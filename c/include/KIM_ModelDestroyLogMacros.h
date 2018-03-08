@@ -33,15 +33,8 @@
 /*                                                                            */
 
 
-#ifdef LOG_FATAL_CODE
-#undef LOG_FATAL_CODE
-#endif
-#if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_FATAL_)
-#define LOG_FATAL_CODE(CODE) CODE
-#else
-#define LOG_FATAL_CODE(CODE)
-#endif
-/**/
+#undef FATAL_VERBOSITY
+#define FATAL_VERBOSITY (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_FATAL_)
 #ifdef LOG_FATAL
 #undef LOG_FATAL
 #endif
@@ -54,15 +47,8 @@
 #define LOG_FATAL(message)
 #endif
 
-#ifdef LOG_ERROR_CODE
-#undef LOG_ERROR_CODE
-#endif
-#if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_ERROR_)
-#define LOG_ERROR_CODE(CODE) CODE
-#else
-#define LOG_ERROR_CODE(CODE)
-#endif
-/**/
+#undef ERROR_VERBOSITY
+#define ERROR_VERBOSITY (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_ERROR_)
 #ifdef LOG_ERROR
 #undef LOG_ERROR
 #endif
@@ -75,15 +61,8 @@
 #define LOG_ERROR(message)
 #endif
 
-#ifdef LOG_WARNING_CODE
-#undef LOG_WARNING_CODE
-#endif
-#if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_WARNING_)
-#define LOG_WARNING_CODE(CODE) CODE
-#else
-#define LOG_WARNING_CODE(CODE)
-#endif
-/**/
+#undef WARNING_VERBOSITY
+#define WARNING_VERBOSITY (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_WARNING_)
 #ifdef LOG_WARNING
 #undef LOG_WARNING
 #endif
@@ -96,15 +75,8 @@
 #define LOG_WARNING(message)
 #endif
 
-#ifdef LOG_INFORMATION_CODE
-#undef LOG_INFORMATION_CODE
-#endif
-#if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_INFORMATION_)
-#define LOG_INFORMATION_CODE(CODE) CODE
-#else
-#define LOG_INFORMATION_CODE(CODE)
-#endif
-/**/
+#undef INFORMATION_VERBOSITY
+#define INFORMATION_VERBOSITY (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_INFORMATION_)
 #ifdef LOG_INFORMATION
 #undef LOG_INFORMATION
 #endif
@@ -117,15 +89,8 @@
 #define LOG_INFORMATION(message)
 #endif
 
-#ifdef LOG_DEBUG_CODE
-#undef LOG_DEBUG_CODE
-#endif
-#if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_DEBUG_)
-#define LOG_DEBUG_CODE(CODE) CODE
-#else
-#define LOG_DEBUG_CODE(CODE)
-#endif
-/**/
+#undef DEBUG_VERBOSITY
+#define DEBUG_VERBOSITY (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_DEBUG_)
 #ifdef LOG_DEBUG
 #undef LOG_DEBUG
 #endif

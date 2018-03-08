@@ -31,62 +31,57 @@
 //
 
 
+#undef FATAL_VERBOSITY
+#define FATAL_VERBOSITY (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_FATAL_)
 #undef LOG_FATAL
-#undef LOG_FATAL_SOURCE
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_FATAL_)
-#define LOG_FATAL_SOURCE 1
 #define LOG_FATAL(message)                                    \
   this->LogEntry(KIM::LOG_VERBOSITY::fatal, message,          \
                  __LINE__, __FILE__)
 #else
-#define LOG_FATAL_SOURCE 0
 #define LOG_FATAL(message)
 #endif
 
+#undef ERROR_VERBOSITY
+#define ERROR_VERBOSITY (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_ERROR_)
 #undef LOG_ERROR
-#undef LOG_ERROR_SOURCE
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_ERROR_)
-#define LOG_ERROR_SOURCE 1
 #define LOG_ERROR(message)                                    \
   this->LogEntry(KIM::LOG_VERBOSITY::error, message,          \
                  __LINE__, __FILE__)
 #else
-#define LOG_ERROR_SOURCE 0
 #define LOG_ERROR(message)
 #endif
 
+#undef WARNING_VERBOSITY
+#define WARNING_VERBOSITY (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_WARNING_)
 #undef LOG_WARNING
-#undef LOG_WARNING_SOURCE
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_WARNING_)
-#define LOG_WARNING_SOURCE 1
 #define LOG_WARNING(message)                                  \
   this->LogEntry(KIM::LOG_VERBOSITY::warning, message,        \
                  __LINE__, __FILE__)
 #else
-#define LOG_WARNING_SOURCE 0
 #define LOG_WARNING(message)
 #endif
 
+#undef INFORMATION_VERBOSITY
+#define INFORMATION_VERBOSITY (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_INFORMATION_)
 #undef LOG_INFORMATION
-#undef LOG_INFORMAITON_SOURCE
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_INFORMATION_)
-#define LOG_INFORMATION_SOURCE 1
 #define LOG_INFORMATION(message)                              \
   this->LogEntry(KIM::LOG_VERBOSITY::information, message,    \
                  __LINE__, __FILE__)
 #else
-#define LOG_INFORMATION_SOURCE 0
 #define LOG_INFORMATION(message)
 #endif
 
+#undef DEBUG_VERBOSITY
+#define DEBUG_VERBOSITY (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_DEBUG_)
 #undef LOG_DEBUG
-#undef LOG_DEBUG_SOURCE
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_DEBUG_)
-#define LOG_DEBUG_SOURCE 1
 #define LOG_DEBUG(message)                                    \
   this->LogEntry(KIM::LOG_VERBOSITY::debug, message,          \
                  __LINE__, __FILE__)
 #else
-#define LOG_DEBUG_SOURCE 0
 #define LOG_DEBUG(message)
 #endif

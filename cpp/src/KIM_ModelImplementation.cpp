@@ -267,13 +267,13 @@ void ModelImplementation::Destroy(
 void ModelImplementation::SetInfluenceDistancePointer(
     double const * const influenceDistance)
 {
-#if LOG_DEBUG_SOURCE
+#if DEBUG_VERBOSITY
   std::string const callString = "SetInfluenceDistancePointer("
       + SPTR(influenceDistance) + ").";
 #endif
   LOG_DEBUG("Enter " + callString);
 
-#if LOG_ERROR_SOURCE
+#if ERROR_VERBOSITY
   if (influenceDistance == NULL)
     LOG_ERROR("Null pointer provided for InfluenceDistancePotiner.");
 #endif
@@ -286,7 +286,7 @@ void ModelImplementation::SetInfluenceDistancePointer(
 void ModelImplementation::GetInfluenceDistance(
     double * const influenceDistance) const
 {
-#if LOG_DEBUG_SOURCE
+#if DEBUG_VERBOSITY
   std::string const callString = "GetInfluenceDistance("
       + SPTR(influenceDistance) + ").";
 #endif
@@ -301,13 +301,13 @@ void ModelImplementation::GetInfluenceDistance(
 void ModelImplementation::SetNeighborListCutoffsPointer(
     int const numberOfCutoffs, double const * const cutoffs)
 {
-#if LOG_DEBUG_SOURCE
+#if DEBUG_VERBOSITY
   std::string const callString = "SetNeighborListCutoffsPointer("
       + SNUM(numberOfCutoffs) + ", " + SPTR(cutoffs) + ").";
 #endif
   LOG_DEBUG("Enter " + callString);
 
-#if LOG_ERROR_SOURCE
+#if ERROR_VERBOSITY
   if (numberOfCutoffs < 1)
     LOG_ERROR("Number of neighbor list cutoffs, " + SNUM(numberOfCutoffs)
               + ", must be >= 1.");
@@ -324,7 +324,7 @@ void ModelImplementation::SetNeighborListCutoffsPointer(
 void ModelImplementation::GetNeighborListCutoffsPointer(
     int * const numberOfCutoffs, double const ** const cutoffs) const
 {
-#if LOG_DEBUG_SOURCE
+#if DEBUG_VERBOSITY
   std::string const callString = "GetNeighborListCutoffsPointer("
       + SPTR(numberOfCutoffs) + ", " + SPTR(cutoffs) + ").";
 #endif
@@ -341,13 +341,13 @@ void ModelImplementation::GetNeighborListCutoffsPointer(
 int ModelImplementation::SetRefreshPointer(LanguageName const languageName,
                                            func * const fptr)
 {
-#if LOG_DEBUG_SOURCE
+#if DEBUG_VERBOSITY
   std::string const callString = "SetRefreshPointer("
       + languageName.String() + ", " + SFUNC(fptr) + ").";
 #endif
   LOG_DEBUG("Enter " + callString);
 
-#if LOG_ERROR_SOURCE
+#if ERROR_VERBOSITY
   int error = Validate(languageName);
   if (error)
   {
@@ -366,13 +366,13 @@ int ModelImplementation::SetRefreshPointer(LanguageName const languageName,
 int ModelImplementation::SetDestroyPointer(LanguageName const languageName,
                                            func * const fptr)
 {
-#if LOG_DEBUG_SOURCE
+#if DEBUG_VERBOSITY
   std::string const callString = "SetDestroyPointer("
       + languageName.String() + ", " + SFUNC(fptr) + ").";
 #endif
   LOG_DEBUG("Enter " + callString);
 
-#if LOG_ERROR_SOURCE
+#if ERROR_VERBOSITY
   int error = Validate(languageName);
   if (error)
   {
@@ -391,13 +391,13 @@ int ModelImplementation::SetDestroyPointer(LanguageName const languageName,
 int ModelImplementation::SetComputePointer(LanguageName const languageName,
                                            func * const fptr)
 {
-#if LOG_DEBUG_SOURCE
+#if DEBUG_VERBOSITY
   std::string const callString = "SetComputePointer("
       + languageName.String() + ", " + SFUNC(fptr) + ").";
 #endif
   LOG_DEBUG("Enter " + callString);
 
-#if LOG_ERROR_SOURCE
+#if ERROR_VERBOSITY
   int error = Validate(languageName);
   if (error)
   {
@@ -416,13 +416,13 @@ int ModelImplementation::SetComputePointer(LanguageName const languageName,
 int ModelImplementation::SetSpeciesCode(SpeciesName const speciesName,
                                         int const code)
 {
-#if LOG_DEBUG_SOURCE
+#if DEBUG_VERBOSITY
   std::string const callString = "SetSpeciesCode("
       + speciesName.String() + ", " + SNUM(code) + ").";
 #endif
   LOG_DEBUG("Enter " + callString);
 
-#if LOG_ERROR_SOURCE
+#if ERROR_VERBOSITY
   int error = Validate(speciesName);
   if (error)
   {
@@ -442,14 +442,14 @@ int ModelImplementation::GetSpeciesSupportAndCode(
     int * const speciesIsSupported,
     int * const code) const
 {
-#if LOG_DEBUG_SOURCE
+#if DEBUG_VERBOSITY
   std::string const callString = "GetSpeciesSupportAndCode("
       + speciesName.String() + ", " + SPTR(speciesIsSupported)
       + ", " + SPTR(code) + ").";
 #endif
   LOG_DEBUG("Enter " + callString);
 
-#if LOG_ERROR_SOURCE
+#if ERROR_VERBOSITY
   int error = Validate(speciesName);
   if (error)
   {
@@ -480,13 +480,13 @@ int ModelImplementation::GetSpeciesSupportAndCode(
 int ModelImplementation::SetArgumentSupportStatus(
     ArgumentName const argumentName, SupportStatus const supportStatus)
 {
-#if LOG_DEBUG_SOURCE
+#if DEBUG_VERBOSITY
   std::string const callString = "SetArgumentSupportStatus("
       + argumentName.String() + ", " + supportStatus.String() + ").";
 #endif
   LOG_DEBUG("Enter " + callString);
 
-#if LOG_ERROR_SOURCE
+#if ERROR_VERBOSITY
   int error = Validate(argumentName) || Validate(supportStatus);
   if (error)
   {
@@ -529,13 +529,13 @@ int ModelImplementation::GetArgumentSupportStatus(
     ArgumentName const argumentName, SupportStatus * const supportStatus)
     const
 {
-#if LOG_DEBUG_SOURCE
+#if DEBUG_VERBOSITY
   std::string const callString = "GetArgumentSupportStatus("
       + argumentName.String() + ", " + SPTR(supportStatus) + ").";
 #endif
   LOG_DEBUG("Enter " + callString);
 
-#if LOG_ERROR_SOURCE
+#if ERROR_VERBOSITY
   int error = Validate(argumentName);
   if (error)
   {
@@ -556,13 +556,13 @@ int ModelImplementation::GetArgumentSupportStatus(
 int ModelImplementation::SetCallbackSupportStatus(
     CallbackName const callbackName, SupportStatus const supportStatus)
 {
-#if LOG_DEBUG_SOURCE
+#if DEBUG_VERBOSITY
   std::string const callString = "SetCallbackSupportStatus("
       + callbackName.String() + ", " + supportStatus.String() + ").";
 #endif
   LOG_DEBUG("Enter " + callString);
 
-#if LOG_ERROR_SOURCE
+#if ERROR_VERBOSITY
   int error = Validate(callbackName) || Validate(supportStatus);
   if (error)
   {
@@ -607,13 +607,13 @@ int ModelImplementation::SetCallbackSupportStatus(
 int ModelImplementation::GetCallbackSupportStatus(
     CallbackName const callbackName, SupportStatus * const supportStatus) const
 {
-#if LOG_DEBUG_SOURCE
+#if DEBUG_VERBOSITY
   std::string const callString = "GetCallbackSupportStatus("
       + callbackName.String() + ", " + SPTR(supportStatus) + ").";
 #endif
   LOG_DEBUG("Enter " + callString);
 
-#if LOG_ERROR_SOURCE
+#if ERROR_VERBOSITY
   int error = Validate(callbackName);
   if (error)
   {
@@ -633,13 +633,13 @@ int ModelImplementation::GetCallbackSupportStatus(
 
 int ModelImplementation::SetModelNumbering(Numbering const numbering)
 {
-#if LOG_DEBUG_SOURCE
+#if DEBUG_VERBOSITY
   std::string const callString = "SetModelNumbering("
       + numbering.String() + ").";
 #endif
   LOG_DEBUG("Enter " + callString);
 
-#if LOG_ERROR_SOURCE
+#if ERROR_VERBOSITY
   int error = Validate(numbering);
   if (error)
   {
@@ -658,13 +658,13 @@ int ModelImplementation::SetModelNumbering(Numbering const numbering)
 
 int ModelImplementation::SetSimulatorNumbering(Numbering const numbering)
 {
-#if LOG_DEBUG_SOURCE
+#if DEBUG_VERBOSITY
   std::string const callString = "SetSimulatorNumbering("
       + numbering.String() + ").";
 #endif
   LOG_DEBUG("Enter " + callString);
 
-#if LOG_ERROR_SOURCE
+#if ERROR_VERBOSITY
   int error = Validate(numbering);
   if (error)
   {
@@ -686,7 +686,7 @@ int ModelImplementation::SetUnits(LengthUnit const lengthUnit,
                                   TemperatureUnit const temperatureUnit,
                                   TimeUnit const timeUnit)
 {
-#if LOG_DEBUG_SOURCE
+#if DEBUG_VERBOSITY
   std::string const callString = "SetUnits("
       + lengthUnit.String() + ", "
       + energyUnit.String() + ", "
@@ -697,7 +697,7 @@ int ModelImplementation::SetUnits(LengthUnit const lengthUnit,
 #endif
   LOG_DEBUG("Enter " + callString);
 
-#if LOG_ERROR_SOURCE
+#if ERROR_VERBOSITY
   int error =
       Validate(lengthUnit) ||
       Validate(energyUnit) ||
@@ -744,7 +744,7 @@ void ModelImplementation::GetUnits(LengthUnit * const lengthUnit,
                                    TemperatureUnit * const temperatureUnit,
                                    TimeUnit * const timeUnit) const
 {
-#if LOG_DEBUG_SOURCE
+#if DEBUG_VERBOSITY
   std::string const callString = "GetUnits("
       + SPTR(lengthUnit) + ", "
       + SPTR(energyUnit) + ", "
@@ -771,13 +771,13 @@ void ModelImplementation::GetUnits(LengthUnit * const lengthUnit,
 int ModelImplementation::GetNumberOfParameterFiles(
     int * const numberOfParameterFiles) const
 {
-#if LOG_DEBUG_SOURCE
+#if DEBUG_VERBOSITY
   std::string const callString = "GetNumberOfParameterFiles("
       + SPTR(numberOfParameterFiles) + ").";
 #endif
   LOG_DEBUG("Enter " + callString);
 
-#if LOG_ERROR_SOURCE
+#if ERROR_VERBOSITY
   if (modelType_ != ModelLibrary::PARAMETERIZED_MODEL)
   {
     LOG_ERROR("Only parameterized models have parameter files.");
@@ -795,13 +795,13 @@ int ModelImplementation::GetNumberOfParameterFiles(
 int ModelImplementation::GetParameterFileName(
     int const index, std::string const ** const parameterFileName) const
 {
-#if LOG_DEBUG_SOURCE
+#if DEBUG_VERBOSITY
   std::string const callString = "GetParameterFileName("
       + SNUM(index) + ", " + SPTR(parameterFileName) + ").";
 #endif
   LOG_DEBUG("Enter " + callString);
 
-#if LOG_ERROR_SOURCE
+#if ERROR_VERBOSITY
   if (modelType_ != ModelLibrary::PARAMETERIZED_MODEL)
   {
     LOG_ERROR("Only parameterized models have parameter files.");
@@ -826,13 +826,13 @@ int ModelImplementation::GetParameterFileName(
 int ModelImplementation::SetParameterPointer(int const extent, int * const ptr,
                                              std::string const & description)
 {
-#if LOG_DEBUG_SOURCE
+#if DEBUG_VERBOSITY
   std::string const callString = "SetParameterPointer("
       + SNUM(extent) + ", " + SPTR(ptr) + ", '" + description + "').";
 #endif
   LOG_DEBUG("Enter " + callString);
 
-#if LOG_ERROR_SOURCE
+#if ERROR_VERBOSITY
   if (extent == 0)
   {
     LOG_ERROR("Extent, " + SNUM(extent) + ", must be > 0.");
@@ -860,13 +860,13 @@ int ModelImplementation::SetParameterPointer(int const extent,
                                              double * const ptr,
                                              std::string const & description)
 {
-#if LOG_DEBUG_SOURCE
+#if DEBUG_VERBOSITY
   std::string const callString = "SetParameterPointer("
       + SNUM(extent) + ", " + SPTR(ptr) + ", '" + description + "').";
 #endif
   LOG_DEBUG("Enter " + callString);
 
-#if LOG_ERROR_SOURCE
+#if ERROR_VERBOSITY
   if (extent == 0)
   {
     LOG_ERROR("Extent, " + SNUM(extent) + ", must be > 0.");
@@ -893,7 +893,7 @@ int ModelImplementation::SetParameterPointer(int const extent,
 void ModelImplementation::GetNumberOfParameters(int * const numberOfParameters)
     const
 {
-#if LOG_DEBUG_SOURCE
+#if DEBUG_VERBOSITY
   std::string const callString = "GetNumberOfParameters("
       + SPTR(numberOfParameters) + ").";
 #endif
@@ -908,7 +908,7 @@ int ModelImplementation::GetParameterDataTypeExtentAndDescription(
     int const parameterIndex, DataType * const dataType, int * const extent,
     std::string const ** const description) const
 {
-#if LOG_DEBUG_SOURCE
+#if DEBUG_VERBOSITY
   std::string const callString
       = "GetParameterDataTypeExtentAndDescription("
       + SNUM(parameterIndex) + ", " + SPTR(dataType) + ", "
@@ -916,7 +916,7 @@ int ModelImplementation::GetParameterDataTypeExtentAndDescription(
 #endif
   LOG_DEBUG("Enter " + callString);
 
-#if LOG_ERROR_SOURCE
+#if ERROR_VERBOSITY
   if ((parameterIndex < 0) ||
       (static_cast<unsigned int>(parameterIndex)
        >= parameterPointer_.size()))
@@ -942,14 +942,14 @@ int ModelImplementation::GetParameter(int const parameterIndex,
                                       int const arrayIndex,
                                       int * const parameterValue) const
 {
-#if LOG_DEBUG_SOURCE
+#if DEBUG_VERBOSITY
   std::string const callString = "GetParameter("
       + SNUM(parameterIndex) + ", " + SNUM(arrayIndex) + ", "
       + SPTR(parameterValue) + ").";
 #endif
   LOG_DEBUG("Enter " + callString);
 
-#if LOG_ERROR_SOURCE
+#if ERROR_VERBOSITY
   if ((parameterIndex < 0) ||
       (static_cast<unsigned int>(parameterIndex)
        >= parameterPointer_.size()))
@@ -978,14 +978,14 @@ int ModelImplementation::GetParameter(int const parameterIndex,
                                       int const arrayIndex,
                                       double * const parameterValue) const
 {
-#if LOG_DEBUG_SOURCE
+#if DEBUG_VERBOSITY
   std::string const callString = "GetParameter("
       + SNUM(parameterIndex) + ", " + SNUM(arrayIndex) + ", "
       + SPTR(parameterValue) + ").";
 #endif
   LOG_DEBUG("Enter " + callString);
 
-#if LOG_ERROR_SOURCE
+#if ERROR_VERBOSITY
   if ((parameterIndex < 0) ||
       (static_cast<unsigned int>(parameterIndex)
        >= parameterPointer_.size()))
@@ -1014,14 +1014,14 @@ int ModelImplementation::SetParameter(int const parameterIndex,
                                       int const arrayIndex,
                                       int const parameterValue)
 {
-#if LOG_DEBUG_SOURCE
+#if DEBUG_VERBOSITY
   std::string const callString = "SetParameter("
       + SNUM(parameterIndex) + ", " + SNUM(arrayIndex) + ", "
       + SNUM(parameterValue) + ").";
 #endif
   LOG_DEBUG("Enter " + callString);
 
-#if LOG_ERROR_SOURCE
+#if ERROR_VERBOSITY
   if ((parameterIndex < 0) ||
       (static_cast<unsigned int>(parameterIndex)
        >= parameterPointer_.size()))
@@ -1050,14 +1050,14 @@ int ModelImplementation::SetParameter(int const parameterIndex,
                                       int const arrayIndex,
                                       double const parameterValue)
 {
-#if LOG_DEBUG_SOURCE
+#if DEBUG_VERBOSITY
   std::string const callString = "SetParameter("
       + SNUM(parameterIndex) + ", " + SNUM(arrayIndex) + ", "
       + SNUM(parameterValue) + ").";
 #endif
   LOG_DEBUG("Enter " + callString);
 
-#if LOG_ERROR_SOURCE
+#if ERROR_VERBOSITY
   if ((parameterIndex < 0) ||
       (static_cast<unsigned int>(parameterIndex)
        >= parameterPointer_.size()))
@@ -1085,13 +1085,13 @@ int ModelImplementation::SetParameter(int const parameterIndex,
 int ModelImplementation::SetArgumentPointer(ArgumentName const argumentName,
                                             int const * const ptr)
 {
-#if LOG_DEBUG_SOURCE
+#if DEBUG_VERBOSITY
   std::string const callString = "SetArgumentPointer("
       + argumentName.String() + ", " + SPTR(ptr) + ").";
 #endif
   LOG_DEBUG("Enter " + callString);
 
-#if LOG_ERROR_SOURCE
+#if ERROR_VERBOSITY
   int error = Validate(argumentName);
   if (error)
   {
@@ -1121,13 +1121,13 @@ int ModelImplementation::SetArgumentPointer(ArgumentName const argumentName,
 int ModelImplementation::SetArgumentPointer(ArgumentName const argumentName,
                                             double const * const ptr)
 {
-#if LOG_DEBUG_SOURCE
+#if DEBUG_VERBOSITY
   std::string const callString = "SetArgumentPointer("
       + argumentName.String() + ", " + SPTR(ptr) + ").";
 #endif
   LOG_DEBUG("Enter " + callString);
 
-#if LOG_ERROR_SOURCE
+#if ERROR_VERBOSITY
   int error = Validate(argumentName);
   if (error)
   {
@@ -1157,13 +1157,13 @@ int ModelImplementation::SetArgumentPointer(ArgumentName const argumentName,
 int ModelImplementation::GetArgumentPointer(ArgumentName const argumentName,
                                             int const ** const ptr) const
 {
-#if LOG_DEBUG_SOURCE
+#if DEBUG_VERBOSITY
   std::string const callString = "GetArgumentPointer("
       + argumentName.String() + ", " + SPTR(ptr) + ").";
 #endif
   LOG_DEBUG("Enter " + callString);
 
-#if LOG_ERROR_SOURCE
+#if ERROR_VERBOSITY
   int error = Validate(argumentName);
   if (error)
   {
@@ -1195,13 +1195,13 @@ int ModelImplementation::GetArgumentPointer(ArgumentName const argumentName,
 int ModelImplementation::GetArgumentPointer(ArgumentName const argumentName,
                                             int ** const ptr) const
 {
-#if LOG_DEBUG_SOURCE
+#if DEBUG_VERBOSITY
   std::string const callString = "GetArgumentPointer("
       + argumentName.String() + ", " + SPTR(ptr) + ").";
 #endif
   LOG_DEBUG("Enter " + callString);
 
-#if LOG_ERROR_SOURCE
+#if ERROR_VERBOSITY
   int error = Validate(argumentName);
   if (error)
   {
@@ -1234,13 +1234,13 @@ int ModelImplementation::GetArgumentPointer(ArgumentName const argumentName,
 int ModelImplementation::GetArgumentPointer(ArgumentName const argumentName,
                                             double const ** const ptr) const
 {
-#if LOG_DEBUG_SOURCE
+#if DEBUG_VERBOSITY
   std::string const callString = "GetArgumentPointer("
       + argumentName.String() + ", " + SPTR(ptr) + ").";
 #endif
   LOG_DEBUG("Enter " + callString);
 
-#if LOG_ERROR_SOURCE
+#if ERROR_VERBOSITY
   int error = Validate(argumentName);
   if (error)
   {
@@ -1273,13 +1273,13 @@ int ModelImplementation::GetArgumentPointer(ArgumentName const argumentName,
 int ModelImplementation::GetArgumentPointer(ArgumentName const argumentName,
                                             double ** const ptr) const
 {
-#if LOG_DEBUG_SOURCE
+#if DEBUG_VERBOSITY
   std::string const callString = "GetArgumentPointer("
       + argumentName.String() + ", " + SPTR(ptr) + ").";
 #endif
   LOG_DEBUG("Enter " + callString);
 
-#if LOG_ERROR_SOURCE
+#if ERROR_VERBOSITY
   int error = Validate(argumentName);
   if (error)
   {
@@ -1314,14 +1314,14 @@ int ModelImplementation::SetCallbackPointer(CallbackName const callbackName,
                                             func * const fptr,
                                             void const * const dataObject)
 {
-#if LOG_DEBUG_SOURCE
+#if DEBUG_VERBOSITY
   std::string const callString = "SetCallbackPointer("
       + callbackName.String() + ", " + languageName.String()
       + ", " + SFUNC(fptr) + ", " + SPTR(dataObject) + ").";
 #endif
   LOG_DEBUG("Enter " + callString);
 
-#if LOG_ERROR_SOURCE
+#if ERROR_VERBOSITY
   int error =
       Validate(callbackName) ||
       Validate(languageName);
@@ -1355,13 +1355,13 @@ int ModelImplementation::SetCallbackPointer(CallbackName const callbackName,
 int ModelImplementation::IsCallbackPresent(
     CallbackName const callbackName, int * const present) const
 {
-#if LOG_DEBUG_SOURCE
+#if DEBUG_VERBOSITY
   std::string const callString = "IsCallbackPresent("
       + callbackName.String() + ", " + SPTR(present) + ").";
 #endif
   LOG_DEBUG("Enter " + callString);
 
-#if LOG_ERROR_SOURCE
+#if ERROR_VERBOSITY
   int error = Validate(callbackName);
   if (error)
   {
@@ -1394,12 +1394,12 @@ struct KIM_ModelCompute
 
 int ModelImplementation::Compute() const
 {
-#if LOG_DEBUG_SOURCE
+#if DEBUG_VERBOSITY
   std::string const callString = "Compute().";
 #endif
   LOG_DEBUG("Enter " + callString);
 
-#if LOG_ERROR_SOURCE
+#if ERROR_VERBOSITY
   // Check that all required arguments are present
   for (std::map<ArgumentName const, SupportStatus,
            ARGUMENT_NAME::Comparator>::const_iterator
@@ -1498,7 +1498,7 @@ struct KIM_ModelRefresh
 
 int ModelImplementation::ClearInfluenceDistanceAndCutoffsThenRefreshModel()
 {
-#if LOG_DEBUG_SOURCE
+#if DEBUG_VERBOSITY
   std::string const callString =
       "ClearInfluenceDistanceAndCutoffsThenRefreshModel().";
 #endif
@@ -1556,7 +1556,7 @@ int ModelImplementation::ClearInfluenceDistanceAndCutoffsThenRefreshModel()
   }
   else
   {
-#if LOG_ERROR_SOURCE
+#if ERROR_VERBOSITY
     // error checking
     if (influenceDistance_ == NULL)
     {
@@ -1586,14 +1586,14 @@ int ModelImplementation::GetNeighborList(int const neighborListIndex,
 {
   // No debug logging for callbacks: too expensive
   //
-  // #if LOG_DEBUG_SOURCE
+  // #if DEBUG_VERBOSITY
   //   std::string const callString = "GetNeighborList("
   //       + SNUM(neighborListIndex) + ", " + SNUM(particleNumber) + ", "
   //       + SPTR(numberOfNeighbors) + ", " + SPTR(neighborsOfParticle) + ").";
   // #endif
   //   LOG_DEBUG("Enter " + callString);
 
-#if LOG_ERROR_SOURCE
+#if ERROR_VERBOSITY
   if ((neighborListIndex < 0) || (neighborListIndex >= numberOfCutoffs_))
   {
     LOG_ERROR("Invalid neighborListIndex, " + SNUM(neighborListIndex)
@@ -1718,7 +1718,7 @@ int ModelImplementation::ProcessDEDrTerm(double const de, double const r,
 {
   // No debug logging for callbacks: too expensive
   //
-  // #if LOG_DEBUG_SOURCE
+  // #if DEBUG_VERBOSITY
   //   std::string const callString = "ProcessDEDrTerm("
   //       + SNUM(de) + ", " + SNUM(r) + ", " + SPTR(dx) + ", "
   //       + SNUM(i) + ", " + SNUM(j) + ").";
@@ -1798,7 +1798,7 @@ int ModelImplementation::ProcessD2EDr2Term(double const de,
 {
   // No debug logging for callbacks: too expensive
   //
-  // #if LOG_DEBUG_SOURCE
+  // #if DEBUG_VERBOSITY
   //   std::string const callString = "ProcessD2EDr2Term("
   //       + SNUM(de) + ", " + SPTR(r) + ", " + SPTR(dx) + ", "
   //       + SPTR(i) + ", " + SPTR(j) + ").";
@@ -1880,7 +1880,7 @@ int ModelImplementation::ProcessD2EDr2Term(double const de,
 
 void ModelImplementation::SetModelBufferPointer(void * const ptr)
 {
-#if LOG_DEBUG_SOURCE
+#if DEBUG_VERBOSITY
   std::string const callString = "SetModelBufferPointer(" + SPTR(ptr) + ").";
 #endif
   LOG_DEBUG("Enter " + callString);
@@ -1892,7 +1892,7 @@ void ModelImplementation::SetModelBufferPointer(void * const ptr)
 
 void ModelImplementation::GetModelBufferPointer(void ** const ptr) const
 {
-#if LOG_DEBUG_SOURCE
+#if DEBUG_VERBOSITY
   std::string const callString = "GetModelBufferPointer(" + SPTR(ptr) + ").";
 #endif
   LOG_DEBUG("Enter " + callString);
@@ -1905,7 +1905,7 @@ void ModelImplementation::GetModelBufferPointer(void ** const ptr) const
 
 void ModelImplementation::SetSimulatorBufferPointer(void * const ptr)
 {
-#if LOG_DEBUG_SOURCE
+#if DEBUG_VERBOSITY
   std::string const callString = "SetSimulatorBufferPointer("
       + SPTR(ptr) + ").";
 #endif
@@ -1918,7 +1918,7 @@ void ModelImplementation::SetSimulatorBufferPointer(void * const ptr)
 
 void ModelImplementation::GetSimulatorBufferPointer(void ** const ptr) const
 {
-#if LOG_DEBUG_SOURCE
+#if DEBUG_VERBOSITY
   std::string const callString = "GetSimulatorBufferPointer("
       + SPTR(ptr) + ").";
 #endif
@@ -2014,7 +2014,7 @@ int ModelImplementation::ConvertUnit(
     double const timeExponent,
     double * const conversionFactor) const
 {
-#if LOG_DEBUG_SOURCE
+#if DEBUG_VERBOSITY
   std::string const callString = "ConvertUnit("
       + fromLengthUnit.String() + ", "
       + fromEnergyUnit.String() + ", "
@@ -2041,7 +2041,7 @@ int ModelImplementation::ConvertUnit(
   static TemperatureMap const temperatureConvertToSI = GetTemperatureMap();
   static TimeMap const timeConvertToSI = GetTimeMap();
 
-#if LOG_ERROR_SOURCE
+#if ERROR_VERBOSITY
   int error =
       Validate(fromLengthUnit) ||
       Validate(fromEnergyUnit) ||
@@ -2090,7 +2090,7 @@ int ModelImplementation::ConvertUnit(
 
 void ModelImplementation::SetLogID(std::string const & logID)
 {
-#if LOG_DEBUG_SOURCE
+#if DEBUG_VERBOSITY
   std::string const callString = "SetLogID('" + logID + "').";
 #endif
   LOG_DEBUG("Enter " + callString);
@@ -2102,7 +2102,7 @@ void ModelImplementation::SetLogID(std::string const & logID)
 
 void ModelImplementation::PushLogVerbosity(LogVerbosity const logVerbosity)
 {
-#if LOG_DEBUG_SOURCE
+#if DEBUG_VERBOSITY
   std::string const callString = "PushLogVerbosity("
       + logVerbosity.String() + ").";
 #endif
@@ -2115,7 +2115,7 @@ void ModelImplementation::PushLogVerbosity(LogVerbosity const logVerbosity)
 
 void ModelImplementation::PopLogVerbosity()
 {
-#if LOG_DEBUG_SOURCE
+#if DEBUG_VERBOSITY
   std::string const callString = "PopLogVerbosity().";
 #endif
   LOG_DEBUG("Enter " + callString);
@@ -2136,7 +2136,7 @@ void ModelImplementation::LogEntry(LogVerbosity const logVerbosity,
 
 std::string const & ModelImplementation::String() const
 {
-#if LOG_DEBUG_SOURCE
+#if DEBUG_VERBOSITY
   std::string const callString = "String().";
 #endif
   LOG_DEBUG("Enter " + callString);
@@ -2356,7 +2356,7 @@ ModelImplementation::ModelImplementation(ModelLibrary * const modelLibrary,
     modelBuffer_(0),
     simulatorBuffer_(0)
 {
-#if LOG_DEBUG_SOURCE
+#if DEBUG_VERBOSITY
   std::string const callString = "ModelImplementation("
       + SPTR(modelLibrary) + ", " + SPTR(log) + ").";
 #endif
@@ -2410,7 +2410,7 @@ ModelImplementation::ModelImplementation(ModelLibrary * const modelLibrary,
 
 ModelImplementation::~ModelImplementation()
 {
-#if LOG_DEBUG_SOURCE
+#if DEBUG_VERBOSITY
   std::string const callString = "~ModelImplementation().";
 #endif
   LOG_DEBUG("Enter " + callString);
@@ -2430,7 +2430,7 @@ int ModelImplementation::ModelCreate(
     TimeUnit const requestedTimeUnit,
     std::string const & modelName)
 {
-#if LOG_DEBUG_SOURCE
+#if DEBUG_VERBOSITY
   std::string const callString = "ModelCreate("
       + numbering.String() + ", "
       + requestedLengthUnit.String() + ", "
@@ -2442,7 +2442,7 @@ int ModelImplementation::ModelCreate(
 #endif
   LOG_DEBUG("Enter " + callString);
 
-#if LOG_ERROR_SOURCE
+#if ERROR_VERBOSITY
   int error =
       Validate(numbering) ||
       Validate(requestedLengthUnit) ||
@@ -2524,7 +2524,7 @@ int ModelImplementation::ModelCreate(
       break;
   }
 
-#if LOG_ERROR_SOURCE
+#if ERROR_VERBOSITY
   // Error checking
   //  no need to check arguments, callbacks, or parameters
   if (!numberingHasBeenSet_)
@@ -2612,7 +2612,7 @@ struct KIM_ModelDestroy
 
 int ModelImplementation::ModelDestroy()
 {
-#if LOG_DEBUG_SOURCE
+#if DEBUG_VERBOSITY
   std::string const callString = "ModelDestroy().";
 #endif
   LOG_DEBUG("Enter " + callString);
@@ -2681,7 +2681,7 @@ int ModelImplementation::InitializeStandAloneModel(
     TemperatureUnit const requestedTemperatureUnit,
     TimeUnit const requestedTimeUnit)
 {
-#if LOG_DEBUG_SOURCE
+#if DEBUG_VERBOSITY
   std::string const callString = "InitializeStandAloneModel("
       + requestedLengthUnit.String() + ", "
       + requestedEnergyUnit.String() + ", "
@@ -2691,7 +2691,7 @@ int ModelImplementation::InitializeStandAloneModel(
 #endif
   LOG_DEBUG("Enter " + callString);
 
-#if LOG_ERROR_SOURCE
+#if ERROR_VERBOSITY
   int error =
       Validate(requestedLengthUnit) ||
       Validate(requestedEnergyUnit) ||
@@ -2815,7 +2815,7 @@ int ModelImplementation::InitializeParameterizedModel(
     TemperatureUnit const requestedTemperatureUnit,
     TimeUnit const requestedTimeUnit)
 {
-#if LOG_DEBUG_SOURCE
+#if DEBUG_VERBOSITY
   std::string const callString = "InitializeParameterizedModel("
       + requestedLengthUnit.String() + ", "
       + requestedEnergyUnit.String() + ", "
@@ -2825,7 +2825,7 @@ int ModelImplementation::InitializeParameterizedModel(
 #endif
   LOG_DEBUG("Enter " + callString);
 
-#if LOG_ERROR_SOURCE
+#if ERROR_VERBOSITY
   int error =
       Validate(requestedLengthUnit) ||
       Validate(requestedEnergyUnit) ||
@@ -2990,7 +2990,7 @@ int ModelImplementation::InitializeParameterizedModel(
 
 int ModelImplementation::WriteParameterFiles()
 {
-#if LOG_DEBUG_SOURCE
+#if DEBUG_VERBOSITY
   std::string const callString = "WriteParameterFiles().";
 #endif
   LOG_DEBUG("Enter " + callString);
@@ -3044,7 +3044,7 @@ int ModelImplementation::Validate(ArgumentName const argumentName) const
 {
   // No debug logging for Validate: too expensive
   //
-  // #if LOG_DEBUG_SOURCE
+  // #if DEBUG_VERBOSITY
   //   std::string const callString = "Validate(" + argumentName.String()
   //       + ").";
   // #endif
@@ -3074,7 +3074,7 @@ int ModelImplementation::Validate(CallbackName const callbackName) const
 {
   // No debug logging for Validate: too expensive
   //
-  // #if LOG_DEBUG_SOURCE
+  // #if DEBUG_VERBOSITY
   //   std::string const callString = "Validate(" + callbackName.String()
   //       + ").";
   // #endif
@@ -3104,7 +3104,7 @@ int ModelImplementation::Validate(ChargeUnit const chargeUnit) const
 {
   // No debug logging for Validate: too expensive
   //
-  // #if LOG_DEBUG_SOURCE
+  // #if DEBUG_VERBOSITY
   //   std::string const callString = "Validate(" + chargeUnit.String()
   //       + ").";
   // #endif
@@ -3134,7 +3134,7 @@ int ModelImplementation::Validate(DataType const dataType) const
 {
   // No debug logging for Validate: too expensive
   //
-  // #if LOG_DEBUG_SOURCE
+  // #if DEBUG_VERBOSITY
   //   std::string const callString = "Validate(" + dataType.String()
   //       + ").";
   // #endif
@@ -3164,7 +3164,7 @@ int ModelImplementation::Validate(EnergyUnit const energyUnit) const
 {
   // No debug logging for Validate: too expensive
   //
-  // #if LOG_DEBUG_SOURCE
+  // #if DEBUG_VERBOSITY
   //   std::string const callString = "Validate(" + energyUnit.String() + ").";
   // #endif
   //   LOG_DEBUG("Enter " + callString);
@@ -3193,7 +3193,7 @@ int ModelImplementation::Validate(LanguageName const languageName) const
 {
   // No debug logging for Validate: too expensive
   //
-  // #if LOG_DEBUG_SOURCE
+  // #if DEBUG_VERBOSITY
   //   std::string const callString = "Validate(" + languageName.String()
   //       + ").";
   // #endif
@@ -3223,7 +3223,7 @@ int ModelImplementation::Validate(LengthUnit const lengthUnit) const
 {
   // No debug logging for Validate: too expensive
   //
-  // #if LOG_DEBUG_SOURCE
+  // #if DEBUG_VERBOSITY
   //   std::string const callString = "Validate(" + lengthUnit.String()
   //       + ").";
   // #endif
@@ -3253,7 +3253,7 @@ int ModelImplementation::Validate(Numbering const numbering) const
 {
   // No debug logging for Validate: too expensive
   //
-  // #if LOG_DEBUG_SOURCE
+  // #if DEBUG_VERBOSITY
   //   std::string const callString = "Validate(" + numbering.String()
   //       + ").";
   // #endif
@@ -3283,7 +3283,7 @@ int ModelImplementation::Validate(SpeciesName const speciesName) const
 {
   // No debug logging for Validate: too expensive
   //
-  // #if LOG_DEBUG_SOURCE
+  // #if DEBUG_VERBOSITY
   //   std::string const callString = "Validate(" + speciesName.String()
   //       + ").";
   // #endif
@@ -3313,7 +3313,7 @@ int ModelImplementation::Validate(SupportStatus const supportStatus) const
 {
   // No debug logging for Validate: too expensive
   //
-  // #if LOG_DEBUG_SOURCE
+  // #if DEBUG_VERBOSITY
   //   std::string const callString = "Validate(" + supportStatus.String()
   //       + ").";
   // #endif
@@ -3343,7 +3343,7 @@ int ModelImplementation::Validate(TemperatureUnit const temperatureUnit) const
 {
   // No debug logging for Validate: too expensive
   //
-  // #if LOG_DEBUG_SOURCE
+  // #if DEBUG_VERBOSITY
   //   std::string const callString = "Validate(" + temperatureUnit.String()
   //       + ").";
   // #endif
@@ -3373,7 +3373,7 @@ int ModelImplementation::Validate(TimeUnit const timeUnit) const
 {
   // No debug logging for Validate: too expensive
   //
-  // #if LOG_DEBUG_SOURCE
+  // #if DEBUG_VERBOSITY
   //   std::string const callString = "Validate(" + timeUnit.String()
   //       + ").";
   // #endif
