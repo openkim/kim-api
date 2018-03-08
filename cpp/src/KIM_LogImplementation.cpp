@@ -71,11 +71,11 @@ int Validate(LogVerbosity const logVerbosity)
 
     if (logVerbosity == logVerb)
     {
-      return false;
+      return true;
     }
   }
 
-  return true;
+  return false;
 }
 }  // namespace
 
