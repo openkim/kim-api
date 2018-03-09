@@ -53,9 +53,7 @@ class EnergyUnit;
 class ChargeUnit;
 class TemperatureUnit;
 class TimeUnit;
-class ArgumentName;
-class CallbackName;
-class SupportStatus;
+class ComputeArguments;
 class ModelImplementation;
 
 
@@ -78,29 +76,16 @@ class Model
   void GetNeighborListCutoffsPointer(int * const numberOfCutoffs,
                                      double const ** const cutoffs) const;
 
-  int GetArgumentSupportStatus(ArgumentName const argumentName,
-                               SupportStatus * const supportStatus) const;
-  int GetCallbackSupportStatus(CallbackName const callbackName,
-                               SupportStatus * const supportStatus) const;
-
   void GetUnits(LengthUnit * const lengthUnit,
                 EnergyUnit * const energyUnit,
                 ChargeUnit * const chargeUnit,
                 TemperatureUnit * const temperatureUnit,
                 TimeUnit * const timeUnit) const;
 
+  int ComputeArgumentsCreate(ComputeArguments ** const computeArguments) const;
+  int ComputeArgumentsDestroy(ComputeArguments ** const computeArguments) const;
+  int Compute(ComputeArguments const * const computeArguments) const;
 
-  int SetArgumentPointer(ArgumentName const argumentName,
-                         int const * const ptr);
-  int SetArgumentPointer(ArgumentName const argumentName,
-                         double const * const ptr);
-
-  int SetCallbackPointer(CallbackName const callbackName,
-                         LanguageName const languageName,
-                         func * const fptr,
-                         void const * const dataObject);
-
-  int Compute() const;
   int ClearInfluenceDistanceAndCutoffsThenRefreshModel();
 
   int GetSpeciesSupportAndCode(SpeciesName const speciesName,

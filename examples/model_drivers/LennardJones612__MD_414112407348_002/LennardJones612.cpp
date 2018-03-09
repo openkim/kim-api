@@ -147,10 +147,39 @@ int LennardJones612::Refresh(
 
 //******************************************************************************
 // static member function
-int LennardJones612::Compute(KIM::ModelCompute const * const modelCompute)
+int LennardJones612::Compute(
+    KIM::ModelCompute const * const modelCompute,
+    KIM::ModelComputeArguments const * const modelComputeArguments)
 {
   LennardJones612 * modelObject;
   modelCompute->GetModelBufferPointer(reinterpret_cast<void**>(&modelObject));
 
-  return modelObject->implementation_->Compute(modelCompute);
+  return modelObject->implementation_->Compute(modelCompute,
+                                               modelComputeArguments);
+}
+
+//******************************************************************************
+// static member function
+int LennardJones612::ComputeArgumentsCreate(
+    KIM::ModelCompute const * const modelCompute,
+    KIM::ModelComputeArgumentsCreate * const modelComputeArgumentsCreate)
+{
+  LennardJones612 * modelObject;
+  modelCompute->GetModelBufferPointer(reinterpret_cast<void**>(&modelObject));
+
+  return modelObject->implementation_
+      ->ComputeArgumentsCreate(modelComputeArgumentsCreate);
+}
+
+//******************************************************************************
+// static member function
+int LennardJones612::ComputeArgumentsDestroy(
+    KIM::ModelCompute const * const modelCompute,
+    KIM::ModelComputeArgumentsDestroy * const modelComputeArgumentsDestroy)
+{
+  LennardJones612 * modelObject;
+  modelCompute->GetModelBufferPointer(reinterpret_cast<void**>(&modelObject));
+
+  return modelObject->implementation_
+      ->ComputeArgumentsDestroy(modelComputeArgumentsDestroy);
 }

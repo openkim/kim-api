@@ -31,43 +31,45 @@
 //
 
 
-#ifndef KIM_CALLBACK_NAME_HPP_
-#define KIM_CALLBACK_NAME_HPP_
+#ifndef KIM_COMPUTE_CALLBACK_NAME_HPP_
+#define KIM_COMPUTE_CALLBACK_NAME_HPP_
 
 #include <string>
 
 namespace KIM
 {
 
-class CallbackName
+class ComputeCallbackName
 {
  public:
-  int callbackNameID;
+  int computeCallbackNameID;
 
-  CallbackName();
-  CallbackName(int const id);
-  CallbackName(std::string const & str);
-  bool operator==(CallbackName const & rhs) const;
-  bool operator!=(CallbackName const & rhs) const;
+  ComputeCallbackName();
+  ComputeCallbackName(int const id);
+  ComputeCallbackName(std::string const & str);
+  bool operator==(ComputeCallbackName const & rhs) const;
+  bool operator!=(ComputeCallbackName const & rhs) const;
   std::string const & String() const;
 };
 
-namespace CALLBACK_NAME
+namespace COMPUTE_CALLBACK_NAME
 {
-extern CallbackName const GetNeighborList;
-extern CallbackName const ProcessDEDrTerm;
-extern CallbackName const ProcessD2EDr2Term;
+extern ComputeCallbackName const GetNeighborList;
+extern ComputeCallbackName const ProcessDEDrTerm;
+extern ComputeCallbackName const ProcessD2EDr2Term;
 
-void GetNumberOfCallbacks(int * const numberOfCallbacks);
-int GetCallbackName(int const index, CallbackName * const callbackName);
+void GetNumberOfComputeCallbacks(int * const numberOfComputeCallbacks);
+int GetComputeCallbackName(int const index,
+                           ComputeCallbackName * const computeCallbackName);
 
 struct Comparator
 {
-  bool operator()(CallbackName const & a, CallbackName const & b) const
+  bool operator()(ComputeCallbackName const & a,
+                  ComputeCallbackName const & b) const
   {
-    return a.callbackNameID < b.callbackNameID;
+    return a.computeCallbackNameID < b.computeCallbackNameID;
   }
 };
-}  // namespace CALLBACK_NAME
+}  // namespace COMPUTE_CALLBACK_NAME
 }  // namespace KIM
-#endif  // KIM_CALLBACK_NAME_HPP_
+#endif  // KIM_COMPUTE_CALLBACK_NAME_HPP_

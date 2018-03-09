@@ -85,7 +85,16 @@ class LennardJones612Implementation
   ~LennardJones612Implementation();  // no explicit Destroy() needed here
 
   int Refresh(KIM::ModelRefresh * const modelRefresh);
-  int Compute(KIM::ModelCompute const * const modelCompute);
+  int Compute(
+      KIM::ModelCompute const * const modelCompute,
+      KIM::ModelComputeArguments const * const modelComputeArguments);
+  int ComputeArgumentsCreate(
+      KIM::ModelComputeArgumentsCreate * const modelComputeArgumentsCreate)
+      const;
+  int ComputeArgumentsDestroy(
+      KIM::ModelComputeArgumentsDestroy * const modelComputeArgumentsDestroy)
+      const;
+
 
  private:
   // Constant values that never change
@@ -173,7 +182,10 @@ class LennardJones612Implementation
       KIM::TemperatureUnit const requestedTemperatureUnit,
       KIM::TimeUnit const requestedTimeUnit);
   int RegisterKIMModelSettings(
-      KIM::ModelDriverCreate * const modelDriverCreate);
+      KIM::ModelDriverCreate * const modelDriverCreate) const;
+  int RegisterKIMComputeArgumentsSettings(
+      KIM::ModelComputeArgumentsCreate * const modelComputeArgumentsCreate)
+      const;
   int RegisterKIMParameters(
       KIM::ModelDriverCreate * const modelDriverCreate);
   int RegisterKIMFunctions(
@@ -185,18 +197,19 @@ class LennardJones612Implementation
 
   //
   // Related to Compute()
-  int SetComputeMutableValues(KIM::ModelCompute const * const modelCompute,
-                              bool& isComputeProcess_dEdr,
-                              bool& isComputeProcess_d2Edr2,
-                              bool& isComputeEnergy,
-                              bool& isComputeForces,
-                              bool& isComputeParticleEnergy,
-                              int const*& particleSpeciesCodes,
-                              int const*& particleContributing,
-                              VectorOfSizeDIM const*& coordinates,
-                              double*& energy,
-                              double*& particleEnergy,
-                              VectorOfSizeDIM*& forces);
+  int SetComputeMutableValues(
+      KIM::ModelComputeArguments const * const modelComputeArguments,
+      bool& isComputeProcess_dEdr,
+      bool& isComputeProcess_d2Edr2,
+      bool& isComputeEnergy,
+      bool& isComputeForces,
+      bool& isComputeParticleEnergy,
+      int const*& particleSpeciesCodes,
+      int const*& particleContributing,
+      VectorOfSizeDIM const*& coordinates,
+      double*& energy,
+      double*& particleEnergy,
+      VectorOfSizeDIM*& forces);
   int CheckParticleSpeciesCodes(KIM::ModelCompute const * const modelCompute,
                                 int const* const particleSpeciesCodes) const;
   int GetComputeIndex(const bool& isComputeProcess_dEdr,
@@ -211,12 +224,13 @@ class LennardJones612Implementation
             bool isComputeEnergy, bool isComputeForces,
             bool isComputeParticleEnergy, bool isShift >
   int Compute(KIM::ModelCompute const * const modelCompute,
+              KIM::ModelComputeArguments const * const modelComputeArguments,
               const int* const particleSpeciesCodes,
               const int* const particleContributing,
               const VectorOfSizeDIM* const coordinates,
               double* const energy,
               VectorOfSizeDIM* const forces,
-              double* const particleEnergy);
+              double* const particleEnergy) const;
 };
 
 //==============================================================================
@@ -245,12 +259,13 @@ template< bool isComputeProcess_dEdr, bool isComputeProcess_d2Edr2,
           bool isComputeParticleEnergy, bool isShift >
 int LennardJones612Implementation::Compute(
     KIM::ModelCompute const * const modelCompute,
+    KIM::ModelComputeArguments const * const modelComputeArguments,
     const int* const particleSpeciesCodes,
     const int* const particleContributing,
     const VectorOfSizeDIM* const coordinates,
     double* const energy,
     VectorOfSizeDIM* const forces,
-    double* const particleEnergy)
+    double* const particleEnergy) const
 {
   int ier = false;
 
@@ -306,7 +321,7 @@ int LennardJones612Implementation::Compute(
   {
     if (particleContributing[ii])
     {
-      modelCompute->GetNeighborList(0, ii, &numnei, &n1atom);
+      modelComputeArguments->GetNeighborList(0, ii, &numnei, &n1atom);
       int const numNei = numnei;
       int const * const n1Atom = n1atom;
       int const i = ii;
@@ -400,7 +415,8 @@ int LennardJones612Implementation::Compute(
           {
             double const rij = sqrt(rij2);
             double const dEidr = dEidrByR*rij;
-            ier = modelCompute->ProcessDEDrTerm(dEidr, rij, r_ij_const, i, j);
+            ier = modelComputeArguments
+                ->ProcessDEDrTerm(dEidr, rij, r_ij_const, i, j);
             if (ier)
             {
               LOG_ERROR("process_dEdr");
@@ -423,8 +439,8 @@ int LennardJones612Implementation::Compute(
             int const* const pis = &i_pairs[0];
             int const* const pjs = &j_pairs[0];
 
-            ier = modelCompute->ProcessD2EDr2Term(d2Eidr2, pRs, pRijConsts, pis,
-                                                  pjs);
+            ier = modelComputeArguments
+                ->ProcessD2EDr2Term(d2Eidr2, pRs, pRijConsts, pis, pjs);
             if (ier)
             {
               LOG_ERROR("process_d2Edr2");

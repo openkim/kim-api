@@ -36,6 +36,9 @@
 #include "KIM_ModelRefresh.hpp"
 #include "KIM_ModelDestroy.hpp"
 #include "KIM_ModelCompute.hpp"
+#include "KIM_ModelComputeArguments.hpp"
+#include "KIM_ModelComputeArgumentsCreate.hpp"
+#include "KIM_ModelComputeArgumentsDestroy.hpp"
 
 extern "C"
 {
@@ -68,7 +71,15 @@ class LennardJones612
   // an implicit this pointer added to the prototype by the C++ compiler
   static int Destroy(KIM::ModelDestroy * const modelDestroy);
   static int Refresh(KIM::ModelRefresh * const modelRefresh);
-  static int Compute(KIM::ModelCompute const * const modelCompute);
+  static int Compute(
+      KIM::ModelCompute const * const modelCompute,
+      KIM::ModelComputeArguments const * const modelComputeArguments);
+  static int ComputeArgumentsCreate(
+      KIM::ModelCompute const * const modelCompute,
+      KIM::ModelComputeArgumentsCreate * const modelComputeArgumentsCreate);
+  static int ComputeArgumentsDestroy(
+      KIM::ModelCompute const * const modelCompute,
+      KIM::ModelComputeArgumentsDestroy * const modelComputeArgumentsDestroy);
 
  private:
   LennardJones612Implementation* implementation_;

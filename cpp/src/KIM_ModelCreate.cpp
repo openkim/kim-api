@@ -84,6 +84,22 @@ int ModelCreate::SetDestroyPointer(LanguageName const languageName,
   return pImpl->SetDestroyPointer(languageName, fptr);
 }
 
+int ModelCreate::SetComputeArgumentsCreatePointer(
+    LanguageName const languageName, func * const fptr)
+{
+  CONVERT_POINTER;
+
+  return pImpl->SetComputeArgumentsCreatePointer(languageName, fptr);
+}
+
+int ModelCreate::SetComputeArgumentsDestroyPointer(
+    LanguageName const languageName, func * const fptr)
+{
+  CONVERT_POINTER;
+
+  return pImpl->SetComputeArgumentsDestroyPointer(languageName, fptr);
+}
+
 int ModelCreate::SetComputePointer(LanguageName const languageName,
                                    func * const fptr)
 {
@@ -98,22 +114,6 @@ int ModelCreate::SetSpeciesCode(SpeciesName const speciesName,
   CONVERT_POINTER;
 
   return pImpl->SetSpeciesCode(speciesName, code);
-}
-
-int ModelCreate::SetArgumentSupportStatus(
-    ArgumentName const argumentName, SupportStatus const supportStatus)
-{
-  CONVERT_POINTER;
-
-  return pImpl->SetArgumentSupportStatus(argumentName, supportStatus);
-}
-
-int ModelCreate::SetCallbackSupportStatus(
-    CallbackName const callbackName, SupportStatus const supportStatus)
-{
-  CONVERT_POINTER;
-
-  return pImpl->SetCallbackSupportStatus(callbackName, supportStatus);
 }
 
 int ModelCreate::SetParameterPointer(int const extent, int * const ptr,

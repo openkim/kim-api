@@ -31,35 +31,51 @@
 //
 
 
-#ifndef KIM_MODEL_COMPUTE_HPP_
-#define KIM_MODEL_COMPUTE_HPP_
+#ifndef KIM_MODEL_COMPUTE_ARGUMENTS_CREATE_HPP_
+#define KIM_MODEL_COMPUTE_ARGUMENTS_CREATE_HPP_
 
 #include <string>
+
+#ifndef KIM_FUNC_HPP_
+#include "KIM_func.hpp"
+#endif
+
 
 namespace KIM
 {
 // Forward declarations
 class LogVerbosity;
-class ModelComputeImplementation;
+class SupportStatus;
+class ComputeArgumentName;
+class ComputeCallbackName;
+class ModelComputeArgumentsCreateImplementation;
 
 
-class ModelCompute{
+class ModelComputeArgumentsCreate
+{
  public:
-  void GetModelBufferPointer(void ** const ptr) const;
+  int SetArgumentSupportStatus(ComputeArgumentName const clomputeArgumentName,
+                               SupportStatus const supportStatus);
+
+  int SetCallbackSupportStatus(ComputeCallbackName const computeCallbackName,
+                               SupportStatus const supportStatus);
+
+  void SetModelBufferPointer(void * const ptr);
 
   void LogEntry(LogVerbosity const logVerbosity, std::string const & message,
                 int const lineNumber, std::string const & fileName) const;
+
   std::string const & String() const;
 
  private:
   // do not allow copy constructor or operator=
-  ModelCompute(ModelCompute const &);
-  void operator=(ModelCompute const &);
+  ModelComputeArgumentsCreate(ModelComputeArgumentsCreate const &);
+  void operator=(ModelComputeArgumentsCreate const &);
 
-  ModelCompute();
-  ~ModelCompute();
+  ModelComputeArgumentsCreate();
+  ~ModelComputeArgumentsCreate();
 
-  ModelComputeImplementation * pimpl;
-};  // class ModelCompute
+  ModelComputeArgumentsCreateImplementation * pimpl;
+};  // class ModelComputeArgumentsCreate
 }  // namespace KIM
-#endif  // KIM_MODEL_COMPUTE_HPP_
+#endif  // KIM_MODEL_COMPUTE_ARGUMENTS_CREATE_HPP_

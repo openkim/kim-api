@@ -41,8 +41,8 @@
 #include "KIM_LanguageName.hpp"
 #include "KIM_SpeciesName.hpp"
 #include "KIM_SupportStatus.hpp"
-#include "KIM_ArgumentName.hpp"
-#include "KIM_CallbackName.hpp"
+#include "KIM_ComputeArgumentName.hpp"
+#include "KIM_ComputeCallbackName.hpp"
 
 #define MAXLINE 1024
 #define IGNORE_RESULT(fn) if(fn){}
@@ -156,7 +156,8 @@ int LennardJones612Implementation::Refresh(
 
 //******************************************************************************
 int LennardJones612Implementation::Compute(
-    KIM::ModelCompute const * const modelCompute)
+    KIM::ModelCompute const * const modelCompute,
+    KIM::ModelComputeArguments const * const modelComputeArguments)
 {
   int ier;
 
@@ -178,7 +179,8 @@ int LennardJones612Implementation::Compute(
   double* energy = 0;
   double* particleEnergy = 0;
   VectorOfSizeDIM* forces = 0;
-  ier = SetComputeMutableValues(modelCompute, isComputeProcess_dEdr,
+  ier = SetComputeMutableValues(modelComputeArguments,
+                                isComputeProcess_dEdr,
                                 isComputeProcess_d2Edr2, isComputeEnergy,
                                 isComputeForces, isComputeParticleEnergy,
                                 particleSpeciesCodes, particleContributing,
@@ -195,6 +197,37 @@ int LennardJones612Implementation::Compute(
 #include "LennardJones612ImplementationComputeDispatch.cpp"
   return ier;
 }
+
+//******************************************************************************
+int LennardJones612Implementation::ComputeArgumentsCreate(
+    KIM::ModelComputeArgumentsCreate * const modelComputeArgumentsCreate) const
+{
+  int ier;
+
+  ier = RegisterKIMComputeArgumentsSettings(modelComputeArgumentsCreate);
+  if (ier) return ier;
+
+  // nothing else to do for this case
+
+  // everything is good
+  ier = false;
+  return ier;
+}
+
+//******************************************************************************
+int LennardJones612Implementation::ComputeArgumentsDestroy(
+    KIM::ModelComputeArgumentsDestroy * const modelComputeArgumentsDestroy)
+    const
+{
+  int ier;
+
+  // nothing else to do for this case
+
+  // everything is good
+  ier = false;
+  return ier;
+}
+
 
 //==============================================================================
 //
@@ -541,35 +574,48 @@ int LennardJones612Implementation::ConvertUnits(
 
 //******************************************************************************
 int LennardJones612Implementation::RegisterKIMModelSettings(
-    KIM::ModelDriverCreate * const modelDriverCreate)
+    KIM::ModelDriverCreate * const modelDriverCreate) const
 {
   // register numbering
   int error = modelDriverCreate->SetModelNumbering(
       KIM::NUMBERING::zeroBased);
 
+  return error;
+}
+
+//******************************************************************************
+#include "KIM_ModelComputeArgumentsCreateLogMacros.hpp"
+int LennardJones612Implementation::RegisterKIMComputeArgumentsSettings(
+    KIM::ModelComputeArgumentsCreate * const modelComputeArgumentsCreate) const
+{
   // register arguments
   LOG_INFORMATION("Register argument supportStatus");
-  error = error
-      || modelDriverCreate->SetArgumentSupportStatus(
-          KIM::ARGUMENT_NAME::partialEnergy, KIM::SUPPORT_STATUS::optional)
-      || modelDriverCreate->SetArgumentSupportStatus(
-          KIM::ARGUMENT_NAME::partialForces, KIM::SUPPORT_STATUS::optional)
-      || modelDriverCreate->SetArgumentSupportStatus(
-          KIM::ARGUMENT_NAME::partialParticleEnergy,
+  int error =
+      modelComputeArgumentsCreate->SetArgumentSupportStatus(
+          KIM::COMPUTE_ARGUMENT_NAME::partialEnergy,
+          KIM::SUPPORT_STATUS::optional)
+      || modelComputeArgumentsCreate->SetArgumentSupportStatus(
+          KIM::COMPUTE_ARGUMENT_NAME::partialForces,
+          KIM::SUPPORT_STATUS::optional)
+      || modelComputeArgumentsCreate->SetArgumentSupportStatus(
+          KIM::COMPUTE_ARGUMENT_NAME::partialParticleEnergy,
           KIM::SUPPORT_STATUS::optional);
 
   // register callbacks
   LOG_INFORMATION("Register callback supportStatus");
   error = error
-      || modelDriverCreate->SetCallbackSupportStatus(
-          KIM::CALLBACK_NAME::ProcessDEDrTerm, KIM::SUPPORT_STATUS::optional)
-      || modelDriverCreate->SetCallbackSupportStatus(
-          KIM::CALLBACK_NAME::ProcessD2EDr2Term, KIM::SUPPORT_STATUS::optional);
+      || modelComputeArgumentsCreate->SetCallbackSupportStatus(
+          KIM::COMPUTE_CALLBACK_NAME::ProcessDEDrTerm,
+          KIM::SUPPORT_STATUS::optional)
+      || modelComputeArgumentsCreate->SetCallbackSupportStatus(
+          KIM::COMPUTE_CALLBACK_NAME::ProcessD2EDr2Term,
+          KIM::SUPPORT_STATUS::optional);
 
   return error;
 }
 
 //******************************************************************************
+#include "KIM_ModelDriverCreateLogMacros.hpp"
 int LennardJones612Implementation::RegisterKIMParameters(
     KIM::ModelDriverCreate * const modelDriverCreate)
 {
@@ -622,7 +668,13 @@ int LennardJones612Implementation::RegisterKIMFunctions(
       || modelDriverCreate->SetRefreshPointer(
           KIM::LANGUAGE_NAME::cpp, (KIM::func*) &(LennardJones612::Refresh))
       || modelDriverCreate->SetComputePointer(
-          KIM::LANGUAGE_NAME::cpp, (KIM::func*) &(LennardJones612::Compute));
+          KIM::LANGUAGE_NAME::cpp, (KIM::func*) &(LennardJones612::Compute))
+      || modelDriverCreate->SetComputeArgumentsCreatePointer(
+          KIM::LANGUAGE_NAME::cpp,
+          (KIM::func*) &(LennardJones612::ComputeArgumentsCreate))
+      || modelDriverCreate->SetComputeArgumentsDestroyPointer(
+          KIM::LANGUAGE_NAME::cpp,
+          (KIM::func*) &(LennardJones612::ComputeArgumentsDestroy));
 
   return error;
 }
@@ -709,9 +761,9 @@ int LennardJones612Implementation::SetReinitMutableValues(
 }
 
 //******************************************************************************
-#include "KIM_ModelComputeLogMacros.hpp"
+#include "KIM_ModelComputeArgumentsLogMacros.hpp"
 int LennardJones612Implementation::SetComputeMutableValues(
-    KIM::ModelCompute const * const modelCompute,
+    KIM::ModelComputeArguments const * const modelComputeArguments,
     bool& isComputeProcess_dEdr,
     bool& isComputeProcess_d2Edr2,
     bool& isComputeEnergy,
@@ -730,10 +782,12 @@ int LennardJones612Implementation::SetComputeMutableValues(
   int compProcess_dEdr;
   int compProcess_d2Edr2;
 
-  modelCompute->IsCallbackPresent(KIM::CALLBACK_NAME::ProcessDEDrTerm,
-                                  &compProcess_dEdr);
-  modelCompute->IsCallbackPresent(KIM::CALLBACK_NAME::ProcessD2EDr2Term,
-                                  &compProcess_d2Edr2);
+  modelComputeArguments->IsCallbackPresent(
+      KIM::COMPUTE_CALLBACK_NAME::ProcessDEDrTerm,
+      &compProcess_dEdr);
+  modelComputeArguments->IsCallbackPresent(
+      KIM::COMPUTE_CALLBACK_NAME::ProcessD2EDr2Term,
+      &compProcess_d2Edr2);
 
   isComputeProcess_dEdr = compProcess_dEdr;
   isComputeProcess_d2Edr2 = compProcess_d2Edr2;
@@ -742,26 +796,26 @@ int LennardJones612Implementation::SetComputeMutableValues(
   // int const* numberOfSpeciesCodes;  // currently unused
   int const* numberOfParticles;
   ier =
-      modelCompute->GetArgumentPointer(
-          KIM::ARGUMENT_NAME::numberOfParticles,
+      modelComputeArguments->GetArgumentPointer(
+          KIM::COMPUTE_ARGUMENT_NAME::numberOfParticles,
           &numberOfParticles)
-      || modelCompute->GetArgumentPointer(
-          KIM::ARGUMENT_NAME::particleSpeciesCodes,
+      || modelComputeArguments->GetArgumentPointer(
+          KIM::COMPUTE_ARGUMENT_NAME::particleSpeciesCodes,
           &particleSpeciesCodes)
-      || modelCompute->GetArgumentPointer(
-          KIM::ARGUMENT_NAME::particleContributing,
+      || modelComputeArguments->GetArgumentPointer(
+          KIM::COMPUTE_ARGUMENT_NAME::particleContributing,
           &particleContributing)
-      || modelCompute->GetArgumentPointer(
-          KIM::ARGUMENT_NAME::coordinates,
+      || modelComputeArguments->GetArgumentPointer(
+          KIM::COMPUTE_ARGUMENT_NAME::coordinates,
           (double const ** const) &coordinates)
-      || modelCompute->GetArgumentPointer(
-          KIM::ARGUMENT_NAME::partialEnergy,
+      || modelComputeArguments->GetArgumentPointer(
+          KIM::COMPUTE_ARGUMENT_NAME::partialEnergy,
           &energy)
-      || modelCompute->GetArgumentPointer(
-          KIM::ARGUMENT_NAME::partialParticleEnergy,
+      || modelComputeArguments->GetArgumentPointer(
+          KIM::COMPUTE_ARGUMENT_NAME::partialParticleEnergy,
           &particleEnergy)
-      || modelCompute->GetArgumentPointer(
-          KIM::ARGUMENT_NAME::partialForces,
+      || modelComputeArguments->GetArgumentPointer(
+          KIM::COMPUTE_ARGUMENT_NAME::partialForces,
           (double const ** const) &forces);
   if (ier)
   {
@@ -782,6 +836,7 @@ int LennardJones612Implementation::SetComputeMutableValues(
 }
 
 //******************************************************************************
+#include "KIM_ModelComputeLogMacros.hpp"
 int LennardJones612Implementation::CheckParticleSpeciesCodes(
     KIM::ModelCompute const * const modelCompute,
     int const* const particleSpeciesCodes)

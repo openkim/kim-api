@@ -101,6 +101,22 @@ int ModelDriverCreate::SetDestroyPointer(
   return pImpl->SetDestroyPointer(languageName, fptr);
 }
 
+int ModelDriverCreate::SetComputeArgumentsCreatePointer(
+    LanguageName const languageName, func * const fptr)
+{
+  CONVERT_POINTER;
+
+  return pImpl->SetComputeArgumentsCreatePointer(languageName, fptr);
+}
+
+int ModelDriverCreate::SetComputeArgumentsDestroyPointer(
+    LanguageName const languageName, func * const fptr)
+{
+  CONVERT_POINTER;
+
+  return pImpl->SetComputeArgumentsDestroyPointer(languageName, fptr);
+}
+
 int ModelDriverCreate::SetComputePointer(
     LanguageName const languageName, func * const fptr)
 {
@@ -115,22 +131,6 @@ int ModelDriverCreate::SetSpeciesCode(SpeciesName const speciesName,
   CONVERT_POINTER;
 
   return pImpl->SetSpeciesCode(speciesName, code);
-}
-
-int ModelDriverCreate::SetArgumentSupportStatus(
-    ArgumentName const argumentName, SupportStatus const supportStatus)
-{
-  CONVERT_POINTER;
-
-  return pImpl->SetArgumentSupportStatus(argumentName, supportStatus);
-}
-
-int ModelDriverCreate::SetCallbackSupportStatus(
-    CallbackName const callbackName, SupportStatus const supportStatus)
-{
-  CONVERT_POINTER;
-
-  return pImpl->SetCallbackSupportStatus(callbackName, supportStatus);
 }
 
 int ModelDriverCreate::SetParameterPointer(

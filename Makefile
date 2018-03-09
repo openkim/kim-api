@@ -75,19 +75,19 @@ KIM_MAKE_FILES += $(KIM_DIR)/Makefile
 # build targets involved in "make all"
 
 kim-api-fortran-includes-all: $(KIM_MAKE_FILES) kim-api-fortran-includes-making-echo
-	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C fortran/include all
+	$(QUELL)#$(MAKE) $(MAKE_FLAGS) -C fortran/include all
 
 kim-api-c-includes-all: $(KIM_MAKE_FILES) kim-api-c-includes-making-echo
-	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C c/include all
+	$(QUELL)#$(MAKE) $(MAKE_FLAGS) -C c/include all
 
 kim-api-cpp-includes-all: $(KIM_MAKE_FILES) kim-api-cpp-includes-making-echo
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C cpp/include all
 
 kim-api-fortran-all: $(KIM_MAKE_FILES) kim-api-fortran-making-echo
-	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C fortran/src all
+	$(QUELL)#$(MAKE) $(MAKE_FLAGS) -C fortran/src all
 
 kim-api-c-all: $(KIM_MAKE_FILES) kim-api-c-making-echo
-	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C c/src all
+	$(QUELL)#$(MAKE) $(MAKE_FLAGS) -C c/src all
 
 kim-api-cpp-all: $(KIM_MAKE_FILES) kim-api-cpp-making-echo
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C cpp/src all
@@ -165,10 +165,10 @@ build-system-install:
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C build_system install
 
 kim-api-fortran-install:
-	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C fortran/src install
+	$(QUELL)#$(MAKE) $(MAKE_FLAGS) -C fortran/src install
 
 kim-api-c-install:
-	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C c/src install
+	$(QUELL)#$(MAKE) $(MAKE_FLAGS) -C c/src install
 
 kim-api-cpp-install:
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C cpp/src install

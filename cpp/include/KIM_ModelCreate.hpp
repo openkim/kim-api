@@ -54,8 +54,6 @@ class EnergyUnit;
 class ChargeUnit;
 class TemperatureUnit;
 class TimeUnit;
-class ArgumentName;
-class CallbackName;
 class ModelCreateImplementation;
 
 
@@ -71,15 +69,13 @@ class ModelCreate
 
   int SetRefreshPointer(LanguageName const languageName, func * const fptr);
   int SetDestroyPointer(LanguageName const languageName, func * const fptr);
+  int SetComputeArgumentsCreatePointer(LanguageName const languageName,
+                                       func * const fptr);
+  int SetComputeArgumentsDestroyPointer(LanguageName const languageName,
+                                        func * const fptr);
   int SetComputePointer(LanguageName const languageName, func * const fptr);
 
   int SetSpeciesCode(SpeciesName const speciesName, int const code);
-
-  int SetArgumentSupportStatus(ArgumentName const argumentName,
-                               SupportStatus const supportStatus);
-
-  int SetCallbackSupportStatus(CallbackName const callbackName,
-                               SupportStatus const supportStatus);
 
   int SetParameterPointer(int const extent, int * const ptr,
                           std::string const & description);

@@ -31,8 +31,8 @@
 //
 
 
-#ifndef KIM_MODEL_COMPUTE_HPP_
-#define KIM_MODEL_COMPUTE_HPP_
+#ifndef KIM_MODEL_COMPUTE_ARGUMENTS_DESTROY_HPP_
+#define KIM_MODEL_COMPUTE_ARGUMENTS_DESTROY_HPP_
 
 #include <string>
 
@@ -40,26 +40,27 @@ namespace KIM
 {
 // Forward declarations
 class LogVerbosity;
-class ModelComputeImplementation;
+class ModelComputeArgumentsDestroyImplementation;
 
 
-class ModelCompute{
+class ModelComputeArgumentsDestroy{
  public:
   void GetModelBufferPointer(void ** const ptr) const;
 
   void LogEntry(LogVerbosity const logVerbosity, std::string const & message,
                 int const lineNumber, std::string const & fileName) const;
+
   std::string const & String() const;
 
  private:
   // do not allow copy constructor or operator=
-  ModelCompute(ModelCompute const &);
-  void operator=(ModelCompute const &);
+  ModelComputeArgumentsDestroy(ModelComputeArgumentsDestroy const &);
+  void operator=(ModelComputeArgumentsDestroy const &);
 
-  ModelCompute();
-  ~ModelCompute();
+  ModelComputeArgumentsDestroy();
+  ~ModelComputeArgumentsDestroy();
 
-  ModelComputeImplementation * pimpl;
-};  // class ModelCompute
+  ModelComputeArgumentsDestroyImplementation * pimpl;
+};  // class ModelComputeArgumentsDestroy
 }  // namespace KIM
-#endif  // KIM_MODEL_COMPUTE_HPP_
+#endif  // KIM_MODEL_COMPUTE_ARGUMENTS_DESTROY_HPP_

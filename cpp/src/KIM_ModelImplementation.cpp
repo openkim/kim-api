@@ -45,6 +45,10 @@
 #include "KIM_ModelImplementation.hpp"
 #endif
 
+#ifndef KIM_COMPUTE_ARGUMENTS_IMPLEMENTATION_HPP_
+#include "KIM_ComputeArgumentsImplementation.hpp"
+#endif
+
 #ifndef KIM_UNIT_SYSTEM_H_
 extern "C"
 {
@@ -80,27 +84,19 @@ extern "C"
 }  // extern "C"
 #endif
 
+// #ifndef KIM_MODEL_COMPUTE_ARGUMENTS_H_
+// extern "C"
+// {
+// #include "KIM_ModelComputeArguments.h"
+// }  // extern "C"
+// #endif
+
 #ifndef KIM_MODEL_DESTROY_H_
 extern "C"
 {
 #include "KIM_ModelDestroy.h"
 }  // extern "C"
 #endif
-
-
-namespace KIM
-{
-namespace ARGUMENT_NAME
-{
-extern std::vector<ArgumentName> const requiredByAPI_Arguments;
-}  // namespace ARGUMENT_NAME
-
-namespace CALLBACK_NAME
-{
-extern std::vector<CallbackName> const requiredByAPI_Callbacks;
-}  // namespace CALLBACK_NAME
-}  // namespace KIM
-
 
 namespace
 {
@@ -153,7 +149,10 @@ class ModelCreate;
 class ModelDriverCreate;
 class ModelRefresh;
 class ModelCompute;
+class ModelComputeArguments;
 class ModelDestroy;
+class ModelComputeArgumentsCreate;
+class ModelComputeArgumentsDestroy;
 
 int ModelImplementation::Create(
     Numbering const numbering,
@@ -177,21 +176,36 @@ int ModelImplementation::Create(
 
   ModelImplementation * pModelImplementation;
   pModelImplementation = new ModelImplementation(new ModelLibrary(pLog), pLog);
+#if DEBUG_VERBOSITY
+  std::string const callString = "Create("
+      + numbering.String() + ", "
+      + requestedLengthUnit.String() + ", "
+      + requestedEnergyUnit.String() + ", "
+      + requestedChargeUnit.String() + ", "
+      + requestedTemperatureUnit.String() + ", "
+      + requestedTimeUnit.String() + ", '"
+      + modelName + "', "
+      + SPTR(requestedUnitsAccepted) + ", "
+      + SPTR(modelImplementation) + ").";
   pModelImplementation->LogEntry(
       LOG_VERBOSITY::debug,
-      "Created Log and ModelImplementation objects after enter Create().",
+      "Created Log and ModelImplementation objects after enter " + callString,
       __LINE__, __FILE__);
+#endif
 
   error = pModelImplementation->ModelCreate(
       numbering, requestedLengthUnit, requestedEnergyUnit, requestedChargeUnit,
       requestedTemperatureUnit, requestedTimeUnit, modelName);
   if (error)
   {
-    pModelImplementation->LogEntry(
-        LOG_VERBOSITY::error,
-        "ModelCreate routine returned with an error.",
+#if DEBUG_VERBOSITY
+    (*modelImplementation)->LogEntry(
+        LOG_VERBOSITY::debug,
+        "Destroying ModelImplementation object and exit " + callString,
         __LINE__, __FILE__);
+#endif
     delete pModelImplementation;  // also deletes pLog
+
     return true;
   }
 
@@ -233,9 +247,12 @@ int ModelImplementation::Create(
   }
 
   *modelImplementation = pModelImplementation;
-  pModelImplementation->LogEntry(LOG_VERBOSITY::debug,
-                                 "Exit Create().",
-                                 __LINE__, __FILE__);
+#if DEBUG_VERBOSITY
+  (*modelImplementation)->LogEntry(
+      LOG_VERBOSITY::debug,
+      "Exit " + callString,
+      __LINE__, __FILE__);
+#endif
   return false;
 }
 
@@ -243,25 +260,99 @@ int ModelImplementation::Create(
 void ModelImplementation::Destroy(
     ModelImplementation ** const modelImplementation)
 {
+#if DEBUG_VERBOSITY
+  std::string callString = "Destroy(" + SPTR(modelImplementation) + ").";
   (*modelImplementation)->LogEntry(LOG_VERBOSITY::debug,
-                                "Enter Destroy().",
-                                __LINE__, __FILE__);
+                                   "Enter " + callString,
+                                   __LINE__, __FILE__);
+#endif
 
-  int error = (*modelImplementation)->ModelDestroy();
-  if (error)
-  {
-    (*modelImplementation)->LogEntry(
-        KIM::LOG_VERBOSITY::error,
-        "ModelDestroy routine returned with an error.",
-        __LINE__, __FILE__);
-  }
+  (*modelImplementation)->ModelDestroy();
 
+#if DEBUG_VERBOSITY
   (*modelImplementation)->LogEntry(
       LOG_VERBOSITY::debug,
-      "Destroying ModelImplementation object and exit Destroy().",
+      "Destroying ModelImplementation object and exit " + callString,
       __LINE__, __FILE__);
-  delete *modelImplementation;
-  *modelImplementation = 0;
+#endif
+  delete *modelImplementation;  // also deletes Log object
+  *modelImplementation = NULL;
+}
+
+int ModelImplementation::ComputeArgumentsCreate(
+    ComputeArguments ** const computeArguments) const
+{
+#if DEBUG_VERBOSITY
+  std::string const callString = "ComputeArgumentsCreate("
+      + SPTR(computeArguments) + ").";
+#endif
+  LOG_DEBUG("Enter " + callString);
+
+  *computeArguments = new ComputeArguments();
+
+  int error = ComputeArgumentsImplementation::Create(
+      modelName_,
+      log_->GetID(),
+      modelNumbering_,
+      simulatorNumbering_,
+      numberingOffset_,
+      &((*computeArguments)->pimpl));
+  if (error)
+  {
+    delete *computeArguments;
+    *computeArguments = NULL;
+
+    return true;
+  }
+
+  error = ModelComputeArgumentsCreate(*computeArguments);
+  if (error)
+  {
+    delete *computeArguments;
+    *computeArguments = NULL;
+
+    return true;
+  }
+
+  //No further error checking needed
+
+  LOG_DEBUG("Exit " + callString);
+  return false;
+}
+
+int ModelImplementation::ComputeArgumentsDestroy(
+    ComputeArguments ** const computeArguments) const
+{
+#if DEBUG_VERBOSITY
+  std::string const callString = "ComputeArgumentsDestroy("
+      + SPTR(computeArguments) + ").";
+#endif
+  LOG_DEBUG("Enter " + callString);
+
+  if (modelName_ != (*computeArguments)->pimpl->modelName_)
+  {
+    LOG_ERROR("ComputeArguments object for Model '"
+              + (*computeArguments)->pimpl->modelName_
+              + "' cannot be Destroyed with the "
+              "ModelDestroy() routine of Model '" + modelName_ + "'.");
+
+    LOG_DEBUG("Exit " + callString);
+    return true;
+  }
+
+  int error = ModelComputeArgumentsDestroy(*computeArguments);
+  if (error)
+  {
+    return true;
+  }
+
+  ComputeArgumentsImplementation::Destroy(&((*computeArguments)->pimpl));
+
+  delete *computeArguments;
+  *computeArguments = NULL;
+
+  LOG_DEBUG("Exit " + callString);
+  return false;
 }
 
 void ModelImplementation::SetInfluenceDistancePointer(
@@ -388,6 +479,58 @@ int ModelImplementation::SetDestroyPointer(LanguageName const languageName,
   return false;
 }
 
+int ModelImplementation::SetComputeArgumentsCreatePointer(
+    LanguageName const languageName,
+    func * const fptr)
+{
+#if DEBUG_VERBOSITY
+  std::string const callString = "SetComputeArgumentsCreatePointer("
+      + languageName.String() + ", " + SFUNC(fptr) + ").";
+#endif
+  LOG_DEBUG("Enter " + callString);
+
+#if ERROR_VERBOSITY
+  int error = Validate(languageName);
+  if (error)
+  {
+    LOG_ERROR("Invalid arguemnts.");
+    return true;
+  }
+#endif
+
+  computeArgumentsCreateLanguage_ = languageName;
+  computeArgumentsCreateFunction_ = fptr;
+
+  LOG_DEBUG("Exit " + callString);
+  return false;
+}
+
+int ModelImplementation::SetComputeArgumentsDestroyPointer(
+    LanguageName const languageName,
+    func * const fptr)
+{
+#if DEBUG_VERBOSITY
+  std::string const callString = "SetComputeArgumentsDestroyPointer("
+      + languageName.String() + ", " + SFUNC(fptr) + ").";
+#endif
+  LOG_DEBUG("Enter " + callString);
+
+#if ERROR_VERBOSITY
+  int error = Validate(languageName);
+  if (error)
+  {
+    LOG_ERROR("Invalid arguemnts.");
+    return true;
+  }
+#endif
+
+  computeArgumentsDestroyLanguage_ = languageName;
+  computeArgumentsDestroyFunction_ = fptr;
+
+  LOG_DEBUG("Exit " + callString);
+  return false;
+}
+
 int ModelImplementation::SetComputePointer(LanguageName const languageName,
                                            func * const fptr)
 {
@@ -458,7 +601,7 @@ int ModelImplementation::GetSpeciesSupportAndCode(
   }
 #endif
 
-  std::map<SpeciesName const, int, CALLBACK_NAME::Comparator>::const_iterator
+  std::map<SpeciesName const, int, SPECIES_NAME::Comparator>::const_iterator
       result = supportedSpecies_.find(speciesName);
   if (result == supportedSpecies_.end())
   {
@@ -472,160 +615,6 @@ int ModelImplementation::GetSpeciesSupportAndCode(
     if (code != NULL)
       *code = result->second;
   }
-
-  LOG_DEBUG("Exit " + callString);
-  return false;
-}
-
-int ModelImplementation::SetArgumentSupportStatus(
-    ArgumentName const argumentName, SupportStatus const supportStatus)
-{
-#if DEBUG_VERBOSITY
-  std::string const callString = "SetArgumentSupportStatus("
-      + argumentName.String() + ", " + supportStatus.String() + ").";
-#endif
-  LOG_DEBUG("Enter " + callString);
-
-#if ERROR_VERBOSITY
-  int error = Validate(argumentName) || Validate(supportStatus);
-  if (error)
-  {
-    LOG_ERROR("Invalid arguments.");
-    LOG_DEBUG("Exit " + callString);
-    return true;
-  }
-
-  if ((argumentSupportStatus_[argumentName]
-       == SUPPORT_STATUS::requiredByAPI)
-      && (supportStatus != SUPPORT_STATUS::requiredByAPI))
-  {
-    LOG_ERROR("Argument '" + argumentName.String()
-              + "' SupportStatus is 'requiredByAPI' and cannot be changed.");
-    LOG_DEBUG("Exit " + callString);
-    return true;
-  }
-#endif
-
-  argumentSupportStatus_[argumentName] = supportStatus;
-
-  // initialize pointer if not already done
-  if (supportStatus != SUPPORT_STATUS::notSupported)
-  {
-    std::map<ArgumentName const, void *, ARGUMENT_NAME::Comparator>::
-        const_iterator result = argumentPointer_.find(argumentName);
-
-    if (result == argumentPointer_.end())
-    {
-      LOG_DEBUG("Initialize argument pointer.");
-      argumentPointer_[argumentName] = NULL;
-    }
-  }
-
-  LOG_DEBUG("Exit " + callString);
-  return false;
-}
-
-int ModelImplementation::GetArgumentSupportStatus(
-    ArgumentName const argumentName, SupportStatus * const supportStatus)
-    const
-{
-#if DEBUG_VERBOSITY
-  std::string const callString = "GetArgumentSupportStatus("
-      + argumentName.String() + ", " + SPTR(supportStatus) + ").";
-#endif
-  LOG_DEBUG("Enter " + callString);
-
-#if ERROR_VERBOSITY
-  int error = Validate(argumentName);
-  if (error)
-  {
-    LOG_ERROR("Invalid arguments.");
-    LOG_DEBUG("Exit " + callString);
-    return true;
-  }
-#endif
-
-  std::map<ArgumentName const, SupportStatus, ARGUMENT_NAME::Comparator>::
-      const_iterator result = argumentSupportStatus_.find(argumentName);
-  *supportStatus = result->second;
-
-  LOG_DEBUG("Exit " + callString);
-  return false;
-}
-
-int ModelImplementation::SetCallbackSupportStatus(
-    CallbackName const callbackName, SupportStatus const supportStatus)
-{
-#if DEBUG_VERBOSITY
-  std::string const callString = "SetCallbackSupportStatus("
-      + callbackName.String() + ", " + supportStatus.String() + ").";
-#endif
-  LOG_DEBUG("Enter " + callString);
-
-#if ERROR_VERBOSITY
-  int error = Validate(callbackName) || Validate(supportStatus);
-  if (error)
-  {
-    LOG_ERROR("Invalid arguments.");
-    LOG_DEBUG("Exit " + callString);
-    return true;
-  }
-
-  if ((callbackSupportStatus_[callbackName]
-       == SUPPORT_STATUS::requiredByAPI)
-      && (supportStatus != SUPPORT_STATUS::requiredByAPI))
-  {
-    LOG_ERROR("Callback '" + callbackName.String()
-              + "' SupportStatus is 'requiredByAPI' and cannot "
-              "be changed.");
-    LOG_DEBUG("Exit " + callString);
-    return true;
-  }
-#endif
-
-  callbackSupportStatus_[callbackName] = supportStatus;
-
-  // initialize pointer if not already done
-  if (supportStatus != SUPPORT_STATUS::notSupported)
-  {
-    std::map<CallbackName const, func *, CALLBACK_NAME::Comparator>::
-        const_iterator result = callbackFunctionPointer_.find(callbackName);
-
-    if (result == callbackFunctionPointer_.end())
-    {
-      LOG_DEBUG("Initialize callback pointer.");
-      callbackLanguage_[callbackName] = LANGUAGE_NAME::cpp;  // place holder
-      callbackFunctionPointer_[callbackName] = NULL;
-      callbackDataObjectPointer_[callbackName] = NULL;
-    }
-  }
-
-  LOG_DEBUG("Exit " + callString);
-  return false;
-}
-
-int ModelImplementation::GetCallbackSupportStatus(
-    CallbackName const callbackName, SupportStatus * const supportStatus) const
-{
-#if DEBUG_VERBOSITY
-  std::string const callString = "GetCallbackSupportStatus("
-      + callbackName.String() + ", " + SPTR(supportStatus) + ").";
-#endif
-  LOG_DEBUG("Enter " + callString);
-
-#if ERROR_VERBOSITY
-  int error = Validate(callbackName);
-  if (error)
-  {
-    LOG_ERROR("Invalid arguments.");
-    LOG_DEBUG("Exit " + callString);
-    return true;
-  }
-#endif
-
-  std::map<CallbackName const, SupportStatus, CALLBACK_NAME::Comparator>::
-      const_iterator result = callbackSupportStatus_.find(callbackName);
-  *supportStatus = result->second;
 
   LOG_DEBUG("Exit " + callString);
   return false;
@@ -1082,372 +1071,64 @@ int ModelImplementation::SetParameter(int const parameterIndex,
   return false;
 }
 
-int ModelImplementation::SetArgumentPointer(ArgumentName const argumentName,
-                                            int const * const ptr)
-{
-#if DEBUG_VERBOSITY
-  std::string const callString = "SetArgumentPointer("
-      + argumentName.String() + ", " + SPTR(ptr) + ").";
-#endif
-  LOG_DEBUG("Enter " + callString);
-
-#if ERROR_VERBOSITY
-  int error = Validate(argumentName);
-  if (error)
-  {
-    LOG_ERROR("Invalid arguments.");
-    LOG_DEBUG("Exit " + callString);
-    return true;
-  }
-
-  std::map<ArgumentName const, SupportStatus, ARGUMENT_NAME::Comparator>::
-      const_iterator result = argumentSupportStatus_.find(argumentName);
-  if (result->second == SUPPORT_STATUS::notSupported)
-  {
-    LOG_ERROR("Pointer value cannot be set for Argument '"
-              + argumentName.String() + "' which is 'notSupported'.");
-    LOG_DEBUG("Exit " + callString);
-    return true;
-  }
-#endif
-
-  argumentPointer_[argumentName]
-      = reinterpret_cast<void *>(const_cast<int *>(ptr));
-
-  LOG_DEBUG("Exit " + callString);
-  return false;
-}
-
-int ModelImplementation::SetArgumentPointer(ArgumentName const argumentName,
-                                            double const * const ptr)
-{
-#if DEBUG_VERBOSITY
-  std::string const callString = "SetArgumentPointer("
-      + argumentName.String() + ", " + SPTR(ptr) + ").";
-#endif
-  LOG_DEBUG("Enter " + callString);
-
-#if ERROR_VERBOSITY
-  int error = Validate(argumentName);
-  if (error)
-  {
-    LOG_ERROR("Invalid arguments.");
-    LOG_DEBUG("Exit " + callString);
-    return true;
-  }
-
-  std::map<ArgumentName const, SupportStatus, ARGUMENT_NAME::Comparator>::
-      const_iterator result = argumentSupportStatus_.find(argumentName);
-  if (result->second == SUPPORT_STATUS::notSupported)
-  {
-    LOG_ERROR("Pointer value cannot be set for Arguments '"
-              + argumentName.String() + "' which is 'notSupported'.");
-    LOG_DEBUG("Exit " + callString);
-    return true;
-  }
-#endif
-
-  argumentPointer_[argumentName]
-      = reinterpret_cast<void *>(const_cast<double *>(ptr));
-
-  LOG_DEBUG("Exit " + callString);
-  return false;
-}
-
-int ModelImplementation::GetArgumentPointer(ArgumentName const argumentName,
-                                            int const ** const ptr) const
-{
-#if DEBUG_VERBOSITY
-  std::string const callString = "GetArgumentPointer("
-      + argumentName.String() + ", " + SPTR(ptr) + ").";
-#endif
-  LOG_DEBUG("Enter " + callString);
-
-#if ERROR_VERBOSITY
-  int error = Validate(argumentName);
-  if (error)
-  {
-    LOG_ERROR("Invalid arguments.");
-    LOG_DEBUG("Exit " + callString);
-    return true;
-  }
-
-  std::map<ArgumentName const, SupportStatus, ARGUMENT_NAME::Comparator>::
-      const_iterator statusResult = argumentSupportStatus_.find(argumentName);
-  if (statusResult->second == SUPPORT_STATUS::notSupported)
-  {
-    LOG_ERROR("Pointer value does not exist for Argument '"
-              + (statusResult->first).String()
-              + "' which is 'notSupported'.");
-    LOG_DEBUG("Exit " + callString);
-    return true;
-  }
-#endif
-
-  std::map<ArgumentName const, void *, ARGUMENT_NAME::Comparator>::
-      const_iterator result = argumentPointer_.find(argumentName);
-  *ptr = reinterpret_cast<int const *>(result->second);
-
-  LOG_DEBUG("Exit " + callString);
-  return false;
-}
-
-int ModelImplementation::GetArgumentPointer(ArgumentName const argumentName,
-                                            int ** const ptr) const
-{
-#if DEBUG_VERBOSITY
-  std::string const callString = "GetArgumentPointer("
-      + argumentName.String() + ", " + SPTR(ptr) + ").";
-#endif
-  LOG_DEBUG("Enter " + callString);
-
-#if ERROR_VERBOSITY
-  int error = Validate(argumentName);
-  if (error)
-  {
-    LOG_ERROR("Invalid arguments.");
-    LOG_DEBUG("Exit " + callString);
-    return true;
-  }
-
-  std::map<ArgumentName const, SupportStatus, ARGUMENT_NAME::Comparator>::
-      const_iterator statusResult = argumentSupportStatus_.find(argumentName);
-  if (statusResult->second == SUPPORT_STATUS::notSupported)
-  {
-    LOG_ERROR("Pointer value does not exist for Argument '"
-              + (statusResult->first).String()
-              + "' which is 'notSupported'.");
-    LOG_DEBUG("Exit " + callString);
-    return true;
-  }
-#endif
-
-  std::map<ArgumentName const, void *, ARGUMENT_NAME::Comparator>::
-      const_iterator result = argumentPointer_.find(argumentName);
-
-  *ptr = reinterpret_cast<int *>(result->second);
-
-  LOG_DEBUG("Exit " + callString);
-  return false;
-}
-
-int ModelImplementation::GetArgumentPointer(ArgumentName const argumentName,
-                                            double const ** const ptr) const
-{
-#if DEBUG_VERBOSITY
-  std::string const callString = "GetArgumentPointer("
-      + argumentName.String() + ", " + SPTR(ptr) + ").";
-#endif
-  LOG_DEBUG("Enter " + callString);
-
-#if ERROR_VERBOSITY
-  int error = Validate(argumentName);
-  if (error)
-  {
-    LOG_ERROR("Invalid arguments.");
-    LOG_DEBUG("Exit " + callString);
-    return true;
-  }
-
-  std::map<ArgumentName const, SupportStatus, ARGUMENT_NAME::Comparator>::
-      const_iterator statusResult = argumentSupportStatus_.find(argumentName);
-  if (statusResult->second == SUPPORT_STATUS::notSupported)
-  {
-    LOG_ERROR("Pointer value does not exist for Argument '"
-              + (statusResult->first).String()
-              + "' which is 'notSupported'.");
-    LOG_DEBUG("Exit " + callString);
-    return true;
-  }
-#endif
-
-  std::map<ArgumentName const, void *, ARGUMENT_NAME::Comparator>::
-      const_iterator result = argumentPointer_.find(argumentName);
-
-  *ptr = reinterpret_cast<double const *>(result->second);
-
-  LOG_DEBUG("Exit " + callString);
-  return false;
-}
-
-int ModelImplementation::GetArgumentPointer(ArgumentName const argumentName,
-                                            double ** const ptr) const
-{
-#if DEBUG_VERBOSITY
-  std::string const callString = "GetArgumentPointer("
-      + argumentName.String() + ", " + SPTR(ptr) + ").";
-#endif
-  LOG_DEBUG("Enter " + callString);
-
-#if ERROR_VERBOSITY
-  int error = Validate(argumentName);
-  if (error)
-  {
-    LOG_ERROR("Invalid arguments.");
-    LOG_DEBUG("Exit " + callString);
-    return true;
-  }
-
-  std::map<ArgumentName const, SupportStatus, ARGUMENT_NAME::Comparator>::
-      const_iterator statusResult = argumentSupportStatus_.find(argumentName);
-  if (statusResult->second == SUPPORT_STATUS::notSupported)
-  {
-    LOG_ERROR("Pointer value does not exist for Argument '"
-              + (statusResult->first).String()
-              + "' which is 'notSupported'.");
-    LOG_DEBUG("Exit " + callString);
-    return true;
-  }
-#endif
-
-  std::map<ArgumentName const, void *, ARGUMENT_NAME::Comparator>::
-      const_iterator result = argumentPointer_.find(argumentName);
-
-  *ptr = reinterpret_cast<double *>(result->second);
-
-  LOG_DEBUG("Exit " + callString);
-  return false;
-}
-
-int ModelImplementation::SetCallbackPointer(CallbackName const callbackName,
-                                            LanguageName const languageName,
-                                            func * const fptr,
-                                            void const * const dataObject)
-{
-#if DEBUG_VERBOSITY
-  std::string const callString = "SetCallbackPointer("
-      + callbackName.String() + ", " + languageName.String()
-      + ", " + SFUNC(fptr) + ", " + SPTR(dataObject) + ").";
-#endif
-  LOG_DEBUG("Enter " + callString);
-
-#if ERROR_VERBOSITY
-  int error =
-      Validate(callbackName) ||
-      Validate(languageName);
-  if (error)
-  {
-    LOG_ERROR("Invalid arguments.");
-    LOG_DEBUG("Exit " + callString);
-    return true;
-  }
-
-  std::map<CallbackName const, SupportStatus, CALLBACK_NAME::Comparator>::
-      const_iterator result = callbackSupportStatus_.find(callbackName);
-
-  if (result->second == SUPPORT_STATUS::notSupported)
-  {
-    LOG_ERROR("Pointer value cannot be set for Callback '"
-              + callbackName.String() + "' that is 'notSupported'.");
-    LOG_DEBUG("Exit " + callString);
-    return true;
-  }
-#endif
-
-  callbackLanguage_[callbackName] = languageName;
-  callbackFunctionPointer_[callbackName] = fptr;
-  callbackDataObjectPointer_[callbackName] = dataObject;
-
-  LOG_DEBUG("Exit " + callString);
-  return false;
-}
-
-int ModelImplementation::IsCallbackPresent(
-    CallbackName const callbackName, int * const present) const
-{
-#if DEBUG_VERBOSITY
-  std::string const callString = "IsCallbackPresent("
-      + callbackName.String() + ", " + SPTR(present) + ").";
-#endif
-  LOG_DEBUG("Enter " + callString);
-
-#if ERROR_VERBOSITY
-  int error = Validate(callbackName);
-  if (error)
-  {
-    LOG_ERROR("Invalid arguments.");
-    LOG_DEBUG("Exit " + callString);
-    return false;
-  }
-#endif
-
-  std::map<CallbackName const, func *, CALLBACK_NAME::Comparator>::
-      const_iterator result = callbackFunctionPointer_.find(callbackName);
-
-  if (result->second == NULL)
-  {
-    *present = false;
-  }
-  else
-  {
-    *present = true;
-  }
-
-  LOG_DEBUG("Exit " + callString);
-  return false;
-}
-
 struct KIM_ModelCompute
 {
   void * p;
 };
 
-int ModelImplementation::Compute() const
+int ModelImplementation::Compute(
+    ComputeArguments const * const computeArguments) const
 {
 #if DEBUG_VERBOSITY
-  std::string const callString = "Compute().";
+  std::string const callString = "Compute("
+      + SPTR(computeArguments) + ").";
 #endif
   LOG_DEBUG("Enter " + callString);
 
-#if ERROR_VERBOSITY
-  // Check that all required arguments are present
-  for (std::map<ArgumentName const, SupportStatus,
-           ARGUMENT_NAME::Comparator>::const_iterator
-           itr = argumentSupportStatus_.begin();
-       itr != argumentSupportStatus_.end(); ++itr)
+  // Check that computeArguments is for this model
+  if (modelName_ != computeArguments->pimpl->modelName_)
   {
-    if ((itr->second == SUPPORT_STATUS::requiredByAPI) ||
-        (itr->second == SUPPORT_STATUS::required))
-    {
-      if (argumentPointer_.find(itr->first)->second == NULL)
-      {
-        LOG_ERROR("Required Argument '" + (itr->first).String()
-                  + "' is not present.");
-        LOG_DEBUG("Exit " + callString);
-        return true;
-      }
-    }
+    LOG_ERROR("ComputeArguments object for Model '"
+              + computeArguments->pimpl->modelName_
+              + "' cannot be used with the "
+              "ModelCompute() routine of Model '" + modelName_ + "'.");
+
+    LOG_DEBUG("Exit " + callString);
+    return true;
   }
 
-  // Check that all required callbacks are present
-  for (std::map<CallbackName const, SupportStatus,
-           CALLBACK_NAME::Comparator>::const_iterator
-           itr = callbackSupportStatus_.begin();
-       itr != callbackSupportStatus_.end(); ++itr)
+  // Check that computeArguments is ready...
+#if ERROR_VERBOSITY
+  int isReady;
+  computeArguments->AreAllRequiredArgumentsAndCallbacksPresent(&isReady);
+  if (!isReady)
   {
-    if ((itr->second == SUPPORT_STATUS::requiredByAPI) ||
-        (itr->second == SUPPORT_STATUS::required))
-    {
-      if (callbackFunctionPointer_.find(itr->first)->second == NULL)
-      {
-        LOG_ERROR("Required Callback '" + (itr->first).String()
-                  + "' is not present.");
-        LOG_DEBUG("Exit " + callString);
-        return true;
-      }
-    }
+    LOG_ERROR("Not all required ComputeArguments and ComputeCallbacks "
+              "are present in ComputeArguments object.");
+
+    LOG_DEBUG("Exit " + callString);
+    return true;
   }
 #endif
 
-  typedef int ModelComputeCpp(KIM::ModelCompute * const);
+  // Set cutoffs data within computeArguments
+  computeArguments->pimpl->inModelComputeRoutine_ = true;
+  computeArguments->pimpl->numberOfCutoffs_ = numberOfCutoffs_;
+  computeArguments->pimpl->cutoffs_ = cutoffs_;
+
+  typedef int ModelComputeCpp(KIM::ModelCompute const * const,
+                              KIM::ModelComputeArguments const * const);
   ModelComputeCpp * CppCompute
       = reinterpret_cast<ModelComputeCpp *>(computeFunction_);
-  typedef int ModelComputeC(KIM_ModelCompute * const);
-  ModelComputeC * CCompute
-      = reinterpret_cast<ModelComputeC *>(computeFunction_);
-  typedef void ModelComputeF(KIM_ModelCompute * const, int * const);
-  ModelComputeF * FCompute
-      = reinterpret_cast<ModelComputeF *>(computeFunction_);
+//  typedef int ModelComputeC(KIM_ModelCompute const * const,
+//                            KIM_ModelCompueArguments const * const);
+//  ModelComputeC * CCompute
+//      = reinterpret_cast<ModelComputeC *>(computeFunction_);
+//  typedef void ModelComputeF(KIM_ModelCompute * const,
+//                             KIM_ModelComputeArguments const * const,
+//                             int * const);
+//  ModelComputeF * FCompute
+//      = reinterpret_cast<ModelComputeF *>(computeFunction_);
 
   int error;
   struct Mdl {void const * p;};
@@ -1455,28 +1136,42 @@ int ModelImplementation::Compute() const
   M.p = this;
   if (computeLanguage_ == LANGUAGE_NAME::cpp)
   {
-    error = CppCompute(reinterpret_cast<KIM::ModelCompute *>(&M));
+    error = CppCompute(
+        reinterpret_cast<KIM::ModelCompute const * const>(&M),
+        reinterpret_cast<KIM::ModelComputeArguments const * const>(
+            computeArguments));
   }
-  else if (computeLanguage_ == LANGUAGE_NAME::c)
-  {
-    KIM_ModelCompute cM;
-    cM.p = &M;
-    error = CCompute(&cM);
-  }
-  else if (computeLanguage_ == LANGUAGE_NAME::fortran)
-  {
-    KIM_ModelCompute cM;
-    cM.p = &M;
-    KIM_ModelCompute cM_Handle;
-    cM_Handle.p = &cM;
-    FCompute(&cM_Handle, &error);
-  }
+//  else if (computeLanguage_ == LANGUAGE_NAME::c)
+//  {
+//    KIM_ModelCompute cM;
+//    cM.p = &M;
+//    KIM_ModelComputeArguments cMca;
+//    cMca.p = &computeArguments;
+//    error = CCompute(&cM, &cMca);
+//  }
+//  else if (computeLanguage_ == LANGUAGE_NAME::fortran)
+//  {
+//    KIM_ModelCompute cM;
+//    cM.p = &M;
+//    KIM_ModelCompute cM_Handle;
+//    cM_Handle.p = &cM;
+//    KIM_ModelComputeArguments cMca;
+//    cMca.p = &computeArguments;
+//    KIM_ModelComputeArguments cMca_Handle;
+//    cMca_Handle.p = &cMca;
+//    FCompute(&cM_Handle, &cMca_Handle, &error);
+//  }
   else
   {
     LOG_ERROR("Unknown LanguageName.  SHOULD NEVER GET HERE.");
     LOG_DEBUG("Exit " + callString);
     return true;
   }
+
+  // Unset cutoffs data within computeArguments
+  computeArguments->pimpl->inModelComputeRoutine_ = false;
+  computeArguments->pimpl->numberOfCutoffs_ = 0;
+  computeArguments->pimpl->cutoffs_ = NULL;
 
   if (error)
   {
@@ -1574,306 +1269,6 @@ int ModelImplementation::ClearInfluenceDistanceAndCutoffsThenRefreshModel()
     }
 #endif
     LOG_DEBUG("Exit " + callString);
-    return false;
-  }
-}
-
-int ModelImplementation::GetNeighborList(int const neighborListIndex,
-                                         int const particleNumber,
-                                         int * const numberOfNeighbors,
-                                         int const ** const neighborsOfParticle)
-    const
-{
-  // No debug logging for callbacks: too expensive
-  //
-  // #if DEBUG_VERBOSITY
-  //   std::string const callString = "GetNeighborList("
-  //       + SNUM(neighborListIndex) + ", " + SNUM(particleNumber) + ", "
-  //       + SPTR(numberOfNeighbors) + ", " + SPTR(neighborsOfParticle) + ").";
-  // #endif
-  //   LOG_DEBUG("Enter " + callString);
-
-#if ERROR_VERBOSITY
-  if ((neighborListIndex < 0) || (neighborListIndex >= numberOfCutoffs_))
-  {
-    LOG_ERROR("Invalid neighborListIndex, " + SNUM(neighborListIndex)
-              + ".");
-    // LOG_DEBUG("Exit " + callString);
-    return true;
-  }
-
-  int zeroBasedParticleNumber = particleNumber +
-      ((NUMBERING::zeroBased == modelNumbering_) ? 0 : -1);
-  std::map<ArgumentName const, void *, ARGUMENT_NAME::Comparator>::
-      const_iterator pointerResult
-      = argumentPointer_.find(ARGUMENT_NAME::numberOfParticles);
-  int const * numberOfParticles
-      = reinterpret_cast<int const *>(pointerResult->second);
-  if ((zeroBasedParticleNumber < 0) ||
-      (zeroBasedParticleNumber >= *(numberOfParticles)))
-  {
-    LOG_ERROR("Invalid particleNumber, " + SNUM(zeroBasedParticleNumber)
-              + ".");
-    // LOG_DEBUG("Exit " + callString);
-    return true;
-  }
-#endif
-
-  std::map<CallbackName const, LanguageName, CALLBACK_NAME::Comparator>::
-      const_iterator languageResult
-      = callbackLanguage_.find(CALLBACK_NAME::GetNeighborList);
-
-  LanguageName const languageName = languageResult->second;
-  void const * dataObject
-      = (callbackDataObjectPointer_.find(CALLBACK_NAME::GetNeighborList))
-      ->second;
-
-  func * functionPointer
-      = (callbackFunctionPointer_.find(CALLBACK_NAME::GetNeighborList))->second;
-  typedef int GetNeighborListCpp(void const * const dataObject,
-                                 int const neighborListIndex,
-                                 int const particleNumber,
-                                 int * const numberOfNeighbors,
-                                 int const ** const neighborsOfParticle);
-  GetNeighborListCpp * CppGetNeighborList
-      = reinterpret_cast<GetNeighborListCpp *>(functionPointer);
-  typedef int GetNeighborListC(void const * const dataObject,
-                               int const neighborListIndex,
-                               int const particleNumber,
-                               int * const numberOfNeighbors,
-                               int const ** const neighborsOfParticle);
-  GetNeighborListC * CGetNeighborList
-      = reinterpret_cast<GetNeighborListC *>(functionPointer);
-  typedef void GetNeighborListF(void const * const dataObject,
-                                int const neighborListIndex,
-                                int const particleNumber,
-                                int * const numberOfNeighbors,
-                                int const ** const neighborsOfParticle,
-                                int * const ierr);
-  GetNeighborListF * FGetNeighborList
-      = reinterpret_cast<GetNeighborListF *>(functionPointer);
-
-
-  int simulatorParticleNumber = particleNumber +
-      ((simulatorNumbering_ == modelNumbering_) ? 0 : -numberingOffset_);
-  int const * simulatorNeighborsOfParticle;
-  int error;
-  if (languageName == LANGUAGE_NAME::cpp)
-  {
-    error = CppGetNeighborList(dataObject, neighborListIndex,
-                               simulatorParticleNumber, numberOfNeighbors,
-                               &simulatorNeighborsOfParticle);
-  }
-  else if (languageName == LANGUAGE_NAME::c)
-  {
-    error = CGetNeighborList(dataObject, neighborListIndex,
-                             simulatorParticleNumber,
-                             numberOfNeighbors, &simulatorNeighborsOfParticle);
-  }
-  else if (languageName == LANGUAGE_NAME::fortran)
-  {
-    FGetNeighborList(dataObject, neighborListIndex+1, simulatorParticleNumber,
-                     numberOfNeighbors, &simulatorNeighborsOfParticle, &error);
-  }
-  else
-  {
-    LOG_ERROR("Unknown LanguageName.  SHOULD NEVER GET HERE.");
-    // LOG_DEBUG("Exit " + callString);
-    return true;
-  }
-
-  if (error)
-  {
-    LOG_ERROR("Simulator supplied GetNeighborList() routine returned error.");
-    // LOG_DEBUG("Exit " + callString);
-    return true;
-  }
-
-  // account for numbering differences if needed
-  if (simulatorNumbering_ != modelNumbering_)
-  {
-    // LOG_DEBUG("Numbering conversion is required.");
-
-    std::vector<int> & list = getNeighborListStorage_[neighborListIndex];
-    list.resize(*numberOfNeighbors);
-    for (int i=0; i<*numberOfNeighbors; ++i)
-      list[i] = simulatorNeighborsOfParticle[i] + numberingOffset_;
-
-    *neighborsOfParticle = list.data();
-  }
-  else
-  {
-    // LOG_DEBUG("Numbering conversion is not required.");
-
-    *neighborsOfParticle = simulatorNeighborsOfParticle;
-  }
-
-  // LOG_DEBUG("Exit " + callString);
-  return false;
-}
-
-int ModelImplementation::ProcessDEDrTerm(double const de, double const r,
-                                         double const * const dx,
-                                         int const i, int const j) const
-{
-  // No debug logging for callbacks: too expensive
-  //
-  // #if DEBUG_VERBOSITY
-  //   std::string const callString = "ProcessDEDrTerm("
-  //       + SNUM(de) + ", " + SNUM(r) + ", " + SPTR(dx) + ", "
-  //       + SNUM(i) + ", " + SNUM(j) + ").";
-  // #endif
-  //   LOG_DEBUG("Enter " + callString);
-
-  std::map<CallbackName const, LanguageName, CALLBACK_NAME::Comparator>::
-      const_iterator languageResult
-      = callbackLanguage_.find(CALLBACK_NAME::ProcessDEDrTerm);
-
-  LanguageName languageName = languageResult->second;
-  void const * dataObject
-      = (callbackDataObjectPointer_.find(CALLBACK_NAME::ProcessDEDrTerm))
-      ->second;
-
-  func * functionPointer
-      = (callbackFunctionPointer_.find(CALLBACK_NAME::ProcessDEDrTerm))->second;
-  typedef int ProcessDEDrTermCpp(void const * const dataObject, double const de,
-                                 double const r, double const * const dx,
-                                 int const i, int const j);
-  ProcessDEDrTermCpp * CppProcess_dEdr
-      = reinterpret_cast<ProcessDEDrTermCpp *>(functionPointer);
-  typedef int ProcessDEDrTermC(void const * const dataObject, double const de,
-                               double const r, double const * const dx,
-                               int const i, int const j);
-  ProcessDEDrTermC * CProcess_dEdr
-      = reinterpret_cast<ProcessDEDrTermC *>(functionPointer);
-  typedef void ProcessDEDrTermF(void const * const dataObject, double const de,
-                                double const r, double const * const dx,
-                                int const i, int const j, int * const ierr);
-  ProcessDEDrTermF * FProcess_dEdr
-      = reinterpret_cast<ProcessDEDrTermF *>(functionPointer);
-
-  int offset
-      = ((simulatorNumbering_ == modelNumbering_) ? 0 : -numberingOffset_);
-  int simulatorI = i + offset;
-  int simulatorJ = j + offset;
-
-  int error;
-  if (languageName == LANGUAGE_NAME::cpp)
-  {
-    error = CppProcess_dEdr(dataObject, de, r, dx, simulatorI, simulatorJ);
-  }
-  else if (languageName == LANGUAGE_NAME::c)
-  {
-    error = CProcess_dEdr(dataObject, de, r, dx, simulatorI, simulatorJ);
-  }
-  else if (languageName == LANGUAGE_NAME::fortran)
-  {
-    FProcess_dEdr(dataObject, de, r, dx, simulatorI, simulatorJ, &error);
-  }
-  else
-  {
-    LOG_ERROR("Unknown LanguageName.  SHOULD NEVER GET HERE.");
-    // LOG_DEBUG("Exit " + callString);
-    return true;
-  }
-
-  if (error)
-  {
-    LOG_ERROR("Simulator supplied ProcessDEDrTerm() routine returned error.");
-    // LOG_DEBUG("Exit " + callString);
-    return true;
-  }
-  else
-  {
-    // LOG_DEBUG("Exit " + callString);
-    return false;
-  }
-}
-
-int ModelImplementation::ProcessD2EDr2Term(double const de,
-                                           double const * const r,
-                                           double const * const dx,
-                                           int const * const i,
-                                           int const * const j) const
-{
-  // No debug logging for callbacks: too expensive
-  //
-  // #if DEBUG_VERBOSITY
-  //   std::string const callString = "ProcessD2EDr2Term("
-  //       + SNUM(de) + ", " + SPTR(r) + ", " + SPTR(dx) + ", "
-  //       + SPTR(i) + ", " + SPTR(j) + ").";
-  // #endif
-  //   LOG_DEBUG("Enter " + callString);
-  std::map<CallbackName const, LanguageName, CALLBACK_NAME::Comparator>::
-      const_iterator languageResult
-      = callbackLanguage_.find(CALLBACK_NAME::ProcessD2EDr2Term);
-
-  LanguageName languageName = languageResult->second;
-  void const * dataObject = (callbackDataObjectPointer_
-                             .find(CALLBACK_NAME::ProcessD2EDr2Term))->second;
-
-  func * functionPointer
-      = (callbackFunctionPointer_.find(CALLBACK_NAME::ProcessD2EDr2Term))
-      ->second;
-  typedef int ProcessD2EDr2TermCpp(void const * const dataObject,
-                                   double const de, double const * const r,
-                                   double const * const dx,
-                                   int const * const i, int const * const j);
-  ProcessD2EDr2TermCpp * CppProcess_d2Edr2
-      = reinterpret_cast<ProcessD2EDr2TermCpp *>(functionPointer);
-  typedef int ProcessD2EDr2TermC(void const * const dataObject, double const de,
-                                 double const * const r,
-                                 double const * const dx,
-                                 int const * const i, int const * const j);
-  ProcessD2EDr2TermC * CProcess_d2Edr2
-      = reinterpret_cast<ProcessD2EDr2TermC *>(functionPointer);
-  typedef void ProcessD2EDr2TermF(void const * const dataObject,
-                                  double const de, double const * const r,
-                                  double const * const dx,
-                                  int const * const i, int const * const j,
-                                  int * const ierr);
-  ProcessD2EDr2TermF * FProcess_d2Edr2
-      = reinterpret_cast<ProcessD2EDr2TermF *>(functionPointer);
-
-  int offset
-      = ((simulatorNumbering_ == modelNumbering_) ? 0 : -numberingOffset_);
-  int simulatorI[2];
-  simulatorI[0] = i[0] + offset;
-  simulatorI[1] = i[1] + offset;
-
-  int simulatorJ[2];
-  simulatorJ[0] = j[0] + offset;
-  simulatorJ[1] = j[1] + offset;
-
-  int error;
-  if (languageName == LANGUAGE_NAME::cpp)
-  {
-    error = CppProcess_d2Edr2(dataObject, de, r, dx, simulatorI, simulatorJ);
-  }
-  else if (languageName == LANGUAGE_NAME::c)
-  {
-    error = CProcess_d2Edr2(dataObject, de, r, dx, simulatorI, simulatorJ);
-  }
-  else if (languageName == LANGUAGE_NAME::fortran)
-  {
-    FProcess_d2Edr2(dataObject, de, r, dx, simulatorI, simulatorJ, &error);
-  }
-  else
-  {
-    LOG_ERROR("Unknown LanguageName.  SHOULD NEVER GET HERE.");
-    // LOG_DEBUG("Exit " + callString);
-    return true;
-  }
-
-  if (error)
-  {
-    LOG_ERROR("Simulator supplied ProcessD2EDr2Term() routine returned error.");
-    // LOG_DEBUG("Exit " + callString);
-    return true;
-  }
-  else
-  {
-    // LOG_DEBUG("Exit " + callString);
     return false;
   }
 }
@@ -2147,11 +1542,14 @@ std::string const & ModelImplementation::String() const
       "====================================================================="
       "===========\n\n";
 
+  ss << "Model object\n"
+     << "------------\n\n";
   ss << "Model Name : " << modelName_ << "\n";
   if (modelType_ == ModelLibrary::PARAMETERIZED_MODEL)
   {
     ss << "Model Driver Name : " << modelDriverName_ << "\n";
   }
+  ss << "Log ID : " << log_->GetID() << "\n";
   ss << "\n";
 
   ss << "Model Supplied Functions :\n"
@@ -2166,17 +1564,27 @@ std::string const & ModelImplementation::String() const
      << "\t"
      << std::setw(25) << "Refresh"
      << std::setw(10) << refreshLanguage_.String()
-     << std::setw(15) << refreshFunction_
+     << std::setw(15) << SFUNC(refreshFunction_)
      << "\n"
      << "\t"
      << std::setw(25) << "Destroy"
      << std::setw(10) << destroyLanguage_.String()
-     << std::setw(15) << destroyFunction_
+     << std::setw(15) << SFUNC(destroyFunction_)
+     << "\n"
+     << "\t"
+     << std::setw(25) << "ComputeArgumentsCreate"
+     << std::setw(10) << computeArgumentsCreateLanguage_.String()
+     << std::setw(15) << SFUNC(computeArgumentsCreateFunction_)
+     << "\n"
+     << "\t"
+     << std::setw(25) << "ComputeArgumentsDestroy"
+     << std::setw(10) << computeArgumentsDestroyLanguage_.String()
+     << std::setw(15) << SFUNC(computeArgumentsDestroyFunction_)
      << "\n"
      << "\t"
      << std::setw(25) << "Compute"
      << std::setw(10) << computeLanguage_.String()
-     << std::setw(15) << computeFunction_
+     << std::setw(15) << SFUNC(computeFunction_)
      << "\n\n";
 
   ss << "Numbering : " << modelNumbering_.String() << "\n\n";
@@ -2214,96 +1622,6 @@ std::string const & ModelImplementation::String() const
   }
   ss << "\n";
 
-  ss << "Compute Arguments :\n";
-  int const argW = 25;
-  ss << "\t" << std::setw(argW) << "Argument Name"
-     << std::setw(argW) << "SupportStatus"
-     << std::setw(argW) << "Pointer"
-     << "\n";
-  ss << "\t" << std::setw(argW) << "-------------------------"
-     << std::setw(argW) << "-------------------------"
-     << std::setw(argW) << "-------------------------"
-     << "\n\n";
-  for (std::map<ArgumentName const, SupportStatus, ARGUMENT_NAME::Comparator>::
-           const_iterator argName = argumentSupportStatus_.begin();
-       argName != argumentSupportStatus_.end();
-       ++argName)
-  {
-    ss << "\t" << std::setw(argW) << (argName->first).String()
-       << std::setw(argW) << (argName->second).String();
-
-    if ((argName->second) != SUPPORT_STATUS::notSupported)
-    {
-      std::map<ArgumentName const, void *, ARGUMENT_NAME::Comparator>::
-          const_iterator ptr = argumentPointer_.find(argName->first);
-      if (ptr != argumentPointer_.end())
-      {
-        ss << std::setw(argW) << (void *) ptr->second;
-      }
-      else
-      {
-        ss << std::setw(argW) << "Not Set";
-      }
-    }
-    else
-    {
-      ss << std::setw(argW) << "N/A";
-    }
-    ss << "\n";
-  }
-  ss << "\n";
-
-
-  ss << "Compute Callbacks :\n";
-  int const cbW = 25;
-  ss << "\t" << std::setw(cbW) << "Callback Name"
-     << std::setw(cbW) << "SupportStatus"
-     << std::setw(cbW) << "Language"
-     << std::setw(cbW) << "Function Pointer"
-     << std::setw(cbW) << "Data Pointer"
-     << "\n";
-  ss << "\t" << std::setw(cbW) << "-------------------------"
-     << std::setw(cbW) << "-------------------------"
-     << std::setw(cbW) << "-------------------------"
-     << std::setw(cbW) << "-------------------------"
-     << std::setw(cbW) << "-------------------------"
-     << "\n\n";
-  for (std::map<CallbackName const, SupportStatus, CALLBACK_NAME::Comparator>::
-           const_iterator cbName = callbackSupportStatus_.begin();
-       cbName != callbackSupportStatus_.end();
-       ++cbName)
-  {
-    ss << "\t" << std::setw(cbW) << (cbName->first).String()
-       << std::setw(cbW) << (cbName->second).String();
-
-    if ((cbName->second) != SUPPORT_STATUS::notSupported)
-    {
-      std::map<CallbackName const, LanguageName, CALLBACK_NAME::Comparator>::
-          const_iterator ptr = callbackLanguage_.find(cbName->first);
-      if (ptr != callbackLanguage_.end())
-      {
-        ss << std::setw(cbW) << (ptr->second).String();
-        std::map<CallbackName const, func *, CALLBACK_NAME::Comparator>::
-            const_iterator ptr2 = callbackFunctionPointer_.find(cbName->first);
-        ss << std::setw(cbW) << ptr2->second;
-        std::map<CallbackName const, void const *, CALLBACK_NAME::Comparator>::
-            const_iterator ptr3
-            = callbackDataObjectPointer_.find(cbName->first);
-        ss << std::setw(cbW) << ptr3->second;
-      }
-      else
-      {
-        ss << std::setw(cbW) << "Not Set";
-      }
-    }
-    else
-    {
-      ss << std::setw(cbW) << "N/A";
-    }
-    ss << "\n";
-  }
-  ss << "\n";
-
 
   int numberOfParameters = parameterPointer_.size();
   ss << "Number Of Prameters : " << numberOfParameters << "\n";
@@ -2324,12 +1642,29 @@ std::string const & ModelImplementation::String() const
     ss << "\t" << std::setw(8) << i
        << std::setw(10) << parameterDataType_[i].String()
        << std::setw(10) << parameterExtent_[i]
-       << std::setw(15) << (void *) parameterPointer_[i]
+       << std::setw(15) << SPTR(parameterPointer_[i])
        << parameterDescription_[i]
        << "\n";
   }
   ss << "\n";
 
+  ss << "Buffers\n";
+  ss << "\t"
+     << std::setw(15) << "Buffer"
+     << std::setw(15) << "Pointer"
+     << "\n";
+  ss << "\t"
+     << std::setw(15) << "---------------"
+     << std::setw(15) << "---------------"
+     << "\n\n";
+  ss << "\t"
+     << std::setw(15) << "Model"
+     << std::setw(15) << SPTR(modelBuffer_)
+     << "\n"
+     << "\t"
+     << std::setw(15) << "Simulator"
+     << std::setw(15) << SPTR(simulatorBuffer_)
+     << "\n\n";
 
   ss <<
       "====================================================================="
@@ -2362,48 +1697,6 @@ ModelImplementation::ModelImplementation(ModelLibrary * const modelLibrary,
 #endif
   LOG_DEBUG("Enter " + callString);
 
-  // populate Arguments
-  int numberOfArguments;
-  ARGUMENT_NAME::GetNumberOfArguments(&numberOfArguments);
-  for (int i=0; i<numberOfArguments; ++i)
-  {
-    ArgumentName argumentName;
-    ARGUMENT_NAME::GetArgumentName(i, &argumentName);
-    argumentSupportStatus_[argumentName] = SUPPORT_STATUS::notSupported;
-  }
-  // populate requiredByAPI Arguments
-  for (std::vector<ArgumentName>::const_iterator requiredByAPI_Argument
-           = ARGUMENT_NAME::requiredByAPI_Arguments.begin();
-       requiredByAPI_Argument != ARGUMENT_NAME::requiredByAPI_Arguments.end();
-       ++requiredByAPI_Argument)
-  {
-    argumentSupportStatus_[*requiredByAPI_Argument]
-        = SUPPORT_STATUS::requiredByAPI;
-    argumentPointer_[*requiredByAPI_Argument] = NULL;
-  }
-
-  // populate Callbacks
-  int numberOfCallbacks;
-  CALLBACK_NAME::GetNumberOfCallbacks(&numberOfCallbacks);
-  for (int i=0; i<numberOfCallbacks; ++i)
-  {
-    CallbackName callbackName;
-    CALLBACK_NAME::GetCallbackName(i, &callbackName);
-    callbackSupportStatus_[callbackName] = SUPPORT_STATUS::notSupported;
-  }
-  // populate Callbacks
-  for (std::vector<CallbackName>::const_iterator requiredByAPI_Callback
-           = CALLBACK_NAME::requiredByAPI_Callbacks.begin();
-       requiredByAPI_Callback != CALLBACK_NAME::requiredByAPI_Callbacks.end();
-       ++requiredByAPI_Callback)
-  {
-    callbackSupportStatus_[*requiredByAPI_Callback]
-        = SUPPORT_STATUS::requiredByAPI;
-    callbackLanguage_[*requiredByAPI_Callback]
-        = LANGUAGE_NAME::cpp;  // place holder
-    callbackFunctionPointer_[*requiredByAPI_Callback] = NULL;
-    callbackDataObjectPointer_[*requiredByAPI_Callback] = NULL;
-  }
 
   LOG_DEBUG("Exit " + callString);
 }
@@ -2573,6 +1866,22 @@ int ModelImplementation::ModelCreate(
     return true;
   }
 
+  if (computeArgumentsCreateFunction_ == NULL)
+  {
+    LOG_ERROR("Model supplied Create() routine did not set "
+              "ComputeArgumentsCreatePointer.");
+    LOG_DEBUG("Exit " + callString);
+    return true;
+  }
+
+  if (computeArgumentsDestroyFunction_ == NULL)
+  {
+    LOG_ERROR("Model supplied Create() routine did not set "
+              "ComputeArgumentsDestroyPointer.");
+    LOG_DEBUG("Exit " + callString);
+    return true;
+  }
+
   if (computeFunction_ == NULL)
   {
     LOG_ERROR("Model supplied Create() routine did not set "
@@ -2596,10 +1905,6 @@ int ModelImplementation::ModelCreate(
     numberingOffset_ = 1;
   else
     numberingOffset_ = -1;
-
-  // resize getNeighborListStorage_
-  if (simulatorNumbering_ != modelNumbering_)
-    getNeighborListStorage_.resize(numberOfCutoffs_);
 
   LOG_DEBUG("Exit " + callString);
   return false;
@@ -2668,6 +1973,174 @@ int ModelImplementation::ModelDestroy()
     return false;
   }
 }
+
+struct KIM_ModelComputeArgumentsCreate
+{
+  void * p;
+};
+
+int ModelImplementation::ModelComputeArgumentsCreate(ComputeArguments * const
+                                                     computeArguments) const
+{
+#if DEBUG_VERBOSITY
+  std::string const callString = "ModelComputeArgumentsCreate().";
+#endif
+  LOG_DEBUG("Enter " + callString);
+
+  typedef int ModelComputeArgumentsCreateCpp(
+      KIM::ModelCompute const * const,
+      KIM::ModelComputeArgumentsCreate * const);
+  ModelComputeArgumentsCreateCpp * CppComputeArgumentsCreate
+      = reinterpret_cast<ModelComputeArgumentsCreateCpp *>(
+          computeArgumentsCreateFunction_);
+//  typedef int ModelComputeArgumentsCreateC(
+//      KIM_ModelCompute const * const,
+//      KIM_ModelComputeArgumentsCreate * const);
+//  ModelComputeArgumentsCreateC * CComputeArgumentsCreate
+//      = reinterpret_cast<ModelComputeArgumentsCreateC *>(
+//          computeArgumentsCreateFunction_);
+//  typedef void ModelComputeArgumentsCreateF(
+//      KIM_ModelCompute const * const,
+//      KIM_ModelComputeArgumentsCreate * const, int * const);
+//  ModelComputeArgumentsCreateF * FComputeArgumentsCreate
+//      = reinterpret_cast<ModelComputeArgumentsCreateF *>(
+//          computeArgumentsCreateFunction_);
+
+  int error;
+  struct Mdl {void const * p;};
+  Mdl M;
+  M.p = this;
+  if (computeArgumentsCreateLanguage_ == LANGUAGE_NAME::cpp)
+  {
+    error = CppComputeArgumentsCreate(
+        reinterpret_cast<KIM::ModelCompute const * const>(&M),
+        reinterpret_cast<KIM::ModelComputeArgumentsCreate *>(computeArguments));
+  }
+//  else if (computeArgumentsCreateLanguage_ == LANGUAGE_NAME::c)
+//  {
+//    KIM_ModelCompute cM;
+//    cM.p = &M;
+//    KIM_ModelComputeArgumentsCreate cMcac;
+//    cMcac.p = computeArguments;
+//    error = CComputeArgumentsCreate(&cM, &cMcac);
+//  }
+//  else if (computeArgumentsCreateLanguage_ == LANGUAGE_NAME::fortran)
+//  {
+//    KIM_ModelCompute cM;
+//    cM.p = &M;
+//    KIM_ModelCompute cM_Handle;
+//    cM_Handle.p = &cM;
+//    KIM_ModelComputeArgumentsCreate cMcac;
+//    cMcac.p = computeArguments;
+//    KIM_ModelComputeArgumentsCreate cMcac_Handle;
+//    cMcac_Handle.p = &cM;
+//    FComputeArgumentsCreate(&cM_Handle, &cMcac_Handle, &error);
+//  }
+  else
+  {
+    LOG_ERROR("Unknown LanguageName.  SHOULD NEVER GET HERE.");
+    LOG_DEBUG("Exit " + callString);
+    return true;
+  }
+
+  if (error)
+  {
+    LOG_ERROR("Model supplied ComputeArgumentsCreate() routine "
+              "returned error.");
+    LOG_DEBUG("Exit " + callString);
+    return true;
+  }
+  else
+  {
+    LOG_DEBUG("Exit " + callString);
+    return false;
+  }
+}
+
+struct KIM_ModelComputeArgumentsDestroy
+{
+  void * p;
+};
+
+int ModelImplementation::ModelComputeArgumentsDestroy(ComputeArguments * const
+                                                      computeArguments) const
+{
+#if DEBUG_VERBOSITY
+  std::string const callString = "ModelComputeArgumentsDestroy().";
+#endif
+  LOG_DEBUG("Enter " + callString);
+
+  typedef int ModelComputeArgumentsDestroyCpp(
+      KIM::ModelCompute const * const,
+      KIM::ModelComputeArgumentsDestroy * const);
+  ModelComputeArgumentsDestroyCpp * CppComputeArgumentsDestroy
+      = reinterpret_cast<ModelComputeArgumentsDestroyCpp * const>(
+          computeArgumentsDestroyFunction_);
+//  typedef int ModelComputeArgumentsDestroyC(
+//      KIM::ModelCompute const * const,
+//      KIM_ModelComputeArgumentsDestroy * const);
+//  ModelComputeArgumentsDestroyC * CComputeArgumentsDestroy
+//      = reinterpret_cast<ModelComputeArgumentsDestroyC * const>(
+//          computeArgumentsDestroyFunction_);
+//  typedef void ModelComputeArgumentsDestroyF(
+//      KIM::ModelCompute const * const,
+//      KIM_ModelComputeArgumentsDestroy * const, int * const);
+//  ModelComputeArgumentsDestroyF * FComputeArgumentsDestroy
+//      = reinterpret_cast<ModelComputeArgumentsDestroyF * const>(
+//          computeArgumentsDestroyFunction_);
+
+  int error;
+  struct Mdl {void const * p;};
+  Mdl M;
+  M.p = this;
+  if (computeArgumentsDestroyLanguage_ == LANGUAGE_NAME::cpp)
+  {
+    error = CppComputeArgumentsDestroy(
+        reinterpret_cast<KIM::ModelCompute const * const>(&M),
+        reinterpret_cast<KIM::ModelComputeArgumentsDestroy * const>(
+            computeArguments));
+  }
+//  else if (computeArgumentsDestroyLanguage_ == LANGUAGE_NAME::c)
+//  {
+//    KIM_ModelCompute cM;
+//    cM.p = &M;
+//    KIM_ModelComputeArgumentsDestroy cMcad;
+//    cMcad.p = computeArguments;
+//    error = CComputeArgumentsDestroy(&cM, &cMcad);
+//  }
+//  else if (computeArgumentsDestroyLanguage_ == LANGUAGE_NAME::fortran)
+//  {
+//    KIM_ModelCompute cM;
+//    cM.p = &M;
+//    KIM_ModelCompute cM_Handle;
+//    cM_Handle.p = &cM;
+//    KIM_ModelComputeArgumentsDestroy cMcad;
+//    cMcad.p = computeArguments;
+//    KIM_ModelComputeArgumentsDestroy cMcad_Handle;
+//    cMcad_Handle.p = &cMcad;
+//    FComputeArgumentsDestroy(&cM_Handle, &cMcad_Handle, &error);
+//  }
+  else
+  {
+    LOG_ERROR("Unknown LanguageName.  SHOULD NEVER GET HERE.");
+    LOG_DEBUG("Exit " + callString);
+    return true;
+  }
+
+  if (error)
+  {
+    LOG_ERROR("Model supplied ComputeArgumentsDestroy() routine "
+              "returned error.");
+    LOG_DEBUG("Exit " + callString);
+    return true;
+  }
+  else
+  {
+    LOG_DEBUG("Exit " + callString);
+    return false;
+  }
+}
+
 
 struct KIM_ModelCreate
 {
@@ -3038,66 +2511,6 @@ int ModelImplementation::WriteParameterFiles()
 
   LOG_DEBUG("Exit " + callString);
   return false;
-}
-
-int ModelImplementation::Validate(ArgumentName const argumentName) const
-{
-  // No debug logging for Validate: too expensive
-  //
-  // #if DEBUG_VERBOSITY
-  //   std::string const callString = "Validate(" + argumentName.String()
-  //       + ").";
-  // #endif
-  //   LOG_DEBUG("Enter " + callString);
-
-  int numberOfArguments;
-  ARGUMENT_NAME::GetNumberOfArguments(&numberOfArguments);
-
-  for (int i = 0; i < numberOfArguments; ++i)
-  {
-    ArgumentName argName;
-    ARGUMENT_NAME::GetArgumentName(i, &argName);
-
-    if (argumentName == argName)
-    {
-      // LOG_DEBUG("Exit " + callString);
-      return false;
-    }
-  }
-
-  LOG_ERROR("Invalid ArgumentName encountered.");
-  // LOG_DEBUG("Exit " + callString);
-  return true;
-}
-
-int ModelImplementation::Validate(CallbackName const callbackName) const
-{
-  // No debug logging for Validate: too expensive
-  //
-  // #if DEBUG_VERBOSITY
-  //   std::string const callString = "Validate(" + callbackName.String()
-  //       + ").";
-  // #endif
-  //   LOG_DEBUG("Enter " + callString);
-
-  int numberOfCallbacks;
-  CALLBACK_NAME::GetNumberOfCallbacks(&numberOfCallbacks);
-
-  for (int i = 0; i < numberOfCallbacks; ++i)
-  {
-    CallbackName cbName;
-    CALLBACK_NAME::GetCallbackName(i, &cbName);
-
-    if (callbackName == cbName)
-    {
-      // LOG_DEBUG("Exit " + callString);
-      return false;
-    }
-  }
-
-  LOG_ERROR("Invalid CallbackName encountered.");
-  // LOG_DEBUG("Exit " + callString);
-  return true;
 }
 
 int ModelImplementation::Validate(ChargeUnit const chargeUnit) const

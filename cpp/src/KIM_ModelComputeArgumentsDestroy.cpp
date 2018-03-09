@@ -30,49 +30,51 @@
 // Release: This file is part of the kim-api.git repository.
 //
 
-#ifndef KIM_MODEL_COMPUTE_HPP_
-#include "KIM_ModelCompute.hpp"
+
+#ifndef KIM_MODEL_COMPUTE_ARGUMENTS_DESTROY_HPP_
+#include "KIM_ModelComputeArgumentsDestroy.hpp"
 #endif
 
-#ifndef KIM_MODEL_IMPLEMENTATION_HPP_
-#include "KIM_ModelImplementation.hpp"
+#ifndef KIM_COMPUTE_ARGUMENTS_IMPLEMENTATION_HPP_
+#include "KIM_ComputeArgumentsImplementation.hpp"
 #endif
 
-#define CONVERT_POINTER ModelImplementation *pImpl      \
-  = reinterpret_cast<ModelImplementation *>(pimpl)
+#define CONVERT_POINTER ComputeArgumentsImplementation *pImpl   \
+  = reinterpret_cast<ComputeArgumentsImplementation *>(pimpl)
+
 
 namespace KIM
 {
-
-void ModelCompute::GetModelBufferPointer(void ** const ptr) const
+void ModelComputeArgumentsDestroy::GetModelBufferPointer(void ** const ptr)
+    const
 {
   CONVERT_POINTER;
 
   pImpl->GetModelBufferPointer(ptr);
 }
 
-void ModelCompute::LogEntry(LogVerbosity const logVerbosity,
-                            std::string const & message,
-                            int const lineNumber,
-                            std::string const & fileName) const
+void ModelComputeArgumentsDestroy::LogEntry(LogVerbosity const logVerbosity,
+                                            std::string const & message,
+                                            int const lineNumber,
+                                            std::string const & fileName) const
 {
   CONVERT_POINTER;
 
   pImpl->LogEntry(logVerbosity, message, lineNumber, fileName);
 }
 
-std::string const & ModelCompute::String() const
+std::string const & ModelComputeArgumentsDestroy::String() const
 {
   CONVERT_POINTER;
 
   return pImpl->String();
 }
 
-ModelCompute::ModelCompute() : pimpl(0)
+ModelComputeArgumentsDestroy::ModelComputeArgumentsDestroy() : pimpl(0)
 {
 }
 
-ModelCompute::~ModelCompute()
+ModelComputeArgumentsDestroy::~ModelComputeArgumentsDestroy()
 {
 }
 

@@ -82,18 +82,6 @@ void Model::GetNeighborListCutoffsPointer(int * const numberOfCutoffs,
   pimpl->GetNeighborListCutoffsPointer(numberOfCutoffs, cutoffs);
 }
 
-int Model::GetArgumentSupportStatus(ArgumentName const argumentName,
-                                    SupportStatus * const supportStatus) const
-{
-  return pimpl->GetArgumentSupportStatus(argumentName, supportStatus);
-}
-
-int Model::GetCallbackSupportStatus(CallbackName const callbackName,
-                                    SupportStatus * const supportStatus) const
-{
-  return pimpl->GetCallbackSupportStatus(callbackName, supportStatus);
-}
-
 void Model::GetUnits(LengthUnit * const lengthUnit,
                      EnergyUnit * const energyUnit,
                      ChargeUnit * const chargeUnit,
@@ -104,31 +92,21 @@ void Model::GetUnits(LengthUnit * const lengthUnit,
                   timeUnit);
 }
 
-
-int Model::SetArgumentPointer(ArgumentName const argumentName,
-                              int const * const ptr)
+int Model::ComputeArgumentsCreate(ComputeArguments ** const computeArguments)
+    const
 {
-  return pimpl->SetArgumentPointer(argumentName, ptr);
+  return pimpl->ComputeArgumentsCreate(computeArguments);
 }
 
-int Model::SetArgumentPointer(ArgumentName const argumentName,
-                              double const * const ptr)
+int Model::ComputeArgumentsDestroy(ComputeArguments ** const computeArguments)
+    const
 {
-  return pimpl->SetArgumentPointer(argumentName, ptr);
+  return pimpl->ComputeArgumentsDestroy(computeArguments);
 }
 
-int Model::SetCallbackPointer(CallbackName const callbackName,
-                              LanguageName const languageName,
-                              func * const fptr,
-                              void const * const dataObject)
+int Model::Compute(ComputeArguments const * const computeArguments) const
 {
-  return pimpl->SetCallbackPointer(callbackName, languageName, fptr,
-                                   dataObject);
-}
-
-int Model::Compute() const
-{
-  return pimpl->Compute();
+  return pimpl->Compute(computeArguments);
 }
 
 int Model::ClearInfluenceDistanceAndCutoffsThenRefreshModel()

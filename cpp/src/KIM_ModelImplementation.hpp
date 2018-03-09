@@ -70,12 +70,8 @@
 #include "KIM_SupportStatus.hpp"
 #endif
 
-#ifndef KIM_ARGUMENT_NAME_HPP_
-#include "KIM_ArgumentName.hpp"
-#endif
-
-#ifndef KIM_CALLBACK_NAME_HPP_
-#include "KIM_CallbackName.hpp"
+#ifndef KIM_COMPUTE_ARGUMENTS_HPP_
+#include "KIM_ComputeArguments.hpp"
 #endif
 
 #ifndef KIM_MODEL_LIBRARY_HPP_
@@ -102,6 +98,9 @@ class ModelImplementation
                     ModelImplementation ** const modelImplementation);
   static void Destroy(ModelImplementation ** const modelImplementation);
 
+  int ComputeArgumentsCreate(ComputeArguments ** const computeArguments) const;
+  int ComputeArgumentsDestroy(ComputeArguments ** const computeArguments) const;
+
   void SetInfluenceDistancePointer(double const * const influenceDistance);
   void GetInfluenceDistance(double * const influenceDistance) const;
 
@@ -114,6 +113,10 @@ class ModelImplementation
 
   int SetRefreshPointer(LanguageName const languageName, func * const fptr);
   int SetDestroyPointer(LanguageName const languageName, func * const fptr);
+  int SetComputeArgumentsCreatePointer(LanguageName const languageName,
+                                       func * const fptr);
+  int SetComputeArgumentsDestroyPointer(LanguageName const languageName,
+                                        func * const fptr);
   int SetComputePointer(LanguageName const languageName, func * const fptr);
 
 
@@ -122,17 +125,6 @@ class ModelImplementation
                                int * const speciesIsSupported,
                                int * const code) const;
 
-
-  int SetArgumentSupportStatus(ArgumentName const argumentName,
-                               SupportStatus const supportStatus);
-  int GetArgumentSupportStatus(ArgumentName const argumentName,
-                               SupportStatus * const supportStatus) const;
-
-
-  int SetCallbackSupportStatus(CallbackName const callbackName,
-                               SupportStatus const supportStatus);
-  int GetCallbackSupportStatus(CallbackName const callbackName,
-                               SupportStatus * const supportStatus) const;
 
   int SetModelNumbering(Numbering const numbering);
  private:
@@ -173,44 +165,8 @@ class ModelImplementation
                    double const parameterValue);
 
 
-  int SetArgumentPointer(ArgumentName const argumentName,
-                         int const * const ptr);
-  int SetArgumentPointer(ArgumentName const argumentName,
-                         double const * const ptr);
-  int GetArgumentPointer(ArgumentName const argumentName,
-                         int const ** const ptr) const;
-  int GetArgumentPointer(ArgumentName const argumentName,
-                         int ** const ptr) const;
-  int GetArgumentPointer(ArgumentName const argumentName,
-                         double const ** const ptr) const;
-  int GetArgumentPointer(ArgumentName const argumentName,
-                         double ** const ptr) const;
-
-
-  int SetCallbackPointer(CallbackName const callbackName,
-                         LanguageName const languageName,
-                         func * const fptr,
-                         void const * const dataObject);
-  int IsCallbackPresent(CallbackName const callbackName, int * const present)
-      const;
-
-
-  int Compute() const;
+  int Compute(ComputeArguments const * const computeArguments) const;
   int ClearInfluenceDistanceAndCutoffsThenRefreshModel();
-
-
-  int GetNeighborList(int const neighborListIndex, int const particleNumber,
-                      int * const numberOfNeighbors,
-                      int const ** const neighborsOfParticle) const;
-
-  int ProcessDEDrTerm(double const de, double const r, double const * const dx,
-                      int const i, int const j) const;
-
-  int ProcessD2EDr2Term(double const de, double const * const r,
-                        double const * const dx, int const * const i,
-                        int const * const j) const;
-
-
 
 
   void SetModelBufferPointer(void * const ptr);
@@ -263,8 +219,12 @@ class ModelImplementation
                   std::string const & modelName);
   int ModelDestroy();
 
-  int Validate(ArgumentName const argumentName) const;
-  int Validate(CallbackName const callbackName) const;
+  int ModelComputeArgumentsCreate(ComputeArguments * const computeArguments)
+      const;
+  int ModelComputeArgumentsDestroy(ComputeArguments * const computeArguments)
+      const;
+
+
   int Validate(ChargeUnit const chargeUnit) const;
   int Validate(DataType const dataType) const;
   int Validate(EnergyUnit const energyUnit) const;
@@ -326,29 +286,15 @@ class ModelImplementation
   func * refreshFunction_;
   LanguageName destroyLanguage_;
   func * destroyFunction_;
+  LanguageName computeArgumentsCreateLanguage_;
+  func * computeArgumentsCreateFunction_;
+  LanguageName computeArgumentsDestroyLanguage_;
+  func * computeArgumentsDestroyFunction_;
   LanguageName computeLanguage_;
   func * computeFunction_;
 
 
   std::map<SpeciesName const, int, SPECIES_NAME::Comparator> supportedSpecies_;
-
-
-  std::map<ArgumentName const, SupportStatus, ARGUMENT_NAME::Comparator>
-  argumentSupportStatus_;
-  std::map<ArgumentName const, void *, ARGUMENT_NAME::Comparator>
-  argumentPointer_;
-
-
-  std::map<CallbackName const, SupportStatus, CALLBACK_NAME::Comparator>
-  callbackSupportStatus_;
-  std::map<CallbackName const, LanguageName, CALLBACK_NAME::Comparator>
-  callbackLanguage_;
-  std::map<CallbackName const, func *, CALLBACK_NAME::Comparator>
-  callbackFunctionPointer_;
-  std::map<CallbackName const, void const *, CALLBACK_NAME::Comparator>
-  callbackDataObjectPointer_;
-
-  mutable std::vector<std::vector<int> > getNeighborListStorage_;
 
 
   std::vector<std::string> parameterDescription_;
