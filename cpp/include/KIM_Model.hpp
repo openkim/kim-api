@@ -103,7 +103,7 @@ class Model
   int Compute() const;
   int ClearInfluenceDistanceAndCutoffsThenRefreshModel();
 
-  int GetSpeciesSupportAndCode(KIM::SpeciesName const speciesName,
+  int GetSpeciesSupportAndCode(SpeciesName const speciesName,
                                int * const speciesIsSupported,
                                int * const code) const;
 

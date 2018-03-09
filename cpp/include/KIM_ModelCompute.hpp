@@ -42,6 +42,7 @@ namespace KIM
 class LogVerbosity;
 class ArgumentName;
 class CallbackName;
+class ModelComputeImplementation;
 
 
 class ModelCompute{
@@ -83,7 +84,6 @@ class ModelCompute{
   ModelCompute();
   ~ModelCompute();
 
-  class ModelComputeImplementation;
   ModelComputeImplementation * pimpl;
 };  // class ModelCompute
 }  // namespace KIM

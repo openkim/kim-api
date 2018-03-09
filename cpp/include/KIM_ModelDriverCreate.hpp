@@ -56,6 +56,7 @@ class TemperatureUnit;
 class TimeUnit;
 class ArgumentName;
 class CallbackName;
+class ModelDriverCreateImplementation;
 
 
 class ModelDriverCreate
@@ -127,7 +128,6 @@ class ModelDriverCreate
   ModelDriverCreate();
   ~ModelDriverCreate();
 
-  class ModelDriverCreateImplementation;
   ModelDriverCreateImplementation * pimpl;
 };  // class ModelDriverCreate
 }  // namespace KIM

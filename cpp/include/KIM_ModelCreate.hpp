@@ -56,6 +56,7 @@ class TemperatureUnit;
 class TimeUnit;
 class ArgumentName;
 class CallbackName;
+class ModelCreateImplementation;
 
 
 class ModelCreate
@@ -123,7 +124,6 @@ class ModelCreate
   ModelCreate();
   ~ModelCreate();
 
-  class ModelCreateImplementation;
   ModelCreateImplementation * pimpl;
 };  // class ModelCreate
 }  // namespace KIM

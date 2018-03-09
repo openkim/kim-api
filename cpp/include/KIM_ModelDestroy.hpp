@@ -40,6 +40,8 @@ namespace KIM
 {
 // Forward declarations
 class LogVerbosity;
+class ModelDestroyImplementation;
+
 
 class ModelDestroy{
  public:
@@ -57,7 +59,6 @@ class ModelDestroy{
   ModelDestroy();
   ~ModelDestroy();
 
-  class ModelDestroyImplementation;
   ModelDestroyImplementation * pimpl;
 };  // class ModelDestroy
 }  // namespace KIM

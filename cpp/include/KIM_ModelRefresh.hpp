@@ -45,6 +45,7 @@ class EnergyUnit;
 class ChargeUnit;
 class TemperatureUnit;
 class TimeUnit;
+class ModelRefreshImplementation;
 
 
 class ModelRefresh{
@@ -68,7 +69,6 @@ class ModelRefresh{
   ModelRefresh();
   ~ModelRefresh();
 
-  class ModelRefreshImplementation;
   ModelRefreshImplementation * pimpl;
 };  // class ModelRefresh
 }  // namespace KIM
