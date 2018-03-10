@@ -202,7 +202,7 @@ clean:
                       $(EXPORT_LIST_NAME) descriptor.kim
 
 check-for-empty-environment-collection:
-	$(QUELL)if test x"$(install_modeldir)" = x"--empty--/$(MODEL_NAME)"; then \
+	$(QUELL)if test x"$(install_parammodeldir)" = x"--empty--/$(MODEL_NAME)"; then \
                   printf "Environment variable '$(shell $(COLLECTIONS_INFO) env env | sed -e 's/\([^[:space:]]*\) .*/\1/')' is empty.\n"; \
                   false; else true; \
                 fi
