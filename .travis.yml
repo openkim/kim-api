@@ -1,0 +1,11 @@
+language: cpp
+
+addons:
+  apt:
+    packages:
+      - gfortran
+
+script:
+ - ./configure
+ - make
+ - make install DESTDIR=${PWD}
