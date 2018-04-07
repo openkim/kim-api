@@ -112,6 +112,7 @@ rm -rf examples/openkim_tests/ex_test_Ar_*CPP
 rm -f  'examples/openkim_tests/run_all_training_tests'
 rm -rf 'examples/openkim_tests/ex_test_Ar_free_cluster_energy'
 
+rm -f '.travis.yml'
 rm -f README_GIT
 rm -rf scripts
 rm -f 'docs/kim-api-introduction.pptx'
