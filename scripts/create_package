@@ -97,6 +97,7 @@ ed Makefile.Version <<EOF
 w
 EOF
 
+rm -f '.travis.yml'
 rm -rf scripts
 rm -f `find . -name ".gitignore"`
 
