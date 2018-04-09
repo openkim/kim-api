@@ -53,9 +53,10 @@ usage () {
   printf "  ${command} install\n"
   printf "          (CWD | environment | user | system [--sudo])\n"
   printf "          (<openkim-item-id>... | <local-item-path>... | OpenKIM)\n"
-  printf "  ${command} reinstall [--sudo] (<openkim-item-id> | <local-item-path>)...\n"
-  printf "  ${command} remove [--sudo] <item-id>...\n"
-  printf "  ${command} remove-all [--sudo]\n"
+  printf "  ${command} reinstall [--interacitive] [--sudo]\n"
+  printf "          (<openkim-item-id> | <local-item-path>)...\n"
+  printf "  ${command} remove [--interactive] [--sudo] <item-id>...\n"
+  printf "  ${command} remove-all [--interactive] [--sudo]\n"
   printf "\n\n"
 
   printf "list:\n"
@@ -74,6 +75,8 @@ usage () {
   printf "\n"
   printf "reinstall:\n"
   printf "  Remove and reinstall items.\n"
+  printf "  WARNING: This will remove and reinstall the entire directory of files\n"
+  printf "           associated with the item.\n"
   printf "\n"
   printf "remove:\n"
   printf "  Remove model or model driver.\n"
@@ -392,8 +395,10 @@ remove_item () {
   local item_name="$1"
   local use_sudo="$2"
   local PASSWORD="$3"
+  local interactive="$4"
   local found_item=""
   local item_type=""
+  local confirmed=1
 
   # check for existing item
   found_item="`${collections_info} model_drivers find "${item_name}"`"
@@ -411,11 +416,21 @@ remove_item () {
 
   local item_dir="`${collections_info} "${item_type}" find "${item_name}" | sed -e 's/^[^ ]* [^ ]* \([^ ]*\).*/\1/'`""/${item_name}"
 
-  printf "Removing '%s'.\n" "${item_dir}"
-  if test x"sudo-yes" = x"${use_sudo}"; then
-    printf -- "${PASSWORD}\n" | sudo -k -S rm -rf "${item_dir}" 2> /dev/null || return 1
+  printf "Removing '%s'. " "${item_dir}"
+  if test x"${interactive}" = x"interactive"; then
+    if get_confirmation; then
+      confirmed=0
+    fi
   else
-    rm -rf "${item_dir}" || return 1
+    printf "\n"
+    confirmed=0
+  fi
+  if test 0 -eq ${confirmed}; then
+    if test x"sudo-yes" = x"${use_sudo}"; then
+      printf -- "${PASSWORD}\n" | sudo -k -S rm -rf "${item_dir}" 2> /dev/null || return 1
+    else
+      rm -rf "${item_dir}" || return 1
+    fi
   fi
 }
 
@@ -811,46 +826,65 @@ case $command in
       exit 1
     else
       shift
-      if test x"--sudo" = x"$1"; then
+      use_sudo="sudo-no"
+      use_interactive="interactive-no"
+      while test x"--" = x"`printf -- "$1" | sed -e 's/^\(..\).*/\1/'`"; do
+        case $1 in
+          --interactive)
+            use_interactive="interactive"
+          ;;
+          --sudo)
+            use_sudo="sudo-yes"
+            if ! get_password; then
+              printf "\nAborting!\n"
+              exit 1
+            fi
+            ;;
+          *)
+            printf "unknown option: %s\n\n" $1
+            usage
+            exit 1
+            ;;
+        esac
         shift
-        use_sudo="sudo-yes"
-        if ! get_password; then
-          printf "\nAborting!\n"
-          exit 1
-        fi
-      else
-        use_sudo="sudo-no"
-      fi
+      done
     fi
-    for item_id in $@; do
-      if check_for_local_build "${item_id}"; then  # sets local_build_path
-        if ! get_local_build_item_name "${local_build_path}"; then  # sets item_name
-          printf "\nAborting!\n"
-          exit 1
-        fi
-      else
-        if ! check_item_compatibility "${item_id}"; then
-          printf "\nAborting!\n"
-          exit 1
+    printf "This will remove and reinstall all files associated with these items.\n"
+    printf "  Use the '--interactive' option to request confirmation\n"
+    printf "  before attempting to remove each item.\n"
+    printf "\n"
+    printf "Are you sure you want to proceed? "
+    if get_confirmation; then
+      for item_id in $@; do
+        if check_for_local_build "${item_id}"; then  # sets local_build_path
+          if ! get_local_build_item_name "${local_build_path}"; then  # sets item_name
+            printf "\nAborting!\n"
+            exit 1
+          fi
         else
-          item_name="${item_id}"
+          if ! check_item_compatibility "${item_id}"; then
+            printf "\nAborting!\n"
+            exit 1
+          else
+            item_name="${item_id}"
+          fi
         fi
-      fi
-      found_item="`${collections_info} model_drivers find "${item_name}"` `${collections_info} models find "${item_name}"`"
-      if test \! x"" = x"${found_item}"; then
-        item_collection="`printf "${found_item}" | sed -e 's/^[[:space:]]*\([^[:space:]]*\) .*/\1/'`"
-        if ! (remove_item "${item_name}" "${use_sudo}" "${PASSWORD}" && \
-                get_build_install_item "${item_collection}" "${item_id}" "${use_sudo}" "${PASSWORD}"); then
+        found_item="`${collections_info} model_drivers find "${item_name}"` `${collections_info} models find "${item_name}"`"
+        if test \! x"" = x"${found_item}"; then
+          item_collection="`printf "${found_item}" | sed -e 's/^[[:space:]]*\([^[:space:]]*\) .*/\1/'`"
+          if ! (remove_item "${item_name}" "${use_sudo}" "${PASSWORD}" "${use_interacitve}" && \
+                  get_build_install_item "${item_collection}" "${item_id}" "${use_sudo}" "${PASSWORD}"); then
+            printf "\nAborting!\n"
+            exit 1
+          else
+            printf "\nSuccess!\n"
+          fi
+        else
           printf "\nAborting!\n"
           exit 1
-        else
-          printf "\nSuccess!\n"
         fi
-      else
-        printf "\nAborting!\n"
-        exit 1
-      fi
-    done
+      done
+    fi
     ;;
   remove)
     if test $# -lt 2; then
@@ -858,23 +892,37 @@ case $command in
       exit 1
     else
       shift
-      if test x"--sudo" = x"$1"; then
+      use_sudo="sudo-no"
+      use_interactive="interactive-no"
+      while test x"--" = x"`printf -- "$1" | sed -e 's/^\(..\).*/\1/'`"; do
+        case $1 in
+          --interactive)
+            use_interactive="interactive"
+          ;;
+          --sudo)
+            use_sudo="sudo-yes"
+            if ! get_password; then
+              printf "\nAborting!\n"
+              exit 1
+            fi
+            ;;
+          *)
+            printf "unknown option: %s\n\n" $1
+            usage
+            exit 1
+            ;;
+        esac
         shift
-        use_sudo="sudo-yes"
-        if ! get_password; then
-          printf "\nAborting!\n"
-          exit 1
-        fi
-      else
-        use_sudo="sudo-no"
-      fi
+      done
     fi
     printf "This will remove all files associated with these items.\n"
+    printf "  Use the '--interactive' option to request confirmation\n"
+    printf "  before attempting to remove each item.\n"
     printf "\n"
     printf "Are you sure you want to proceed? "
     if get_confirmation; then
       for item_id in $@; do
-        if ! remove_item "${item_id}" "${use_sudo}" "${PASSWORD}"; then
+        if ! remove_item "${item_id}" "${use_sudo}" "${PASSWORD}" "${use_interactive}"; then
           printf "\nAborting!\n"
           exit 1
         else
@@ -886,31 +934,45 @@ case $command in
     fi
     ;;
   remove-all)
-    if test $# -eq 2; then
-      if test x"--sudo" = x"$2"; then
-        use_sudo="sudo-yes"
-        if ! get_password; then
-          printf "\nAborting!\n"
+    shift
+    use_sudo="sudo-no"
+    use_interactive="interactive-no"
+    while test x"--" = x"`printf -- "$1" | sed -e 's/^\(..\).*/\1/'`"; do
+      case $1 in
+        --interactive)
+          use_interactive="interactive"
+          ;;
+        --sudo)
+          use_sudo="sudo-yes"
+          if ! get_password; then
+            printf "\nAborting!\n"
+            exit 1
+          fi
+          ;;
+        *)
+          printf "unknown option: %s\n\n" $1
+          usage
           exit 1
-        fi
-      else
-        use_sudo="sudo-no"
-      fi
-    fi
+          ;;
+      esac
+      shift
+    done
     printf "This will remove all files associated with all items in the 'environment',\n"
     printf "'user', and 'system' collections.\n"
+    printf "  Use the '--interactive' option to request confirmation\n"
+    printf "  before attempting to remove each item.\n"
     printf "\n"
     printf "Are you sure you want to proceed? "
     if get_confirmation; then
       # get full list and loop over it to remove
       for item_id in `${collections_info} model_drivers | sed -e 's/^[^[:space:]]* \([^[:space:]]*\).*/\1/'`; do
-        if ! remove_item "${item_id}" "${use_sudo}" "${PASSWORD}"; then
+        if ! remove_item "${item_id}" "${use_sudo}" "${PASSWORD}" "${use_interactive}"; then
           printf "\n Aborting!\n"
           exit 1
         fi
       done
       for item_id in `${collections_info} models | sed -e 's/^[^[:space:]]* \([^[:space:]]*\).*/\1/'`; do
-        if ! remove_item "${item_id}" "${use_sudo}" "${PASSWORD}"; then
+        if ! remove_item "${item_id}" "${use_sudo}" "${PASSWORD}" "${use_interactive}"; then
           printf "\n Aborting!\n"
           exit 1
         fi

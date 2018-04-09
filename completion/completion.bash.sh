@@ -126,7 +126,11 @@ _###FULL#PACKAGE#NAME###-collections-management()
       reinstall|remove)
         opts=""
         if test ${COMP_CWORD} -eq 2; then
+          opts="--interactive --sudo"
+        elif test ${COMP_CWORD} -eq 3 -a x"--interactive" = x"${COMP_WORDS[2]}"; then
           opts="--sudo"
+        elif test ${COMP_CWORD} -eq 3 -a x"--sudo" = x"${COMP_WORDS[2]}"; then
+          opts="--interactive"
         fi
         local models drivers
         models=`${collections_info} models | sed -e 's|[^[:space:]]* \([^[:space:]]*\) .*|\1|'`
@@ -140,12 +144,16 @@ _###FULL#PACKAGE#NAME###-collections-management()
         return 0;
         ;;
       remove-all)
+        opts=""
         if test ${COMP_CWORD} -eq 2; then
-          COMPREPLY=( "--sudo" )
-          return 0
-        else
-          return 1
+          opts="--interactive --sudo"
+        elif test ${COMP_CWORD} -eq 3 -a x"--interactive" = x"${COMP_WORDS[2]}"; then
+          opts="--sudo"
+        elif test ${COMP_CWORD} -eq 3 -a x"--sudo" = x"${COMP_WORDS[2]}"; then
+          opts="--interactive"
         fi
+        COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+        return 0
         ;;
       *)
         return 1
