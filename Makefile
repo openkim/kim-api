@@ -40,6 +40,9 @@ include Makefile.KIM_Config
 #
 .PHONY: help
 
+# see https://github.com/openkim/kim-api/issues/4
+.NOTPARALLEL:
+
 help:
 	@printf "TARGETS FOR HELP\n"
 	@printf "'help'                       -- print this list of targets\n"
