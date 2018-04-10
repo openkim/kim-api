@@ -418,11 +418,11 @@ remove_item () {
 
   printf "Removing '%s'. " "${item_dir}"
   if test x"${interactive}" = x"interactive"; then
+    printf "Continue? "
     if get_confirmation; then
       confirmed=0
     fi
   else
-    printf "\n"
     confirmed=0
   fi
   if test 0 -eq ${confirmed}; then
@@ -431,6 +431,9 @@ remove_item () {
     else
       rm -rf "${item_dir}" || return 1
     fi
+    printf "[done]\n"
+  else
+    printf "[skipped]\n"
   fi
 }
 
@@ -832,7 +835,7 @@ case $command in
         case $1 in
           --interactive)
             use_interactive="interactive"
-          ;;
+            ;;
           --sudo)
             use_sudo="sudo-yes"
             if ! get_password; then
@@ -872,18 +875,17 @@ case $command in
         found_item="`${collections_info} model_drivers find "${item_name}"` `${collections_info} models find "${item_name}"`"
         if test \! x"" = x"${found_item}"; then
           item_collection="`printf "${found_item}" | sed -e 's/^[[:space:]]*\([^[:space:]]*\) .*/\1/'`"
-          if ! (remove_item "${item_name}" "${use_sudo}" "${PASSWORD}" "${use_interacitve}" && \
+          if ! (remove_item "${item_name}" "${use_sudo}" "${PASSWORD}" "${use_interactive}" && \
                   get_build_install_item "${item_collection}" "${item_id}" "${use_sudo}" "${PASSWORD}"); then
             printf "\nAborting!\n"
             exit 1
-          else
-            printf "\nSuccess!\n"
           fi
         else
           printf "\nAborting!\n"
           exit 1
         fi
       done
+      printf "\nSuccess!\n"
     fi
     ;;
   remove)
@@ -898,7 +900,7 @@ case $command in
         case $1 in
           --interactive)
             use_interactive="interactive"
-          ;;
+            ;;
           --sudo)
             use_sudo="sudo-yes"
             if ! get_password; then
@@ -925,10 +927,9 @@ case $command in
         if ! remove_item "${item_id}" "${use_sudo}" "${PASSWORD}" "${use_interactive}"; then
           printf "\nAborting!\n"
           exit 1
-        else
-          printf "\nSuccess!\n"
         fi
       done
+      printf "\nSuccess!\n"
     else
       printf "\nAborting!\n"
     fi
