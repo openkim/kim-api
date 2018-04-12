@@ -162,7 +162,7 @@ install-check:
                   rm -f  "$(DESTDIR)$(libdir)/lib$(full_package_name).so"; \
                 fi
 
-installdirs:
+installdirs: install-check
 	$(QUELL)$(INSTALL_PROGRAM) -d -m 0755 "$(DESTDIR)$(includedir)"
 	$(QUELL)$(INSTALL_PROGRAM) -d -m 0755 "$(install_includedir)"
 	$(QUELL)$(INSTALL_PROGRAM) -d -m 0755 "$(install_modelsdir)"

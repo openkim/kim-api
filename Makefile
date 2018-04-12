@@ -40,9 +40,6 @@ include Makefile.KIM_Config
 #
 .PHONY: help
 
-# see https://github.com/openkim/kim-api/issues/4
-.NOTPARALLEL:
-
 help:
 	@printf "TARGETS FOR HELP\n"
 	@printf "'help'                       -- print this list of targets\n"
@@ -97,13 +94,13 @@ $(KIM_CONFIG_FILES): $(KIM_MAKE_FILES)
                   printf 'include $(package_dir)/Makefile.KIM_Config\n'                          >> $@; \
                 fi
 
-kim-api-objects: $(KIM_MAKE_FILES) kim-api-objects-making-echo
+kim-api-objects: $(KIM_MAKE_FILES) config kim-api-objects-making-echo
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(srcdir) objects
 
-kim-api-libs: $(KIM_MAKE_FILES) kim-api-libs-making-echo
+kim-api-libs: $(KIM_MAKE_FILES) kim-api-objects kim-api-libs-making-echo
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(srcdir) libs
 
-utils-all: $(KIM_MAKE_FILES) src/utils-making-echo
+utils-all: $(KIM_MAKE_FILES) kim-api-libs src/utils-making-echo
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(srcdir)/utils all
 
 completion-all: $(KIM_MAKE_FILES) completion-making-echo
@@ -118,17 +115,17 @@ completion-all: $(KIM_MAKE_FILES) completion-making-echo
 clean: config kim-api-clean utils-clean completion-clean config-clean
 
 # build targets involved in "make clean"
-kim-api-clean:
+kim-api-clean: config
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(srcdir) clean
 	$(QUELL)rm -f kim.log
 
-utils-clean:
+utils-clean: config
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(srcdir)/utils clean
 
-completion-clean:
+completion-clean: config
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(compdir) clean
 
-config-clean:
+config-clean: config
 	@printf "Cleaning... KIM_Config files.\n"
 	$(QUELL)rm -f $(KIM_CONFIG_FILES)
 
@@ -138,7 +135,7 @@ config-clean:
 #
 .PHONY: install install-check installdirs kim-api-objects-install kim-api-libs-install config-install utils-install completion-install
 
-install: install-check config kim-api-objects-install kim-api-libs-install utils-install config-install completion-install
+install: install-check all kim-api-objects-install kim-api-libs-install utils-install config-install completion-install
 
 # build targets involved in "make install"
 install_builddir = $(dest_package_dir)/$(builddir)
@@ -148,7 +145,7 @@ install_compiler = Makefile.GCC Makefile.INTEL
 install_linkerdir = $(dest_package_dir)/$(buildlinkerdir)
 install_linker = Makefile.DARWIN Makefile.FREEBSD Makefile.LINUX
 
-install-check:
+install-check: $(KIM_MAKE_FILES)
 	$(QUELL)if test -d "$(dest_package_dir)"; then \
                   rm -rf "$(install_linkerdir)"; \
                   rm -rf "$(install_compilerdir)"; \
@@ -157,19 +154,19 @@ install-check:
                   rm -f  "$(dest_package_dir)/Makefile.Version"; \
                 fi
 
-kim-api-objects-install:
+kim-api-objects-install: $(KIM_MAKE_FILES) kim-api-objects
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(srcdir) objects-install
 
-kim-api-libs-install:
+kim-api-libs-install: $(KIM_MAKE_FILES) kim-api-libs
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(srcdir) libs-install
 
-utils-install:
+utils-install: $(KIM_MAKE_FILES) utils-all
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(srcdir)/utils install
 
-completion-install:
+completion-install: $(KIM_MAKE_FILES) completion-all
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(compdir) install
 
-config-install: installdirs
+config-install: $(KIM_MAKE_FILES) config installdirs
 	@printf "Installing...($(dest_package_dir))................................. $(builddir)"
         # Install make directory
 	$(QUELL)for fl in $(install_make); do $(INSTALL_PROGRAM) -m 0644 "$(builddir)/$$fl" "$(install_builddir)/$$fl"; done
@@ -192,7 +189,7 @@ config-install: installdirs
   endif
 	@printf ".\n"
 
-installdirs:
+installdirs: $(KIM_MAKE_FILES)
 	$(QUELL)$(INSTALL_PROGRAM) -d -m 0755 "$(install_builddir)"
 	$(QUELL)$(INSTALL_PROGRAM) -d -m 0755 "$(install_compilerdir)"
 	$(QUELL)$(INSTALL_PROGRAM) -d -m 0755 "$(install_linkerdir)"
@@ -206,19 +203,19 @@ installdirs:
 uninstall: config kim-api-objects-uninstall kim-api-libs-uninstall utils-uninstall completion-uninstall config-uninstall
 
 # targets involved in "make uninstall"
-kim-api-objects-uninstall:
+kim-api-objects-uninstall: $(KIM_MAKE_FILES) config
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(srcdir) objects-uninstall
 
-kim-api-libs-uninstall:
+kim-api-libs-uninstall: $(KIM_MAKE_FILES) config
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(srcdir) libs-uninstall
 
-utils-uninstall:
+utils-uninstall: $(KIM_MAKE_FILES) config
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(srcdir)/utils uninstall
 
-completion-uninstall:
+completion-uninstall: $(KIM_MAKE_FILES) config
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C $(compdir) uninstall
 
-config-uninstall:
+config-uninstall: $(KIM_MAKE_FILES) config
 	@printf "Uninstalling...($(dest_package_dir))................................. KIM_Config files.\n"
         # Make sure the package directory is gone
 	$(QUELL)if test -d "$(dest_package_dir)"; then rm -rf "$(dest_package_dir)"; fi
