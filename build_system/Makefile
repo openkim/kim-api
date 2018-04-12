@@ -70,7 +70,7 @@ dirs-install:
 	$(QUELL)$(INSTALL_PROGRAM) -d -m 0755 "$(install_compilerdir)"
 	$(QUELL)$(INSTALL_PROGRAM) -d -m 0755 "$(install_linkerdir)"
 
-build-system-install:
+build-system-install: dirs-install
 	$(QUELL)for fl in $(install_make); do $(INSTALL_PROGRAM) -m 0644 "$(KIM_DIR)/$(builddir)/$$fl" "$(install_builddir)/$$fl"; done
 	$(QUELL)for fl in $(install_compiler); do $(INSTALL_PROGRAM) -m 0644 "$(KIM_DIR)/$(buildcompilerdir)/$$fl" "$(install_compilerdir)/$$fl"; done
 	$(QUELL)for fl in $(install_linker); do $(INSTALL_PROGRAM) -m 0644 "$(KIM_DIR)/$(buildlinkerdir)/$$fl" "$(install_linkerdir)/$$fl"; done
@@ -88,7 +88,7 @@ build-system-uninstall:
 	$(QUELL)for fl in $(install_compiler); do if test -f "$(install_compilerdir)/$$fl"; then rm -f "$(install_compilerdir)/$$fl"; fi; done
 	$(QUELL)for fl in $(install_make); do if test -f "$(install_builddir)/$$fl"; then rm -f "$(install_builddir)/$$fl"; fi; done
 
-dirs-uninstall:
+dirs-uninstall: build-system-uninstall
 	$(QUELL)if test -d "$(install_linkerdir)"; then rmdir "$(install_linkerdir)" > /dev/null 2>&1 || true; fi
 	$(QUELL)if test -d "$(install_compilerdir)"; then rmdir "$(install_compilerdir)" > /dev/null 2>&1 || true; fi
 	$(QUELL)if test -d "$(install_builddir)"; then rmdir "$(install_builddir)" > /dev/null 2>&1 || true; fi

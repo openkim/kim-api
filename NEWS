@@ -32,6 +32,17 @@
 #
 
 
+=== kim-api-v1.9.4 ============== 09Apr2018 ====================================
+
+* Added '--interactive' option to collections-management utility.
+
+* Added Travis-CI support through GitHub.
+
+* Fixed bugs in collections-management utility.
+
+* Fixed bugs in build system.
+
+
 === kim-api-v1.9.3 ============== 10Feb2018 ====================================
 
 * Major additions to options supported by the kim-api-v1-collections-management

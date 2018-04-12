@@ -245,12 +245,12 @@ dirs-install:
 	$(QUELL)$(INSTALL_PROGRAM) -d -m 0755 "$(dest_package_dir)"
 	$(QUELL)$(INSTALL_PROGRAM) -d -m 0755 "$(DESTDIR)$(libdir)"
 
-headers-install:
+headers-install: dirs-install
 	@printf "Installing...($(dest_package_dir))................................. cpp/include.\n"
         # Install include files
 	$(QUELL)for fl in $(install_include_cpp); do $(INSTALL_PROGRAM) -m 0644 "../include/$$fl" "$(install_includedir)/$$fl"; done
 
-lib-install: lib$(KIM_LIB_BUILD).so
+lib-install: lib$(KIM_LIB_BUILD).so dirs-install
 	@printf "Installing...($(dest_package_dir))................................. cpp/src.\n"
         # Install lib files
 	$(QUELL)$(INSTALL_PROGRAM) -m 0755 "lib$(KIM_LIB_BUILD).so" "$(dest_package_dir)/lib$(KIM_LIB_BUILD).so"
@@ -276,7 +276,7 @@ headers-uninstall:
 	@printf "Uninstalling...($(dest_package_dir))................................. cpp/include.\n"
 	$(QUELL)for fl in $(install_include_cpp); do if test -f "$(install_includedir)/$$fl"; then rm -f "$(install_includedir)/$$fl"; fi; done
 
-dirs-uninstall:
+dirs-uninstall: lib-uninstall headers-uninstall
 	$(QUELL)if test -d "$(install_modeldriversdir)"; then rmdir "$(install_modeldriversdir)" > /dev/null 2>&1 || true; fi
 	$(QUELL)if test -d "$(install_modelsdir)"; then rmdir "$(install_modelsdir)" > /dev/null 2>&1 || true; fi
 	$(QUELL)if test -d "$(install_includedir)"; then rmdir "$(install_includedir)" > /dev/null 2>&1 || true; fi

@@ -74,28 +74,28 @@ KIM_MAKE_FILES += $(KIM_DIR)/Makefile
 
 # build targets involved in "make all"
 
-kim-api-fortran-includes-all: $(KIM_MAKE_FILES) kim-api-fortran-includes-making-echo
+kim-api-fortran-includes-all: kim-api-fortran-includes-making-echo
 	$(QUELL)#$(MAKE) $(MAKE_FLAGS) -C fortran/include all
 
-kim-api-c-includes-all: $(KIM_MAKE_FILES) kim-api-c-includes-making-echo
+kim-api-c-includes-all: kim-api-c-includes-making-echo
 	$(QUELL)#$(MAKE) $(MAKE_FLAGS) -C c/include all
 
-kim-api-cpp-includes-all: $(KIM_MAKE_FILES) kim-api-cpp-includes-making-echo
+kim-api-cpp-includes-all: kim-api-cpp-includes-making-echo
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C cpp/include all
 
-kim-api-fortran-all: $(KIM_MAKE_FILES) kim-api-fortran-making-echo
+kim-api-fortran-all: kim-api-fortran-includes-all kim-api-fortran-making-echo
 	$(QUELL)#$(MAKE) $(MAKE_FLAGS) -C fortran/src all
 
-kim-api-c-all: $(KIM_MAKE_FILES) kim-api-c-making-echo
+kim-api-c-all: kim-api-c-includes-all kim-api-c-making-echo
 	$(QUELL)#$(MAKE) $(MAKE_FLAGS) -C c/src all
 
-kim-api-cpp-all: $(KIM_MAKE_FILES) kim-api-cpp-making-echo
+kim-api-cpp-all: kim-api-cpp-includes-all kim-api-cpp-making-echo
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C cpp/src all
 
-utils-all: $(KIM_MAKE_FILES) cpp/src/utils-making-echo
+utils-all: kim-api-cpp-all cpp/src/utils-making-echo
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C cpp/src/utils all
 
-completion-all: $(KIM_MAKE_FILES) completion-making-echo
+completion-all: completion-making-echo
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C completion all
 
 
@@ -140,7 +140,7 @@ dirs-install:
 	$(QUELL)$(INSTALL_PROGRAM) -d -m 0755 "$(DESTDIR)$(bindir)"
 	$(QUELL)$(INSTALL_PROGRAM) -d -m 0755 "$(DESTDIR)$(libexecdir)"
 
-config-install:
+config-install: dirs-install
 	@printf "Installing...($(dest_package_dir))................................. config.\n"
 	$(QUELL)$(INSTALL_PROGRAM) -d -m 0755 "$(dest_package_dir)"
         # Install KIM_Config file
@@ -161,22 +161,22 @@ endif
                   rm -rf "$(DESTDIR)$(includedir)/$(full_package_name)"; fi && \
                 ln -s "$(package_dir)/include" "$(DESTDIR)$(includedir)/$(full_package_name)"
 
-build-system-install:
+build-system-install: dirs-install
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C build_system install
 
-kim-api-fortran-install:
+kim-api-fortran-install: dirs-install kim-api-fortran-all
 	$(QUELL)#$(MAKE) $(MAKE_FLAGS) -C fortran/src install
 
-kim-api-c-install:
+kim-api-c-install: dirs-install kim-api-c-all
 	$(QUELL)#$(MAKE) $(MAKE_FLAGS) -C c/src install
 
-kim-api-cpp-install:
+kim-api-cpp-install: dirs-install kim-api-cpp-all
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C cpp/src install
 
-utils-install:
+utils-install: dirs-install utils-all
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C cpp/src/utils install
 
-completion-install:
+completion-install: dirs-install completion-all
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C completion install
 
 #
@@ -193,7 +193,7 @@ completion-uninstall:
 utils-uninstall:
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C cpp/src/utils uninstall
 
-kim-api-cpp-uninstall:
+kim-api-cpp-uninstall: utils-uninstall
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C cpp/src uninstall
 
 kim-api-c-uninstall:
@@ -205,14 +205,14 @@ kim-api-fortran-uninstall:
 build-system-uninstall:
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C build_system uninstall
 
-config-uninstall:
+config-uninstall: completion-uninstall utils-uninstall kim-api-cpp-uninstall kim-api-c-uninstall kim-api-fortran-uninstall build-system-uninstall
 	@printf "Uninstalling...($(dest_package_dir))................................. config.\n"
 	$(QUELL)fl="$(DESTDIR)$(includedir)/$(full_package_name)" && if test -L "$$fl"; then rm -f "$$fl"; fi
 	$(QUELL)fl="$(dest_package_dir)/Makefile.KIM_Config" && if test -f "$$fl"; then rm -f "$$fl"; fi
 	$(QUELL)fl="$(dest_package_dir)/Makefile.Version" && if test -f "$$fl"; then rm -f "$$fl"; fi
 	$(QUELL)if test -d "$(dest_package_dir)"; then rmdir "$(dest_package_dir)" > /dev/null 2>&1 || true; fi
 
-dirs-uninstall:
+dirs-uninstall: config-uninstall
 	$(QUELL)if test -d "$(DESTDIR)$(libexecdir)"; then rmdir "$(DESTDIR)$(libexecdir)" > /dev/null 2>&1 || true; fi
 	$(QUELL)if test -d "$(DESTDIR)$(bindir)"; then rmdir "$(DESTDIR)$(bindir)" > /dev/null 2>&1 || true; fi
 	$(QUELL)if test -d "$(DESTDIR)$(libdir)"; then rmdir "$(DESTDIR)$(libdir)" > /dev/null 2>&1 || true; fi

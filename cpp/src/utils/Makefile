@@ -151,7 +151,7 @@ dirs-install:
 	$(QUELL)$(INSTALL_PROGRAM) -d -m 0755 "$(install_bindir)"
 	$(QUELL)$(INSTALL_PROGRAM) -d -m 0755 "$(install_libexecdir)/$(full_package_name)"
 
-programs-install: all
+programs-install: all dirs-install
 	@printf "Installing...($(dest_package_dir))................................. bin.\n"
 	@printf "Installing...($(dest_package_dir))................................. libexec.\n"
         # Install bin files
@@ -177,7 +177,7 @@ programs-uninstall:
 	$(QUELL)for fl in $(install_libexec); do if test -f "$(DESTDIR)$(install_libexecdir)/$(full_package_name)/$$fl"; then rm -f "$(DESTDIR)$(install_libexecdir)/$(full_package_name)/$$fl"; fi; done
 	$(QUELL) if test -L "$(DESTDIR)$(libexecdir)/$(full_package_name)"; then rm -f "$(DESTDIR)$(libexecdir)/$(full_package_name)"; fi
 
-dirs-uninstall:
+dirs-uninstall: programs-uninstall
 	$(QUELL)if test -d "$(install_libexecdir)/$(full_package_name)"; then rmdir "$(install_libexecdir)/$(full_package_name)" > /dev/null 2>&1 || true; fi
 	$(QUELL)if test -d "$(install_libexecdir)"; then rmdir "$(install_libexecdir)" > /dev/null 2>&1 || true; fi
 	$(QUELL)if test -d "$(install_bindir)"; then rmdir "$(install_bindir)" > /dev/null 2>&1 || true; fi

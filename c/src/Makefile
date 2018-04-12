@@ -174,7 +174,7 @@ install: dirs-install headers-install
 dirs-install:
 	$(QUELL)$(INSTALL_PROGRAM) -d -m 0755 "$(install_includedir)"
 
-headers-install:
+headers-install: dirs-install
 	@printf "Installing...($(dest_package_dir))................................. c/include.\n"
         # Install include files
 	$(QUELL)for fl in $(install_include_c); do $(INSTALL_PROGRAM) -m 0644 "../include/$$fl" "$(install_includedir)/$$fl"; done
@@ -191,6 +191,6 @@ headers-uninstall:
         # Uninstall include files
 	$(QUELL)for fl in $(install_include_c); do rm -f "$(install_includedir)/$$fl"; done
 
-dirs-uninstall:
+dirs-uninstall: headers-uninstall
 	$(QUELL)if test -d "$(install_includedir)"; then rmdir "$(install_includedir)" > /dev/null 2>&1 || true; fi
 	$(QUELL)if test -d "$(dest_package_dir)"; then rmdir "$(dest_package_dir)" > /dev/null 2>&1 || true; fi
