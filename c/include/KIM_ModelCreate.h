@@ -46,11 +46,6 @@
 typedef struct KIM_LogVerbosity KIM_LogVerbosity;
 #endif
 
-#ifndef KIM_SPECIES_NAME_DEFINED_
-#define KIM_SPECIES_NAME_DEFINED_
-typedef struct KIM_SpeciesName KIM_SpeciesName;
-#endif
-
 #ifndef KIM_LANGUAGE_NAME_DEFINED_
 #define KIM_LANGUAGE_NAME_DEFINED_
 typedef struct KIM_LanguageName KIM_LanguageName;
@@ -59,6 +54,16 @@ typedef struct KIM_LanguageName KIM_LanguageName;
 #ifndef KIM_NUMBERING_DEFINED_
 #define KIM_NUMBERING_DEFINED_
 typedef struct KIM_Numbering KIM_Numbering;
+#endif
+
+#ifndef KIM_SPECIES_NAME_DEFINED_
+#define KIM_SPECIES_NAME_DEFINED_
+typedef struct KIM_SpeciesName KIM_SpeciesName;
+#endif
+
+#ifndef KIM_SUPPORT_STATUS_DEFINED_
+#define KIM_SUPPORT_STATUS_DEFINED_
+typedef struct KIM_SupportStatus KIM_SupportStatus;
 #endif
 
 #ifndef KIM_LENGTH_UNIT_DEFINED_
@@ -84,21 +89,6 @@ typedef struct KIM_TemperatureUnit KIM_TemperatureUnit;
 #ifndef KIM_TIME_UNIT_DEFINED_
 #define KIM_TIME_UNIT_DEFINED_
 typedef struct KIM_TimeUnit KIM_TimeUnit;
-#endif
-
-#ifndef KIM_SUPPORT_STATUS_DEFINED_
-#define KIM_SUPPORT_STATUS_DEFINED_
-typedef struct KIM_SupportStatus KIM_SupportStatus;
-#endif
-
-#ifndef KIM_ARGUMENT_NAME_DEFINED_
-#define KIM_ARGUMENT_NAME_DEFINED_
-typedef struct KIM_ArgumentName KIM_ArgumentName;
-#endif
-
-#ifndef KIM_CALLBACK_NAME_DEFINED_
-#define KIM_CALLBACK_NAME_DEFINED_
-typedef struct KIM_CallbackName KIM_CallbackName;
 #endif
 
 
@@ -128,6 +118,12 @@ int KIM_ModelCreate_SetRefreshPointer(
 int KIM_ModelCreate_SetDestroyPointer(
     KIM_ModelCreate * const modelCreate,
     KIM_LanguageName const languageName, func * const fptr);
+int KIM_ModelCreate_SetComputeArgumentsCreatePointer(
+    KIM_ModelCreate * const modelCreate,
+    KIM_LanguageName const languageName, func * const fptr);
+int KIM_ModelCreate_SetComputeArgumentsDestroyPointer(
+    KIM_ModelCreate * const modelCreate,
+    KIM_LanguageName const languageName, func * const fptr);
 int KIM_ModelCreate_SetComputePointer(
     KIM_ModelCreate * const modelCreate,
     KIM_LanguageName const languageName, func * const fptr);
@@ -135,14 +131,6 @@ int KIM_ModelCreate_SetComputePointer(
 int KIM_ModelCreate_SetSpeciesCode(
     KIM_ModelCreate * const modelCreate,
     KIM_SpeciesName const speciesName, int const code);
-
-int KIM_ModelCreate_SetArgumentSupportStatus(
-    KIM_ModelCreate * const modelCreate,
-    KIM_ArgumentName const argumentName, KIM_SupportStatus const supportStatus);
-
-int KIM_ModelCreate_SetCallbackSupportStatus(
-    KIM_ModelCreate * const modelCreate,
-    KIM_CallbackName const callbackName, KIM_SupportStatus const supportStatus);
 
 int KIM_ModelCreate_SetParameterPointerInteger(
     KIM_ModelCreate * const modelCreate,

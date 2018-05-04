@@ -39,21 +39,25 @@ VPATH = ../include ../../cpp/include
 KIMINCLUDEFLAGS = -I../include -I../../cpp/include
 
 # Definition of c object files
-OBJC = KIM_ArgumentName_c.o \
-       KIM_CallbackName_c.o \
-       KIM_ChargeUnit_c.o \
+OBJC = KIM_ChargeUnit_c.o \
+       KIM_ComputeArgumentName_c.o \
+       KIM_ComputeArguments_c.o \
+       KIM_ComputeCallbackName_c.o \
        KIM_DataType_c.o \
        KIM_EnergyUnit_c.o \
        KIM_LanguageName_c.o \
        KIM_LengthUnit_c.o \
-       KIM_LogVerbosity_c.o \
        KIM_Log_c.o \
+       KIM_LogVerbosity_c.o \
+       KIM_Model_c.o \
        KIM_ModelCompute_c.o \
+       KIM_ModelComputeArguments_c.o \
+       KIM_ModelComputeArgumentsCreate_c.o \
+       KIM_ModelComputeArgumentsDestroy_c.o \
        KIM_ModelCreate_c.o \
        KIM_ModelDestroy_c.o \
        KIM_ModelDriverCreate_c.o \
        KIM_ModelRefresh_c.o \
-       KIM_Model_c.o \
        KIM_Numbering_c.o \
        KIM_SemVer_c.o \
        KIM_SpeciesName_c.o \
@@ -87,38 +91,46 @@ include ../include/Makefile.dependencies
 include ../../cpp/include/Makefile.dependencies
 
 # Source file dependencies
-KIM_ArgumentName_c.o: KIM_ArgumentName_c.cpp $(KIM_DATA_TYPE_C) $(KIM_DATA_TYPE_CPP) $(KIM_ARGUMENT_NAME_C) $(KIM_ARGUMENT_NAME_CPP) $(KIM_MAKE_FILES)
-KIM_CallbackName_c.o: KIM_CallbackName_c.cpp $(KIM_CALLBACK_NAME_C) $(KIM_CALLBACK_NAME_CPP) $(KIM_MAKE_FILES)
 KIM_ChargeUnit_c.o: KIM_ChargeUnit_c.cpp $(KIM_CHARGE_UNIT_C) $(KIM_CHARGE_UNIT_CPP) $(KIM_MAKE_FILES)
+KIM_ComputeArgumentName_c.o: KIM_ComputeArgumentName_c.cpp $(KIM_COMPUTE_ARGUMENT_NAME_C) $(KIM_COMPUTE_ARGUMENT_NAME_CPP) \
+                             $(KIM_DATA_TYPE_C) $(KIM_DATA_TYPE_CPP) $(KIM_MAKE_FILES)
+KIM_ComputeArguments_c.o: KIM_ComputeArguments_c.cpp $(KIM_COMPUTE_ARGUMENTS_C) $(KIM_COMPUTE_ARGUMENTS_CPP) \
+                          $(KIM_COMPUTE_CALLBACK_NAME_C) $(KIM_COMPUTE_CALLBACK_NAME_CPP) $(KIM_SUPPORT_STATUS_C) \
+                          $(KIM_SUPPORT_STATUS_CPP) $(KIM_LANGUAGE_C) $(KIM_LANGUAGE_CPP) $(KIM_MAKE_FILES)
+KIM_ComputeCallbackName_c.o: KIM_ComputeCallbackName_c.cpp $(KIM_COMPUTE_CALLBACK_NAME_C) $(KIM_COMPUTE_CALLBACK_NAME_CPP) $(KIM_MAKE_FILES)
 KIM_DataType_c.o: KIM_DataType_c.cpp $(KIM_DATA_TYPE_C) $(KIM_DATA_TYPE_CPP) $(KIM_MAKE_FILES)
 KIM_EnergyUnit_c.o: KIM_EnergyUnit_c.cpp $(KIM_ENERGY_UNIT_C) $(KIM_ENERGY_UNIT_CPP) $(KIM_MAKE_FILES)
 KIM_LanguageName_c.o: KIM_LanguageName_c.cpp $(KIM_LANGUAGE_NAME_C) $(KIM_LANGUAGE_NAME_CPP) $(KIM_MAKE_FILES)
 KIM_LengthUnit_c.o: KIM_LengthUnit_c.cpp $(KIM_LENGTH_UNIT_C) $(KIM_LENGTH_UNIT_CPP) $(KIM_MAKE_FILES)
+KIM_Log_c.o: KIM_Log_c.cpp $(KIM_LOG_C) $(KIM_LOG_CPP) $(KIM_LOG_VERBOSITY_C) $(KIM_LOG_VERBOSITY_CPP) $(KIM_MAKE_FILES)
 KIM_LogVerbosity_c.o: KIM_LogVerbosity_c.cpp $(KIM_LOG_VERBOSITY_C) $(KIM_LOG_VERBOSITY_CPP) $(KIM_MAKE_FILES)
-KIM_Log_c.o: KIM_Log_c.cpp $(KIM_LOG_VERBOSITY_C) $(KIM_LOG_VERBOSITY_CPP) $(KIM_LOG_C) $(KIM_LOG_CPP) $(KIM_MAKE_FILES)
+KIM_Model_c.o: KIM_Model_c.cpp $(KIM_MODEL_C) $(KIM_MODEL_CPP) $(KIM_UNIT_SYSTEM_C) $(KIM_UNIT_SYSTEM_CPP) \
+               $(KIM_COMPUTE_ARGUMENTS_C) $(KIM_COMPUTE_ARGUMENTS_CPP) $(KIM_NUMBERING_C) $(KIM_NUMBERING_CPP) \
+               $(KIM_SPECIES_NAME_C) $(KIM_SPECIES_NAME_CPP) $(KIM_DATA_TYPE_C) $(KIM_DATA_TYPE_CPP) \
+               $(KIM_MAKE_FILES)
 KIM_ModelCompute_c.o: KIM_ModelCompute_c.cpp $(KIM_MODEL_COMPUTE_C) $(KIM_MODEL_COMPUTE_CPP) \
-                      $(KIM_CALLBACK_NAME_C) $(KIM_CALLBACK_NAME_CPP) $(KIM_ARGUMENT_NAME_C) $(KIM_ARGUMENT_NAME_CPP) \
-                      $(KIM_LOG_VEBOSITY_C) $(KIM_LOG_VERBOSITY_CPP) $(KIM_MAKE_FILES)
-KIM_ModelCreate_c.o: KIM_ModelCreate_c.cpp $(KIM_MODEL_CREATE_C) $(KIM_MODEL_CREATE_CPP) \
-                     $(KIM_CALLBACK_NAME_C) $(KIM_CALLBACK_NAME_CPP) $(KIM_ARGUMENT_NAME_C) $(KIM_ARGUMENT_NAME_CPP) \
-                     $(KIM_SUPPORT_STATUS_C) $(KIM_SUPPORT_STATUS_CPP) $(KIM_UNIT_SYSTEM_C) $(KIM_UNIT_SYSTEM_CPP) \
-                     $(KIM_NUMBERING_C) $(KIM_NUMBERING_CPP) $(KIM_LANGUAGE_NAME_C) $(KIM_LANGUAGE_NAME_CPP) \
-                     $(KIM_SPECIES_NAME_C) $(KIM_SPECIES_NAME_CPP) $(KIM_LOG_VERBOSITY_C) $(KIM_LOG_VERBOSITY_CPP) \
-                     $(KIM_MAKE_FILES)
-KIM_ModelDestroy_c.o: KIM_ModelDestroy_c.cpp $(KIM_MODEL_DESTROY_C) $(KIM_MODEL_DESTROY_CPP) $(KIM_LOG_VERBOSITY_C) $(KIM_LOG_VERBOSITY_CPP) $(KIM_MAKE_FILES)
+                      $(KIM_LOG_C) $(KIM_LOG_CPP) $(KIM_LOG_VEBOSITY_C) $(KIM_LOG_VERBOSITY_CPP) $(KIM_MAKE_FILES)
+KIM_ModelComputeArguments_c.o: KIM_ModelComputeArguments_c.cpp $(KIM_MODEL_COMPUTE_ARGUMENTS_C) $(KIM_MODEL_COMPUTE_ARGUMENTS_CPP) \
+                               $(KIM_COMPUTE_ARGUMENT_NAME_C) $(KIM_COMPUTE_ARGUMENT_NAME_CPP) \
+                               $(KIM_COMPUTE_CALLBACK_NAME_C) $(KIM_COMPUTE_CALLBACK_NAME_CPP) $(KIM_MAKE_FILES)
+KIM_ModelComputeArgumentsCreate_c.o: KIM_ModelComputeArgumentsCreate_c.cpp $(KIM_MODEL_COMPUTE_ARGUMENTS_CREATE_C) \
+                                     $(KIM_MODEL_COMPUTE_ARGUMENTS_CREATE_CPP) $(KIM_COMPUTE_ARGUMENT_NAME_C) \
+                                     $(KIM_COMPUTE_ARGUMENT_NAME_CPP) $(KIM_COMPUTE_CALLBACK_NAME_C) $(KIM_COMPUTE_CALLBACK_NAME_CPP) \
+                                     $(KIM_MAKE_FILES)
+KIM_ModelComputeArgumentsDestroy_c.o: KIM_ModelComputeArgumentsDestroy_c.cpp $(KIM_MODEL_COMPUTE_ARGUMENTS_DESTROY_C) \
+                                      $(KIM_MODEL_COMPUTE_ARGUMENTS_DESTROY_CPP) $(KIM_MAKE_FILES)
+KIM_ModelCreate_c.o: KIM_ModelCreate_c.cpp $(KIM_MODEL_CREATE_C) $(KIM_MODEL_CREATE_CPP) $(KIM_UNIT_SYSTEM_C) $(KIM_UNIT_SYSTEM_CPP) \
+                     $(KIM_SPECIES_NAME_C) $(KIM_SPECIES_NAME_CPP) $(KIM_LANGUAGE_NAME_C) $(KIM_LANGUAGE_NAME_CPP) \
+                     $(KIM_LOG_C) $(KIM_LOG_CPP) $(KIM_LOG_VERBOSITY_C) $(KIM_LOG_VERBOSITY_CPP) $(KIM_MAKE_FILES)
+KIM_ModelDestroy_c.o: KIM_ModelDestroy_c.cpp $(KIM_MODEL_DESTROY_C) $(KIM_MODEL_DESTROY_CPP) $(KIM_LANGUAGE_NAME_C) $(KIM_LANGUAGE_NAME_CPP) \
+                      $(KIM_LOG_VERBOSITY_C) $(KIM_LOG_VERBOSITY_CPP) $(KIM_MAKE_FILES)
 KIM_ModelDriverCreate_c.o: KIM_ModelDriverCreate_c.cpp $(KIM_MODEL_DRIVER_CREATE_C) $(KIM_MODEL_DRIVER_CREATE_CPP) \
-                     $(KIM_CALLBACK_NAME_C) $(KIM_CALLBACK_NAME_CPP) $(KIM_ARGUMENT_NAME_C) $(KIM_ARGUMENT_NAME_CPP) \
+                     $(KIM_COMPUTE_ARGUMENTS_C) $(KIM_COMPUTE_ARGUMENTS_CPP) \
                      $(KIM_SUPPORT_STATUS_C) $(KIM_SUPPORT_STATUS_CPP) $(KIM_UNIT_SYSTEM_C) $(KIM_UNIT_SYSTEM_CPP) \
                      $(KIM_NUMBERING_C) $(KIM_NUMBERING_CPP) $(KIM_LANGUAGE_NAME_C) $(KIM_LANGUAGE_NAME_CPP) \
                      $(KIM_SPECIES_NAME_C) $(KIM_SPECIES_NAME_CPP) $(KIM_LOG_VERBOSITY_C) $(KIM_LOG_VERBOSITY_CPP) \
                      $(KIM_MAKE_FILES)
 KIM_ModelRefresh_c.o: KIM_ModelRefresh_c.cpp $(KIM_MODEL_REFRESH_C) $(KIM_MODEL_REFRESH_CPP) $(KIM_LOG_VERBOSITY_C) $(KIM_LOG_VERBOSITY_CPP) $(KIM_MAKE_FILES)
-KIM_Model_c.o: KIM_Model_c.cpp $(KIM_MODEL_C) $(KIM_MODEL_CPP) \
-                     $(KIM_CALLBACK_NAME_C) $(KIM_CALLBACK_NAME_CPP) $(KIM_ARGUMENT_NAME_C) $(KIM_ARGUMENT_NAME_CPP) \
-                     $(KIM_SUPPORT_STATUS_C) $(KIM_SUPPORT_STATUS_CPP) $(KIM_UNIT_SYSTEM_C) $(KIM_UNIT_SYSTEM_CPP) \
-                     $(KIM_NUMBERING_C) $(KIM_NUMBERING_CPP) $(KIM_LANGUAGE_NAME_C) $(KIM_LANGUAGE_NAME_CPP) \
-                     $(KIM_SPECIES_NAME_C) $(KIM_SPECIES_NAME_CPP) $(KIM_DATA_TYPE_C) $(KIM_DATA_TYPE_CPP) \
-                     $(KIM_LOG_VERBOSITY_C) $(KIM_LOG_VERBOSITY_CPP) $(KIM_MAKE_FILES)
 KIM_Numbering_c.o: KIM_Numbering_c.cpp $(KIM_NUMBERING_C) $(KIM_NUMBERING_CPP) $(KIM_MAKE_FILES)
 KIM_SemVer_c.o: KIM_SemVer_c.cpp $(KIM_SEM_VER_C) $(KIM_SEM_VER_CPP) $(KIM_MAKE_FILES)
 KIM_SpeciesName_c.o: KIM_SpeciesName_c.cpp $(KIM_SPECIES_NAME_C) $(KIM_SPECIES_NAME_CPP) $(KIM_MAKE_FILES)
@@ -143,9 +155,10 @@ clean:
 .PHONY: install dirs-install headers-install
 
 install_includedir = $(dest_package_dir)/include
-install_include_c = KIM_ArgumentName.h \
-                    KIM_CallbackName.h \
-                    KIM_ChargeUnit.h \
+install_include_c = KIM_ChargeUnit.h \
+                    KIM_ComputeArgumentName.h \
+                    KIM_ComputeArguments.h \
+                    KIM_ComputeCallbackName.h \
                     KIM_DataType.h \
                     KIM_EnergyUnit.h \
                     KIM_LanguageName.h \
@@ -154,11 +167,13 @@ install_include_c = KIM_ArgumentName.h \
                     KIM_LogVerbosity.h \
                     KIM_Model.h \
                     KIM_ModelCompute.h KIM_ModelComputeLogMacros.h \
+                    KIM_ModelComputeArguments.h KIM_ModelComputeArgumentsLogMacros.h \
+                    KIM_ModelComputeArgumentsCreate.h KIM_ModelComputeArgumentsCreateLogMacros.h \
+                    KIM_ModelComputeArgumentsDestroy.h KIM_ModelComputeArgumentsDestroyLogMacros.h \
                     KIM_ModelCreate.h KIM_ModelCreateLogMacros.h \
                     KIM_ModelDestroy.h KIM_ModelDestroyLogMacros.h \
                     KIM_ModelDriverCreate.h KIM_ModelDriverCreateLogMacros.h \
-                    KIM_ModelRefresh.h \
-                    KIM_ModelRefreshLogMacros.h \
+                    KIM_ModelRefresh.h KIM_ModelRefreshLogMacros.h \
                     KIM_Numbering.h \
                     KIM_SemVer.h \
                     KIM_SpeciesName.h \

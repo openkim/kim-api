@@ -91,19 +91,9 @@ typedef struct KIM_TemperatureUnit KIM_TemperatureUnit;
 typedef struct KIM_TimeUnit KIM_TimeUnit;
 #endif
 
-#ifndef KIM_ARGUMENT_NAME_DEFINED_
-#define KIM_ARGUMENT_NAME_DEFINED_
-typedef struct KIM_ArgumentName KIM_ArgumentName;
-#endif
-
-#ifndef KIM_CALLBACK_NAME_DEFINED_
-#define KIM_CALLBACK_NAME_DEFINED_
-typedef struct KIM_CallbackName KIM_CallbackName;
-#endif
-
-#ifndef KIM_SUPPORT_STATUS_DEFINED_
-#define KIM_SUPPORT_STATUS_DEFINED_
-typedef struct KIM_SupportStatus KIM_SupportStatus;
+#ifndef KIM_COMPUTE_ARGUMENTS_DEFINED_
+#define KIM_COMPUTE_ARGUMENTS_DEFINED_
+typedef struct KIM_ComputeArguments KIM_ComputeArguments;
 #endif
 
 
@@ -132,13 +122,6 @@ void KIM_Model_GetNeighborListCutoffsPointer(KIM_Model const * const model,
                                              int * const numberOfCutoffs,
                                              double const ** const cutoffs);
 
-int KIM_Model_GetArgumentSupportStatus(KIM_Model const * const model,
-                                       KIM_ArgumentName const argumentName,
-                                       KIM_SupportStatus * const supportStatus);
-int KIM_Model_GetCallbackSupportStatus(KIM_Model const * const model,
-                                       KIM_CallbackName const callbackName,
-                                       KIM_SupportStatus * const supportStatus);
-
 void KIM_Model_GetUnits(KIM_Model const * const model,
                         KIM_LengthUnit * const lengthUnit,
                         KIM_EnergyUnit * const energyUnit,
@@ -146,21 +129,15 @@ void KIM_Model_GetUnits(KIM_Model const * const model,
                         KIM_TemperatureUnit * const temperatureUnit,
                         KIM_TimeUnit * const timeUnit);
 
+int KIM_Model_ComputeArgumentsCreate(
+    KIM_Model const * const model,
+    KIM_ComputeArguments ** const computeArguments);
+int KIM_Model_ComputeArgumentsDestroy(
+    KIM_Model const * const model,
+    KIM_ComputeArguments ** const computeArguments);
+int KIM_Model_Compute(KIM_Model const * const model,
+                      KIM_ComputeArguments const * const computeArguments);
 
-int KIM_Model_SetArgumentPointerInteger(KIM_Model * const model,
-                                        KIM_ArgumentName const argumentName,
-                                        int const * const ptr);
-
-int KIM_Model_SetArgumentPointerDouble(KIM_Model * const model,
-                                       KIM_ArgumentName const argumentName,
-                                       double const * const ptr);
-int KIM_Model_SetCallbackPointer(KIM_Model * const model,
-                                 KIM_CallbackName const callbackName,
-                                 KIM_LanguageName const languageName,
-                                 func * const fptr,
-                                 void const * const dataObject);
-
-int KIM_Model_Compute(KIM_Model const * const model);
 int KIM_Model_ClearInfluenceDistanceAndCutoffsThenRefreshModel(
     KIM_Model * const model);
 

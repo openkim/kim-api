@@ -90,33 +90,13 @@ extern "C"
 #endif
 }  // extern "C"
 
-#ifndef KIM_SUPPORT_STATUS_HPP_
-#include "KIM_SupportStatus.hpp"
+#ifndef KIM_COMPUTE_ARGUMENTS_HPP_
+#include "KIM_ComputeArguments.hpp"
 #endif
 extern "C"
 {
-#ifndef KIM_SUPPORT_STATUS_H_
-#include "KIM_SupportStatus.h"
-#endif
-}  // extern "C"
-
-#ifndef KIM_ARGUMENT_NAME_HPP_
-#include "KIM_ArgumentName.hpp"
-#endif
-extern "C"
-{
-#ifndef KIM_ARGUMENT_NAME_H_
-#include "KIM_ArgumentName.h"
-#endif
-}  // extern "C"
-
-#ifndef KIM_CALLBACK_NAME_HPP_
-#include "KIM_CallbackName.hpp"
-#endif
-extern "C"
-{
-#ifndef KIM_CALLBACK_NAME_H_
-#include "KIM_CallbackName.h"
+#ifndef KIM_COMPUTE_ARGUMENTS_H_
+#include "KIM_ComputeArguments.h"
 #endif
 }  // extern "C"
 
@@ -130,6 +110,11 @@ extern "C"
 #endif
 }  // extern "C"
 
+
+struct KIM_ComputeArguments
+{
+  void * p;
+};
 
 struct KIM_Model
 {
@@ -159,22 +144,6 @@ makeLanguageNameCpp(KIM_LanguageName const languageName)
 KIM::SpeciesName makeSpecNameCpp(KIM_SpeciesName const speciesName)
 {
   return KIM::SpeciesName(speciesName.speciesNameID);
-}
-
-KIM::ArgumentName makeArgumentNameCpp(KIM_ArgumentName const argumentName)
-{
-  return KIM::ArgumentName(argumentName.argumentNameID);
-}
-
-KIM::CallbackName makeCallbackNameCpp(KIM_CallbackName const callbackName)
-{
-  return KIM::CallbackName(callbackName.callbackNameID);
-}
-
-KIM_SupportStatus const makeSupportStatusC(KIM::SupportStatus supportStatus)
-{
-  KIM_SupportStatus supportStatusC = {supportStatus.supportStatusID};
-  return supportStatusC;
 }
 
 KIM::LengthUnit makeLengthUnitCpp(KIM_LengthUnit lengthUnit)
@@ -256,7 +225,7 @@ void KIM_Model_Destroy(KIM_Model ** const model)
 
   KIM::Model::Destroy(&pModel);
   delete (*model);
-  *model = 0;
+  *model = NULL;
 }
 
 void KIM_Model_GetInfluenceDistance(KIM_Model const * const model,
@@ -276,44 +245,6 @@ void KIM_Model_GetNeighborListCutoffsPointer(KIM_Model const * const model,
   pModel->GetNeighborListCutoffsPointer(numberOfCutoffs, cutoffs);
 }
 
-int KIM_Model_GetArgumentSupportStatus(KIM_Model const * const model,
-                                       KIM_ArgumentName const argumentName,
-                                       KIM_SupportStatus * const supportStatus)
-{
-  CONVERT_POINTER;
-  KIM::SupportStatus supportStatusCpp;
-
-  int error = pModel->GetArgumentSupportStatus(
-      makeArgumentNameCpp(argumentName),
-      &supportStatusCpp);
-  if (error)
-    return true;
-  else
-  {
-    *supportStatus = makeSupportStatusC(supportStatusCpp);
-    return false;
-  }
-}
-
-int KIM_Model_GetCallbackSupportStatus(KIM_Model const * const model,
-                                       KIM_CallbackName const callbackName,
-                                       KIM_SupportStatus * const supportStatus)
-{
-  CONVERT_POINTER;
-  KIM::SupportStatus supportStatusCpp;
-
-  int error = pModel->GetCallbackSupportStatus(
-      makeCallbackNameCpp(callbackName),
-      &supportStatusCpp);
-  if (error)
-    return true;
-  else
-  {
-    *supportStatus = makeSupportStatusC(supportStatusCpp);
-    return false;
-  }
-}
-
 void KIM_Model_GetUnits(KIM_Model const * const model,
                         KIM_LengthUnit * const lengthUnit,
                         KIM_EnergyUnit * const energyUnit,
@@ -331,44 +262,60 @@ void KIM_Model_GetUnits(KIM_Model const * const model,
       reinterpret_cast<KIM::TimeUnit *>(timeUnit));
 }
 
-int KIM_Model_SetArgumentPointerInteger(KIM_Model * const model,
-                                        KIM_ArgumentName const argumentName,
-                                        int const * const ptr)
+int KIM_Model_ComputeArgumentsCreate(
+    KIM_Model const * const model,
+    KIM_ComputeArguments ** const computeArguments)
 {
   CONVERT_POINTER;
-  KIM::ArgumentName argN = makeArgumentNameCpp(argumentName);
 
-  return pModel->SetArgumentPointer(argN, ptr);
+  KIM::ComputeArguments * pComputeArguments;
+
+  int err = pModel->ComputeArgumentsCreate(&pComputeArguments);
+  if (err)
+  {
+    return true;
+  }
+  else
+  {
+    (*computeArguments) = new KIM_ComputeArguments;
+    (*computeArguments)->p = (void *) pComputeArguments;
+    return false;
+  }
 }
 
-int KIM_Model_SetArgumentPointerDouble(KIM_Model * const model,
-                                       KIM_ArgumentName const argumentName,
-                                       double const * const ptr)
+int KIM_Model_ComputeArgumentsDestroy(
+    KIM_Model const * const model,
+    KIM_ComputeArguments ** const computeArguments)
 {
   CONVERT_POINTER;
-  KIM::ArgumentName argN = makeArgumentNameCpp(argumentName);
 
-  return pModel->SetArgumentPointer(argN, ptr);
+  KIM::ComputeArguments * pComputeArguments
+      = reinterpret_cast<KIM::ComputeArguments * const >
+      ((*computeArguments)->p);
+
+  int err = pModel->ComputeArgumentsDestroy(&pComputeArguments);
+  if (err)
+  {
+    return true;
+  }
+  else
+  {
+    delete(*computeArguments);
+    *computeArguments = NULL;
+    return false;
+  }
 }
 
-int KIM_Model_SetCallbackPointer(KIM_Model * const model,
-                                 KIM_CallbackName const callbackName,
-                                 KIM_LanguageName const languageName,
-                                 func * const fptr,
-                                 void const * const dataObject)
-{
-  CONVERT_POINTER;
-  KIM::CallbackName callbackNameCpp = makeCallbackNameCpp(callbackName);
-  KIM::LanguageName langN = makeLanguageNameCpp(languageName);
-
-  return pModel->SetCallbackPointer(callbackNameCpp, langN, fptr, dataObject);
-}
-
-int KIM_Model_Compute(KIM_Model const * const model)
+int KIM_Model_Compute(KIM_Model const * const model,
+                      KIM_ComputeArguments const * const computeArguments)
 {
   CONVERT_POINTER;
 
-  return pModel->Compute();
+  KIM::ComputeArguments const * const pComputeArguments
+      = reinterpret_cast<KIM::ComputeArguments const * const>
+      (computeArguments->p);
+
+  return pModel->Compute(pComputeArguments);
 }
 
 int KIM_Model_ClearInfluenceDistanceAndCutoffsThenRefreshModel(

@@ -100,6 +100,21 @@ std::string const & ComputeArguments::String() const
   return pimpl->String();
 }
 
+void ComputeArguments::SetLogID(std::string const & logID)
+{
+  pimpl->SetLogID(logID);
+}
+
+void ComputeArguments::PushLogVerbosity(LogVerbosity const logVerbosity)
+{
+  pimpl->PushLogVerbosity(logVerbosity);
+}
+
+void ComputeArguments::PopLogVerbosity()
+{
+  pimpl->PopLogVerbosity();
+}
+
 ComputeArguments::ComputeArguments() : pimpl(0)
 {
 }

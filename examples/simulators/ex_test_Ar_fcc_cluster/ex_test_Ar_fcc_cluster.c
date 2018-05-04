@@ -38,8 +38,9 @@
 #include "KIM_Numbering.h"
 #include "KIM_Model.h"
 #include "KIM_SupportStatus.h"
-#include "KIM_ArgumentName.h"
-#include "KIM_CallbackName.h"
+#include "KIM_ComputeArguments.h"
+#include "KIM_ComputeArgumentName.h"
+#include "KIM_ComputeCallbackName.h"
 #include "KIM_UnitSystem.h"
 
 #define TRUE 1
@@ -71,6 +72,7 @@
 /* Define neighborlist structure */
 typedef struct
 {
+  double cutoff;
   int numberOfParticles;
   int* NNeighbors;
   int* neighborList;
@@ -82,6 +84,7 @@ void fcc_cluster_neighborlist(int half, int numberOfParticles, double* coords,
 
 int get_cluster_neigh(
     void const * const dataObject,
+    int const numberOfCutoffs, double const * const cutoffs,
     int const neighborListIndex,
     int const particleNumber, int * const numberOfNeighbors,
     int const ** const neighborsOfParticle);
@@ -122,11 +125,12 @@ int main()
   char modelname[NAMESTRLEN];
   int requestedUnitsAccepted;
   int modelArCode;
-  int numberOfAPI_Arguments;
-  KIM_ArgumentName argumentName;
+  int numberOfComputeArguments;
+  KIM_ComputeArguments * computeArguments;
+  KIM_ComputeArgumentName computeArgumentName;
   KIM_SupportStatus supportStatus;
-  int numberOfAPI_Callbacks;
-  KIM_CallbackName callbackName;
+  int numberOfComputeCallbacks;
+  KIM_ComputeCallbackName computeCallbackName;
 
   /* Get KIM Model names */
   printf("Please enter valid KIM Model name: \n");
@@ -159,32 +163,45 @@ int main()
     MY_ERROR("Species Ar not supported");
   }
 
-  /* check arguments */
-  KIM_ARGUMENT_NAME_GetNumberOfArguments(&numberOfAPI_Arguments);
-  for (i=0; i<numberOfAPI_Arguments; ++i)
+  error = KIM_Model_ComputeArgumentsCreate(model, &computeArguments);
+  if (error)
   {
-    error = KIM_ARGUMENT_NAME_GetArgumentName(i, &argumentName);
+    MY_ERROR("KIM_Model_ComputeArgumentsCreate");
+  }
+
+  /* check arguments */
+  KIM_COMPUTE_ARGUMENT_NAME_GetNumberOfComputeArguments(
+      &numberOfComputeArguments);
+  for (i=0; i<numberOfComputeArguments; ++i)
+  {
+    error = KIM_COMPUTE_ARGUMENT_NAME_GetComputeArgumentName(
+        i, &computeArgumentName);
     if (error) MY_ERROR("can't get argument name");
-    error = KIM_Model_GetArgumentSupportStatus(model, argumentName,
-                                               &supportStatus);
+    error = KIM_ComputeArguments_GetArgumentSupportStatus(computeArguments,
+                                                          computeArgumentName,
+                                                          &supportStatus);
     if (error) MY_ERROR("can't get argument supportStatus");
 
     /* can only handle energy and force as a required arg */
     if (KIM_SupportStatusEqual(supportStatus, KIM_SUPPORT_STATUS_required))
     {
-      if ((KIM_ArgumentNameNotEqual(argumentName,
-                                    KIM_ARGUMENT_NAME_partialEnergy)) ||
-          (KIM_ArgumentNameNotEqual(argumentName,
-                                    KIM_ARGUMENT_NAME_partialForces)))
+      if ((KIM_ComputeArgumentNameNotEqual(
+              computeArgumentName,
+              KIM_COMPUTE_ARGUMENT_NAME_partialEnergy)) ||
+          (KIM_ComputeArgumentNameNotEqual(
+              computeArgumentName,
+              KIM_COMPUTE_ARGUMENT_NAME_partialForces)))
       {
         MY_ERROR("unsupported required argument");
       }
     }
 
     /* must have energy and forces */
-    if ((KIM_ArgumentNameEqual(argumentName, KIM_ARGUMENT_NAME_partialEnergy))
+    if ((KIM_ComputeArgumentNameEqual(computeArgumentName,
+                                      KIM_COMPUTE_ARGUMENT_NAME_partialEnergy))
         ||
-        (KIM_ArgumentNameEqual(argumentName, KIM_ARGUMENT_NAME_partialForces)))
+        (KIM_ComputeArgumentNameEqual(computeArgumentName,
+                                      KIM_COMPUTE_ARGUMENT_NAME_partialForces)))
     {
       if (! ((KIM_SupportStatusEqual(supportStatus,
                                      KIM_SUPPORT_STATUS_required))
@@ -198,13 +215,16 @@ int main()
   }
 
   /* check call backs */
-  KIM_CALLBACK_NAME_GetNumberOfCallbacks(&numberOfAPI_Callbacks);
-  for (i=0; i<numberOfAPI_Callbacks; ++i)
+  KIM_COMPUTE_CALLBACK_NAME_GetNumberOfComputeCallbacks(
+      &numberOfComputeCallbacks);
+  for (i=0; i<numberOfComputeCallbacks; ++i)
   {
-    error = KIM_CALLBACK_NAME_GetCallbackName(i, &callbackName);
+    error = KIM_COMPUTE_CALLBACK_NAME_GetComputeCallbackName(
+        i, &computeCallbackName);
     if (error) MY_ERROR("can't get call back name");
-    error = KIM_Model_GetCallbackSupportStatus(model, callbackName,
-                                               &supportStatus);
+    error = KIM_ComputeArguments_GetCallbackSupportStatus(computeArguments,
+                                                          computeCallbackName,
+                                                          &supportStatus);
     if (error) MY_ERROR("can't get call back supportStatus");
 
     /* cannot handle any "required" call backs */
@@ -217,35 +237,39 @@ int main()
   /* We're compatible with the model.  Let's do it. */
 
   error =
-      KIM_Model_SetArgumentPointerInteger(
-          model,
-          KIM_ARGUMENT_NAME_numberOfParticles,
+      KIM_ComputeArguments_SetArgumentPointerInteger(
+          computeArguments,
+          KIM_COMPUTE_ARGUMENT_NAME_numberOfParticles,
           &numberOfParticles_cluster)
       ||
-      KIM_Model_SetArgumentPointerInteger(
-          model,
-          KIM_ARGUMENT_NAME_particleSpeciesCodes,
+      KIM_ComputeArguments_SetArgumentPointerInteger(
+          computeArguments,
+          KIM_COMPUTE_ARGUMENT_NAME_particleSpeciesCodes,
           particleSpecies_cluster_model)
       ||
-      KIM_Model_SetArgumentPointerInteger(
-          model,
-          KIM_ARGUMENT_NAME_particleContributing,
+      KIM_ComputeArguments_SetArgumentPointerInteger(
+          computeArguments,
+          KIM_COMPUTE_ARGUMENT_NAME_particleContributing,
           particleContributing_cluster_model)
       ||
-      KIM_Model_SetArgumentPointerDouble(model, KIM_ARGUMENT_NAME_coordinates,
-                                         (double*) &coords_cluster)
+      KIM_ComputeArguments_SetArgumentPointerDouble(
+          computeArguments, KIM_COMPUTE_ARGUMENT_NAME_coordinates,
+          (double*) &coords_cluster)
       ||
-      KIM_Model_SetArgumentPointerDouble(model, KIM_ARGUMENT_NAME_partialEnergy,
-                                         &energy_cluster_model)
+      KIM_ComputeArguments_SetArgumentPointerDouble(
+          computeArguments, KIM_COMPUTE_ARGUMENT_NAME_partialEnergy,
+          &energy_cluster_model)
       ||
-      KIM_Model_SetArgumentPointerDouble(model, KIM_ARGUMENT_NAME_partialForces,
-                                         (double*) &forces_cluster);
+      KIM_ComputeArguments_SetArgumentPointerDouble(
+          computeArguments, KIM_COMPUTE_ARGUMENT_NAME_partialForces,
+          (double*) &forces_cluster);
   if (error) MY_ERROR("KIM_setm_data");
-  KIM_Model_SetCallbackPointer(model,
-                               KIM_CALLBACK_NAME_GetNeighborList,
-                               KIM_LANGUAGE_NAME_c,
-                               (func *) &get_cluster_neigh,
-                               &nl_cluster_model);
+  KIM_ComputeArguments_SetCallbackPointer(
+      computeArguments,
+      KIM_COMPUTE_CALLBACK_NAME_GetNeighborList,
+      KIM_LANGUAGE_NAME_c,
+      (func *) &get_cluster_neigh,
+      &nl_cluster_model);
 
   KIM_Model_GetInfluenceDistance(model, &influence_distance_cluster_model);
   KIM_Model_GetNeighborListCutoffsPointer(model,
@@ -293,7 +317,7 @@ int main()
                              (*cutoff_cluster_model + cutpad), &nl_cluster_model);
 
     /* call compute functions */
-    error = KIM_Model_Compute(model);
+    error = KIM_Model_Compute(model, computeArguments);
     if (error) MY_ERROR("KIM_model_compute");
 
     /* compute force norm */
@@ -309,6 +333,12 @@ int main()
            energy_cluster_model,
            force_norm,
            CurrentSpacing);
+  }
+
+  error = KIM_Model_ComputeArgumentsDestroy(model, &computeArguments);
+  if (error)
+  {
+    MY_ERROR("Unable to destroy compute arguments");
   }
 
   /* free memory of neighbor lists */
@@ -485,6 +515,7 @@ void fcc_cluster_neighborlist(int half, int numberOfParticles, double* coords,
 }
 
 int get_cluster_neigh(void const * const dataObject,
+                      int const numberOfCutoffs, double const * const cutoffs,
                       int const neighborListIndex,
                       int const particleNumber, int * const numberOfNeighbors,
                       int const ** const neighborsOfParticle)

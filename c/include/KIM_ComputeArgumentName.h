@@ -33,32 +33,56 @@
 /*                                                                            */
 
 
-#ifndef KIM_MODEL_COMPUTE_H_
-#define KIM_MODEL_COMPUTE_H_
+#ifndef KIM_COMPUTE_ARGUMENT_NAME_H_
+#define KIM_COMPUTE_ARGUMENT_NAME_H_
 
 /* Forward declarations */
-#ifndef KIM_LOG_VERBOSITY_DEFINED_
-#define KIM_LOG_VERBOSITY_DEFINED_
-typedef struct KIM_LogVerbosity KIM_LogVerbosity;
+#ifndef KIM_DATA_TYPE_DEFINED_
+#define KIM_DATA_TYPE_DEFINED_
+typedef struct KIM_DataType KIM_DataType;
 #endif
 
-
-struct KIM_ModelCompute;
-
-#ifndef KIM_MODEL_COMPUTE_DEFINED_
-#define KIM_MODEL_COMPUTE_DEFINED_
-typedef struct KIM_ModelCompute KIM_ModelCompute;
+struct KIM_ComputeArgumentName
+{
+  int computeArgumentNameID;
+};
+#ifndef KIM_COMPUTE_ARGUMENT_NAME_DEFINED_
+#define KIM_COMPUTE_ARGUMENT_NAME_DEFINED_
+typedef struct KIM_ComputeArgumentName KIM_ComputeArgumentName;
 #endif
 
-void KIM_ModelCompute_GetModelBufferPointer(
-    KIM_ModelCompute const * const modelCompute, void ** const ptr);
+KIM_ComputeArgumentName KIM_ComputeArgumentNameFromString(
+    char const * const str);
 
-void KIM_ModelCompute_LogEntry(
-    KIM_ModelCompute const * const modelCompute,
-    KIM_LogVerbosity const logVerbosity, char const * const message,
-    int const lineNumber, char const * const fileName);
+int KIM_ComputeArgumentNameEqual(KIM_ComputeArgumentName const left,
+                                 KIM_ComputeArgumentName const right);
+int KIM_ComputeArgumentNameNotEqual(KIM_ComputeArgumentName const left,
+                                    KIM_ComputeArgumentName const right);
+char const * const KIM_ComputeArgumentNameString(
+    KIM_ComputeArgumentName const computeArgumentName);
 
-char const * const KIM_ModelCompute_String(
-    KIM_ModelCompute const * const modelCompute);
+extern
+KIM_ComputeArgumentName const KIM_COMPUTE_ARGUMENT_NAME_numberOfParticles;
+extern
+KIM_ComputeArgumentName const KIM_COMPUTE_ARGUMENT_NAME_particleSpeciesCodes;
+extern
+KIM_ComputeArgumentName const KIM_COMPUTE_ARGUMENT_NAME_particleContributing;
+extern KIM_ComputeArgumentName const KIM_COMPUTE_ARGUMENT_NAME_coordinates;
+extern KIM_ComputeArgumentName const KIM_COMPUTE_ARGUMENT_NAME_partialEnergy;
+extern KIM_ComputeArgumentName const KIM_COMPUTE_ARGUMENT_NAME_partialForces;
+extern
+KIM_ComputeArgumentName const KIM_COMPUTE_ARGUMENT_NAME_partialParticleEnergy;
+extern KIM_ComputeArgumentName const KIM_COMPUTE_ARGUMENT_NAME_partialVirial;
+extern
+KIM_ComputeArgumentName const KIM_COMPUTE_ARGUMENT_NAME_partialParticleVirial;
 
-#endif  /* KIM_MODEL_COMPUTE_H_ */
+void KIM_COMPUTE_ARGUMENT_NAME_GetNumberOfComputeArguments(
+    int * const numberOfComputeArguments);
+int KIM_COMPUTE_ARGUMENT_NAME_GetComputeArgumentName(
+    int const index, KIM_ComputeArgumentName * const computeArgumentName);
+
+int KIM_COMPUTE_ARGUMENT_NAME_GetComputeArgumentDataType(
+    KIM_ComputeArgumentName const computeArgumentName,
+    KIM_DataType * const dataType);
+
+#endif  /* KIM_COMPUTE_ARGUMENT_NAME_H_ */

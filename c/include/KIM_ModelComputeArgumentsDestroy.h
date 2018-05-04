@@ -33,8 +33,8 @@
 /*                                                                            */
 
 
-#ifndef KIM_MODEL_COMPUTE_H_
-#define KIM_MODEL_COMPUTE_H_
+#ifndef KIM_MODEL_COMPUTE_ARGUMENTS_DESTROY_H_
+#define KIM_MODEL_COMPUTE_ARGUMENTS_DESTROY_H_
 
 /* Forward declarations */
 #ifndef KIM_LOG_VERBOSITY_DEFINED_
@@ -43,22 +43,25 @@ typedef struct KIM_LogVerbosity KIM_LogVerbosity;
 #endif
 
 
-struct KIM_ModelCompute;
+struct KIM_ModelComputeArgumentsDestroy;
 
-#ifndef KIM_MODEL_COMPUTE_DEFINED_
-#define KIM_MODEL_COMPUTE_DEFINED_
-typedef struct KIM_ModelCompute KIM_ModelCompute;
+#ifndef KIM_MODEL_COMPUTE_ARGUMENTS_DESTROY_DEFINED_
+#define KIM_MODEL_COMPUTE_ARGUMENTS_DESTROY_DEFINED_
+typedef
+struct KIM_ModelComputeArgumentsDestroy KIM_ModelComputeArgumentsDestroy;
 #endif
 
-void KIM_ModelCompute_GetModelBufferPointer(
-    KIM_ModelCompute const * const modelCompute, void ** const ptr);
+void KIM_ModelComputeArgumentsDestroy_GetModelBufferPointer(
+    KIM_ModelComputeArgumentsDestroy const * const modelComputeArgumentsDestroy,
+    void ** const ptr);
 
-void KIM_ModelCompute_LogEntry(
-    KIM_ModelCompute const * const modelCompute,
+void KIM_ModelComputeArgumentsDestroy_LogEntry(
+    KIM_ModelComputeArgumentsDestroy const * const modelComputeArgumentsDestroy,
     KIM_LogVerbosity const logVerbosity, char const * const message,
     int const lineNumber, char const * const fileName);
 
-char const * const KIM_ModelCompute_String(
-    KIM_ModelCompute const * const modelCompute);
+char const * const KIM_ModelComputeArgumentsDestroy_String(
+    KIM_ModelComputeArgumentsDestroy const * const
+    modelComputeArgumentsDestroy);
 
-#endif  /* KIM_MODEL_COMPUTE_H_ */
+#endif  /* KIM_MODEL_COMPUTE_ARGUMENTS_DESTROY_H_ */

@@ -41,16 +41,6 @@ extern "C"
 #endif
 }  // extern "C"
 
-#ifndef KIM_SPECIES_NAME_HPP_
-#include "KIM_SpeciesName.hpp"
-#endif
-extern "C"
-{
-#ifndef KIM_SPECIES_NAME_H_
-#include "KIM_SpeciesName.h"
-#endif
-}  // extern "C"
-
 #ifndef KIM_LANGUAGE_NAME_HPP_
 #include "KIM_LanguageName.hpp"
 #endif
@@ -71,13 +61,13 @@ extern "C"
 #endif
 }  // extern "C"
 
-#ifndef KIM_UNIT_SYSTEM_HPP_
-#include "KIM_UnitSystem.hpp"
+#ifndef KIM_SPECIES_NAME_HPP_
+#include "KIM_SpeciesName.hpp"
 #endif
 extern "C"
 {
-#ifndef KIM_UNIT_SYSTEM_H_
-#include "KIM_UnitSystem.h"
+#ifndef KIM_SPECIES_NAME_H_
+#include "KIM_SpeciesName.h"
 #endif
 }  // extern "C"
 
@@ -91,23 +81,13 @@ extern "C"
 #endif
 }  // extern "C"
 
-#ifndef KIM_ARGUMENT_NAME_HPP_
-#include "KIM_ArgumentName.hpp"
+#ifndef KIM_UNIT_SYSTEM_HPP_
+#include "KIM_UnitSystem.hpp"
 #endif
 extern "C"
 {
-#ifndef KIM_ARGUMENT_NAME_H_
-#include "KIM_ArgumentName.h"
-#endif
-}  // extern "C"
-
-#ifndef KIM_CALLBACK_NAME_HPP_
-#include "KIM_CallbackName.hpp"
-#endif
-extern "C"
-{
-#ifndef KIM_CALLBACK_NAME_H_
-#include "KIM_CallbackName.h"
+#ifndef KIM_UNIT_SYSTEM_H_
+#include "KIM_UnitSystem.h"
 #endif
 }  // extern "C"
 
@@ -129,7 +109,7 @@ struct KIM_ModelDriverCreate
 
 #define CONVERT_POINTER                                         \
   KIM::ModelDriverCreate * pModelDriverCreate                   \
-  = reinterpret_cast<KIM::ModelDriverCreate *>(modelCreate->p)
+  = reinterpret_cast<KIM::ModelDriverCreate *>(modelDriverCreate->p)
 
 namespace
 {
@@ -146,16 +126,6 @@ KIM::Numbering makeNumberingCpp(KIM_Numbering const numbering)
 KIM::SupportStatus makeSupportStatusCpp(KIM_SupportStatus const supportStatus)
 {
   return KIM::SupportStatus(supportStatus.supportStatusID);
-}
-
-KIM::ArgumentName makeArgumentNameCpp(KIM_ArgumentName const argumentName)
-{
-  return KIM::ArgumentName(argumentName.argumentNameID);
-}
-
-KIM::CallbackName makeCallbackNameCpp(KIM_CallbackName const callbackName)
-{
-  return KIM::CallbackName(callbackName.callbackNameID);
 }
 
 KIM::LengthUnit makeLengthUnitCpp(KIM_LengthUnit const lengthUnit)
@@ -190,7 +160,7 @@ makeLanguageNameCpp(KIM_LanguageName const languageName)
   return KIM::LanguageName(languageName.languageNameID);
 }
 
-KIM::SpeciesName makeSpecNameCpp(KIM_SpeciesName const speciesName)
+KIM::SpeciesName makeSpeciesNameCpp(KIM_SpeciesName const speciesName)
 {
   return KIM::SpeciesName(speciesName.speciesNameID);
 }
@@ -199,7 +169,7 @@ KIM::SpeciesName makeSpecNameCpp(KIM_SpeciesName const speciesName)
 extern "C"
 {
 void KIM_ModelDriverCreate_GetNumberOfParameterFiles(
-    KIM_ModelDriverCreate * const modelCreate,
+    KIM_ModelDriverCreate * const modelDriverCreate,
     int * const numberOfParameterFiles)
 {
   CONVERT_POINTER;
@@ -209,7 +179,7 @@ void KIM_ModelDriverCreate_GetNumberOfParameterFiles(
 }
 
 int KIM_ModelDriverCreate_GetParameterFileName(
-    KIM_ModelDriverCreate * const modelCreate,
+    KIM_ModelDriverCreate * const modelDriverCreate,
     int const index,
     char const ** const parameterFileName)
 {
@@ -235,7 +205,7 @@ int KIM_ModelDriverCreate_GetParameterFileName(
 }
 
 int KIM_ModelDriverCreate_SetModelNumbering(
-    KIM_ModelDriverCreate * const modelCreate,
+    KIM_ModelDriverCreate * const modelDriverCreate,
     KIM_Numbering const numbering)
 {
   CONVERT_POINTER;
@@ -245,7 +215,7 @@ int KIM_ModelDriverCreate_SetModelNumbering(
 }
 
 void KIM_ModelDriverCreate_SetInfluenceDistancePointer(
-    KIM_ModelDriverCreate * const modelCreate,
+    KIM_ModelDriverCreate * const modelDriverCreate,
     double * const influenceDistance)
 {
   CONVERT_POINTER;
@@ -254,7 +224,7 @@ void KIM_ModelDriverCreate_SetInfluenceDistancePointer(
 }
 
 void KIM_ModelDriverCreate_SetNeighborListCutoffsPointer(
-    KIM_ModelDriverCreate * const modelCreate,
+    KIM_ModelDriverCreate * const modelDriverCreate,
     int const numberOfCutoffs, double const * const cutoffs)
 {
   CONVERT_POINTER;
@@ -263,7 +233,7 @@ void KIM_ModelDriverCreate_SetNeighborListCutoffsPointer(
 }
 
 int KIM_ModelDriverCreate_SetRefreshPointer(
-    KIM_ModelDriverCreate * const modelCreate,
+    KIM_ModelDriverCreate * const modelDriverCreate,
     KIM_LanguageName const languageName, func * const fptr)
 {
   CONVERT_POINTER;
@@ -273,7 +243,7 @@ int KIM_ModelDriverCreate_SetRefreshPointer(
 }
 
 int KIM_ModelDriverCreate_SetDestroyPointer(
-    KIM_ModelDriverCreate * const modelCreate,
+    KIM_ModelDriverCreate * const modelDriverCreate,
     KIM_LanguageName const languageName, func * const fptr)
 {
   CONVERT_POINTER;
@@ -282,8 +252,28 @@ int KIM_ModelDriverCreate_SetDestroyPointer(
   return pModelDriverCreate->SetDestroyPointer(langN, fptr);
 }
 
+int KIM_ModelDriverCreate_SetComputeArgumentsCreatePointer(
+    KIM_ModelDriverCreate * const modelDriverCreate,
+    KIM_LanguageName const languageName, func * const fptr)
+{
+  CONVERT_POINTER;
+
+  KIM::LanguageName langN = makeLanguageNameCpp(languageName);
+  return pModelDriverCreate->SetComputeArgumentsCreatePointer(langN, fptr);
+}
+
+int KIM_ModelDriverCreate_SetComputeArgumentsDestroyPointer(
+    KIM_ModelDriverCreate * const modelDriverCreate,
+    KIM_LanguageName const languageName, func * const fptr)
+{
+  CONVERT_POINTER;
+
+  KIM::LanguageName langN = makeLanguageNameCpp(languageName);
+  return pModelDriverCreate->SetComputeArgumentsDestroyPointer(langN, fptr);
+}
+
 int KIM_ModelDriverCreate_SetComputePointer(
-    KIM_ModelDriverCreate * const modelCreate,
+    KIM_ModelDriverCreate * const modelDriverCreate,
     KIM_LanguageName const languageName, func * const fptr)
 {
   CONVERT_POINTER;
@@ -293,37 +283,17 @@ int KIM_ModelDriverCreate_SetComputePointer(
 }
 
 int KIM_ModelDriverCreate_SetSpeciesCode(
-    KIM_ModelDriverCreate * const modelCreate,
+    KIM_ModelDriverCreate * const modelDriverCreate,
     KIM_SpeciesName const speciesName, int const code)
 {
   CONVERT_POINTER;
 
   return pModelDriverCreate
-      ->SetSpeciesCode(makeSpecNameCpp(speciesName), code);
-}
-
-int KIM_ModelDriverCreate_SetArgumentSupportStatus(
-    KIM_ModelDriverCreate * const modelCreate,
-    KIM_ArgumentName const argumentName, KIM_SupportStatus const supportStatus)
-{
-  CONVERT_POINTER;
-
-  return pModelDriverCreate->SetArgumentSupportStatus(
-      makeArgumentNameCpp(argumentName), makeSupportStatusCpp(supportStatus));
-}
-
-int KIM_ModelDriverCreate_SetCallbackSupportStatus(
-    KIM_ModelDriverCreate * const modelCreate,
-    KIM_CallbackName const callbackName, KIM_SupportStatus const supportStatus)
-{
-  CONVERT_POINTER;
-
-  return pModelDriverCreate->SetCallbackSupportStatus(
-      makeCallbackNameCpp(callbackName), makeSupportStatusCpp(supportStatus));
+      ->SetSpeciesCode(makeSpeciesNameCpp(speciesName), code);
 }
 
 int KIM_ModelDriverCreate_SetParameterPointerInteger(
-    KIM_ModelDriverCreate * const modelCreate,
+    KIM_ModelDriverCreate * const modelDriverCreate,
     int const extent, int * const ptr, char const * const description)
 {
   CONVERT_POINTER;
@@ -333,7 +303,7 @@ int KIM_ModelDriverCreate_SetParameterPointerInteger(
 }
 
 int KIM_ModelDriverCreate_SetParameterPointerDouble(
-    KIM_ModelDriverCreate * const modelCreate,
+    KIM_ModelDriverCreate * const modelDriverCreate,
     int const extent, double * const ptr, char const * const description)
 {
   CONVERT_POINTER;
@@ -343,7 +313,7 @@ int KIM_ModelDriverCreate_SetParameterPointerDouble(
 }
 
 void KIM_ModelDriverCreate_SetModelBufferPointer(
-    KIM_ModelDriverCreate * const modelCreate, void * const ptr)
+    KIM_ModelDriverCreate * const modelDriverCreate, void * const ptr)
 {
   CONVERT_POINTER;
 
@@ -351,7 +321,7 @@ void KIM_ModelDriverCreate_SetModelBufferPointer(
 }
 
 int KIM_ModelDriverCreate_SetUnits(
-    KIM_ModelDriverCreate * const modelCreate,
+    KIM_ModelDriverCreate * const modelDriverCreate,
     KIM_LengthUnit const lengthUnit,
     KIM_EnergyUnit const energyUnit,
     KIM_ChargeUnit const chargeUnit,
@@ -371,7 +341,7 @@ int KIM_ModelDriverCreate_SetUnits(
 }
 
 int KIM_ModelDriverCreate_ConvertUnit(
-    KIM_ModelDriverCreate const * const modelCreate,
+    KIM_ModelDriverCreate const * const modelDriverCreate,
     KIM_LengthUnit const fromLengthUnit,
     KIM_EnergyUnit const fromEnergyUnit,
     KIM_ChargeUnit const fromChargeUnit,
@@ -411,7 +381,7 @@ int KIM_ModelDriverCreate_ConvertUnit(
 }
 
 void KIM_ModelDriverCreate_LogEntry(
-    KIM_ModelDriverCreate const * const modelCreate,
+    KIM_ModelDriverCreate const * const modelDriverCreate,
     KIM_LogVerbosity const logVerbosity, char const * const message,
     int const lineNumber, char const * const fileName)
 {
@@ -422,7 +392,7 @@ void KIM_ModelDriverCreate_LogEntry(
 }
 
 char const * const KIM_ModelDriverCreate_String(
-    KIM_ModelDriverCreate const * const modelCreate)
+    KIM_ModelDriverCreate const * const modelDriverCreate)
 {
   CONVERT_POINTER;
 

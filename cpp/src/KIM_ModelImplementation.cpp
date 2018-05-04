@@ -84,12 +84,12 @@ extern "C"
 }  // extern "C"
 #endif
 
-// #ifndef KIM_MODEL_COMPUTE_ARGUMENTS_H_
-// extern "C"
-// {
-// #include "KIM_ModelComputeArguments.h"
-// }  // extern "C"
-// #endif
+#ifndef KIM_MODEL_COMPUTE_ARGUMENTS_H_
+extern "C"
+{
+#include "KIM_ModelComputeArguments.h"
+}  // extern "C"
+#endif
 
 #ifndef KIM_MODEL_DESTROY_H_
 extern "C"
@@ -199,7 +199,7 @@ int ModelImplementation::Create(
   if (error)
   {
 #if DEBUG_VERBOSITY
-    (*modelImplementation)->LogEntry(
+    pModelImplementation->LogEntry(
         LOG_VERBOSITY::debug,
         "Destroying ModelImplementation object and exit " + callString,
         __LINE__, __FILE__);
@@ -1076,6 +1076,11 @@ struct KIM_ModelCompute
   void * p;
 };
 
+struct KIM_ModelComputeArguments
+{
+  void * p;
+};
+
 int ModelImplementation::Compute(
     ComputeArguments const * const computeArguments) const
 {
@@ -1120,10 +1125,10 @@ int ModelImplementation::Compute(
                               KIM::ModelComputeArguments const * const);
   ModelComputeCpp * CppCompute
       = reinterpret_cast<ModelComputeCpp *>(computeFunction_);
-//  typedef int ModelComputeC(KIM_ModelCompute const * const,
-//                            KIM_ModelCompueArguments const * const);
-//  ModelComputeC * CCompute
-//      = reinterpret_cast<ModelComputeC *>(computeFunction_);
+  typedef int ModelComputeC(KIM_ModelCompute const * const,
+                            KIM_ModelComputeArguments const * const);
+  ModelComputeC * CCompute
+      = reinterpret_cast<ModelComputeC *>(computeFunction_);
 //  typedef void ModelComputeF(KIM_ModelCompute * const,
 //                             KIM_ModelComputeArguments const * const,
 //                             int * const);
@@ -1141,14 +1146,15 @@ int ModelImplementation::Compute(
         reinterpret_cast<KIM::ModelComputeArguments const * const>(
             computeArguments));
   }
-//  else if (computeLanguage_ == LANGUAGE_NAME::c)
-//  {
-//    KIM_ModelCompute cM;
-//    cM.p = &M;
-//    KIM_ModelComputeArguments cMca;
-//    cMca.p = &computeArguments;
-//    error = CCompute(&cM, &cMca);
-//  }
+  else if (computeLanguage_ == LANGUAGE_NAME::c)
+  {
+    KIM_ModelCompute cM;
+    cM.p = &M;
+    KIM_ModelComputeArguments cMca;
+    cMca.p = reinterpret_cast<void *>
+        (const_cast<KIM::ComputeArguments *>(computeArguments));
+    error = CCompute(&cM, &cMca);
+  }
 //  else if (computeLanguage_ == LANGUAGE_NAME::fortran)
 //  {
 //    KIM_ModelCompute cM;
@@ -1993,12 +1999,12 @@ int ModelImplementation::ModelComputeArgumentsCreate(ComputeArguments * const
   ModelComputeArgumentsCreateCpp * CppComputeArgumentsCreate
       = reinterpret_cast<ModelComputeArgumentsCreateCpp *>(
           computeArgumentsCreateFunction_);
-//  typedef int ModelComputeArgumentsCreateC(
-//      KIM_ModelCompute const * const,
-//      KIM_ModelComputeArgumentsCreate * const);
-//  ModelComputeArgumentsCreateC * CComputeArgumentsCreate
-//      = reinterpret_cast<ModelComputeArgumentsCreateC *>(
-//          computeArgumentsCreateFunction_);
+  typedef int ModelComputeArgumentsCreateC(
+      KIM_ModelCompute const * const,
+      KIM_ModelComputeArgumentsCreate * const);
+  ModelComputeArgumentsCreateC * CComputeArgumentsCreate
+      = reinterpret_cast<ModelComputeArgumentsCreateC *>(
+          computeArgumentsCreateFunction_);
 //  typedef void ModelComputeArgumentsCreateF(
 //      KIM_ModelCompute const * const,
 //      KIM_ModelComputeArgumentsCreate * const, int * const);
@@ -2016,14 +2022,14 @@ int ModelImplementation::ModelComputeArgumentsCreate(ComputeArguments * const
         reinterpret_cast<KIM::ModelCompute const * const>(&M),
         reinterpret_cast<KIM::ModelComputeArgumentsCreate *>(computeArguments));
   }
-//  else if (computeArgumentsCreateLanguage_ == LANGUAGE_NAME::c)
-//  {
-//    KIM_ModelCompute cM;
-//    cM.p = &M;
-//    KIM_ModelComputeArgumentsCreate cMcac;
-//    cMcac.p = computeArguments;
-//    error = CComputeArgumentsCreate(&cM, &cMcac);
-//  }
+  else if (computeArgumentsCreateLanguage_ == LANGUAGE_NAME::c)
+  {
+    KIM_ModelCompute cM;
+    cM.p = &M;
+    KIM_ModelComputeArgumentsCreate cMcac;
+    cMcac.p = computeArguments;
+    error = CComputeArgumentsCreate(&cM, &cMcac);
+  }
 //  else if (computeArgumentsCreateLanguage_ == LANGUAGE_NAME::fortran)
 //  {
 //    KIM_ModelCompute cM;
@@ -2076,12 +2082,12 @@ int ModelImplementation::ModelComputeArgumentsDestroy(ComputeArguments * const
   ModelComputeArgumentsDestroyCpp * CppComputeArgumentsDestroy
       = reinterpret_cast<ModelComputeArgumentsDestroyCpp * const>(
           computeArgumentsDestroyFunction_);
-//  typedef int ModelComputeArgumentsDestroyC(
-//      KIM::ModelCompute const * const,
-//      KIM_ModelComputeArgumentsDestroy * const);
-//  ModelComputeArgumentsDestroyC * CComputeArgumentsDestroy
-//      = reinterpret_cast<ModelComputeArgumentsDestroyC * const>(
-//          computeArgumentsDestroyFunction_);
+  typedef int ModelComputeArgumentsDestroyC(
+      KIM_ModelCompute const * const,
+      KIM_ModelComputeArgumentsDestroy * const);
+  ModelComputeArgumentsDestroyC * CComputeArgumentsDestroy
+      = reinterpret_cast<ModelComputeArgumentsDestroyC * const>(
+          computeArgumentsDestroyFunction_);
 //  typedef void ModelComputeArgumentsDestroyF(
 //      KIM::ModelCompute const * const,
 //      KIM_ModelComputeArgumentsDestroy * const, int * const);
@@ -2100,14 +2106,14 @@ int ModelImplementation::ModelComputeArgumentsDestroy(ComputeArguments * const
         reinterpret_cast<KIM::ModelComputeArgumentsDestroy * const>(
             computeArguments));
   }
-//  else if (computeArgumentsDestroyLanguage_ == LANGUAGE_NAME::c)
-//  {
-//    KIM_ModelCompute cM;
-//    cM.p = &M;
-//    KIM_ModelComputeArgumentsDestroy cMcad;
-//    cMcad.p = computeArguments;
-//    error = CComputeArgumentsDestroy(&cM, &cMcad);
-//  }
+  else if (computeArgumentsDestroyLanguage_ == LANGUAGE_NAME::c)
+  {
+    KIM_ModelCompute cM;
+    cM.p = &M;
+    KIM_ModelComputeArgumentsDestroy cMcad;
+    cMcad.p = computeArguments;
+    error = CComputeArgumentsDestroy(&cM, &cMcad);
+  }
 //  else if (computeArgumentsDestroyLanguage_ == LANGUAGE_NAME::fortran)
 //  {
 //    KIM_ModelCompute cM;

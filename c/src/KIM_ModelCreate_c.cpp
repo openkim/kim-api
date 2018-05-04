@@ -41,16 +41,6 @@ extern "C"
 #endif
 }  // extern "C"
 
-#ifndef KIM_SPECIES_NAME_HPP_
-#include "KIM_SpeciesName.hpp"
-#endif
-extern "C"
-{
-#ifndef KIM_SPECIES_NAME_H_
-#include "KIM_SpeciesName.h"
-#endif
-}  // extern "C"
-
 #ifndef KIM_LANGUAGE_NAME_HPP_
 #include "KIM_LanguageName.hpp"
 #endif
@@ -71,13 +61,13 @@ extern "C"
 #endif
 }  // extern "C"
 
-#ifndef KIM_UNIT_SYSTEM_HPP_
-#include "KIM_UnitSystem.hpp"
+#ifndef KIM_SPECIES_NAME_HPP_
+#include "KIM_SpeciesName.hpp"
 #endif
 extern "C"
 {
-#ifndef KIM_UNIT_SYSTEM_H_
-#include "KIM_UnitSystem.h"
+#ifndef KIM_SPECIES_NAME_H_
+#include "KIM_SpeciesName.h"
 #endif
 }  // extern "C"
 
@@ -91,23 +81,13 @@ extern "C"
 #endif
 }  // extern "C"
 
-#ifndef KIM_ARGUMENT_NAME_HPP_
-#include "KIM_ArgumentName.hpp"
+#ifndef KIM_UNIT_SYSTEM_HPP_
+#include "KIM_UnitSystem.hpp"
 #endif
 extern "C"
 {
-#ifndef KIM_ARGUMENT_NAME_H_
-#include "KIM_ArgumentName.h"
-#endif
-}  // extern "C"
-
-#ifndef KIM_CALLBACK_NAME_HPP_
-#include "KIM_CallbackName.hpp"
-#endif
-extern "C"
-{
-#ifndef KIM_CALLBACK_NAME_H_
-#include "KIM_CallbackName.h"
+#ifndef KIM_UNIT_SYSTEM_H_
+#include "KIM_UnitSystem.h"
 #endif
 }  // extern "C"
 
@@ -145,16 +125,6 @@ KIM::Numbering makeNumberingCpp(KIM_Numbering const numbering)
 KIM::SupportStatus makeSupportStatusCpp(KIM_SupportStatus const supportStatus)
 {
   return KIM::SupportStatus(supportStatus.supportStatusID);
-}
-
-KIM::ArgumentName makeArgumentNameCpp(KIM_ArgumentName const argumentName)
-{
-  return KIM::ArgumentName(argumentName.argumentNameID);
-}
-
-KIM::CallbackName makeCallbackNameCpp(KIM_CallbackName const callbackName)
-{
-  return KIM::CallbackName(callbackName.callbackNameID);
 }
 
 KIM::LengthUnit makeLengthUnitCpp(KIM_LengthUnit const lengthUnit)
@@ -244,6 +214,26 @@ int KIM_ModelCreate_SetDestroyPointer(
   return pModelCreate->SetDestroyPointer(langN, fptr);
 }
 
+int KIM_ModelCreate_SetComputeArgumentsCreatePointer(
+    KIM_ModelCreate * const modelCreate,
+    KIM_LanguageName const languageName, func * const fptr)
+{
+  CONVERT_POINTER;
+
+  KIM::LanguageName langN = makeLanguageNameCpp(languageName);
+  return pModelCreate->SetComputeArgumentsCreatePointer(langN, fptr);
+}
+
+int KIM_ModelCreate_SetComputeArgumentsDestroyPointer(
+    KIM_ModelCreate * const modelCreate,
+    KIM_LanguageName const languageName, func * const fptr)
+{
+  CONVERT_POINTER;
+
+  KIM::LanguageName langN = makeLanguageNameCpp(languageName);
+  return pModelCreate->SetComputeArgumentsDestroyPointer(langN, fptr);
+}
+
 int KIM_ModelCreate_SetComputePointer(
     KIM_ModelCreate * const modelCreate,
     KIM_LanguageName const languageName, func * const fptr)
@@ -262,26 +252,6 @@ int KIM_ModelCreate_SetSpeciesCode(
 
   return pModelCreate->SetSpeciesCode(makeSpecNameCpp(speciesName),
                                       code);
-}
-
-int KIM_ModelCreate_SetArgumentSupportStatus(
-    KIM_ModelCreate * const modelCreate,
-    KIM_ArgumentName const argumentName, KIM_SupportStatus const supportStatus)
-{
-  CONVERT_POINTER;
-
-  return pModelCreate->SetArgumentSupportStatus(
-      makeArgumentNameCpp(argumentName), makeSupportStatusCpp(supportStatus));
-}
-
-int KIM_ModelCreate_SetCallbackSupportStatus(
-    KIM_ModelCreate * const modelCreate,
-    KIM_CallbackName const callbackName, KIM_SupportStatus const supportStatus)
-{
-  CONVERT_POINTER;
-
-  return pModelCreate->SetCallbackSupportStatus(
-      makeCallbackNameCpp(callbackName), makeSupportStatusCpp(supportStatus));
 }
 
 int KIM_ModelCreate_SetParameterPointerInteger(

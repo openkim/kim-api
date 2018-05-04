@@ -40,26 +40,6 @@ extern "C"
 #endif
 }  // extern "C"
 
-#ifndef KIM_ARGUMENT_NAME_HPP_
-#include "KIM_ArgumentName.hpp"
-#endif
-extern "C"
-{
-#ifndef KIM_ARGUMENT_NAME_H_
-#include "KIM_ArgumentName.h"
-#endif
-}  // extern "C"
-
-#ifndef KIM_CALLBACK_NAME_HPP_
-#include "KIM_CallbackName.hpp"
-#endif
-extern "C"
-{
-#ifndef KIM_CALLBACK_NAME_H_
-#include "KIM_CallbackName.h"
-#endif
-}  // extern "C"
-
 #ifndef KIM_MODEL_COMPUTE_HPP_
 #include "KIM_ModelCompute.hpp"
 #endif
@@ -85,90 +65,11 @@ KIM::LogVerbosity makeLogVerbosityCpp(KIM_LogVerbosity const logVerbosity)
 {
   return KIM::LogVerbosity(logVerbosity.logVerbosityID);
 }
-
-KIM::ArgumentName makeArgumentNameCpp(KIM_ArgumentName const argumentName)
-{
-  return KIM::ArgumentName(argumentName.argumentNameID);
-}
-
-KIM::CallbackName makeCallbackNameCpp(KIM_CallbackName const callbackName)
-{
-  return KIM::CallbackName(callbackName.callbackNameID);
-}
 }  // namespace
 
 
 extern "C"
 {
-int KIM_ModelCompute_GetNeighborList(
-    KIM_ModelCompute const * const modelCompute,
-    int const neighborListIndex,
-    int const particleNumber,
-    int * const numberOfNeighbors,
-    int const ** const neighborsOfParticle)
-{
-  CONVERT_POINTER;
-
-  return pModelCompute->GetNeighborList(neighborListIndex, particleNumber,
-                                        numberOfNeighbors,
-                                        neighborsOfParticle);
-}
-
-int KIM_ModelCompute_ProcessDEDrTerm(
-    KIM_ModelCompute const * const modelCompute,
-    double const de, double const r,
-    double const * const dx, int const i,
-    int const j)
-{
-  CONVERT_POINTER;
-
-  return pModelCompute->ProcessDEDrTerm(de, r, dx, i, j);
-}
-
-int KIM_ModelCompute_ProcessD2EDr2Term(
-    KIM_ModelCompute const * const modelCompute,
-    double const de, double const * const r,
-    double const * const dx,
-    int const * const i,
-    int const * const j)
-{
-  CONVERT_POINTER;
-
-  return pModelCompute->ProcessD2EDr2Term(de, r, dx, i, j);
-}
-
-// *data functions
-int KIM_ModelCompute_GetArgumentPointerInteger(
-    KIM_ModelCompute const * const modelCompute,
-    KIM_ArgumentName const argumentName,
-    int ** const ptr)
-{
-  CONVERT_POINTER;
-
-  return pModelCompute->GetArgumentPointer(makeArgumentNameCpp(argumentName),
-                                           ptr);
-}
-
-int KIM_ModelCompute_GetArgumentPointerDouble(
-    KIM_ModelCompute const * const modelCompute,
-    KIM_ArgumentName const argumentName, double ** const ptr)
-{
-  CONVERT_POINTER;
-
-  return pModelCompute->GetArgumentPointer(makeArgumentNameCpp(argumentName),
-                                           ptr);
-}
-
-int KIM_ModelCompute_IsCallbackPresent(
-    KIM_ModelCompute const * const modelCompute,
-    KIM_CallbackName const callbackName, int * const present)
-{
-  CONVERT_POINTER;
-
-  KIM::CallbackName callbackNameC = makeCallbackNameCpp(callbackName);
-  return pModelCompute->IsCallbackPresent(callbackNameC, present);
-}
-
 void KIM_ModelCompute_GetModelBufferPointer(
     KIM_ModelCompute const * const modelCompute, void ** const ptr)
 {

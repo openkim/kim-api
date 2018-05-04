@@ -33,32 +33,37 @@
 /*                                                                            */
 
 
-#ifndef KIM_MODEL_COMPUTE_H_
-#define KIM_MODEL_COMPUTE_H_
+#ifndef KIM_COMPUTE_CALLBACK_NAME_H_
+#define KIM_COMPUTE_CALLBACK_NAME_H_
 
-/* Forward declarations */
-#ifndef KIM_LOG_VERBOSITY_DEFINED_
-#define KIM_LOG_VERBOSITY_DEFINED_
-typedef struct KIM_LogVerbosity KIM_LogVerbosity;
+struct KIM_ComputeCallbackName
+{
+  int computeCallbackNameID;
+};
+#ifndef KIM_COMPUTE_CALLBACK_NAME_DEFINED_
+#define KIM_COMPUTE_CALLBACK_NAME_DEFINED_
+typedef struct KIM_ComputeCallbackName KIM_ComputeCallbackName;
 #endif
 
+KIM_ComputeCallbackName KIM_ComputeCallbackNameFromString(
+    char const * const str);
 
-struct KIM_ModelCompute;
+int KIM_ComputeCallbackNameEqual(KIM_ComputeCallbackName const left,
+                                 KIM_ComputeCallbackName const right);
+int KIM_ComputeCallbackNameNotEqual(KIM_ComputeCallbackName const left,
+                                    KIM_ComputeCallbackName const right);
 
-#ifndef KIM_MODEL_COMPUTE_DEFINED_
-#define KIM_MODEL_COMPUTE_DEFINED_
-typedef struct KIM_ModelCompute KIM_ModelCompute;
-#endif
+char const * const KIM_ComputeCallbackNameString(
+    KIM_ComputeCallbackName const computeCallbackName);
 
-void KIM_ModelCompute_GetModelBufferPointer(
-    KIM_ModelCompute const * const modelCompute, void ** const ptr);
+extern KIM_ComputeCallbackName const KIM_COMPUTE_CALLBACK_NAME_GetNeighborList;
+extern KIM_ComputeCallbackName const KIM_COMPUTE_CALLBACK_NAME_ProcessDEDrTerm;
+extern
+KIM_ComputeCallbackName const KIM_COMPUTE_CALLBACK_NAME_ProcessD2EDr2Term;
 
-void KIM_ModelCompute_LogEntry(
-    KIM_ModelCompute const * const modelCompute,
-    KIM_LogVerbosity const logVerbosity, char const * const message,
-    int const lineNumber, char const * const fileName);
+void KIM_COMPUTE_CALLBACK_NAME_GetNumberOfComputeCallbacks(
+    int * const numberOfComputeCallbacks);
+int KIM_COMPUTE_CALLBACK_NAME_GetComputeCallbackName(
+    int const index, KIM_ComputeCallbackName * const computeCallbackName);
 
-char const * const KIM_ModelCompute_String(
-    KIM_ModelCompute const * const modelCompute);
-
-#endif  /* KIM_MODEL_COMPUTE_H_ */
+#endif  /* KIM_COMPUTE_CALLBACK_NAME_H_ */

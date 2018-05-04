@@ -39,10 +39,10 @@ VPATH = ../include ../../c/include
 KIMINCLUDEFLAGS = -I../include -I../../c/include
 
 # Definition of cpp object files
-OBJCPP = KIM_ComputeArgumentName.o \
+OBJCPP = KIM_ChargeUnit.o \
+         KIM_ComputeArgumentName.o \
          KIM_ComputeArguments.o \
          KIM_ComputeCallbackName.o \
-         KIM_ChargeUnit.o \
          KIM_DataType.o \
          KIM_EnergyUnit.o \
          KIM_LanguageName.o \
@@ -65,8 +65,8 @@ OBJCPP = KIM_ComputeArgumentName.o \
          KIM_TemperatureUnit.o \
          KIM_TimeUnit.o \
          \
-         KIM_LogImplementation.o \
          KIM_ComputeArgumentsImplementation.o \
+         KIM_LogImplementation.o \
          KIM_ModelImplementation.o \
          KIM_ModelLibrary.o \
          old_KIM_API_DIRS.o
@@ -99,7 +99,7 @@ ifeq ($(filter $(standard_system_prefixes),$(prefix)),)
    LINKSOPATH = $(package_dir)/
 endif
 
-lib$(KIM_LIB_BUILD).so: lib-cpp-$(KIM_LIB_BUILD).a #../../c/src/lib-c-$(KIM_LIB_BUILD).a ../../fortran/src/lib-fortran-$(KIM_LIB_BUILD).a
+lib$(KIM_LIB_BUILD).so: lib-cpp-$(KIM_LIB_BUILD).a ../../c/src/lib-c-$(KIM_LIB_BUILD).a #../../fortran/src/lib-fortran-$(KIM_LIB_BUILD).a
 	@printf "Creating... KIM API library....... $@.\n";
 	$(QUELL)$(LD) $(ARCHFLAG) $(FNOMAINFLAG) $(LDSHAREDFLAG) $(LINKSONAME)$(LINKSOPATH)lib$(KIM_LIB).so $(LDFLAGS) $(OUTPUTINFLAG) $@ \
                       $(LDWHOLEARCHIVESTARTFLAG) $^ $(LDWHOLEARCHIVEENDFLAG) \
@@ -111,11 +111,11 @@ lib$(KIM_LIB_BUILD).so: lib-cpp-$(KIM_LIB_BUILD).a #../../c/src/lib-c-$(KIM_LIB_
 include ../include/Makefile.dependencies
 include ../../c/include/Makefile.dependencies
 
+KIM_ChargeUnit.o: KIM_ChargeUnit.cpp $(KIM_CHARGE_UNIT_CPP) $(KIM_MAKE_FILES)
 KIM_ComputeArgumentName.o: KIM_ComputeArgumentName.cpp $(KIM_COMPUTE_ARGUMENT_NAME_CPP) $(KIM_DATA_TYPE_CPP) $(KIM_MAKE_FILES)
 KIM_ComputeArguments.o: KIM_ComputeArguments.cpp $(KIM_COMPUTE_ARGUMENTS_CPP) $(KIM_COMPUTE_ARGUMENT_NAME_CPP) \
                         $(KIM_COMPUTE_CALLBACK_NAME_CPP) $(KIM_SUPPORT_STATUS_CPP) $(KIM_LANGUAGE_NAME_CPP) $(KIM_MAKE_FILES)
 KIM_ComputeCallbackName.o: KIM_ComputeCallbackName.cpp $(KIM_COMPUTE_CALLBACK_NAME_CPP) $(KIM_MAKE_FILES)
-KIM_ChargeUnit.o: KIM_ChargeUnit.cpp $(KIM_CHARGE_UNIT_CPP) $(KIM_MAKE_FILES)
 KIM_DataType.o: KIM_DataType.cpp $(KIM_DATA_TYPE_CPP) $(KIM_MAKE_FILES)
 KIM_EnergyUnit.o: KIM_EnergyUnit.cpp $(KIM_ENERGY_UNIT_CPP) $(KIM_MAKE_FILES)
 KIM_LanguageName.o: KIM_LanguageName.cpp $(KIM_LANGUAGE_NAME_CPP) $(KIM_MAKE_FILES)
@@ -141,37 +141,33 @@ KIM_ModelDestroy.o: KIM_ModelDestroy.cpp $(KIM_MODEL_IMPLEMENTATION_CPP) $(KIM_M
                     $(KIM_LANGUAGE_NAME_CPP) $(KIM_LOG_CPP) $(KIM_LOG_VERBOSITY_CPP) \
                     $(KIM_FUNC_CPP) $(KIM_MAKE_FILES)
 KIM_ModelDriverCreate.o: KIM_ModelDriverCreate.cpp $(KIM_MODEL_IMPLEMENTATION_CPP) \
-                         $(KIM_MODEL_DRIVER_CREATE_CPP) $(KIM_CALLBACK_NAME_CPP) \
-                         $(KIM_ARGUMENT_NAME_CPP) $(KIM_SUPPORT_STATUS_CPP) $(KIM_UNIT_SYSTEM_CPP) \
+                         $(KIM_MODEL_DRIVER_CREATE_CPP) $(KIM_COMPUTE_ARGUMENTS_CPP) \
+                         $(KIM_SUPPORT_STATUS_CPP) $(KIM_UNIT_SYSTEM_CPP) \
                          $(KIM_SPECIES_NAME_CPP) $(KIM_LANGUAGE_NAME_CPP) $(KIM_LOG_CPP) \
                          $(KIM_LOG_VERGOSITY_CPP) $(KIM_MAKE_FILES)
 KIM_ModelRefresh.o: KIM_ModelRefresh.cpp $(KIM_MODEL_IMPLEMENTATION_CPP) $(KIM_UNIT_SYSTEM_CPP) \
                     $(KIM_MODEL_REFERESH_CPP) $(KIM_LOG_CPP) $(KIM_MAKE_FILES)
 KIM_Numbering.o: KIM_Numbering.cpp $(KIM_NUMBERING_CPP) $(KIM_MAKE_FILES)
+KIM_SemVer.o: KIM_SemVer.cpp $(KIM_SEM_VER_CPP) $(KIM_MAKE_FILES)
 KIM_SpeciesName.o: KIM_SpeciesName.cpp $(KIM_SPECIES_NAME_CPP) $(KIM_MAKE_FILES)
 KIM_SupportStatus.o: KIM_SupportStatus.cpp $(KIM_SUPPORT_STATUS_CPP) $(KIM_MAKE_FILES)
 KIM_TemperatureUnit.o: KIM_TemperatureUnit.cpp $(KIM_TEMPERATURE_UNIT_CPP) $(KIM_MAKE_FILES)
 KIM_TimeUnit.o: KIM_TimeUnit.cpp $(KIM_TIME_UNIT_CPP) $(KIM_MAKE_FILES)
-KIM_SemVer.o: KIM_SemVer.cpp $(KIM_SEM_VER_CPP) $(KIM_MAKE_FILES)
 
-
-KIM_ModelLibrary.o: KIM_ModelLibrary.cpp KIM_ModelLibraryLogMacros.hpp \
-                    $(KIM_MODEL_LIBRARY_CPP) $(KIM_LOG_VERBOSITY_CPP) $(KIM_LANGUAGE_NAME_CPP) \
-                    $(KIM_API_DIRS_CPP) $(KIM_MAKE_FILES)
-KIM_ModelLibrary.o: KIMDEFINES = -D MODELLIBFILE=\"lib$(MODEL_LIB)\" -D MODELDRIVERLIBFILE=\"lib$(MODEL_DRIVER_LIB)\"
-
-KIM_LogImplementation.o: KIM_LogImplementation.cpp $(KIM_LOG_IMPLEMENTATION_CPP) $(KIM_LOG_VERBOSITY_CPP) $(KIM_MAKE_FILES)
 
 KIM_ComputeArgumentsImplementation.o: KIM_ComputeArgumentsImplementation.cpp \
                            $(KIM_COMPUTE_ARGUMENTS_CTEATE_C) $(KIM_COMPUTE_ARGUMENTS_DESTROY_C) \
                            $(KI_LANGUAGE_NAME_CPP) $(KIM_COMPUTE_ARGUMENTS_IMPLEMENTATION_CPP) $(KIM_MAKE_FILES)
-
+KIM_LogImplementation.o: KIM_LogImplementation.cpp $(KIM_LOG_IMPLEMENTATION_CPP) $(KIM_LOG_VERBOSITY_CPP) $(KIM_MAKE_FILES)
 KIM_ModelImplementation.o: KIM_ModelImplementation.cpp KIM_ModelImplementationLogMacros.hpp \
                            $(KIM_MODEL_DESTROY_C) $(KIM_MODEL_COMPUTE_C) \
                            $(KIM_MODEL_REFRESH_C) $(KIM_MODEL_DRIVER_CREATE_C) $(KIM_MODEL_CREATE_C) \
                            $(KIM_UNIT_SYSTEM_C) $(KI_LANGUAGE_NAME_CPP) $(KIM_MODEL_LIBRARY_CPP) \
                            $(KIM_MODEL_IMPLEMENTATION_CPP) $(KIM_MAKE_FILES)
-
+KIM_ModelLibrary.o: KIM_ModelLibrary.cpp KIM_ModelLibraryLogMacros.hpp \
+                    $(KIM_MODEL_LIBRARY_CPP) $(KIM_LOG_VERBOSITY_CPP) $(KIM_LANGUAGE_NAME_CPP) \
+                    $(KIM_API_DIRS_CPP) $(KIM_MAKE_FILES)
+KIM_ModelLibrary.o: KIMDEFINES = -D MODELLIBFILE=\"lib$(MODEL_LIB)\" -D MODELDRIVERLIBFILE=\"lib$(MODEL_DRIVER_LIB)\"
 old_KIM_API_DIRS.o: $(KIM_API_DIRS_CPP) $(KIM_LOG_VERBOSITY_CPP) $(KIM_MAKE_FILES)
 old_KIM_API_DIRS.o: KIMDEFINES = -D PACKAGEDIR=\"$(package_dir)\" \
                                  -D KIMDIR=\"$(KIM_DIR)\" \

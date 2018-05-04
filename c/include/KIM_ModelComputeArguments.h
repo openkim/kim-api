@@ -33,8 +33,8 @@
 /*                                                                            */
 
 
-#ifndef KIM_MODEL_COMPUTE_H_
-#define KIM_MODEL_COMPUTE_H_
+#ifndef KIM_MODEL_COMPUTE_ARGUMENTS_H_
+#define KIM_MODEL_COMPUTE_ARGUMENTS_H_
 
 /* Forward declarations */
 #ifndef KIM_LOG_VERBOSITY_DEFINED_
@@ -42,23 +42,67 @@
 typedef struct KIM_LogVerbosity KIM_LogVerbosity;
 #endif
 
-
-struct KIM_ModelCompute;
-
-#ifndef KIM_MODEL_COMPUTE_DEFINED_
-#define KIM_MODEL_COMPUTE_DEFINED_
-typedef struct KIM_ModelCompute KIM_ModelCompute;
+#ifndef KIM_COMPUTE_ARGUMENT_NAME_DEFINED_
+#define KIM_COMPUTE_ARGUMENT_NAME_DEFINED_
+typedef struct KIM_ComputeArgumentName KIM_ComputeArgumentName;
 #endif
 
-void KIM_ModelCompute_GetModelBufferPointer(
-    KIM_ModelCompute const * const modelCompute, void ** const ptr);
+#ifndef KIM_COMPUTE_CALLBACK_NAME_DEFINED_
+#define KIM_COMPUTE_CALLBACK_NAME_DEFINED_
+typedef struct KIM_ComputeCallbackName KIM_ComputeCallbackName;
+#endif
 
-void KIM_ModelCompute_LogEntry(
-    KIM_ModelCompute const * const modelCompute,
+
+struct KIM_ModelComputeArguments;
+
+#ifndef KIM_MODEL_COMPUTE_ARGUMENTS_DEFINED_
+#define KIM_MODEL_COMPUTE_ARGUMENTS_DEFINED_
+typedef struct KIM_ModelComputeArguments KIM_ModelComputeArguments;
+#endif
+
+int KIM_ModelComputeArguments_GetNeighborList(
+    KIM_ModelComputeArguments const * const modelComputeArguments,
+    int const neighborListIndex,
+    int const particleNumber,
+    int * const numberOfNeighbors,
+    int const ** const neighborsOfParticle);
+
+int KIM_ModelComputeArguments_ProcessDEDrTerm(
+    KIM_ModelComputeArguments const * const modelComputeArguments,
+    double const de, double const r,
+    double const * const dx, int const i,
+    int const j);
+
+int KIM_ModelComputeArguments_ProcessD2EDr2Term(
+    KIM_ModelComputeArguments const * const modelComputeArguments,
+    double const de, double const * const r,
+    double const * const dx,
+    int const * const i,
+    int const * const j);
+
+int KIM_ModelComputeArguments_GetArgumentPointerInteger(
+    KIM_ModelComputeArguments const * const modelComputeArguments,
+    KIM_ComputeArgumentName const computeArgumentName,
+    int ** const ptr);
+
+int KIM_ModelComputeArguments_GetArgumentPointerDouble(
+    KIM_ModelComputeArguments const * const modelComputeArguments,
+    KIM_ComputeArgumentName const computeArgumentName, double ** const ptr);
+
+int KIM_ModelComputeArguments_IsCallbackPresent(
+    KIM_ModelComputeArguments const * const modelComputeArguments,
+    KIM_ComputeCallbackName const computeCallbackName, int * const present);
+
+void KIM_ModelComputeArguments_GetModelBufferPointer(
+    KIM_ModelComputeArguments const * const modelComputeArguments,
+    void ** const ptr);
+
+void KIM_ModelComputeArguments_LogEntry(
+    KIM_ModelComputeArguments const * const modelComputeArguments,
     KIM_LogVerbosity const logVerbosity, char const * const message,
     int const lineNumber, char const * const fileName);
 
-char const * const KIM_ModelCompute_String(
-    KIM_ModelCompute const * const modelCompute);
+char const * const KIM_ModelComputeArguments_String(
+    KIM_ModelComputeArguments const * const modelComputeArguments);
 
-#endif  /* KIM_MODEL_COMPUTE_H_ */
+#endif  /* KIM_MODEL_COMPUTE_ARGUMENTS_H_ */

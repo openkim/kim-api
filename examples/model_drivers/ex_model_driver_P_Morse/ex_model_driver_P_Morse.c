@@ -54,8 +54,11 @@
 #include "KIM_LanguageName.h"
 #include "KIM_SpeciesName.h"
 #include "KIM_SupportStatus.h"
-#include "KIM_ArgumentName.h"
-#include "KIM_CallbackName.h"
+#include "KIM_ComputeArgumentName.h"
+#include "KIM_ComputeCallbackName.h"
+#include "KIM_ModelComputeArguments.h"
+#include "KIM_ModelComputeArgumentsCreate.h"
+#include "KIM_ModelComputeArgumentsDestroy.h"
 #include "KIM_ModelDriverCreate.h"
 #include "KIM_ModelRefresh.h"
 #include "KIM_ModelCompute.h"
@@ -85,7 +88,15 @@ int model_driver_create(
 static int destroy(KIM_ModelDestroy * const modelDestroy);
 
 /* Define prototype for compute routine */
-static int compute(KIM_ModelCompute const * const modelCompute);
+static int compute(
+    KIM_ModelCompute const * const modelCompute,
+    KIM_ModelComputeArguments const * const modelComputeArguments);
+static int compute_arguments_create(
+    KIM_ModelCompute const * const modelCompute,
+    KIM_ModelComputeArgumentsCreate * const modelComputeArgumentsCreate);
+static int compute_arguments_destroy(
+    KIM_ModelCompute const * const modelCompute,
+    KIM_ModelComputeArgumentsDestroy * const modelComputeArgumentsDestroy);
 
 /* Define prototype for refresh routine */
 static int refresh(KIM_ModelRefresh * const modelRefresh);
@@ -175,7 +186,9 @@ static void calc_phi_dphi(double const* epsilon,
 
 /* compute function */
 #include "KIM_ModelComputeLogMacros.h"
-static int compute(KIM_ModelCompute const * const modelCompute)
+static int compute(
+    KIM_ModelCompute const * const modelCompute,
+    KIM_ModelComputeArguments const * const modelComputeArguments)
 {
   /* local variables */
   double R;
@@ -222,39 +235,39 @@ static int compute(KIM_ModelCompute const * const modelCompute)
   shift = &(buffer->shift);
 
   ier =
-      KIM_ModelCompute_GetArgumentPointerInteger(
-          modelCompute,
-          KIM_ARGUMENT_NAME_numberOfParticles,
+      KIM_ModelComputeArguments_GetArgumentPointerInteger(
+          modelComputeArguments,
+          KIM_COMPUTE_ARGUMENT_NAME_numberOfParticles,
           &nParts)
       ||
-      KIM_ModelCompute_GetArgumentPointerInteger(
-          modelCompute,
-          KIM_ARGUMENT_NAME_particleSpeciesCodes,
+      KIM_ModelComputeArguments_GetArgumentPointerInteger(
+          modelComputeArguments,
+          KIM_COMPUTE_ARGUMENT_NAME_particleSpeciesCodes,
           &particleSpeciesCodes)
       ||
-      KIM_ModelCompute_GetArgumentPointerInteger(
-          modelCompute,
-          KIM_ARGUMENT_NAME_particleContributing,
+      KIM_ModelComputeArguments_GetArgumentPointerInteger(
+          modelComputeArguments,
+          KIM_COMPUTE_ARGUMENT_NAME_particleContributing,
           &particleContributing)
       ||
-      KIM_ModelCompute_GetArgumentPointerDouble(
-          modelCompute,
-          KIM_ARGUMENT_NAME_coordinates,
+      KIM_ModelComputeArguments_GetArgumentPointerDouble(
+          modelComputeArguments,
+          KIM_COMPUTE_ARGUMENT_NAME_coordinates,
           &coords)
       ||
-      KIM_ModelCompute_GetArgumentPointerDouble(
-          modelCompute,
-          KIM_ARGUMENT_NAME_partialEnergy,
+      KIM_ModelComputeArguments_GetArgumentPointerDouble(
+          modelComputeArguments,
+          KIM_COMPUTE_ARGUMENT_NAME_partialEnergy,
           &energy)
       ||
-      KIM_ModelCompute_GetArgumentPointerDouble(
-          modelCompute,
-          KIM_ARGUMENT_NAME_partialForces,
+      KIM_ModelComputeArguments_GetArgumentPointerDouble(
+          modelComputeArguments,
+          KIM_COMPUTE_ARGUMENT_NAME_partialForces,
           &force)
       ||
-      KIM_ModelCompute_GetArgumentPointerDouble(
-          modelCompute,
-          KIM_ARGUMENT_NAME_partialParticleEnergy,
+      KIM_ModelComputeArguments_GetArgumentPointerDouble(
+          modelComputeArguments,
+          KIM_COMPUTE_ARGUMENT_NAME_partialParticleEnergy,
           &particleEnergy);
   if (ier)
   {
@@ -310,8 +323,9 @@ static int compute(KIM_ModelCompute const * const modelCompute)
   {
     if (particleContributing[i])
     {
-      ier = KIM_ModelCompute_GetNeighborList(
-          modelCompute, 0, i, &numOfPartNeigh, &neighListOfCurrentPart);
+      ier = KIM_ModelComputeArguments_GetNeighborList(
+          modelComputeArguments,
+          0, i, &numOfPartNeigh, &neighListOfCurrentPart);
       if (ier)
       {
         /* some sort of problem, exit */
@@ -439,31 +453,16 @@ int model_driver_create(
     return ier;
   }
 
-  /* register arguments */
-  ier = KIM_ModelDriverCreate_SetArgumentSupportStatus(
-      modelDriverCreate,
-      KIM_ARGUMENT_NAME_partialEnergy,
-      KIM_SUPPORT_STATUS_optional)
-      ||
-      KIM_ModelDriverCreate_SetArgumentSupportStatus(
-          modelDriverCreate,
-          KIM_ARGUMENT_NAME_partialParticleEnergy,
-          KIM_SUPPORT_STATUS_optional)
-      ||
-      KIM_ModelDriverCreate_SetArgumentSupportStatus(
-          modelDriverCreate,
-          KIM_ARGUMENT_NAME_partialForces,
-          KIM_SUPPORT_STATUS_optional);
-  if (ier == TRUE)
-  {
-    LOG_ERROR("Unable to set argument supportStatus.");
-    return ier;
-  }
-
   /* store pointer to functions in KIM object */
   KIM_ModelDriverCreate_SetDestroyPointer(modelDriverCreate,
                                           KIM_LANGUAGE_NAME_c,
                                           (func *) destroy);
+  KIM_ModelDriverCreate_SetComputeArgumentsCreatePointer(modelDriverCreate,
+                                          KIM_LANGUAGE_NAME_c,
+                                          (func *) compute_arguments_create);
+  KIM_ModelDriverCreate_SetComputeArgumentsDestroyPointer(modelDriverCreate,
+                                          KIM_LANGUAGE_NAME_c,
+                                          (func *) compute_arguments_destroy);
   KIM_ModelDriverCreate_SetComputePointer(modelDriverCreate,
                                           KIM_LANGUAGE_NAME_c,
                                           (func *) compute);
@@ -605,4 +604,48 @@ static int destroy(KIM_ModelDestroy * const modelDestroy)
 
   ier = FALSE;
   return ier;
+}
+
+/* compute arguments create routine */
+#include "KIM_ModelComputeArgumentsCreateLogMacros.h"
+static int compute_arguments_create(
+    KIM_ModelCompute const * const modelCompute,
+    KIM_ModelComputeArgumentsCreate * const modelComputeArgumentsCreate)
+{
+  int ier;
+  /* register arguments */
+  ier = KIM_ModelComputeArgumentsCreate_SetArgumentSupportStatus(
+      modelComputeArgumentsCreate,
+      KIM_COMPUTE_ARGUMENT_NAME_partialEnergy,
+      KIM_SUPPORT_STATUS_optional)
+      ||
+      KIM_ModelComputeArgumentsCreate_SetArgumentSupportStatus(
+          modelComputeArgumentsCreate,
+          KIM_COMPUTE_ARGUMENT_NAME_partialParticleEnergy,
+          KIM_SUPPORT_STATUS_optional)
+      ||
+      KIM_ModelComputeArgumentsCreate_SetArgumentSupportStatus(
+          modelComputeArgumentsCreate,
+          KIM_COMPUTE_ARGUMENT_NAME_partialForces,
+          KIM_SUPPORT_STATUS_optional);
+  if (ier == TRUE)
+  {
+    LOG_ERROR("Unable to set argument supportStatus.");
+    return TRUE;
+  }
+  else
+  {
+    return FALSE;
+  }
+}
+
+/* compue arguments destroy routine */
+#include "KIM_ModelComputeArgumentsDestroyLogMacros.h"
+static int compute_arguments_destroy(
+    KIM_ModelCompute const * const modelCompute,
+    KIM_ModelComputeArgumentsDestroy * const modelComputeArgumentsDestroy)
+{
+  /* nothing to be done */
+
+  return FALSE;
 }

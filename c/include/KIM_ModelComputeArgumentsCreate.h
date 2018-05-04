@@ -33,33 +33,63 @@
 /*                                                                            */
 
 
-#ifndef KIM_CALLBACK_NAME_H_
-#define KIM_CALLBACK_NAME_H_
+#ifndef KIM_MODEL_COMPUTE_ARGUMENTS_CREATE_H_
+#define KIM_MODEL_COMPUTE_ARGUMENTS_CREATE_H_
 
-struct KIM_CallbackName
-{
-  int callbackNameID;
-};
-#ifndef KIM_CALLBACK_NAME_DEFINED_
-#define KIM_CALLBACK_NAME_DEFINED_
-typedef struct KIM_CallbackName KIM_CallbackName;
+#ifndef KIM_FUNC_H_
+#include "KIM_func.h"
 #endif
 
-KIM_CallbackName KIM_CallbackNameFromString(char const * const str);
+/* Forward declarations */
+#ifndef KIM_LOG_VERBOSITY_DEFINED_
+#define KIM_LOG_VERBOSITY_DEFINED_
+typedef struct KIM_LogVerbosity KIM_LogVerbosity;
+#endif
 
-int KIM_CallbackNameEqual(KIM_CallbackName const left,
-                          KIM_CallbackName const right);
-int KIM_CallbackNameNotEqual(KIM_CallbackName const left,
-                             KIM_CallbackName const right);
+#ifndef KIM_SUPPORT_STATUS_DEFINED_
+#define KIM_SUPPORT_STATUS_DEFINED_
+typedef struct KIM_SupportStatus KIM_SupportStatus;
+#endif
 
-char const * const KIM_CallbackNameString(KIM_CallbackName const callbackName);
+#ifndef KIM_COMPUTE_ARGUMENT_NAME_DEFINED_
+#define KIM_COMPUTE_ARGUMENT_NAME_DEFINED_
+typedef struct KIM_ComputeArgumentName KIM_ComputeArgumentName;
+#endif
 
-extern KIM_CallbackName const KIM_CALLBACK_NAME_GetNeighborList;
-extern KIM_CallbackName const KIM_CALLBACK_NAME_ProcessDEDrTerm;
-extern KIM_CallbackName const KIM_CALLBACK_NAME_ProcessD2EDr2Term;
+#ifndef KIM_COMPUTE_CALLBACK_NAME_DEFINED_
+#define KIM_COMPUTE_CALLBACK_NAME_DEFINED_
+typedef struct KIM_ComputeCallbackName KIM_ComputeCallbackName;
+#endif
 
-void KIM_CALLBACK_NAME_GetNumberOfCallbacks(int * const numberOfCallbacks);
-int KIM_CALLBACK_NAME_GetCallbackName(
-    int const index, KIM_CallbackName * const callbackName);
 
-#endif  /* KIM_CALLBACK_NAME_H_ */
+struct KIM_ModelComputeArgumentsCreate;
+
+#ifndef KIM_MODEL_COMPUTE_ARGUMENTS_CREATE_DEFINED_
+#define KIM_MODEL_COMPUTE_ARGUMENTS_CREATE_DEFINED_
+typedef struct KIM_ModelComputeArgumentsCreate KIM_ModelComputeArgumentsCreate;
+#endif
+
+
+int KIM_ModelComputeArgumentsCreate_SetArgumentSupportStatus(
+    KIM_ModelComputeArgumentsCreate * const modelComputeArgumentsCreate,
+    KIM_ComputeArgumentName const computeArgumentName,
+    KIM_SupportStatus const supportStatus);
+
+int KIM_ModelComputeArgumentsCreate_SetCallbackSupportStatus(
+    KIM_ModelComputeArgumentsCreate * const modelComputeArgumentsCreate,
+    KIM_ComputeCallbackName const computeCallbackName,
+    KIM_SupportStatus const supportStatus);
+
+void KIM_ModelComputeArgumentsCreate_SetModelBufferPointer(
+    KIM_ModelComputeArgumentsCreate * const modelComputeArgumentsCreate,
+    void * const ptr);
+
+void KIM_ModelComputeArgumentsCreate_LogEntry(
+    KIM_ModelComputeArgumentsCreate const * const modelComputeArgumentsCreate,
+    KIM_LogVerbosity const logVerbosity, char const * const message,
+    int const lineNumber, char const * const fileName);
+
+char const * const KIM_ModelComputeArgumentsCreate_String(
+    KIM_ModelComputeArgumentsCreate const * const modelComputeArgumentsCreate);
+
+#endif  /* KIM_MODEL_COMPUTE_ARGUMENTS_CREATE_H_ */

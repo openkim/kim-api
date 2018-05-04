@@ -46,11 +46,6 @@
 typedef struct KIM_LogVerbosity KIM_LogVerbosity;
 #endif
 
-#ifndef KIM_SPECIES_NAME_DEFINED_
-#define KIM_SPECIES_NAME_DEFINED_
-typedef struct KIM_SpeciesName KIM_SpeciesName;
-#endif
-
 #ifndef KIM_LANGUAGE_NAME_DEFINED_
 #define KIM_LANGUAGE_NAME_DEFINED_
 typedef struct KIM_LanguageName KIM_LanguageName;
@@ -59,6 +54,16 @@ typedef struct KIM_LanguageName KIM_LanguageName;
 #ifndef KIM_NUMBERING_DEFINED_
 #define KIM_NUMBERING_DEFINED_
 typedef struct KIM_Numbering KIM_Numbering;
+#endif
+
+#ifndef KIM_SPECIES_NAME_DEFINED_
+#define KIM_SPECIES_NAME_DEFINED_
+typedef struct KIM_SpeciesName KIM_SpeciesName;
+#endif
+
+#ifndef KIM_SUPPORT_STATUS_DEFINED_
+#define KIM_SUPPORT_STATUS_DEFINED_
+typedef struct KIM_SupportStatus KIM_SupportStatus;
 #endif
 
 #ifndef KIM_LENGTH_UNIT_DEFINED_
@@ -84,21 +89,6 @@ typedef struct KIM_TemperatureUnit KIM_TemperatureUnit;
 #ifndef KIM_TIME_UNIT_DEFINED_
 #define KIM_TIME_UNIT_DEFINED_
 typedef struct KIM_TimeUnit KIM_TimeUnit;
-#endif
-
-#ifndef KIM_SUPPORT_STATUS_DEFINED_
-#define KIM_SUPPORT_STATUS_DEFINED_
-typedef struct KIM_SupportStatus KIM_SupportStatus;
-#endif
-
-#ifndef KIM_ARGUMENT_NAME_DEFINED_
-#define KIM_ARGUMENT_NAME_DEFINED_
-typedef struct KIM_ArgumentName KIM_ArgumentName;
-#endif
-
-#ifndef KIM_CALLBACK_NAME_DEFINED_
-#define KIM_CALLBACK_NAME_DEFINED_
-typedef struct KIM_CallbackName KIM_CallbackName;
 #endif
 
 
@@ -136,6 +126,12 @@ int KIM_ModelDriverCreate_SetRefreshPointer(
 int KIM_ModelDriverCreate_SetDestroyPointer(
     KIM_ModelDriverCreate * const modelDriverCreate,
     KIM_LanguageName const languageName, func * const fptr);
+int KIM_ModelDriverCreate_SetComputeArgumentsCreatePointer(
+    KIM_ModelDriverCreate * const modelDriverCreate,
+    KIM_LanguageName const languageName, func * const fptr);
+int KIM_ModelDriverCreate_SetComputeArgumentsDestroyPointer(
+    KIM_ModelDriverCreate * const modelDriverCreate,
+    KIM_LanguageName const languageName, func * const fptr);
 int KIM_ModelDriverCreate_SetComputePointer(
     KIM_ModelDriverCreate * const modelDriverCreate,
     KIM_LanguageName const languageName, func * const fptr);
@@ -143,14 +139,6 @@ int KIM_ModelDriverCreate_SetComputePointer(
 int KIM_ModelDriverCreate_SetSpeciesCode(
     KIM_ModelDriverCreate * const modelDriverCreate,
     KIM_SpeciesName const speciesName, int const code);
-
-int KIM_ModelDriverCreate_SetArgumentSupportStatus(
-    KIM_ModelDriverCreate * const modelDriverCreate,
-    KIM_ArgumentName const argumentName, KIM_SupportStatus const supportStatus);
-
-int KIM_ModelDriverCreate_SetCallbackSupportStatus(
-    KIM_ModelDriverCreate * const modelDriverCreate,
-    KIM_CallbackName const callbackName, KIM_SupportStatus const supportStatus);
 
 int KIM_ModelDriverCreate_SetParameterPointerInteger(
     KIM_ModelDriverCreate * const modelDriverCreate,

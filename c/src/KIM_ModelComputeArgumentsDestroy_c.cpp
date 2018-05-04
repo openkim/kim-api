@@ -33,48 +33,74 @@
 /*                                                                            */
 
 
-#ifndef KIM_ARGUMENT_NAME_H_
-#define KIM_ARGUMENT_NAME_H_
-
-/* Forward declarations */
-#ifndef KIM_DATA_TYPE_DEFINED_
-#define KIM_DATA_TYPE_DEFINED_
-typedef struct KIM_DataType KIM_DataType;
+#ifndef KIM_LOG_VERBOSITY_HPP_
+#include "KIM_LogVerbosity.hpp"
 #endif
-
-struct KIM_ArgumentName
+extern "C"
 {
-  int argumentNameID;
-};
-#ifndef KIM_ARGUMENT_NAME_DEFINED_
-#define KIM_ARGUMENT_NAME_DEFINED_
-typedef struct KIM_ArgumentName KIM_ArgumentName;
+#ifndef KIM_LOG_VERBOSITY_H_
+#include "KIM_LogVerbosity.h"
 #endif
+}  // extern "C"
 
-KIM_ArgumentName KIM_ArgumentNameFromString(char const * const str);
+#ifndef KIM_MODEL_COMPUTE_ARGUMENTS_DESTROY_HPP_
+#include "KIM_ModelComputeArgumentsDestroy.hpp"
+#endif
+extern "C"
+{
+#ifndef KIM_MODEL_COMPUTE_ARGUMENTS_DESTROY_H_
+#include "KIM_ModelComputeArgumentsDestroy.h"
+#endif
+}  // extern "C"
 
-int KIM_ArgumentNameEqual(KIM_ArgumentName const left,
-                          KIM_ArgumentName const right);
-int KIM_ArgumentNameNotEqual(KIM_ArgumentName const left,
-                             KIM_ArgumentName const right);
-char const * const KIM_ArgumentNameString(KIM_ArgumentName const argumentName);
 
-extern KIM_ArgumentName const KIM_ARGUMENT_NAME_numberOfParticles;
-extern KIM_ArgumentName const KIM_ARGUMENT_NAME_particleSpeciesCodes;
-extern KIM_ArgumentName const KIM_ARGUMENT_NAME_particleContributing;
-extern KIM_ArgumentName const KIM_ARGUMENT_NAME_coordinates;
-extern KIM_ArgumentName const KIM_ARGUMENT_NAME_partialEnergy;
-extern KIM_ArgumentName const KIM_ARGUMENT_NAME_partialForces;
-extern KIM_ArgumentName const KIM_ARGUMENT_NAME_partialParticleEnergy;
-extern KIM_ArgumentName const KIM_ARGUMENT_NAME_partialVirial;
-extern KIM_ArgumentName const KIM_ARGUMENT_NAME_partialParticleVirial;
+struct KIM_ModelComputeArgumentsDestroy
+{
+  void * p;
+};
 
-void KIM_ARGUMENT_NAME_GetNumberOfArguments(int * const numberOfArguments);
-int KIM_ARGUMENT_NAME_GetArgumentName(
-    int const index, KIM_ArgumentName * const argumentName);
+#define CONVERT_POINTER KIM::ModelComputeArgumentsDestroy *             \
+  pModelComputeArgumentsDestroy                                         \
+  = reinterpret_cast<KIM::ModelComputeArgumentsDestroy *>               \
+      (modelComputeArgumentsDestroy->p)
 
-int KIM_ARGUMENT_NAME_GetArgumentDataType(
-    KIM_ArgumentName const argumentName,
-    KIM_DataType * const dataType);
+namespace
+{
+KIM::LogVerbosity makeLogVerbosityCpp(KIM_LogVerbosity const logVerbosity)
+{
+  return KIM::LogVerbosity(logVerbosity.logVerbosityID);
+}
+}  // namespace
 
-#endif  /* KIM_ARGUMENT_NAME_H_ */
+extern "C"
+{
+void KIM_ModelComputeArgumentsDestroy_GetModelBufferPointer(
+    KIM_ModelComputeArgumentsDestroy const * const modelComputeArgumentsDestroy,
+    void ** const ptr)
+{
+  CONVERT_POINTER;
+
+  pModelComputeArgumentsDestroy->GetModelBufferPointer(ptr);
+}
+
+
+void KIM_ModelComputeArgumentsDestroy_LogEntry(
+    KIM_ModelComputeArgumentsDestroy const * const modelComputeArgumentsDestroy,
+    KIM_LogVerbosity const logVerbosity, char const * const message,
+    int const lineNumber, char const * const fileName)
+{
+  CONVERT_POINTER;
+
+  pModelComputeArgumentsDestroy->LogEntry(makeLogVerbosityCpp(logVerbosity),
+                                          message, lineNumber, fileName);
+}
+
+char const * const KIM_ModelComputeArgumentsDestroy_String(
+    KIM_ModelComputeArgumentsDestroy const * const modelComputeArgumentsDestroy)
+{
+  CONVERT_POINTER;
+
+  return pModelComputeArgumentsDestroy->String().c_str();
+}
+
+}  // extern "C"

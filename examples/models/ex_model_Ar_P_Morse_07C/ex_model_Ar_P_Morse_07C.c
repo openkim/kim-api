@@ -48,13 +48,16 @@
 #include "KIM_LanguageName.h"
 #include "KIM_SpeciesName.h"
 #include "KIM_SupportStatus.h"
-#include "KIM_ArgumentName.h"
-#include "KIM_CallbackName.h"
+#include "KIM_ComputeArgumentName.h"
+#include "KIM_ComputeCallbackName.h"
 #include "KIM_LogVerbosity.h"
 #include "KIM_UnitSystem.h"
 #include "KIM_ModelCreate.h"
 #include "KIM_ModelRefresh.h"
 #include "KIM_ModelCompute.h"
+#include "KIM_ModelComputeArguments.h"
+#include "KIM_ModelComputeArgumentsCreate.h"
+#include "KIM_ModelComputeArgumentsDestroy.h"
 #include "KIM_ModelDestroy.h"
 
 #define TRUE 1
@@ -78,7 +81,7 @@ struct buffer
 };
 typedef struct buffer buffer;
 
-/* Define prototype for Model init */
+/* Define prototype for Model create */
 int model_create(KIM_ModelCreate * const modelCreate,
                  KIM_LengthUnit const requestedLengthUnit,
                  KIM_EnergyUnit const requestedEnergyUnit,
@@ -86,8 +89,16 @@ int model_create(KIM_ModelCreate * const modelCreate,
                  KIM_TemperatureUnit const requestedTemperatureUnit,
                  KIM_TimeUnit const requestedTimeUnit);
 
-/* Define prototype for compute routine */
-static int compute(KIM_ModelCompute const * const modelCompute);
+/* Define prototype for other routines */
+static int compute(
+    KIM_ModelCompute const * const modelCompute,
+    KIM_ModelComputeArguments const * const modelComputeArguments);
+static int compute_arguments_create(
+    KIM_ModelCompute const * const modelCompute,
+    KIM_ModelComputeArgumentsCreate * const modelComputeArgumentsCreate);
+static int compute_arguments_destroy(
+    KIM_ModelCompute const * const modelCompute,
+    KIM_ModelComputeArgumentsDestroy * const modelComputeArgumentsDestroy);
 static int model_refresh(KIM_ModelRefresh * const modelRefresh);
 static int model_destroy(KIM_ModelDestroy * const modelDestroy);
 
@@ -184,7 +195,9 @@ static void calc_phi_d2phi(double* epsilon,
 
 /* compute function */
 #include "KIM_ModelComputeLogMacros.h"
-static int compute(KIM_ModelCompute const * const modelCompute)
+static int compute(
+    KIM_ModelCompute const * const modelCompute,
+    KIM_ModelComputeArguments const * const modelComputeArguments)
 {
   /* local variables */
   double R;
@@ -235,48 +248,50 @@ static int compute(KIM_ModelCompute const * const modelCompute)
   /* check to see if we have been asked to compute the forces, */
   /* particleEnergy, and d1Edr */
   LOG_INFORMATION("Checking if call backs are present.");
-  KIM_ModelCompute_IsCallbackPresent(modelCompute,
-                                     KIM_CALLBACK_NAME_ProcessDEDrTerm,
-                                     &comp_process_dEdr);
-  KIM_ModelCompute_IsCallbackPresent(modelCompute,
-                                     KIM_CALLBACK_NAME_ProcessD2EDr2Term,
-                                     &comp_process_d2Edr2);
+  KIM_ModelComputeArguments_IsCallbackPresent(
+      modelComputeArguments,
+      KIM_COMPUTE_CALLBACK_NAME_ProcessDEDrTerm,
+      &comp_process_dEdr);
+  KIM_ModelComputeArguments_IsCallbackPresent(
+      modelComputeArguments,
+      KIM_COMPUTE_CALLBACK_NAME_ProcessD2EDr2Term,
+      &comp_process_d2Edr2);
 
   LOG_INFORMATION("Getting data pointers");
   ier =
-      KIM_ModelCompute_GetArgumentPointerInteger(
-          modelCompute,
-          KIM_ARGUMENT_NAME_numberOfParticles,
+      KIM_ModelComputeArguments_GetArgumentPointerInteger(
+          modelComputeArguments,
+          KIM_COMPUTE_ARGUMENT_NAME_numberOfParticles,
           &nParts)
       ||
-      KIM_ModelCompute_GetArgumentPointerInteger(
-          modelCompute,
-          KIM_ARGUMENT_NAME_particleSpeciesCodes,
+      KIM_ModelComputeArguments_GetArgumentPointerInteger(
+          modelComputeArguments,
+          KIM_COMPUTE_ARGUMENT_NAME_particleSpeciesCodes,
           &particleSpeciesCodes)
       ||
-      KIM_ModelCompute_GetArgumentPointerInteger(
-          modelCompute,
-          KIM_ARGUMENT_NAME_particleContributing,
+      KIM_ModelComputeArguments_GetArgumentPointerInteger(
+          modelComputeArguments,
+          KIM_COMPUTE_ARGUMENT_NAME_particleContributing,
           &particleContributing)
       ||
-      KIM_ModelCompute_GetArgumentPointerDouble(
-          modelCompute,
-          KIM_ARGUMENT_NAME_coordinates,
+      KIM_ModelComputeArguments_GetArgumentPointerDouble(
+          modelComputeArguments,
+          KIM_COMPUTE_ARGUMENT_NAME_coordinates,
           &coords)
       ||
-      KIM_ModelCompute_GetArgumentPointerDouble(
-          modelCompute,
-          KIM_ARGUMENT_NAME_partialEnergy,
+      KIM_ModelComputeArguments_GetArgumentPointerDouble(
+          modelComputeArguments,
+          KIM_COMPUTE_ARGUMENT_NAME_partialEnergy,
           &energy)
       ||
-      KIM_ModelCompute_GetArgumentPointerDouble(
-          modelCompute,
-          KIM_ARGUMENT_NAME_partialForces,
+      KIM_ModelComputeArguments_GetArgumentPointerDouble(
+          modelComputeArguments,
+          KIM_COMPUTE_ARGUMENT_NAME_partialForces,
           &force)
       ||
-      KIM_ModelCompute_GetArgumentPointerDouble(
-          modelCompute,
-          KIM_ARGUMENT_NAME_partialParticleEnergy,
+      KIM_ModelComputeArguments_GetArgumentPointerDouble(
+          modelComputeArguments,
+          KIM_COMPUTE_ARGUMENT_NAME_partialParticleEnergy,
           &particleEnergy);
   if (ier) {
     LOG_ERROR("get data pointers failed");
@@ -328,8 +343,9 @@ static int compute(KIM_ModelCompute const * const modelCompute)
   for (i = 0; i< *nParts; ++i) {
     if (particleContributing[i])
     {
-      ier = KIM_ModelCompute_GetNeighborList(
-          modelCompute, 0, i, &numOfPartNeigh, &neighListOfCurrentPart);
+      ier = KIM_ModelComputeArguments_GetNeighborList(
+          modelComputeArguments,
+          0, i, &numOfPartNeigh, &neighListOfCurrentPart);
       if (ier) {
         /* some sort of problem, exit */
         LOG_ERROR("GetNeighborList failed");
@@ -389,8 +405,8 @@ static int compute(KIM_ModelCompute const * const modelCompute)
 
           /* contribution to process_dEdr */
           if (comp_process_dEdr) {
-            ier = KIM_ModelCompute_ProcessDEDrTerm(
-                modelCompute, dEidr, R, pRij, i, j); }
+            ier = KIM_ModelComputeArguments_ProcessDEDrTerm(
+                modelComputeArguments, dEidr, R, pRij, i, j); }
 
           /* contribution to process_d2Edr2 */
           if (comp_process_d2Edr2) {
@@ -401,8 +417,9 @@ static int compute(KIM_ModelCompute const * const modelCompute)
             i_pairs[0] = i_pairs[1] = i;
             j_pairs[0] = j_pairs[1] = j;
 
-            ier = KIM_ModelCompute_ProcessD2EDr2Term(
-                modelCompute, d2Eidr, pR_pairs, pRij_pairs, pi_pairs, pj_pairs);
+            ier = KIM_ModelComputeArguments_ProcessD2EDr2Term(
+                modelComputeArguments,
+                d2Eidr, pR_pairs, pRij_pairs, pi_pairs, pj_pairs);
           }
 
           /* contribution to forces */
@@ -453,38 +470,20 @@ int model_create(KIM_ModelCreate * const modelCreate,
   error = error || KIM_ModelCreate_SetModelNumbering(modelCreate,
                                                      KIM_NUMBERING_zeroBased);
 
-  /* register arguments */
-  LOG_INFORMATION("Register argument supportStatus");
-  error = error ||
-      KIM_ModelCreate_SetArgumentSupportStatus(
-          modelCreate,
-          KIM_ARGUMENT_NAME_partialEnergy, KIM_SUPPORT_STATUS_optional);
-  error = error ||
-      KIM_ModelCreate_SetArgumentSupportStatus(
-          modelCreate,
-          KIM_ARGUMENT_NAME_partialForces, KIM_SUPPORT_STATUS_optional);
-  error = error ||
-      KIM_ModelCreate_SetArgumentSupportStatus(
-          modelCreate,
-          KIM_ARGUMENT_NAME_partialParticleEnergy, KIM_SUPPORT_STATUS_optional);
-
-  /* register call backs */
-  LOG_INFORMATION("Register call back supportStatus");
-  error = error ||
-      KIM_ModelCreate_SetCallbackSupportStatus(
-          modelCreate,
-          KIM_CALLBACK_NAME_ProcessDEDrTerm, KIM_SUPPORT_STATUS_optional);
-  error = error ||
-      KIM_ModelCreate_SetCallbackSupportStatus(
-          modelCreate,
-          KIM_CALLBACK_NAME_ProcessD2EDr2Term, KIM_SUPPORT_STATUS_optional);
-
   /* register function pointers */
   LOG_INFORMATION("Register model function pointers");
   error = error ||
       KIM_ModelCreate_SetComputePointer(modelCreate,
                                         KIM_LANGUAGE_NAME_c,
                                         (func *) &compute);
+  error = error ||
+      KIM_ModelCreate_SetComputeArgumentsCreatePointer(modelCreate,
+                                        KIM_LANGUAGE_NAME_c,
+                                        (func *) &compute_arguments_create);
+  error = error ||
+      KIM_ModelCreate_SetComputeArgumentsDestroyPointer(modelCreate,
+                                        KIM_LANGUAGE_NAME_c,
+                                        (func *) &compute_arguments_destroy);
   error = error ||
       KIM_ModelCreate_SetDestroyPointer(modelCreate,
                                         KIM_LANGUAGE_NAME_c,
@@ -558,3 +557,59 @@ int model_destroy(KIM_ModelDestroy * const modelDestroy) {
   free(bufferPointer);
 
   return FALSE; }
+
+/* compute arguments create routine */
+#include "KIM_ModelComputeArgumentsCreateLogMacros.h"
+static int compute_arguments_create(
+    KIM_ModelCompute const * const modelCompute,
+    KIM_ModelComputeArgumentsCreate * const modelComputeArgumentsCreate)
+{
+  int error;
+  /* register arguments */
+  LOG_INFORMATION("Register argument supportStatus");
+  error =
+      KIM_ModelComputeArgumentsCreate_SetArgumentSupportStatus(
+          modelComputeArgumentsCreate,
+          KIM_COMPUTE_ARGUMENT_NAME_partialEnergy, KIM_SUPPORT_STATUS_optional);
+  error = error ||
+      KIM_ModelComputeArgumentsCreate_SetArgumentSupportStatus(
+          modelComputeArgumentsCreate,
+          KIM_COMPUTE_ARGUMENT_NAME_partialForces, KIM_SUPPORT_STATUS_optional);
+  error = error ||
+      KIM_ModelComputeArgumentsCreate_SetArgumentSupportStatus(
+          modelComputeArgumentsCreate,
+          KIM_COMPUTE_ARGUMENT_NAME_partialParticleEnergy,
+          KIM_SUPPORT_STATUS_optional);
+
+  /* register call backs */
+  LOG_INFORMATION("Register call back supportStatus");
+  error = error ||
+      KIM_ModelComputeArgumentsCreate_SetCallbackSupportStatus(
+          modelComputeArgumentsCreate,
+          KIM_COMPUTE_CALLBACK_NAME_ProcessDEDrTerm,
+          KIM_SUPPORT_STATUS_optional);
+  error = error ||
+      KIM_ModelComputeArgumentsCreate_SetCallbackSupportStatus(
+          modelComputeArgumentsCreate,
+          KIM_COMPUTE_CALLBACK_NAME_ProcessD2EDr2Term,
+          KIM_SUPPORT_STATUS_optional);
+
+  if (error)
+  {
+    LOG_ERROR("Unable to successfully initialize compute arguments");
+    return TRUE;
+  }
+  else
+    return FALSE;
+}
+
+/* compue arguments destroy routine */
+#include "KIM_ModelComputeArgumentsDestroyLogMacros.h"
+static int compute_arguments_destroy(
+    KIM_ModelCompute const * const modelCompute,
+    KIM_ModelComputeArgumentsDestroy * const modelComputeArgumentsDestroy)
+{
+  /* nothing to be done */
+
+  return FALSE;
+}
