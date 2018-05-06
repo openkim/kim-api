@@ -60,16 +60,6 @@ extern "C"
 #endif
 }  // extern "C"
 
-#ifndef KIM_LANGUAGE_NAME_HPP_
-#include "KIM_LanguageName.hpp"
-#endif
-extern "C"
-{
-#ifndef KIM_LANGUAGE_NAME_H_
-#include "KIM_LanguageName.h"
-#endif
-}  // extern "C"
-
 #ifndef KIM_NUMBERING_HPP_
 #include "KIM_Numbering.hpp"
 #endif
@@ -133,12 +123,6 @@ makeDataTypeC(KIM::DataType const dataType)
   KIM_DataType * pTyp = (KIM_DataType *) &dataType;
   typ.dataTypeID = pTyp->dataTypeID;
   return typ;
-}
-
-KIM::LanguageName
-makeLanguageNameCpp(KIM_LanguageName const languageName)
-{
-  return KIM::LanguageName(languageName.languageNameID);
 }
 
 KIM::SpeciesName makeSpecNameCpp(KIM_SpeciesName const speciesName)

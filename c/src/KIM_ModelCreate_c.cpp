@@ -71,16 +71,6 @@ extern "C"
 #endif
 }  // extern "C"
 
-#ifndef KIM_SUPPORT_STATUS_HPP_
-#include "KIM_SupportStatus.hpp"
-#endif
-extern "C"
-{
-#ifndef KIM_SUPPORT_STATUS_H_
-#include "KIM_SupportStatus.h"
-#endif
-}  // extern "C"
-
 #ifndef KIM_UNIT_SYSTEM_HPP_
 #include "KIM_UnitSystem.hpp"
 #endif
@@ -120,11 +110,6 @@ KIM::LogVerbosity makeLogVerbosityCpp(KIM_LogVerbosity const logVerbosity)
 KIM::Numbering makeNumberingCpp(KIM_Numbering const numbering)
 {
   return KIM::Numbering(numbering.numberingID);
-}
-
-KIM::SupportStatus makeSupportStatusCpp(KIM_SupportStatus const supportStatus)
-{
-  return KIM::SupportStatus(supportStatus.supportStatusID);
 }
 
 KIM::LengthUnit makeLengthUnitCpp(KIM_LengthUnit const lengthUnit)
