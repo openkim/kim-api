@@ -99,7 +99,7 @@ ifeq ($(filter $(standard_system_prefixes),$(prefix)),)
    LINKSOPATH = $(package_dir)/
 endif
 
-lib$(KIM_LIB_BUILD).so: lib-cpp-$(KIM_LIB_BUILD).a ../../c/src/lib-c-$(KIM_LIB_BUILD).a #../../fortran/src/lib-fortran-$(KIM_LIB_BUILD).a
+lib$(KIM_LIB_BUILD).so: lib-cpp-$(KIM_LIB_BUILD).a ../../c/src/lib-c-$(KIM_LIB_BUILD).a ../../fortran/src/lib-fortran-$(KIM_LIB_BUILD).a
 	@printf "Creating... KIM API library....... $@.\n";
 	$(QUELL)$(LD) $(ARCHFLAG) $(FNOMAINFLAG) $(LDSHAREDFLAG) $(LINKSONAME)$(LINKSOPATH)lib$(KIM_LIB).so $(LDFLAGS) $(OUTPUTINFLAG) $@ \
                       $(LDWHOLEARCHIVESTARTFLAG) $^ $(LDWHOLEARCHIVEENDFLAG) \

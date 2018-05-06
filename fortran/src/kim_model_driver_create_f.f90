@@ -45,10 +45,10 @@ module kim_model_driver_create_f_module
     set_neighbor_list_cutoffs_pointer, &
     set_refresh_pointer, &
     set_destroy_pointer, &
+    set_compute_arguments_create_pointer, &
+    set_compute_arguments_destroy_pointer, &
     set_compute_pointer, &
     set_species_code, &
-    set_argument_support_status, &
-    set_callback_support_status, &
     set_parameter_pointer_integer, &
     set_parameter_pointer_double, &
     set_model_buffer_pointer, &
@@ -161,6 +161,32 @@ module kim_model_driver_create_f_module
       type(c_funptr), intent(in), value :: fptr
     end function set_compute_pointer
 
+    integer(c_int) function set_compute_arguments_create_pointer( &
+      model_driver_create, language_name, fptr) &
+      bind(c, name="KIM_ModelDriverCreate_SetComputeArgumentsCreatePointer")
+      use, intrinsic :: iso_c_binding
+      use kim_language_name_module, only : kim_language_name_type
+      import kim_model_driver_create_type
+      implicit none
+      type(kim_model_driver_create_type), intent(inout) &
+        :: model_driver_create
+      type(kim_language_name_type), intent(in), value :: language_name
+      type(c_funptr), intent(in), value :: fptr
+    end function set_compute_arguments_create_pointer
+
+    integer(c_int) function set_compute_arguments_destroy_pointer( &
+      model_driver_create, language_name, fptr) &
+      bind(c, name="KIM_ModelDriverCreate_SetComputeArgumentsDestroyPointer")
+      use, intrinsic :: iso_c_binding
+      use kim_language_name_module, only : kim_language_name_type
+      import kim_model_driver_create_type
+      implicit none
+      type(kim_model_driver_create_type), intent(inout) &
+        :: model_driver_create
+      type(kim_language_name_type), intent(in), value :: language_name
+      type(c_funptr), intent(in), value :: fptr
+    end function set_compute_arguments_destroy_pointer
+
     integer(c_int) function set_species_code(model_driver_create, &
       species_name, code) &
       bind(c, name="KIM_ModelDriverCreate_SetSpeciesCode")
@@ -173,34 +199,6 @@ module kim_model_driver_create_f_module
       type(kim_species_name_type), intent(in), value :: species_name
       integer(c_int), intent(in), value :: code
     end function set_species_code
-
-    integer(c_int) function set_argument_support_status( &
-      model_driver_create, argument_name, support_status) &
-      bind(c, name="KIM_ModelDriverCreate_SetArgumentSupportStatus")
-      use, intrinsic :: iso_c_binding
-      use kim_argument_name_module, only : kim_argument_name_type
-      use kim_support_status_module, only : kim_support_status_type
-      import kim_model_driver_create_type
-      implicit none
-      type(kim_model_driver_create_type), intent(in) &
-        :: model_driver_create
-      type(kim_argument_name_type), intent(in), value :: argument_name
-      type(kim_support_status_type), intent(in), value :: support_status
-    end function set_argument_support_status
-
-    integer(c_int) function set_callback_support_status( &
-      model_driver_create, callback_name, support_status) &
-      bind(c, name="KIM_ModelDriverCreate_SetCallbackSupportStatus")
-      use, intrinsic :: iso_c_binding
-      use kim_callback_name_module, only : kim_callback_name_type
-      use kim_support_status_module, only : kim_support_status_type
-      import kim_model_driver_create_type
-      implicit none
-      type(kim_model_driver_create_type), intent(in) &
-        :: model_driver_create
-      type(kim_callback_name_type), intent(in), value :: callback_name
-      type(kim_support_status_type), intent(in), value :: support_status
-    end function set_callback_support_status
 
     integer(c_int) function set_parameter_pointer_integer( &
       model_driver_create, extent, ptr, description) &
@@ -497,14 +495,14 @@ subroutine kim_model_driver_create_set_destroy_pointer( &
   ierr = set_destroy_pointer(model_driver_create, language_name, fptr)
 end subroutine kim_model_driver_create_set_destroy_pointer
 
-subroutine kim_model_driver_create_set_compute_pointer( &
+subroutine kim_model_driver_create_set_compute_arguments_create_pointer( &
   model_driver_create_handle, language_name, fptr, ierr)
   use, intrinsic :: iso_c_binding
   use kim_language_name_module, only : kim_language_name_type
   use kim_model_driver_create_module, only &
     : kim_model_driver_create_handle_type
   use kim_model_driver_create_f_module, only : kim_model_driver_create_type, &
-    set_compute_pointer
+    set_compute_arguments_create_pointer
   implicit none
   type(kim_model_driver_create_handle_type), intent(in) &
     :: model_driver_create_handle
@@ -514,8 +512,30 @@ subroutine kim_model_driver_create_set_compute_pointer( &
   type(kim_model_driver_create_type), pointer :: model_driver_create
 
   call c_f_pointer(model_driver_create_handle%p, model_driver_create)
-  ierr = set_compute_pointer(model_driver_create, language_name, fptr)
-end subroutine kim_model_driver_create_set_compute_pointer
+  ierr = set_compute_arguments_create_pointer(model_driver_create, &
+    language_name, fptr)
+end subroutine kim_model_driver_create_set_compute_arguments_create_pointer
+
+subroutine kim_model_driver_create_set_compute_arguments_destroy_pointer( &
+  model_driver_create_handle, language_name, fptr, ierr)
+  use, intrinsic :: iso_c_binding
+  use kim_language_name_module, only : kim_language_name_type
+  use kim_model_driver_create_module, only &
+    : kim_model_driver_create_handle_type
+  use kim_model_driver_create_f_module, only : kim_model_driver_create_type, &
+    set_compute_arguments_destroy_pointer
+  implicit none
+  type(kim_model_driver_create_handle_type), intent(in) &
+    :: model_driver_create_handle
+  type(kim_language_name_type), intent(in), value :: language_name
+  type(c_funptr), intent(in), value :: fptr
+  integer(c_int), intent(out) :: ierr
+  type(kim_model_driver_create_type), pointer :: model_driver_create
+
+  call c_f_pointer(model_driver_create_handle%p, model_driver_create)
+  ierr = set_compute_arguments_destroy_pointer(model_driver_create, &
+    language_name, fptr)
+end subroutine kim_model_driver_create_set_compute_arguments_destroy_pointer
 
 subroutine kim_model_driver_create_set_species_code( &
   model_driver_create_handle, species_name, code, ierr)
@@ -537,49 +557,25 @@ subroutine kim_model_driver_create_set_species_code( &
   ierr = set_species_code(model_driver_create, species_name, code)
 end subroutine kim_model_driver_create_set_species_code
 
-subroutine kim_model_driver_create_set_argument_support_status( &
-  model_driver_create_handle, argument_name, support_status, ierr)
+subroutine kim_model_driver_create_set_compute_pointer( &
+  model_driver_create_handle, language_name, fptr, ierr)
   use, intrinsic :: iso_c_binding
-  use kim_argument_name_module, only : kim_argument_name_type
+  use kim_language_name_module, only : kim_language_name_type
   use kim_model_driver_create_module, only &
     : kim_model_driver_create_handle_type
-  use kim_support_status_module, only : kim_support_status_type
-  use kim_model_driver_create_f_module, only &
-    : kim_model_driver_create_type, set_argument_support_status
+  use kim_model_driver_create_f_module, only : kim_model_driver_create_type, &
+    set_compute_pointer
   implicit none
   type(kim_model_driver_create_handle_type), intent(in) &
     :: model_driver_create_handle
-  type(kim_argument_name_type), intent(in), value :: argument_name
-  type(kim_support_status_type), intent(in), value :: support_status
+  type(kim_language_name_type), intent(in), value :: language_name
+  type(c_funptr), intent(in), value :: fptr
   integer(c_int), intent(out) :: ierr
   type(kim_model_driver_create_type), pointer :: model_driver_create
 
   call c_f_pointer(model_driver_create_handle%p, model_driver_create)
-  ierr = set_argument_support_status(model_driver_create, &
-    argument_name, support_status)
-end subroutine kim_model_driver_create_set_argument_support_status
-
-subroutine kim_model_driver_create_set_callback_support_status( &
-  model_driver_create_handle, callback_name, support_status, ierr)
-  use, intrinsic :: iso_c_binding
-  use kim_callback_name_module, only : kim_callback_name_type
-  use kim_model_driver_create_module, only &
-    : kim_model_driver_create_handle_type
-  use kim_support_status_module, only : kim_support_status_type
-  use kim_model_driver_create_f_module, only &
-    : kim_model_driver_create_type, set_callback_support_status
-  implicit none
-  type(kim_model_driver_create_handle_type), intent(in) &
-    :: model_driver_create_handle
-  type(kim_callback_name_type), intent(in), value :: callback_name
-  type(kim_support_status_type), intent(in), value :: support_status
-  integer(c_int), intent(out) :: ierr
-  type(kim_model_driver_create_type), pointer :: model_driver_create
-
-  call c_f_pointer(model_driver_create_handle%p, model_driver_create)
-  ierr = set_callback_support_status(model_driver_create, &
-    callback_name, support_status)
-end subroutine kim_model_driver_create_set_callback_support_status
+  ierr = set_compute_pointer(model_driver_create, language_name, fptr)
+end subroutine kim_model_driver_create_set_compute_pointer
 
 subroutine kim_model_driver_create_set_parameter_pointer_integer( &
   model_driver_create_handle, int1, description, ierr)

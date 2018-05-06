@@ -38,8 +38,6 @@
 !**
 !**  Language: Fortran 2003
 !**
-!**  Release: This file is part of the kim-api-v1.8.0 package.
-!**
 !****************************************************************************
 
 
@@ -50,13 +48,15 @@ implicit none
 
 save
 private
-public BUFFER_TYPE,           &
-       Compute_Energy_Forces, &
-       refresh,               &
-       destroy,               &
-       calc_phi,              &
-       calc_phi_dphi,         &
-       calc_phi_dphi_d2phi,   &
+public BUFFER_TYPE,               &
+       Compute_Energy_Forces,     &
+       compute_arguments_create,  &
+       compute_arguments_destroy, &
+       refresh,                   &
+       destroy,                   &
+       calc_phi,                  &
+       calc_phi_dphi,             &
+       calc_phi_dphi_d2phi,       &
        speccode
 
 ! Below are the definitions and values of all Model parameters
@@ -201,15 +201,19 @@ end subroutine calc_phi_dphi_d2phi
 !
 !-------------------------------------------------------------------------------
 #include "kim_model_compute_log_macros.fd"
-subroutine Compute_Energy_Forces(model_compute_handle, ierr) bind(c)
+subroutine Compute_Energy_Forces(model_compute_handle, &
+  model_compute_arguments_handle, ierr) bind(c)
 use kim_log_verbosity_module
 use kim_model_compute_module
-use kim_argument_name_module
-use kim_callback_name_module
+use kim_model_compute_arguments_module
+use kim_compute_argument_name_module
+use kim_compute_callback_name_module
 implicit none
 
 !-- Transferred variables
 type(kim_model_compute_handle_type), intent(in) :: model_compute_handle
+type(kim_model_compute_arguments_handle_type), intent(in) :: &
+  model_compute_arguments_handle
 integer(c_int), intent(out) :: ierr
 
 !-- Local variables
@@ -248,11 +252,13 @@ model_cutoff = buf%influence_distance(1)
 ! energy and d1Edr
 !
 ierr = 0
-call kim_model_compute_is_callback_present(model_compute_handle, &
-  kim_callback_name_process_dedr_term, comp_process_dedr, ierr2)
+call kim_model_compute_arguments_is_callback_present( &
+  model_compute_arguments_handle, &
+  kim_compute_callback_name_process_dedr_term, comp_process_dedr, ierr2)
 ierr = ierr + ierr2
-call kim_model_compute_is_callback_present(model_compute_handle, &
-  kim_callback_name_process_d2edr2_term, comp_process_d2edr2, ierr2)
+call kim_model_compute_arguments_is_callback_present( &
+  model_compute_arguments_handle, &
+  kim_compute_callback_name_process_d2edr2_term, comp_process_d2edr2, ierr2)
 ierr = ierr + ierr2
 if (ierr /= 0) then
    kim_log_message = "get_compute"
@@ -263,30 +269,36 @@ endif
 ! Unpack data from KIM object
 !
 ierr = 0
-call kim_model_compute_get_argument_pointer(model_compute_handle, &
-  kim_argument_name_number_of_particles, &
-  n, ierr2)
+call kim_model_compute_arguments_get_argument_pointer( &
+  model_compute_arguments_handle, &
+  kim_compute_argument_name_number_of_particles, n, ierr2)
 ierr = ierr + ierr2
 
-call kim_model_compute_get_argument_pointer(model_compute_handle, &
-  kim_argument_name_particle_species_codes, &
+call kim_model_compute_arguments_get_argument_pointer( &
+  model_compute_arguments_handle, &
+  kim_compute_argument_name_particle_species_codes, &
   n, particlespeciesCodes, ierr2)
 ierr = ierr + ierr2
-call kim_model_compute_get_argument_pointer(model_compute_handle, &
-  kim_argument_name_particle_contributing, n, particlecontributing, &
+call kim_model_compute_arguments_get_argument_pointer( &
+  model_compute_arguments_handle, &
+  kim_compute_argument_name_particle_contributing, n, particlecontributing, &
   ierr2)
 ierr = ierr + ierr2
-call kim_model_compute_get_argument_pointer(model_compute_handle, &
-  kim_argument_name_coordinates, dim, n, coor, ierr2)
+call kim_model_compute_arguments_get_argument_pointer( &
+  model_compute_arguments_handle, &
+  kim_compute_argument_name_coordinates, dim, n, coor, ierr2)
 ierr = ierr + ierr2
-call kim_model_compute_get_argument_pointer(model_compute_handle, &
-  kim_argument_name_partial_energy, energy, ierr2)
+call kim_model_compute_arguments_get_argument_pointer( &
+  model_compute_arguments_handle, &
+  kim_compute_argument_name_partial_energy, energy, ierr2)
 ierr = ierr + ierr2
-call kim_model_compute_get_argument_pointer(model_compute_handle, &
-  kim_argument_name_partial_forces, dim, n, force, ierr2)
+call kim_model_compute_arguments_get_argument_pointer( &
+  model_compute_arguments_handle, &
+  kim_compute_argument_name_partial_forces, dim, n, force, ierr2)
 ierr = ierr + ierr2
-call kim_model_compute_get_argument_pointer(model_compute_handle, &
-  kim_argument_name_partial_particle_energy, n, enepot, ierr2)
+call kim_model_compute_arguments_get_argument_pointer( &
+  model_compute_arguments_handle, &
+  kim_compute_argument_name_partial_particle_energy, n, enepot, ierr2)
 ierr = ierr + ierr2
 if (ierr /= 0) then
   kim_log_message = "get_argument_pointer"
@@ -348,8 +360,8 @@ do i = 1, N
   if (particleContributing(i) == 1) then
     ! Set up neighbor list for next particle
     !
-    call kim_model_compute_get_neighbor_list( &
-      model_compute_handle, 1, i, numnei, nei1part, ierr)
+    call kim_model_compute_arguments_get_neighbor_list( &
+      model_compute_arguments_handle, 1, i, numnei, nei1part, ierr)
     if (ierr /= 0) then
       ! some sort of problem, exit
       kim_log_message = "kim_api_get_neigh"
@@ -412,8 +424,8 @@ do i = 1, N
         ! contribution to process_dEdr
         !
         if (comp_process_dEdr.eq.1) then
-          call kim_model_compute_process_dedr_term( &
-            model_compute_handle, deidr, r, c_loc(rij(1)), i, j, ierr)
+          call kim_model_compute_arguments_process_dedr_term( &
+            model_compute_arguments_handle, deidr, r, c_loc(rij(1)), i, j, ierr)
         endif
 
         ! contribution to process_d2Edr2
@@ -427,8 +439,8 @@ do i = 1, N
           j_pairs(1) = j
           j_pairs(2) = j
 
-          call kim_model_compute_process_d2edr2_term( &
-            model_compute_handle, d2eidr, &
+          call kim_model_compute_arguments_process_d2edr2_term( &
+            model_compute_arguments_handle, d2eidr, &
             c_loc(r_pairs(1)),     &
             c_loc(Rij_pairs(1,1)), &
             c_loc(i_pairs(1)),     &
@@ -537,6 +549,103 @@ return
 
 end subroutine destroy
 
+!-------------------------------------------------------------------------------
+!
+! Model driver compute arguments create routine
+!
+!-------------------------------------------------------------------------------
+#include "kim_model_compute_arguments_create_log_macros.fd"
+subroutine compute_arguments_create(model_compute_handle, &
+  model_compute_arguments_create_handle, ierr) bind(c)
+use kim_log_verbosity_module
+use kim_compute_argument_name_module
+use kim_compute_callback_name_module
+use kim_support_status_module
+use kim_model_compute_module
+use kim_model_compute_arguments_create_module, &
+    log_entry=>kim_model_compute_arguments_create_log_entry
+implicit none
+
+!-- Transferred variables
+type(kim_model_compute_handle_type), intent(in) :: model_compute_handle
+type(kim_model_compute_arguments_create_handle_type), intent(inout) :: &
+  model_compute_arguments_create_handle
+integer(c_int), intent(out) :: ierr
+
+integer(c_int) ierr2
+
+ierr = 0
+ierr2 = 0
+
+! register arguments
+call kim_model_compute_arguments_create_set_argument_support_status( &
+  model_compute_arguments_create_handle, &
+  kim_compute_argument_name_partial_energy, &
+  kim_support_status_optional, ierr)
+call kim_model_compute_arguments_create_set_argument_support_status( &
+  model_compute_arguments_create_handle, &
+  kim_compute_argument_name_partial_forces, &
+  kim_support_status_optional, ierr2)
+ierr = ierr + ierr2
+call kim_model_compute_arguments_create_set_argument_support_status( &
+  model_compute_arguments_create_handle, &
+  kim_compute_argument_name_partial_particle_energy, &
+  kim_support_status_optional, ierr2)
+ierr = ierr + ierr2
+if (ierr /= 0) then
+  kim_log_message = "Unable to register arguments support_statuss"
+  LOG_ERROR()
+  goto 42
+end if
+
+! register callbacks
+call kim_model_compute_arguments_create_set_callback_support_status( &
+  model_compute_arguments_create_handle, &
+  kim_compute_callback_name_process_dedr_term, &
+  kim_support_status_optional, ierr)
+call kim_model_compute_arguments_create_set_callback_support_status( &
+  model_compute_arguments_create_handle, &
+  kim_compute_callback_name_process_d2edr2_term, &
+  kim_support_status_optional, ierr2)
+ierr = ierr + ierr2
+if (ierr /= 0) then
+  kim_log_message = "Unable to register callbacks support_statuss"
+  LOG_ERROR()
+  goto 42
+end if
+
+ierr = 0
+42 continue
+return
+
+end subroutine compute_arguments_create
+
+!-------------------------------------------------------------------------------
+!
+! Model driver compute arguments destroy routine
+!
+!-------------------------------------------------------------------------------
+#include "kim_model_compute_arguments_destroy_log_macros.fd"
+subroutine compute_arguments_destroy(model_compute_handle, &
+  model_compute_arguments_destroy_handle, ierr) bind(c)
+use kim_model_compute_module
+use kim_model_compute_arguments_destroy_module, &
+    log_entry=>kim_model_compute_arguments_destroy_log_entry
+implicit none
+
+!-- Transferred variables
+type(kim_model_compute_handle_type), intent(in) :: model_compute_handle
+type(kim_model_compute_arguments_destroy_handle_type), intent(inout) :: &
+  model_compute_arguments_destroy_handle
+integer(c_int), intent(out) :: ierr
+
+! nothing to be done
+
+ierr = 0
+
+return
+end subroutine compute_arguments_destroy
+
 end module ex_model_driver_p_lj
 
 !-------------------------------------------------------------------------------
@@ -557,8 +666,8 @@ use kim_numbering_module
 use kim_unit_system_module
 use kim_species_name_module
 use kim_support_status_module
-use kim_argument_name_module
-use kim_callback_name_module
+use kim_compute_argument_name_module
+use kim_compute_callback_name_module
 implicit none
 integer(c_int), parameter :: cd = c_double ! used for literal constants
 
@@ -612,42 +721,19 @@ if (ierr /= 0) then
   goto 42
 end if
 
-! register arguments
-call kim_model_driver_create_set_argument_support_status( &
-  model_driver_create_handle, kim_argument_name_partial_energy, &
-  kim_support_status_optional, ierr)
-call kim_model_driver_create_set_argument_support_status( &
-  model_driver_create_handle, kim_argument_name_partial_forces, &
-  kim_support_status_optional, ierr2)
-ierr = ierr + ierr2
-call kim_model_driver_create_set_argument_support_status( &
-  model_driver_create_handle, kim_argument_name_partial_particle_energy, &
-  kim_support_status_optional, ierr2)
-ierr = ierr + ierr2
-if (ierr /= 0) then
-  kim_log_message = "Unable to register arguments support_statuss"
-  LOG_ERROR()
-  goto 42
-end if
-
-! register callbacks
-call kim_model_driver_create_set_callback_support_status( &
-  model_driver_create_handle, kim_callback_name_process_dedr_term, &
-  kim_support_status_optional, ierr)
-call kim_model_driver_create_set_callback_support_status( &
-  model_driver_create_handle, kim_callback_name_process_d2edr2_term, &
-  kim_support_status_optional, ierr2)
-ierr = ierr + ierr2
-if (ierr /= 0) then
-  kim_log_message = "Unable to register callbacks support_statuss"
-  LOG_ERROR()
-  goto 42
-end if
 
 ! store callback pointers in KIM object
 call kim_model_driver_create_set_compute_pointer( &
   model_driver_create_handle, kim_language_name_fortran, &
   c_funloc(Compute_Energy_Forces), ierr)
+call kim_model_driver_create_set_compute_arguments_create_pointer( &
+  model_driver_create_handle, kim_language_name_fortran, &
+  c_funloc(compute_arguments_create), ierr2)
+ierr = ierr + ierr2
+call kim_model_driver_create_set_compute_arguments_destroy_pointer( &
+  model_driver_create_handle, kim_language_name_fortran, &
+  c_funloc(compute_arguments_destroy), ierr2)
+ierr = ierr + ierr2
 call kim_model_driver_create_set_refresh_pointer( &
   model_driver_create_handle, kim_language_name_fortran, &
   c_funloc(refresh), ierr2)

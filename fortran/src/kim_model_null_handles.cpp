@@ -45,9 +45,12 @@ typedef struct Handle Handle;
 extern "C"
 {
 extern Handle const KIM_MODEL_COMPUTE_null_handle = {0};
+extern Handle const KIM_MODEL_COMPUTE_ARGUMENTS_CREATE_null_handle = {0};
+extern Handle const KIM_MODEL_COMPUTE_ARGUMENTS_DESTROY_null_handle = {0};
 extern Handle const KIM_MODEL_CREATE_null_handle = {0};
 extern Handle const KIM_MODEL_DESTROY_null_handle = {0};
 extern Handle const KIM_MODEL_DRIVER_CREATE_null_handle = {0};
 extern Handle const KIM_MODEL_null_handle = {0};
+extern Handle const KIM_COMPUTE_ARGUMENTS_null_handle = {0};
 extern Handle const KIM_MODEL_REFRESH_null_handle = {0};
 }  // extern "C"

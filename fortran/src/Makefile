@@ -39,9 +39,10 @@ VPATH = ../include
 KIMINCLUDEFLAGS = -I../include
 
 # Definition of fortran object files
-OBJF = kim_argument_name_f.o \
-       kim_callback_name_f.o \
-       kim_charge_unit_f.o \
+OBJF = kim_charge_unit_f.o \
+       kim_compute_argument_name_f.o \
+       kim_compute_arguments_f.o \
+       kim_compute_callback_name_f.o \
        kim_data_type_f.o \
        kim_energy_unit_f.o \
        kim_language_name_f.o \
@@ -49,11 +50,14 @@ OBJF = kim_argument_name_f.o \
        kim_log_f.o \
        kim_log_verbosity_module.o \
        kim_log_verbosity_f.o \
+       kim_model_f.o \
        kim_model_compute_f.o \
+       kim_model_compute_arguments_f.o \
+       kim_model_compute_arguments_create_f.o \
+       kim_model_compute_arguments_destroy_f.o \
        kim_model_create_f.o \
        kim_model_destroy_f.o \
        kim_model_driver_create_f.o \
-       kim_model_f.o \
        kim_model_null_handles.o \
        kim_model_refresh_f.o \
        kim_numbering_f.o \
@@ -93,20 +97,26 @@ lib-fortran-$(KIM_LIB_BUILD).a: $(OBJF)
 include ../include/Makefile.dependencies
 
 # Source file dependencies
-kim_argument_name_f.o: kim_argument_name_f.f90 kim_argument_name_module.mod kim_data_type_module.mod
-kim_callback_name_f.o: kim_callback_name_f.f90 kim_callback_name_module.mod
 kim_charge_unit_f.o: kim_charge_unit_f.f90 kim_charge_unit_module.mod
+kim_compute_argument_name_f.o: kim_compute_argument_name_f.f90 kim_compute_argument_name_module.mod kim_data_type_module.mod
+kim_compute_arguments_f.o: kim_compute_arguments_f.f90 kim_compute_arguments_module.mod kim_compute_argument_name_module.mod kim_compute_callback_name_module.mod kim_support_status_module.mod kim_language_name_module.mod kim_log_verbosity_module.mod
+kim_compute_callback_name_f.o: kim_compute_callback_name_f.f90 kim_compute_callback_name_module.mod
 kim_data_type_f.o: kim_data_type_f.f90 kim_data_type_module.mod
 kim_energy_unit_f.o: kim_energy_unit_f.f90 kim_energy_unit_module.mod
 kim_language_name_f.o: kim_language_name_f.f90 kim_language_name_module.mod
 kim_length_unit_f.o: kim_length_unit_f.f90 kim_length_unit_module.mod
 kim_log_f.o: kim_log_f.f90 kim_log_module.mod kim_log_verbosity_module.mod
 kim_log_verbosity_f.o: kim_log_verbosity_f.f90 kim_log_verbosity_module.mod
-kim_model_compute_f.o: kim_model_compute_f.f90 kim_model_compute_module.mod kim_argument_name_module.mod kim_callback_name_module.mod kim_log_verbosity_module.mod
-kim_model_create_f.o: kim_model_create_f.f90 kim_model_create_module.mod kim_numbering_module.mod kim_language_name_module.mod kim_species_name_module.mod kim_argument_name_module.mod kim_support_status_module.mod kim_callback_name_module.mod kim_unit_system_module.mod kim_log_verbosity_module.mod
+kim_model_compute_f.o: kim_model_compute_f.f90 kim_model_compute_module.mod kim_log_verbosity_module.mod
+
+kim_model_compute_arguments_f.o: kim_model_compute_arguments_f.f90 kim_model_compute_arguments_module.mod
+kim_model_compute_arguments_create_f.o: kim_model_compute_arguments_create_f.f90 kim_model_compute_arguments_create_module.mod
+kim_model_compute_arguments_destroy_f.o: kim_model_compute_arguments_destroy_f.f90 kim_model_compute_arguments_destroy_module.mod
+
+kim_model_create_f.o: kim_model_create_f.f90 kim_model_create_module.mod kim_numbering_module.mod kim_language_name_module.mod kim_species_name_module.mod kim_compute_arguments_module.mod kim_support_status_module.mod kim_unit_system_module.mod kim_log_verbosity_module.mod
 kim_model_destroy_f.o: kim_model_destroy_f.f90 kim_model_destroy_module.mod kim_log_verbosity_module.mod
-kim_model_driver_create_f.o: kim_model_driver_create_f.f90 kim_model_driver_create_module.mod kim_numbering_module.mod kim_language_name_module.mod kim_species_name_module.mod kim_argument_name_module.mod kim_support_status_module.mod kim_callback_name_module.mod kim_unit_system_module.mod kim_log_verbosity_module.mod
-kim_model_f.o: kim_model_f.f90 kim_model_module.mod kim_numbering_module.mod kim_unit_system_module.mod kim_argument_name_module.mod kim_support_status_module.mod kim_callback_name_module.mod kim_language_name_module.mod kim_species_name_module.mod kim_data_type_module.mod kim_log_verbosity_module.mod
+kim_model_driver_create_f.o: kim_model_driver_create_f.f90 kim_model_driver_create_module.mod kim_numbering_module.mod kim_language_name_module.mod kim_species_name_module.mod kim_compute_arguments_module.mod kim_support_status_module.mod kim_unit_system_module.mod kim_log_verbosity_module.mod
+kim_model_f.o: kim_model_f.f90 kim_model_module.mod kim_numbering_module.mod kim_unit_system_module.mod kim_compute_arguments_module.mod kim_support_status_module.mod kim_language_name_module.mod kim_species_name_module.mod kim_data_type_module.mod kim_log_verbosity_module.mod
 kim_model_null_handles.o: kim_model_null_handles.cpp
 kim_model_refresh_f.o: kim_model_refresh_f.f90 kim_model_refresh_module.mod kim_log_verbosity_module.mod
 kim_numbering_f.o: kim_numbering_f.f90 kim_numbering_module.mod
@@ -132,20 +142,24 @@ clean:
 .PHONY: install dirs-install headers-install
 
 install_includedir = $(dest_package_dir)/include
-install_include_fortran = kim_argument_name_module.mod \
-                          kim_callback_name_module.mod \
-                          kim_charge_unit_module.mod \
+install_include_fortran = kim_charge_unit_module.mod \
+                          kim_compute_argument_name_module.mod \
+                          kim_compute_arguments_module.mod \
+                          kim_compute_callback_name_module.mod \
                           kim_data_type_module.mod \
                           kim_energy_unit_module.mod \
                           kim_language_name_module.mod \
                           kim_length_unit_module.mod \
                           kim_log_module.mod \
                           kim_log_verbosity_module.mod \
+                          kim_model_module.mod \
                           kim_model_compute_module.mod \
+                          kim_model_compute_arguments_module.mod \
+                          kim_model_compute_arguments_create_module.mod \
+                          kim_model_compute_arguments_destroy_module.mod \
                           kim_model_create_module.mod \
                           kim_model_destroy_module.mod \
                           kim_model_driver_create_module.mod \
-                          kim_model_module.mod \
                           kim_model_refresh_module.mod \
                           kim_numbering_module.mod \
                           kim_sem_ver_module.mod \
@@ -154,7 +168,10 @@ install_include_fortran = kim_argument_name_module.mod \
                           kim_temperature_unit_module.mod \
                           kim_time_unit_module.mod \
                           kim_unit_system_module.mod
-install_include_fd =  kim_model_compute_log_macros.fd \
+install_include_fd =  kim_model_compute_arguments_log_macros.fd \
+                      kim_model_compute_arguments_create_log_macros.fd \
+                      kim_model_compute_arguments_destroy_log_macros.fd \
+                      kim_model_compute_log_macros.fd \
                       kim_model_create_log_macros.fd \
                       kim_model_destroy_log_macros.fd \
                       kim_model_driver_create_log_macros.fd \

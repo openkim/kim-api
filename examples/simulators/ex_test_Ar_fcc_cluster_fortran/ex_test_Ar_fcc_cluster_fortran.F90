@@ -83,13 +83,15 @@ contains
 ! This function implements Locator and Iterator mode
 !
 !-------------------------------------------------------------------------------
-subroutine get_neigh(data_object, neighbor_list_index, request, numnei, &
-  pnei1part, ierr) bind(c)
+subroutine get_neigh(data_object, number_of_cutoffs, cutoffs, &
+  neighbor_list_index, request, numnei, pnei1part, ierr) bind(c)
   use error
   implicit none
 
   !-- Transferred variables
   type(c_ptr),    value, intent(in) :: data_object
+  integer(c_int), value, intent(in) :: number_of_cutoffs
+  integer(c_int),        intent(in) :: cutoffs(:)
   integer(c_int), value, intent(in) :: neighbor_list_index
   integer(c_int), value, intent(in)  :: request
   integer(c_int),        intent(out) :: numnei
@@ -100,6 +102,12 @@ subroutine get_neigh(data_object, neighbor_list_index, request, numnei, &
   integer(c_int), parameter :: DIM = 3
   integer(c_int) numberOfParticles
   type(neighObject_type), pointer :: neighObject
+
+  if (number_of_cutoffs /= 1) then
+    call my_warning("invalid number of cutoffs", __LINE__, __FILE__)
+    ierr = 1
+    return
+  endif
 
   if (neighbor_list_index /= 1) then
     call my_warning("wrong list index", __LINE__, __FILE__)
@@ -112,6 +120,7 @@ subroutine get_neigh(data_object, neighbor_list_index, request, numnei, &
   numberOfParticles = neighObject%number_of_particles
 
   if ( (request.gt.numberOfParticles) .or. (request.lt.1)) then
+    print *, request
     call my_warning("Invalid part ID in get_neigh", &
       __LINE__, __FILE__)
     ierr = 1
@@ -129,6 +138,13 @@ subroutine get_neigh(data_object, neighbor_list_index, request, numnei, &
 end subroutine get_neigh
 
 end module mod_neighborlist
+
+
+module mod_utility
+  implicit none
+  public
+
+contains
 
 !-------------------------------------------------------------------------------
 !
@@ -294,7 +310,7 @@ subroutine create_FCC_configuration(FCCspacing, nCellsPerSide, periodic, &
 
 end subroutine create_FCC_configuration
 
-
+end module mod_utility
 
 !*******************************************************************************
 !**
@@ -316,10 +332,12 @@ program ex_test_ar_fcc_cluster_fortran
   use kim_species_name_module
   use kim_numbering_module
   use kim_model_module
-  use kim_argument_name_module
-  use kim_callback_name_module
+  use kim_compute_arguments_module
+  use kim_compute_argument_name_module
+  use kim_compute_callback_name_module
   use kim_unit_system_module
   use mod_neighborlist
+  use mod_utility
   implicit none
   integer(c_int), parameter :: cd = c_double ! used for literal constants
 
@@ -342,6 +360,7 @@ program ex_test_ar_fcc_cluster_fortran
   type(neighObject_type), target :: neighObject
 
   type(kim_model_handle_type) :: model_handle
+  type(kim_compute_arguments_handle_type) :: compute_arguments_handle
   real(c_double) :: influence_distance
   integer(c_int) :: number_of_cutoffs
   real(c_double) :: cutoff
@@ -408,25 +427,34 @@ program ex_test_ar_fcc_cluster_fortran
   ! Best-practice is to check that the model is compatible
   ! but we will skip it here
 
+  ! create compute_arguments object
+  call kim_model_compute_arguments_create( &
+    model_handle, compute_arguments_handle, ierr)
+  if (ierr /= 0) then
+    call my_error("kim_model_compute_arguments_create", __LINE__, __FILE__)
+  endif
+
   ! register memory with the KIM system
   ierr = 0
-  call kim_model_set_argument_pointer(model_handle, &
-    kim_argument_name_number_of_particles, n, ierr2)
+  call kim_compute_arguments_set_argument_pointer(compute_arguments_handle, &
+    kim_compute_argument_name_number_of_particles, n, ierr2)
   ierr = ierr + ierr2
-  call kim_model_set_argument_pointer(model_handle, &
-    kim_argument_name_particle_species_codes, particle_species_codes, ierr2)
+  call kim_compute_arguments_set_argument_pointer(compute_arguments_handle, &
+    kim_compute_argument_name_particle_species_codes, particle_species_codes, &
+    ierr2)
   ierr = ierr + ierr2
-  call kim_model_set_argument_pointer(model_handle, &
-    kim_argument_name_particle_contributing, particle_contributing, ierr2)
+  call kim_compute_arguments_set_argument_pointer(compute_arguments_handle, &
+    kim_compute_argument_name_particle_contributing, particle_contributing, &
+    ierr2)
   ierr = ierr + ierr2
-  call kim_model_set_argument_pointer(model_handle, &
-    kim_argument_name_coordinates, coords, ierr2)
+  call kim_compute_arguments_set_argument_pointer(compute_arguments_handle, &
+    kim_compute_argument_name_coordinates, coords, ierr2)
   ierr = ierr + ierr2
-  call kim_model_set_argument_pointer(model_handle, &
-    kim_argument_name_partial_energy, energy, ierr2)
+  call kim_compute_arguments_set_argument_pointer(compute_arguments_handle, &
+    kim_compute_argument_name_partial_energy, energy, ierr2)
   ierr = ierr + ierr2
-  call kim_model_set_argument_pointer(model_handle, &
-    kim_argument_name_partial_forces, forces, ierr2)
+  call kim_compute_arguments_set_argument_pointer(compute_arguments_handle, &
+    kim_compute_argument_name_partial_forces, forces, ierr2)
   ierr = ierr + ierr2
   if (ierr /= 0) then
      call my_error("set_argument_pointer", __LINE__, __FILE__)
@@ -439,8 +467,8 @@ program ex_test_ar_fcc_cluster_fortran
 
   ! Set pointer in KIM object to neighbor list routine and object
   !
-  call kim_model_set_callback_pointer(model_handle, &
-    kim_callback_name_get_neighbor_list, kim_language_name_fortran, &
+  call kim_compute_arguments_set_callback_pointer(compute_arguments_handle, &
+    kim_compute_callback_name_get_neighbor_list, kim_language_name_fortran, &
     c_funloc(get_neigh), c_loc(neighobject), ierr)
   if (ierr /= 0) then
     call my_error("set_callback_pointer", __LINE__, __FILE__)
@@ -482,7 +510,7 @@ program ex_test_ar_fcc_cluster_fortran
                                          neighObject)
 
     ! Call model compute
-    call kim_model_compute(model_handle, ierr)
+    call kim_model_compute(model_handle, compute_arguments_handle, ierr)
     if (ierr /= 0) then
       call my_error("kim_api_model_compute", __LINE__, __FILE__)
     endif
@@ -506,6 +534,11 @@ program ex_test_ar_fcc_cluster_fortran
   ! Deallocate neighbor list object
   deallocate( neighObject%neighborList )
 
+  call kim_model_compute_arguments_destroy(&
+    model_handle, compute_arguments_handle, ierr)
+  if (ierr /= 0) then
+    call my_error("compute_arguments_destroy", __LINE__, __FILE__)
+  endif
   call kim_model_destroy(model_handle)
 
 end program ex_test_ar_fcc_cluster_fortran

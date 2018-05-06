@@ -805,6 +805,7 @@ int ComputeArgumentsImplementation::GetNeighborList(
   {
     // LOG_DEBUG("Numbering conversion is required.");
 
+    LOG_INFORMATION(SNUM(*numberOfNeighbors) + ", " + SNUM(neighborListIndex));
     std::vector<int> & list = getNeighborListStorage_[neighborListIndex];
     list.resize(*numberOfNeighbors);
     for (int i=0; i<*numberOfNeighbors; ++i)

@@ -46,10 +46,10 @@ module kim_model_create_module
     kim_model_create_set_neighbor_list_cutoffs_pointer, &
     kim_model_create_set_refresh_pointer, &
     kim_model_create_set_destroy_pointer, &
+    kim_model_create_set_compute_arguments_create_pointer, &
+    kim_model_create_set_compute_arguments_destroy_pointer, &
     kim_model_create_set_compute_pointer, &
     kim_model_create_set_species_code, &
-    kim_model_create_set_argument_support_status, &
-    kim_model_create_set_callback_support_status, &
     kim_model_create_set_parameter_pointer, &
     kim_model_create_set_model_buffer_pointer, &
     kim_model_create_set_units, &
@@ -164,6 +164,30 @@ module kim_model_create_module
       integer(c_int), intent(out) :: ierr
     end subroutine kim_model_create_set_destroy_pointer
 
+    subroutine kim_model_create_set_compute_arguments_create_pointer( &
+      model_create_handle, language_name, fptr, ierr)
+      use, intrinsic :: iso_c_binding
+      use kim_language_name_module, only : kim_language_name_type
+      import kim_model_create_handle_type
+      implicit none
+      type(kim_model_create_handle_type), intent(in) :: model_create_handle
+      type(kim_language_name_type), intent(in), value :: language_name
+      type(c_funptr), intent(in), value :: fptr
+      integer(c_int), intent(out) :: ierr
+    end subroutine kim_model_create_set_compute_arguments_create_pointer
+
+    subroutine kim_model_create_set_compute_arguments_destroy_pointer( &
+      model_create_handle, language_name, fptr, ierr)
+      use, intrinsic :: iso_c_binding
+      use kim_language_name_module, only : kim_language_name_type
+      import kim_model_create_handle_type
+      implicit none
+      type(kim_model_create_handle_type), intent(in) :: model_create_handle
+      type(kim_language_name_type), intent(in), value :: language_name
+      type(c_funptr), intent(in), value :: fptr
+      integer(c_int), intent(out) :: ierr
+    end subroutine kim_model_create_set_compute_arguments_destroy_pointer
+
     subroutine kim_model_create_set_compute_pointer( &
       model_create_handle, language_name, fptr, ierr)
       use, intrinsic :: iso_c_binding
@@ -187,32 +211,6 @@ module kim_model_create_module
       integer(c_int), intent(in), value :: code
       integer(c_int), intent(out) :: ierr
     end subroutine kim_model_create_set_species_code
-
-    subroutine kim_model_create_set_argument_support_status( &
-      model_create_handle, argument_name, support_status, ierr)
-      use, intrinsic :: iso_c_binding
-      use kim_argument_name_module, only : kim_argument_name_type
-      use kim_support_status_module, only : kim_support_status_type
-      import kim_model_create_handle_type
-      implicit none
-      type(kim_model_create_handle_type), intent(in) :: model_create_handle
-      type(kim_argument_name_type), intent(in), value :: argument_name
-      type(kim_support_status_type), intent(in), value :: support_status
-      integer(c_int), intent(out) :: ierr
-    end subroutine kim_model_create_set_argument_support_status
-
-    subroutine kim_model_create_set_callback_support_status( &
-      model_create_handle, callback_name, support_status, ierr)
-      use, intrinsic :: iso_c_binding
-      use kim_callback_name_module, only : kim_callback_name_type
-      use kim_support_status_module, only : kim_support_status_type
-      import kim_model_create_handle_type
-      implicit none
-      type(kim_model_create_handle_type), intent(in) :: model_create_handle
-      type(kim_callback_name_type), intent(in), value :: callback_name
-      type(kim_support_status_type), intent(in), value :: support_status
-      integer(c_int), intent(out) :: ierr
-    end subroutine kim_model_create_set_callback_support_status
 
     subroutine kim_model_create_set_model_buffer_pointer( &
       model_create_handle, ptr)

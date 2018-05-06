@@ -42,12 +42,9 @@ module kim_model_f_module
     destroy, &
     get_influence_distance, &
     get_neighbor_list_cutoffs_pointer, &
-    get_argument_support_status, &
-    get_callback_support_status, &
     get_units, &
-    set_argument_pointer_integer, &
-    set_argument_pointer_double, &
-    set_callback_pointer, &
+    compute_arguments_create, &
+    compute_arguments_destroy, &
     compute, &
     clear_and_refresh_model, &
     get_species_support_and_code, &
@@ -117,30 +114,6 @@ module kim_model_f_module
       type(c_ptr), intent(out) :: cutoffs_ptr
     end subroutine get_neighbor_list_cutoffs_pointer
 
-    integer(c_int) function get_argument_support_status(model, argument_name, &
-      support_status) bind(c, name="KIM_Model_GetArgumentSupportStatus")
-      use, intrinsic :: iso_c_binding
-      use kim_argument_name_module, only : kim_argument_name_type
-      use kim_support_status_module, only : kim_support_status_type
-      import kim_model_type
-      implicit none
-      type(kim_model_type), intent(in) :: model
-      type(kim_argument_name_type), intent(in), value :: argument_name
-      type(kim_support_status_type), intent(out) :: support_status
-    end function get_argument_support_status
-
-    integer(c_int) function get_callback_support_status(model, callback_name, &
-      support_status) bind(c, name="KIM_Model_GetCallbackSupportStatus")
-      use, intrinsic :: iso_c_binding
-      use kim_callback_name_module, only : kim_callback_name_type
-      use kim_support_status_module, only : kim_support_status_type
-      import kim_model_type
-      implicit none
-      type(kim_model_type), intent(in) :: model
-      type(kim_callback_name_type), intent(in), value :: callback_name
-      type(kim_support_status_type), intent(out) :: support_status
-    end function get_callback_support_status
-
     subroutine get_units(model, length_unit, energy_unit, charge_unit, &
       temperature_unit, time_unit) bind(c, name="KIM_Model_GetUnits")
       use, intrinsic :: iso_c_binding
@@ -156,48 +129,32 @@ module kim_model_f_module
       type(kim_time_unit_type), intent(out) :: time_unit
     end subroutine get_units
 
-    integer(c_int) function set_argument_pointer_integer(model, argument_name, &
-      ptr) bind(c, name="KIM_Model_SetArgumentPointerInteger")
-      use, intrinsic :: iso_c_binding
-      use kim_argument_name_module, only : kim_argument_name_type
-      import kim_model_type
-      implicit none
-      type(kim_model_type), intent(inout) :: model
-      type(kim_argument_name_type), intent(in), value :: argument_name
-      type(c_ptr), intent(in), value :: ptr
-    end function set_argument_pointer_integer
-
-    integer(c_int) function set_argument_pointer_double(model, argument_name, &
-      ptr) bind(c, name="KIM_Model_SetArgumentPointerDouble")
-      use, intrinsic :: iso_c_binding
-      use kim_argument_name_module, only : kim_argument_name_type
-      import kim_model_type
-      implicit none
-      type(kim_model_type), intent(inout) :: model
-      type(kim_argument_name_type), intent(in), value :: argument_name
-      type(c_ptr), intent(in), value :: ptr
-    end function set_argument_pointer_double
-
-    integer(c_int) function set_callback_pointer(model, callback_name, &
-      language_name, fptr, data_object) &
-      bind(c, name="KIM_Model_SetCallbackPointer")
-      use, intrinsic :: iso_c_binding
-      use kim_language_name_module, only : kim_language_name_type
-      use kim_callback_name_module, only : kim_callback_name_type
-      import kim_model_type
-      implicit none
-      type(kim_model_type), intent(inout) :: model
-      type(kim_language_name_type), intent(in), value :: language_name
-      type(kim_callback_name_type), intent(in), value :: callback_name
-      type(c_funptr), intent(in), value :: fptr
-      type(c_ptr), intent(in), value :: data_object
-    end function set_callback_pointer
-
-    integer(c_int) function compute(model) bind(c, name="KIM_Model_Compute")
+    integer(c_int) function compute_arguments_create(model, compute_arguments) &
+      bind(c, name="KIM_Model_ComputeArgumentsCreate")
       use, intrinsic :: iso_c_binding
       import kim_model_type
       implicit none
       type(kim_model_type), intent(in) :: model
+      type(c_ptr), intent(out) :: compute_arguments
+    end function compute_arguments_create
+
+    integer(c_int) function compute_arguments_destroy(model, &
+      compute_arguments) bind(c, name="KIM_Model_ComputeArgumentsDestroy")
+      use, intrinsic :: iso_c_binding
+      import kim_model_type
+      implicit none
+      type(kim_model_type), intent(in) :: model
+      type(c_ptr), intent(inout) :: compute_arguments
+    end function compute_arguments_destroy
+
+    integer(c_int) function compute(model, compute_arguments) &
+      bind(c, name="KIM_Model_Compute")
+      use, intrinsic :: iso_c_binding
+      use kim_compute_arguments_f_module, only : kim_compute_arguments_type
+      import kim_model_type
+      implicit none
+      type(kim_model_type), intent(in) :: model
+      type(kim_compute_arguments_type), intent(in) :: compute_arguments
     end function compute
 
     integer(c_int) function clear_and_refresh_model(&
@@ -484,42 +441,6 @@ subroutine kim_model_get_neighbor_list_cutoffs(model_handle, cutoffs, ierr)
   end if
 end subroutine kim_model_get_neighbor_list_cutoffs
 
-subroutine kim_model_get_argument_support_status(model_handle, argument_name, &
-  support_status, ierr)
-  use, intrinsic :: iso_c_binding
-  use kim_model_module, only : kim_model_handle_type
-  use kim_argument_name_module, only : kim_argument_name_type
-  use kim_support_status_module, only : kim_support_status_type
-  use kim_model_f_module, only : kim_model_type, get_argument_support_status
-  implicit none
-  type(kim_model_handle_type), intent(in) :: model_handle
-  type(kim_argument_name_type), intent(in), value :: argument_name
-  type(kim_support_status_type), intent(out) :: support_status
-  integer(c_int), intent(out) :: ierr
-  type(kim_model_type), pointer :: model
-
-  call c_f_pointer(model_handle%p, model)
-  ierr = get_argument_support_status(model, argument_name, support_status)
-end subroutine kim_model_get_argument_support_status
-
-subroutine kim_model_get_callback_support_status(model_handle, callback_name, &
-  support_status, ierr)
-  use, intrinsic :: iso_c_binding
-  use kim_model_module, only : kim_model_handle_type
-  use kim_callback_name_module, only : kim_callback_name_type
-  use kim_support_status_module, only : kim_support_status_type
-  use kim_model_f_module, only : kim_model_type, get_callback_support_status
-  implicit none
-  type(kim_model_handle_type), intent(in) :: model_handle
-  type(kim_callback_name_type), intent(in), value :: callback_name
-  type(kim_support_status_type), intent(out) :: support_status
-  integer(c_int), intent(out) :: ierr
-  type(kim_model_type), pointer :: model
-
-  call c_f_pointer(model_handle%p, model)
-  ierr = get_callback_support_status(model, callback_name, support_status)
-end subroutine kim_model_get_callback_support_status
-
 subroutine kim_model_get_units(model_handle, length_unit, energy_unit, &
   charge_unit, temperature_unit, time_unit)
   use, intrinsic :: iso_c_binding
@@ -541,208 +462,69 @@ subroutine kim_model_get_units(model_handle, length_unit, energy_unit, &
     temperature_unit, time_unit)
 end subroutine kim_model_get_units
 
-subroutine kim_model_set_argument_pointer_int0(model_handle, argument_name, &
-  int0, ierr)
+subroutine kim_model_compute_arguments_create(model_handle, &
+  compute_arguments_handle, ierr)
   use, intrinsic :: iso_c_binding
-  use kim_argument_name_module, only : kim_argument_name_type
   use kim_model_module, only : kim_model_handle_type
-  use kim_model_f_module, only : kim_model_type, set_argument_pointer_integer
+  use kim_compute_arguments_module, only : &
+    kim_compute_arguments_handle_type
+  use kim_model_f_module, only : kim_model_type, compute_arguments_create
   implicit none
   type(kim_model_handle_type), intent(in) :: model_handle
-  type(kim_argument_name_type), intent(in), value :: argument_name
-  integer(c_int), intent(in), target :: int0
+  type(kim_compute_arguments_handle_type), intent(out) :: &
+    compute_arguments_handle
   integer(c_int), intent(out) :: ierr
   type(kim_model_type), pointer :: model
+  type(c_ptr) :: pcompute_arguments
 
   call c_f_pointer(model_handle%p, model)
-  ierr = set_argument_pointer_integer(model, argument_name, c_loc(int0))
-end subroutine kim_model_set_argument_pointer_int0
 
-subroutine kim_model_set_argument_pointer_int1(model_handle, argument_name, &
-  int1, ierr)
+  ierr = compute_arguments_create(model, pcompute_arguments)
+  if (ierr == 0) then
+    compute_arguments_handle%p = pcompute_arguments
+  end if
+end subroutine kim_model_compute_arguments_create
+
+subroutine kim_model_compute_arguments_destroy(model_handle, &
+  compute_arguments_handle, ierr)
   use, intrinsic :: iso_c_binding
-  use kim_argument_name_module, only : kim_argument_name_type
   use kim_model_module, only : kim_model_handle_type
-  use kim_model_f_module, only : kim_model_type, set_argument_pointer_integer
+  use kim_compute_arguments_module, only : &
+    kim_compute_arguments_handle_type
+  use kim_model_f_module, only : kim_model_type, compute_arguments_destroy
   implicit none
   type(kim_model_handle_type), intent(in) :: model_handle
-  type(kim_argument_name_type), intent(in), value :: argument_name
-  integer(c_int), intent(in), target :: int1(:)
+  type(kim_compute_arguments_handle_type), intent(inout) :: &
+    compute_arguments_handle
   integer(c_int), intent(out) :: ierr
   type(kim_model_type), pointer :: model
+  type(c_ptr) pcompute_arguments
 
   call c_f_pointer(model_handle%p, model)
-  call set(model, argument_name, size(int1,1,c_int), int1, ierr)
-  return
+  pcompute_arguments = compute_arguments_handle%p
+  ierr = compute_arguments_destroy(model, pcompute_arguments)
+  if (ierr /= 0) then
+    compute_arguments_handle%p = c_null_ptr
+  end if
+end subroutine kim_model_compute_arguments_destroy
 
-contains
-  subroutine set(model, argument_name, extent1, int1, ierr)
-    use, intrinsic :: iso_c_binding
-    use kim_argument_name_module, only : kim_argument_name_type
-    use kim_model_f_module, only : kim_model_type
-    implicit none
-    type(kim_model_type), intent(inout) :: model
-    type(kim_argument_name_type), intent(in), value :: argument_name
-    integer(c_int), intent(in) :: extent1
-    integer(c_int), intent(in), target :: int1(extent1)
-    integer(c_int), intent(out) :: ierr
-
-    ierr = set_argument_pointer_integer(model, argument_name, c_loc(int1))
-  end subroutine set
-end subroutine kim_model_set_argument_pointer_int1
-
-subroutine kim_model_set_argument_pointer_int2(model_handle, argument_name, &
-  int2, ierr)
-  use, intrinsic :: iso_c_binding
-  use kim_argument_name_module, only : kim_argument_name_type
-  use kim_model_module, only : kim_model_handle_type
-  use kim_model_f_module, only : kim_model_type
-  implicit none
-  type(kim_model_handle_type), intent(in) :: model_handle
-  type(kim_argument_name_type), intent(in), value :: argument_name
-  integer(c_int), intent(in), target :: int2(:,:)
-  integer(c_int), intent(out) :: ierr
-  type(kim_model_type), pointer :: model
-
-  call c_f_pointer(model_handle%p, model)
-  call set(model, argument_name, size(int2, 1, c_int), size(int2, 2, c_int), &
-    int2, ierr)
-  return
-
-contains
-  subroutine set(model, argument_name, extent1, extent2, int2, ierr)
-    use, intrinsic :: iso_c_binding
-    use kim_argument_name_module, only : kim_argument_name_type
-    use kim_model_f_module, only : kim_model_type, set_argument_pointer_integer
-    implicit none
-    type(kim_model_type), intent(inout) :: model
-    type(kim_argument_name_type), intent(in), value :: argument_name
-    integer(c_int), intent(in) :: extent1
-    integer(c_int), intent(in) :: extent2
-    integer(c_int), intent(in), target :: int2(extent1,extent2)
-    integer(c_int), intent(out) :: ierr
-
-    ierr = set_argument_pointer_integer(model, argument_name, c_loc(int2))
-  end subroutine set
-end subroutine kim_model_set_argument_pointer_int2
-
-subroutine kim_model_set_argument_pointer_double0(model_handle, argument_name, &
-  double0, ierr)
-  use, intrinsic :: iso_c_binding
-  use kim_argument_name_module, only : kim_argument_name_type
-  use kim_model_module, only : kim_model_handle_type
-  use kim_model_f_module, only : kim_model_type, set_argument_pointer_double
-  implicit none
-  type(kim_model_handle_type), intent(in) :: model_handle
-  type(kim_argument_name_type), intent(in), value :: argument_name
-  real(c_double), intent(in), target :: double0
-  integer(c_int), intent(out) :: ierr
-  type(kim_model_type), pointer :: model
-
-  call c_f_pointer(model_handle%p, model)
-  ierr = set_argument_pointer_double(model, argument_name, c_loc(double0))
-end subroutine kim_model_set_argument_pointer_double0
-
-subroutine kim_model_set_argument_pointer_double1(model_handle, argument_name, &
-  double1, ierr)
-  use, intrinsic :: iso_c_binding
-  use kim_argument_name_module, only : kim_argument_name_type
-  use kim_model_module, only : kim_model_handle_type
-  use kim_model_f_module, only : kim_model_type
-  implicit none
-  type(kim_model_handle_type), intent(in) :: model_handle
-  type(kim_argument_name_type), intent(in), value :: argument_name
-  real(c_double), intent(in), target :: double1(:)
-  integer(c_int), intent(out) :: ierr
-  type(kim_model_type), pointer :: model
-
-  call c_f_pointer(model_handle%p, model)
-  call set(model, argument_name, size(double1, 1, c_int), double1, ierr)
-  return
-
-contains
-  subroutine set(model, argument_name, extent1, double1, ierr)
-    use, intrinsic :: iso_c_binding
-    use kim_argument_name_module, only : kim_argument_name_type
-    use kim_model_f_module, only : kim_model_type, set_argument_pointer_double
-    implicit none
-    type(kim_model_type), intent(inout) :: model
-    type(kim_argument_name_type), intent(in), value :: argument_name
-    integer(c_int), intent(in) :: extent1
-    real(c_double), intent(in), target :: double1(extent1)
-    integer(c_int), intent(out) :: ierr
-
-    ierr = set_argument_pointer_double(model, argument_name, c_loc(double1))
-  end subroutine set
-end subroutine kim_model_set_argument_pointer_double1
-
-subroutine kim_model_set_argument_pointer_double2(model_handle, argument_name, &
-  double2, ierr)
-  use, intrinsic :: iso_c_binding
-  use kim_argument_name_module, only : kim_argument_name_type
-  use kim_model_module, only : kim_model_handle_type
-  use kim_model_f_module, only : kim_model_type
-  implicit none
-  type(kim_model_handle_type), intent(in) :: model_handle
-  type(kim_argument_name_type), intent(in), value :: argument_name
-  real(c_double), intent(in), target :: double2(:,:)
-  integer(c_int), intent(out) :: ierr
-  type(kim_model_type), pointer :: model
-
-  call c_f_pointer(model_handle%p, model)
-  call set(model, argument_name, size(double2, 1, c_int), &
-    size(double2, 2, c_int), double2, ierr)
-  return
-
-contains
-  subroutine set(model, argument_name, extent1, extent2, double2, ierr)
-    use, intrinsic :: iso_c_binding
-    use kim_argument_name_module, only : kim_argument_name_type
-    use kim_model_f_module, only : kim_model_type, set_argument_pointer_double
-    implicit none
-    type(kim_model_type), intent(inout) :: model
-    type(kim_argument_name_type), intent(in), value :: argument_name
-    integer(c_int), intent(in) :: extent1
-    integer(c_int), intent(in) :: extent2
-    real(c_double), intent(in), target :: double2(extent1,extent2)
-    integer(c_int), intent(out) :: ierr
-
-    ierr = set_argument_pointer_double(model, argument_name, c_loc(double2))
-  end subroutine set
-end subroutine kim_model_set_argument_pointer_double2
-
-subroutine kim_model_set_callback_pointer(model_handle, callback_name, &
-  language_name, fptr, data_object, ierr)
-  use, intrinsic :: iso_c_binding
-  use kim_callback_name_module, only : kim_callback_name_type
-  use kim_language_name_module, only : kim_language_name_type
-  use kim_model_module, only : kim_model_handle_type
-  use kim_model_f_module, only : kim_model_type, set_callback_pointer
-  implicit none
-  type(kim_model_handle_type), intent(in) :: model_handle
-  type(kim_callback_name_type), intent(in), value :: callback_name
-  type(kim_language_name_type), intent(in), value :: language_name
-  type(c_funptr), intent(in), value :: fptr
-  type(c_ptr), intent(in), value :: data_object
-  integer(c_int), intent(out) :: ierr
-  type(kim_model_type), pointer :: model
-
-  call c_f_pointer(model_handle%p, model)
-  ierr = set_callback_pointer(model, callback_name, language_name, fptr, &
-    data_object)
-end subroutine kim_model_set_callback_pointer
-
-subroutine kim_model_compute(model_handle, ierr)
+subroutine kim_model_compute(model_handle, compute_arguments_handle, ierr)
   use, intrinsic :: iso_c_binding
   use kim_model_module, only : kim_model_handle_type
+  use kim_compute_arguments_module, only : kim_compute_arguments_handle_type
   use kim_model_f_module, only : kim_model_type, compute
+  use kim_compute_arguments_f_module, only : kim_compute_arguments_type
   implicit none
   type(kim_model_handle_type), intent(in) :: model_handle
+  type(kim_compute_arguments_handle_type), intent(in) :: &
+    compute_arguments_handle
   integer(c_int), intent(out) :: ierr
   type(kim_model_type), pointer :: model
+  type(kim_compute_arguments_type), pointer :: compute_arguments
 
   call c_f_pointer(model_handle%p, model)
-  ierr = compute(model)
+  call c_f_pointer(compute_arguments_handle%p, compute_arguments)
+  ierr = compute(model, compute_arguments)
 end subroutine kim_model_compute
 
 subroutine &

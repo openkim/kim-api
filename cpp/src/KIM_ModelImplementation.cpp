@@ -1120,6 +1120,12 @@ int ModelImplementation::Compute(
   computeArguments->pimpl->inModelComputeRoutine_ = true;
   computeArguments->pimpl->numberOfCutoffs_ = numberOfCutoffs_;
   computeArguments->pimpl->cutoffs_ = cutoffs_;
+  // Resize computeArguments storage if needed
+  if (simulatorNumbering_ != modelNumbering_)
+  {
+    computeArguments->pimpl->getNeighborListStorage_.resize(numberOfCutoffs_);
+  }
+
 
   typedef int ModelComputeCpp(KIM::ModelCompute const * const,
                               KIM::ModelComputeArguments const * const);
@@ -1129,11 +1135,11 @@ int ModelImplementation::Compute(
                             KIM_ModelComputeArguments const * const);
   ModelComputeC * CCompute
       = reinterpret_cast<ModelComputeC *>(computeFunction_);
-//  typedef void ModelComputeF(KIM_ModelCompute * const,
-//                             KIM_ModelComputeArguments const * const,
-//                             int * const);
-//  ModelComputeF * FCompute
-//      = reinterpret_cast<ModelComputeF *>(computeFunction_);
+  typedef void ModelComputeF(KIM_ModelCompute * const,
+                             KIM_ModelComputeArguments const * const,
+                             int * const);
+  ModelComputeF * FCompute
+      = reinterpret_cast<ModelComputeF *>(computeFunction_);
 
   int error;
   struct Mdl {void const * p;};
@@ -1155,18 +1161,19 @@ int ModelImplementation::Compute(
         (const_cast<KIM::ComputeArguments *>(computeArguments));
     error = CCompute(&cM, &cMca);
   }
-//  else if (computeLanguage_ == LANGUAGE_NAME::fortran)
-//  {
-//    KIM_ModelCompute cM;
-//    cM.p = &M;
-//    KIM_ModelCompute cM_Handle;
-//    cM_Handle.p = &cM;
-//    KIM_ModelComputeArguments cMca;
-//    cMca.p = &computeArguments;
-//    KIM_ModelComputeArguments cMca_Handle;
-//    cMca_Handle.p = &cMca;
-//    FCompute(&cM_Handle, &cMca_Handle, &error);
-//  }
+  else if (computeLanguage_ == LANGUAGE_NAME::fortran)
+  {
+    KIM_ModelCompute cM;
+    cM.p = &M;
+    KIM_ModelCompute cM_Handle;
+    cM_Handle.p = &cM;
+    KIM_ModelComputeArguments cMca;
+    cMca.p = reinterpret_cast<void *>
+        (const_cast<KIM::ComputeArguments *>(computeArguments));
+    KIM_ModelComputeArguments cMca_Handle;
+    cMca_Handle.p = &cMca;
+    FCompute(&cM_Handle, &cMca_Handle, &error);
+  }
   else
   {
     LOG_ERROR("Unknown LanguageName.  SHOULD NEVER GET HERE.");
@@ -1693,6 +1700,8 @@ ModelImplementation::ModelImplementation(ModelLibrary * const modelLibrary,
     cutoffs_(0),
     refreshFunction_(0),
     destroyFunction_(0),
+    computeArgumentsCreateFunction_(0),
+    computeArgumentsDestroyFunction_(0),
     computeFunction_(0),
     modelBuffer_(0),
     simulatorBuffer_(0)
@@ -1825,7 +1834,7 @@ int ModelImplementation::ModelCreate(
 
 #if ERROR_VERBOSITY
   // Error checking
-  //  no need to check arguments, callbacks, or parameters
+  //  no need to check parameters
   if (!numberingHasBeenSet_)
   {
     LOG_ERROR("Model supplied Create() routine did not set numbering.");
@@ -2005,12 +2014,12 @@ int ModelImplementation::ModelComputeArgumentsCreate(ComputeArguments * const
   ModelComputeArgumentsCreateC * CComputeArgumentsCreate
       = reinterpret_cast<ModelComputeArgumentsCreateC *>(
           computeArgumentsCreateFunction_);
-//  typedef void ModelComputeArgumentsCreateF(
-//      KIM_ModelCompute const * const,
-//      KIM_ModelComputeArgumentsCreate * const, int * const);
-//  ModelComputeArgumentsCreateF * FComputeArgumentsCreate
-//      = reinterpret_cast<ModelComputeArgumentsCreateF *>(
-//          computeArgumentsCreateFunction_);
+  typedef void ModelComputeArgumentsCreateF(
+      KIM_ModelCompute const * const,
+      KIM_ModelComputeArgumentsCreate * const, int * const);
+  ModelComputeArgumentsCreateF * FComputeArgumentsCreate
+      = reinterpret_cast<ModelComputeArgumentsCreateF *>(
+          computeArgumentsCreateFunction_);
 
   int error;
   struct Mdl {void const * p;};
@@ -2030,18 +2039,18 @@ int ModelImplementation::ModelComputeArgumentsCreate(ComputeArguments * const
     cMcac.p = computeArguments;
     error = CComputeArgumentsCreate(&cM, &cMcac);
   }
-//  else if (computeArgumentsCreateLanguage_ == LANGUAGE_NAME::fortran)
-//  {
-//    KIM_ModelCompute cM;
-//    cM.p = &M;
-//    KIM_ModelCompute cM_Handle;
-//    cM_Handle.p = &cM;
-//    KIM_ModelComputeArgumentsCreate cMcac;
-//    cMcac.p = computeArguments;
-//    KIM_ModelComputeArgumentsCreate cMcac_Handle;
-//    cMcac_Handle.p = &cM;
-//    FComputeArgumentsCreate(&cM_Handle, &cMcac_Handle, &error);
-//  }
+  else if (computeArgumentsCreateLanguage_ == LANGUAGE_NAME::fortran)
+  {
+    KIM_ModelCompute cM;
+    cM.p = &M;
+    KIM_ModelCompute cM_Handle;
+    cM_Handle.p = &cM;
+    KIM_ModelComputeArgumentsCreate cMcac;
+    cMcac.p = computeArguments;
+    KIM_ModelComputeArgumentsCreate cMcac_Handle;
+    cMcac_Handle.p = &cMcac;
+    FComputeArgumentsCreate(&cM_Handle, &cMcac_Handle, &error);
+  }
   else
   {
     LOG_ERROR("Unknown LanguageName.  SHOULD NEVER GET HERE.");
@@ -2088,12 +2097,12 @@ int ModelImplementation::ModelComputeArgumentsDestroy(ComputeArguments * const
   ModelComputeArgumentsDestroyC * CComputeArgumentsDestroy
       = reinterpret_cast<ModelComputeArgumentsDestroyC * const>(
           computeArgumentsDestroyFunction_);
-//  typedef void ModelComputeArgumentsDestroyF(
-//      KIM::ModelCompute const * const,
-//      KIM_ModelComputeArgumentsDestroy * const, int * const);
-//  ModelComputeArgumentsDestroyF * FComputeArgumentsDestroy
-//      = reinterpret_cast<ModelComputeArgumentsDestroyF * const>(
-//          computeArgumentsDestroyFunction_);
+  typedef void ModelComputeArgumentsDestroyF(
+      KIM_ModelCompute const * const,
+      KIM_ModelComputeArgumentsDestroy * const, int * const);
+  ModelComputeArgumentsDestroyF * FComputeArgumentsDestroy
+      = reinterpret_cast<ModelComputeArgumentsDestroyF * const>(
+          computeArgumentsDestroyFunction_);
 
   int error;
   struct Mdl {void const * p;};
@@ -2114,18 +2123,18 @@ int ModelImplementation::ModelComputeArgumentsDestroy(ComputeArguments * const
     cMcad.p = computeArguments;
     error = CComputeArgumentsDestroy(&cM, &cMcad);
   }
-//  else if (computeArgumentsDestroyLanguage_ == LANGUAGE_NAME::fortran)
-//  {
-//    KIM_ModelCompute cM;
-//    cM.p = &M;
-//    KIM_ModelCompute cM_Handle;
-//    cM_Handle.p = &cM;
-//    KIM_ModelComputeArgumentsDestroy cMcad;
-//    cMcad.p = computeArguments;
-//    KIM_ModelComputeArgumentsDestroy cMcad_Handle;
-//    cMcad_Handle.p = &cMcad;
-//    FComputeArgumentsDestroy(&cM_Handle, &cMcad_Handle, &error);
-//  }
+  else if (computeArgumentsDestroyLanguage_ == LANGUAGE_NAME::fortran)
+  {
+    KIM_ModelCompute cM;
+    cM.p = &M;
+    KIM_ModelCompute cM_Handle;
+    cM_Handle.p = &cM;
+    KIM_ModelComputeArgumentsDestroy cMcad;
+    cMcad.p = computeArguments;
+    KIM_ModelComputeArgumentsDestroy cMcad_Handle;
+    cMcad_Handle.p = &cMcad;
+    FComputeArgumentsDestroy(&cM_Handle, &cMcad_Handle, &error);
+  }
   else
   {
     LOG_ERROR("Unknown LanguageName.  SHOULD NEVER GET HERE.");
