@@ -39,20 +39,20 @@
 
 Previous Section: \ref features.
 
-At the highest level there are "Simulators" and "Models".  At the conceptual
-level, a %KIM Model is something that defines an energy-per-particle function,
-\f$E_i\f$, and an "influence distance", \f$r_{\text{infl}}\f$, that identifies
-the particle separation range over which \f$E_i\f$ depends on the position of
-its neighboring particles.  (Note, this is not necessarily equal to the
-neighbor list cutoff radius used by a model.)  A %KIM Model is defined for a
-specific material system (a specific set of particle species: e.g., Al, Ni, and
-Cu) and contains all parameter values necessary for evaluating \f$E_i\f$ for
-any configuration containing particles of the supported species.  A %KIM Model
+At the highest level there are "Simulators" and "Models".  Conceptually, a %KIM
+Model is something that defines an energy-per-particle function, \f$E_i\f$, and
+an "influence distance", \f$r_{\text{infl}}\f$, that identifies the particle
+separation range over which \f$E_i\f$ depends on the position of its
+neighboring particles.  (Note, this is not necessarily equal to the neighbor
+list cutoff radius used by a model.)  A %KIM Model is defined for a specific
+material system (a specific set of particle species: e.g., Al, Ni, and Cu) and
+contains all parameter values necessary for evaluating \f$E_i\f$ for any
+configuration containing particles of the supported species.  A %KIM Model
 will, typically, also have the ability to compute other quantities related to
 the energy-per-particle, such as the force on a particle or the particle's
 virial.
 
-At the conceptual level, a %KIM Simulator is something that performs a numerical
+Conceptually, a %KIM Simulator is something that performs a numerical
 simulation based on the energy, forces, etc. of a set of particles.  This could
 be a molecular dynamics simulation, a monte carlo simulation, or other similar
 simulation technique.  A %KIM Simulator treats a %KIM Model as a black box.  It
@@ -312,4 +312,4 @@ Next Section: \ref implementation.
 
 LocalWords:  CDDL yyyy Ellad Tadmor Karls kim api infl Ni Cu virial monte Li
 LocalWords:  carlo atomistic mathcal mathbf equiv ac cp ncp emptyset le otimes
-LocalWords:  unaccented html jpg pdf np
+LocalWords:  unaccented html jpg pdf np ref

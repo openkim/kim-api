@@ -63,18 +63,18 @@ The current version of the %KIM API package supports the following features:
 - **Extensible, Strongly-Typed Enumerations**: The %KIM API implements a set of
     typed constants for each category of entity that it defines (DataType,
     LanguageName, Numbering, SpeciesName, LengthUnit, EnergyUnit, ChargeUnit,
-    TemperatureUnit, TimeUnit, ArgumentName, CallbackName, SupportStatus).
-    This allows for backward-compatible additions to the enumerations in future
-    versions of the %KIM API.  Further, the strong-typing greatly facilitates
-    debugging.
+    TemperatureUnit, TimeUnit, ComputeArgumentName, ComputeCallbackName,
+    SupportStatus).  This allows for backward-compatible additions to the
+    enumerations in future versions of the %KIM API.  Further, the
+    strong-typing greatly facilitates debugging.
 
 - **Numbering Origin Support**: Support for automatic translation between
   zero-based numbering of particles (C-style numbering beginning with zero) and
   one-based numbering (Fortran-style numbering beginning with one).
 
 - **Data Communication**: Communication of an arbitrary number of *arguments*
-  between a *Model* (interatomic potential) and a *Simulator* (simulation code
-  that uses a Model).
+  and *callback* routines between a *Model* (interatomic potential) and a
+  *Simulator* (simulation code that uses a Model).
 
 - **Data types**: integer and double.
 
@@ -141,7 +141,8 @@ Next Section: \ref theory.
 
 */
 
-LocalWords:  CDDL yyyy Ellad Tadmor Karls kim api pimpl discoverable const
+LocalWords:  CDDL yyyy Ellad Tadmor Karls kim api pimpl discoverable const ref
 LocalWords:  DataType LanguageName SpeciesName LengthUnit EnergyUnit TimeUnit
 LocalWords:  ChargeUnit TemperatureUnit ArgumentName CallbackName interatomic
-LocalWords:  SupportStatus atomistic Versioning
+LocalWords:  SupportStatus atomistic Versioning ComputeArgumentName
+LocalWords:  ComputeCallbackName

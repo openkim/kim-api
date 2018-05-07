@@ -47,11 +47,11 @@ The %KIM API defines standard quantities that must be communicated between the
 simulation code and the interatomic model, such as the number of particles, the
 species and position coordinates of each particle, and the forces acting on the
 particles.  This information is communicated via memory pointers so that
-minimal data copying is necessary.  The %KIM API provides a "model object"
-interface which facilitates and simplifies (as much as possible) the exchange
-of memory pointers between the simulator and model.
+minimal data copying is necessary.  The %KIM API provides a "model object" and
+"arguments object" interface which facilitates and simplifies (as much as
+possible) the exchange of memory pointers between the simulator and model.
 
-This documentaion is organized into the following components:
+This documentation is organized into the following components:
 
 -# \ref features
 
@@ -83,3 +83,6 @@ for [browsing](files.html).
 
 
 */
+
+LocalWords:  CDDL yyyy Ellad Tadmor kim api mainpage atomistic interatomic ref
+LocalWords:  Ar fcc cpp fortran MLJ LennardJones hpp LJ params html
