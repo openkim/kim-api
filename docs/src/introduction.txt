@@ -48,8 +48,8 @@ simulation code and the interatomic model, such as the number of particles, the
 species and position coordinates of each particle, and the forces acting on the
 particles.  This information is communicated via memory pointers so that
 minimal data copying is necessary.  The %KIM API provides a "model object" and
-"arguments object" interface which facilitates and simplifies (as much as
-possible) the exchange of memory pointers between the simulator and model.
+"compute-arguments object" interface which facilitates and simplifies (as much
+as possible) the exchange of memory pointers between the simulator and model.
 
 This documentation is organized into the following components:
 

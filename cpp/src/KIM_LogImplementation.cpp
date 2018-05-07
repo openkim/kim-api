@@ -30,6 +30,7 @@
 // Release: This file is part of the kim-api.git repository.
 //
 
+
 #include <iostream>
 #include <iomanip>
 #include <string>
@@ -47,14 +48,13 @@
 #define LOG_DIR "."
 #define LOG_FILE "kim.log"
 
+// log helper
+#define SPTR( x ) static_cast<std::ostringstream &>(                    \
+    std::ostringstream() << static_cast<void const * const>(x) ).str()
+
+
 namespace KIM
 {
-std::ofstream LogImplementation::logStream_;
-int LogImplementation::numberOfObjectsCreated_ = 0;
-int LogImplementation::numberOfObjectsDestroyed_ = 0;
-std::string LogImplementation::latestTimeStamp_;
-unsigned LogImplementation::sequence_ = 0;
-
 namespace
 {
 LogVerbosity const defaultLogVerbosity(KIM_LOG_MAXIMUM_LEVEL);
@@ -81,67 +81,25 @@ int Validate(LogVerbosity const logVerbosity)
 
 int LogImplementation::Create(LogImplementation ** const logImplementation)
 {
-  LogImplementation * pLogImplementation;
-  pLogImplementation = new LogImplementation();
+  *logImplementation = new LogImplementation();
 
-  if (numberOfObjectsCreated_ == numberOfObjectsDestroyed_)
-  {
-    logStream_.open(LOG_DIR "/" LOG_FILE, std::ios::app);
-    if (logStream_.fail())
-    {
-      std::cerr << "Unable to open " LOG_DIR "/" LOG_FILE " file."
-                << std::endl;
-      delete pLogImplementation;
-      return true;
-    }
-    if (defaultLogVerbosity > LOG_VERBOSITY::silent)
-    {
-      std::stringstream ss;
-      ss << "Log file opened.  Default verbosity level is '"
-         << defaultLogVerbosity.String() << "'.";
-      std::string const tm(GetTimeStamp());
-      logStream_ << EntryString("system",
-                                tm,
-                                sequence_,
-                                "system",
-                                ss.str(),
-                                __LINE__,
-                                __FILE__);
-    }
-  }
-  ++numberOfObjectsCreated_;
-  *logImplementation = pLogImplementation;
-  pLogImplementation->LogEntry(LOG_VERBOSITY::information,
-                               "Log object created.",
-                               __LINE__, __FILE__);
+  std::stringstream ss;
+  ss << "Log object created.  Default verbosity level is '"
+     << defaultLogVerbosity.String() << "'.";
+  (*logImplementation)->LogEntry(LOG_VERBOSITY::information,
+                                 ss.str(),
+                                 __LINE__, __FILE__);
 
   return false;
 }
 
 void LogImplementation::Destroy(LogImplementation ** const logImplementation)
 {
-  ++numberOfObjectsDestroyed_;
   (*logImplementation)->LogEntry(LOG_VERBOSITY::information,
                                  "Log object destroyed.",
                                  __LINE__, __FILE__);
   delete (*logImplementation);
   *logImplementation = 0;
-
-  if (numberOfObjectsCreated_ == numberOfObjectsDestroyed_)
-  {
-    if (defaultLogVerbosity > LOG_VERBOSITY::silent)
-    {
-      std::string const tm(GetTimeStamp());
-      logStream_ << EntryString("system",
-                                tm,
-                                sequence_,
-                                "system",
-                                "Log file closed.",
-                                __LINE__,
-                                __FILE__);
-    }
-    logStream_.close();
-  }
 }
 
 std::string const & LogImplementation::GetID() const
@@ -229,26 +187,34 @@ void LogImplementation::LogEntry(LogVerbosity const logVerbosity,
 
   if ((logVerb != LOG_VERBOSITY::silent) && (logVerb <= verbosity_.top()))
   {
-    std::string tm(GetTimeStamp());
-    logStream_ << EntryString(logVerb.String(),
-                              tm,
-                              sequence_,
-                              idString_,
-                              message,
-                              lineNumber,
-                              fileName);
-#if (KIM_LOG_MAXIMUM_LEVEL == KIM_LOG_VERBOSITY_DEBUG_)
-    logStream_ << std::flush;
-#endif
+    // Need to figure out how to do file locking to make this work for
+    // parallel computations.
+
+    FILE * file = fopen(LOG_DIR "/" LOG_FILE, "a");
+    if (file == NULL)
+    {
+      std::cerr << "Unable to open " LOG_DIR "/" LOG_FILE " file."
+                << std::endl;
+    }
+    else
+    {
+      std::string tm(GetTimeStamp());
+      std::string entry(EntryString(logVerb.String(),
+                                    tm,
+                                    sequence_,
+                                    idString_,
+                                    message,
+                                    lineNumber,
+                                    fileName));
+      fwrite(entry.c_str(), sizeof(char), entry.length(), file);
+      fclose(file);
+    }
   }
 }
 
 LogImplementation::LogImplementation() :
-    idNumber_(numberOfObjectsCreated_)
+    idString_(SPTR(this))
 {
-  std::stringstream ss;
-  ss << numberOfObjectsCreated_;
-  idString_ = ss.str();
   verbosity_.push(defaultLogVerbosity);
 }
 
@@ -287,7 +253,7 @@ std::string LogImplementation::EntryString(std::string const & logVerbosity,
   return ss.str();
 }
 
-std::string LogImplementation::GetTimeStamp()
+std::string LogImplementation::GetTimeStamp() const
 {
   time_t rawTime;
   time(&rawTime);

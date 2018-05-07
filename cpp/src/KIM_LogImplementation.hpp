@@ -77,17 +77,13 @@ class LogImplementation
                                  int const lineNumberString,
                                  std::string const & fileName);
 
-  static std::string GetTimeStamp();
+  std::string GetTimeStamp() const;
 
-  const int idNumber_;
   std::string idString_;
   std::stack<LogVerbosity> verbosity_;
 
-  static int numberOfObjectsCreated_;
-  static int numberOfObjectsDestroyed_;
-  static std::ofstream logStream_;
-  static std::string latestTimeStamp_;
-  static unsigned sequence_;
+  mutable std::string latestTimeStamp_;
+  mutable unsigned sequence_;
 
 };  // class LogImplementation
 }  // namespace KIM
