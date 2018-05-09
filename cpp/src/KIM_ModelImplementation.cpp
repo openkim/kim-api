@@ -1568,36 +1568,36 @@ std::string const & ModelImplementation::String() const
   ss << "Model Supplied Functions :\n"
      << "\t" << std::setw(25) << "Function Name"
      << std::setw(10) << "Language"
-     << std::setw(15) << "Pointer"
+     << std::setw(25) << "Pointer (1-set / 0-unset)"
      << "\n"
      << "\t" << std::setw(25) << "-------------------------"
      << std::setw(10) << "----------"
-     << std::setw(15) << "---------------"
+     << std::setw(25) << "-------------------------"
      << "\n\n"
      << "\t"
      << std::setw(25) << "Refresh"
      << std::setw(10) << refreshLanguage_.String()
-     << std::setw(15) << SFUNC(refreshFunction_)
+     << std::setw(25) << SFUNC(refreshFunction_)
      << "\n"
      << "\t"
      << std::setw(25) << "Destroy"
      << std::setw(10) << destroyLanguage_.String()
-     << std::setw(15) << SFUNC(destroyFunction_)
+     << std::setw(25) << SFUNC(destroyFunction_)
      << "\n"
      << "\t"
      << std::setw(25) << "ComputeArgumentsCreate"
      << std::setw(10) << computeArgumentsCreateLanguage_.String()
-     << std::setw(15) << SFUNC(computeArgumentsCreateFunction_)
+     << std::setw(25) << SFUNC(computeArgumentsCreateFunction_)
      << "\n"
      << "\t"
      << std::setw(25) << "ComputeArgumentsDestroy"
      << std::setw(10) << computeArgumentsDestroyLanguage_.String()
-     << std::setw(15) << SFUNC(computeArgumentsDestroyFunction_)
+     << std::setw(25) << SFUNC(computeArgumentsDestroyFunction_)
      << "\n"
      << "\t"
      << std::setw(25) << "Compute"
      << std::setw(10) << computeLanguage_.String()
-     << std::setw(15) << SFUNC(computeFunction_)
+     << std::setw(25) << SFUNC(computeFunction_)
      << "\n\n";
 
   ss << "Numbering : " << modelNumbering_.String() << "\n\n";
