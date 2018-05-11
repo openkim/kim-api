@@ -92,7 +92,7 @@ usage () {
 check_version_compatibility () {
   local version="$1"
   local major="`printf -- "${version}" | sed -e 's/\([^.}]*\).*/\1/'`"
-  local minor="`printf -- "${version}" | sed -e 's/[^.]*\.\([^.}]*\).*/\1/'`"
+  local minor="`printf -- "${version}" | sed -e 's/[^.]*\.\([^.:]*\).*/\1/'`"
   if test \( ${major} -eq ${major_version} \) ; then
     return 0
   else
@@ -108,7 +108,7 @@ check_item_compatibility () {
   local version="`wget -q -O - --post-data="${query}" https://query.openkim.org/api \
                  | \
                  sed -e 's/\[//g' -e 's/\]//g' \
-                 -e 's/{"kim-api-version": "\([0-9.]*\)"/\1/g'`"
+                 -e 's/{"kim-api-version": "\([0-9.]*\)"}/\1/g'`"
   if test x"" = x"${version}"; then
     printf "*** ERROR *** ${item_name} not found at openkim.org.\n"
     return 1
@@ -277,6 +277,7 @@ get_build_install_item () {
                      -e 's/{"kim-api-version": "\([0-9.]*\)", "kimcode": "\([^"]*\)"},*/\1:\2/g'`"
       for version in ${list}; do \
         if check_version_compatibility "${version}"; then
+          local modname="`printf -- ${version} | sed -e s/[^:]*://`"
           get_build_install_item "$install_collection" "${modname}" "${use_sudo}" "${PASSWORD}" || return 1
         fi
       done
