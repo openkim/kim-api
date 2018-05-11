@@ -32,6 +32,15 @@
 #
 
 
+=== kim-api-v1.9.5 ============== 12May2018 ====================================
+
+* Update build system to support parallel builds (make -j).
+
+* Fixed bug in collections-management for "install OpenKIM" option.
+
+* Update INSTALL file
+
+
 === kim-api-v1.9.4 ============== 09Apr2018 ====================================
 
 * Added '--interactive' option to collections-management utility.
