@@ -1156,19 +1156,24 @@ std::string const & ComputeArgumentsImplementation::String() const
   ss << "\n";
 
 
-  ss << "Compute Callbacks :\n";
-  int const cbW = 25;
-  ss << "\t" << std::setw(cbW) << "Compute Callback Name"
-     << std::setw(cbW) << "SupportStatus"
-     << std::setw(cbW) << "Language"
-     << std::setw(cbW) << "Function Pointer"
-     << std::setw(cbW) << "Data Pointer"
+  ss << "Compute Callback Functions :\n";
+  int const cbWn = 25;
+  int const cbWs = 15;
+  int const cbWl = 12;
+  int const cbWd = 25;
+  int const cbWf = 25;
+  ss << "\t" << std::setw(cbWn) << "Compute Callback Name"
+     << std::setw(cbWs) << "SupportStatus"
+     << std::setw(cbWl) << "Language"
+     << std::setw(cbWd) << "Data Pointer"
+     << std::setw(cbWf) << "Pointer (1-set / 0-unset)"
      << "\n";
-  ss << "\t" << std::setw(cbW) << "-------------------------"
-     << std::setw(cbW) << "-------------------------"
-     << std::setw(cbW) << "-------------------------"
-     << std::setw(cbW) << "-------------------------"
-     << std::setw(cbW) << "-------------------------"
+  ss << "\t"
+     << std::setw(cbWn) << "-------------------------"
+     << std::setw(cbWs) << "---------------"
+     << std::setw(cbWl) << "------------"
+     << std::setw(cbWd) << "-------------------------"
+     << std::setw(cbWf) << "-------------------------"
      << "\n\n";
   for (std::map<ComputeCallbackName const, SupportStatus,
            COMPUTE_CALLBACK_NAME::Comparator>::const_iterator
@@ -1176,8 +1181,8 @@ std::string const & ComputeArgumentsImplementation::String() const
        cbName != computeCallbackSupportStatus_.end();
        ++cbName)
   {
-    ss << "\t" << std::setw(cbW) << (cbName->first).String()
-       << std::setw(cbW) << (cbName->second).String();
+    ss << "\t" << std::setw(cbWn) << (cbName->first).String()
+       << std::setw(cbWs) << (cbName->second).String();
 
     if ((cbName->second) != SUPPORT_STATUS::notSupported)
     {
@@ -1186,24 +1191,24 @@ std::string const & ComputeArgumentsImplementation::String() const
           ptr = computeCallbackLanguage_.find(cbName->first);
       if (ptr != computeCallbackLanguage_.end())
       {
-        ss << std::setw(cbW) << (ptr->second).String();
-        std::map<ComputeCallbackName const, func *,
-                 COMPUTE_CALLBACK_NAME::Comparator>::const_iterator
-            ptr2 = computeCallbackFunctionPointer_.find(cbName->first);
-        ss << std::setw(cbW) << SFUNC(ptr2->second);
+        ss << std::setw(cbWl) << (ptr->second).String();
         std::map<ComputeCallbackName const, void const *,
                  COMPUTE_CALLBACK_NAME::Comparator>::const_iterator
-            ptr3 = computeCallbackDataObjectPointer_.find(cbName->first);
-        ss << std::setw(cbW) << SPTR(ptr3->second);
+            ptr2 = computeCallbackDataObjectPointer_.find(cbName->first);
+        ss << std::setw(cbWd) << SPTR(ptr2->second);
+        std::map<ComputeCallbackName const, func *,
+                 COMPUTE_CALLBACK_NAME::Comparator>::const_iterator
+            ptr3 = computeCallbackFunctionPointer_.find(cbName->first);
+        ss << std::setw(cbWf) << SFUNC(ptr3->second);
       }
       else
       {
-        ss << std::setw(cbW) << "Not Set";
+        ss << std::setw(cbWl) << "Not Set";
       }
     }
     else
     {
-      ss << std::setw(cbW) << "N/A";
+      ss << std::setw(cbWs) << "N/A";
     }
     ss << "\n";
   }
