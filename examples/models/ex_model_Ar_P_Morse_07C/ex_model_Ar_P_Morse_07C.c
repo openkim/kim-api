@@ -473,25 +473,30 @@ int model_create(KIM_ModelCreate * const modelCreate,
   /* register function pointers */
   LOG_INFORMATION("Register model function pointers");
   error = error ||
-      KIM_ModelCreate_SetComputePointer(modelCreate,
-                                        KIM_LANGUAGE_NAME_c,
-                                        (func *) &compute);
+      KIM_ModelCreate_SetComputePointer(
+          modelCreate,
+          KIM_LANGUAGE_NAME_c,
+          (func *) &compute);
   error = error ||
-      KIM_ModelCreate_SetComputeArgumentsCreatePointer(modelCreate,
-                                        KIM_LANGUAGE_NAME_c,
-                                        (func *) &compute_arguments_create);
+      KIM_ModelCreate_SetComputeArgumentsCreatePointer(
+          modelCreate,
+          KIM_LANGUAGE_NAME_c,
+          (func *) &compute_arguments_create);
   error = error ||
-      KIM_ModelCreate_SetComputeArgumentsDestroyPointer(modelCreate,
-                                        KIM_LANGUAGE_NAME_c,
-                                        (func *) &compute_arguments_destroy);
+      KIM_ModelCreate_SetComputeArgumentsDestroyPointer(
+          modelCreate,
+          KIM_LANGUAGE_NAME_c,
+          (func *) &compute_arguments_destroy);
   error = error ||
-      KIM_ModelCreate_SetDestroyPointer(modelCreate,
-                                        KIM_LANGUAGE_NAME_c,
-                                        (func *) &model_destroy);
+      KIM_ModelCreate_SetDestroyPointer(
+          modelCreate,
+          KIM_LANGUAGE_NAME_c,
+          (func *) &model_destroy);
   error = error ||
-      KIM_ModelCreate_SetRefreshPointer(modelCreate,
-                                        KIM_LANGUAGE_NAME_c,
-                                        (func *) &model_refresh);
+      KIM_ModelCreate_SetRefreshPointer(
+          modelCreate,
+          KIM_LANGUAGE_NAME_c,
+          (func *) &model_refresh);
 
   /* allocate buffer */
   bufferPointer = (buffer *) malloc(sizeof(buffer));

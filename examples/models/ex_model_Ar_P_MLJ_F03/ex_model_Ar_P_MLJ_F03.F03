@@ -541,8 +541,6 @@ use ex_model_Ar_P_MLJ_F03
 use kim_log_verbosity_module
 use kim_numbering_module
 use kim_species_name_module
-use kim_compute_argument_name_module
-use kim_support_status_module
 use kim_unit_system_module
 use kim_model_create_module
 use kim_language_name_module
