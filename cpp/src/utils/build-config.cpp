@@ -48,7 +48,6 @@ void usage(std::string name)
   std::cerr << "Usage:\n"
             << "  " << name << " <option> [<option>]...\n"
             << "    Stand-alone Options:\n"
-            << "      --makefile-kim-config\n"
             << "      --master-config\n"
             << "      --libexec-path\n"
             << "      --cc\n"
