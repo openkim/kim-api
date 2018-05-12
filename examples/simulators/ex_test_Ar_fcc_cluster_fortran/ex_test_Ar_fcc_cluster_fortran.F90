@@ -71,6 +71,7 @@ module mod_neighborlist
   public get_neigh
 
   type neighObject_type
+     real(c_double) :: cutoff
      integer(c_int) :: number_of_particles
      integer(c_int), pointer :: neighborList(:,:)
   end type neighObject_type
@@ -91,7 +92,7 @@ subroutine get_neigh(data_object, number_of_cutoffs, cutoffs, &
   !-- Transferred variables
   type(c_ptr),    value, intent(in) :: data_object
   integer(c_int), value, intent(in) :: number_of_cutoffs
-  integer(c_int),        intent(in) :: cutoffs(:)
+  real(c_double),        intent(in) :: cutoffs(number_of_cutoffs)
   integer(c_int), value, intent(in) :: neighbor_list_index
   integer(c_int), value, intent(in)  :: request
   integer(c_int),        intent(out) :: numnei
@@ -103,8 +104,17 @@ subroutine get_neigh(data_object, number_of_cutoffs, cutoffs, &
   integer(c_int) numberOfParticles
   type(neighObject_type), pointer :: neighObject
 
+  call c_f_pointer(data_object, neighObject)
+
   if (number_of_cutoffs /= 1) then
     call my_warning("invalid number of cutoffs", __LINE__, __FILE__)
+    ierr = 1
+    return
+  endif
+
+  if (cutoffs(1) > neighObject%cutoff) then
+    call my_warning("neighbor list cutoff too small for model cutoff", &
+      __LINE__, __FILE__)
     ierr = 1
     return
   endif
@@ -114,8 +124,6 @@ subroutine get_neigh(data_object, number_of_cutoffs, cutoffs, &
     ierr = 1
     return
   endif
-
-  call c_f_pointer(data_object, neighObject)
 
   numberOfParticles = neighObject%number_of_particles
 
@@ -170,6 +178,8 @@ subroutine NEIGH_PURE_cluster_neighborlist(half, numberOfParticles, coords, &
   real(c_double) dx(3)
   real(c_double) r2
   real(c_double) cutoff2
+
+  neighObject%cutoff = cutoff
 
   cutoff2 = cutoff**2
 
@@ -358,8 +368,8 @@ program ex_test_ar_fcc_cluster_fortran
   integer(c_int) :: number_of_cutoffs
   real(c_double) :: cutoff
   real(c_double) :: cutoffs(1)
-  integer(c_int), target          :: particle_species_codes(N)
-  integer(c_int), target          :: particle_contributing(N)
+  integer(c_int), target :: particle_species_codes(N)
+  integer(c_int), target :: particle_contributing(N)
   real(c_double), target :: energy
   real(c_double), target :: coords(DIM, N)
   real(c_double), target :: forces(DIM, N)
@@ -368,11 +378,8 @@ program ex_test_ar_fcc_cluster_fortran
   integer(c_int) species_is_supported
   integer(c_int) species_code
   integer(c_int) requested_units_accepted
-  real(c_double), pointer :: null_pointer
 
   integer :: middledum
-
-  nullify(null_pointer)
 
   ! Initialize error flag
   ierr = 0

@@ -72,12 +72,20 @@ module mod_neighborlist
   public get_neigh
 
   type neighObject_type
+     real(c_double) :: cutoff
      integer(c_int) :: number_of_particles
      integer(c_int), pointer :: neighborList(:,:)
      real(c_double), pointer :: RijList(:,:,:)
   end type neighObject_type
 contains
 
+!-------------------------------------------------------------------------------
+!
+! get_neigh neighbor list access function
+!
+! This function implements Locator and Iterator mode
+!
+!-------------------------------------------------------------------------------
 !-------------------------------------------------------------------------------
 !
 ! get_neigh neighbor list access function
@@ -93,7 +101,7 @@ subroutine get_neigh(data_object, number_of_cutoffs, cutoffs, &
   !-- Transferred variables
   type(c_ptr),    value, intent(in) :: data_object
   integer(c_int), value, intent(in) :: number_of_cutoffs
-  integer(c_int),        intent(in) :: cutoffs(:)
+  real(c_double),        intent(in) :: cutoffs(number_of_cutoffs)
   integer(c_int), value, intent(in) :: neighbor_list_index
   integer(c_int), value, intent(in)  :: request
   integer(c_int),        intent(out) :: numnei
@@ -105,11 +113,7 @@ subroutine get_neigh(data_object, number_of_cutoffs, cutoffs, &
   integer(c_int) numberOfParticles
   type(neighObject_type), pointer :: neighObject
 
-  if (neighbor_list_index /= 1) then
-    call my_warning("wrong list index", __LINE__, __FILE__)
-    ierr = 1
-    return
-  endif
+  call c_f_pointer(data_object, neighObject)
 
   if (number_of_cutoffs /= 1) then
     call my_warning("invalid number of cutoffs", __LINE__, __FILE__)
@@ -117,11 +121,23 @@ subroutine get_neigh(data_object, number_of_cutoffs, cutoffs, &
     return
   endif
 
-  call c_f_pointer(data_object, neighObject)
+  if (cutoffs(1) > neighObject%cutoff) then
+    call my_warning("neighbor list cutoff too small for model cutoff", &
+      __LINE__, __FILE__)
+    ierr = 1
+    return
+  endif
+
+  if (neighbor_list_index /= 1) then
+    call my_warning("wrong list index", __LINE__, __FILE__)
+    ierr = 1
+    return
+  endif
 
   numberOfParticles = neighObject%number_of_particles
 
   if ( (request.gt.numberOfParticles) .or. (request.lt.1)) then
+    print *, request
     call my_warning("Invalid part ID in get_neigh", &
       __LINE__, __FILE__)
     ierr = 1
@@ -141,6 +157,7 @@ end subroutine get_neigh
 end module mod_neighborlist
 
 module mod_utilities
+  use kim_simulator_headers_module
   implicit none
   public
 
@@ -155,10 +172,6 @@ subroutine check_model_compatibility(compute_arguments_handle, &
   forces_optional, model_is_compatible, ierr)
   use, intrinsic :: iso_c_binding
   use error
-  use kim_compute_arguments_module
-  use kim_support_status_module
-  use kim_compute_argument_name_module
-  use kim_compute_callback_name_module
   implicit none
 
   !-- Transferred variables
@@ -281,9 +294,6 @@ end subroutine Check_Model_Compatibility
 subroutine Get_Model_Supported_Species(model_handle, max_species, &
   model_species, num_species, ier)
 use, intrinsic :: iso_c_binding
-
-use kim_model_module
-use kim_species_name_module
 implicit none
 
 !-- Transferred variables
@@ -418,6 +428,8 @@ subroutine NEIGH_PURE_cluster_neighborlist(half, numberOfParticles, coords, &
   real(c_double) dx(3)
   real(c_double) r2
   real(c_double) cutoff2
+
+  neighObject%cutoff = cutoff
 
   cutoff2 = cutoff**2
 
@@ -564,9 +576,6 @@ subroutine compute_numer_deriv(partnum,dir,model_handle, &
                                coordsave,neighObject,deriv,deriv_err,ierr)
 use, intrinsic :: iso_c_binding
 use error
-use kim_model_module
-use kim_model_module
-use kim_compute_arguments_module
 use mod_neighborlist
 implicit none
 integer(c_int), parameter :: cd = c_double ! used for literal constants
@@ -764,14 +773,6 @@ end module mod_utilities
 program vc_forces_numer_deriv
   use, intrinsic :: iso_c_binding
   use error
-  use kim_language_name_module
-  use kim_species_name_module
-  use kim_numbering_module
-  use kim_model_module
-  use kim_compute_arguments_module
-  use kim_compute_argument_name_module
-  use kim_compute_callback_name_module
-  use kim_unit_system_module
   use mod_neighborlist
   use mod_utilities
   implicit none

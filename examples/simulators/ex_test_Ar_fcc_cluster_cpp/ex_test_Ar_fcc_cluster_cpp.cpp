@@ -31,7 +31,6 @@
 
 
 #include <stdlib.h>
-#include <stdio.h>
 #include <iostream>
 #include <iomanip>
 #include <string>
@@ -546,9 +545,9 @@ int get_cluster_neigh(void const * const dataObject,
   NeighList* nl = (NeighList*) dataObject;
   int numberOfParticles = nl->numberOfParticles;
 
-  if (neighborListIndex != 0) return error;
+  if ((numberOfCutoffs != 1) || (cutoffs[0] > nl->cutoff)) return error;
 
-  if (nl->cutoff < cutoffs[0]) return error;
+  if (neighborListIndex != 0) return error;
 
   /* initialize numNeigh */
   *numberOfNeighbors = 0;
