@@ -31,14 +31,7 @@
 #ifndef LENNARD_JONES_612_HPP_
 #define LENNARD_JONES_612_HPP_
 
-#include "KIM_UnitSystem.hpp"
-#include "KIM_ModelDriverCreate.hpp"
-#include "KIM_ModelRefresh.hpp"
-#include "KIM_ModelDestroy.hpp"
-#include "KIM_ModelCompute.hpp"
-#include "KIM_ModelComputeArguments.hpp"
-#include "KIM_ModelComputeArgumentsCreate.hpp"
-#include "KIM_ModelComputeArgumentsDestroy.hpp"
+#include "KIM_ModelDriverHeaders.hpp"
 
 extern "C"
 {

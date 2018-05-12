@@ -173,9 +173,12 @@ install_include_c = KIM_ChargeUnit.h \
                     KIM_ModelCreate.h KIM_ModelCreateLogMacros.h \
                     KIM_ModelDestroy.h KIM_ModelDestroyLogMacros.h \
                     KIM_ModelDriverCreate.h KIM_ModelDriverCreateLogMacros.h \
+                    KIM_ModelDriverHeaders.h \
+                    KIM_ModelHeaders.h \
                     KIM_ModelRefresh.h KIM_ModelRefreshLogMacros.h \
                     KIM_Numbering.h \
                     KIM_SemVer.h \
+                    KIM_SimulatorHeaders.h \
                     KIM_SpeciesName.h \
                     KIM_SupportStatus.h \
                     KIM_TemperatureUnit.h \

@@ -220,8 +220,11 @@ install_include_cpp = KIM_ComputeArgumentName.hpp \
                       KIM_ModelCreate.hpp KIM_ModelCreateLogMacros.hpp \
                       KIM_ModelDestroy.hpp KIM_ModelDestroyLogMacros.hpp \
                       KIM_ModelDriverCreate.hpp KIM_ModelDriverCreateLogMacros.hpp \
+                      KIM_ModelDriverHeaders.hpp \
                       KIM_ModelRefresh.hpp KIM_ModelRefreshLogMacros.hpp \
+                      KIM_ModelHeaders.hpp \
                       KIM_Numbering.hpp \
+                      KIM_SimulatorHeaders.hpp \
                       KIM_SemVer.hpp \
                       KIM_SpeciesName.hpp \
                       KIM_SupportStatus.hpp \

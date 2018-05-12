@@ -37,12 +37,7 @@
 #include <map>
 
 #include "LennardJones612Implementation.hpp"
-#include "KIM_Numbering.hpp"
-#include "KIM_LanguageName.hpp"
-#include "KIM_SpeciesName.hpp"
-#include "KIM_SupportStatus.hpp"
-#include "KIM_ComputeArgumentName.hpp"
-#include "KIM_ComputeCallbackName.hpp"
+#include "KIM_ModelDriverHeaders.hpp"
 
 #define MAXLINE 1024
 #define IGNORE_RESULT(fn) if(fn){}

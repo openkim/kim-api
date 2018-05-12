@@ -36,17 +36,7 @@
 #include <iomanip>
 #include <string>
 #include <cmath>
-#include "KIM_LogVerbosity.hpp"
-#include "KIM_LanguageName.hpp"
-#include "KIM_DataType.hpp"
-#include "KIM_SpeciesName.hpp"
-#include "KIM_Numbering.hpp"
-#include "KIM_Model.hpp"
-#include "KIM_ComputeArguments.hpp"
-#include "KIM_ComputeArgumentName.hpp"
-#include "KIM_ComputeCallbackName.hpp"
-#include "KIM_SupportStatus.hpp"
-#include "KIM_UnitSystem.hpp"
+#include "KIM_SimulatorHeaders.hpp"
 
 #define NAMESTRLEN    128
 

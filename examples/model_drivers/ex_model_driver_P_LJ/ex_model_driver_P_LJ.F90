@@ -44,6 +44,7 @@
 module ex_model_driver_p_lj
 
 use, intrinsic :: iso_c_binding
+use kim_model_driver_headers_module
 implicit none
 
 save
@@ -203,11 +204,6 @@ end subroutine calc_phi_dphi_d2phi
 #include "kim_model_compute_log_macros.fd"
 subroutine Compute_Energy_Forces(model_compute_handle, &
   model_compute_arguments_handle, ierr) bind(c)
-use kim_log_verbosity_module
-use kim_model_compute_module
-use kim_model_compute_arguments_module
-use kim_compute_argument_name_module
-use kim_compute_callback_name_module
 implicit none
 
 !-- Transferred variables
@@ -485,7 +481,6 @@ end subroutine Compute_Energy_Forces
 !
 !-------------------------------------------------------------------------------
 subroutine refresh(model_refresh_handle, ierr) bind(c)
-use kim_model_refresh_module
 implicit none
 
 !-- Transferred variables
@@ -528,7 +523,6 @@ end subroutine refresh
 !
 !-------------------------------------------------------------------------------
 subroutine destroy(model_destroy_handle, ierr) bind(c)
-use kim_model_destroy_module
 implicit none
 
 !-- Transferred variables
@@ -557,11 +551,6 @@ end subroutine destroy
 #include "kim_model_compute_arguments_create_log_macros.fd"
 subroutine compute_arguments_create(model_compute_handle, &
   model_compute_arguments_create_handle, ierr) bind(c)
-use kim_log_verbosity_module
-use kim_compute_argument_name_module
-use kim_compute_callback_name_module
-use kim_support_status_module
-use kim_model_compute_module
 use kim_model_compute_arguments_create_module, &
     log_entry=>kim_model_compute_arguments_create_log_entry
 implicit none
@@ -628,7 +617,6 @@ end subroutine compute_arguments_create
 #include "kim_model_compute_arguments_destroy_log_macros.fd"
 subroutine compute_arguments_destroy(model_compute_handle, &
   model_compute_arguments_destroy_handle, ierr) bind(c)
-use kim_model_compute_module
 use kim_model_compute_arguments_destroy_module, &
     log_entry=>kim_model_compute_arguments_destroy_log_entry
 implicit none
@@ -659,15 +647,7 @@ subroutine model_driver_create_routine(model_driver_create_handle, &
   requested_temperature_unit, requested_time_unit, ierr) bind(c)
 use, intrinsic :: iso_c_binding
 use ex_model_driver_p_lj
-use kim_log_verbosity_module
-use kim_model_driver_create_module
-use kim_language_name_module
-use kim_numbering_module
-use kim_unit_system_module
-use kim_species_name_module
-use kim_support_status_module
-use kim_compute_argument_name_module
-use kim_compute_callback_name_module
+use kim_model_driver_headers_module
 implicit none
 integer(c_int), parameter :: cd = c_double ! used for literal constants
 

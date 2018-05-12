@@ -33,15 +33,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
-#include "KIM_LanguageName.h"
-#include "KIM_SpeciesName.h"
-#include "KIM_Numbering.h"
-#include "KIM_Model.h"
-#include "KIM_SupportStatus.h"
-#include "KIM_ComputeArguments.h"
-#include "KIM_ComputeArgumentName.h"
-#include "KIM_ComputeCallbackName.h"
-#include "KIM_UnitSystem.h"
+#include "KIM_SimulatorHeaders.h"
 
 #define TRUE 1
 #define FALSE 0

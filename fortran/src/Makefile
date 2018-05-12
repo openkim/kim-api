@@ -77,14 +77,14 @@ OBJF = kim_charge_unit_f.o \
 #
 # Main build settings and rules
 #
-.PHONY: all objects lib
+.PHONY: all objects lib headers
 
 all: objects lib
 
 # add local Makefile to KIM_MAKE_FILES
 KIM_MAKE_FILES += $(KIM_DIR)/fortran/include/Makefile.dependencies $(KIM_DIR)/fortran/src/Makefile
 
-all: objects lib
+all: objects lib headers
 
 objects: $(OBJF)
 lib: lib-fortran-$(KIM_LIB_BUILD).a
@@ -92,6 +92,8 @@ lib: lib-fortran-$(KIM_LIB_BUILD).a
 lib-fortran-$(KIM_LIB_BUILD).a: $(OBJF)
 	@printf "Creating... Fortran KIM API library....... $@.\n";
 	$(QUELL)ar rcs $@ $(OBJF)
+
+headers: kim_model_driver_headers_module.mod kim_model_headers_module.mod kim_simulator_headers_module.mod
 
 # Include file dependency lists
 include ../include/Makefile.dependencies
@@ -160,9 +162,12 @@ install_include_fortran = kim_charge_unit_module.mod \
                           kim_model_create_module.mod \
                           kim_model_destroy_module.mod \
                           kim_model_driver_create_module.mod \
+                          kim_model_driver_headers_module.mod \
+                          kim_model_headers_module.mod \
                           kim_model_refresh_module.mod \
                           kim_numbering_module.mod \
                           kim_sem_ver_module.mod \
+                          kim_simulator_headers_module.mod \
                           kim_species_name_module.mod \
                           kim_support_status_module.mod \
                           kim_temperature_unit_module.mod \

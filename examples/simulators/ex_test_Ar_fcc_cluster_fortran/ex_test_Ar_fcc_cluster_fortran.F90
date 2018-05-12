@@ -328,14 +328,7 @@ end module mod_utility
 program ex_test_ar_fcc_cluster_fortran
   use, intrinsic :: iso_c_binding
   use error
-  use kim_language_name_module
-  use kim_species_name_module
-  use kim_numbering_module
-  use kim_model_module
-  use kim_compute_arguments_module
-  use kim_compute_argument_name_module
-  use kim_compute_callback_name_module
-  use kim_unit_system_module
+  use kim_simulator_headers_module
   use mod_neighborlist
   use mod_utility
   implicit none

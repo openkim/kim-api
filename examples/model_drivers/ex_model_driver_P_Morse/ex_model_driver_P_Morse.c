@@ -44,25 +44,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
-#include "KIM_LogVerbosity.h"
-#include "KIM_LengthUnit.h"
-#include "KIM_EnergyUnit.h"
-#include "KIM_ChargeUnit.h"
-#include "KIM_TemperatureUnit.h"
-#include "KIM_TimeUnit.h"
-#include "KIM_Numbering.h"
-#include "KIM_LanguageName.h"
-#include "KIM_SpeciesName.h"
-#include "KIM_SupportStatus.h"
-#include "KIM_ComputeArgumentName.h"
-#include "KIM_ComputeCallbackName.h"
-#include "KIM_ModelComputeArguments.h"
-#include "KIM_ModelComputeArgumentsCreate.h"
-#include "KIM_ModelComputeArgumentsDestroy.h"
-#include "KIM_ModelDriverCreate.h"
-#include "KIM_ModelRefresh.h"
-#include "KIM_ModelCompute.h"
-#include "KIM_ModelDestroy.h"
+#include "KIM_ModelDriverHeaders.h"
 
 #define TRUE 1
 #define FALSE 0
