@@ -32,6 +32,7 @@
 #define LENNARD_JONES_612_IMPLEMENTATION_HPP_
 
 #include <vector>
+#include <cmath>
 #include "KIM_LogVerbosity.hpp"
 #include "LennardJones612.hpp"
 
@@ -111,14 +112,14 @@ class LennardJones612Implementation
   //   Set in constructor (via functions listed below)
   //
   //
-  // KIM API: Model Fixed Parameters
-  //   Memory allocated in   AllocateFixedParameterMemory()
+  // Private Model Parameters
+  //   Memory allocated in AllocatePrivateParameterMemory() (from constructor)
   //   Memory deallocated in destructor
   //   Data set in ReadParameterFile routines
   // none
   //
-  // KIM API: Model Free Parameters whose (pointer) values never change
-  //   Memory allocated in   AllocateFreeParameterMemory() (from constructor)
+  // KIM API: Model Parameters whose (pointer) values never change
+  //   Memory allocated in AllocateParameterMemory() (from constructor)
   //   Memory deallocated in destructor
   //   Data set in ReadParameterFile routines OR by KIM Simulator
   int shift_;
@@ -126,17 +127,14 @@ class LennardJones612Implementation
   double* epsilons_;
   double* sigmas_;
 
-  // Mutable values that only change when reinit() executes
-  //   Set in Reinit (via SetReinitMutableValues)
+  // Mutable values that only change when Refresh() executes
+  //   Set in Refresh (via SetRefreshMutableValues)
   //
   //
-  // KIM API: Model Fixed Parameters
+  // KIM API: Model Parameters (can be changed directly by KIM Simulator)
   // none
   //
-  // KIM API: Model Free Parameters
-  // none
-  //
-  // LennardJones612Implementation: values
+  // LennardJones612Implementation: values (changed only by Refresh())
   double influenceDistance_;
   double** cutoffsSq2D_;
   double** fourEpsilonSigma6_2D_;
@@ -148,7 +146,7 @@ class LennardJones612Implementation
   double** shifts2D_;
 
 
-  // Mutable values that can change with each call to Reinit() and Compute()
+  // Mutable values that can change with each call to Refresh() and Compute()
   //   Memory may be reallocated on each call
   //
   //
@@ -160,20 +158,21 @@ class LennardJones612Implementation
   //
   //
   // Related to constructor
-  void AllocateFreeParameterMemory();
+  void AllocatePrivateParameterMemory();
+  void AllocateParameterMemory();
   static int OpenParameterFiles(
       KIM::ModelDriverCreate * const modelDriverCreate,
       int const numberParameterFiles,
       FILE* parameterFilePointers[MAX_PARAMETER_FILES]);
-  static void CloseParameterFiles(
-      int const numberParameterFiles,
-      FILE* const parameterFilePointers[MAX_PARAMETER_FILES]);
   int ProcessParameterFiles(
       KIM::ModelDriverCreate * const modelDriverCreate,
       int const numberParameterFiles,
       FILE* const parameterFilePointers[MAX_PARAMETER_FILES]);
   void getNextDataLine(FILE* const filePtr, char* const nextLine,
                        int const maxSize, int* endOfFileFlag);
+  static void CloseParameterFiles(
+      int const numberParameterFiles,
+      FILE* const parameterFilePointers[MAX_PARAMETER_FILES]);
   int ConvertUnits(
       KIM::ModelDriverCreate * const modelDriverCreate,
       KIM::LengthUnit const requestedLengthUnit,
@@ -191,9 +190,9 @@ class LennardJones612Implementation
   int RegisterKIMFunctions(
       KIM::ModelDriverCreate * const modelDriverCreate) const;
   //
-  // Related to Reinit()
+  // Related to Refresh()
   template<class ModelObj>
-  int SetReinitMutableValues(ModelObj * const modelObj);
+  int SetRefreshMutableValues(ModelObj * const modelObj);
 
   //
   // Related to Compute()

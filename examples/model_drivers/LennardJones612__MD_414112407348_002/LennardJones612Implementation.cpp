@@ -98,7 +98,7 @@ LennardJones612Implementation::LennardJones612Implementation(
                       requestedTimeUnit);
   if (*ier) return;
 
-  *ier = SetReinitMutableValues(modelDriverCreate);
+  *ier = SetRefreshMutableValues(modelDriverCreate);
   if (*ier) return;
 
   *ier = RegisterKIMModelSettings(modelDriverCreate);
@@ -134,12 +134,13 @@ LennardJones612Implementation::~LennardJones612Implementation()
 }
 
 //******************************************************************************
+#include "KIM_ModelRefreshLogMacros.hpp"
 int LennardJones612Implementation::Refresh(
     KIM::ModelRefresh * const modelRefresh)
 {
   int ier;
 
-  ier = SetReinitMutableValues(modelRefresh);
+  ier = SetRefreshMutableValues(modelRefresh);
   if (ier) return ier;
 
   // nothing else to do for this case
@@ -184,8 +185,8 @@ int LennardJones612Implementation::Compute(
 
   // Skip this check for efficiency
   //
-  // ier = CheckParticleSpecies(pkim, particleSpeciesCodes);
-  // if (ier) return ier;
+  //ier = CheckParticleSpecies(modelComputeArguments, particleSpeciesCodes);
+  //if (ier) return ier;
 
   bool const isShift = (1 == shift_);
 
@@ -229,6 +230,38 @@ int LennardJones612Implementation::ComputeArgumentsDestroy(
 // Implementation of LennardJones612Implementation private member functions
 //
 //==============================================================================
+
+//******************************************************************************
+void LennardJones612Implementation::AllocatePrivateParameterMemory()
+{
+  // nothing to do for this case
+}
+
+//******************************************************************************
+void LennardJones612Implementation::AllocateParameterMemory()
+{ // allocate memory for data
+  cutoffs_ = new double[numberUniqueSpeciesPairs_];
+  AllocateAndInitialize2DArray(cutoffsSq2D_, numberModelSpecies_,
+                               numberModelSpecies_);
+
+  epsilons_ = new double[numberUniqueSpeciesPairs_];
+  sigmas_ = new double[numberUniqueSpeciesPairs_];
+  AllocateAndInitialize2DArray(fourEpsilonSigma6_2D_, numberModelSpecies_,
+                               numberModelSpecies_);
+  AllocateAndInitialize2DArray(fourEpsilonSigma12_2D_, numberModelSpecies_,
+                               numberModelSpecies_);
+  AllocateAndInitialize2DArray(twentyFourEpsilonSigma6_2D_, numberModelSpecies_,
+                               numberModelSpecies_);
+  AllocateAndInitialize2DArray(fortyEightEpsilonSigma12_2D_,
+                               numberModelSpecies_, numberModelSpecies_);
+  AllocateAndInitialize2DArray(oneSixtyEightEpsilonSigma6_2D_,
+                               numberModelSpecies_, numberModelSpecies_);
+  AllocateAndInitialize2DArray(sixTwentyFourEpsilonSigma12_2D_,
+                               numberModelSpecies_, numberModelSpecies_);
+
+  AllocateAndInitialize2DArray(shifts2D_, numberModelSpecies_,
+                               numberModelSpecies_);
+}
 
 //******************************************************************************
 #include "KIM_ModelDriverCreateLogMacros.hpp"
@@ -280,6 +313,7 @@ int LennardJones612Implementation::OpenParameterFiles(
 }
 
 //******************************************************************************
+#include "KIM_ModelDriverCreateLogMacros.hpp"
 int LennardJones612Implementation::ProcessParameterFiles(
     KIM::ModelDriverCreate * const modelDriverCreate,
     int const numberParameterFiles,
@@ -306,7 +340,7 @@ int LennardJones612Implementation::ProcessParameterFiles(
   }
   numberModelSpecies_ = N;
   numberUniqueSpeciesPairs_ = ((numberModelSpecies_+1)*numberModelSpecies_)/2;
-  AllocateFreeParameterMemory();
+  AllocateParameterMemory();
 
   // set all values in the arrays to -1 for mixing later
   for (int i = 0; i < ((N+1)*N/2); i++)
@@ -460,32 +494,6 @@ void LennardJones612Implementation::CloseParameterFiles(
 {
   for (int i = 0; i < numberParameterFiles; ++i)
     fclose(parameterFilePointers[i]);
-}
-
-//******************************************************************************
-void LennardJones612Implementation::AllocateFreeParameterMemory()
-{ // allocate memory for data
-  cutoffs_ = new double[numberUniqueSpeciesPairs_];
-  AllocateAndInitialize2DArray(cutoffsSq2D_, numberModelSpecies_,
-                               numberModelSpecies_);
-
-  epsilons_ = new double[numberUniqueSpeciesPairs_];
-  sigmas_ = new double[numberUniqueSpeciesPairs_];
-  AllocateAndInitialize2DArray(fourEpsilonSigma6_2D_, numberModelSpecies_,
-                               numberModelSpecies_);
-  AllocateAndInitialize2DArray(fourEpsilonSigma12_2D_, numberModelSpecies_,
-                               numberModelSpecies_);
-  AllocateAndInitialize2DArray(twentyFourEpsilonSigma6_2D_, numberModelSpecies_,
-                               numberModelSpecies_);
-  AllocateAndInitialize2DArray(fortyEightEpsilonSigma12_2D_,
-                               numberModelSpecies_, numberModelSpecies_);
-  AllocateAndInitialize2DArray(oneSixtyEightEpsilonSigma6_2D_,
-                               numberModelSpecies_, numberModelSpecies_);
-  AllocateAndInitialize2DArray(sixTwentyFourEpsilonSigma12_2D_,
-                               numberModelSpecies_, numberModelSpecies_);
-
-  AllocateAndInitialize2DArray(shifts2D_, numberModelSpecies_,
-                               numberModelSpecies_);
 }
 
 //******************************************************************************
@@ -676,9 +684,12 @@ int LennardJones612Implementation::RegisterKIMFunctions(
 
 //******************************************************************************
 template<class ModelObj>
-int LennardJones612Implementation::SetReinitMutableValues(
+int LennardJones612Implementation::SetRefreshMutableValues(
     ModelObj * const modelObj)
-{ // use (possibly) new values of free parameters to compute other quantities
+{ // use (possibly) new values of parameters to compute other quantities
+  // NOTE: This function is templated because it's called with both a
+  //       modelDriverCreate object during initialization and with a
+  //       modelRefresh object when the Model's parameters have been altered
   int ier;
 
   // update cutoffsSq, epsilons, and sigmas
@@ -787,8 +798,6 @@ int LennardJones612Implementation::SetComputeMutableValues(
   isComputeProcess_dEdr = compProcess_dEdr;
   isComputeProcess_d2Edr2 = compProcess_d2Edr2;
 
-  // double const* cutoff;            // currently unused
-  // int const* numberOfSpeciesCodes;  // currently unused
   int const* numberOfParticles;
   ier =
       modelComputeArguments->GetArgumentPointer(

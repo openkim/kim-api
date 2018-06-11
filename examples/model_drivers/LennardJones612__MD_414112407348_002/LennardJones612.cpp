@@ -75,14 +75,13 @@ int model_driver_create(
   }
 
   // register pointer to LennardJones612 object in KIM object
-  modelDriverCreate->SetModelBufferPointer(
-      static_cast<void*>(modelObject));
+  modelDriverCreate->SetModelBufferPointer(static_cast<void*>(modelObject));
 
   // everything is good
   ier = false;
   return ier;
 }
-}
+}  // extern "C"
 
 //==============================================================================
 //
