@@ -117,6 +117,7 @@ std::vector<std::string> getConfigFileName()
   configFileName[0].append("/config-v").append(VERSION_MAJOR);
 
   std::string varName(PACKAGENAME);
+  varName.append("_V" VERSION_MAJOR);
   sanitizeString(varName);
   varName.append("_USER_CONFIG_FILE");
   configFileName[1] = varName;
@@ -291,6 +292,7 @@ std::string pushEnvDirs(
     std::list<std::pair<std::string,std::string> >* const lst)
 {
   std::string varName = PACKAGENAME;
+  varName.append("_V" VERSION_MAJOR);
   sanitizeString(varName);
   switch (type)
   {
