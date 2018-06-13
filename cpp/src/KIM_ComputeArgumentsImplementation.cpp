@@ -600,7 +600,19 @@ int ComputeArgumentsImplementation::IsCallbackPresent(
   {
     LOG_ERROR("Invalid arguments.");
     LOG_DEBUG("Exit " + callString);
-    return false;
+    return true;
+  }
+
+  std::map<ComputeCallbackName const, SupportStatus,
+           COMPUTE_CALLBACK_NAME::Comparator>::const_iterator
+      statusResult = computeCallbackSupportStatus_.find(computeCallbackName);
+  if (statusResult->second == SUPPORT_STATUS::notSupported)
+  {
+    LOG_ERROR("Pointer value does not exist for ComputeCallback '"
+              + (statusResult->first).String()
+              + "' which is 'notSupported'.");
+    LOG_DEBUG("Exit " + callString);
+    return true;
   }
 #endif
 
