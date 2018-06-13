@@ -38,7 +38,7 @@ module kim_compute_argument_name_f_module
   public &
     from_string, &
     get_string, &
-    get_number_of_compute_arguments, &
+    get_number_of_compute_argument_names, &
     get_compute_argument_name, &
     get_compute_argument_data_type
 
@@ -62,11 +62,12 @@ module kim_compute_argument_name_f_module
         compute_argument_name
     end function get_string
 
-    subroutine get_number_of_compute_arguments(number_of_compute_arguments) &
-      bind(c, name="KIM_COMPUTE_ARGUMENT_NAME_GetNumberOfComputeArguments")
+    subroutine get_number_of_compute_argument_names( &
+      number_of_compute_argument_names) &
+      bind(c, name="KIM_COMPUTE_ARGUMENT_NAME_GetNumberOfComputeArgumentNames")
       use, intrinsic :: iso_c_binding
-      integer(c_int), intent(out) :: number_of_compute_arguments
-    end subroutine get_number_of_compute_arguments
+      integer(c_int), intent(out) :: number_of_compute_argument_names
+    end subroutine get_number_of_compute_argument_names
 
     integer(c_int) function get_compute_argument_name(index, &
       compute_argument_name) &
@@ -153,15 +154,16 @@ subroutine kim_compute_argument_name_string(compute_argument_name, string)
   end if
 end subroutine kim_compute_argument_name_string
 
-subroutine kim_compute_argument_name_get_number_of_compute_arguments( &
-  number_of_compute_arguments)
+subroutine kim_compute_argument_name_get_number_of_compute_argument_names( &
+  number_of_compute_argument_names)
   use, intrinsic :: iso_c_binding
-  use kim_compute_argument_name_f_module, only : get_number_of_compute_arguments
+  use kim_compute_argument_name_f_module, only : &
+    get_number_of_compute_argument_names
   implicit none
-  integer(c_int), intent(out) :: number_of_compute_arguments
+  integer(c_int), intent(out) :: number_of_compute_argument_names
 
-  call get_number_of_compute_arguments(number_of_compute_arguments)
-end subroutine kim_compute_argument_name_get_number_of_compute_arguments
+  call get_number_of_compute_argument_names(number_of_compute_argument_names)
+end subroutine kim_compute_argument_name_get_number_of_compute_argument_names
 
 subroutine kim_compute_argument_name_get_compute_argument_name(index, &
   compute_argument_name, ierr)

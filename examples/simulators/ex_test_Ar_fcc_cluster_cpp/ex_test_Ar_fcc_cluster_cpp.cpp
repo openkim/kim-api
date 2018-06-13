@@ -174,10 +174,10 @@ int main()
   }
 
   // check compute arguments
-  int numberOfComputeArguments;
-  KIM::COMPUTE_ARGUMENT_NAME::GetNumberOfComputeArguments(
-      &numberOfComputeArguments);
-  for (int i=0; i<numberOfComputeArguments; ++i)
+  int numberOfComputeArgumentNames;
+  KIM::COMPUTE_ARGUMENT_NAME::GetNumberOfComputeArgumentNames(
+      &numberOfComputeArgumentNames);
+  for (int i=0; i<numberOfComputeArgumentNames; ++i)
   {
     KIM::ComputeArgumentName computeArgumentName;
     KIM::SupportStatus supportStatus;

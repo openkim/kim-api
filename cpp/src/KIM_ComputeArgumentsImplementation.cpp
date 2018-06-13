@@ -1278,9 +1278,10 @@ ComputeArgumentsImplementation::ComputeArgumentsImplementation(
   LOG_DEBUG("Enter " + callString);
 
   // populate ComputeArguments
-  int numberOfComputeArguments;
-  COMPUTE_ARGUMENT_NAME::GetNumberOfComputeArguments(&numberOfComputeArguments);
-  for (int i=0; i<numberOfComputeArguments; ++i)
+  int numberOfComputeArgumentNames;
+  COMPUTE_ARGUMENT_NAME::GetNumberOfComputeArgumentNames(
+      &numberOfComputeArgumentNames);
+  for (int i=0; i<numberOfComputeArgumentNames; ++i)
   {
     ComputeArgumentName computeArgumentName;
     COMPUTE_ARGUMENT_NAME::GetComputeArgumentName(i, &computeArgumentName);
@@ -1352,10 +1353,11 @@ int ComputeArgumentsImplementation::Validate(
   // #endif
   //   LOG_DEBUG("Enter " + callString);
 
-  int numberOfComputeArguments;
-  COMPUTE_ARGUMENT_NAME::GetNumberOfComputeArguments(&numberOfComputeArguments);
+  int numberOfComputeArgumentNames;
+  COMPUTE_ARGUMENT_NAME::GetNumberOfComputeArgumentNames(
+      &numberOfComputeArgumentNames);
 
-  for (int i = 0; i < numberOfComputeArguments; ++i)
+  for (int i = 0; i < numberOfComputeArgumentNames; ++i)
   {
     ComputeArgumentName argName;
     COMPUTE_ARGUMENT_NAME::GetComputeArgumentName(i, &argName);

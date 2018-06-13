@@ -120,11 +120,11 @@ KIM_ComputeArgumentName const KIM_COMPUTE_ARGUMENT_NAME_partialVirial
 KIM_ComputeArgumentName const KIM_COMPUTE_ARGUMENT_NAME_partialParticleVirial
 = {KIM::COMPUTE_ARGUMENT_NAME::partialParticleVirial.computeArgumentNameID};
 
-void KIM_COMPUTE_ARGUMENT_NAME_GetNumberOfComputeArguments(
-    int * const numberOfComputeArguments)
+void KIM_COMPUTE_ARGUMENT_NAME_GetNumberOfComputeArgumentNames(
+    int * const numberOfComputeArgumentNames)
 {
-  KIM::COMPUTE_ARGUMENT_NAME::GetNumberOfComputeArguments(
-      numberOfComputeArguments);
+  KIM::COMPUTE_ARGUMENT_NAME::GetNumberOfComputeArgumentNames(
+      numberOfComputeArgumentNames);
 }
 
 int KIM_COMPUTE_ARGUMENT_NAME_GetComputeArgumentName(

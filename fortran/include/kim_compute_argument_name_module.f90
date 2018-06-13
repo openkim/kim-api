@@ -53,7 +53,7 @@ module kim_compute_argument_name_module
     kim_compute_argument_name_partial_virial, &
     kim_compute_argument_name_partial_particle_virial, &
 
-    kim_compute_argument_name_get_number_of_compute_arguments, &
+    kim_compute_argument_name_get_number_of_compute_argument_names, &
     kim_compute_argument_name_get_compute_argument_name, &
     kim_compute_argument_name_get_compute_argument_data_type
 
@@ -126,12 +126,13 @@ module kim_compute_argument_name_module
       character(len=*), intent(out) :: string
     end subroutine kim_compute_argument_name_string
 
-    subroutine kim_compute_argument_name_get_number_of_compute_arguments( &
-      number_of_compute_arguments)
+    subroutine kim_compute_argument_name_get_number_of_compute_argument_names( &
+      number_of_compute_argument_names)
       use, intrinsic :: iso_c_binding
       implicit none
-      integer(c_int), intent(out) :: number_of_compute_arguments
-    end subroutine kim_compute_argument_name_get_number_of_compute_arguments
+      integer(c_int), intent(out) :: number_of_compute_argument_names
+    end subroutine &
+      kim_compute_argument_name_get_number_of_compute_argument_names
 
     subroutine kim_compute_argument_name_get_compute_argument_name(index, &
       compute_argument_name, ierr)

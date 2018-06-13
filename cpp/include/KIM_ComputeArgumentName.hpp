@@ -66,7 +66,7 @@ extern ComputeArgumentName const partialParticleEnergy;
 extern ComputeArgumentName const partialVirial;
 extern ComputeArgumentName const partialParticleVirial;
 
-void GetNumberOfComputeArguments(int * const numberOfComputeArguments);
+void GetNumberOfComputeArgumentNames(int * const numberOfComputeArgumentNames);
 int GetComputeArgumentName(int const index,
                            ComputeArgumentName * const computeArgumentName);
 

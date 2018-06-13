@@ -76,8 +76,8 @@ extern KIM_ComputeArgumentName const KIM_COMPUTE_ARGUMENT_NAME_partialVirial;
 extern
 KIM_ComputeArgumentName const KIM_COMPUTE_ARGUMENT_NAME_partialParticleVirial;
 
-void KIM_COMPUTE_ARGUMENT_NAME_GetNumberOfComputeArguments(
-    int * const numberOfComputeArguments);
+void KIM_COMPUTE_ARGUMENT_NAME_GetNumberOfComputeArgumentNames(
+    int * const numberOfComputeArgumentNames);
 int KIM_COMPUTE_ARGUMENT_NAME_GetComputeArgumentName(
     int const index, KIM_ComputeArgumentName * const computeArgumentName);
 

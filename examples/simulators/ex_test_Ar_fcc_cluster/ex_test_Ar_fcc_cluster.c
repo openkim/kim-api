@@ -117,7 +117,7 @@ int main()
   char modelname[NAMESTRLEN];
   int requestedUnitsAccepted;
   int modelArCode;
-  int numberOfComputeArguments;
+  int numberOfComputeArgumentNames;
   KIM_ComputeArguments * computeArguments;
   KIM_ComputeArgumentName computeArgumentName;
   KIM_SupportStatus supportStatus;
@@ -162,9 +162,9 @@ int main()
   }
 
   /* check arguments */
-  KIM_COMPUTE_ARGUMENT_NAME_GetNumberOfComputeArguments(
-      &numberOfComputeArguments);
-  for (i=0; i<numberOfComputeArguments; ++i)
+  KIM_COMPUTE_ARGUMENT_NAME_GetNumberOfComputeArgumentNames(
+      &numberOfComputeArgumentNames);
+  for (i=0; i<numberOfComputeArgumentNames; ++i)
   {
     error = KIM_COMPUTE_ARGUMENT_NAME_GetComputeArgumentName(
         i, &computeArgumentName);

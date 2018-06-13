@@ -129,17 +129,17 @@ ComputeArgumentVector const GetComputeArgumentVector()
 extern ComputeArgumentVector const requiredByAPI_ComputeArguments
 = GetComputeArgumentVector();
 
-void GetNumberOfComputeArguments(int * const numberOfComputeArguments)
+void GetNumberOfComputeArgumentNames(int * const numberOfComputeArgumentNames)
 {
-  *numberOfComputeArguments = computeArgumentNameToString.size();
+  *numberOfComputeArgumentNames = computeArgumentNameToString.size();
 }
 
 int GetComputeArgumentName(int const index,
                            ComputeArgumentName * const computeArgumentName)
 {
-  int numberOfComputeArguments;
-  GetNumberOfComputeArguments(&numberOfComputeArguments);
-  if ((index < 0) || (index >= numberOfComputeArguments)) return true;
+  int numberOfComputeArgumentNames;
+  GetNumberOfComputeArgumentNames(&numberOfComputeArgumentNames);
+  if ((index < 0) || (index >= numberOfComputeArgumentNames)) return true;
 
   StringMap::const_iterator iter = computeArgumentNameToString.begin();
   for (int i=0; i<index; ++i) ++iter;
