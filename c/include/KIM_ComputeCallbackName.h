@@ -61,8 +61,8 @@ extern KIM_ComputeCallbackName const KIM_COMPUTE_CALLBACK_NAME_ProcessDEDrTerm;
 extern
 KIM_ComputeCallbackName const KIM_COMPUTE_CALLBACK_NAME_ProcessD2EDr2Term;
 
-void KIM_COMPUTE_CALLBACK_NAME_GetNumberOfComputeCallbacks(
-    int * const numberOfComputeCallbacks);
+void KIM_COMPUTE_CALLBACK_NAME_GetNumberOfComputeCallbackNames(
+    int * const numberOfComputeCallbackNames);
 int KIM_COMPUTE_CALLBACK_NAME_GetComputeCallbackName(
     int const index, KIM_ComputeCallbackName * const computeCallbackName);
 

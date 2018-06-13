@@ -98,11 +98,11 @@ KIM_ComputeCallbackName const KIM_COMPUTE_CALLBACK_NAME_ProcessDEDrTerm
 KIM_ComputeCallbackName const KIM_COMPUTE_CALLBACK_NAME_ProcessD2EDr2Term
 = {KIM::COMPUTE_CALLBACK_NAME::ProcessD2EDr2Term.computeCallbackNameID};
 
-void KIM_COMPUTE_CALLBACK_NAME_GetNumberOfComputeCallbacks(
-    int * const numberOfComputeCallbacks)
+void KIM_COMPUTE_CALLBACK_NAME_GetNumberOfComputeCallbackNames(
+    int * const numberOfComputeCallbackNames)
 {
-  KIM::COMPUTE_CALLBACK_NAME::GetNumberOfComputeCallbacks(
-      numberOfComputeCallbacks);
+  KIM::COMPUTE_CALLBACK_NAME::GetNumberOfComputeCallbackNames(
+      numberOfComputeCallbackNames);
 }
 
 int KIM_COMPUTE_CALLBACK_NAME_GetComputeCallbackName(

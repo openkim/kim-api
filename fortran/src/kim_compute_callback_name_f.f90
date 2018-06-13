@@ -38,7 +38,7 @@ module kim_compute_callback_name_f_module
   public &
     from_string, &
     get_string, &
-    get_number_of_compute_callbacks, &
+    get_number_of_compute_callback_names, &
     get_compute_callback_name
 
   interface
@@ -61,11 +61,12 @@ module kim_compute_callback_name_f_module
         compute_callback_name
     end function get_string
 
-    subroutine get_number_of_compute_callbacks(number_of_compute_callbacks) &
-      bind(c, name="KIM_COMPUTE_CALLBACK_NAME_GetNumberOfComputeCallbacks")
+    subroutine get_number_of_compute_callback_names( &
+      number_of_compute_callback_names) &
+      bind(c, name="KIM_COMPUTE_CALLBACK_NAME_GetNumberOfComputeCallbackNames")
       use, intrinsic :: iso_c_binding
-      integer(c_int), intent(out) :: number_of_compute_callbacks
-    end subroutine get_number_of_compute_callbacks
+      integer(c_int), intent(out) :: number_of_compute_callback_names
+    end subroutine get_number_of_compute_callback_names
 
     integer(c_int) function get_compute_callback_name(index, &
       compute_callback_name) &
@@ -139,15 +140,16 @@ subroutine kim_compute_callback_name_string(compute_callback_name, string)
   end if
 end subroutine kim_compute_callback_name_string
 
-subroutine kim_compute_callback_name_get_number_of_compute_callbacks( &
-  number_of_compute_callbacks)
+subroutine kim_compute_callback_name_get_number_of_compute_callback_names( &
+  number_of_compute_callback_names)
   use, intrinsic :: iso_c_binding
-  use kim_compute_callback_name_f_module, only : get_number_of_compute_callbacks
+  use kim_compute_callback_name_f_module, only : &
+    get_number_of_compute_callback_names
   implicit none
-  integer(c_int), intent(out) :: number_of_compute_callbacks
+  integer(c_int), intent(out) :: number_of_compute_callback_names
 
-  call get_number_of_compute_callbacks(number_of_compute_callbacks)
-end subroutine kim_compute_callback_name_get_number_of_compute_callbacks
+  call get_number_of_compute_callback_names(number_of_compute_callback_names)
+end subroutine kim_compute_callback_name_get_number_of_compute_callback_names
 
 subroutine kim_compute_callback_name_get_compute_callback_name(index, &
   compute_callback_name, ierr)

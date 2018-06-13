@@ -83,17 +83,17 @@ extern ComputeCallbackVector const requiredByAPI_ComputeCallbacks
 = GetComputeCallbackVector();
 
 
-void GetNumberOfComputeCallbacks(int * const numberOfComputeCallbacks)
+void GetNumberOfComputeCallbackNames(int * const numberOfComputeCallbackNames)
 {
-  *numberOfComputeCallbacks = computeCallbackNameToString.size();
+  *numberOfComputeCallbackNames = computeCallbackNameToString.size();
 }
 
 int GetComputeCallbackName(int const index,
                            ComputeCallbackName * const computeCallbackName)
 {
-  int numberOfComputeCallbacks;
-  GetNumberOfComputeCallbacks(&numberOfComputeCallbacks);
-  if ((index < 0) || (index >= numberOfComputeCallbacks)) return true;
+  int numberOfComputeCallbackNames;
+  GetNumberOfComputeCallbackNames(&numberOfComputeCallbackNames);
+  if ((index < 0) || (index >= numberOfComputeCallbackNames)) return true;
 
   StringMap::const_iterator iter = computeCallbackNameToString.begin();
   for (int i=0; i<index; ++i) ++iter;

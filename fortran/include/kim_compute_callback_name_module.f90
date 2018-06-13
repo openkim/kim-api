@@ -47,7 +47,7 @@ module kim_compute_callback_name_module
     kim_compute_callback_name_process_dedr_term, &
     kim_compute_callback_name_process_d2edr2_term, &
 
-    kim_compute_callback_name_get_number_of_compute_callbacks, &
+    kim_compute_callback_name_get_number_of_compute_callback_names, &
     kim_compute_callback_name_get_compute_callback_name
 
   type, bind(c) :: kim_compute_callback_name_type
@@ -91,12 +91,13 @@ module kim_compute_callback_name_module
       character(len=*), intent(out) :: string
     end subroutine kim_compute_callback_name_string
 
-    subroutine kim_compute_callback_name_get_number_of_compute_callbacks( &
-      number_of_compute_callbacks)
+    subroutine kim_compute_callback_name_get_number_of_compute_callback_names( &
+      number_of_compute_callback_names)
       use, intrinsic :: iso_c_binding
       implicit none
-      integer(c_int), intent(out) :: number_of_compute_callbacks
-    end subroutine kim_compute_callback_name_get_number_of_compute_callbacks
+      integer(c_int), intent(out) :: number_of_compute_callback_names
+    end subroutine &
+      kim_compute_callback_name_get_number_of_compute_callback_names
 
     subroutine kim_compute_callback_name_get_compute_callback_name(index, &
       compute_callback_name, ierr)

@@ -121,7 +121,7 @@ int main()
   KIM_ComputeArguments * computeArguments;
   KIM_ComputeArgumentName computeArgumentName;
   KIM_SupportStatus supportStatus;
-  int numberOfComputeCallbacks;
+  int numberOfComputeCallbackNames;
   KIM_ComputeCallbackName computeCallbackName;
 
   /* Get KIM Model names */
@@ -207,9 +207,9 @@ int main()
   }
 
   /* check call backs */
-  KIM_COMPUTE_CALLBACK_NAME_GetNumberOfComputeCallbacks(
-      &numberOfComputeCallbacks);
-  for (i=0; i<numberOfComputeCallbacks; ++i)
+  KIM_COMPUTE_CALLBACK_NAME_GetNumberOfComputeCallbackNames(
+      &numberOfComputeCallbackNames);
+  for (i=0; i<numberOfComputeCallbackNames; ++i)
   {
     error = KIM_COMPUTE_CALLBACK_NAME_GetComputeCallbackName(
         i, &computeCallbackName);

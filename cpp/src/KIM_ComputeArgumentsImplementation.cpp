@@ -1289,9 +1289,10 @@ ComputeArgumentsImplementation::ComputeArgumentsImplementation(
   }
 
   // populate ComputeCallbacks
-  int numberOfComputeCallbacks;
-  COMPUTE_CALLBACK_NAME::GetNumberOfComputeCallbacks(&numberOfComputeCallbacks);
-  for (int i=0; i<numberOfComputeCallbacks; ++i)
+  int numberOfComputeCallbackNames;
+  COMPUTE_CALLBACK_NAME::GetNumberOfComputeCallbackNames(
+      &numberOfComputeCallbackNames);
+  for (int i=0; i<numberOfComputeCallbackNames; ++i)
   {
     ComputeCallbackName computeCallbackName;
     COMPUTE_CALLBACK_NAME::GetComputeCallbackName(i, &computeCallbackName);
@@ -1370,10 +1371,11 @@ int ComputeArgumentsImplementation::Validate(
   // #endif
   //   LOG_DEBUG("Enter " + callString);
 
-  int numberOfComputeCallbacks;
-  COMPUTE_CALLBACK_NAME::GetNumberOfComputeCallbacks(&numberOfComputeCallbacks);
+  int numberOfComputeCallbackNames;
+  COMPUTE_CALLBACK_NAME::GetNumberOfComputeCallbackNames(
+      &numberOfComputeCallbackNames);
 
-  for (int i = 0; i < numberOfComputeCallbacks; ++i)
+  for (int i = 0; i < numberOfComputeCallbackNames; ++i)
   {
     ComputeCallbackName cbName;
     COMPUTE_CALLBACK_NAME::GetComputeCallbackName(i, &cbName);

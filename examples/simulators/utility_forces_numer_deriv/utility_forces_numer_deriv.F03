@@ -183,7 +183,7 @@ subroutine check_model_compatibility(compute_arguments_handle, &
   !-- Local variables
   integer(c_int) i
   integer(c_int) number_of_arguments
-  integer(c_int) number_of_callbacks
+  integer(c_int) number_of_callback_names
   type(kim_compute_argument_name_type) argument_name
   type(kim_support_status_type) support_status
   type(kim_compute_callback_name_type) callback_name
@@ -252,9 +252,9 @@ subroutine check_model_compatibility(compute_arguments_handle, &
   end do
 
   ! check call backs
-  call kim_compute_callback_name_get_number_of_compute_callbacks( &
-    number_of_callbacks)
-  do i=1,number_of_callbacks
+  call kim_compute_callback_name_get_number_of_compute_callback_names( &
+    number_of_callback_names)
+  do i=1,number_of_callback_names
     call kim_compute_callback_name_get_compute_callback_name(i, callback_name, &
       ierr)
     if (ierr /= 0) then

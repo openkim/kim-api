@@ -58,7 +58,7 @@ extern ComputeCallbackName const GetNeighborList;
 extern ComputeCallbackName const ProcessDEDrTerm;
 extern ComputeCallbackName const ProcessD2EDr2Term;
 
-void GetNumberOfComputeCallbacks(int * const numberOfComputeCallbacks);
+void GetNumberOfComputeCallbackNames(int * const numberOfComputeCallbackNames);
 int GetComputeCallbackName(int const index,
                            ComputeCallbackName * const computeCallbackName);
 

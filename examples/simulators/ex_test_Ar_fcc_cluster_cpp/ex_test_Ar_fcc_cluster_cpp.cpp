@@ -224,10 +224,10 @@ int main()
   }
 
   // check compute callbacks
-  int numberOfComputeCallbacks;
-  KIM::COMPUTE_CALLBACK_NAME::GetNumberOfComputeCallbacks(
-      &numberOfComputeCallbacks);
-  for (int i=0; i<numberOfComputeCallbacks; ++i)
+  int numberOfComputeCallbackNames;
+  KIM::COMPUTE_CALLBACK_NAME::GetNumberOfComputeCallbackNames(
+      &numberOfComputeCallbackNames);
+  for (int i=0; i<numberOfComputeCallbackNames; ++i)
   {
     KIM::ComputeCallbackName computeCallbackName;
     KIM::COMPUTE_CALLBACK_NAME::GetComputeCallbackName(i, &computeCallbackName);
