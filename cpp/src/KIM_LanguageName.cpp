@@ -79,7 +79,7 @@ int GetLanguageName(int const index, LanguageName * const languageName)
   StringMap::const_iterator iter = languageNameToString.begin();
   for (int i=0; i<index; ++i) ++iter;
   *languageName = iter->first;
-  return true;  // no error
+  return false;  // no error
 }
 }  // namespace LANGUAGE_NAME
 
