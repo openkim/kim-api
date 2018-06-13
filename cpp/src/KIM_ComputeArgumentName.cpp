@@ -90,17 +90,21 @@ typedef std::map<ComputeArgumentName const, DataType,
 DataTypeMap;
 
 DataTypeMap const GetDataTypeMap()
-{
+{ // Here we must assume that the DATA_TYPE:: constants are not initialized.
+  int const Integer = 0;
+  int const Double = 1;
+
   DataTypeMap m;
-  m[numberOfParticles] = DATA_TYPE::Integer;
-  m[particleSpeciesCodes] = DATA_TYPE::Integer;
-  m[particleContributing] = DATA_TYPE::Integer;
-  m[coordinates] = DATA_TYPE::Double;
-  m[partialEnergy] = DATA_TYPE::Double;
-  m[partialForces] = DATA_TYPE::Double;
-  m[partialParticleEnergy] = DATA_TYPE::Double;
-  m[partialVirial] = DATA_TYPE::Double;
-  m[partialParticleVirial] = DATA_TYPE::Double;
+  m[numberOfParticles] = DataType(Integer);
+  m[particleSpeciesCodes] = DataType(Integer);
+  m[particleContributing] = DataType(Integer);
+  m[coordinates] = DataType(Double);
+  m[partialEnergy] = DataType(Double);
+  m[partialForces] = DataType(Double);
+  m[partialParticleEnergy] = DataType(Double);
+  m[partialVirial] = DataType(Double);
+  m[partialParticleVirial] = DataType(Double);
+
   return m;
 }
 

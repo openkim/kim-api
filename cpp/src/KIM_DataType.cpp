@@ -42,6 +42,8 @@ namespace KIM
 // Order doesn't matter as long as all values are unique
 namespace DATA_TYPE
 {
+// Note: these are coupled to KIM::ComputeArgumentName and any changes
+//       to the dataTypeID values must be updated there too.
 DataType const Integer(0);
 DataType const Double(1);
 
