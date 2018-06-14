@@ -1,0 +1,961 @@
+/*                                                                            */
+/* CDDL HEADER START                                                          */
+/*                                                                            */
+/* The contents of this file are subject to the terms of the Common           */
+/* Development and Distribution License Version 1.0 (the "License").          */
+/*                                                                            */
+/* You can obtain a copy of the license at                                    */
+/* http://www.opensource.org/licenses/CDDL-1.0.  See the License for the      */
+/* specific language governing permissions and limitations under the License. */
+/*                                                                            */
+/* When distributing Covered Code, include this CDDL HEADER in each file and  */
+/* include the License file in a prominent location with the name             */
+/* LICENSE.CDDL.                                                              */
+/* If applicable, add the following below this CDDL HEADER, with the fields   */
+/* enclosed by brackets "[]" replaced with your own identifying information:  */
+/*                                                                            */
+/* Portions Copyright (c) [yyyy] [name of copyright owner].                   */
+/* All rights reserved.                                                       */
+/*                                                                            */
+/* CDDL HEADER END                                                            */
+/*                                                                            */
+
+/*                                                                            */
+/* Copyright (c) 2017--2018, Regents of the University of Minnesota.          */
+/* All rights reserved.                                                       */
+/*                                                                            */
+/* Contributors:                                                              */
+/*    Ryan S. Elliott                                                         */
+/*    Ellad B. Tadmor                                                         */
+/*                                                                            */
+
+/*                                                                            */
+/* Release: This file is part of the kim-api.git repository.                  */
+/*                                                                            */
+
+/**
+\page porting_content_from_v1_to_v2 Guide for porting content from %KIM API V1 to V2
+
+Version 2 of the KIM API constitutes a major rewrite with a simplified
+interface, best practice design, and new capabilities.  For more details,
+see the [**UPDATE @@@@@@@@@@@@@@** news item on the alpha release of v2](/news/2018-01-18)
+and the [KIM API v2 documentation](/kim-api/docs/).
+
+Version 2 is *NOT* backward compatible and therefore requires significant
+modifications to existing code (Model Drivers, Models, Test Drivers, and
+Tests) to work. The purpose of this document is to provide step-by-step
+instructions on how to transition content from version 1 to 2.
+
+A complete translation table of v1 and v2 identifier names is available on the [Summary of Differences Between kim-api-v1 and kim-api-v2](/kim-api/docs/version2_differences.html) page.
+
+## <a name="porting-models"></a> Porting Models
+
+Model drivers and stand-alone models compatible with version 1 of the
+KIM API will need to be modified to conform to version 2. A step-by-step
+process for doing so is described below. (In what follows the generic
+term "model" will be used to refer to both Model Drivers and Models.)
+
+
+#### <a name="porting-models-step-0"></a> Step 0
+
+* Setup your machine to perform the conversion.  We suggest that you create a local installation of kim-api-v1 and kim-api-v2 in your home directory so that you can work with everything simultaneously.
+
+  ~~~bash
+  $ cd ${HOME}
+  $ mkdir kim-api-porting
+  $ cd kim-api-porting
+
+  $ wget https://s3.openkim.org/kim-api/kim-api-v1.9.5.txz
+  $ tar Jxf kim-api-v1.9.5.txz
+  $ rm kim-api-v1.9.5.txz
+  $ cd kim-api-v1.9.5
+  $ ./configure --prefix=${HOME}/kim-api-porting/kim-api-installed
+  $ make
+  $ make install
+  $ cd ..
+
+  $ wget https://s3.openkim.org/kim-api/kim-api-v2.0.0-beta.0.txz
+  $ tar Jxf kim-api-v2.0.0-beta.0.txz
+  $ rm kim-api-v2.0.0-beta.0.txz
+  $ cd kim-api-v2.0.0-beta.0
+  $ ./configure --prefix=${HOME}/kim-api-porting/kim-api-installed
+  $ make
+  $ make install
+  $ cd ..
+  ~~~
+
+* Now, "activate" (update the `PATH` variable and set up tab-completion) both versions of the KIM API within your bash shell
+
+  ~~~bash
+  $ source ${HOME}/kim-api-porting/kim-api-installed/bin/kim-api-v1-activate
+  $ source ${HOME}/kim-api-porting/kim-api-installed/bin/kim-api-v2-activate
+  ~~~
+
+  Now, you can use the `kim-api-v#-build-config` and `kim-api-v#-collections-management` utilities as you perform your work.
+
+  When you are done working on this activity, you can deactivate the KIM API with
+
+  ~~~bash
+  $ source kim-api-v1-deactivate
+  $ source kim-api-v2-deactivate
+  ~~~
+
+  Or, simply exit the shell.
+
+* Next, download the example codes associated with these instructions
+
+  ~~~bash
+  $ wget https://s3.openkim.org/kim-api/v1-v2-porting.txz
+  $ tar Jxf v1-v2-porting.txz
+  $ rm v1-v2-porting.txz
+  ~~~
+
+  The `v1-v2-porting` codes include two models (one in c and one in Fortran) and three simulators (one each in c, c++ and Fortran).  Copies of these codes are provided for each step in the instructiuons below (where changes occur).  These can be compared to see a specific example of the code changes described below.
+
+  To start, the kim-api-v1 compatible versions of the models can be installed
+
+  ~~~bash
+  $ kim-api-v1-collections-management install system ./v1-v2-porting/models/step0/ex_model_Ar_P_MLJ_F03
+  $ kim-api-v1-collections-management install system ./v1-v2-porting/models/step0/ex_model_Ar_P_Morse_07C
+  ~~~
+
+  It will be useful to know the output of these models generated by the example simulator.  This can be generated as follows:
+
+  ~~~
+  $ cp -r v1-v2-porting/simulators/step0/ex_test_Ar_fcc_cluster ./v1-ex_test_Ar_fcc_cluster
+  $ cd v1-ex_test_Ar_fcc_cluster
+  $ make
+
+  $ printf ex_model_Ar_P_MLJ_F03 | ./ex_test_Ar_fcc_cluster
+
+  Please enter valid KIM Model name:
+  This is Test  : ex_test_Ar_fcc_cluster
+  --------------------------------------------------------------------------------
+  Results for KIM Model : ex_model_Ar_P_MLJ_F03
+                Energy,           Force Norm,      Lattice Spacing
+      2.6568305947e+01,     1.2671877978e+01,     4.2080000000e+00
+      1.5269225751e+01,     7.9639127468e+00,     4.3395000000e+00
+      8.1940651929e+00,     4.9863838571e+00,     4.4710000000e+00
+      3.7947024307e+00,     3.0924620572e+00,     4.6025000000e+00
+      1.0980474405e+00,     1.8835116189e+00,     4.7340000000e+00
+     -5.1288233270e-01,     1.1111343811e+00,     4.8655000000e+00
+     -1.4321763817e+00,     6.1892128072e-01,     4.9970000000e+00
+     -1.9129769394e+00,     3.0756389059e-01,     5.1285000000e+00
+     -2.1185529279e+00,     1.1421905922e-01,     5.2600000000e+00
+     -2.1545585638e+00,     2.4987808283e-02,     5.3915000000e+00
+     -2.0893135757e+00,     8.1104969450e-02,     5.5230000000e+00
+     -1.9668026189e+00,     1.1844534144e-01,     5.6545000000e+00
+     -1.8151243558e+00,     1.3646818860e-01,     5.7860000000e+00
+     -1.6520140667e+00,     1.4203290937e-01,     5.9175000000e+00
+     -1.4884681605e+00,     1.3991074278e-01,     6.0490000000e+00
+     -1.3310358744e+00,     1.3327798308e-01,     6.1805000000e+00
+
+
+  $ printf ex_model_Ar_P_Morse_07C | ./ex_test_Ar_fcc_cluster
+
+  Please enter valid KIM Model name:
+  This is Test  : ex_test_Ar_fcc_cluster
+  --------------------------------------------------------------------------------
+  Results for KIM Model : ex_model_Ar_P_Morse_07C
+                Energy,           Force Norm,      Lattice Spacing
+      1.4703219623e+01,     6.9678657557e+00,     4.2080000000e+00
+      8.2453550705e+00,     4.8650873812e+00,     4.3395000000e+00
+      3.7883556879e+00,     3.3409407134e+00,     4.4710000000e+00
+      7.7810749699e-01,     2.2399352517e+00,     4.6025000000e+00
+     -1.1944148939e+00,     1.4518130136e+00,     4.7340000000e+00
+     -2.4291941022e+00,     8.9239060716e-01,     4.8655000000e+00
+     -3.1445433206e+00,     5.0063786968e-01,     4.9970000000e+00
+     -3.4996095359e+00,     2.3199479279e-01,     5.1285000000e+00
+     -3.6112724693e+00,     6.3687021777e-02,     5.2600000000e+00
+     -3.5604853404e+00,     8.7536239707e-02,     5.3915000000e+00
+     -3.4059878193e+00,     1.5700051389e-01,     5.5230000000e+00
+     -3.1896247548e+00,     1.9909723852e-01,     5.6545000000e+00
+     -2.9407853637e+00,     2.1928061006e-01,     5.7860000000e+00
+     -2.6800661721e+00,     2.2574027063e-01,     5.9175000000e+00
+     -2.4197463013e+00,     2.2234487833e-01,     6.0490000000e+00
+     -2.1685167432e+00,     2.1265537489e-01,     6.1805000000e+00
+
+  $ cd ..
+  ~~~
+
+* You can see the corresponding example codes online by following these links: [step0/ex_model_Ar_P_MLJ_F90](/kim-api/v1-v2-porting/models/step0/ex_model_Ar_P_MLJ_F03/ex_model_Ar_P_MLJ_F03.F03), [step0/ex_model_Ar_P_Morse_07C](/kim-api/v1-v2-porting/models/step0/ex_model_Ar_P_Morse_07C/ex_model_Ar_P_Morse_07C.c), [step0/ex_test_Ar_fcc_cluster](/kim-api/v1-v2-porting/simulators/step0/ex_test_Ar_fcc_cluster/ex_test_Ar_fcc_cluster.c).
+
+#### <a name="porting-models-step-1"></a> Step 1
+
+* Working with v1 of the model, strip out all supported neighbor list and boundary conditions (NBCs) *except* for `NEIGH_PURE_F`, which is the only one supported by v2.  If the model does not support this NBC, add it in.
+
+* Next, strip out all supported neighbor list methods except for `Neigh_LocaAccess`.  If the model does not support this method, add it in.
+
+* In the Makefile, append "_step1" to the model name.  This will allow you to
+  install the updated model alongside the original version and check that they
+  give the same output.
+
+* When ready, install the new model.  For the example codes, do
+
+  ~~~bash
+  $ kim-api-v1-collections-management install system ./v1-v2-porting/models/step1/ex_model_Ar_P_MLJ_F03
+  $ kim-api-v1-collections-management install system ./v1-v2-porting/models/step1/ex_model_Ar_P_Morse_07C
+  ~~~
+
+  If you make further changes to the code, you can reinstall (remove and install) the model with commands such as
+
+  ~~~bash
+  $ kim-api-v1-collections-management reinstall ./v1-v2-porting/models/step1/ex_model_Ar_P_MLJ_F03
+  $ kim-api-v1-collections-management reinstall ./v1-v2-porting/models/step1/ex_model_Ar_P_Morse_07C
+  ~~~
+
+  You can see the installed models using the `kim-api-v1-collections-managment` utility:
+
+  ~~~
+  $ kim-api-v1-collections-management list
+
+  Knowledgebase of Interatomic Models (KIM)  ---  Model Collections Listing
+  ===============================================================================
+
+  kim-api library:
+  	/.../kim-api-porting/lib/kim-api-v1/libkim-api-v1.9.5.GCC.linux.64bit.dynamic-load.so
+
+  .
+  .
+  .
+
+  System Collection
+  -------------------------------------------------------------------------------
+  Drivers: /.../kim-api-porting/lib/kim-api-v1/model_drivers
+  	--empty--
+
+
+  Models: /.../kim-api-porting/lib/kim-api-v1/models
+  	ex_model_Ar_P_MLJ_F03
+  	ex_model_Ar_P_MLJ_F03_step1
+  	ex_model_Ar_P_Morse_07C
+  	ex_model_Ar_P_Morse_07C_step1
+
+  $
+  ~~~
+
+* Execute the model using the example test `ex_test_Ar_fcc_cluster` to generate output that can be compared with the original model.  For example:
+
+  ~~~
+  $ cd v1-ex_test_Ar_fcc_cluster
+  $ printf ex_model_Ar_P_MLJ_F03_step1 | ./ex_test_Ar_fcc_cluster
+
+  Please enter valid KIM Model name:
+  This is Test  : ex_test_Ar_fcc_cluster
+  --------------------------------------------------------------------------------
+  Results for KIM Model : ex_model_Ar_P_MLJ_F03_step1
+                Energy,           Force Norm,      Lattice Spacing
+      2.6568305947e+01,     1.2671877978e+01,     4.2080000000e+00
+      1.5269225751e+01,     7.9639127468e+00,     4.3395000000e+00
+      8.1940651929e+00,     4.9863838571e+00,     4.4710000000e+00
+      3.7947024307e+00,     3.0924620572e+00,     4.6025000000e+00
+      1.0980474405e+00,     1.8835116189e+00,     4.7340000000e+00
+     -5.1288233270e-01,     1.1111343811e+00,     4.8655000000e+00
+     -1.4321763817e+00,     6.1892128072e-01,     4.9970000000e+00
+     -1.9129769394e+00,     3.0756389059e-01,     5.1285000000e+00
+     -2.1185529279e+00,     1.1421905922e-01,     5.2600000000e+00
+     -2.1545585638e+00,     2.4987808283e-02,     5.3915000000e+00
+     -2.0893135757e+00,     8.1104969450e-02,     5.5230000000e+00
+     -1.9668026189e+00,     1.1844534144e-01,     5.6545000000e+00
+     -1.8151243558e+00,     1.3646818860e-01,     5.7860000000e+00
+     -1.6520140667e+00,     1.4203290937e-01,     5.9175000000e+00
+     -1.4884681605e+00,     1.3991074278e-01,     6.0490000000e+00
+     -1.3310358744e+00,     1.3327798308e-01,     6.1805000000e+00
+
+  $ cd ..
+  ~~~
+
+* You can see the corresponding example codes online by following these links: [step1/ex_model_Ar_P_MLJ_F03](/kim-api/v1-v2-porting/models/step1/ex_model_Ar_P_MLJ_F03/ex_model_Ar_P_MLJ_F03.F03), [step1/ex_model_Ar_P_Morse_07C](/kim-api/v1-v2-porting/models/step1/ex_model_Ar_P_Morse_07C/ex_model_Ar_P_Morse_07C.c).
+
+
+#### <a name="porting-models-step-2"></a> Step 2
+
+Become familiar with v2 by reading the [documentation](/kim-api/docs/), and reviewing the example Model Drivers and/or Models. (The examples are under "Files" in the documentation.  The `ex_model_Ar_P_MLJ_F03` and `ex_model_Ar_P_Morse_07C` examples are the same codes found in the `v1-v2-porting` examples used in these instructions.)
+
+As you review the material, if you have any questions, post them to the OpenKIM Google Group forum by emailing <openkim@googlegroups.com> or by visiting the [group](http://groups.google.com/group/openkim).  This will help others with similar questions. Continue using the forum for support in the next steps.
+
+
+#### <a name="porting-models-step-3"></a> Step 3
+
+You are now ready to make the modifications to the code needed for it to be compatible with v2.
+
+Start with the `ModelDriverCreate` or `ModelCreate` routine. Since KIM descriptor files no longer exist in v2, the information encoded in these files must be incorporated into this routine (and the `ModelComputeArgumentsCreate` routine described in the next step) to make it available to the API.
+
+* Update the Makefile to use new pre/post-amble and to provide kim-api-v2 variables.  For Paramaterized Models, remove the `SPECIES_###_NAME` variables and convert `PARAM_FILE_###_NAME` variables to `PARAM_FILE_#_NAME` (numbering should start from 1 and be in sequence without any gaps).  Also, update the model name to end in "_step3" so that it can be installed alongside the previous versions.
+
+* Update source files to use new v2 header file (module) as opposed to old v1 versions.
+
+* Comment out the v1 versions of the model's `compute`, `reinit`, and `destroy` functions.
+
+* Update the v1 model_init routine to a v2 `ModelCreate` routine:
+
+  * Change to prototype to match the v2 requirements (see examples)
+
+  * Translate the model's v1 KIM descriptor file into appropriate code within the new `ModelCreate` routine:
+
+    * First, a list of things in the descriptor file that will be simply discarded:
+
+      * The `KIM_API_Version` value
+      * `Neigh_LocaAccess`
+      * `NEIGH_PURE_F`
+
+    * Set the base units to be used by the model.  If the v1 model has flexible-units, simply make a call to `KIM::ModelCreate::SetUnits` and pass in the "requested" unit values (Although, be careful to convert any "unused" values to appropriate unit values as necessary).  Update the moel's parameters to the requested units with call(s) to `KIM:ModelCreate::ConvertUnit`.  If the v1 model has fixed-units, simply make a call to `KIM::ModelCreate::SetUnits` with the desired values.  Make sure to specify the new "unused" value where appropriate.
+
+    * Register the model's supported species and their code with call(s) to `KIM::ModelCreate::SetSpeciesCode`.  (By default no species are supported.)
+
+    * Set the model's numbering with a call to `KIM::ModelCreate::SetModelNumbering`.
+
+    * Register the model's ComputeArgumentsCreate function pointer with a call to `KIM::ModelCreate::SetComputeArgumentsCreatePointer`.  (Use `2` for now (for Fortran, use `c_funloc(kim_model_compute_string)`).  We'll implement this function and update this call in a later step.)
+
+    * Register the model's ComputeArgumentsDestroy function pointer with a call to `KIM::ModelCreate::SetComputeArgumentsDestroyPointer`.  (Use `2` for now (for Fortran, use `c_funloc(kim_model_compute_string)`).  We'll implement this function and update this call in a later step.)
+
+    * Register the model's Compute function pointer with a call to `KIM::ModelCreate::SetComputePointer`.  (Use `2` for now (for Fortran, use `c_funloc(kim_model_compute_string)`).  We'll implement this function and update this call in a later step.)
+
+    * Register the model's Destroy function pointer with a call to `KIM::ModelCreate::SetDestroyPointer`.  (Use `2` for now (for Fortran, use `c_funloc(kim_model_compute_string)`).  We'll implement this function and update this call in a later step.)
+
+    * Register the model's Refresh function pointer with a call to `KIM::ModelCreate::SetRefreshPointer`.  (Use `2` for now (for Fortran, use `c_funloc(kim_model_compute_string)`).  We'll implement this function and update this call in a later step.)
+
+    * The last set of items in the v1 KIM descriptor file is the model's parameters.  These will be registered with call(s) to `KIM::ModelCreate::SetParameterPointer`.  However, before doing this, you will need to setup and register the model's buffer memory space (See below items).
+
+  * Update/Create the model buffer structure that will contain the model's influence distance value, the model's neighbor list cutoff value(s), and the model's parameters (if any).  In the `ModelCreate` routine, allocate memory for this structure and register the buffer with a call to `KIM::ModelCreate::SetModelBufferPointer`.  Next, set the values to be stored in the buffer (remember to perform unit conversion, if necessary, using call(s) to `KIM::ModelCreate::ConvertUnit`).
+
+  * Register the model's influence distance pointer with a call to `KIM::ModelCreate::SetInfluenceDistancePointer`.
+
+  * Register the model's cutoff values pointer with a call to `KIM::ModelCreate::SetNeighborListCutoffsPointer`.
+
+  * Register the parameters with call(s) to `KIM::ModelCreate::SetParameterPointer`, if necessary.
+
+* Make sure to update all error codes from the v1 codes to the v2 codes.  v2 has just two error codes `error = 1` (true, an error has occurred) and `error = 0` (false, no error has occured).
+
+  * At the end of the `ModelCreate` routine, just before a successful return, print out the content of the model object to verify the settings.  See the examples provided below for the necessary code.
+
+* Build the model and use a simulator to execute it.  You will receive a segmentation fault due to the missing compute routine (etc.), but you should also see a print out of all the data registered by the `ModelCreate` routine.  Make updates to the code until this data is all correct.
+
+  ~~~bash
+  $ kim-api-v2-collections-management install system ./v1-v2-porting/models/step3/ex_model_Ar_P_MLJ_F03
+  $ kim-api-v2-collections-management install system ./v1-v2-porting/models/step3/ex_model_Ar_P_Morse_07C
+  ~~~
+
+  Note that the `v2` collections management utility is now used.  If build errors are reported for the model being updated, correct the reported compiler errors and try again.  To test the model, a v2 version of the simulator is needed:
+
+  ~~~bash
+  $ cp -r v1-v2-porting/simulators/step5/ex_test_Ar_fcc_cluster v2-ex_test_Ar_fcc_cluster
+  $ cd v2-ex_test_Ar_fcc_cluster
+  $ make
+  ~~~
+
+  Now the new `ModelCreate` routine can be tested to verify it is performing correctly.  For example, the `ex_model_Ar_P_Morse_07C_step3` produces
+
+  ~~~
+  $ printf ex_model_Ar_P_Morse_07C_step3 | ./ex_test_Ar_fcc_cluster
+
+  Please enter valid KIM Model name:
+  ================================================================================
+
+  Model object
+  ------------
+
+  Model Name : ex_model_Ar_P_Morse_07C_step3
+  Log ID : 0x79624090
+
+  Model Supplied Functions :
+  	Function Name            Language  Pointer (1-set / 0-unset)
+  	------------------------------------------------------------
+
+  	Refresh                  c         1
+  	Destroy                  c         1
+  	ComputeArgumentsCreate   c         1
+  	ComputeArgumentsDestroy  c         1
+  	Compute                  c         1
+
+  Numbering : zeroBased
+
+  Units :
+  	Length Unit      : A
+  	Energy Unit      : eV
+  	Charge Unit      : unused
+  	Temperature Unit : unused
+  	Time Unit        : unused
+
+  Influence Distance : 8.1500000000e+00
+
+  Number Of Neighbor List Cutoffs : 1
+  Neighbor List Cutoffs :
+  	0 : 8.1500000000e+00
+
+
+  Supported Species :
+  	Species   Code
+  	--------------------
+
+  	Ar        1
+
+  Number Of Prameters : 0
+  	index   Data Type Extent    Pointer        Description
+  	--------------------------------------------------------------------
+
+
+  Buffers
+  	Buffer         Pointer
+  	------------------------------
+
+  	Model          0x7a81fb00
+  	Simulator      0
+
+  ================================================================================
+
+  Segmentation fault: 11
+
+  $ cd ..
+  ~~~
+
+* You can see the corresponding example codes online by following these links: [step3/ex_model_Ar_P_MLJ_F03](/kim-api/v1-v2-porting/models/step3/ex_model_Ar_P_MLJ_F03/ex_model_Ar_P_MLJ_F03.F03), [step3/ex_model_Ar_P_Morse_07C](/kim-api/v1-v2-porting/models/step3/ex_model_Ar_P_Morse_07C/ex_model_Ar_P_Morse_07C.c).  Compare these with the versions from [Step 1](#porting-models-step-1) to see the changes associated with this step.
+
+
+#### <a name="porting-models-step-4"></a> Step 4
+
+Next you will implement the `ModelComputeArgumentsCreate` and `ModelComputeArgumentsDestroy` routines.  The create routine registers the model's supported compute arguments and compute callbacks.  The destroy routine allows the model to clean up the memory (if any) it stored at the compute-arguments object's model buffer pointer.
+
+* Modify the Makefile to update the model name to end in "_step4".
+
+* Create the `ModelComputeArgumentsCreate` routine to conform to the v2 specifications.
+
+    * Register the model's compute argument support status with call(s) to `KIM::ModelComputeArgumentsCreate::SetArgumentSupportStatus`. (By default all arguments are either `requiredByAPI` or `notSupported` as defined in the documentation.)
+
+    * Register the model's compute callback support status with call(s) to `KIM::ModelComputeArgumentsCreate::SetCallbackSupportStatus`.  (By default all callbacks are either `requriedByAPI` or `notSupported` as defined in the documentation.)
+
+    * At the end of the `ModelComputeArgumentsCreate` routine, just before a successful return, print out the content of the compute arguments object to verify the settings.  See the examples provided below for the necessary code.
+
+* Create the `ModelComputeArgumentsDestroy` routine to conform to the v1 specifications.  In many cases this routine will be empty.  See the examples provided below for the necessary code.
+
+* Finally, go back to the `ModelCreate` routine:
+
+     * Update the call to `KIM::ModelCreate::SetComputeArgumentsCreate` to reference the new `ModelComputeArgumentsCreate` routine.
+
+     * Update the call to `KIM::ModelCreate::SetComputeArgumentsDestroy` to reference the new `ModelComputeArgumentsDestroy` routine.
+
+* Build the model and use a simulator to execute it.  You will receive a segmentation fault due to the missing compute routine (etc.), but you should also see a print out of all the data registered by the `ModelComputeArgumentsCreate` routine.  Make updates to the code until this data is all correct.
+
+  ~~~bash
+  $ kim-api-v2-collections-management install system ./v1-v2-porting/models/step4/ex_model_Ar_P_MLJ_F03
+  $ kim-api-v2-collections-management install system ./v1-v2-porting/models/step4/ex_model_Ar_P_Morse_07C
+  ~~~
+
+  Now the new `ModelComputeArgumentsCreate` routine can be tested to verify it is performing correctly.  For example, the `ex_model_Ar_P_Morse_07C_step4` produces
+
+  ~~~
+  $ cd v2-ex_test_Ar_fcc_cluster
+
+  $ printf ex_model_Ar_P_Morse_07C_step4 | ./ex_test_Ar_fcc_cluster
+
+  Please enter valid KIM Model name:
+  ================================================================================
+
+  Model object
+  ------------
+
+  Model Name : ex_model_Ar_P_Morse_07C_step4
+  Log ID : 0x7b6724a0
+
+  Model Supplied Functions :
+  	Function Name            Language  Pointer (1-set / 0-unset)
+  	------------------------------------------------------------
+
+  	Refresh                  c         1
+  	Destroy                  c         1
+  	ComputeArgumentsCreate   c         1
+  	ComputeArgumentsDestroy  c         1
+  	Compute                  c         1
+
+  Numbering : zeroBased
+
+  Units :
+  	Length Unit      : A
+  	Energy Unit      : eV
+  	Charge Unit      : unused
+  	Temperature Unit : unused
+  	Time Unit        : unused
+
+  Influence Distance : 8.1500000000e+00
+
+  Number Of Neighbor List Cutoffs : 1
+  Neighbor List Cutoffs :
+  	0 : 8.1500000000e+00
+
+
+  Supported Species :
+  	Species   Code
+  	--------------------
+
+  	Ar        1
+
+  Number Of Prameters : 0
+  	index   Data Type Extent    Pointer        Description
+  	--------------------------------------------------------------------
+
+
+  Buffers
+  	Buffer         Pointer
+  	------------------------------
+
+  	Model          0x7c86df00
+  	Simulator      0
+
+  ================================================================================
+
+  ================================================================================
+
+  ComputeArguments object
+  -----------------------
+
+  Model Name : ex_model_Ar_P_Morse_07C_step4
+  Log ID : 0x7b6724a0_0x7b76e590
+
+  Compute Arguments :
+  	Compute Argument Name    SupportStatus            Pointer
+  	---------------------------------------------------------------------------
+
+  	numberOfParticles        requiredByAPI            0
+  	particleSpeciesCodes     requiredByAPI            0
+  	particleContributing     requiredByAPI            0
+  	coordinates              requiredByAPI            0
+  	partialEnergy            optional                 0
+  	partialForces            optional                 0
+  	partialParticleEnergy    optional                 0
+  	partialVirial            notSupported             N/A
+  	partialParticleVirial    notSupported             N/A
+
+  Compute Callback Functions :
+  	Compute Callback Name    SupportStatus  Language    Data Pointer             Pointer (1-set / 0-unset)
+  	------------------------------------------------------------------------------------------------------
+
+  	GetNeighborList          requiredByAPI  cpp         0                        0
+  	ProcessDEDrTerm          optional       cpp         0                        0
+  	ProcessD2EDr2Term        optional       cpp         0                        0
+
+  Buffers
+  	Buffer         Pointer
+  	------------------------------
+
+  	Model          0
+  	Simulator      0
+
+  ================================================================================
+
+  This is Test  : ex_test_Ar_fcc_cluster
+  --------------------------------------------------------------------------------
+  Results for KIM Model : ex_model_Ar_P_Morse_07C_step4
+                Energy,           Force Norm,      Lattice Spacing
+  Segmentation fault: 11
+
+  $ cd ..
+  ~~~
+
+* You can see the corresponding example codes online by following these links: [step4/ex_model_Ar_P_MLJ_F03](/kim-api/v1-v2-porting/models/step4/ex_model_Ar_P_MLJ_F03/ex_model_Ar_P_MLJ_F03.F03), [step4/ex_model_Ar_P_Morse_07C](/kim-api/v1-v2-porting/models/step4/ex_model_Ar_P_Morse_07C/ex_model_Ar_P_Morse_07C.c).  Compare these with the versions from [Step 3](#porting-models-step-3) to see the changes associated with this step.
+
+
+#### <a name="porting-models-step-5"></a> Step 5
+
+* Modify/create the `ModelRefresh` and `ModelDestroy` routines to conform to v2.
+
+  * The `ModelRefresh` routine is used to allow the model to refresh the values of private data in its model buffer based on changes to the published parameter values in the model buffer which have been changed by the simulator.  Additionally, after any private data updates, the model must re-register pointers to its influence distance and cutoffs data (since, generally, these values will change due to the changes made to the published parameters by the simulator).
+
+     * Create the `ModelRefresh` routine (or convert the v1 reinit function)
+
+     * Get the model buffer pointer with a call to `KIM::ModelRefresh::GetModelBufferPointer`.
+
+     * Update any private data and, if necessary, the influence distance and cutoffs.
+
+     * Register the influence distance with a call to `KIM::ModelRefresh::SetInfluenceDistancePointer`.
+
+     * Register the cutoff values pointer with a call to `KIM::ModelRefresh::SetNeighborListCutoffsPointer`.
+
+  * The `ModelDestroy` routine is used to clean up the model buffer memory when model is being destroyed.
+
+     * Create the `ModelDestroy` routine (or convert the v1 destroy function)
+
+     * Get the model buffer pointer with a call to `KIM::ModelDestroy::GetModelBufferPointer`.
+
+     * deallocate memory associated with the buffer.
+
+
+* Go back to the `ModelCreate` routine:
+
+   * Update the call to `KIM::ModelCreate::SetRefreshPointer` to reference the new `ModelRefresh` routine.
+
+   * Update the call to `KIM::ModelCreate::SetDestroyPointer` to reference the new `ModelDestroy` routine.
+
+* Finally, remove the code that prints the model object and the code that prints the compute arguments object.
+
+* Build the model to ensure no compiler errors are generated.  It is probably not worth executing a simulator with this version as it will simply give a segmentation fault due to the `ModelCompute` routine still being missing.
+
+  ~~~bash
+  $ kim-api-v2-collections-management install system ./v1-v2-porting/models/step5/ex_model_Ar_P_MLJ_F03
+  $ kim-api-v2-collections-management install system ./v1-v2-porting/models/step5/ex_model_Ar_P_Morse_07C
+  ~~~
+
+* You can see the corresponding example codes online by following these links: [step5/ex_model_Ar_P_MLJ_F03](/kim-api/v1-v2-porting/models/step5/ex_model_Ar_P_MLJ_F03/ex_model_Ar_P_MLJ_F03.F03), [step5/ex_model_Ar_P_Morse_07C](/kim-api/v1-v2-porting/models/step5/ex_model_Ar_P_Morse_07C/ex_model_Ar_P_Morse_07C.c).  Compare these with the versions from [Step 4](#porting-models-step-4) to see the changes associated with this step.
+
+
+#### <a name="porting-models-step-6"></a> Step 6
+
+* Modify the Makefile to have the final v2 model name.  (This may be the same as the v1 model name since the v1 model cannot be used with kim-api-v2.)
+
+* Update the `ModelCompute` routine to get everything working.
+
+  * Update the `ModelCompute` routine prototype (for Fortran, this also includes changing from a FUNCTION to a SUBROUTINE).
+
+  * For Fortran codes, remove `type(c_ptr)` variables, they will not be needed in the v2 version of the compute routine.  This also means that the `C_F_POINTER` intrinsic function should not be needed.
+
+  * Make changes to the code to use one of the `LOG_*` macros or the `KIM::ModelCompute::LogEntry` routine as opposed to the v1 `KIM_API_report_error` routine.
+
+  * Make changes to code that determines what computations have been requested and unpacking the arguments.  In v1 this is associated with calls to `KIM_API_get(m)_compute`, and `KIM_API_get(m)_data`.  In v2, these should be replaced with calls to `KIM::ModelComputeArguments::IsCallbackPresent`, and `KIM::ModelComputeArguments::GetArgumentPointer` (in C there are `KIM_ModelComputeArguments_GetArgumentPointerInteger` and `KIM_ModelComputeArguments_GetArgumentPointerDouble`; C++ and Fortran use function overloading and have only `KIM::ModelComputeArguments::GetArgumentPointer`).  The `KIM::COMPUTE_CALLBACK_NAME::GetNeighborList` callback is `requiredByAPI` so it will always be present, and it is not necessary to check explicitly with a call to `KIM::ModelComputeArguments::IsCallbackPresent`.  In v2, an argument is present if its pointer value is not `NULL` (zero).  Thus, once the pointer values have been unpacked with a call to `KIM::ModelComputeArguments::GetArgumentPointer` a comparison of the pointer to `NULL` (for Fortran, use the intrinsic function `ASSOCIATED`) will determine if the argument is present or not.
+
+  * Make changes to the code so that it gets the neighbor list cutoff, not from the cutoff argument as in v1, but from the value(s) stored in the model buffer.  This will require a call to the `KIM::ModelCompute::GetModelBufferPointer` routine.
+
+  * Make changes to the code to use the `particleContributing` argument values to identify contributing or non-contributing particles, as opposed to the approach in v1 where the number of neighbors for a particle is used.
+
+  * Make changes to the code to use the v2 `KIM::ModelComputeArguments::GetNeighborList` routine as opposed to the v1 `KIM_API_get_neigh` routine.
+
+  * Make changes to the code to use the v2 `KIM::ModelComputeArguments::ProcessDEDrTerm` and `KIM::ModelComputeArguments::ProcessD2EDr2Term` routines as opposed to the v1 `KIM_API_process_dEdr` and `KIM_API_process_d2Edr2` routines, if necessary.
+
+  * Make sure to update all error codes from the v1 codes to the v2 codes.  v2 has just two error codes `error = 1` (true, an error has occurred) and `error = 0` (false, no error has occured).
+
+* Finally, go back to the `ModelCreate` routine:
+
+   * Update the call to `KIM::ModelCreate::SetComputePointer` to reference the new `ModelCompute` routine.
+
+* Build and install the final updated model.
+
+  ~~~bash
+  $ kim-api-v2-collections-management install system ./v1-v2-porting/models/step6/ex_model_Ar_P_MLJ_F03
+  $ kim-api-v2-collections-management install system ./v1-v2-porting/models/step6/ex_model_Ar_P_Morse_07C
+  ~~~
+
+  If build errors are reported for the model being updated, correct the reported compiler errors and try again.
+
+* You can see the corresponding example codes online by following these links: [step6/ex_model_Ar_P_MLJ_F03](/kim-api/v1-v2-porting/models/step6/ex_model_Ar_P_MLJ_F03/ex_model_Ar_P_MLJ_F03.F03), [step6/ex_model_Ar_P_Morse_07C](/kim-api/v1-v2-porting/models/step6/ex_model_Ar_P_Morse_07C/ex_model_Ar_P_Morse_07C.c).  Compare these with the versions from [Step 5](#porting-models-step-5) to see the changes associated with this step.
+
+
+#### <a name="porting-models-step-7"></a> Step 7
+
+Now the new model can be used with the v2 simulator and the output compared with the original output from [Step 1](#porting-models-step-1).
+
+~~~
+$ cd v2-ex_test_Ar_fcc_cluster
+$ printf ex_model_Ar_P_MLJ_F03 | ./ex_test_Ar_fcc_cluster
+
+Please enter valid KIM Model name:
+This is Test  : ex_test_Ar_fcc_cluster
+--------------------------------------------------------------------------------
+Results for KIM Model : ex_model_Ar_P_MLJ_F03
+              Energy,           Force Norm,      Lattice Spacing
+    2.6568305947e+01,     1.2671877978e+01,     4.2080000000e+00
+    1.5269225751e+01,     7.9639127468e+00,     4.3395000000e+00
+    8.1940651929e+00,     4.9863838571e+00,     4.4710000000e+00
+    3.7947024307e+00,     3.0924620572e+00,     4.6025000000e+00
+    1.0980474405e+00,     1.8835116189e+00,     4.7340000000e+00
+   -5.1288233270e-01,     1.1111343811e+00,     4.8655000000e+00
+   -1.4321763817e+00,     6.1892128072e-01,     4.9970000000e+00
+   -1.9129769394e+00,     3.0756389059e-01,     5.1285000000e+00
+   -2.1185529279e+00,     1.1421905922e-01,     5.2600000000e+00
+   -2.1545585638e+00,     2.4987808283e-02,     5.3915000000e+00
+   -2.0893135757e+00,     8.1104969450e-02,     5.5230000000e+00
+   -1.9668026189e+00,     1.1844534144e-01,     5.6545000000e+00
+   -1.8151243558e+00,     1.3646818860e-01,     5.7860000000e+00
+   -1.6520140667e+00,     1.4203290937e-01,     5.9175000000e+00
+   -1.4884681605e+00,     1.3991074278e-01,     6.0490000000e+00
+   -1.3310358744e+00,     1.3327798308e-01,     6.1805000000e+00
+
+$ printf ex_model_Ar_P_Morse_07C | ./ex_test_Ar_fcc_cluster
+
+Please enter valid KIM Model name:
+This is Test  : ex_test_Ar_fcc_cluster
+--------------------------------------------------------------------------------
+Results for KIM Model : ex_model_Ar_P_Morse_07C
+              Energy,           Force Norm,      Lattice Spacing
+    1.4703219623e+01,     6.9678657557e+00,     4.2080000000e+00
+    8.2453550705e+00,     4.8650873812e+00,     4.3395000000e+00
+    3.7883556879e+00,     3.3409407134e+00,     4.4710000000e+00
+    7.7810749699e-01,     2.2399352517e+00,     4.6025000000e+00
+   -1.1944148939e+00,     1.4518130136e+00,     4.7340000000e+00
+   -2.4291941022e+00,     8.9239060716e-01,     4.8655000000e+00
+   -3.1445433206e+00,     5.0063786968e-01,     4.9970000000e+00
+   -3.4996095359e+00,     2.3199479279e-01,     5.1285000000e+00
+   -3.6112724693e+00,     6.3687021777e-02,     5.2600000000e+00
+   -3.5604853404e+00,     8.7536239707e-02,     5.3915000000e+00
+   -3.4059878193e+00,     1.5700051389e-01,     5.5230000000e+00
+   -3.1896247548e+00,     1.9909723852e-01,     5.6545000000e+00
+   -2.9407853637e+00,     2.1928061006e-01,     5.7860000000e+00
+   -2.6800661721e+00,     2.2574027063e-01,     5.9175000000e+00
+   -2.4197463013e+00,     2.2234487833e-01,     6.0490000000e+00
+   -2.1685167432e+00,     2.1265537489e-01,     6.1805000000e+00
+
+$ cd ..
+~~~
+
+
+## <a name="porting-simulators"></a> Porting Simulators
+
+#### <a name="porting-simulators-step-0"></a> Step 0
+
+* See [Porting Models: Step 0](#porting-models-step-0), above.
+
+* You can see the corresponding example codes online by following these links: [step0/ex_test_Ar_fcc_cluster](/kim-api/v1-v2-porting/simulators/step0/ex_test_Ar_fcc_cluster/ex_test_Ar_fcc_cluster.c), [step0/ex_test_Ar_fcc_cluster_cpp](/kim-api/v1-v2-porting/simulators/step0/ex_test_Ar_fcc_cluster_cpp/ex_test_Ar_fcc_cluster_cpp.cpp), and [step0/ex_test_fcc_cluster_fortran](/kim-api/v1-v2-porting/simulators/step0/ex_test_Ar_fcc_cluster_fortran/ex_test_Ar_fcc_cluster_fortran.f90).
+
+#### <a name="porting-simulators-step-1"></a> Step 1
+
+* Working with v1 of the simulator, strip out all supported neighbor list and boundary conditions (NBCs) *except* for `NEIGH_PURE_F`, which is the only one supported by v2.  If the simulator does not support this NBC, add it in.
+
+* Next, strip out all supported neighbor list methods except for `Neigh_LocaAccess`.  If the simulator does not support this method, add it in.
+
+* When ready, build the simulator and test it with the v1 models you installed in [Porting Models: Step 0](#porting-models-step-0).
+
+  ~~~
+  $ cp -r ./v1-v2-porting/simulators/step1/ex_test_Ar_fcc_cluster v1-ex_test_Ar_fcc_cluster-step1
+  $ cd v1-ex_test_Ar_fcc_cluster-step1
+  $ make
+
+  $ printf ex_model_Ar_P_MLJ_F03 | ./ex_test_Ar_fcc_cluster
+
+  Please enter valid KIM Model name:
+  This is Test  : ex_test_Ar_fcc_cluster
+  --------------------------------------------------------------------------------
+  Results for KIM Model : ex_model_Ar_P_MLJ_F03
+                Energy,           Force Norm,      Lattice Spacing
+      2.6568305947e+01,     1.2671877978e+01,     4.2080000000e+00
+      1.5269225751e+01,     7.9639127468e+00,     4.3395000000e+00
+      8.1940651929e+00,     4.9863838571e+00,     4.4710000000e+00
+      3.7947024307e+00,     3.0924620572e+00,     4.6025000000e+00
+      1.0980474405e+00,     1.8835116189e+00,     4.7340000000e+00
+     -5.1288233270e-01,     1.1111343811e+00,     4.8655000000e+00
+     -1.4321763817e+00,     6.1892128072e-01,     4.9970000000e+00
+     -1.9129769394e+00,     3.0756389059e-01,     5.1285000000e+00
+     -2.1185529279e+00,     1.1421905922e-01,     5.2600000000e+00
+     -2.1545585638e+00,     2.4987808283e-02,     5.3915000000e+00
+     -2.0893135757e+00,     8.1104969450e-02,     5.5230000000e+00
+     -1.9668026189e+00,     1.1844534144e-01,     5.6545000000e+00
+     -1.8151243558e+00,     1.3646818860e-01,     5.7860000000e+00
+     -1.6520140667e+00,     1.4203290937e-01,     5.9175000000e+00
+     -1.4884681605e+00,     1.3991074278e-01,     6.0490000000e+00
+     -1.3310358744e+00,     1.3327798308e-01,     6.1805000000e+00
+
+  $ cd ..
+  ~~~
+
+
+
+* You can see the corresponding example codes online by following these links: [step1/ex_test_Ar_fcc_cluster](/kim-api/v1-v2-porting/simulators/step1/ex_test_Ar_fcc_cluster/ex_test_Ar_fcc_cluster.c), [step1/ex_test_Ar_fcc_cluster_cpp](/kim-api/v1-v2-porting/simulators/step1/ex_test_Ar_fcc_cluster_cpp/ex_test_Ar_fcc_cluster_cpp.cpp), and [step1/ex_test_fcc_cluster_fortran](/kim-api/v1-v2-porting/simulators/step1/ex_test_Ar_fcc_cluster_fortran/ex_test_Ar_fcc_cluster_fortran.f90).  Compare these with the versions from [Step 0](#porting-simulators-step-0) to see the changes associated with this step.
+
+
+#### <a name="porting-simulators-step-2"></a> Step 2
+
+* See [Step 2](#porting-models-step-2) for Models, above.
+
+#### <a name="porting-simulators-step-3"></a> Step 3
+
+You are now ready to make the modifications to the code needed to make it compatible with v2.
+
+* Update the Makefile to use new preamble build-config variables.
+
+* Update the source files to use new v2 header file (module) as opposed to old v1 versions.
+
+* Change any error messages using the KIM_API_report_error, as v2 does not provide a similar capability.  If desired, v2 does provide access to its logging facility (see the KIM_Log documentation) which places messages in the kim.log file.
+
+* Change the simulator's neighbor list data structure to include any needed values (such as the number of cutoffs, cutoff values, and number of particles), as the KIM Model object is not available within the `GetNeighborList` function in v2. Also, v2 now requires that the `GetNeighborList` callback routine verifies that the neighbor list cutoff values used to generate the neighbor lists is compatible with the model's cutoffs.  Next, change the prototype of the simulators `GetNeighborList` routine to match the v2 specification.  Update the `GetNeighborList` function to conform to the v2 specification.
+
+* If appropriate, change the simulator's `ProcessDEDrTerm` and `ProcessD2EDr2Term` callbacks in a manner similar to the changes needed for the previous item.
+
+
+* You can see the corresponding example codes online by following these links: [step3/ex_test_Ar_fcc_cluster](/kim-api/v1-v2-porting/simulators/step3/ex_test_Ar_fcc_cluster/ex_test_Ar_fcc_cluster.c), [step3/ex_test_Ar_fcc_cluster_cpp](/kim-api/v1-v2-porting/simulators/step3/ex_test_Ar_fcc_cluster_cpp/ex_test_Ar_fcc_cluster_cpp.cpp), and [step3/ex_test_fcc_cluster_fortran](/kim-api/v1-v2-porting/simulators/step3/ex_test_Ar_fcc_cluster_fortran/ex_test_Ar_fcc_cluster_fortran.f90).  Compare these with the versions from [Step 1](#porting-simulators-step-1) to see the changes associated with this step.
+
+
+#### <a name="porting-simulators-step-4"></a> Step 4
+
+* Translate the simulator's v1 KIM descriptor file into appropriate code within the new Simulator's main routine:
+
+
+    * First, a list of things in the descriptor file that will be simply discarded:
+
+      * The `KIM_API_Version` value
+      * `Neigh_LocaAccess`
+      * `NEIGH_PURE_F`
+
+    * Provide the simulator's numbering and requested base units as part of the call to `KIM::Model::Create`.  Be sure to use "unused" values as appropriate.  After the `KIM::Model::Create` routine returns, check to see if the units request was accepted.  If not, adjust the simulator's behavior appropriately, or exit with an error message.
+
+    * Check to see that the model supports the simulator's required species with call(s) to `KIM::Model::GetSpeciesSupportAndCode`.
+
+    * Use the model object to create an associated compute-arguments object that will be used to communicate data between the simulator and model.  Use a call to `KIM::Model::ComputeArgumentsCreate`.
+
+    * Check (with call(s) to `KIM::COMPUTE_ARGUMENT_NAME::GetNumberOfComputeArguments`, `KIM::COMPUTE_ARGUMENT_NAME::GetComputeArgumentName`, and `KIM::ComputeArguments::GetArgumentSupportStatus`) to see that the model supports the arguments (with the appropriate SupportStatus: `required` or `optional`) that the simulator will use.  Also, check to see that the model does not have any other `required` arguments not supported by the simulator.
+
+    * Check (with call(s) to `KIM::COMPUTE_CALLBACK_NAME::GetNumberOfComputeCallbacks`, `KIM::COMPUTE_CALLBACK_NAME::GetComputeCallbackName`, and `KIM::ComputeArguments::GetCallbackSupportStatus`) to see that the model supports the callbacks (with the appropriate SupportStatus: `required` or `optional`) that the simulator will use.  Also, check to see that the model does not have any other `required` callbacks not supported by the simulator.
+
+    * If the v1 simulator used the `KIM_API_file_init` routine, remove the descriptor.kim file.  If it used the `KIM_API_string_init` routine, remove the associated string and/or routine.
+
+* You can see the corresponding example codes online by following these links: [step4/ex_test_Ar_fcc_cluster](/kim-api/v1-v2-porting/simulators/step4/ex_test_Ar_fcc_cluster/ex_test_Ar_fcc_cluster.c), [step4/ex_test_Ar_fcc_cluster_cpp](/kim-api/v1-v2-porting/simulators/step4/ex_test_Ar_fcc_cluster_cpp/ex_test_Ar_fcc_cluster_cpp.cpp), and [step4/ex_test_fcc_cluster_fortran](/kim-api/v1-v2-porting/simulators/step4/ex_test_Ar_fcc_cluster_fortran/ex_test_Ar_fcc_cluster_fortran.f90).  Compare these with the versions from [Step 3](#porting-simulators-step-3) to see the changes associated with this step.
+
+
+#### <a name="porting-simulators-step-5"></a> Step 5
+
+* Remove the v1 `numberOfSpecies` argument, which is not needed in v2.
+
+* Register the simulator's arguments memory pointers with call(s) to `KIM::ComputeArguments::SetArgumentPointer` (in C there are `KIM_ComputeArguments_SetArgumentPointerInteger` and `KIM_ComputeArguments_SetArgumentPointerDouble`; C++ and Fortran use function overloading and have only `KIM::ComputeArguments::SetArgumentPointer`).
+
+* Register the simulator's callback memory pointers and data object pointers with call(s) to `KIM::ComputeArguments::SetCallbackPointer`.
+
+* Update the simulator code to work with the v2 model's influence distance and multiple cutoffs features.
+
+* Update the simulator code to populate the `particleSpeciesCode` array.
+
+* Add code to the simulator to populate the `particleContributing` array.
+
+* Update call(s) to `KIM::Model::Compute`.
+
+* Add call(s) to `KIM:Model::ComputeArgumentsDestroy` to clean up and release memory associated with the compute-arguments object.
+
+* Update call(s) to `KIM::Model::Destroy`.  Note, the single v2 call to `KIM::Model::Destroy` covers the two v1 calls to `KIM_API_model_destroy` and `KIM_API_free`.
+
+* When ready, build the simulator and test it with the v2 models installed as part of [Step 6](#porting-models-step-6) for porting models.
+
+  (If you have not already copied the example simulator as part of [Porting Models: Step 3](#porting-models-step-3), do the following)
+
+  ~~~
+  $ cp -r ./v1-v2-porting/simulators/step5/ex_test_Ar_fcc_cluster v2-ex_test_Ar_fcc_cluster
+  ~~~
+
+  ~~~
+  $ cd v2-ex_test_Ar_fcc_cluster
+  $ make
+
+  $ printf ex_model_Ar_P_MLJ_F03 | ./ex_test_Ar_fcc_cluster
+  Please enter valid KIM Model name:
+  This is Test  : ex_test_Ar_fcc_cluster
+  --------------------------------------------------------------------------------
+  Results for KIM Model : ex_model_Ar_P_MLJ_F03
+                Energy,           Force Norm,      Lattice Spacing
+      2.6568305947e+01,     1.2671877978e+01,     4.2080000000e+00
+      1.5269225751e+01,     7.9639127468e+00,     4.3395000000e+00
+      8.1940651929e+00,     4.9863838571e+00,     4.4710000000e+00
+      3.7947024307e+00,     3.0924620572e+00,     4.6025000000e+00
+      1.0980474405e+00,     1.8835116189e+00,     4.7340000000e+00
+     -5.1288233270e-01,     1.1111343811e+00,     4.8655000000e+00
+     -1.4321763817e+00,     6.1892128072e-01,     4.9970000000e+00
+     -1.9129769394e+00,     3.0756389059e-01,     5.1285000000e+00
+     -2.1185529279e+00,     1.1421905922e-01,     5.2600000000e+00
+     -2.1545585638e+00,     2.4987808283e-02,     5.3915000000e+00
+     -2.0893135757e+00,     8.1104969450e-02,     5.5230000000e+00
+     -1.9668026189e+00,     1.1844534144e-01,     5.6545000000e+00
+     -1.8151243558e+00,     1.3646818860e-01,     5.7860000000e+00
+     -1.6520140667e+00,     1.4203290937e-01,     5.9175000000e+00
+     -1.4884681605e+00,     1.3991074278e-01,     6.0490000000e+00
+     -1.3310358744e+00,     1.3327798308e-01,     6.1805000000e+00
+
+  $ cd ..
+  ~~~
+
+  You can also try the C++ and Fortran examples.
+
+  ~~~
+  $ cp -r ./v1-v2-porting/simulators/step5/ex_test_Ar_fcc_cluster_cpp v2-ex_test_Ar_fcc_cluster_cpp
+  $ cp -r ./v1-v2-porting/simulators/step5/ex_test_Ar_fcc_cluster_fortran v2-ex_test_Ar_fcc_cluster_fortran
+  ~~~
+
+  ~~~
+  $ cd v2-ex_test_Ar_fcc_cluster_cpp
+  $ make
+
+  $ printf ex_model_Ar_P_Morse_07C | ./ex_test_Ar_fcc_cluster_cpp
+
+  Please enter valid KIM Model name:
+  LengthUnit is "A"
+  EnergyUnit is "eV"
+  ChargeUnit is "unused"
+  TemperatureUnit is "unused"
+  TimeUnit is "unused"
+  ComputeArgument Name "numberOfParticles" is of type "Integer" and has supportStatus "requiredByAPI"
+  ComputeArgument Name "particleSpeciesCodes" is of type "Integer" and has supportStatus "requiredByAPI"
+  ComputeArgument Name "particleContributing" is of type "Integer" and has supportStatus "requiredByAPI"
+  ComputeArgument Name "coordinates" is of type "Integer" and has supportStatus "requiredByAPI"
+  ComputeArgument Name "partialEnergy" is of type "Integer" and has supportStatus "optional"
+  ComputeArgument Name "partialForces" is of type "Integer" and has supportStatus "optional"
+  ComputeArgument Name "partialParticleEnergy" is of type "Integer" and has supportStatus "optional"
+  ComputeArgument Name "partialVirial" is of type "Integer" and has supportStatus "notSupported"
+  ComputeArgument Name "partialParticleVirial" is of type "Integer" and has supportStatus "notSupported"
+  ComputeCallback Name "GetNeighborList" has supportStatus "requiredByAPI"
+  ComputeCallback Name "ProcessDEDrTerm" has supportStatus "optional"
+  ComputeCallback Name "ProcessD2EDr2Term" has supportStatus "optional"
+  This is Test : ex_test_Ar_fcc_cluster_cpp
+  --------------------------------------------------------------------------------
+  Results for KIM Model : ex_model_Ar_P_Morse_07C
+                Energy          Force Norm     Lattice Spacing
+      1.4703219623e+01    6.9678657557e+00    4.2080000000e+00
+      8.2453550705e+00    4.8650873812e+00    4.3395000000e+00
+      3.7883556879e+00    3.3409407134e+00    4.4710000000e+00
+      7.7810749699e-01    2.2399352517e+00    4.6025000000e+00
+     -1.1944148939e+00    1.4518130136e+00    4.7340000000e+00
+     -2.4291941022e+00    8.9239060716e-01    4.8655000000e+00
+     -3.1445433206e+00    5.0063786968e-01    4.9970000000e+00
+     -3.4996095359e+00    2.3199479279e-01    5.1285000000e+00
+     -3.6112724693e+00    6.3687021777e-02    5.2600000000e+00
+     -3.5604853404e+00    8.7536239707e-02    5.3915000000e+00
+     -3.4059878193e+00    1.5700051389e-01    5.5230000000e+00
+     -3.1896247548e+00    1.9909723852e-01    5.6545000000e+00
+     -2.9407853637e+00    2.1928061006e-01    5.7860000000e+00
+     -2.6800661721e+00    2.2574027063e-01    5.9175000000e+00
+     -2.4197463013e+00    2.2234487833e-01    6.0490000000e+00
+     -2.1685167432e+00    2.1265537489e-01    6.1805000000e+00
+
+  $ cd ..
+  $ cd v2-ex_test_Ar_fcc_cluster_fortran
+  $ make
+
+  $ printf ex_model_Ar_P_Morse_07C | ./ex_test_Ar_fcc_cluster_fortran
+
+  Please enter a valid KIM model name:
+
+  This is Test : ex_test_Ar_fcc_cluster_fortran
+  --------------------------------------------------------------------------------
+  Results for KIM Model : ex_model_Ar_P_Morse_07C
+                Energy          Force Norm     Lattice Spacing
+      1.4703215955E+01    6.9678645853E+00    4.2080000627E+00
+      8.2453524404E+00    4.8650865034E+00    4.3395000647E+00
+      3.7883538362E+00    3.3409400589E+00    4.4710000666E+00
+      7.7810622791E-01    2.2399347674E+00    4.6025000686E+00
+     -1.1944157316E+00    1.4518126584E+00    4.7340000705E+00
+     -2.4291946228E+00    8.9239034976E-01    4.8655000725E+00
+     -3.1445436110E+00    5.0063768619E-01    4.9970000745E+00
+     -3.4996096616E+00    2.3199466611E-01    5.1285000764E+00
+     -3.6112724807E+00    6.3686958966E-02    5.2600000784E+00
+     -3.5604852727E+00    8.7536289674E-02    5.3915000803E+00
+     -3.4059876997E+00    1.5700054839E-01    5.5230000823E+00
+     -3.1896246031E+00    1.9909725795E-01    5.6545000843E+00
+     -2.9407851953E+00    2.1928061852E-01    5.7860000862E+00
+     -2.6800659962E+00    2.2574027119E-01    5.9175000882E+00
+     -2.4197461252E+00    2.2234487350E-01    6.0490000901E+00
+     -2.1685165719E+00    2.1265536654E-01    6.1805000921E+00
+     -1.9316933369E+00    1.9920520002E-01    6.3120000941E+00
+
+  $ cd ..
+  ~~~
+
+* You can see the corresponding example codes online by following these links: [step5/ex_test_Ar_fcc_cluster](/kim-api/v1-v2-porting/simulators/step5/ex_test_Ar_fcc_cluster/ex_test_Ar_fcc_cluster.c), [step5/ex_test_Ar_fcc_cluster_cpp](/kim-api/v1-v2-porting/simulators/step5/ex_test_Ar_fcc_cluster_cpp/ex_test_Ar_fcc_cluster_cpp.cpp), and [step5/ex_test_fcc_cluster_fortran](/kim-api/v1-v2-porting/simulators/step5/ex_test_Ar_fcc_cluster_fortran/ex_test_Ar_fcc_cluster_fortran.f90).  Compare these with the versions from [Step 4](#porting-simulators-step-4) to see the changes associated with this step.
+
+
+---
+
+## Support
+
+If you have problems or questions, send an email with your question and all relevant information to
+
+<openkim@googlegroups.com>
+
+Your message will be posted to the openkim google group:
+
+<http://groups.google.com/group/openkim>
+
+The members of the openkim development team actively monitor this forum and will do their best to help you with your question in a timely fashion. This forum is also used to announce minor new releases and bug fixes.
+
+If you plan to work with the KIM API, it is highly recommended that you become a member of the openkim group. (Just go to the above link and click on "Join this group" on the right of the screen.)
+
+*/
