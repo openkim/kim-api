@@ -158,7 +158,7 @@ programs-install: all dirs-install
 	$(QUELL)for fl in $(install_bin); do $(INSTALL_PROGRAM) -m 0755 "$$fl" "$(install_bindir)/$$fl"; done
 	$(QUELL)for fl in $(install_bin); do ln -fs "$(install_nodest_bindir)/$$fl" "$(DESTDIR)$(bindir)/$$fl"; done
 	$(QUELL)for fl in $(install_libexec); do $(INSTALL_PROGRAM) -m 0755 "$$fl" "$(install_libexecdir)/$(full_package_name)/$$fl"; done
-	$(QUELL)ln -fs "$(install_nodest_libexecdir)/$(full_package_name)" "$(DESTDIR)$(libexecdir)/$(full_package_name)"
+	$(QUELL)fl="$(DESTDIR)$(libexecdir)/$(full_package_name)"; if test -L "$$fl"; then rm -f "$$fl"; fi && ln -s "$(install_nodest_libexecdir)/$(full_package_name)" "$$fl"
 
 
 #

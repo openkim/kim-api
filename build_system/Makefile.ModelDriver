@@ -157,9 +157,9 @@ install-system install-user install-environment: install-%: check-for-empty-envi
 	$(QUELL)$(INSTALL_PROGRAM) -m 0755 "lib$(MODEL_DRIVER_LIB_BUILD).so" "$(install_modeldriverdir)/lib$(MODEL_DRIVER_LIB_BUILD).so"
 	$(QUELL)ln -fs "lib$(MODEL_DRIVER_LIB_BUILD).so" "$(install_modeldriverdir)/lib$(MODEL_DRIVER_LIB).so"
 
-uninstall-system:      install_modeldriverdir = $(SYSTEM_DRIVERS_DIR)/$(MODEL_DRIVER_NAME)
-uninstall-user:        install_modeldriverdir = $(USER_DRIVERS_DIR)/$(MODEL_DRIVER_NAME)
-uninstall-environment: install_modeldriverdir = $(ENVIRONMENT_DRIVERS_DIR)/$(MODEL_DRIVER_NAME)
+uninstall-system:      uninstall_modeldriverdir = $(SYSTEM_DRIVERS_DIR)/$(MODEL_DRIVER_NAME)
+uninstall-user:        uninstall_modeldriverdir = $(USER_DRIVERS_DIR)/$(MODEL_DRIVER_NAME)
+uninstall-environment: uninstall_modeldriverdir = $(ENVIRONMENT_DRIVERS_DIR)/$(MODEL_DRIVER_NAME)
 uninstall-system uninstall-user uninstall-environment: uninstall-%: check-for-empty-environment-collection
 	@printf "Uninstalling... Model Driver... $(MODEL_DRIVER_NAME).\n"
 	$(QUELL)fl="$(uninstall_modeldriverdir)" && if test -d "$$fl"; then rm -rf "$$fl"; fi
