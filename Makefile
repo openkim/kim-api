@@ -104,7 +104,7 @@ completion-all: completion-making-echo
 #
 .PHONY: clean kim-api-cpp-includes-clean kim-api-fortran-clean kim-api-c-clean kim-api-cpp-clean utils-clean completion-clean
 
-clean: kim-api-fortran-includes-clean kim-api-c-includes-clean kim-api-cpp-includes-clean kim-api-fortran-clean kim-api-c-clean kim-api-cpp-clean utils-clean completion-clean
+clean: kim-api-fortran-includes-clean kim-api-c-includes-clean kim-api-cpp-includes-clean kim-api-fortran-clean kim-api-c-clean kim-api-cpp-clean utils-clean completion-clean docs-clean
 
 # build targets involved in "make clean"
 kim-api-fortran-includes-clean:
@@ -126,6 +126,8 @@ utils-clean:
 completion-clean:
 	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C completion clean
 
+docs-clean:
+	$(QUELL)$(MAKE) $(MAKE_FLAGS) -C docs clean
 
 #
 # Main install settings and rules
