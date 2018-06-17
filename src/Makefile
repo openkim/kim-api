@@ -177,7 +177,7 @@ libs-install: libs installdirs
 	@printf "Installing...($(dest_package_dir))................................. src"
         # Install include files
 	$(QUELL)for fl in $(install_include); do $(INSTALL_PROGRAM) -m 0644 "$$fl" "$(install_includedir)/$$fl"; done
-	$(QUELL)ln -fhs "$(install_nodest_includedir)" "$(DESTDIR)$(includedir)/$(full_package_name)"
+	$(QUELL)fl="$(DESTDIR)$(includedir)/$(full_package_name)"; if test -L "$$fl"; then rm -f "$$fl"; fi && ln -s "$(install_nodest_includedir)" "$$fl"
         # Install lib files
 	$(QUELL)$(INSTALL_PROGRAM) -m 0755 "lib$(KIM_LIB_BUILD).so" "$(dest_package_dir)/lib$(KIM_LIB_BUILD).so"
 	$(QUELL)ln -fs "lib$(KIM_LIB_BUILD).so" "$(dest_package_dir)/lib$(KIM_LIB).so"
