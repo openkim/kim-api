@@ -59,8 +59,6 @@ This documentation is organized into the following components:
 
 -# \ref implementation
 
--# \ref version2_differences
-
 -# Example simulators written in C++ (\ref ex_test_Ar_fcc_cluster_cpp.cpp), C
    (\ref ex_test_Ar_fcc_cluster.c), and Fortran
    (\ref ex_test_Ar_fcc_cluster_fortran.F90).
@@ -74,6 +72,8 @@ This documentation is organized into the following components:
 
 -# Example parameterized models (ex_model_Ar_P_LJ.params,
    ex_model_Ar_P_Morse.params, LennardJones612_Universal.params)
+
+-# \ref version2_differences
 
 -# \ref porting_content_from_v1_to_v2
 
