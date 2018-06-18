@@ -63,6 +63,11 @@ paramfile_list =  $(sort $(strip $(filter PARAM_FILE_%_NAME,$(.VARIABLES))))
 paramfile_num_list = $(strip $(subst _NAME,,$(subst PARAM_FILE_,,$(paramfile_list))))
 paramfile_name_list = $(strip $(foreach paramfl,$(paramfile_list), $($(paramfl))))
 num_paramfiles = $(words $(paramfile_num_list))
+paramfile_num_list_check = $(shell i=1; while test $$i -le $(num_paramfiles); do printf "$$i "; i=`expr $$i \+ 1`; done)
+
+ifneq ($(strip $(paramfile_num_list)),$(strip $(paramfile_num_list_check)))
+  $(error Parameter file list numbering must start from 1 (PARAM_FILE_1_NAME) and be sequential (1, 2, 3, ...))
+endif
 
 .INTERMEDIATE: init_wrapper.cpp
 init_wrapper.cpp: $(paramfile_name_list) $(KIM_MAKE_FILES)
