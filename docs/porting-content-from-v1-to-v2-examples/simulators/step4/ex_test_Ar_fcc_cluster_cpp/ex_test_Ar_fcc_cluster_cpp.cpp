@@ -183,10 +183,10 @@ int main()
   }
 
   // check compute arguments
-  int numberOfComputeArguments;
-  KIM::COMPUTE_ARGUMENT_NAME::GetNumberOfComputeArguments(
-      &numberOfComputeArguments);
-  for (int i=0; i<numberOfComputeArguments; ++i)
+  int numberOfComputeArgumentNames;
+  KIM::COMPUTE_ARGUMENT_NAME::GetNumberOfComputeArgumentNames(
+      &numberOfComputeArgumentNames);
+  for (int i=0; i<numberOfComputeArgumentNames; ++i)
   {
     KIM::ComputeArgumentName computeArgumentName;
     KIM::SupportStatus supportStatus;
@@ -233,10 +233,10 @@ int main()
   }
 
   // check compute callbacks
-  int numberOfComputeCallbacks;
-  KIM::COMPUTE_CALLBACK_NAME::GetNumberOfComputeCallbacks(
-      &numberOfComputeCallbacks);
-  for (int i=0; i<numberOfComputeCallbacks; ++i)
+  int numberOfComputeCallbackNames;
+  KIM::COMPUTE_CALLBACK_NAME::GetNumberOfComputeCallbackNames(
+      &numberOfComputeCallbackNames);
+  for (int i=0; i<numberOfComputeCallbackNames; ++i)
   {
     KIM::ComputeCallbackName computeCallbackName;
     KIM::COMPUTE_CALLBACK_NAME::GetComputeCallbackName(i, &computeCallbackName);

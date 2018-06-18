@@ -117,11 +117,11 @@ int main()
   char modelname[NAMESTRLEN];
   int requestedUnitsAccepted;
   int modelArCode;
-  int numberOfComputeArguments;
+  int numberOfComputeArgumentNames;
   KIM_ComputeArguments * computeArguments;
   KIM_ComputeArgumentName computeArgumentName;
   KIM_SupportStatus supportStatus;
-  int numberOfComputeCallbacks;
+  int numberOfComputeCallbackNames;
   KIM_ComputeCallbackName computeCallbackName;
 
   /* Get KIM Model names */
@@ -162,9 +162,9 @@ int main()
   }
 
   /* check arguments */
-  KIM_COMPUTE_ARGUMENT_NAME_GetNumberOfComputeArguments(
-      &numberOfComputeArguments);
-  for (i=0; i<numberOfComputeArguments; ++i)
+  KIM_COMPUTE_ARGUMENT_NAME_GetNumberOfComputeArgumentNames(
+      &numberOfComputeArgumentNames);
+  for (i=0; i<numberOfComputeArgumentNames; ++i)
   {
     error = KIM_COMPUTE_ARGUMENT_NAME_GetComputeArgumentName(
         i, &computeArgumentName);
@@ -207,9 +207,9 @@ int main()
   }
 
   /* check call backs */
-  KIM_COMPUTE_CALLBACK_NAME_GetNumberOfComputeCallbacks(
-      &numberOfComputeCallbacks);
-  for (i=0; i<numberOfComputeCallbacks; ++i)
+  KIM_COMPUTE_CALLBACK_NAME_GetNumberOfComputeCallbackNames(
+      &numberOfComputeCallbackNames);
+  for (i=0; i<numberOfComputeCallbackNames; ++i)
   {
     error = KIM_COMPUTE_CALLBACK_NAME_GetComputeCallbackName(
         i, &computeCallbackName);
