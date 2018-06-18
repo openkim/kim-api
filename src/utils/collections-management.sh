@@ -105,8 +105,13 @@ check_item_compatibility () {
   local query="query={\"kimcode\":\"${item_name}\"}"
   query="${query}"'&fields={"kim-api-version":1}'
   query="${query}"'&database=obj&history=on'
-  local version="`wget -q -O - --post-data="${query}" https://query.openkim.org/api \
-                 | \
+  local version
+  version="`wget -q -O - --post-data="${query}" https://query.openkim.org/api`"
+  if test $? -ne 0; then
+    printf "*** ERROR *** Unable to successfully contact openkim.org to check ${item_name} compatibility.\n"
+    return 1
+  fi
+  version="`printf -- "${version}" | \
                  sed -e 's/\[//g' -e 's/\]//g' \
                  -e 's/{"kim-api-version": "\([0-9.]*\)"}/\1/g'`"
   if test x"" = x"${version}"; then
@@ -311,8 +316,13 @@ get_build_install_item () {
       local query='query={"type":"mo","kim-api-version":{"$regex":"^'"${major_version}"'\\."}}'
       query="${query}"'&fields={"kimcode":1, "kim-api-version":1}'
       query="${query}"'&database=obj'
-      local list="`wget -q -O - --post-data="${query}" https://query.openkim.org/api \
-                     | \
+      local list
+      list="`wget -q -O - --post-data="${query}" https://query.openkim.org/api`"
+      if test $? -ne 0; then  # wget failed
+        printf "*** ERROR *** Unable to successfully contact openkim.org to download models.\n"
+        return 1
+      fi
+      list="`printf -- "${list}" | \
                      sed -e 's/\[//g' -e 's/\]//g' \
                      -e 's/{"kim-api-version": "\([0-9.]*\)", "kimcode": "\([^"]*\)"},*/\1:\2/g'`"
       for version in ${list}; do \
