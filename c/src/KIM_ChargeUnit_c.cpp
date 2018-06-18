@@ -82,13 +82,10 @@ char const * const KIM_ChargeUnitString(KIM_ChargeUnit const chargeUnit)
   return makeChargeUnitCpp(chargeUnit).String().c_str();
 }
 
-KIM_ChargeUnit const KIM_CHARGE_UNIT_unused
-= {KIM::CHARGE_UNIT::unused.chargeUnitID};
-KIM_ChargeUnit const KIM_CHARGE_UNIT_C
-= {KIM::CHARGE_UNIT::C.chargeUnitID};
-KIM_ChargeUnit const KIM_CHARGE_UNIT_e
-= {KIM::CHARGE_UNIT::e.chargeUnitID};
-KIM_ChargeUnit const KIM_CHARGE_UNIT_statC
-= {KIM::CHARGE_UNIT::statC.chargeUnitID};
+#include "KIM_ChargeUnit.inc"
+KIM_ChargeUnit const KIM_CHARGE_UNIT_unused = {ID_unused};
+KIM_ChargeUnit const KIM_CHARGE_UNIT_C = {ID_C};
+KIM_ChargeUnit const KIM_CHARGE_UNIT_e = {ID_e};
+KIM_ChargeUnit const KIM_CHARGE_UNIT_statC = {ID_statC};
 
 }  // extern "C"

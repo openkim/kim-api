@@ -42,8 +42,9 @@ namespace KIM
 // Order doesn't matter as long as all values are unique
 namespace NUMBERING
 {
-Numbering const zeroBased(0);
-Numbering const oneBased(1);
+#include "KIM_Numbering.inc"
+Numbering const zeroBased(ID_zeroBased);
+Numbering const oneBased(ID_oneBased);
 
 namespace
 {

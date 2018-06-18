@@ -42,10 +42,12 @@ namespace KIM
 // Order doesn't matter as long as all values are unique
 namespace CHARGE_UNIT
 {
-ChargeUnit const unused(0);
-ChargeUnit const C(1);
-ChargeUnit const e(2);
-ChargeUnit const statC(3);
+
+#include "KIM_ChargeUnit.inc"
+ChargeUnit const unused(ID_unused);
+ChargeUnit const C(ID_C);
+ChargeUnit const e(ID_e);
+ChargeUnit const statC(ID_statC);
 
 namespace
 {

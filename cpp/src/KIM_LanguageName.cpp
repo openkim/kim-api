@@ -42,9 +42,10 @@ namespace KIM
 // Order doesn't matter as long as all values are unique
 namespace LANGUAGE_NAME
 {
-LanguageName const cpp(0);
-LanguageName const c(1);
-LanguageName const fortran(2);
+#include "KIM_LanguageName.inc"
+LanguageName const cpp(ID_cpp);
+LanguageName const c(ID_c);
+LanguageName const fortran(ID_fortran);
 
 namespace
 {

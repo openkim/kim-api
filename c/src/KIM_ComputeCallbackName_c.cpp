@@ -91,12 +91,13 @@ char const * const KIM_ComputeCallbackNameString(
 }
 
 // Order doesn't matter as long as all values are unique
+#include "KIM_ComputeCallbackName.inc"
 KIM_ComputeCallbackName const KIM_COMPUTE_CALLBACK_NAME_GetNeighborList
-= {KIM::COMPUTE_CALLBACK_NAME::GetNeighborList.computeCallbackNameID};
+= {ID_GetNeighborList};
 KIM_ComputeCallbackName const KIM_COMPUTE_CALLBACK_NAME_ProcessDEDrTerm
-= {KIM::COMPUTE_CALLBACK_NAME::ProcessDEDrTerm.computeCallbackNameID};
+= {ID_ProcessDEDrTerm};
 KIM_ComputeCallbackName const KIM_COMPUTE_CALLBACK_NAME_ProcessD2EDr2Term
-= {KIM::COMPUTE_CALLBACK_NAME::ProcessD2EDr2Term.computeCallbackNameID};
+= {ID_ProcessD2EDr2Term};
 
 void KIM_COMPUTE_CALLBACK_NAME_GetNumberOfComputeCallbackNames(
     int * const numberOfComputeCallbackNames)

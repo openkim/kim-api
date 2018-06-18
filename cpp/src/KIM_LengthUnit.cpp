@@ -42,12 +42,13 @@ namespace KIM
 // Order doesn't matter as long as all values are unique
 namespace LENGTH_UNIT
 {
-LengthUnit const unused(0);
-LengthUnit const A(1);
-LengthUnit const Bohr(2);
-LengthUnit const cm(3);
-LengthUnit const m(4);
-LengthUnit const nm(5);
+#include "KIM_LengthUnit.inc"
+LengthUnit const unused(ID_unused);
+LengthUnit const A(ID_A);
+LengthUnit const Bohr(ID_Bohr);
+LengthUnit const cm(ID_cm);
+LengthUnit const m(ID_m);
+LengthUnit const nm(ID_nm);
 
 namespace
 {

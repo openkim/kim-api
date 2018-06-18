@@ -42,10 +42,11 @@ namespace KIM
 // Order doesn't matter as long as all values are unique
 namespace SUPPORT_STATUS
 {
-SupportStatus const requiredByAPI(0);
-SupportStatus const notSupported(1);
-SupportStatus const required(2);
-SupportStatus const optional(3);
+#include "KIM_SupportStatus.inc"
+SupportStatus const requiredByAPI(ID_requiredByAPI);
+SupportStatus const notSupported(ID_notSupported);
+SupportStatus const required(ID_required);
+SupportStatus const optional(ID_optional);
 
 namespace
 {

@@ -83,19 +83,13 @@ char const * const KIM_EnergyUnitString(KIM_EnergyUnit const energyUnit)
   return makeEnergyUnitCpp(energyUnit).String().c_str();
 }
 
-KIM_EnergyUnit const KIM_ENERGY_UNIT_unused
-= {KIM::ENERGY_UNIT::unused.energyUnitID};
-KIM_EnergyUnit const KIM_ENERGY_UNIT_amu_A2_per_ps2
-= {KIM::ENERGY_UNIT::amu_A2_per_ps2.energyUnitID};
-KIM_EnergyUnit const KIM_ENERGY_UNIT_erg
-= {KIM::ENERGY_UNIT::erg.energyUnitID};
-KIM_EnergyUnit const KIM_ENERGY_UNIT_eV
-= {KIM::ENERGY_UNIT::eV.energyUnitID};
-KIM_EnergyUnit const KIM_ENERGY_UNIT_Hartree
-= {KIM::ENERGY_UNIT::Hartree.energyUnitID};
-KIM_EnergyUnit const KIM_ENERGY_UNIT_J
-= {KIM::ENERGY_UNIT::J.energyUnitID};
-KIM_EnergyUnit const KIM_ENERGY_UNIT_kcal_mol
-= {KIM::ENERGY_UNIT::kcal_mol.energyUnitID};
+#include "KIM_EnergyUnit.inc"
+KIM_EnergyUnit const KIM_ENERGY_UNIT_unused = {ID_unused};
+KIM_EnergyUnit const KIM_ENERGY_UNIT_amu_A2_per_ps2 = {ID_amu_A2_per_ps2};
+KIM_EnergyUnit const KIM_ENERGY_UNIT_erg = {ID_erg};
+KIM_EnergyUnit const KIM_ENERGY_UNIT_eV = {ID_eV};
+KIM_EnergyUnit const KIM_ENERGY_UNIT_Hartree = {ID_Hartree};
+KIM_EnergyUnit const KIM_ENERGY_UNIT_J = {ID_J};
+KIM_EnergyUnit const KIM_ENERGY_UNIT_kcal_mol = {ID_kcal_mol};
 
 }  // extern "C"

@@ -42,11 +42,12 @@ namespace KIM
 // Order doesn't matter as long as all values are unique
 namespace TIME_UNIT
 {
-TimeUnit const unused(0);
-TimeUnit const fs(1);
-TimeUnit const ps(2);
-TimeUnit const ns(3);
-TimeUnit const s(4);
+#include "KIM_TimeUnit.inc"
+TimeUnit const unused(ID_unused);
+TimeUnit const fs(ID_fs);
+TimeUnit const ps(ID_ps);
+TimeUnit const ns(ID_ns);
+TimeUnit const s(ID_s);
 
 namespace
 {

@@ -82,9 +82,8 @@ char const * const KIM_NumberingString(
   return makeNumberingCpp(numbering).String().c_str();
 }
 
-KIM_Numbering const KIM_NUMBERING_zeroBased
-= {KIM::NUMBERING::zeroBased.numberingID};
-KIM_Numbering const KIM_NUMBERING_oneBased
-= {KIM::NUMBERING::oneBased.numberingID};
+#include "KIM_Numbering.inc"
+KIM_Numbering const KIM_NUMBERING_zeroBased = {ID_zeroBased};
+KIM_Numbering const KIM_NUMBERING_oneBased = {ID_oneBased};
 
 }  // extern "C"

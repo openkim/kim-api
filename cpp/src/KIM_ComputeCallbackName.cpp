@@ -43,9 +43,10 @@ namespace KIM
 // Order doesn't matter as long as all values are unique
 namespace COMPUTE_CALLBACK_NAME
 {
-ComputeCallbackName const GetNeighborList(0);
-ComputeCallbackName const ProcessDEDrTerm(1);
-ComputeCallbackName const ProcessD2EDr2Term(2);
+#include "KIM_ComputeCallbackName.inc"
+ComputeCallbackName const GetNeighborList(ID_GetNeighborList);
+ComputeCallbackName const ProcessDEDrTerm(ID_ProcessDEDrTerm);
+ComputeCallbackName const ProcessD2EDr2Term(ID_ProcessD2EDr2Term);
 
 namespace
 {

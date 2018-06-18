@@ -200,16 +200,16 @@ clean:
 install_modelsdir = $(dest_package_dir)/$(modelsdir)
 install_modeldriversdir = $(dest_package_dir)/$(modeldriversdir)
 install_includedir = $(dest_package_dir)/include
-install_include_cpp = KIM_ComputeArgumentName.hpp \
+install_include_cpp = KIM_ChargeUnit.hpp KIM_ChargeUnit.inc\
+                      KIM_ComputeArgumentName.hpp KIM_ComputeArgumentName.inc \
                       KIM_ComputeArguments.hpp \
-                      KIM_ComputeCallbackName.hpp \
-                      KIM_ChargeUnit.hpp \
-                      KIM_DataType.hpp \
-                      KIM_EnergyUnit.hpp \
+                      KIM_ComputeCallbackName.hpp KIM_ComputeCallbackName.inc \
+                      KIM_DataType.hpp KIM_DataType.inc \
+                      KIM_EnergyUnit.hpp KIM_EnergyUnit.inc \
                       KIM_LOG_DEFINES.inc \
                       KIM_LOG_MAXIMUM_LEVEL.inc \
-                      KIM_LanguageName.hpp \
-                      KIM_LengthUnit.hpp \
+                      KIM_LanguageName.hpp KIM_LanguageName.inc \
+                      KIM_LengthUnit.hpp KIM_LengthUnit.inc \
                       KIM_Log.hpp \
                       KIM_LogVerbosity.hpp \
                       KIM_Model.hpp \
@@ -223,13 +223,13 @@ install_include_cpp = KIM_ComputeArgumentName.hpp \
                       KIM_ModelDriverHeaders.hpp \
                       KIM_ModelRefresh.hpp KIM_ModelRefreshLogMacros.hpp \
                       KIM_ModelHeaders.hpp \
-                      KIM_Numbering.hpp \
+                      KIM_Numbering.hpp KIM_Numbering.inc \
                       KIM_SimulatorHeaders.hpp \
                       KIM_SemVer.hpp \
-                      KIM_SpeciesName.hpp \
-                      KIM_SupportStatus.hpp \
-                      KIM_TemperatureUnit.hpp \
-                      KIM_TimeUnit.hpp \
+                      KIM_SpeciesName.hpp KIM_SpeciesName.inc \
+                      KIM_SupportStatus.hpp KIM_SupportStatus.inc \
+                      KIM_TemperatureUnit.hpp KIM_TemperatureUnit.inc \
+                      KIM_TimeUnit.hpp KIM_TimeUnit.inc \
                       KIM_UnitSystem.hpp \
                       KIM_Version.hpp \
                       KIM_func.hpp

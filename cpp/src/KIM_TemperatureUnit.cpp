@@ -42,8 +42,9 @@ namespace KIM
 // Order doesn't matter as long as all values are unique
 namespace TEMPERATURE_UNIT
 {
-TemperatureUnit const unused(0);
-TemperatureUnit const K(1);
+#include "KIM_TemperatureUnit.inc"
+TemperatureUnit const unused(ID_unused);
+TemperatureUnit const K(ID_K);
 
 namespace
 {

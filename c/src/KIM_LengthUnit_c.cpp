@@ -82,17 +82,12 @@ char const * const KIM_LengthUnitString(KIM_LengthUnit const lengthUnit)
   return makeLengthUnitCpp(lengthUnit).String().c_str();
 }
 
-KIM_LengthUnit const KIM_LENGTH_UNIT_unused
-= {KIM::LENGTH_UNIT::unused.lengthUnitID};
-KIM_LengthUnit const KIM_LENGTH_UNIT_A
-= {KIM::LENGTH_UNIT::A.lengthUnitID};
-KIM_LengthUnit const KIM_LENGTH_UNIT_Bohr
-= {KIM::LENGTH_UNIT::Bohr.lengthUnitID};
-KIM_LengthUnit const KIM_LENGTH_UNIT_cm
-= {KIM::LENGTH_UNIT::cm.lengthUnitID};
-KIM_LengthUnit const KIM_LENGTH_UNIT_m
-= {KIM::LENGTH_UNIT::m.lengthUnitID};
-KIM_LengthUnit const KIM_LENGTH_UNIT_nm
-= {KIM::LENGTH_UNIT::nm.lengthUnitID};
+#include "KIM_LengthUnit.inc"
+KIM_LengthUnit const KIM_LENGTH_UNIT_unused = {ID_unused};
+KIM_LengthUnit const KIM_LENGTH_UNIT_A = {ID_A};
+KIM_LengthUnit const KIM_LENGTH_UNIT_Bohr = {ID_Bohr};
+KIM_LengthUnit const KIM_LENGTH_UNIT_cm = {ID_cm};
+KIM_LengthUnit const KIM_LENGTH_UNIT_m = {ID_m};
+KIM_LengthUnit const KIM_LENGTH_UNIT_nm = {ID_nm};
 
 }  // extern "C"

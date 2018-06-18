@@ -101,24 +101,25 @@ char const * const KIM_ComputeArgumentNameString(
 }
 
 // Order doesn't matter as long as all values are unique
+#include "KIM_ComputeArgumentName.inc"
 KIM_ComputeArgumentName const KIM_COMPUTE_ARGUMENT_NAME_numberOfParticles
-= {KIM::COMPUTE_ARGUMENT_NAME::numberOfParticles.computeArgumentNameID};
+= {ID_numberOfParticles};
 KIM_ComputeArgumentName const KIM_COMPUTE_ARGUMENT_NAME_particleSpeciesCodes
-= {KIM::COMPUTE_ARGUMENT_NAME::particleSpeciesCodes.computeArgumentNameID};
+= {ID_particleSpeciesCodes};
 KIM_ComputeArgumentName const KIM_COMPUTE_ARGUMENT_NAME_particleContributing
-= {KIM::COMPUTE_ARGUMENT_NAME::particleContributing.computeArgumentNameID};
+= {ID_particleContributing};
 KIM_ComputeArgumentName const KIM_COMPUTE_ARGUMENT_NAME_coordinates
-= {KIM::COMPUTE_ARGUMENT_NAME::coordinates.computeArgumentNameID};
+= {ID_coordinates};
 KIM_ComputeArgumentName const KIM_COMPUTE_ARGUMENT_NAME_partialEnergy
-= {KIM::COMPUTE_ARGUMENT_NAME::partialEnergy.computeArgumentNameID};
+= {ID_partialEnergy};
 KIM_ComputeArgumentName const KIM_COMPUTE_ARGUMENT_NAME_partialForces
-= {KIM::COMPUTE_ARGUMENT_NAME::partialForces.computeArgumentNameID};
+= {ID_partialForces};
 KIM_ComputeArgumentName const KIM_COMPUTE_ARGUMENT_NAME_partialParticleEnergy
-= {KIM::COMPUTE_ARGUMENT_NAME::partialParticleEnergy.computeArgumentNameID};
+= {ID_partialParticleEnergy};
 KIM_ComputeArgumentName const KIM_COMPUTE_ARGUMENT_NAME_partialVirial
-= {KIM::COMPUTE_ARGUMENT_NAME::partialVirial.computeArgumentNameID};
+= {ID_partialVirial};
 KIM_ComputeArgumentName const KIM_COMPUTE_ARGUMENT_NAME_partialParticleVirial
-= {KIM::COMPUTE_ARGUMENT_NAME::partialParticleVirial.computeArgumentNameID};
+= {ID_partialParticleVirial};
 
 void KIM_COMPUTE_ARGUMENT_NAME_GetNumberOfComputeArgumentNames(
     int * const numberOfComputeArgumentNames)

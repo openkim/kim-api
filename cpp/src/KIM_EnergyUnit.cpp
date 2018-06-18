@@ -42,13 +42,14 @@ namespace KIM
 // Order doesn't matter as long as all values are unique
 namespace ENERGY_UNIT
 {
-EnergyUnit const unused(0);
-EnergyUnit const amu_A2_per_ps2(1);
-EnergyUnit const erg(2);
-EnergyUnit const eV(3);
-EnergyUnit const Hartree(4);
-EnergyUnit const J(5);
-EnergyUnit const kcal_mol(6);
+#include "KIM_EnergyUnit.inc"
+EnergyUnit const unused(ID_unused);
+EnergyUnit const amu_A2_per_ps2(ID_amu_A2_per_ps2);
+EnergyUnit const erg(ID_erg);
+EnergyUnit const eV(ID_eV);
+EnergyUnit const Hartree(ID_Hartree);
+EnergyUnit const J(ID_J);
+EnergyUnit const kcal_mol(ID_kcal_mol);
 
 namespace
 {

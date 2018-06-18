@@ -47,15 +47,16 @@ namespace KIM
 // Order doesn't matter as long as all values are unique
 namespace COMPUTE_ARGUMENT_NAME
 {
-ComputeArgumentName const numberOfParticles(0);
-ComputeArgumentName const particleSpeciesCodes(1);
-ComputeArgumentName const particleContributing(2);
-ComputeArgumentName const coordinates(3);
-ComputeArgumentName const partialEnergy(4);
-ComputeArgumentName const partialForces(5);
-ComputeArgumentName const partialParticleEnergy(6);
-ComputeArgumentName const partialVirial(7);
-ComputeArgumentName const partialParticleVirial(8);
+#include "KIM_ComputeArgumentName.inc"
+ComputeArgumentName const numberOfParticles(ID_numberOfParticles);
+ComputeArgumentName const particleSpeciesCodes(ID_particleSpeciesCodes);
+ComputeArgumentName const particleContributing(ID_particleContributing);
+ComputeArgumentName const coordinates(ID_coordinates);
+ComputeArgumentName const partialEnergy(ID_partialEnergy);
+ComputeArgumentName const partialForces(ID_partialForces);
+ComputeArgumentName const partialParticleEnergy(ID_partialParticleEnergy);
+ComputeArgumentName const partialVirial(ID_partialVirial);
+ComputeArgumentName const partialParticleVirial(ID_partialParticleVirial);
 
 namespace
 {

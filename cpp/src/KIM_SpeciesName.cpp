@@ -43,145 +43,146 @@ namespace KIM
 // Order doesn't matter as long as all values are unique
 namespace SPECIES_NAME
 {
-SpeciesName const electron(0);  // electron
-SpeciesName const H(1);         // Hydrogen
-SpeciesName const He(2);        // Helium
-SpeciesName const Li(3);        // Lithium
-SpeciesName const Be(4);        // Beryllium
-SpeciesName const B(5);         // Boron
-SpeciesName const C(6);         // Carbon
-SpeciesName const N(7);         // Nitrogen
-SpeciesName const O(8);         // Oxygen
-SpeciesName const F(9);         // Fluorine
-SpeciesName const Ne(10);       // Neon
-SpeciesName const Na(11);       // Sodium
-SpeciesName const Mg(12);       // Magnesium
-SpeciesName const Al(13);       // Aluminum
-SpeciesName const Si(14);       // Silicon
-SpeciesName const P(15);        // Phosphorus
-SpeciesName const S(16);        // Sulfur
-SpeciesName const Cl(17);       // Chlorine
-SpeciesName const Ar(18);       // Argon
-SpeciesName const K(19);        // Potassium
-SpeciesName const Ca(20);       // Calcium
-SpeciesName const Sc(21);       // Scandium
-SpeciesName const Ti(22);       // Titanium
-SpeciesName const V(23);        // Vanadium
-SpeciesName const Cr(24);       // Chromium
-SpeciesName const Mn(25);       // Manganese
-SpeciesName const Fe(26);       // Iron
-SpeciesName const Co(27);       // Cobalt
-SpeciesName const Ni(28);       // Nickel
-SpeciesName const Cu(29);       // Copper
-SpeciesName const Zn(30);       // Zinc
-SpeciesName const Ga(31);       // Gallium
-SpeciesName const Ge(32);       // Germanium
-SpeciesName const As(33);       // Arsenic
-SpeciesName const Se(34);       // Selenium
-SpeciesName const Br(35);       // Bromine
-SpeciesName const Kr(36);       // Krypton
-SpeciesName const Rb(37);       // Rubidium
-SpeciesName const Sr(38);       // Strontium
-SpeciesName const Y(39);        // Yttrium
-SpeciesName const Zr(40);       // Zirconium
-SpeciesName const Nb(41);       // Niobium
-SpeciesName const Mo(42);       // Molybdenum
-SpeciesName const Tc(43);       // Technetium
-SpeciesName const Ru(44);       // Ruthenium
-SpeciesName const Rh(45);       // Rhodium
-SpeciesName const Pd(46);       // Palladium
-SpeciesName const Ag(47);       // Silver
-SpeciesName const Cd(48);       // Cadmium
-SpeciesName const In(49);       // Indium
-SpeciesName const Sn(50);       // Tin
-SpeciesName const Sb(51);       // Antimony
-SpeciesName const Te(52);       // Tellurium
-SpeciesName const I(53);        // Iodine
-SpeciesName const Xe(54);       // Xenon
-SpeciesName const Cs(55);       // Cesium
-SpeciesName const Ba(56);       // Barium
-SpeciesName const La(57);       // Lanthanum
-SpeciesName const Ce(58);       // Cerium
-SpeciesName const Pr(59);       // Praseodymium
-SpeciesName const Nd(60);       // Neodymium
-SpeciesName const Pm(61);       // Promethium
-SpeciesName const Sm(62);       // Samarium
-SpeciesName const Eu(63);       // Europium
-SpeciesName const Gd(64);       // Gadolinium
-SpeciesName const Tb(65);       // Terbium
-SpeciesName const Dy(66);       // Dysprosium
-SpeciesName const Ho(67);       // Holmium
-SpeciesName const Er(68);       // Erbium
-SpeciesName const Tm(69);       // Thulium
-SpeciesName const Yb(70);       // Ytterbium
-SpeciesName const Lu(71);       // Lutetium
-SpeciesName const Hf(72);       // Hafnium
-SpeciesName const Ta(73);       // Tantalum
-SpeciesName const W(74);        // Tungsten
-SpeciesName const Re(75);       // Rhenium
-SpeciesName const Os(76);       // Osmium
-SpeciesName const Ir(77);       // Iridium
-SpeciesName const Pt(78);       // Platinum
-SpeciesName const Au(79);       // Gold
-SpeciesName const Hg(80);       // Mercury
-SpeciesName const Tl(81);       // Thallium
-SpeciesName const Pb(82);       // Lead
-SpeciesName const Bi(83);       // Bismuth
-SpeciesName const Po(84);       // Polonium
-SpeciesName const At(85);       // Astatine
-SpeciesName const Rn(86);       // Radon
-SpeciesName const Fr(87);       // Francium
-SpeciesName const Ra(88);       // Radium
-SpeciesName const Ac(89);       // Actinium
-SpeciesName const Th(90);       // Thorium
-SpeciesName const Pa(91);       // Protactinium
-SpeciesName const U(92);        // Uranium
-SpeciesName const Np(93);       // Neptunium
-SpeciesName const Pu(94);       // Plutonium
-SpeciesName const Am(95);       // Americium
-SpeciesName const Cm(96);       // Curium
-SpeciesName const Bk(97);       // Berkelium
-SpeciesName const Cf(98);       // Californium
-SpeciesName const Es(99);       // Einsteinium
-SpeciesName const Fm(100);      // Fermium
-SpeciesName const Md(101);      // Mendelevium
-SpeciesName const No(102);      // Nobelium
-SpeciesName const Lr(103);      // Lawrencium
-SpeciesName const Rf(104);      // Rutherfordium
-SpeciesName const Db(105);      // Dubnium
-SpeciesName const Sg(106);      // Seaborgium
-SpeciesName const Bh(107);      // Bohrium
-SpeciesName const Hs(108);      // Hassium
-SpeciesName const Mt(109);      // Meitnerium
-SpeciesName const Ds(110);      // Darmstadtium
-SpeciesName const Rg(111);      // Roentgenium
-SpeciesName const Cn(112);      // Copernicium
-SpeciesName const Uut(113);     // Ununtrium
-SpeciesName const Fl(114);      // Flerovium
-SpeciesName const Uup(115);     // Ununpentium
-SpeciesName const Lv(116);      // Livermorium
-SpeciesName const Uus(117);     // Ununseptium
-SpeciesName const Uuo(118);     // Ununoctium
-SpeciesName const user01(201);  // user defined
-SpeciesName const user02(202);  // user defined
-SpeciesName const user03(203);  // user defined
-SpeciesName const user04(204);  // user defined
-SpeciesName const user05(205);  // user defined
-SpeciesName const user06(206);  // user defined
-SpeciesName const user07(207);  // user defined
-SpeciesName const user08(208);  // user defined
-SpeciesName const user09(209);  // user defined
-SpeciesName const user10(210);  // user defined
-SpeciesName const user11(211);  // user defined
-SpeciesName const user12(212);  // user defined
-SpeciesName const user13(213);  // user defined
-SpeciesName const user14(214);  // user defined
-SpeciesName const user15(215);  // user defined
-SpeciesName const user16(216);  // user defined
-SpeciesName const user17(217);  // user defined
-SpeciesName const user18(218);  // user defined
-SpeciesName const user19(219);  // user defined
-SpeciesName const user20(220);  // user defined
+#include "KIM_SpeciesName.inc"
+SpeciesName const electron(ID_electron);  // electron
+SpeciesName const H(ID_H);                // Hydrogen
+SpeciesName const He(ID_He);              // Helium
+SpeciesName const Li(ID_Li);              // Lithium
+SpeciesName const Be(ID_Be);              // Beryllium
+SpeciesName const B(ID_B);                // Boron
+SpeciesName const C(ID_C);                // Carbon
+SpeciesName const N(ID_N);                // Nitrogen
+SpeciesName const O(ID_O);                // Oxygen
+SpeciesName const F(ID_F);                // Fluorine
+SpeciesName const Ne(ID_Ne);              // Neon
+SpeciesName const Na(ID_Na);              // Sodium
+SpeciesName const Mg(ID_Mg);              // Magnesium
+SpeciesName const Al(ID_Al);              // Aluminum
+SpeciesName const Si(ID_Si);              // Silicon
+SpeciesName const P(ID_P);                // Phosphorus
+SpeciesName const S(ID_S);                // Sulfur
+SpeciesName const Cl(ID_Cl);              // Chlorine
+SpeciesName const Ar(ID_Ar);              // Argon
+SpeciesName const K(ID_K);                // Potassium
+SpeciesName const Ca(ID_Ca);              // Calcium
+SpeciesName const Sc(ID_Sc);              // Scandium
+SpeciesName const Ti(ID_Ti);              // Titanium
+SpeciesName const V(ID_V);                // Vanadium
+SpeciesName const Cr(ID_Cr);              // Chromium
+SpeciesName const Mn(ID_Mn);              // Manganese
+SpeciesName const Fe(ID_Fe);              // Iron
+SpeciesName const Co(ID_Co);              // Cobalt
+SpeciesName const Ni(ID_Ni);              // Nickel
+SpeciesName const Cu(ID_Cu);              // Copper
+SpeciesName const Zn(ID_Zn);              // Zinc
+SpeciesName const Ga(ID_Ga);              // Gallium
+SpeciesName const Ge(ID_Ge);              // Germanium
+SpeciesName const As(ID_As);              // Arsenic
+SpeciesName const Se(ID_Se);              // Selenium
+SpeciesName const Br(ID_Br);              // Bromine
+SpeciesName const Kr(ID_Kr);              // Krypton
+SpeciesName const Rb(ID_Rb);              // Rubidium
+SpeciesName const Sr(ID_Sr);              // Strontium
+SpeciesName const Y(ID_Y);                // Yttrium
+SpeciesName const Zr(ID_Zr);              // Zirconium
+SpeciesName const Nb(ID_Nb);              // Niobium
+SpeciesName const Mo(ID_Mo);              // Molybdenum
+SpeciesName const Tc(ID_Tc);              // Technetium
+SpeciesName const Ru(ID_Ru);              // Ruthenium
+SpeciesName const Rh(ID_Rh);              // Rhodium
+SpeciesName const Pd(ID_Pd);              // Palladium
+SpeciesName const Ag(ID_Ag);              // Silver
+SpeciesName const Cd(ID_Cd);              // Cadmium
+SpeciesName const In(ID_In);              // Indium
+SpeciesName const Sn(ID_Sn);              // Tin
+SpeciesName const Sb(ID_Sb);              // Antimony
+SpeciesName const Te(ID_Te);              // Tellurium
+SpeciesName const I(ID_I);                // Iodine
+SpeciesName const Xe(ID_Xe);              // Xenon
+SpeciesName const Cs(ID_Cs);              // Cesium
+SpeciesName const Ba(ID_Ba);              // Barium
+SpeciesName const La(ID_La);              // Lanthanum
+SpeciesName const Ce(ID_Ce);              // Cerium
+SpeciesName const Pr(ID_Pr);              // Praseodymium
+SpeciesName const Nd(ID_Nd);              // Neodymium
+SpeciesName const Pm(ID_Pm);              // Promethium
+SpeciesName const Sm(ID_Sm);              // Samarium
+SpeciesName const Eu(ID_Eu);              // Europium
+SpeciesName const Gd(ID_Gd);              // Gadolinium
+SpeciesName const Tb(ID_Tb);              // Terbium
+SpeciesName const Dy(ID_Dy);              // Dysprosium
+SpeciesName const Ho(ID_Ho);              // Holmium
+SpeciesName const Er(ID_Er);              // Erbium
+SpeciesName const Tm(ID_Tm);              // Thulium
+SpeciesName const Yb(ID_Yb);              // Ytterbium
+SpeciesName const Lu(ID_Lu);              // Lutetium
+SpeciesName const Hf(ID_Hf);              // Hafnium
+SpeciesName const Ta(ID_Ta);              // Tantalum
+SpeciesName const W(ID_W);                // Tungsten
+SpeciesName const Re(ID_Re);              // Rhenium
+SpeciesName const Os(ID_Os);              // Osmium
+SpeciesName const Ir(ID_Ir);              // Iridium
+SpeciesName const Pt(ID_Pt);              // Platinum
+SpeciesName const Au(ID_Au);              // Gold
+SpeciesName const Hg(ID_Hg);              // Mercury
+SpeciesName const Tl(ID_Tl);              // Thallium
+SpeciesName const Pb(ID_Pb);              // Lead
+SpeciesName const Bi(ID_Bi);              // Bismuth
+SpeciesName const Po(ID_Po);              // Polonium
+SpeciesName const At(ID_At);              // Astatine
+SpeciesName const Rn(ID_Rn);              // Radon
+SpeciesName const Fr(ID_Fr);              // Francium
+SpeciesName const Ra(ID_Ra);              // Radium
+SpeciesName const Ac(ID_Ac);              // Actinium
+SpeciesName const Th(ID_Th);              // Thorium
+SpeciesName const Pa(ID_Pa);              // Protactinium
+SpeciesName const U(ID_U);                // Uranium
+SpeciesName const Np(ID_Np);              // Neptunium
+SpeciesName const Pu(ID_Pu);              // Plutonium
+SpeciesName const Am(ID_Am);              // Americium
+SpeciesName const Cm(ID_Cm);              // Curium
+SpeciesName const Bk(ID_Bk);              // Berkelium
+SpeciesName const Cf(ID_Cf);              // Californium
+SpeciesName const Es(ID_Es);              // Einsteinium
+SpeciesName const Fm(ID_Fm);              // Fermium
+SpeciesName const Md(ID_Md);              // Mendelevium
+SpeciesName const No(ID_No);              // Nobelium
+SpeciesName const Lr(ID_Lr);              // Lawrencium
+SpeciesName const Rf(ID_Rf);              // Rutherfordium
+SpeciesName const Db(ID_Db);              // Dubnium
+SpeciesName const Sg(ID_Sg);              // Seaborgium
+SpeciesName const Bh(ID_Bh);              // Bohrium
+SpeciesName const Hs(ID_Hs);              // Hassium
+SpeciesName const Mt(ID_Mt);              // Meitnerium
+SpeciesName const Ds(ID_Ds);              // Darmstadtium
+SpeciesName const Rg(ID_Rg);              // Roentgenium
+SpeciesName const Cn(ID_Cn);              // Copernicium
+SpeciesName const Uut(ID_Uut);            // Ununtrium
+SpeciesName const Fl(ID_Fl);              // Flerovium
+SpeciesName const Uup(ID_Uup);            // Ununpentium
+SpeciesName const Lv(ID_Lv);              // Livermorium
+SpeciesName const Uus(ID_Uus);            // Ununseptium
+SpeciesName const Uuo(ID_Uuo);            // Ununoctium
+SpeciesName const user01(ID_user01);      // user defined
+SpeciesName const user02(ID_user02);      // user defined
+SpeciesName const user03(ID_user03);      // user defined
+SpeciesName const user04(ID_user04);      // user defined
+SpeciesName const user05(ID_user05);      // user defined
+SpeciesName const user06(ID_user06);      // user defined
+SpeciesName const user07(ID_user07);      // user defined
+SpeciesName const user08(ID_user08);      // user defined
+SpeciesName const user09(ID_user09);      // user defined
+SpeciesName const user10(ID_user10);      // user defined
+SpeciesName const user11(ID_user11);      // user defined
+SpeciesName const user12(ID_user12);      // user defined
+SpeciesName const user13(ID_user13);      // user defined
+SpeciesName const user14(ID_user14);      // user defined
+SpeciesName const user15(ID_user15);      // user defined
+SpeciesName const user16(ID_user16);      // user defined
+SpeciesName const user17(ID_user17);      // user defined
+SpeciesName const user18(ID_user18);      // user defined
+SpeciesName const user19(ID_user19);      // user defined
+SpeciesName const user20(ID_user20);      // user defined
 
 namespace
 {

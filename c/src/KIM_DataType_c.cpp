@@ -82,7 +82,8 @@ char const * const KIM_DataTypeString(KIM_DataType const dataType)
   return makeDataTypeCpp(dataType).String().c_str();
 }
 
-KIM_DataType const KIM_DATA_TYPE_Integer = {KIM::DATA_TYPE::Integer.dataTypeID};
-KIM_DataType const KIM_DATA_TYPE_Double = {KIM::DATA_TYPE::Double.dataTypeID};
+#include "KIM_DataType.inc"
+KIM_DataType const KIM_DATA_TYPE_Integer = {ID_Integer};
+KIM_DataType const KIM_DATA_TYPE_Double = {ID_Double};
 
 }  // extern "C"
