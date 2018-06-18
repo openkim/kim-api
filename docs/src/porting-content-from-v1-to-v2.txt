@@ -50,6 +50,8 @@ instructions on how to transition content from version 1 to 2.
 A complete translation table of v1 and v2 identifier names is available on the
 \ref version2_differences page.
 
+This page includes instructions for \ref porting-models and for \ref porting-simulators.
+
 \section porting-models Porting Models
 
 Model drivers and stand-alone models compatible with version 1 of the
