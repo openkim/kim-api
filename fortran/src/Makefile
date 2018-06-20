@@ -39,33 +39,31 @@ VPATH = ../include
 KIMINCLUDEFLAGS = -I../include
 
 # Definition of fortran object files
-OBJF = kim_charge_unit_f.o \
-       kim_compute_argument_name_f.o \
-       kim_compute_arguments_f.o \
-       kim_compute_callback_name_f.o \
-       kim_data_type_f.o \
-       kim_energy_unit_f.o \
-       kim_language_name_f.o \
-       kim_length_unit_f.o \
-       kim_log_f.o \
-       kim_log_verbosity_module.o \
-       kim_log_verbosity_f.o \
-       kim_model_f.o \
-       kim_model_compute_f.o \
-       kim_model_compute_arguments_f.o \
-       kim_model_compute_arguments_create_f.o \
-       kim_model_compute_arguments_destroy_f.o \
-       kim_model_create_f.o \
-       kim_model_destroy_f.o \
-       kim_model_driver_create_f.o \
-       kim_model_null_handles.o \
-       kim_model_refresh_f.o \
-       kim_numbering_f.o \
-       kim_sem_ver_f.o \
-       kim_species_name_f.o \
-       kim_support_status_f.o \
-       kim_temperature_unit_f.o \
-       kim_time_unit_f.o
+OBJF = kim_charge_unit_f.o kim_charge_unit_module.o \
+       kim_compute_argument_name_f.o kim_compute_argument_name_module.o \
+       kim_compute_arguments_f.o  kim_compute_arguments_module.o \
+       kim_compute_callback_name_f.o kim_compute_callback_name_module.o \
+       kim_data_type_f.o kim_data_type_module.o \
+       kim_energy_unit_f.o kim_energy_unit_module.o \
+       kim_language_name_f.o kim_language_name_module.o \
+       kim_length_unit_f.o kim_length_unit_module.o \
+       kim_log_f.o kim_log_module.o \
+       kim_log_verbosity_f.o kim_log_verbosity_module.o \
+       kim_model_f.o kim_model_module.o \
+       kim_model_compute_f.o kim_model_compute_module.o \
+       kim_model_compute_arguments_f.o kim_model_compute_arguments_module.o \
+       kim_model_compute_arguments_create_f.o kim_model_compute_arguments_create_module.o \
+       kim_model_compute_arguments_destroy_f.o kim_model_compute_arguments_destroy_module.o \
+       kim_model_create_f.o kim_model_create_module.o \
+       kim_model_destroy_f.o kim_model_destroy_module.o \
+       kim_model_driver_create_f.o kim_model_driver_create_module.o \
+       kim_model_refresh_f.o kim_model_refresh_module.o \
+       kim_numbering_f.o kim_numbering_module.o \
+       kim_sem_ver_f.o kim_sem_ver_module.o \
+       kim_species_name_f.o kim_species_name_module.o \
+       kim_support_status_f.o kim_support_status_module.o \
+       kim_temperature_unit_f.o kim_temperature_unit_module.o \
+       kim_time_unit_f.o kim_time_unit_module.o
 
 ##fortran on/of
 #ifdef KIM_NO_FORTRAN
@@ -119,7 +117,6 @@ kim_model_create_f.o: kim_model_create_f.f90 kim_model_create_module.mod kim_num
 kim_model_destroy_f.o: kim_model_destroy_f.f90 kim_model_destroy_module.mod kim_log_verbosity_module.mod
 kim_model_driver_create_f.o: kim_model_driver_create_f.f90 kim_model_driver_create_module.mod kim_numbering_module.mod kim_language_name_module.mod kim_species_name_module.mod kim_compute_arguments_module.mod kim_support_status_module.mod kim_unit_system_module.mod kim_log_verbosity_module.mod
 kim_model_f.o: kim_model_f.f90 kim_model_module.mod kim_numbering_module.mod kim_unit_system_module.mod kim_compute_arguments_module.mod kim_support_status_module.mod kim_language_name_module.mod kim_species_name_module.mod kim_data_type_module.mod kim_log_verbosity_module.mod
-kim_model_null_handles.o: kim_model_null_handles.cpp
 kim_model_refresh_f.o: kim_model_refresh_f.f90 kim_model_refresh_module.mod kim_log_verbosity_module.mod
 kim_numbering_f.o: kim_numbering_f.f90 kim_numbering_module.mod
 kim_sem_ver_f.o: kim_sem_ver_f.f90 kim_sem_ver_module.mod
