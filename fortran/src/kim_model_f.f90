@@ -716,7 +716,7 @@ subroutine kim_model_string(model_handle, string)
   type(kim_model_type), pointer :: model
 
   type(c_ptr) :: p
-  character(len=len(string)+1), pointer :: fp
+  character(len=len(string)+1, kind=c_char), pointer :: fp
   integer(c_int) :: null_index
 
   call c_f_pointer(model_handle%p, model)

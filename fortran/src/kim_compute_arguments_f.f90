@@ -562,7 +562,7 @@ subroutine kim_compute_arguments_string(compute_arguments_handle, string)
   type(kim_compute_arguments_type), pointer :: compute_arguments
 
   type(c_ptr) :: p
-  character(len=len(string)+1), pointer :: fp
+  character(len=len(string)+1, kind=c_char), pointer :: fp
   integer(c_int) :: null_index
 
   call c_f_pointer(compute_arguments_handle%p, compute_arguments)

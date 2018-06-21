@@ -545,7 +545,7 @@ subroutine kim_model_compute_arguments_string(model_compute_arguments_handle, &
   type(kim_model_compute_arguments_type), pointer :: model_compute_arguments
 
   type(c_ptr) :: p
-  character(len=len(string)+1), pointer :: fp
+  character(len=len(string)+1, kind=c_char), pointer :: fp
   integer(c_int) :: null_index
 
   call c_f_pointer(model_compute_arguments_handle%p, model_compute_arguments)

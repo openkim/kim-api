@@ -214,7 +214,7 @@ subroutine kim_model_refresh_string(model_refresh_handle, string)
   type(kim_model_refresh_type), pointer :: model_refresh
 
   type(c_ptr) :: p
-  character(len=len(string)+1), pointer :: fp
+  character(len=len(string)+1, kind=c_char), pointer :: fp
   integer(c_int) :: null_index
 
   call c_f_pointer(model_refresh_handle%p, model_refresh)

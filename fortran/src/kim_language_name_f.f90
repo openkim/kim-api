@@ -103,7 +103,7 @@ subroutine kim_language_name_string(language_name, string)
   character(len=*), intent(out) :: string
 
   type(c_ptr) :: p
-  character(len=len(string)+1), pointer :: fp
+  character(len=len(string)+1, kind=c_char), pointer :: fp
   integer(c_int) :: null_index
 
   p = get_string(language_name)

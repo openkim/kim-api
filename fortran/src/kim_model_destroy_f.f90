@@ -152,7 +152,7 @@ subroutine kim_model_destroy_string(model_destroy_handle, string)
   type(kim_model_destroy_type), pointer :: model_destroy
 
   type(c_ptr) :: p
-  character(len=len(string)+1), pointer :: fp
+  character(len=len(string)+1, kind=c_char), pointer :: fp
   integer(c_int) :: null_index
 
   call c_f_pointer(model_destroy_handle%p, model_destroy)

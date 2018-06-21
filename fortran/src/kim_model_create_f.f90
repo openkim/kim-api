@@ -644,7 +644,7 @@ subroutine kim_model_create_string(model_create_handle, string)
   type(kim_model_create_type), pointer :: model_create
 
   type(c_ptr) :: p
-  character(len=len(string)+1), pointer :: fp
+  character(len=len(string)+1, kind=c_char), pointer :: fp
   integer(c_int) :: null_index
 
   call c_f_pointer(model_create_handle%p, model_create)

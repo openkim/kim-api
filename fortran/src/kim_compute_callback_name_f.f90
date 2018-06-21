@@ -126,7 +126,7 @@ subroutine kim_compute_callback_name_string(compute_callback_name, string)
   character(len=*), intent(out) :: string
 
   type(c_ptr) :: p
-  character(len=len(string)+1), pointer :: fp
+  character(len=len(string)+1, kind=c_char), pointer :: fp
   integer(c_int) :: null_index
 
   p = get_string(compute_callback_name)

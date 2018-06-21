@@ -152,7 +152,7 @@ subroutine kim_model_compute_string(model_compute_handle, string)
   type(kim_model_compute_type), pointer :: model_compute
 
   type(c_ptr) :: p
-  character(len=len(string)+1), pointer :: fp
+  character(len=len(string)+1, kind=c_char), pointer :: fp
   integer(c_int) :: null_index
 
   call c_f_pointer(model_compute_handle%p, model_compute)

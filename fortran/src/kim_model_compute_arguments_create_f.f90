@@ -263,7 +263,7 @@ subroutine kim_model_compute_arguments_create_string( &
     model_commpute_arguments_create
 
   type(c_ptr) :: p
-  character(len=len(string)+1), pointer :: fp
+  character(len=len(string)+1, kind=c_char), pointer :: fp
   integer(c_int) :: null_index
 
   call c_f_pointer(model_commpute_arguments_create_handle%p, &
