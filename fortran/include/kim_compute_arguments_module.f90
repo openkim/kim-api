@@ -57,8 +57,7 @@ module kim_compute_arguments_module
     type(c_ptr) :: p = c_null_ptr
   end type kim_compute_arguments_handle_type
 
-  type(kim_compute_arguments_handle_type), protected, &
-    bind(c,name="KIM_COMPUTE_ARGUMENTS_null_handle") &
+  type(kim_compute_arguments_handle_type), protected &
     :: kim_compute_arguments_null_handle
 
   interface operator (.eq.)

@@ -49,8 +49,7 @@ module kim_model_compute_module
     type(c_ptr) :: p = c_null_ptr
   end type kim_model_compute_handle_type
 
-  type(kim_model_compute_handle_type), protected, &
-    bind(c,name="KIM_MODEL_COMPUTE_null_handle") &
+  type(kim_model_compute_handle_type), protected &
     :: kim_model_compute_null_handle
 
   interface operator (.eq.)
