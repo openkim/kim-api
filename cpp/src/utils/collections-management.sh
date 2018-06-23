@@ -52,7 +52,7 @@ usage () {
   printf "  ${command} set-user-drivers-dir <directory>\n"
   printf "  ${command} install\n"
   printf "          (CWD | environment | user | system [--sudo])\n"
-  printf "          (<openkim-item-id>... | <local-item-path>... | OpenKIM)\n"
+  printf "          (<openkim-item-id>... | <local-item-path>... | OpenKIM | OpenKIM_with_history)\n"
   printf "  ${command} reinstall [--interacitive] [--sudo]\n"
   printf "          (<openkim-item-id> | <local-item-path>)...\n"
   printf "  ${command} remove [--interactive] [--sudo] <item-id>...\n"
@@ -71,7 +71,9 @@ usage () {
   printf "install:\n"
   printf "  Install model and/or model driver from openkim.org or from a local path\n"
   printf "  (Installing to the environment collection places items in the first\n"
-  printf "   directory of the list.)\n"
+  printf "   directory of the list.)  'OpenKIM' installs all 'current' items\n"
+  printf "   found at openkim.org.  'OpenKIM_with_history' installs all 'current'\n"
+  printf "   and all 'old' items.\n"
   printf "\n"
   printf "reinstall:\n"
   printf "  Remove and reinstall items.\n"
@@ -246,6 +248,9 @@ get_build_install_item () {
   if test x"OpenKIM" = x"${item_name}"; then
     found_item=""
     item_type="OpenKIM"
+  elif test x"OpenKIM_with_history" = x"${item_name}"; then
+    found_item=""
+    item_type="OpenKIM_with_history"
   else
     found_item="`${collections_info} model_drivers find "${item_name}"`"
     found_item="${found_item}""`${collections_info} models find "${item_name}"`"
@@ -272,10 +277,13 @@ get_build_install_item () {
     cd "${build_dir}" || return 1
 
     # download item (and possibly its driver)
-    if test x"OpenKIM" = x"${item_type}"; then
+    if test x"OpenKIM" = x"${item_type}" -o x"OpenKIM_with_history" = x"${item_type}"; then
       local query='query={"type":"mo","kim-api-version":{"$regex":"^'"${major_version}"'\\."}}'
       query="${query}"'&fields={"kimcode":1, "kim-api-version":1}'
       query="${query}"'&database=obj'
+      if test x"OpenKIM_with_history" = x"${item_type}"; then
+        query="${query}"'&history=on'
+      fi
       local list
       list="`wget -q -O - --post-data="${query}" https://query.openkim.org/api`"
       if test $? -ne 0; then  # wget failed

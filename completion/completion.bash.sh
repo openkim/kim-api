@@ -105,14 +105,14 @@ _###FULL#PACKAGE#NAME###-collections-management()
         fi
         opts=""
         if test ${COMP_CWORD} -eq 3 -a x"system" = x"${COMP_WORDS[2]}"; then
-          opts="--sudo OpenKIM"
+          opts="--sudo OpenKIM OpenKIM_with_history"
         elif test ${COMP_CWORD} -eq 3; then
-          opts="OpenKIM"
+          opts="OpenKIM OpenKIM_with_history"
         fi
 
         local query='query={"type":"mo","kim-api-version":{"$regex":"^###MAJOR#VERSION###\\."}}'
         query="${query}"'&fields={"kimcode":1}'
-        query="${query}"'&database=obj'
+        query="${query}"'&database=obj&history=on'
         local list=`wget -q -O - --post-data="${query}" \
                     https://query.openkim.org/api | \
                     sed -e 's/\[//g' -e 's/\]//g' \
