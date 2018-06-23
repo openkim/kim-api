@@ -102,8 +102,12 @@ int ModelLibrary::Open(bool const typeIsModel, std::string const & modelName)
 #endif
   LOG_DEBUG("Enter  " + callString);
 
-  if (libraryHandle_ != 0) return true;  // already open
-
+  if (libraryHandle_ != 0)
+  {
+    LOG_ERROR("");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;  // already open
+  }
 
   modelName_ = modelName;
 
@@ -111,7 +115,12 @@ int ModelLibrary::Open(bool const typeIsModel, std::string const & modelName)
   bool accessible = findItem(
       (typeIsModel ? OLD_KIM::KIM_MODELS_DIR : OLD_KIM::KIM_MODEL_DRIVERS_DIR),
       modelName_, &item, log_);
-  if (!accessible) return true;  // cannot find modelName
+  if (!accessible)
+  {
+    LOG_ERROR("");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;  // cannot find modelName
+  }
   libraryPath_ = item[OLD_KIM::IE_DIR] + "/" + item[OLD_KIM::IE_NAME] + "/"
       + (typeIsModel ? MODELLIBFILE : MODELDRIVERLIBFILE) + ".so";
 
