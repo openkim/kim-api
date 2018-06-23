@@ -59,6 +59,7 @@ typedef int (GetNeighborFunction)(void const * const, int const,
                                   int * const, int const ** const);
 // type declaration for vector of constant dimension
 typedef double VectorOfSizeDIM[DIMENSION];
+typedef double VectorOfSizeSix[6];
 
 // helper routine declarations
 void AllocateAndInitialize2DArray(double**& arrayPtr, int const extentZero,
@@ -203,12 +204,16 @@ class LennardJones612Implementation
       bool& isComputeEnergy,
       bool& isComputeForces,
       bool& isComputeParticleEnergy,
+      bool& isComputeVirial,
+      bool& isComputeParticleVirial,
       int const*& particleSpeciesCodes,
       int const*& particleContributing,
       VectorOfSizeDIM const*& coordinates,
       double*& energy,
       double*& particleEnergy,
-      VectorOfSizeDIM*& forces);
+      VectorOfSizeDIM*& forces,
+      VectorOfSizeSix*& virial,
+      VectorOfSizeSix*& particleViral);
   int CheckParticleSpeciesCodes(KIM::ModelCompute const * const modelCompute,
                                 int const* const particleSpeciesCodes) const;
   int GetComputeIndex(const bool& isComputeProcess_dEdr,
@@ -216,12 +221,27 @@ class LennardJones612Implementation
                       const bool& isComputeEnergy,
                       const bool& isComputeForces,
                       const bool& isComputeParticleEnergy,
+                      const bool& isComputeVirial,
+                      const bool& isComputeParticleVirial,
                       const bool& isShift) const;
+  void ProcessVirialTerm(const double& dEidr,
+                         const double& rij,
+                         const double* const r_ij_const,
+                         const int& i,
+                         const int& j,
+                         VectorOfSizeSix virial) const;
+  void ProcessParticleVirialTerm(const double& dEidr,
+                                 const double& rij,
+                                 const double* const r_ij_const,
+                                 const int& i,
+                                 const int& j,
+                                 VectorOfSizeSix* const particleVirial) const;
 
   // compute functions
   template< bool isComputeProcess_dEdr, bool isComputeProcess_d2Edr2,
             bool isComputeEnergy, bool isComputeForces,
-            bool isComputeParticleEnergy, bool isShift >
+            bool isComputeParticleEnergy, bool isComputeVirial,
+            bool isComputeParticleVirial, bool isShift >
   int Compute(KIM::ModelCompute const * const modelCompute,
               KIM::ModelComputeArguments const * const modelComputeArguments,
               const int* const particleSpeciesCodes,
@@ -229,7 +249,9 @@ class LennardJones612Implementation
               const VectorOfSizeDIM* const coordinates,
               double* const energy,
               VectorOfSizeDIM* const forces,
-              double* const particleEnergy) const;
+              double* const particleEnergy,
+              VectorOfSizeSix virial,
+              VectorOfSizeSix* const particleVirial) const;
 };
 
 //==============================================================================
@@ -253,9 +275,10 @@ class LennardJones612Implementation
 
 //******************************************************************************
 #include "KIM_ModelComputeLogMacros.hpp"
-template< bool isComputeProcess_dEdr, bool isComputeProcess_d2Edr2,
-          bool isComputeEnergy, bool isComputeForces,
-          bool isComputeParticleEnergy, bool isShift >
+  template< bool isComputeProcess_dEdr, bool isComputeProcess_d2Edr2,
+            bool isComputeEnergy, bool isComputeForces,
+            bool isComputeParticleEnergy, bool isComputeVirial,
+            bool isComputeParticleVirial, bool isShift >
 int LennardJones612Implementation::Compute(
     KIM::ModelCompute const * const modelCompute,
     KIM::ModelComputeArguments const * const modelComputeArguments,
@@ -264,7 +287,9 @@ int LennardJones612Implementation::Compute(
     const VectorOfSizeDIM* const coordinates,
     double* const energy,
     VectorOfSizeDIM* const forces,
-    double* const particleEnergy) const
+    double* const particleEnergy,
+    VectorOfSizeSix virial,
+    VectorOfSizeSix* const particleVirial) const
 {
   int ier = false;
 
@@ -272,13 +297,19 @@ int LennardJones612Implementation::Compute(
       (isComputeParticleEnergy == false) &&
       (isComputeForces == false) &&
       (isComputeProcess_dEdr == false) &&
-      (isComputeProcess_d2Edr2 == false))
+      (isComputeProcess_d2Edr2 == false) &&
+      (isComputeVirial == false) &&
+      (isComputeParticleVirial == false))
     return ier;
 
   // initialize energy and forces
   if (isComputeEnergy == true)
   {
     *energy = 0.0;
+  }
+  if (isComputeVirial == true)
+  {
+    for (int i = 0; i < 6; ++i) virial[i] = 0.0;
   }
   if (isComputeParticleEnergy == true)
   {
@@ -295,6 +326,15 @@ int LennardJones612Implementation::Compute(
     {
       for (int j = 0; j < DIMENSION; ++j)
         forces[i][j] = 0.0;
+    }
+  }
+  if (isComputeParticleVirial == true)
+  {
+    int const cachedNumParticles = cachedNumberOfParticles_;
+    for (int i = 0; i < cachedNumParticles; ++i)
+    {
+      for (int j = 0; j < 6; ++j)
+        particleVirial[i][j] = 0.0;
     }
   }
 
@@ -364,7 +404,8 @@ int LennardJones612Implementation::Compute(
             d2Eidr2 = 0.5*d2phi;
           }
 
-          if ((isComputeProcess_dEdr == true) || (isComputeForces == true))
+          if ((isComputeProcess_dEdr == true) || (isComputeForces == true) ||
+              (isComputeVirial == true) || (isComputeParticleVirial == true))
           { // Compute dphi
             dphiByR =
                 r6iv * (constTwentyFourEpsSig6_2D[iSpecies][jSpecies] -
@@ -410,16 +451,33 @@ int LennardJones612Implementation::Compute(
           }
 
           // Call process_dEdr
-          if (isComputeProcess_dEdr == true)
+          if ((isComputeProcess_dEdr == true) ||
+              (isComputeVirial == true) ||
+              (isComputeParticleVirial == true))
           {
             double const rij = sqrt(rij2);
             double const dEidr = dEidrByR*rij;
-            ier = modelComputeArguments
-                ->ProcessDEDrTerm(dEidr, rij, r_ij_const, i, j);
-            if (ier)
+
+            if (isComputeProcess_dEdr == true)
             {
-              LOG_ERROR("process_dEdr");
-              return ier;
+              ier = modelComputeArguments
+                  ->ProcessDEDrTerm(dEidr, rij, r_ij_const, i, j);
+              if (ier)
+              {
+                LOG_ERROR("process_dEdr");
+                return ier;
+              }
+            }
+
+            if (isComputeVirial == true)
+            {
+              ProcessVirialTerm(dEidr, rij, r_ij_const, i, j, virial);
+            }
+
+            if (isComputeParticleVirial == true)
+            {
+              ProcessParticleVirialTerm(dEidr, rij, r_ij_const, i, j,
+                                        particleVirial);
             }
           }
 
