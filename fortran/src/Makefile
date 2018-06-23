@@ -59,7 +59,7 @@ OBJF = kim_charge_unit_f.o kim_charge_unit_module.o \
        kim_model_driver_create_f.o kim_model_driver_create_module.o \
        kim_model_refresh_f.o kim_model_refresh_module.o \
        kim_numbering_f.o kim_numbering_module.o \
-       kim_sem_ver_f.o kim_sem_ver_module.o \
+       kim_sem_ver_f.o \
        kim_species_name_f.o kim_species_name_module.o \
        kim_support_status_f.o kim_support_status_module.o \
        kim_temperature_unit_f.o kim_temperature_unit_module.o \
