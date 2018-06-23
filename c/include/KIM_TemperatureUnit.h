@@ -45,16 +45,22 @@ struct KIM_TemperatureUnit
 typedef struct KIM_TemperatureUnit KIM_TemperatureUnit;
 #endif
 
-KIM_TemperatureUnit KIM_TemperatureUnitFromString(char const * const str);
+KIM_TemperatureUnit KIM_TemperatureUnit_FromString(char const * const str);
 
-int KIM_TemperatureUnitEqual(KIM_TemperatureUnit const left,
-                             KIM_TemperatureUnit const right);
-int KIM_TemperatureUnitNotEqual(KIM_TemperatureUnit const left,
-                                KIM_TemperatureUnit const right);
-char const * const KIM_TemperatureUnitString(
+int KIM_TemperatureUnit_Equal(KIM_TemperatureUnit const left,
+                              KIM_TemperatureUnit const right);
+int KIM_TemperatureUnit_NotEqual(KIM_TemperatureUnit const left,
+                                 KIM_TemperatureUnit const right);
+char const * const KIM_TemperatureUnit_String(
     KIM_TemperatureUnit const temperatureUnit);
 
 extern KIM_TemperatureUnit const KIM_TEMPERATURE_UNIT_unused;
 extern KIM_TemperatureUnit const KIM_TEMPERATURE_UNIT_K;
+
+void KIM_TEMPERATURE_UNIT_GetNumberOfTemperatureUnits(
+    int * const numberOfTemperatureUnits);
+int KIM_TEMPERATURE_UNIT_GetTemperatureUnit(
+    int const index,
+    KIM_TemperatureUnit * const temperatureUnit);
 
 #endif  /* KIM_TEMPERATURE_UNIT_H_ */

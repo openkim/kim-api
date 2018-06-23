@@ -62,23 +62,23 @@ KIM_EnergyUnit const makeEnergyUnitC(KIM::EnergyUnit const energyUnit)
 
 extern "C"
 {
-KIM_EnergyUnit KIM_EnergyUnitFromString(char const * const str)
+KIM_EnergyUnit KIM_EnergyUnit_FromString(char const * const str)
 {
   return makeEnergyUnitC(KIM::EnergyUnit(std::string(str)));
 }
 
-int KIM_EnergyUnitEqual(KIM_EnergyUnit const left, KIM_EnergyUnit const right)
+int KIM_EnergyUnit_Equal(KIM_EnergyUnit const left, KIM_EnergyUnit const right)
 {
   return (left.energyUnitID == right.energyUnitID);
 }
 
-int KIM_EnergyUnitNotEqual(KIM_EnergyUnit const left,
-                           KIM_EnergyUnit const right)
+int KIM_EnergyUnit_NotEqual(KIM_EnergyUnit const left,
+                            KIM_EnergyUnit const right)
 {
-  return (!KIM_EnergyUnitEqual(left, right));
+  return (!KIM_EnergyUnit_Equal(left, right));
 }
 
-char const * const KIM_EnergyUnitString(KIM_EnergyUnit const energyUnit)
+char const * const KIM_EnergyUnit_String(KIM_EnergyUnit const energyUnit)
 {
   return makeEnergyUnitCpp(energyUnit).String().c_str();
 }
@@ -91,5 +91,20 @@ KIM_EnergyUnit const KIM_ENERGY_UNIT_eV = {ID_eV};
 KIM_EnergyUnit const KIM_ENERGY_UNIT_Hartree = {ID_Hartree};
 KIM_EnergyUnit const KIM_ENERGY_UNIT_J = {ID_J};
 KIM_EnergyUnit const KIM_ENERGY_UNIT_kcal_mol = {ID_kcal_mol};
+
+void KIM_ENERGY_UNIT_GetNumberOfEnergyUnits(int * const numberOfEnergyUnits)
+{
+  KIM::ENERGY_UNIT::GetNumberOfEnergyUnits(numberOfEnergyUnits);
+}
+
+int KIM_ENERGY_UNIT_GetEnergyUnit(int const index,
+                                  KIM_EnergyUnit * const energyUnit)
+{
+  KIM::EnergyUnit energyUnitCpp;
+  int error = KIM::ENERGY_UNIT::GetEnergyUnit(index, &energyUnitCpp);
+  if (error) return error;
+  *energyUnit = makeEnergyUnitC(energyUnitCpp);
+  return false;
+}
 
 }  // extern "C"

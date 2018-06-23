@@ -64,24 +64,24 @@ KIM_TemperatureUnit const makeTemperatureUnitC(
 
 extern "C"
 {
-KIM_TemperatureUnit KIM_TemperatureUnitFromString(char const * const str)
+KIM_TemperatureUnit KIM_TemperatureUnit_FromString(char const * const str)
 {
   return makeTemperatureUnitC(KIM::TemperatureUnit(std::string(str)));
 }
 
-int KIM_TemperatureUnitEqual(KIM_TemperatureUnit const left,
-                             KIM_TemperatureUnit const right)
+int KIM_TemperatureUnit_Equal(KIM_TemperatureUnit const left,
+                              KIM_TemperatureUnit const right)
 {
   return (left.temperatureUnitID == right.temperatureUnitID);
 }
 
-int KIM_TemperatureUnitNotEqual(KIM_TemperatureUnit const left,
-                                KIM_TemperatureUnit const right)
+int KIM_TemperatureUnit_NotEqual(KIM_TemperatureUnit const left,
+                                 KIM_TemperatureUnit const right)
 {
-  return (!KIM_TemperatureUnitEqual(left, right));
+  return (!KIM_TemperatureUnit_Equal(left, right));
 }
 
-char const * const KIM_TemperatureUnitString(
+char const * const KIM_TemperatureUnit_String(
     KIM_TemperatureUnit const temperatureUnit)
 {
   return makeTemperatureUnitCpp(temperatureUnit).String().c_str();
@@ -90,5 +90,23 @@ char const * const KIM_TemperatureUnitString(
 #include "KIM_TemperatureUnit.inc"
 KIM_TemperatureUnit const KIM_TEMPERATURE_UNIT_unused = {ID_unused};
 KIM_TemperatureUnit const KIM_TEMPERATURE_UNIT_K = {ID_K};
+
+void KIM_TEMPERATURE_UNIT_GetNumberOfTemperatureUnits(
+    int * const numberOfTemperatureUnits)
+{
+  KIM::TEMPERATURE_UNIT::GetNumberOfTemperatureUnits(numberOfTemperatureUnits);
+}
+
+int KIM_TEMPERATURE_UNIT_GetTemperatureUnit(
+    int const index,
+    KIM_TemperatureUnit * const temperatureUnit)
+{
+  KIM::TemperatureUnit temperatureUnitCpp;
+  int error = KIM::TEMPERATURE_UNIT::GetTemperatureUnit(index,
+                                                        &temperatureUnitCpp);
+  if (error) return error;
+  *temperatureUnit = makeTemperatureUnitC(temperatureUnitCpp);
+  return false;
+}
 
 }  // extern "C"

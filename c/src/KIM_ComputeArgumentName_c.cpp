@@ -72,29 +72,36 @@ KIM_ComputeArgumentName makeComputeArgumentNameC(
       (&computeArgumentName);
   return *computeArgumentNameC;
 }
+
+KIM_DataType makeDataTypeC(KIM::DataType const dataType)
+{
+  KIM_DataType const * const dataTypeC
+      = reinterpret_cast<KIM_DataType const * const>(&dataType);
+  return *dataTypeC;
+}
 }  // namespace
 
 extern "C"
 {
-KIM_ComputeArgumentName KIM_ComputeArgumentNameFromString(
+KIM_ComputeArgumentName KIM_ComputeArgumentName_FromString(
     char const * const str)
 {
   return makeComputeArgumentNameC(KIM::ComputeArgumentName(std::string(str)));
 }
 
-int KIM_ComputeArgumentNameEqual(KIM_ComputeArgumentName const left,
-                                 KIM_ComputeArgumentName const right)
+int KIM_ComputeArgumentName_Equal(KIM_ComputeArgumentName const left,
+                                  KIM_ComputeArgumentName const right)
 {
   return (left.computeArgumentNameID == right.computeArgumentNameID);
 }
 
-int KIM_ComputeArgumentNameNotEqual(KIM_ComputeArgumentName const left,
-                                    KIM_ComputeArgumentName const right)
+int KIM_ComputeArgumentName_NotEqual(KIM_ComputeArgumentName const left,
+                                     KIM_ComputeArgumentName const right)
 {
-  return (!KIM_ComputeArgumentNameEqual(left, right));
+  return (!KIM_ComputeArgumentName_Equal(left, right));
 }
 
-char const * const KIM_ComputeArgumentNameString(
+char const * const KIM_ComputeArgumentName_String(
     KIM_ComputeArgumentName computeArgumentName)
 {
   return makeComputeArgumentNameCpp(computeArgumentName).String().c_str();
@@ -133,12 +140,10 @@ int KIM_COMPUTE_ARGUMENT_NAME_GetComputeArgumentName(
     KIM_ComputeArgumentName * const computeArgumentName)
 {
   KIM::ComputeArgumentName computeArgumentNameCpp;
-  int err = KIM::COMPUTE_ARGUMENT_NAME::GetComputeArgumentName(
+  int error = KIM::COMPUTE_ARGUMENT_NAME::GetComputeArgumentName(
       index, &computeArgumentNameCpp);
-  if (err) return err;
-  KIM_ComputeArgumentName * computeArgumentNameC
-      = reinterpret_cast<KIM_ComputeArgumentName *>(&computeArgumentNameCpp);
-  *computeArgumentName = *computeArgumentNameC;
+  if (error) return error;
+  *computeArgumentName = makeComputeArgumentNameC(computeArgumentNameCpp);
   return false;
 }
 
@@ -146,16 +151,14 @@ int KIM_COMPUTE_ARGUMENT_NAME_GetComputeArgumentDataType(
     KIM_ComputeArgumentName const computeArgumentName,
     KIM_DataType * const dataType)
 {
-  KIM::ComputeArgumentName const * const computeArgumentNameCpp
-      = reinterpret_cast<KIM::ComputeArgumentName const *>
-      (&computeArgumentName);
+  KIM::ComputeArgumentName computeArgumentNameCpp
+      = makeComputeArgumentNameCpp(computeArgumentName);
   KIM::DataType dataTypeCpp;
-  int err = KIM::COMPUTE_ARGUMENT_NAME::
-      GetComputeArgumentDataType(*computeArgumentNameCpp, &dataTypeCpp);
-  if (err) return err;
-  KIM_DataType * dataTypeC = reinterpret_cast<KIM_DataType *>(&dataTypeCpp);
-
-  *dataType = *dataTypeC;
+  int error = KIM::COMPUTE_ARGUMENT_NAME::
+      GetComputeArgumentDataType(computeArgumentNameCpp, &dataTypeCpp);
+  if (error) return error;
+  *dataType = makeDataTypeC(dataTypeCpp);
   return false;
 }
+
 }  // extern "C"

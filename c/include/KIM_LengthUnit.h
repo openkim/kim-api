@@ -45,11 +45,11 @@ struct KIM_LengthUnit
 typedef struct KIM_LengthUnit KIM_LengthUnit;
 #endif
 
-KIM_LengthUnit KIM_LengthUnitFromString(char const * const str);
+KIM_LengthUnit KIM_LengthUnit_FromString(char const * const str);
 
-int KIM_LengthUnitEqual(KIM_LengthUnit left, KIM_LengthUnit right);
-int KIM_LengthUnitNotEqual(KIM_LengthUnit left, KIM_LengthUnit right);
-char const* const KIM_LengthUnitString(KIM_LengthUnit const lengthUnit);
+int KIM_LengthUnit_Equal(KIM_LengthUnit left, KIM_LengthUnit right);
+int KIM_LengthUnit_NotEqual(KIM_LengthUnit left, KIM_LengthUnit right);
+char const* const KIM_LengthUnit_String(KIM_LengthUnit const lengthUnit);
 
 extern KIM_LengthUnit const KIM_LENGTH_UNIT_unused;
 extern KIM_LengthUnit const KIM_LENGTH_UNIT_A;
@@ -57,5 +57,9 @@ extern KIM_LengthUnit const KIM_LENGTH_UNIT_Bohr;
 extern KIM_LengthUnit const KIM_LENGTH_UNIT_cm;
 extern KIM_LengthUnit const KIM_LENGTH_UNIT_m;
 extern KIM_LengthUnit const KIM_LENGTH_UNIT_nm;
+
+void KIM_LENGTH_UNIT_GetNumberOfLengthUnits(int * const numberOfLengthUnits);
+int KIM_LENGTH_UNIT_GetLengthUnit(int const index,
+                                  KIM_LengthUnit * const lengthUnit);
 
 #endif  /* KIM_LENGTH_UNIT_H_ */

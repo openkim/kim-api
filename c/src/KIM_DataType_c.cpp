@@ -62,22 +62,22 @@ KIM_DataType const makeDataTypeC(KIM::DataType const dataType)
 
 extern "C"
 {
-KIM_DataType KIM_DataTypeFromString(char const * const str)
+KIM_DataType KIM_DataType_FromString(char const * const str)
 {
   return makeDataTypeC(KIM::DataType(std::string(str)));
 }
 
-int KIM_DataTypeEqual(KIM_DataType const left, KIM_DataType const right)
+int KIM_DataType_Equal(KIM_DataType const left, KIM_DataType const right)
 {
   return (left.dataTypeID == right.dataTypeID);
 }
 
-int KIM_DataTypeNotEqual(KIM_DataType const left, KIM_DataType const right)
+int KIM_DataType_NotEqual(KIM_DataType const left, KIM_DataType const right)
 {
-  return (!KIM_DataTypeEqual(left, right));
+  return (!KIM_DataType_Equal(left, right));
 }
 
-char const * const KIM_DataTypeString(KIM_DataType const dataType)
+char const * const KIM_DataType_String(KIM_DataType const dataType)
 {
   return makeDataTypeCpp(dataType).String().c_str();
 }
@@ -85,5 +85,19 @@ char const * const KIM_DataTypeString(KIM_DataType const dataType)
 #include "KIM_DataType.inc"
 KIM_DataType const KIM_DATA_TYPE_Integer = {ID_Integer};
 KIM_DataType const KIM_DATA_TYPE_Double = {ID_Double};
+
+void KIM_DATA_TYPE_GetNumberOfDataTypes(int * const numberOfDataTypes)
+{
+  KIM::DATA_TYPE::GetNumberOfDataTypes(numberOfDataTypes);
+}
+
+int KIM_DATA_TYPE_GetDataType(int const index, KIM_DataType * const dataType)
+{
+  KIM::DataType dataTypeCpp;
+  int error = KIM::DATA_TYPE::GetDataType(index, &dataTypeCpp);
+  if (error) return error;
+  *dataType = makeDataTypeC(dataTypeCpp);
+  return false;
+}
 
 }  // extern "C"

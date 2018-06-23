@@ -63,24 +63,24 @@ KIM_SupportStatus const makeSupportStatusC(
 
 extern "C"
 {
-KIM_SupportStatus KIM_SupportStatusFromString(char const * const str)
+KIM_SupportStatus KIM_SupportStatus_FromString(char const * const str)
 {
   return makeSupportStatusC(KIM::SupportStatus(std::string(str)));
 }
 
-int KIM_SupportStatusEqual(KIM_SupportStatus const left,
-                           KIM_SupportStatus const right)
+int KIM_SupportStatus_Equal(KIM_SupportStatus const left,
+                            KIM_SupportStatus const right)
 {
   return (left.supportStatusID == right.supportStatusID);
 }
 
-int KIM_SupportStatusNotEqual(KIM_SupportStatus const left,
-                              KIM_SupportStatus const right)
+int KIM_SupportStatus_NotEqual(KIM_SupportStatus const left,
+                               KIM_SupportStatus const right)
 {
-  return (!KIM_SupportStatusEqual(left, right));
+  return (!KIM_SupportStatus_Equal(left, right));
 }
 
-char const * const KIM_SupportStatusString(
+char const * const KIM_SupportStatus_String(
     KIM_SupportStatus const supportStatus)
 {
   return makeSupportStatusCpp(supportStatus).String().c_str();
@@ -91,5 +91,22 @@ KIM_SupportStatus const KIM_SUPPORT_STATUS_requiredByAPI = {ID_requiredByAPI};
 KIM_SupportStatus const KIM_SUPPORT_STATUS_notSupported = {ID_notSupported};
 KIM_SupportStatus const KIM_SUPPORT_STATUS_required = {ID_required};
 KIM_SupportStatus const KIM_SUPPORT_STATUS_optional = {ID_optional};
+
+void KIM_SUPPORT_STATUS_GetNumberOfSupportStatuses(
+    int * const numberOfSupportStatuses)
+{
+  KIM::SUPPORT_STATUS::GetNumberOfSupportStatuses(numberOfSupportStatuses);
+}
+
+int KIM_SUPPORT_STATUS_GetSupportStatus(
+    int const index,
+    KIM_SupportStatus * const supportStatus)
+{
+  KIM::SupportStatus supportStatusCpp;
+  int error = KIM::SUPPORT_STATUS::GetSupportStatus(index, &supportStatusCpp);
+  if (error) return error;
+  *supportStatus = makeSupportStatusC(supportStatusCpp);
+  return false;
+}
 
 }  // extern "C"

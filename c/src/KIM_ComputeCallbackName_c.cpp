@@ -66,25 +66,25 @@ KIM_ComputeCallbackName makeComputeCallbackNameC(
 
 extern "C"
 {
-KIM_ComputeCallbackName KIM_ComputeCallbackNameFromString(
+KIM_ComputeCallbackName KIM_ComputeCallbackName_FromString(
     char const * const str)
 {
   return makeComputeCallbackNameC(KIM::ComputeCallbackName(std::string(str)));
 }
 
-int KIM_ComputeCallbackNameEqual(KIM_ComputeCallbackName const left,
-                                 KIM_ComputeCallbackName const right)
+int KIM_ComputeCallbackName_Equal(KIM_ComputeCallbackName const left,
+                                  KIM_ComputeCallbackName const right)
 {
   return (left.computeCallbackNameID == right.computeCallbackNameID);
 }
 
-int KIM_ComputeCallbackNameNotEqual(KIM_ComputeCallbackName const left,
-                                    KIM_ComputeCallbackName const right)
+int KIM_ComputeCallbackNameNot_Equal(KIM_ComputeCallbackName const left,
+                                     KIM_ComputeCallbackName const right)
 {
-  return (!KIM_ComputeCallbackNameEqual(left, right));
+  return (!KIM_ComputeCallbackName_Equal(left, right));
 }
 
-char const * const KIM_ComputeCallbackNameString(
+char const * const KIM_ComputeCallbackName_String(
     KIM_ComputeCallbackName computeCallbackName)
 {
   return makeComputeCallbackNameCpp(computeCallbackName).String().c_str();
@@ -111,12 +111,11 @@ int KIM_COMPUTE_CALLBACK_NAME_GetComputeCallbackName(
     KIM_ComputeCallbackName * const computeCallbackName)
 {
   KIM::ComputeCallbackName computeCallbackNameCpp;
-  int err = KIM::COMPUTE_CALLBACK_NAME::GetComputeCallbackName(
+  int error = KIM::COMPUTE_CALLBACK_NAME::GetComputeCallbackName(
       index, &computeCallbackNameCpp);
-  if (err) return err;
-  KIM_ComputeCallbackName * computeCallbackNameC
-      = reinterpret_cast<KIM_ComputeCallbackName *>(&computeCallbackNameCpp);
-  *computeCallbackName = *computeCallbackNameC;
+  if (error) return error;
+  *computeCallbackName = makeComputeCallbackNameC(computeCallbackNameCpp);
   return false;
 }
+
 }  // extern "C"

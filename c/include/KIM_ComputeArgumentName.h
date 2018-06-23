@@ -51,14 +51,14 @@ struct KIM_ComputeArgumentName
 typedef struct KIM_ComputeArgumentName KIM_ComputeArgumentName;
 #endif
 
-KIM_ComputeArgumentName KIM_ComputeArgumentNameFromString(
+KIM_ComputeArgumentName KIM_ComputeArgumentName_FromString(
     char const * const str);
 
-int KIM_ComputeArgumentNameEqual(KIM_ComputeArgumentName const left,
-                                 KIM_ComputeArgumentName const right);
-int KIM_ComputeArgumentNameNotEqual(KIM_ComputeArgumentName const left,
-                                    KIM_ComputeArgumentName const right);
-char const * const KIM_ComputeArgumentNameString(
+int KIM_ComputeArgumentName_Equal(KIM_ComputeArgumentName const left,
+                                  KIM_ComputeArgumentName const right);
+int KIM_ComputeArgumentName_NotEqual(KIM_ComputeArgumentName const left,
+                                     KIM_ComputeArgumentName const right);
+char const * const KIM_ComputeArgumentName_String(
     KIM_ComputeArgumentName const computeArgumentName);
 
 extern

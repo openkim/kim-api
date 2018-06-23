@@ -62,24 +62,24 @@ KIM_LanguageName const makeLanguageNameC(KIM::LanguageName languageName)
 
 extern "C"
 {
-KIM_LanguageName KIM_LanguageNameFromString(char const * const str)
+KIM_LanguageName KIM_LanguageName_FromString(char const * const str)
 {
   return makeLanguageNameC(KIM::LanguageName(std::string(str)));
 }
 
-int KIM_LanguageNameEqual(KIM_LanguageName const left,
-                          KIM_LanguageName const right)
+int KIM_LanguageName_Equal(KIM_LanguageName const left,
+                           KIM_LanguageName const right)
 {
   return (left.languageNameID == right.languageNameID);
 }
 
-int KIM_LanguageNameNotEqual(KIM_LanguageName const left,
-                             KIM_LanguageName const right)
+int KIM_LanguageName_NotEqual(KIM_LanguageName const left,
+                              KIM_LanguageName const right)
 {
-  return (!KIM_LanguageNameEqual(left, right));
+  return (!KIM_LanguageName_Equal(left, right));
 }
 
-char const * const KIM_LanguageNameString(KIM_LanguageName languageName)
+char const * const KIM_LanguageName_String(KIM_LanguageName languageName)
 {
   return makeLanguageNameCpp(languageName).String().c_str();
 }
@@ -89,5 +89,21 @@ char const * const KIM_LanguageNameString(KIM_LanguageName languageName)
 KIM_LanguageName const KIM_LANGUAGE_NAME_cpp = {ID_cpp};
 KIM_LanguageName const KIM_LANGUAGE_NAME_c = {ID_c};
 KIM_LanguageName const KIM_LANGUAGE_NAME_fortran = {ID_fortran};
+
+void KIM_LANGUAGE_NAME_GetNumberOfLanguageNames(
+    int * const numberOfLanguageNames)
+{
+  KIM::LANGUAGE_NAME::GetNumberOfLanguageNames(numberOfLanguageNames);
+}
+
+int KIM_LANGUAGE_NAME_GetLanguageName(int const index,
+                                      KIM_LanguageName * const languageName)
+{
+  KIM::LanguageName languageNameCpp;
+  int error = KIM::LANGUAGE_NAME::GetLanguageName(index, &languageNameCpp);
+  if (error) return error;
+  *languageName = makeLanguageNameC(languageNameCpp);
+  return false;
+}
 
 }  // extern "C"

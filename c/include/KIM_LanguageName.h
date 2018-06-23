@@ -45,16 +45,21 @@ struct KIM_LanguageName
 typedef struct KIM_LanguageName KIM_LanguageName;
 #endif
 
-KIM_LanguageName KIM_LanguageNameFromString(char const * const str);
+KIM_LanguageName KIM_LanguageName_FromString(char const * const str);
 
-int KIM_LanguageNameEqual(KIM_LanguageName const left,
-                          KIM_LanguageName const right);
-int KIM_LanguageNameNotEqual(KIM_LanguageName const left,
-                             KIM_LanguageName const right);
-char const * const KIM_LanguageNameString(KIM_LanguageName const languageName);
+int KIM_LanguageName_Equal(KIM_LanguageName const left,
+                           KIM_LanguageName const right);
+int KIM_LanguageName_NotEqual(KIM_LanguageName const left,
+                              KIM_LanguageName const right);
+char const * const KIM_LanguageName_String(KIM_LanguageName const languageName);
 
 extern KIM_LanguageName const KIM_LANGUAGE_NAME_cpp;
 extern KIM_LanguageName const KIM_LANGUAGE_NAME_c;
 extern KIM_LanguageName const KIM_LANGUAGE_NAME_fortran;
+
+void KIM_LANGUAGE_NAME_GetNumberOfLanguageNames(
+    int * const numberOfLanguageNames);
+int KIM_LANGUAGE_NAME_GetLanguageName(int const index,
+                                      KIM_LanguageName * const languageName);
 
 #endif  /* KIM_LANGUAGE_NAME_H_ */

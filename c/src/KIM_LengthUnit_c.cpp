@@ -62,22 +62,22 @@ KIM_LengthUnit const makeLengthUnitC(KIM::LengthUnit const lengthUnit)
 
 extern "C"
 {
-KIM_LengthUnit KIM_LengthUnitFromString(char const * const str)
+KIM_LengthUnit KIM_LengthUnit_FromString(char const * const str)
 {
   return makeLengthUnitC(KIM::LengthUnit(std::string(str)));
 }
 
-int KIM_LengthUnitEqual(KIM_LengthUnit left, KIM_LengthUnit right)
+int KIM_LengthUnit_Equal(KIM_LengthUnit left, KIM_LengthUnit right)
 {
   return (left.lengthUnitID == right.lengthUnitID);
 }
 
-int KIM_LengthUnitNotEqual(KIM_LengthUnit left, KIM_LengthUnit right)
+int KIM_LengthUnit_NotEqual(KIM_LengthUnit left, KIM_LengthUnit right)
 {
-  return (!KIM_LengthUnitEqual(left, right));
+  return (!KIM_LengthUnit_Equal(left, right));
 }
 
-char const * const KIM_LengthUnitString(KIM_LengthUnit const lengthUnit)
+char const * const KIM_LengthUnit_String(KIM_LengthUnit const lengthUnit)
 {
   return makeLengthUnitCpp(lengthUnit).String().c_str();
 }
@@ -89,5 +89,20 @@ KIM_LengthUnit const KIM_LENGTH_UNIT_Bohr = {ID_Bohr};
 KIM_LengthUnit const KIM_LENGTH_UNIT_cm = {ID_cm};
 KIM_LengthUnit const KIM_LENGTH_UNIT_m = {ID_m};
 KIM_LengthUnit const KIM_LENGTH_UNIT_nm = {ID_nm};
+
+void KIM_LENGTH_UNIT_GetNumberOfLengthUnits(int * const numberOfLengthUnits)
+{
+  KIM::LENGTH_UNIT::GetNumberOfLengthUnits(numberOfLengthUnits);
+}
+
+int KIM_LENGTH_UNIT_GetLengthUnit(int const index,
+                                  KIM_LengthUnit * const lengthUnit)
+{
+  KIM::LengthUnit lengthUnitCpp;
+  int error = KIM::LENGTH_UNIT::GetLengthUnit(index, &lengthUnitCpp);
+  if (error) return error;
+  *lengthUnit = makeLengthUnitC(lengthUnitCpp);
+  return false;
+}
 
 }  // extern "C"

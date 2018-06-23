@@ -62,22 +62,22 @@ KIM_ChargeUnit const makeChargeUnitC(KIM::ChargeUnit const chargeUnit)
 
 extern "C"
 {
-KIM_ChargeUnit KIM_ChargeUnitFromString(char const * const str)
+KIM_ChargeUnit KIM_ChargeUnit_FromString(char const * const str)
 {
   return makeChargeUnitC(KIM::ChargeUnit(std::string(str)));
 }
 
-int KIM_ChargeUnitEqual(KIM_ChargeUnit const left, KIM_ChargeUnit right)
+int KIM_ChargeUnit_Equal(KIM_ChargeUnit const left, KIM_ChargeUnit right)
 {
   return (left.chargeUnitID == right.chargeUnitID);
 }
 
-int KIM_ChargeUnitNotEqual(KIM_ChargeUnit const left, KIM_ChargeUnit right)
+int KIM_ChargeUnit_NotEqual(KIM_ChargeUnit const left, KIM_ChargeUnit right)
 {
-  return (!KIM_ChargeUnitEqual(left, right));
+  return (!KIM_ChargeUnit_Equal(left, right));
 }
 
-char const * const KIM_ChargeUnitString(KIM_ChargeUnit const chargeUnit)
+char const * const KIM_ChargeUnit_String(KIM_ChargeUnit const chargeUnit)
 {
   return makeChargeUnitCpp(chargeUnit).String().c_str();
 }
@@ -87,5 +87,20 @@ KIM_ChargeUnit const KIM_CHARGE_UNIT_unused = {ID_unused};
 KIM_ChargeUnit const KIM_CHARGE_UNIT_C = {ID_C};
 KIM_ChargeUnit const KIM_CHARGE_UNIT_e = {ID_e};
 KIM_ChargeUnit const KIM_CHARGE_UNIT_statC = {ID_statC};
+
+void KIM_CHARGE_UNIT_GetNumberOfChargeUnits(int * const numberOfChargeUnits)
+{
+  KIM::CHARGE_UNIT::GetNumberOfChargeUnits(numberOfChargeUnits);
+}
+
+int KIM_CHARGE_UNIT_GetChargeUnit(int const index,
+                                  KIM_ChargeUnit * const chargeUnit)
+{
+  KIM::ChargeUnit chargeUnitCpp;
+  int error = KIM::CHARGE_UNIT::GetChargeUnit(index, &chargeUnitCpp);
+  if (error) return error;
+  *chargeUnit = makeChargeUnitC(chargeUnitCpp);
+  return false;
+}
 
 }  // extern "C"

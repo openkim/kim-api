@@ -62,22 +62,22 @@ KIM_TimeUnit const makeTimeUnitC(KIM::TimeUnit const timeUnit)
 
 extern "C"
 {
-KIM_TimeUnit KIM_TimeUnitFromString(char const * const str)
+KIM_TimeUnit KIM_TimeUnit_FromString(char const * const str)
 {
   return makeTimeUnitC(KIM::TimeUnit(std::string(str)));
 }
 
-int KIM_TimeUnitEqual(KIM_TimeUnit const left, KIM_TimeUnit right)
+int KIM_TimeUnit_Equal(KIM_TimeUnit const left, KIM_TimeUnit right)
 {
   return (left.timeUnitID == right.timeUnitID);
 }
 
-int KIM_TimeUnitNotEqual(KIM_TimeUnit const left, KIM_TimeUnit right)
+int KIM_TimeUnit_NotEqual(KIM_TimeUnit const left, KIM_TimeUnit right)
 {
-  return (!KIM_TimeUnitEqual(left, right));
+  return (!KIM_TimeUnit_Equal(left, right));
 }
 
-char const * const KIM_TimeUnitString(KIM_TimeUnit const tiemUnit)
+char const * const KIM_TimeUnit_String(KIM_TimeUnit const tiemUnit)
 {
   return makeTimeUnitCpp(tiemUnit).String().c_str();
 }
@@ -88,5 +88,19 @@ KIM_TimeUnit const KIM_TIME_UNIT_fs = {ID_fs};
 KIM_TimeUnit const KIM_TIME_UNIT_ps = {ID_ps};
 KIM_TimeUnit const KIM_TIME_UNIT_ns = {ID_ns};
 KIM_TimeUnit const KIM_TIME_UNIT_s = {ID_s};
+
+void KIM_TIME_UNIT_GetNumberOfTimeUnits(int * const numberOfTimeUnits)
+{
+  KIM::TIME_UNIT::GetNumberOfTimeUnits(numberOfTimeUnits);
+}
+
+int KIM_TIME_UNIT_GetTimeUnit(int const index, KIM_TimeUnit * const timeUnit)
+{
+  KIM::TimeUnit timeUnitCpp;
+  int error = KIM::TIME_UNIT::GetTimeUnit(index, &timeUnitCpp);
+  if (error) return error;
+  *timeUnit = makeTimeUnitC(timeUnitCpp);
+  return false;
+}
 
 }  // extern "C"

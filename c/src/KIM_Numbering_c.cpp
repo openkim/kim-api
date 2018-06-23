@@ -61,22 +61,22 @@ KIM_Numbering makeNumberingC(KIM::Numbering const numbering)
 
 extern "C"
 {
-KIM_Numbering KIM_NumberingFromString(char const * const str)
+KIM_Numbering KIM_Numbering_FromString(char const * const str)
 {
   return makeNumberingC(KIM::Numbering(std::string(str)));
 }
 
-int KIM_NumberingEqual(KIM_Numbering const left, KIM_Numbering const right)
+int KIM_Numbering_Equal(KIM_Numbering const left, KIM_Numbering const right)
 {
   return (left.numberingID == right.numberingID);
 }
 
-int KIM_NumberingNotEqual(KIM_Numbering const left, KIM_Numbering const right)
+int KIM_Numbering_NotEqual(KIM_Numbering const left, KIM_Numbering const right)
 {
-  return (!KIM_NumberingEqual(left, right));
+  return (!KIM_Numbering_Equal(left, right));
 }
 
-char const * const KIM_NumberingString(
+char const * const KIM_Numbering_String(
     KIM_Numbering const numbering)
 {
   return makeNumberingCpp(numbering).String().c_str();
@@ -85,5 +85,19 @@ char const * const KIM_NumberingString(
 #include "KIM_Numbering.inc"
 KIM_Numbering const KIM_NUMBERING_zeroBased = {ID_zeroBased};
 KIM_Numbering const KIM_NUMBERING_oneBased = {ID_oneBased};
+
+void KIM_NUMBERING_GetNumberOfNumberings(int * const numberOfNumberings)
+{
+  KIM::NUMBERING::GetNumberOfNumberings(numberOfNumberings);
+}
+
+int KIM_NUMBERING_GetNumbering(int const index, KIM_Numbering * const numbering)
+{
+  KIM::Numbering numberingCpp;
+  int error = KIM::NUMBERING::GetNumbering(index, &numberingCpp);
+  if (error) return error;
+  *numbering = makeNumberingC(numberingCpp);
+  return false;
+}
 
 }  // extern "C"

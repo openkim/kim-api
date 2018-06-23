@@ -45,12 +45,12 @@ struct KIM_EnergyUnit
 typedef struct KIM_EnergyUnit KIM_EnergyUnit;
 #endif
 
-KIM_EnergyUnit KIM_EnergyUnitFromString(char const * const str);
+KIM_EnergyUnit KIM_EnergyUnit_FromString(char const * const str);
 
-int KIM_EnergyUnitEqual(KIM_EnergyUnit const left, KIM_EnergyUnit const right);
-int KIM_EnergyUnitNotEqual(KIM_EnergyUnit const left,
-                           KIM_EnergyUnit const right);
-char const* const KIM_EnergyUnitString(KIM_EnergyUnit const energyUnit);
+int KIM_EnergyUnit_Equal(KIM_EnergyUnit const left, KIM_EnergyUnit const right);
+int KIM_EnergyUnit_NotEqual(KIM_EnergyUnit const left,
+                            KIM_EnergyUnit const right);
+char const* const KIM_EnergyUnit_String(KIM_EnergyUnit const energyUnit);
 
 extern KIM_EnergyUnit const KIM_ENERGY_UNIT_unused;
 extern KIM_EnergyUnit const KIM_ENERGY_UNIT_amu_A2_per_ps2;
@@ -59,5 +59,9 @@ extern KIM_EnergyUnit const KIM_ENERGY_UNIT_eV;
 extern KIM_EnergyUnit const KIM_ENERGY_UNIT_Hartree;
 extern KIM_EnergyUnit const KIM_ENERGY_UNIT_J;
 extern KIM_EnergyUnit const KIM_ENERGY_UNIT_kcal_mol;
+
+void KIM_ENERGY_UNIT_GetNumberOfEnergyUnits(int * const numberOfEnergyUnits);
+int KIM_ENERGY_UNIT_GetEnergyUnit(int const index,
+                                  KIM_EnergyUnit * const energyUnit);
 
 #endif  /* KIM_ENERGY_UNIT_H_ */
