@@ -52,12 +52,15 @@ A complete translation table of v1 and v2 identifier names is available on the
 
 This page includes instructions for \ref porting-models and for \ref porting-simulators.
 
-\section porting-models Porting Models
+\section porting-models Porting Models and Model Drivers
 
-Model drivers and stand-alone models compatible with version 1 of the
-%KIM API will need to be modified to conform to version 2. A step-by-step
-process for doing so is described below. (In what follows the generic
-term "model" will be used to refer to both Model Drivers and Models.)
+Model drivers and stand-alone models compatible with version 1 of the %KIM API
+will need to be modified to conform to version 2. A step-by-step process for
+doing so is described below. (In what follows the generic term "model" will be
+used to refer to both Model Drivers and Models.  The only difference between
+the two cases is that Model Drivers have these two additional functions:
+KIM::ModelDriverCreate::GetNumberOfParameterFiles() and
+KIM::ModelDriverCreate::GetParameterFileName().)
 
 
 \subsection porting-models-step-0 Step 0
