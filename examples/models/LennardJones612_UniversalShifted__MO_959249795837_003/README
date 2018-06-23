@@ -28,8 +28,8 @@
 #
 
 
-This directory (LennardJones612_Universal__MO_826355984548_002) contains a
-Lennard-Jones model defined for the entire set of KIM API particle types.
+This directory (LennardJones612_UniversalShifted__MO_959249795837_003) contains
+a Lennard-Jones model defined for the entire set of KIM API particle types.
 
 * Sigma parameters are set to (2^{-1/6})*r_0, where r_0 is the atomic covalent
   radius.  Covalent radii for elements 1--96 were taken from Wolfram
@@ -60,5 +60,5 @@ Lennard-Jones model defined for the entire set of KIM API particle types.
   of approximately epsilon/1024.
 
 * Lorentz-Berthelot mixing rules are used for interactions between unlike
-  particles.  No shifting is performed; The potential is truncated at the
-  cutoff.
+  particles. Each interaction potential is shifted to zero energy at its cutoff
+  distance.

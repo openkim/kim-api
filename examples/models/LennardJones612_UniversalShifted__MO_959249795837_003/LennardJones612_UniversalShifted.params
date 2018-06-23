@@ -1,4 +1,4 @@
-139 0
+139 1
 
 # cutoff and sigmas are in units of Angstroms
 # epsilon are in units of Electron Volts
@@ -205,5 +205,5 @@ user20       user20        4.0             1.0             1.0
 #   energy of approximately epsilon/1024.
 #
 # * Lorentz-Berthelot mixing rules are used for interactions between unlike
-#   particles.  No shifting is performed; The potential is truncated at the
-#   cutoff.
+#   particles.  Each interaction potential is shifted to zero energy at its
+#   cutoff distance.

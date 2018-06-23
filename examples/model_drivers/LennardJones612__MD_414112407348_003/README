@@ -28,7 +28,7 @@
 #
 
 
-This directory (LennardJones612__MD_414112407348_002) contains a Lennard-Jones
+This directory (LennardJones612__MD_414112407348_003) contains a Lennard-Jones
 Driver which reads a parameter file containing the parameters for up to 139
 species.  It supports shifted and non-shifted energy behavior.  The driver is
 written in C++.  This Model Driver expects one parameter file as decribed

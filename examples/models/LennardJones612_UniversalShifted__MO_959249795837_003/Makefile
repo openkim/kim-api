@@ -37,9 +37,9 @@ include $(shell $(KIM_API_BUILD_CONFIG) --master-config)
 
 
 # set model driver specific details
-MODEL_DRIVER_NAME := LennardJones612__MD_414112407348_002
-MODEL_NAME        := LennardJones612_Universal__MO_826355984548_002
-PARAM_FILE_1_NAME := LennardJones612_Universal.params
+MODEL_DRIVER_NAME := LennardJones612__MD_414112407348_003
+MODEL_NAME        := LennardJones612_UniversalShifted__MO_959249795837_003
+PARAM_FILE_1_NAME := LennardJones612_UniversalShifted.params
 
 # APPEND to compiler option flag lists
 #FFLAGS   +=
