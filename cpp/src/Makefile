@@ -91,7 +91,7 @@ lib$(KIM_LIB).so: lib$(KIM_LIB_BUILD).so
 	$(QUELL)ln -fs "lib$(KIM_LIB_BUILD).so" "lib$(KIM_LIB).so"
 
 lib-cpp-$(KIM_LIB_BUILD).a: $(OBJCPP)
-	@printf "Creating... KIM API library....... $@.\n";
+	@printf "Creating... C++ KIM API library... $@.\n";
 	$(QUELL)ar rcs $@ $(OBJCPP)
 
 # Update LINKSOPATH, if prefix is non-standard
