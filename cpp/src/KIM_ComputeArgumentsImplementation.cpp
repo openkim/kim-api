@@ -106,7 +106,7 @@ int ComputeArgumentsImplementation::Create(
 #if DEBUG_VERBOSITY
   (*computeArgumentsImplementation)->LogEntry(
       LOG_VERBOSITY::debug,
-      "Exit " + callString,
+      "Exit 0=" + callString,
       __LINE__, __FILE__);
 #endif
   return false;
@@ -120,7 +120,7 @@ void ComputeArgumentsImplementation::Destroy(
       + SPTR(computeArgumentsImplementation) + ").";
   (*computeArgumentsImplementation)->LogEntry(
       LOG_VERBOSITY::debug,
-      "Enter " + callString,
+      "Enter  " + callString,
       __LINE__, __FILE__);
 #endif
 
@@ -143,14 +143,14 @@ int ComputeArgumentsImplementation::SetArgumentSupportStatus(
   std::string const callString = "SetArgumentSupportStatus("
       + computeArgumentName.String() + ", " + supportStatus.String() + ").";
 #endif
-  LOG_DEBUG("Enter " + callString);
+  LOG_DEBUG("Enter  " + callString);
 
 #if ERROR_VERBOSITY
   int error = Validate(computeArgumentName) || Validate(supportStatus);
   if (error)
   {
     LOG_ERROR("Invalid arguments.");
-    LOG_DEBUG("Exit " + callString);
+    LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
 
@@ -160,7 +160,7 @@ int ComputeArgumentsImplementation::SetArgumentSupportStatus(
   {
     LOG_ERROR("Argument '" + computeArgumentName.String()
               + "' SupportStatus is 'requiredByAPI' and cannot be changed.");
-    LOG_DEBUG("Exit " + callString);
+    LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
 #endif
@@ -181,7 +181,7 @@ int ComputeArgumentsImplementation::SetArgumentSupportStatus(
     }
   }
 
-  LOG_DEBUG("Exit " + callString);
+  LOG_DEBUG("Exit 0=" + callString);
   return false;
 }
 
@@ -194,14 +194,14 @@ int ComputeArgumentsImplementation::GetArgumentSupportStatus(
   std::string const callString = "GetArgumentSupportStatus("
       + computeArgumentName.String() + ", " + SPTR(supportStatus) + ").";
 #endif
-  LOG_DEBUG("Enter " + callString);
+  LOG_DEBUG("Enter  " + callString);
 
 #if ERROR_VERBOSITY
   int error = Validate(computeArgumentName);
   if (error)
   {
     LOG_ERROR("Invalid arguments.");
-    LOG_DEBUG("Exit " + callString);
+    LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
 #endif
@@ -211,7 +211,7 @@ int ComputeArgumentsImplementation::GetArgumentSupportStatus(
       result = computeArgumentSupportStatus_.find(computeArgumentName);
   *supportStatus = result->second;
 
-  LOG_DEBUG("Exit " + callString);
+  LOG_DEBUG("Exit 0=" + callString);
   return false;
 }
 
@@ -223,14 +223,14 @@ int ComputeArgumentsImplementation::SetCallbackSupportStatus(
   std::string const callString = "SetCallbackSupportStatus("
       + computeCallbackName.String() + ", " + supportStatus.String() + ").";
 #endif
-  LOG_DEBUG("Enter " + callString);
+  LOG_DEBUG("Enter  " + callString);
 
 #if ERROR_VERBOSITY
   int error = Validate(computeCallbackName) || Validate(supportStatus);
   if (error)
   {
     LOG_ERROR("Invalid arguments.");
-    LOG_DEBUG("Exit " + callString);
+    LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
 
@@ -241,7 +241,7 @@ int ComputeArgumentsImplementation::SetCallbackSupportStatus(
     LOG_ERROR("ComputeCallback '" + computeCallbackName.String()
               + "' SupportStatus is 'requiredByAPI' and cannot "
               "be changed.");
-    LOG_DEBUG("Exit " + callString);
+    LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
 #endif
@@ -264,7 +264,7 @@ int ComputeArgumentsImplementation::SetCallbackSupportStatus(
     }
   }
 
-  LOG_DEBUG("Exit " + callString);
+  LOG_DEBUG("Exit 0=" + callString);
   return false;
 }
 
@@ -276,14 +276,14 @@ int ComputeArgumentsImplementation::GetCallbackSupportStatus(
   std::string const callString = "GetCallbackSupportStatus("
       + computeCallbackName.String() + ", " + SPTR(supportStatus) + ").";
 #endif
-  LOG_DEBUG("Enter " + callString);
+  LOG_DEBUG("Enter  " + callString);
 
 #if ERROR_VERBOSITY
   int error = Validate(computeCallbackName);
   if (error)
   {
     LOG_ERROR("Invalid arguments.");
-    LOG_DEBUG("Exit " + callString);
+    LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
 #endif
@@ -293,7 +293,7 @@ int ComputeArgumentsImplementation::GetCallbackSupportStatus(
       result = computeCallbackSupportStatus_.find(computeCallbackName);
   *supportStatus = result->second;
 
-  LOG_DEBUG("Exit " + callString);
+  LOG_DEBUG("Exit 0=" + callString);
   return false;
 }
 
@@ -305,14 +305,14 @@ int ComputeArgumentsImplementation::SetArgumentPointer(
   std::string const callString = "SetArgumentPointer("
       + computeArgumentName.String() + ", " + SPTR(ptr) + ").";
 #endif
-  LOG_DEBUG("Enter " + callString);
+  LOG_DEBUG("Enter  " + callString);
 
 #if ERROR_VERBOSITY
   int error = Validate(computeArgumentName);
   if (error)
   {
     LOG_ERROR("Invalid arguments.");
-    LOG_DEBUG("Exit " + callString);
+    LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
 
@@ -323,7 +323,7 @@ int ComputeArgumentsImplementation::SetArgumentPointer(
   {
     LOG_ERROR("Pointer value cannot be set for ComputeArgument '"
               + computeArgumentName.String() + "' which is 'notSupported'.");
-    LOG_DEBUG("Exit " + callString);
+    LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
 #endif
@@ -331,7 +331,7 @@ int ComputeArgumentsImplementation::SetArgumentPointer(
   computeArgumentPointer_[computeArgumentName]
       = reinterpret_cast<void *>(const_cast<int *>(ptr));
 
-  LOG_DEBUG("Exit " + callString);
+  LOG_DEBUG("Exit 0=" + callString);
   return false;
 }
 
@@ -343,14 +343,14 @@ int ComputeArgumentsImplementation::SetArgumentPointer(
   std::string const callString = "SetArgumentPointer("
       + computeArgumentName.String() + ", " + SPTR(ptr) + ").";
 #endif
-  LOG_DEBUG("Enter " + callString);
+  LOG_DEBUG("Enter  " + callString);
 
 #if ERROR_VERBOSITY
   int error = Validate(computeArgumentName);
   if (error)
   {
     LOG_ERROR("Invalid arguments.");
-    LOG_DEBUG("Exit " + callString);
+    LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
 
@@ -361,7 +361,7 @@ int ComputeArgumentsImplementation::SetArgumentPointer(
   {
     LOG_ERROR("Pointer value cannot be set for ComputeArguments '"
               + computeArgumentName.String() + "' which is 'notSupported'.");
-    LOG_DEBUG("Exit " + callString);
+    LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
 #endif
@@ -369,7 +369,7 @@ int ComputeArgumentsImplementation::SetArgumentPointer(
   computeArgumentPointer_[computeArgumentName]
       = reinterpret_cast<void *>(const_cast<double *>(ptr));
 
-  LOG_DEBUG("Exit " + callString);
+  LOG_DEBUG("Exit 0=" + callString);
   return false;
 }
 
@@ -381,14 +381,14 @@ int ComputeArgumentsImplementation::GetArgumentPointer(
   std::string const callString = "GetArgumentPointer("
       + computeArgumentName.String() + ", " + SPTR(ptr) + ").";
 #endif
-  LOG_DEBUG("Enter " + callString);
+  LOG_DEBUG("Enter  " + callString);
 
 #if ERROR_VERBOSITY
   int error = Validate(computeArgumentName);
   if (error)
   {
     LOG_ERROR("Invalid arguments.");
-    LOG_DEBUG("Exit " + callString);
+    LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
 
@@ -400,7 +400,7 @@ int ComputeArgumentsImplementation::GetArgumentPointer(
     LOG_ERROR("Pointer value does not exist for ComputeArgument '"
               + (statusResult->first).String()
               + "' which is 'notSupported'.");
-    LOG_DEBUG("Exit " + callString);
+    LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
 #endif
@@ -410,7 +410,7 @@ int ComputeArgumentsImplementation::GetArgumentPointer(
       result = computeArgumentPointer_.find(computeArgumentName);
   *ptr = reinterpret_cast<int const *>(result->second);
 
-  LOG_DEBUG("Exit " + callString);
+  LOG_DEBUG("Exit 0=" + callString);
   return false;
 }
 
@@ -422,14 +422,14 @@ int ComputeArgumentsImplementation::GetArgumentPointer(
   std::string const callString = "GetArgumentPointer("
       + computeArgumentName.String() + ", " + SPTR(ptr) + ").";
 #endif
-  LOG_DEBUG("Enter " + callString);
+  LOG_DEBUG("Enter  " + callString);
 
 #if ERROR_VERBOSITY
   int error = Validate(computeArgumentName);
   if (error)
   {
     LOG_ERROR("Invalid arguments.");
-    LOG_DEBUG("Exit " + callString);
+    LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
 
@@ -441,7 +441,7 @@ int ComputeArgumentsImplementation::GetArgumentPointer(
     LOG_ERROR("Pointer value does not exist for ComputeArgument '"
               + (statusResult->first).String()
               + "' which is 'notSupported'.");
-    LOG_DEBUG("Exit " + callString);
+    LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
 #endif
@@ -452,7 +452,7 @@ int ComputeArgumentsImplementation::GetArgumentPointer(
 
   *ptr = reinterpret_cast<int *>(result->second);
 
-  LOG_DEBUG("Exit " + callString);
+  LOG_DEBUG("Exit 0=" + callString);
   return false;
 }
 
@@ -464,14 +464,14 @@ int ComputeArgumentsImplementation::GetArgumentPointer(
   std::string const callString = "GetArgumentPointer("
       + computeArgumentName.String() + ", " + SPTR(ptr) + ").";
 #endif
-  LOG_DEBUG("Enter " + callString);
+  LOG_DEBUG("Enter  " + callString);
 
 #if ERROR_VERBOSITY
   int error = Validate(computeArgumentName);
   if (error)
   {
     LOG_ERROR("Invalid arguments.");
-    LOG_DEBUG("Exit " + callString);
+    LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
 
@@ -483,7 +483,7 @@ int ComputeArgumentsImplementation::GetArgumentPointer(
     LOG_ERROR("Pointer value does not exist for ComputeArgument '"
               + (statusResult->first).String()
               + "' which is 'notSupported'.");
-    LOG_DEBUG("Exit " + callString);
+    LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
 #endif
@@ -494,7 +494,7 @@ int ComputeArgumentsImplementation::GetArgumentPointer(
 
   *ptr = reinterpret_cast<double const *>(result->second);
 
-  LOG_DEBUG("Exit " + callString);
+  LOG_DEBUG("Exit 0=" + callString);
   return false;
 }
 
@@ -506,14 +506,14 @@ int ComputeArgumentsImplementation::GetArgumentPointer(
   std::string const callString = "GetArgumentPointer("
       + computeArgumentName.String() + ", " + SPTR(ptr) + ").";
 #endif
-  LOG_DEBUG("Enter " + callString);
+  LOG_DEBUG("Enter  " + callString);
 
 #if ERROR_VERBOSITY
   int error = Validate(computeArgumentName);
   if (error)
   {
     LOG_ERROR("Invalid arguments.");
-    LOG_DEBUG("Exit " + callString);
+    LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
 
@@ -525,7 +525,7 @@ int ComputeArgumentsImplementation::GetArgumentPointer(
     LOG_ERROR("Pointer value does not exist for ComputeArgument '"
               + (statusResult->first).String()
               + "' which is 'notSupported'.");
-    LOG_DEBUG("Exit " + callString);
+    LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
 #endif
@@ -536,7 +536,7 @@ int ComputeArgumentsImplementation::GetArgumentPointer(
 
   *ptr = reinterpret_cast<double *>(result->second);
 
-  LOG_DEBUG("Exit " + callString);
+  LOG_DEBUG("Exit 0=" + callString);
   return false;
 }
 
@@ -551,7 +551,7 @@ int ComputeArgumentsImplementation::SetCallbackPointer(
       + computeCallbackName.String() + ", " + languageName.String()
       + ", " + SFUNC(fptr) + ", " + SPTR(dataObject) + ").";
 #endif
-  LOG_DEBUG("Enter " + callString);
+  LOG_DEBUG("Enter  " + callString);
 
 #if ERROR_VERBOSITY
   int error =
@@ -560,7 +560,7 @@ int ComputeArgumentsImplementation::SetCallbackPointer(
   if (error)
   {
     LOG_ERROR("Invalid arguments.");
-    LOG_DEBUG("Exit " + callString);
+    LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
 
@@ -572,7 +572,7 @@ int ComputeArgumentsImplementation::SetCallbackPointer(
   {
     LOG_ERROR("Pointer value cannot be set for ComputeCallback '"
               + computeCallbackName.String() + "' that is 'notSupported'.");
-    LOG_DEBUG("Exit " + callString);
+    LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
 #endif
@@ -581,7 +581,7 @@ int ComputeArgumentsImplementation::SetCallbackPointer(
   computeCallbackFunctionPointer_[computeCallbackName] = fptr;
   computeCallbackDataObjectPointer_[computeCallbackName] = dataObject;
 
-  LOG_DEBUG("Exit " + callString);
+  LOG_DEBUG("Exit 0=" + callString);
   return false;
 }
 
@@ -592,14 +592,14 @@ int ComputeArgumentsImplementation::IsCallbackPresent(
   std::string const callString = "IsCallbackPresent("
       + computeCallbackName.String() + ", " + SPTR(present) + ").";
 #endif
-  LOG_DEBUG("Enter " + callString);
+  LOG_DEBUG("Enter  " + callString);
 
 #if ERROR_VERBOSITY
   int error = Validate(computeCallbackName);
   if (error)
   {
     LOG_ERROR("Invalid arguments.");
-    LOG_DEBUG("Exit " + callString);
+    LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
 
@@ -611,7 +611,7 @@ int ComputeArgumentsImplementation::IsCallbackPresent(
     LOG_ERROR("Pointer value does not exist for ComputeCallback '"
               + (statusResult->first).String()
               + "' which is 'notSupported'.");
-    LOG_DEBUG("Exit " + callString);
+    LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
 #endif
@@ -629,7 +629,7 @@ int ComputeArgumentsImplementation::IsCallbackPresent(
     *present = true;
   }
 
-  LOG_DEBUG("Exit " + callString);
+  LOG_DEBUG("Exit 0=" + callString);
   return false;
 }
 
@@ -640,7 +640,7 @@ void ComputeArgumentsImplementation::AreAllRequiredArgumentsAndCallbacksPresent(
   std::string const callString =
       "AreAllRequiredArgumentsAndCallbacksPresent(" + SPTR(result) + ").";
 #endif
-  LOG_DEBUG("Enter " + callString);
+  LOG_DEBUG("Enter  " + callString);
 
   // Check that all required compute arguments are present
   for (std::map<ComputeArgumentName const, SupportStatus,
@@ -657,7 +657,7 @@ void ComputeArgumentsImplementation::AreAllRequiredArgumentsAndCallbacksPresent(
                   + "' is not present.");
 
         *result = 0;
-        LOG_DEBUG("Exit " + callString);
+        LOG_DEBUG("Exit   " + callString);
         return;
       }
     }
@@ -678,14 +678,14 @@ void ComputeArgumentsImplementation::AreAllRequiredArgumentsAndCallbacksPresent(
                   + "' is not present.");
 
         *result = 0;
-        LOG_DEBUG("Exit " + callString);
+        LOG_DEBUG("Exit   " + callString);
         return;
       }
     }
   }
 
   *result = 1;
-  LOG_DEBUG("Exit " + callString);
+  LOG_DEBUG("Exit   " + callString);
   return;
 }
 
@@ -703,14 +703,14 @@ int ComputeArgumentsImplementation::GetNeighborList(
   //       + SNUM(neighborListIndex) + ", " + SNUM(particleNumber) + ", "
   //       + SPTR(numberOfNeighbors) + ", " + SPTR(neighborsOfParticle) + ").";
   // #endif
-  //   LOG_DEBUG("Enter " + callString);
+  //   LOG_DEBUG("Enter  " + callString);
 
 #if ERROR_VERBOSITY
   if ((neighborListIndex < 0) || (neighborListIndex >= numberOfCutoffs_))
   {
     LOG_ERROR("Invalid neighborListIndex, " + SNUM(neighborListIndex)
               + ".");
-    // LOG_DEBUG("Exit " + callString);
+    // LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
 
@@ -727,7 +727,7 @@ int ComputeArgumentsImplementation::GetNeighborList(
   {
     LOG_ERROR("Invalid particleNumber, " + SNUM(zeroBasedParticleNumber)
               + ".");
-    // LOG_DEBUG("Exit " + callString);
+    // LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
 #endif
@@ -801,14 +801,14 @@ int ComputeArgumentsImplementation::GetNeighborList(
   else
   {
     LOG_ERROR("Unknown LanguageName.  SHOULD NEVER GET HERE.");
-    // LOG_DEBUG("Exit " + callString);
+    // LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
 
   if (error)
   {
     LOG_ERROR("Simulator supplied GetNeighborList() routine returned error.");
-    // LOG_DEBUG("Exit " + callString);
+    // LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
 
@@ -817,7 +817,6 @@ int ComputeArgumentsImplementation::GetNeighborList(
   {
     // LOG_DEBUG("Numbering conversion is required.");
 
-    LOG_INFORMATION(SNUM(*numberOfNeighbors) + ", " + SNUM(neighborListIndex));
     std::vector<int> & list = getNeighborListStorage_[neighborListIndex];
     list.resize(*numberOfNeighbors);
     for (int i=0; i<*numberOfNeighbors; ++i)
@@ -832,7 +831,7 @@ int ComputeArgumentsImplementation::GetNeighborList(
     *neighborsOfParticle = simulatorNeighborsOfParticle;
   }
 
-  // LOG_DEBUG("Exit " + callString);
+  // LOG_DEBUG("Exit 0=" + callString);
   return false;
 }
 
@@ -848,7 +847,7 @@ int ComputeArgumentsImplementation::ProcessDEDrTerm(
   //       + SNUM(de) + ", " + SNUM(r) + ", " + SPTR(dx) + ", "
   //       + SNUM(i) + ", " + SNUM(j) + ").";
   // #endif
-  //   LOG_DEBUG("Enter " + callString);
+  //   LOG_DEBUG("Enter  " + callString);
 
   std::map<ComputeCallbackName const, LanguageName,
            COMPUTE_CALLBACK_NAME::Comparator>::const_iterator
@@ -900,19 +899,19 @@ int ComputeArgumentsImplementation::ProcessDEDrTerm(
   else
   {
     LOG_ERROR("Unknown LanguageName.  SHOULD NEVER GET HERE.");
-    // LOG_DEBUG("Exit " + callString);
+    // LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
 
   if (error)
   {
     LOG_ERROR("Simulator supplied ProcessDEDrTerm() routine returned error.");
-    // LOG_DEBUG("Exit " + callString);
+    // LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
   else
   {
-    // LOG_DEBUG("Exit " + callString);
+    // LOG_DEBUG("Exit 0=" + callString);
     return false;
   }
 }
@@ -930,7 +929,7 @@ int ComputeArgumentsImplementation::ProcessD2EDr2Term(
   //       + SNUM(de) + ", " + SPTR(r) + ", " + SPTR(dx) + ", "
   //       + SPTR(i) + ", " + SPTR(j) + ").";
   // #endif
-  //   LOG_DEBUG("Enter " + callString);
+  //   LOG_DEBUG("Enter  " + callString);
   std::map<ComputeCallbackName const, LanguageName,
            COMPUTE_CALLBACK_NAME::Comparator>::const_iterator
       languageResult = computeCallbackLanguage_.find(
@@ -990,19 +989,19 @@ int ComputeArgumentsImplementation::ProcessD2EDr2Term(
   else
   {
     LOG_ERROR("Unknown LanguageName.  SHOULD NEVER GET HERE.");
-    // LOG_DEBUG("Exit " + callString);
+    // LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
 
   if (error)
   {
     LOG_ERROR("Simulator supplied ProcessD2EDr2Term() routine returned error.");
-    // LOG_DEBUG("Exit " + callString);
+    // LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
   else
   {
-    // LOG_DEBUG("Exit " + callString);
+    // LOG_DEBUG("Exit 0=" + callString);
     return false;
   }
 }
@@ -1012,11 +1011,11 @@ void ComputeArgumentsImplementation::SetModelBufferPointer(void * const ptr)
 #if DEBUG_VERBOSITY
   std::string const callString = "SetModelBufferPointer(" + SPTR(ptr) + ").";
 #endif
-  LOG_DEBUG("Enter " + callString);
+  LOG_DEBUG("Enter  " + callString);
 
   modelBuffer_ = ptr;
 
-  LOG_DEBUG("Exit " + callString);
+  LOG_DEBUG("Exit   " + callString);
 }
 
 void ComputeArgumentsImplementation::GetModelBufferPointer(void ** const ptr)
@@ -1025,11 +1024,11 @@ void ComputeArgumentsImplementation::GetModelBufferPointer(void ** const ptr)
 #if DEBUG_VERBOSITY
   std::string const callString = "GetModelBufferPointer(" + SPTR(ptr) + ").";
 #endif
-  LOG_DEBUG("Enter " + callString);
+  LOG_DEBUG("Enter  " + callString);
 
   *ptr = modelBuffer_;
 
-  LOG_DEBUG("Exit " + callString);
+  LOG_DEBUG("Exit   " + callString);
 }
 
 
@@ -1039,11 +1038,11 @@ void ComputeArgumentsImplementation::SetSimulatorBufferPointer(void * const ptr)
   std::string const callString = "SetSimulatorBufferPointer("
       + SPTR(ptr) + ").";
 #endif
-  LOG_DEBUG("Enter " + callString);
+  LOG_DEBUG("Enter  " + callString);
 
   simulatorBuffer_ = ptr;
 
-  LOG_DEBUG("Exit " + callString);
+  LOG_DEBUG("Exit   " + callString);
 }
 
 void ComputeArgumentsImplementation::GetSimulatorBufferPointer(
@@ -1053,11 +1052,11 @@ void ComputeArgumentsImplementation::GetSimulatorBufferPointer(
   std::string const callString = "GetSimulatorBufferPointer("
       + SPTR(ptr) + ").";
 #endif
-  LOG_DEBUG("Enter " + callString);
+  LOG_DEBUG("Enter  " + callString);
 
   *ptr = simulatorBuffer_;
 
-  LOG_DEBUG("Exit " + callString);
+  LOG_DEBUG("Exit   " + callString);
 }
 
 void ComputeArgumentsImplementation::SetLogID(std::string const & logID)
@@ -1065,11 +1064,11 @@ void ComputeArgumentsImplementation::SetLogID(std::string const & logID)
 #if DEBUG_VERBOSITY
   std::string const callString = "SetLogID('" + logID + "').";
 #endif
-  LOG_DEBUG("Enter " + callString);
+  LOG_DEBUG("Enter  " + callString);
 
   log_->SetID(logID);
 
-  LOG_DEBUG("Exit " + callString);
+  LOG_DEBUG("Exit   " + callString);
 }
 
 void ComputeArgumentsImplementation::PushLogVerbosity(
@@ -1079,11 +1078,11 @@ void ComputeArgumentsImplementation::PushLogVerbosity(
   std::string const callString = "PushLogVerbosity("
       + logVerbosity.String() + ").";
 #endif
-  LOG_DEBUG("Enter " + callString);
+  LOG_DEBUG("Enter  " + callString);
 
   log_->PushVerbosity(logVerbosity);
 
-  LOG_DEBUG("Exit " + callString);
+  LOG_DEBUG("Exit   " + callString);
 }
 
 void ComputeArgumentsImplementation::PopLogVerbosity()
@@ -1091,11 +1090,11 @@ void ComputeArgumentsImplementation::PopLogVerbosity()
 #if DEBUG_VERBOSITY
   std::string const callString = "PopLogVerbosity().";
 #endif
-  LOG_DEBUG("Enter " + callString);
+  LOG_DEBUG("Enter  " + callString);
 
   log_->PopVerbosity();
 
-  LOG_DEBUG("Exit " + callString);
+  LOG_DEBUG("Exit   " + callString);
 }
 
 void ComputeArgumentsImplementation::LogEntry(LogVerbosity const logVerbosity,
@@ -1112,7 +1111,7 @@ std::string const & ComputeArgumentsImplementation::String() const
 #if DEBUG_VERBOSITY
   std::string const callString = "String().";
 #endif
-  LOG_DEBUG("Enter " + callString);
+  LOG_DEBUG("Enter  " + callString);
 
   std::stringstream ss;
   ss << std::setprecision(10) << std::scientific << std::left;
@@ -1249,7 +1248,7 @@ std::string const & ComputeArgumentsImplementation::String() const
       "===========\n";
 
   string_ = ss.str();
-  LOG_DEBUG("Exit " + callString);
+  LOG_DEBUG("Exit   " + callString);
   return string_;
 }
 
@@ -1275,7 +1274,7 @@ ComputeArgumentsImplementation::ComputeArgumentsImplementation(
   std::string const callString = "ComputeArgumentsImplementation("
       + modelName + ", " + SPTR(log) + ").";
 #endif
-  LOG_DEBUG("Enter " + callString);
+  LOG_DEBUG("Enter  " + callString);
 
   // populate ComputeArguments
   int numberOfComputeArgumentNames;
@@ -1328,7 +1327,7 @@ ComputeArgumentsImplementation::ComputeArgumentsImplementation(
     computeCallbackDataObjectPointer_[*requiredByAPI_ComputeCallback] = NULL;
   }
 
-  LOG_DEBUG("Exit " + callString);
+  LOG_DEBUG("Exit   " + callString);
 }
 
 ComputeArgumentsImplementation::~ComputeArgumentsImplementation()
@@ -1336,7 +1335,7 @@ ComputeArgumentsImplementation::~ComputeArgumentsImplementation()
 #if DEBUG_VERBOSITY
   std::string const callString = "~ComputeArgumentsImplementation().";
 #endif
-  LOG_DEBUG("Enter " + callString);
+  LOG_DEBUG("Enter  " + callString);
 
   LOG_DEBUG("Destroying Log object and exit " + callString);
   Log::Destroy(&log_);
@@ -1351,7 +1350,7 @@ int ComputeArgumentsImplementation::Validate(
   //   std::string const callString = "Validate(" + computeArgumentName.String()
   //       + ").";
   // #endif
-  //   LOG_DEBUG("Enter " + callString);
+  //   LOG_DEBUG("Enter  " + callString);
 
   int numberOfComputeArgumentNames;
   COMPUTE_ARGUMENT_NAME::GetNumberOfComputeArgumentNames(
@@ -1364,13 +1363,13 @@ int ComputeArgumentsImplementation::Validate(
 
     if (computeArgumentName == argName)
     {
-      // LOG_DEBUG("Exit " + callString);
+      // LOG_DEBUG("Exit 0=" + callString);
       return false;
     }
   }
 
   LOG_ERROR("Invalid ComputeArgumentName encountered.");
-  // LOG_DEBUG("Exit " + callString);
+  // LOG_DEBUG("Exit 1=" + callString);
   return true;
 }
 
@@ -1383,7 +1382,7 @@ int ComputeArgumentsImplementation::Validate(
   //   std::string const callString = "Validate(" + computeCallbackName.String()
   //       + ").";
   // #endif
-  //   LOG_DEBUG("Enter " + callString);
+  //   LOG_DEBUG("Enter  " + callString);
 
   int numberOfComputeCallbackNames;
   COMPUTE_CALLBACK_NAME::GetNumberOfComputeCallbackNames(
@@ -1396,13 +1395,13 @@ int ComputeArgumentsImplementation::Validate(
 
     if (computeCallbackName == cbName)
     {
-      // LOG_DEBUG("Exit " + callString);
+      // LOG_DEBUG("Exit 0=" + callString);
       return false;
     }
   }
 
   LOG_ERROR("Invalid ComputeCallbackName encountered.");
-  // LOG_DEBUG("Exit " + callString);
+  // LOG_DEBUG("Exit 1=" + callString);
   return true;
 }
 
@@ -1415,7 +1414,7 @@ int ComputeArgumentsImplementation::Validate(LanguageName const languageName)
   //   std::string const callString = "Validate(" + languageName.String()
   //       + ").";
   // #endif
-  //   LOG_DEBUG("Enter " + callString);
+  //   LOG_DEBUG("Enter  " + callString);
 
   int numberOfLanguageNames;
   LANGUAGE_NAME::GetNumberOfLanguageNames(&numberOfLanguageNames);
@@ -1427,13 +1426,13 @@ int ComputeArgumentsImplementation::Validate(LanguageName const languageName)
 
     if (languageName == langName)
     {
-      // LOG_DEBUG("Exit " + callString);
+      // LOG_DEBUG("Exit 0=" + callString);
       return false;
     }
   }
 
   LOG_ERROR("Invalid LanguageName encountered.");
-  // LOG_DEBUG("Exit " + callString);
+  // LOG_DEBUG("Exit 1=" + callString);
   return true;
 }
 
@@ -1446,7 +1445,7 @@ int ComputeArgumentsImplementation::Validate(SupportStatus const supportStatus)
   //   std::string const callString = "Validate(" + supportStatus.String()
   //       + ").";
   // #endif
-  //   LOG_DEBUG("Enter " + callString);
+  //   LOG_DEBUG("Enter  " + callString);
 
   int numberOfSupportStatuses;
   SUPPORT_STATUS::GetNumberOfSupportStatuses(&numberOfSupportStatuses);
@@ -1458,13 +1457,13 @@ int ComputeArgumentsImplementation::Validate(SupportStatus const supportStatus)
 
     if (supportStatus == supStatus)
     {
-      // LOG_DEBUG("Exit " + callString);
+      // LOG_DEBUG("Exit 0=" + callString);
       return false;
     }
   }
 
   LOG_ERROR("Invalid SupportStatus encountered.");
-  // LOG_DEBUG("Exit " + callString);
+  // LOG_DEBUG("Exit 1=" + callString);
   return true;
 }
 }  // namespace KIM

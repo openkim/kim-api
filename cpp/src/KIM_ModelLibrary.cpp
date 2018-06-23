@@ -59,28 +59,48 @@
 
 namespace KIM
 {
+// log helpers
+#define SNUM( x ) static_cast<std::ostringstream &>(    \
+    std::ostringstream() << std::dec << x).str()
+#define SPTR( x ) static_cast<std::ostringstream &>(                    \
+    std::ostringstream() << static_cast<void const * const>(x) ).str()
+#define SFUNCP( x ) static_cast<std::ostringstream &>(           \
+    std::ostringstream() << static_cast<func **>(x)).str()
+#define SBOOL( x ) std::string((x ? "true" : "false"))
 
 #include "KIM_ModelLibraryLogMacros.hpp"
 ModelLibrary::ModelLibrary(Log * const log) :
     libraryHandle_(0),
     log_(log)
 {
-  LOG_DEBUG("Enter ModelLibrary().");
-  LOG_DEBUG("Exit ModelLibrary().");
+#if DEBUG_VERBOSITY
+  std::string const callString = "ModelLibrary("
+      + SPTR(log) + ").";
+#endif
+  LOG_DEBUG("Enter  " + callString);
+
+  LOG_DEBUG("Exit   " + callString);
 }
 
 ModelLibrary::~ModelLibrary()
 {
-  LOG_DEBUG("Enter ~ModelLibrary().");
+#if DEBUG_VERBOSITY
+  std::string const callString = "~ModelLibrary().";
+#endif
+  LOG_DEBUG("Enter  " + callString);
 
   Close();
 
-  LOG_DEBUG("Exit ~ModelLibrary().");
+  LOG_DEBUG("Exit   " + callString);
 }
 
 int ModelLibrary::Open(bool const typeIsModel, std::string const & modelName)
 {
-  LOG_DEBUG("Enter Open().");
+#if DEBUG_VERBOSITY
+  std::string const callString = "Open("
+      + SBOOL(typeIsModel) + ", '" + modelName + "').";
+#endif
+  LOG_DEBUG("Enter  " + callString);
 
   if (libraryHandle_ != 0) return true;  // already open
 
@@ -100,17 +120,20 @@ int ModelLibrary::Open(bool const typeIsModel, std::string const & modelName)
   {
     std::cout << dlerror() << std::endl;
     LOG_ERROR("");
-    LOG_DEBUG("Exit Open().");
+    LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
 
-  LOG_DEBUG("Exit Open().");
+  LOG_DEBUG("Exit 0=" + callString);
   return false;
 }
 
 int ModelLibrary::Close()
 {
-  LOG_DEBUG("Enter Close().");
+#if DEBUG_VERBOSITY
+  std::string const callString = "Close().";
+#endif
+  LOG_DEBUG("Enter  " + callString);
 
   if (libraryHandle_ == 0) return true;  // not open
 
@@ -119,7 +142,7 @@ int ModelLibrary::Close()
   if (error)
   {
     LOG_ERROR("");
-    LOG_DEBUG("Exit Close().");
+    LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
   else
@@ -127,13 +150,17 @@ int ModelLibrary::Close()
     libraryHandle_ = 0;
   }
 
-  LOG_DEBUG("Exit Close().");
+  LOG_DEBUG("Exit 0=" + callString);
   return false;
 }
 
 int ModelLibrary::GetModelType(ITEM_TYPE * const modelType) const
 {
-  LOG_DEBUG("Enter GetModelType().");
+#if DEBUG_VERBOSITY
+  std::string const callString = "GetModelType("
+      + SPTR(modelType) + ").";
+#endif
+  LOG_DEBUG("Enter  " + callString);
 
   *modelType = SIMULATOR_MODEL;  // dummy value
   if (libraryHandle_ == 0) return true;  // not open
@@ -144,7 +171,7 @@ int ModelLibrary::GetModelType(ITEM_TYPE * const modelType) const
   {
     std::cout << dlerror() << std::endl;
     LOG_ERROR("");
-    LOG_DEBUG("Exit GetModelType().");
+    LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
 
@@ -160,18 +187,22 @@ int ModelLibrary::GetModelType(ITEM_TYPE * const modelType) const
   {
     std::cout << "unknown kim_item_type" << std::endl;
     LOG_ERROR("");
-    LOG_DEBUG("Exit GetModelType().");
+    LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
 
-  LOG_DEBUG("Exit GetModelType().");
+  LOG_DEBUG("Exit 0=" + callString);
   return false;
 }
 
 int ModelLibrary::GetModelCreateFunctionPointer(
     LanguageName * const languageName, func ** const functionPointer) const
 {
-  LOG_DEBUG("Enter GetModelCreateFunctionPointer().");
+#if DEBUG_VERBOSITY
+  std::string const callString = "GetModelCreateFunctionPointer("
+      + languageName->String() + ", " + SFUNCP(functionPointer) + ").";
+#endif
+  LOG_DEBUG("Enter  " + callString);
 
   if (libraryHandle_ == 0) return true;  // not open
 
@@ -182,7 +213,7 @@ int ModelLibrary::GetModelCreateFunctionPointer(
   if (languageNameString == 0)
   {
     std::cout << dlerror() << std::endl;
-    LOG_DEBUG("Exit GetModelCreateFunctionPointer().");
+    LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
   else
@@ -198,19 +229,23 @@ int ModelLibrary::GetModelCreateFunctionPointer(
   if (pointerToFunctionPointer == 0)
   {
     std::cout << dlerror() << std::endl;
-    LOG_DEBUG("Exit GetModelCreateFunctionPointer().");
+    LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
 
   *functionPointer = *(pointerToFunctionPointer);
-  LOG_DEBUG("Exit GetModelCreateFunctionPointer().");
+  LOG_DEBUG("Exit 0=" + callString);
   return false;
 }
 
 int ModelLibrary::GetNumberOfParameterFiles(int * const numberOfParameterFiles)
     const
 {
-  LOG_DEBUG("Enter GetNumberOfParameterFiles().");
+#if DEBUG_VERBOSITY
+  std::string const callString = "GetNumberOfParameterFiles("
+      + SPTR(numberOfParameterFiles) + ").";
+#endif
+  LOG_DEBUG("Enter  " + callString);
 
   *numberOfParameterFiles = 0;  // default value
   ITEM_TYPE itemType;
@@ -222,13 +257,13 @@ int ModelLibrary::GetNumberOfParameterFiles(int * const numberOfParameterFiles)
   if (numParamFiles == 0)
   {
     std::cout << dlerror() << std::endl;
-    LOG_DEBUG("Exit GetNumberOfParameterFiles().");
+    LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
 
   *numberOfParameterFiles = *numParamFiles;
 
-  LOG_DEBUG("Exit GetNumberOfParameterFiles().");
+  LOG_DEBUG("Exit 0=" + callString);
   return false;
 }
 
@@ -237,13 +272,18 @@ int ModelLibrary::GetParameterFileString(
     unsigned int * const parameterFileStringLength,
     unsigned char const ** const parameterFileString) const
 {
-  LOG_DEBUG("Enter GetParameterFileString().");
+#if DEBUG_VERBOSITY
+  std::string const callString = "GetParameterFileString("
+      + SNUM(index) + ", " + SPTR(parameterFileStringLength)
+      + ", " + SPTR(parameterFileString) + ").";
+#endif
+  LOG_DEBUG("Enter  " + callString);
 
   ITEM_TYPE itemType;
   GetModelType(&itemType);
   if (itemType != PARAMETERIZED_MODEL)
   {
-    LOG_DEBUG("Exit GetParameterFileString().");
+    LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
 
@@ -251,7 +291,7 @@ int ModelLibrary::GetParameterFileString(
   GetNumberOfParameterFiles(&numberOfParameterFiles);
   if ((index < 0) || index >= numberOfParameterFiles)
   {
-    LOG_DEBUG("Exit GetParameterFileString().");
+    LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
 
@@ -264,7 +304,7 @@ int ModelLibrary::GetParameterFileString(
   if (paramFileString == 0)
   {
     std::cout << dlerror() << std::endl;
-    LOG_DEBUG("Exit GetParameterFileString().");
+    LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
   std::stringstream paramFileStringLengthSymbol;
@@ -275,24 +315,28 @@ int ModelLibrary::GetParameterFileString(
   if (paramFileStringLength == 0)
   {
     std::cout << dlerror() << std::endl;
-    LOG_DEBUG("Exit GetParameterFileString().");
+    LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
 
   *parameterFileString = paramFileString;
   *parameterFileStringLength = *paramFileStringLength;
 
-  LOG_DEBUG("Exit GetParameterFileString().");
+  LOG_DEBUG("Exit 0=" + callString);
   return false;
 }
 
 int ModelLibrary::GetModelDriverName(std::string * const modelDriverName) const
 {
-  LOG_DEBUG("Enter GetModelDriverName().");
+#if DEBUG_VERBOSITY
+  std::string const callString = "GetModelDriverName("
+      + SPTR(modelDriverName) + ").";
+#endif
+  LOG_DEBUG("Enter  " + callString);
 
   if (libraryHandle_ == 0)
   {
-    LOG_DEBUG("Exit GetModelDriverName().");
+    LOG_DEBUG("Exit 1=" + callString);
     return true;  // not open
   }
 
@@ -300,7 +344,7 @@ int ModelLibrary::GetModelDriverName(std::string * const modelDriverName) const
   GetModelType(&itemType);
   if (itemType != PARAMETERIZED_MODEL)
   {
-    LOG_DEBUG("Exit GetModelDriverName().");
+    LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
 
@@ -311,20 +355,24 @@ int ModelLibrary::GetModelDriverName(std::string * const modelDriverName) const
   if (modelDriverNameString == 0)
   {
     std::cout << dlerror() << std::endl;
-    LOG_DEBUG("Exit GetModelDriverName().");
+    LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
 
   *modelDriverName = modelDriverNameString;
 
-  LOG_DEBUG("Exit GetModelDriverName().");
+  LOG_DEBUG("Exit 0=" + callString);
   return false;
 }
 
 int ModelLibrary::GetModelCompiledWithVersion(
     std::string * const versionString) const
 {
-  LOG_DEBUG("Enter GetModelCompiledWithVersion().");
+#if DEBUG_VERBOSITY
+  std::string const callString = "GetModelCompiledWithVersion("
+      + SPTR(versionString) + ").";
+#endif
+  LOG_DEBUG("Enter  " + callString);
 
   if (libraryHandle_ == 0)
   {
@@ -338,12 +386,12 @@ int ModelLibrary::GetModelCompiledWithVersion(
   if (versionCharString == 0)
   {
     std::cout << dlerror() << std::endl;
-    LOG_DEBUG("Exit GetModelCompiledWithVersion().");
+    LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
 
   *versionString = versionCharString;
-  LOG_DEBUG("Exit GetModelCompiledWithVersion().");
+  LOG_DEBUG("Exit 1=" + callString);
   return false;
 }
 
