@@ -44,6 +44,7 @@ module kim_model_compute_arguments_f_module
     get_argument_pointer_integer, &
     get_argument_pointer_double, &
     is_callback_present, &
+    set_model_buffer_pointer, &
     get_model_buffer_pointer, &
     log_entry, &
     model_compute_string
@@ -143,6 +144,16 @@ module kim_model_compute_arguments_f_module
         compute_callback_name
       integer(c_int), intent(out) :: present
     end function is_callback_present
+
+    subroutine set_model_buffer_pointer(model_compute_arguments, ptr) &
+      bind(c, name="KIM_ModelComputeArguments_SetModelBufferPointer")
+      use, intrinsic :: iso_c_binding
+      import kim_model_compute_arguments_type
+      implicit none
+      type(kim_model_compute_arguments_type), intent(inout) :: &
+        model_compute_arguments
+      type(c_ptr), intent(in), value :: ptr
+    end subroutine set_model_buffer_pointer
 
     subroutine get_model_buffer_pointer(model_compute_arguments, ptr) &
       bind(c, name="KIM_ModelComputeArguments_GetModelBufferPointer")

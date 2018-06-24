@@ -46,6 +46,7 @@ module kim_model_compute_arguments_module
     kim_model_compute_arguments_process_d2edr2_term, &
     kim_model_compute_arguments_get_argument_pointer, &
     kim_model_compute_arguments_is_callback_present, &
+    kim_model_compute_arguments_set_model_buffer_pointer, &
     kim_model_compute_arguments_get_model_buffer_pointer, &
     kim_model_compute_arguments_log_entry, &
     kim_model_compute_arguments_string
@@ -239,6 +240,16 @@ module kim_model_compute_arguments_module
       integer(c_int), intent(out) :: present
       integer(c_int), intent(out) :: ierr
     end subroutine kim_model_compute_arguments_is_callback_present
+
+    subroutine kim_model_compute_arguments_set_model_buffer_pointer( &
+      model_compute_arguments_handle, ptr)
+      use, intrinsic :: iso_c_binding
+      import kim_model_compute_arguments_handle_type
+      implicit none
+      type(kim_model_compute_arguments_handle_type), intent(inout) :: &
+        model_compute_arguments_handle
+      type(c_ptr), intent(in), value :: ptr
+    end subroutine kim_model_compute_arguments_set_model_buffer_pointer
 
     subroutine kim_model_compute_arguments_get_model_buffer_pointer( &
       model_compute_arguments_handle, ptr)
