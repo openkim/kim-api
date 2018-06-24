@@ -172,6 +172,15 @@ int KIM_ModelComputeArguments_IsCallbackPresent(
                                                    present);
 }
 
+void KIM_ModelComputeArguments_SetModelBufferPointer(
+    KIM_ModelComputeArguments * const modelComputeArguments,
+    void * const ptr)
+{
+  CONVERT_POINTER;
+
+  pModelComputeArguments->SetModelBufferPointer(ptr);
+}
+
 void KIM_ModelComputeArguments_GetModelBufferPointer(
     KIM_ModelComputeArguments const * const modelComputeArguments,
     void ** const ptr)

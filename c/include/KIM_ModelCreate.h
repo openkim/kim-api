@@ -135,7 +135,6 @@ int KIM_ModelCreate_SetSpeciesCode(
 int KIM_ModelCreate_SetParameterPointerInteger(
     KIM_ModelCreate * const modelCreate,
     int const extent, int * const ptr, char const * const description);
-
 int KIM_ModelCreate_SetParameterPointerDouble(
     KIM_ModelCreate * const modelCreate,
     int const extent, double * const ptr, char const * const description);

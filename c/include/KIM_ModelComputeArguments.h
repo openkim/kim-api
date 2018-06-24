@@ -84,7 +84,6 @@ int KIM_ModelComputeArguments_GetArgumentPointerInteger(
     KIM_ModelComputeArguments const * const modelComputeArguments,
     KIM_ComputeArgumentName const computeArgumentName,
     int ** const ptr);
-
 int KIM_ModelComputeArguments_GetArgumentPointerDouble(
     KIM_ModelComputeArguments const * const modelComputeArguments,
     KIM_ComputeArgumentName const computeArgumentName, double ** const ptr);
@@ -93,6 +92,9 @@ int KIM_ModelComputeArguments_IsCallbackPresent(
     KIM_ModelComputeArguments const * const modelComputeArguments,
     KIM_ComputeCallbackName const computeCallbackName, int * const present);
 
+void KIM_ModelComputeArguments_SetModelBufferPointer(
+    KIM_ModelComputeArguments * const modelComputeArguments,
+    void * const ptr);
 void KIM_ModelComputeArguments_GetModelBufferPointer(
     KIM_ModelComputeArguments const * const modelComputeArguments,
     void ** const ptr);

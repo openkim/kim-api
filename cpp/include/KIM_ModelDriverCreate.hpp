@@ -114,6 +114,7 @@ class ModelDriverCreate
 
   void LogEntry(LogVerbosity const logVerbosity, std::string const & message,
                 int const lineNumber, std::string const & fileName) const;
+
   std::string const & String() const;
 
  private:

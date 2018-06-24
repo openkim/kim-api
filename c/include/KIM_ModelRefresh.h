@@ -56,16 +56,16 @@ void KIM_ModelRefresh_SetNeighborListCutoffsPointer(
     KIM_ModelRefresh * const modelRefresh,
     int const numberOfCutoffs, double const * const cutoffs);
 
+void KIM_ModelRefresh_GetModelBufferPointer(
+    KIM_ModelRefresh const * const modelRefresh,
+    void ** const ptr);
+
 void KIM_ModelRefresh_LogEntry(
     KIM_ModelRefresh const * const modelRefresh,
     KIM_LogVerbosity const logVerbosity, char const * const message,
     int const lineNumber, char const * const fileName);
 
-char const * const KIM_ModelRefresh_string(
+char const * const KIM_ModelRefresh_String(
     KIM_ModelRefresh const * const modelRefresh);
-
-void KIM_ModelRefresh_GetModelBufferPointer(
-    KIM_ModelRefresh const * const modelRefresh,
-    void ** const ptr);
 
 #endif  /* KIM_MODEL_REFRESH_H_ */

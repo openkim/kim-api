@@ -40,11 +40,6 @@ namespace KIM
 {
 // Forward declarations
 class LogVerbosity;
-class LengthUnit;
-class EnergyUnit;
-class ChargeUnit;
-class TemperatureUnit;
-class TimeUnit;
 class ModelRefreshImplementation;
 
 
@@ -59,6 +54,7 @@ class ModelRefresh{
 
   void LogEntry(LogVerbosity const logVerbosity, std::string const & message,
                 int const lineNumber, std::string const & fileName) const;
+
   std::string const & String() const;
 
  private:
