@@ -35,6 +35,7 @@
 #define KIM_COMPUTE_ARGUMENTS_IMPLEMENTATION_HPP_
 
 #include <string>
+#include <sstream>
 #include <map>
 #include <vector>
 
@@ -147,6 +148,9 @@ class ComputeArgumentsImplementation
   void PushLogVerbosity(LogVerbosity const logVerbosity);
   void PopLogVerbosity();
   void LogEntry(LogVerbosity const logVerbosity, std::string const & message,
+                int const lineNumber, std::string const & fileName) const;
+  void LogEntry(LogVerbosity const logVerbosity,
+                std::stringstream const & message,
                 int const lineNumber, std::string const & fileName) const;
 
  private:

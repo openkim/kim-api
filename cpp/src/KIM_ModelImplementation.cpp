@@ -1552,6 +1552,15 @@ void ModelImplementation::LogEntry(LogVerbosity const logVerbosity,
   log_->LogEntry(logVerbosity, message, lineNumber, fileName);
 }
 
+void ModelImplementation::LogEntry(LogVerbosity const logVerbosity,
+                                   std::stringstream const & message,
+                                   int const lineNumber,
+                                   std::string const & fileName) const
+{
+  // No debug logs to avoid infinite loop
+  log_->LogEntry(logVerbosity, message, lineNumber, fileName);
+}
+
 std::string const & ModelImplementation::String() const
 {
 #if DEBUG_VERBOSITY

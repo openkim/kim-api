@@ -35,6 +35,7 @@
 #define KIM_MODEL_COMPUTE_ARGUMENTS_DESTROY_HPP_
 
 #include <string>
+#include <sstream>
 
 namespace KIM
 {
@@ -48,6 +49,9 @@ class ModelComputeArgumentsDestroy{
   void GetModelBufferPointer(void ** const ptr) const;
 
   void LogEntry(LogVerbosity const logVerbosity, std::string const & message,
+                int const lineNumber, std::string const & fileName) const;
+  void LogEntry(LogVerbosity const logVerbosity,
+                std::stringstream const & message,
                 int const lineNumber, std::string const & fileName) const;
 
   std::string const & String() const;

@@ -63,6 +63,16 @@ void ModelDestroy::LogEntry(LogVerbosity const logVerbosity,
   pImpl->LogEntry(logVerbosity, message, lineNumber, fileName);
 }
 
+void ModelDestroy::LogEntry(LogVerbosity const logVerbosity,
+                            std::stringstream const & message,
+                            int const lineNumber,
+                            std::string const & fileName) const
+{
+  CONVERT_POINTER;
+
+  pImpl->LogEntry(logVerbosity, message, lineNumber, fileName);
+}
+
 std::string const & ModelDestroy::String() const
 {
   CONVERT_POINTER;

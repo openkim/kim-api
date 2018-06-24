@@ -35,6 +35,7 @@
 #define KIM_MODEL_DRIVER_CREATE_HPP_
 
 #include <string>
+#include <sstream>
 
 #ifndef KIM_FUNC_HPP_
 #include "KIM_func.hpp"
@@ -113,6 +114,9 @@ class ModelDriverCreate
       double * const conversionFactor) const;
 
   void LogEntry(LogVerbosity const logVerbosity, std::string const & message,
+                int const lineNumber, std::string const & fileName) const;
+  void LogEntry(LogVerbosity const logVerbosity,
+                std::stringstream const & message,
                 int const lineNumber, std::string const & fileName) const;
 
   std::string const & String() const;

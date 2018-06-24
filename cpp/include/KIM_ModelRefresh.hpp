@@ -35,6 +35,7 @@
 #define KIM_MODEL_REFRESH_HPP_
 
 #include <string>
+#include <sstream>
 
 namespace KIM
 {
@@ -53,6 +54,9 @@ class ModelRefresh{
   void GetModelBufferPointer(void ** const ptr) const;
 
   void LogEntry(LogVerbosity const logVerbosity, std::string const & message,
+                int const lineNumber, std::string const & fileName) const;
+  void LogEntry(LogVerbosity const logVerbosity,
+                std::stringstream const & message,
                 int const lineNumber, std::string const & fileName) const;
 
   std::string const & String() const;
