@@ -35,9 +35,9 @@ module error
 contains
   subroutine my_error(message, line, file)
     implicit none
-    character(len=*), intent(in) :: message
+    character(len=*, kind=c_char), intent(in) :: message
     integer, intent(in) :: line
-    character(len=*), intent(in) :: file
+    character(len=*, kind=c_char), intent(in) :: file
 
     print *,"* Error : '", trim(message), "' ", line, ":", &
       trim(file)
@@ -46,9 +46,9 @@ contains
 
   subroutine my_warning(message, line, file)
     implicit none
-    character(len=*), intent(in) :: message
+    character(len=*, kind=c_char), intent(in) :: message
     integer, intent(in) :: line
-    character(len=*), intent(in) :: file
+    character(len=*, kind=c_char), intent(in) :: file
 
     print *,"* Error : '", trim(message), "' ", line, ":", &
       trim(file)
@@ -92,7 +92,7 @@ subroutine get_neigh(data_object, number_of_cutoffs, cutoffs, &
   !-- Transferred variables
   type(c_ptr),    value, intent(in) :: data_object
   integer(c_int), value, intent(in) :: number_of_cutoffs
-  read(c_double),        intent(in) :: cutoffs(number_of_cutoffs)
+  real(c_double),        intent(in) :: cutoffs(number_of_cutoffs)
   integer(c_int), value, intent(in) :: neighbor_list_index
   integer(c_int), value, intent(in)  :: request
   integer(c_int),        intent(out) :: numnei

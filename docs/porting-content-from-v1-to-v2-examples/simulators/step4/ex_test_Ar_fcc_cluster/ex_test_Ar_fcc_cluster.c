@@ -175,12 +175,12 @@ int main()
     if (error) MY_ERROR("can't get argument supportStatus");
 
     /* can only handle energy and force as a required arg */
-    if (KIM_SupportStatusEqual(supportStatus, KIM_SUPPORT_STATUS_required))
+    if (KIM_SupportStatus_Equal(supportStatus, KIM_SUPPORT_STATUS_required))
     {
-      if ((KIM_ComputeArgumentNameNotEqual(
+      if ((KIM_ComputeArgumentName_NotEqual(
               computeArgumentName,
               KIM_COMPUTE_ARGUMENT_NAME_partialEnergy)) ||
-          (KIM_ComputeArgumentNameNotEqual(
+          (KIM_ComputeArgumentName_NotEqual(
               computeArgumentName,
               KIM_COMPUTE_ARGUMENT_NAME_partialForces)))
       {
@@ -189,17 +189,19 @@ int main()
     }
 
     /* must have energy and forces */
-    if ((KIM_ComputeArgumentNameEqual(computeArgumentName,
-                                      KIM_COMPUTE_ARGUMENT_NAME_partialEnergy))
+    if ((KIM_ComputeArgumentName_Equal(
+            computeArgumentName,
+            KIM_COMPUTE_ARGUMENT_NAME_partialEnergy))
         ||
-        (KIM_ComputeArgumentNameEqual(computeArgumentName,
-                                      KIM_COMPUTE_ARGUMENT_NAME_partialForces)))
+        (KIM_ComputeArgumentName_Equal(
+            computeArgumentName,
+            KIM_COMPUTE_ARGUMENT_NAME_partialForces)))
     {
-      if (! ((KIM_SupportStatusEqual(supportStatus,
-                                     KIM_SUPPORT_STATUS_required))
+      if (! ((KIM_SupportStatus_Equal(supportStatus,
+                                      KIM_SUPPORT_STATUS_required))
              ||
-             (KIM_SupportStatusEqual(supportStatus,
-                                     KIM_SUPPORT_STATUS_optional))))
+             (KIM_SupportStatus_Equal(supportStatus,
+                                      KIM_SUPPORT_STATUS_optional))))
       {
         MY_ERROR("energy or forces not available");
       }
@@ -220,7 +222,7 @@ int main()
     if (error) MY_ERROR("can't get call back supportStatus");
 
     /* cannot handle any "required" call backs */
-    if (KIM_SupportStatusEqual(supportStatus, KIM_SUPPORT_STATUS_required))
+    if (KIM_SupportStatus_Equal(supportStatus, KIM_SUPPORT_STATUS_required))
     {
       MY_ERROR("unsupported required call back");
     }
