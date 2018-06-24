@@ -50,9 +50,10 @@ usage () {
   printf "  ${command} list [--with-version]\n"
   printf "  ${command} set-user-models-dir <directory>\n"
   printf "  ${command} set-user-drivers-dir <directory>\n"
-  printf "  ${command} install\n"
+  printf "  ${command} install [--force]\n"
   printf "          (CWD | environment | user | system [--sudo])\n"
-  printf "          (<openkim-item-id>... | <local-item-path>... | OpenKIM | OpenKIM_with_history)\n"
+  printf "          (<openkim-item-id>... | <local-item-path>... | OpenKIM |\n"
+  printf "           OpenKIM_with_history)\n"
   printf "  ${command} reinstall [--interacitive] [--sudo]\n"
   printf "          (<openkim-item-id> | <local-item-path>)...\n"
   printf "  ${command} remove [--interactive] [--sudo] <item-id>...\n"
@@ -70,10 +71,13 @@ usage () {
   printf "\n"
   printf "install:\n"
   printf "  Install model and/or model driver from openkim.org or from a local path\n"
-  printf "  (Installing to the environment collection places items in the first\n"
-  printf "   directory of the list.)  'OpenKIM' installs all 'current' items\n"
-  printf "   found at openkim.org.  'OpenKIM_with_history' installs all 'current'\n"
-  printf "   and all 'old' items.\n"
+  printf "    * Installing to the environment collection places items in the first\n"
+  printf "      directory of the list.)\n"
+  printf "    * 'install --force' is essentially equivalent to 'reinstall', but works\n"
+  printf "      even when the item is not currently installed.\n"
+  printf "    * 'OpenKIM' installs all 'current' items found at openkim.org,\n"
+  printf "      whereas 'OpenKIM_with_history' installs all 'current'\n"
+  printf "      and all 'old' items.\n"
   printf "\n"
   printf "reinstall:\n"
   printf "  Remove and reinstall items.\n"
@@ -217,8 +221,9 @@ rewrite_config_file_drivers_dir () {
 get_build_install_item () {
   local install_collection="$1"
   local item_name="$2"
-  local use_sudo="$3"
-  local PASSWORD="$4"
+  local force="$3"
+  local use_sudo="$4"
+  local PASSWORD="$5"
   local found_item=""
   local item_type=""
   local local_build_path=""
@@ -258,10 +263,16 @@ get_build_install_item () {
   if test x"" != x"${found_item}"; then
     local item_collection="`printf -- "${found_item}" | sed -e 's/ .*//'`"
     printf "Item '${item_name}' already installed in collection '${item_collection}'.\n"
-    if test x"${item_collection}" = x"${install_collection}"; then
-      return 0
+    if test x"${force}" = x"yes"; then
+      if ! remove_item "${item_name}" "${use_sudo}" "${PASSWORD}" "interactive-no"; then
+        return 1
+      fi
     else
-      return 1
+      if test x"${item_collection}" = x"${install_collection}"; then
+        return 0
+      else
+        return 1
+      fi
     fi
   fi
 
@@ -296,7 +307,7 @@ get_build_install_item () {
       for version in ${list}; do \
         if check_version_compatibility "${version}"; then
           local modname="`printf -- ${version} | sed -e s/[^:]*://`"
-          get_build_install_item "$install_collection" "${modname}" "${use_sudo}" "${PASSWORD}" || return 1
+          get_build_install_item "$install_collection" "${modname}" "${force}" "${use_sudo}" "${PASSWORD}" || return 1
         fi
       done
     else
@@ -325,12 +336,12 @@ get_build_install_item () {
         else
           printf "This model needs its driver '${dvr}', trying to find it at openkim.org.\n"
           # try openkim.org first
-          if ! get_build_install_item "${install_collection}" "${dvr}" "${use_sudo}" "${PASSWORD}"; then
+          if ! get_build_install_item "${install_collection}" "${dvr}" "${force}" "${use_sudo}" "${PASSWORD}"; then
             if test x"" != x"${local_build}"; then
               # now try local
               printf "Now trying to find '${dvr}' locally.\n"
               dvr="`printf "${local_build}" | sed "s|^\(.*/\)${item_name}\$|\1${dvr}|"`"
-              get_build_install_item "${install_collection}" "${dvr}" "${use_sudo}" "${PASSWORD}" || return 1
+              get_build_install_item "${install_collection}" "${dvr}" "${force}" "${use_sudo}" "${PASSWORD}" || return 1
             fi
           fi
         fi
@@ -754,13 +765,18 @@ case $command in
       usage
       exit 1
     else
+      force="no"
+      if test x"$2" = x"--force"; then
+        force="yes"
+        shift
+      fi
       subcommand=$2
       shift
       shift
       case $subcommand in
         CWD|environment|user)
           for item_id in $@; do
-            if ! get_build_install_item "${subcommand}" "${item_id}" "sudo-no" ""; then
+            if ! get_build_install_item "${subcommand}" "${item_id}" "${force}" "sudo-no" ""; then
               printf "\nAborting!\n"
               exit 1
             else
@@ -781,7 +797,7 @@ case $command in
             use_sudo="sudo-no"
           fi
           for item_id in $@; do
-            if ! get_build_install_item "system" "${item_id}" "${use_sudo}" "${PASSWORD}"; then
+            if ! get_build_install_item "system" "${item_id}" "${force}" "${use_sudo}" "${PASSWORD}"; then
               printf "\nAborting!\n"
               exit 1
             else
@@ -850,7 +866,7 @@ case $command in
         if test \! x"" = x"${found_item}"; then
           item_collection="`printf "${found_item}" | sed -e 's/^[[:space:]]*\([^[:space:]]*\) .*/\1/'`"
           if ! (remove_item "${item_name}" "${use_sudo}" "${PASSWORD}" "${use_interactive}" && \
-                  get_build_install_item "${item_collection}" "${item_id}" "${use_sudo}" "${PASSWORD}"); then
+                  get_build_install_item "${item_collection}" "${item_id}" "${use_sudo}" "${PASSWORD}" "no"); then
             printf "\nAborting!\n"
             exit 1
           fi
