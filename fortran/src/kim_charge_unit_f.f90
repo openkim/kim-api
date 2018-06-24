@@ -44,7 +44,7 @@ module kim_charge_unit_f_module
 
   interface
     type(kim_charge_unit_type) function from_string(string) &
-      bind(c, name="KIM_ChargeUnitFromString")
+      bind(c, name="KIM_ChargeUnit_FromString")
       use, intrinsic :: iso_c_binding
       use kim_charge_unit_module, only : &
         kim_charge_unit_type
@@ -53,7 +53,7 @@ module kim_charge_unit_f_module
     end function from_string
 
     type(c_ptr) function get_string(charge_unit) &
-      bind(c, name="KIM_ChargeUnitString")
+      bind(c, name="KIM_ChargeUnit_String")
       use, intrinsic :: iso_c_binding
       use kim_charge_unit_module, only : kim_charge_unit_type
       implicit none
@@ -67,7 +67,8 @@ module kim_charge_unit_f_module
       integer(c_int), intent(out) :: number_of_charge_units
     end subroutine get_number_of_charge_units
 
-    integer(c_int) function get_charge_unit(index, charge_unit)
+    integer(c_int) function get_charge_unit(index, charge_unit) &
+      bind(c, name="KIM_CHARGE_UNIT_GetChargeUnit")
       use, intrinsic :: iso_c_binding
       use kim_charge_unit_module, only : kim_charge_unit_type
       implicit none

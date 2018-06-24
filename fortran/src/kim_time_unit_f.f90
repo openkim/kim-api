@@ -60,7 +60,7 @@ module kim_time_unit_f_module
     end function get_string
 
     subroutine get_number_of_time_units(number_of_time_units) &
-      bind(c, name="kIM_TIME_UNIT_GetNumberOfTimeUnits")
+      bind(c, name="KIM_TIME_UNIT_GetNumberOfTimeUnits")
       use, intrinsic :: iso_c_binding
       implicit none
       integer(c_int), intent(out) :: number_of_time_units

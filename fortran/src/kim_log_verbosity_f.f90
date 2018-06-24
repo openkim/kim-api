@@ -61,7 +61,7 @@ module kim_log_verbosity_f_module
     end function get_string
 
     subroutine get_number_of_log_verbosities(number_of_log_verbosities) &
-      bind(c, name="KIM_LOG_VERBOSITIES_GetNumberOfLogVerbosities")
+      bind(c, name="KIM_LOG_VERBOSITY_GetNumberOfLogVerbosities")
       use, intrinsic :: iso_c_binding
       implicit none
       integer(c_int), intent(out) :: number_of_log_verbosities

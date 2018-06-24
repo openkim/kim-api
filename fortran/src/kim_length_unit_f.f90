@@ -61,7 +61,7 @@ module kim_length_unit_f_module
     end function get_string
 
     subroutine get_number_of_length_units(number_of_length_units) &
-      bind(c, name="KIM_LENGHT_UNIT_GetNumberOfLengthUnits")
+      bind(c, name="KIM_LENGTH_UNIT_GetNumberOfLengthUnits")
       use, intrinsic :: iso_c_binding
       integer(c_int), intent(out) :: number_of_length_units
     end subroutine get_number_of_length_units

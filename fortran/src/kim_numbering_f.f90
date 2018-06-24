@@ -67,7 +67,8 @@ module kim_numbering_f_module
       integer(c_int), intent(out) :: number_of_numberings
     end subroutine get_number_of_numberings
 
-    integer(c_int) function get_numbering(index, numbering)
+    integer(c_int) function get_numbering(index, numbering) &
+      bind(c, name="KIM_NUMBERING_GetNumbering")
       use, intrinsic :: iso_c_binding
       use kim_numbering_module, only : kim_numbering_type
       implicit none
