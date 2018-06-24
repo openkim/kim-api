@@ -99,12 +99,24 @@ _###FULL#PACKAGE#NAME###-collections-management()
         ;;
       install)
         if test ${COMP_CWORD} -eq 2; then
+          COMPREPLY=( $(compgen -W "--force CWD environment user system" \
+                                -- "${cur}") )
+          return 0
+        fi
+        if test ${COMP_CWORD} -eq 3 -a x"${COMP_WORDS[2]}" = x"--force"; then
           COMPREPLY=( $(compgen -W "CWD environment user system" \
                                 -- "${cur}") )
           return 0
         fi
+        local collection_position
+        if test x"${COMP_WORDS[2]}" = x"--force"; then
+          collection_position=3
+        else
+          collection_position=2
+        fi
         opts=""
-        if test ${COMP_CWORD} -eq 3 -a x"system" = x"${COMP_WORDS[2]}"; then
+        if test ${COMP_CWORD} -eq ${collection_position} \
+                -a x"system" = x"${COMP_WORDS[${collection_position}]}"; then
           opts="--sudo OpenKIM OpenKIM_with_history"
         elif test ${COMP_CWORD} -eq 3; then
           opts="OpenKIM OpenKIM_with_history"
