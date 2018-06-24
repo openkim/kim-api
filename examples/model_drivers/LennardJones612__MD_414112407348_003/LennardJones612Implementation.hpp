@@ -226,13 +226,13 @@ class LennardJones612Implementation
                       const bool& isShift) const;
   void ProcessVirialTerm(const double& dEidr,
                          const double& rij,
-                         const double* const r_ij_const,
+                         const double* const r_ij,
                          const int& i,
                          const int& j,
                          VectorOfSizeSix virial) const;
   void ProcessParticleVirialTerm(const double& dEidr,
                                  const double& rij,
-                                 const double* const r_ij_const,
+                                 const double* const r_ij,
                                  const int& i,
                                  const int& j,
                                  VectorOfSizeSix* const particleVirial) const;

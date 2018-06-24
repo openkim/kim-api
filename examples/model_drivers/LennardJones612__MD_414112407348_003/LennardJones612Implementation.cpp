@@ -950,26 +950,26 @@ int LennardJones612Implementation::GetComputeIndex(
 void LennardJones612Implementation::ProcessVirialTerm(
     const double& dEidr,
     const double& rij,
-    const double* const r_ij_const,
+    const double* const r_ij,
     const int& i,
     const int& j,
     VectorOfSizeSix virial) const
 {
   double const v = dEidr/rij;
 
-  virial[0] += v * r_ij_const[0] * r_ij_const[0];
-  virial[1] += v * r_ij_const[1] * r_ij_const[1];
-  virial[2] += v * r_ij_const[2] * r_ij_const[2];
-  virial[3] += v * r_ij_const[1] * r_ij_const[2];
-  virial[4] += v * r_ij_const[0] * r_ij_const[2];
-  virial[5] += v * r_ij_const[0] * r_ij_const[1];
+  virial[0] += v * r_ij[0] * r_ij[0];
+  virial[1] += v * r_ij[1] * r_ij[1];
+  virial[2] += v * r_ij[2] * r_ij[2];
+  virial[3] += v * r_ij[1] * r_ij[2];
+  virial[4] += v * r_ij[0] * r_ij[2];
+  virial[5] += v * r_ij[0] * r_ij[1];
 }
 
 //******************************************************************************
 void LennardJones612Implementation::ProcessParticleVirialTerm(
     const double& dEidr,
     const double& rij,
-    const double* const r_ij_const,
+    const double* const r_ij,
     const int& i,
     const int& j,
     VectorOfSizeSix* const particleVirial) const
@@ -977,12 +977,12 @@ void LennardJones612Implementation::ProcessParticleVirialTerm(
   double const v = dEidr/rij;
   VectorOfSizeSix vir;
 
-  vir[0] = 0.5 * v * r_ij_const[0] * r_ij_const[0];
-  vir[1] = 0.5 * v * r_ij_const[1] * r_ij_const[1];
-  vir[2] = 0.5 * v * r_ij_const[2] * r_ij_const[2];
-  vir[3] = 0.5 * v * r_ij_const[1] * r_ij_const[2];
-  vir[4] = 0.5 * v * r_ij_const[0] * r_ij_const[2];
-  vir[5] = 0.5 * v * r_ij_const[0] * r_ij_const[1];
+  vir[0] = 0.5 * v * r_ij[0] * r_ij[0];
+  vir[1] = 0.5 * v * r_ij[1] * r_ij[1];
+  vir[2] = 0.5 * v * r_ij[2] * r_ij[2];
+  vir[3] = 0.5 * v * r_ij[1] * r_ij[2];
+  vir[4] = 0.5 * v * r_ij[0] * r_ij[2];
+  vir[5] = 0.5 * v * r_ij[0] * r_ij[1];
 
   for (int k = 0; k < 6; ++k)
   {
