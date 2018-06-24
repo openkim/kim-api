@@ -37,11 +37,14 @@ module kim_language_name_f_module
 
   public &
     from_string, &
-    get_string
+    get_string, &
+    get_number_of_language_names, &
+    get_language_name
+
 
   interface
     type(kim_language_name_type) function from_string(string) &
-      bind(c, name="KIM_LanguageNameFromString")
+      bind(c, name="KIM_LanguageName_FromString")
       use, intrinsic :: iso_c_binding
       use kim_language_name_module, only : &
         kim_language_name_type
@@ -50,12 +53,26 @@ module kim_language_name_f_module
     end function from_string
 
     type(c_ptr) function get_string(language_name) &
-      bind(c, name="KIM_LanguageNameString")
+      bind(c, name="KIM_LanguageName_String")
       use, intrinsic :: iso_c_binding
       use kim_language_name_module, only : kim_language_name_type
       implicit none
       type(kim_language_name_type), intent(in), value :: language_name
     end function get_string
+
+    subroutine get_number_of_language_names(number_of_language_names) &
+      bind(c, name="KIM_LANGUAGE_NAME_GetNumberOfLanguageNames")
+      use, intrinsic :: iso_c_binding
+      integer(c_int), intent(out) :: number_of_language_names
+    end subroutine get_number_of_language_names
+
+    integer(c_int) function get_language_name(index, language_name) &
+      bind(c, name="KIM_LANGUAGE_NAME_GetLanguageName")
+      use, intrinsic :: iso_c_binding
+      use kim_language_name_module, only : kim_language_name_type
+      integer(c_int), intent(in), value :: index
+      type(kim_language_name_type), intent(out) :: language_name
+    end function get_language_name
   end interface
 end module kim_language_name_f_module
 
@@ -116,3 +133,25 @@ subroutine kim_language_name_string(language_name, string)
     string = ""
   end if
 end subroutine kim_language_name_string
+
+subroutine kim_language_name_get_number_of_language_names( &
+  number_of_language_names)
+  use, intrinsic :: iso_c_binding
+  use kim_language_name_f_module, only : get_number_of_language_names
+  implicit none
+  integer(c_int), intent(out) :: number_of_language_names
+
+  call get_number_of_language_names(number_of_language_names)
+end subroutine kim_language_name_get_number_of_language_names
+
+subroutine kim_language_name_get_language_name(index, language_name, ierr)
+  use, intrinsic :: iso_c_binding
+  use kim_language_name_module, only : kim_language_name_type
+  use kim_language_name_f_module, only : get_language_name
+  implicit none
+  integer(c_int), intent(in), value :: index
+  type(kim_language_name_type), intent(out) :: language_name
+  integer(c_int), intent(out) :: ierr
+
+  ierr = get_language_name(index-1, language_name)
+end subroutine kim_language_name_get_language_name

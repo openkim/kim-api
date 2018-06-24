@@ -37,11 +37,13 @@ module kim_temperature_unit_f_module
 
   public &
     from_string, &
-    get_string
+    get_string, &
+    get_number_of_temperature_units, &
+    get_temperature_unit
 
   interface
     type(kim_temperature_unit_type) function from_string(string) &
-      bind(c, name="KIM_TemperatureUnitFromString")
+      bind(c, name="KIM_TemperatureUnit_FromString")
       use, intrinsic :: iso_c_binding
       use kim_temperature_unit_module, only : &
         kim_temperature_unit_type
@@ -50,12 +52,28 @@ module kim_temperature_unit_f_module
     end function from_string
 
     type(c_ptr) function get_string(temperature_unit) &
-      bind(c, name="KIM_TemperatureUnitString")
+      bind(c, name="KIM_TemperatureUnit_String")
       use, intrinsic :: iso_c_binding
       use kim_temperature_unit_module, only : kim_temperature_unit_type
       implicit none
       type(kim_temperature_unit_type), intent(in), value :: temperature_unit
     end function get_string
+
+    subroutine get_number_of_temperature_units(number_of_temperature_units) &
+      bind(c, name="KIM_TEMPERATURE_UNIT_GetNumberOfTemperatureUnits")
+      use, intrinsic :: iso_c_binding
+      implicit none
+      integer(c_int), intent(out) :: number_of_temperature_units
+    end subroutine get_number_of_temperature_units
+
+    integer(c_int) function get_temperature_unit(index, temperature_unit) &
+      bind(c, name="KIM_TEMPERATURE_UNIT_GetTemperatureUnit")
+      use, intrinsic :: iso_c_binding
+      use kim_temperature_unit_module, only : kim_temperature_unit_type
+      implicit none
+      integer(c_int), intent(in), value :: index
+      type(kim_temperature_unit_type), intent(in) :: temperature_unit
+    end function get_temperature_unit
   end interface
 end module kim_temperature_unit_f_module
 
@@ -116,3 +134,26 @@ subroutine kim_temperature_unit_string(temperature_unit, string)
     string = ""
   end if
 end subroutine kim_temperature_unit_string
+
+subroutine kim_temperature_unit_get_number_of_temperature_units( &
+  number_of_temperature_units)
+  use, intrinsic :: iso_c_binding
+  use kim_temperature_unit_f_module, only : get_number_of_temperature_units
+  implicit none
+  integer(c_int), intent(out) :: number_of_temperature_units
+
+  call get_number_of_temperature_units(number_of_temperature_units)
+end subroutine kim_temperature_unit_get_number_of_temperature_units
+
+subroutine kim_temperature_unit_get_temperature_unit(index, temperature_unit, &
+  ierr)
+  use, intrinsic :: iso_c_binding
+  use kim_temperature_unit_module, only : kim_temperature_unit_type
+  use kim_temperature_unit_f_module, only : get_temperature_unit
+  implicit none
+  integer(c_int), intent(in), value :: index
+  type(kim_temperature_unit_type), intent(out) :: temperature_unit
+  integer(c_int), intent(out) :: ierr
+
+  ierr = get_temperature_unit(index-1, temperature_unit)
+end subroutine kim_temperature_unit_get_temperature_unit

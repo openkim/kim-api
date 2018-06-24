@@ -37,11 +37,14 @@ module kim_numbering_f_module
 
   public &
     from_string, &
-    get_string
+    get_string, &
+    get_number_of_numberings, &
+    get_numbering
+
 
   interface
     type(kim_numbering_type) function from_string(string) &
-      bind(c, name="KIM_NumberingFromString")
+      bind(c, name="KIM_Numbering_FromString")
       use, intrinsic :: iso_c_binding
       use kim_numbering_module, only : &
         kim_numbering_type
@@ -50,12 +53,27 @@ module kim_numbering_f_module
     end function from_string
 
     type(c_ptr) function get_string(numbering) &
-      bind(c, name="KIM_NumberingString")
+      bind(c, name="KIM_Numbering_String")
       use, intrinsic :: iso_c_binding
       use kim_numbering_module, only : kim_numbering_type
       implicit none
       type(kim_numbering_type), intent(in), value :: numbering
     end function get_string
+
+    subroutine get_number_of_numberings(number_of_numberings) &
+      bind(c, name="KIM_NUMBERING_GetNumberOfNumberings")
+      use, intrinsic :: iso_c_binding
+      implicit none
+      integer(c_int), intent(out) :: number_of_numberings
+    end subroutine get_number_of_numberings
+
+    integer(c_int) function get_numbering(index, numbering)
+      use, intrinsic :: iso_c_binding
+      use kim_numbering_module, only : kim_numbering_type
+      implicit none
+      integer(c_int), intent(in), value :: index
+      type(kim_numbering_type), intent(out) :: numbering
+    end function get_numbering
   end interface
 end module kim_numbering_f_module
 
@@ -116,3 +134,24 @@ subroutine kim_numbering_string(numbering, string)
     string = ""
   end if
 end subroutine kim_numbering_string
+
+subroutine kim_numbering_get_number_of_numberings(number_of_numberings)
+  use, intrinsic :: iso_c_binding
+  use kim_numbering_f_module, only : get_number_of_numberings
+  implicit none
+  integer(c_int), intent(out) :: number_of_numberings
+
+  call get_number_of_numberings(number_of_numberings)
+end subroutine kim_numbering_get_number_of_numberings
+
+subroutine kim_numbering_get_numbering(index, numbering, ierr)
+  use, intrinsic :: iso_c_binding
+  use kim_numbering_module, only : kim_numbering_type
+  use kim_numbering_f_module, only : get_numbering
+  implicit none
+  integer(c_int), intent(in), value :: index
+  type(kim_numbering_type), intent(out) :: numbering
+  integer(c_int), intent(out) :: ierr
+
+  ierr = get_numbering(index-1, numbering)
+end subroutine kim_numbering_get_numbering

@@ -44,7 +44,11 @@ module kim_temperature_unit_module
     kim_temperature_unit_string, &
 
     kim_temperature_unit_unused, &
-    kim_temperature_unit_k
+    kim_temperature_unit_k, &
+
+    kim_temperature_unit_get_number_of_temperature_units, &
+    kim_temperature_unit_get_temperature_unit
+
 
   type, bind(c) :: kim_temperature_unit_type
     integer(c_int) temperature_unit_id
@@ -91,5 +95,22 @@ module kim_temperature_unit_module
       type(kim_temperature_unit_type), intent(in), value :: temperature_unit
       character(len=*), intent(out) :: string
     end subroutine kim_temperature_unit_string
+
+    subroutine kim_temperature_unit_get_number_of_temperature_units( &
+      number_of_temperature_units)
+      use, intrinsic :: iso_c_binding
+      implicit none
+      integer(c_int), intent(out) :: number_of_temperature_units
+    end subroutine kim_temperature_unit_get_number_of_temperature_units
+
+    subroutine kim_temperature_unit_get_temperature_unit(index, &
+      temperature_unit, ierr)
+      use, intrinsic :: iso_c_binding
+      import kim_temperature_unit_type
+      implicit none
+      integer(c_int), intent(in), value :: index
+      type(kim_temperature_unit_type), intent(out) :: temperature_unit
+      integer(c_int), intent(out) :: ierr
+    end subroutine kim_temperature_unit_get_temperature_unit
   end interface
 end module kim_temperature_unit_module

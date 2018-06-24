@@ -37,7 +37,10 @@ module kim_charge_unit_f_module
 
   public &
     from_string, &
-    get_string
+    get_string, &
+    get_number_of_charge_units, &
+    get_charge_unit
+
 
   interface
     type(kim_charge_unit_type) function from_string(string) &
@@ -56,6 +59,21 @@ module kim_charge_unit_f_module
       implicit none
       type(kim_charge_unit_type), intent(in), value :: charge_unit
     end function get_string
+
+    subroutine get_number_of_charge_units(number_of_charge_units) &
+      bind(c, name="KIM_CHARGE_UNIT_GetNumberOfChargeUnits")
+      use, intrinsic :: iso_c_binding
+      implicit none
+      integer(c_int), intent(out) :: number_of_charge_units
+    end subroutine get_number_of_charge_units
+
+    integer(c_int) function get_charge_unit(index, charge_unit)
+      use, intrinsic :: iso_c_binding
+      use kim_charge_unit_module, only : kim_charge_unit_type
+      implicit none
+      integer(c_int), intent(in), value :: index
+      type(kim_charge_unit_type), intent(out) :: charge_unit
+    end function get_charge_unit
   end interface
 end module kim_charge_unit_f_module
 
@@ -116,3 +134,24 @@ subroutine kim_charge_unit_string(charge_unit, string)
     string = ""
   end if
 end subroutine kim_charge_unit_string
+
+subroutine kim_charge_unit_get_number_of_charge_units(number_of_charge_units)
+  use, intrinsic :: iso_c_binding
+  use kim_charge_unit_f_module, only : get_number_of_charge_units
+  implicit none
+  integer(c_int), intent(out) :: number_of_charge_units
+
+  call get_number_of_charge_units(number_of_charge_units)
+end subroutine kim_charge_unit_get_number_of_charge_units
+
+subroutine kim_charge_unit_get_charege_unit(index, charge_unit, ierr)
+  use, intrinsic :: iso_c_binding
+  use kim_charge_unit_module, only : kim_charge_unit_type
+  use kim_charge_unit_f_module, only : get_charge_unit
+  implicit none
+  integer(c_int), intent(in), value :: index
+  type(kim_charge_unit_type), intent(out) :: charge_unit
+  integer(c_int), intent(out) :: ierr
+
+  ierr = get_charge_unit(index-1, charge_unit)
+end subroutine kim_charge_unit_get_charege_unit

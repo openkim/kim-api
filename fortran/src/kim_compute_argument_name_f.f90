@@ -42,9 +42,10 @@ module kim_compute_argument_name_f_module
     get_compute_argument_name, &
     get_compute_argument_data_type
 
+
   interface
     type(kim_compute_argument_name_type) function from_string(string) &
-      bind(c, name="KIM_ComputeArgumentNameFromString")
+      bind(c, name="KIM_ComputeArgumentName_FromString")
       use, intrinsic :: iso_c_binding
       use kim_compute_argument_name_module, only : &
         kim_compute_argument_name_type
@@ -53,7 +54,7 @@ module kim_compute_argument_name_f_module
     end function from_string
 
     type(c_ptr) function get_string(compute_argument_name) &
-      bind(c, name="KIM_ComputeArgumentNameString")
+      bind(c, name="KIM_ComputeArgumentName_String")
       use, intrinsic :: iso_c_binding
       use kim_compute_argument_name_module, only : &
         kim_compute_argument_name_type

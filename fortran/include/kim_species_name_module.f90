@@ -183,7 +183,7 @@ module kim_species_name_module
     kim_species_name_user19, &
     kim_species_name_user20, &
 
-    kim_species_name_get_number_of_species, &
+    kim_species_name_get_number_of_species_names, &
     kim_species_name_get_species_name
 
   type, bind(c) :: kim_species_name_type
@@ -644,12 +644,12 @@ module kim_species_name_module
       character(len=*), intent(out) :: string
     end subroutine kim_species_name_string
 
-    subroutine kim_species_name_get_number_of_species(&
-      number_of_species)
+    subroutine kim_species_name_get_number_of_species_names(&
+      number_of_species_names)
       use, intrinsic :: iso_c_binding
       implicit none
-      integer(c_int), intent(out) :: number_of_species
-    end subroutine kim_species_name_get_number_of_species
+      integer(c_int), intent(out) :: number_of_species_names
+    end subroutine kim_species_name_get_number_of_species_names
 
     subroutine kim_species_name_get_species_name(index, species_name, ierr)
       use, intrinsic :: iso_c_binding

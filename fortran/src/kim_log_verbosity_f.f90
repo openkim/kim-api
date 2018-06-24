@@ -37,11 +37,14 @@ module kim_log_verbosity_f_module
 
   public &
     from_string, &
-    get_string
+    get_string, &
+    get_number_of_log_verbosities, &
+    get_log_verbosity
+
 
   interface
     type(kim_log_verbosity_type) function from_string(string) &
-      bind(c, name="KIM_LogVerbosityFromString")
+      bind(c, name="KIM_LogVerbosity_FromString")
       use, intrinsic :: iso_c_binding
       use kim_log_verbosity_module, only : &
         kim_log_verbosity_type
@@ -50,12 +53,28 @@ module kim_log_verbosity_f_module
     end function from_string
 
     type(c_ptr) function get_string(log_verbosity) &
-      bind(c, name="KIM_LogVerbosityString")
+      bind(c, name="KIM_LogVerbosity_String")
       use, intrinsic :: iso_c_binding
       use kim_log_verbosity_module, only : kim_log_verbosity_type
       implicit none
       type(kim_log_verbosity_type), intent(in), value :: log_verbosity
     end function get_string
+
+    subroutine get_number_of_log_verbosities(number_of_log_verbosities) &
+      bind(c, name="KIM_LOG_VERBOSITIES_GetNumberOfLogVerbosities")
+      use, intrinsic :: iso_c_binding
+      implicit none
+      integer(c_int), intent(out) :: number_of_log_verbosities
+    end subroutine get_number_of_log_verbosities
+
+    integer(c_int) function get_log_verbosity(index, log_verbosity) &
+      bind(c, name="KIM_LOG_VERBOSITY_GetLogVerbosity")
+      use, intrinsic :: iso_c_binding
+      use kim_log_verbosity_module, only : kim_log_verbosity_type
+      implicit none
+      integer(c_int), intent(in), value :: index
+      type(kim_log_verbosity_type), intent(out) :: log_verbosity
+    end function get_log_verbosity
   end interface
 end module kim_log_verbosity_f_module
 
@@ -160,3 +179,25 @@ subroutine kim_log_verbosity_string(log_verbosity, string)
     string = ""
   end if
 end subroutine kim_log_verbosity_string
+
+subroutine kim_log_verbosity_get_number_of_log_verbosities( &
+  number_of_log_verbosities)
+  use, intrinsic :: iso_c_binding
+  use kim_log_verbosity_f_module, only : get_number_of_log_verbosities
+  implicit none
+  integer(c_int), intent(out) :: number_of_log_verbosities
+
+  call get_number_of_log_verbosities(number_of_log_verbosities)
+end subroutine kim_log_verbosity_get_number_of_log_verbosities
+
+subroutine kim_log_verbosities_get_log_verbosity(index, log_verbosity, ierr)
+  use, intrinsic :: iso_c_binding
+  use kim_log_verbosity_module, only : kim_log_verbosity_type
+  use kim_log_verbosity_f_module, only : get_log_verbosity
+  implicit none
+  integer(c_int), intent(in), value :: index
+  type(kim_log_verbosity_type), intent(out) :: log_verbosity
+  integer(c_int), intent(out) :: ierr
+
+  ierr = get_log_verbosity(index-1, log_verbosity)
+end subroutine kim_log_verbosities_get_log_verbosity

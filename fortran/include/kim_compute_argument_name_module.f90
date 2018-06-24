@@ -57,6 +57,7 @@ module kim_compute_argument_name_module
     kim_compute_argument_name_get_compute_argument_name, &
     kim_compute_argument_name_get_compute_argument_data_type
 
+
   type, bind(c) :: kim_compute_argument_name_type
     integer(c_int) compute_argument_name_id
   end type kim_compute_argument_name_type

@@ -37,11 +37,13 @@ module kim_time_unit_f_module
 
   public &
     from_string, &
-    get_string
+    get_string, &
+    get_number_of_time_units, &
+    get_time_unit
 
   interface
     type(kim_time_unit_type) function from_string(string) &
-      bind(c, name="KIM_TimeUnitFromString")
+      bind(c, name="KIM_TimeUnit_FromString")
       use, intrinsic :: iso_c_binding
       use kim_time_unit_module, only : &
         kim_time_unit_type
@@ -50,12 +52,28 @@ module kim_time_unit_f_module
     end function from_string
 
     type(c_ptr) function get_string(time_unit) &
-      bind(c, name="KIM_TimeUnitString")
+      bind(c, name="KIM_TimeUnit_String")
       use, intrinsic :: iso_c_binding
       use kim_time_unit_module, only : kim_time_unit_type
       implicit none
       type(kim_time_unit_type), intent(in), value :: time_unit
     end function get_string
+
+    subroutine get_number_of_time_units(number_of_time_units) &
+      bind(c, name="kIM_TIME_UNIT_GetNumberOfTimeUnits")
+      use, intrinsic :: iso_c_binding
+      implicit none
+      integer(c_int), intent(out) :: number_of_time_units
+    end subroutine get_number_of_time_units
+
+    integer(c_int) function get_time_unit(index, time_unit) &
+      bind(c, name="KIM_TIME_UNIT_GetTimeUnit")
+      use, intrinsic :: iso_c_binding
+      use kim_time_unit_module, only : kim_time_unit_type
+      implicit none
+      integer(c_int), intent(in), value :: index
+      type(kim_time_unit_type), intent(out) :: time_unit
+    end function get_time_unit
   end interface
 end module kim_time_unit_f_module
 
@@ -116,3 +134,24 @@ subroutine kim_time_unit_string(time_unit, string)
     string = ""
   end if
 end subroutine kim_time_unit_string
+
+subroutine kim_time_unit_get_number_of_time_units(number_of_time_units)
+  use, intrinsic :: iso_c_binding
+  use kim_time_unit_f_module, only : get_number_of_time_units
+  implicit none
+  integer(c_int), intent(out) :: number_of_time_units
+
+  call get_number_of_time_units(number_of_time_units)
+end subroutine kim_time_unit_get_number_of_time_units
+
+subroutine kim_time_unit_get_time_unit(index, time_unit, ierr)
+  use, intrinsic :: iso_c_binding
+  use kim_time_unit_module, only : kim_time_unit_type
+  use kim_time_unit_f_module, only : get_time_unit
+  implicit none
+  integer(c_int), intent(in), value :: index
+  type(kim_time_unit_type), intent(out) :: time_unit
+  integer(c_int), intent(out) :: ierr
+
+  ierr = get_time_unit(index-1, time_unit)
+end subroutine kim_time_unit_get_time_unit

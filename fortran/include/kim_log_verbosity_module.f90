@@ -54,8 +54,12 @@ module kim_log_verbosity_module
     kim_log_verbosity_information, &
     kim_log_verbosity_debug, &
 
+    kim_log_verbosity_get_number_of_log_verbosities, &
+    kim_log_verbosity_get_log_verbosity, &
+
     kim_log_file, &
     kim_log_message
+
 
   type, bind(c) :: kim_log_verbosity_type
     integer(c_int) :: log_verbosity_id
@@ -154,6 +158,22 @@ module kim_log_verbosity_module
       type(kim_log_verbosity_type), intent(in), value :: log_verbosity
       character(len=*), intent(out) :: string
     end subroutine kim_log_verbosity_string
+
+    subroutine kim_log_verbosity_get_number_of_log_verbosities( &
+      number_of_log_verbosities)
+      use, intrinsic :: iso_c_binding
+      implicit none
+      integer(c_int), intent(out) :: number_of_log_verbosities
+    end subroutine kim_log_verbosity_get_number_of_log_verbosities
+
+    subroutine kim_log_verbosity_get_log_verbosity(index, log_verbosity, ierr)
+      use, intrinsic :: iso_c_binding
+      import kim_log_verbosity_type
+      implicit none
+      integer(c_int), intent(in), value :: index
+      type(kim_log_verbosity_type), intent(out) :: log_verbosity
+      integer(c_int), intent(out) :: ierr
+    end subroutine kim_log_verbosity_get_log_verbosity
   end interface
 
   character(len=4096) :: kim_log_file

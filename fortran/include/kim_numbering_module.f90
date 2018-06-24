@@ -44,7 +44,11 @@ module kim_numbering_module
     kim_numbering_string, &
 
     kim_numbering_zero_based, &
-    kim_numbering_one_based
+    kim_numbering_one_based, &
+
+    kim_numbering_get_number_of_numberings, &
+    kim_numbering_get_numbering
+
 
   type, bind(c) :: kim_numbering_type
     integer(c_int) :: numbering_id
@@ -91,5 +95,20 @@ module kim_numbering_module
       type(kim_numbering_type), intent(in), value :: numbering
       character(len=*), intent(out) :: string
     end subroutine kim_numbering_string
+
+    subroutine kim_numbering_get_number_of_numberings(number_of_numberings)
+      use, intrinsic :: iso_c_binding
+      implicit none
+      integer(c_int), intent(out) :: number_of_numberings
+    end subroutine kim_numbering_get_number_of_numberings
+
+    subroutine kim_numbering_get_numbering(index, numbering, ierr)
+      use, intrinsic :: iso_c_binding
+      import kim_numbering_type
+      implicit none
+      integer(c_int), intent(in), value :: index
+      type(kim_numbering_type), intent(out) :: numbering
+      integer(c_int), intent(out) :: ierr
+    end subroutine kim_numbering_get_numbering
   end interface
 end module kim_numbering_module

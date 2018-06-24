@@ -37,11 +37,14 @@ module kim_length_unit_f_module
 
   public &
     from_string, &
-    get_string
+    get_string, &
+    get_number_of_length_units, &
+    get_length_unit
+
 
   interface
     type(kim_length_unit_type) function from_string(string) &
-      bind(c, name="KIM_LengthUnitFromString")
+      bind(c, name="KIM_LengthUnit_FromString")
       use, intrinsic :: iso_c_binding
       use kim_length_unit_module, only : &
         kim_length_unit_type
@@ -50,12 +53,27 @@ module kim_length_unit_f_module
     end function from_string
 
     type(c_ptr) function get_string(length_unit) &
-      bind(c, name="KIM_LengthUnitString")
+      bind(c, name="KIM_LengthUnit_String")
       use, intrinsic :: iso_c_binding
       use kim_length_unit_module, only : kim_length_unit_type
       implicit none
       type(kim_length_unit_type), intent(in), value :: length_unit
     end function get_string
+
+    subroutine get_number_of_length_units(number_of_length_units) &
+      bind(c, name="KIM_LENGHT_UNIT_GetNumberOfLengthUnits")
+      use, intrinsic :: iso_c_binding
+      integer(c_int), intent(out) :: number_of_length_units
+    end subroutine get_number_of_length_units
+
+    integer(c_int) function get_length_unit(index, length_unit) &
+      bind(c, name="KIM_LENGTH_UNIT_GetLengthUnit")
+      use, intrinsic :: iso_c_binding
+      use kim_length_unit_module, only : kim_length_unit_type
+      implicit none
+      integer(c_int), intent(in), value :: index
+      type(kim_length_unit_type), intent(out) :: length_unit
+    end function get_length_unit
   end interface
 end module kim_length_unit_f_module
 
@@ -116,3 +134,24 @@ subroutine kim_length_unit_string(length_unit, string)
     string = ""
   end if
 end subroutine kim_length_unit_string
+
+subroutine kim_length_unit_get_number_of_length_units(number_of_length_units)
+  use, intrinsic :: iso_c_binding
+  use kim_length_unit_f_module, only : get_number_of_length_units
+  implicit none
+  integer(c_int), intent(out) :: number_of_length_units
+
+  call get_number_of_length_units(number_of_length_units)
+end subroutine kim_length_unit_get_number_of_length_units
+
+subroutine kim_length_unit_get_length_unit(index, length_unit, ierr)
+  use, intrinsic :: iso_c_binding
+  use kim_length_unit_module, only : kim_length_unit_type
+  use kim_length_unit_f_module, only : get_length_unit
+  implicit none
+  integer(c_int), intent(in), value :: index
+  type(kim_length_unit_type), intent(out) :: length_unit
+  integer(c_int), intent(out) :: ierr
+
+  ierr = get_length_unit(index-1, length_unit)
+end subroutine kim_length_unit_get_length_unit

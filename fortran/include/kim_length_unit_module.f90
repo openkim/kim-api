@@ -48,7 +48,11 @@ module kim_length_unit_module
     kim_length_unit_bohr, &
     kim_length_unit_cm, &
     kim_length_unit_m, &
-    kim_length_unit_nm
+    kim_length_unit_nm, &
+
+    kim_length_unit_get_number_of_length_units, &
+    kim_length_unit_get_length_unit
+
 
   type, bind(c) :: kim_length_unit_type
     integer(c_int) length_unit_id
@@ -107,5 +111,21 @@ module kim_length_unit_module
       type(kim_length_unit_type), intent(in), value :: length_unit
       character(len=*), intent(out) :: string
     end subroutine kim_length_unit_string
+
+    subroutine kim_length_unit_get_number_of_length_units( &
+      number_of_length_units)
+      use, intrinsic :: iso_c_binding
+      implicit none
+      integer(c_int), intent(out) :: number_of_length_units
+    end subroutine kim_length_unit_get_number_of_length_units
+
+    subroutine kim_length_unit_get_length_unit(index, length_unit, ierr)
+      use, intrinsic :: iso_c_binding
+      import kim_length_unit_type
+      implicit none
+      integer(c_int), intent(in), value :: index
+      type(kim_length_unit_type), intent(out) :: length_unit
+      integer(c_int), intent(out) :: ierr
+    end subroutine kim_length_unit_get_length_unit
   end interface
 end module kim_length_unit_module

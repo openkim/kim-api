@@ -46,7 +46,11 @@ module kim_charge_unit_module
     kim_charge_unit_unused, &
     kim_charge_unit_c, &
     kim_charge_unit_e, &
-    kim_charge_unit_statc
+    kim_charge_unit_statc, &
+
+    kim_charge_unit_get_number_of_charge_units, &
+    kim_charge_unit_get_charge_unit
+
 
   type, bind(c) :: kim_charge_unit_type
     integer(c_int) charge_unit_id
@@ -99,5 +103,21 @@ module kim_charge_unit_module
       type(kim_charge_unit_type), intent(in), value :: charge_unit
       character(len=*), intent(out) :: string
     end subroutine kim_charge_unit_string
+
+    subroutine kim_charge_unit_get_number_of_charge_units( &
+      number_of_charge_units)
+      use, intrinsic :: iso_c_binding
+      implicit none
+      integer(c_int), intent(out) :: number_of_charge_units
+    end subroutine kim_charge_unit_get_number_of_charge_units
+
+    subroutine kim_charge_unit_get_charge_unit(index, charge_unit, ierr)
+      use, intrinsic :: iso_c_binding
+      import kim_charge_unit_type
+      implicit none
+      integer(c_int), intent(in), value :: index
+      type(kim_charge_unit_type), intent(out) :: charge_unit
+      integer(c_int), intent(out) :: ierr
+    end subroutine kim_charge_unit_get_charge_unit
   end interface
 end module kim_charge_unit_module

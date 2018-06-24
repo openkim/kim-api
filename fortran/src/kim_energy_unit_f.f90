@@ -37,11 +37,14 @@ module kim_energy_unit_f_module
 
   public &
     from_string, &
-    get_string
+    get_string, &
+    get_number_of_energy_units, &
+    get_energy_unit
+
 
   interface
     type(kim_energy_unit_type) function from_string(string) &
-      bind(c, name="KIM_EnergyUnitFromString")
+      bind(c, name="KIM_EnergyUnit_FromString")
       use, intrinsic :: iso_c_binding
       use kim_energy_unit_module, only : &
         kim_energy_unit_type
@@ -50,12 +53,27 @@ module kim_energy_unit_f_module
     end function from_string
 
     type(c_ptr) function get_string(energy_unit) &
-      bind(c, name="KIM_EnergyUnitString")
+      bind(c, name="KIM_EnergyUnit_String")
       use, intrinsic :: iso_c_binding
       use kim_energy_unit_module, only : kim_energy_unit_type
       implicit none
       type(kim_energy_unit_type), intent(in), value :: energy_unit
     end function get_string
+
+    subroutine get_number_of_energy_units(number_of_energy_units) &
+      bind(c, name="KIM_ENERGY_UNIT_GetNumberOfEnergyUnits")
+      use, intrinsic :: iso_c_binding
+      integer(c_int), intent(out) :: number_of_energy_units
+    end subroutine get_number_of_energy_units
+
+    integer(c_int) function get_energy_unit(index, energy_unit) &
+      bind(c, name="KIM_ENERGY_UNIT_GetEnergyUnit")
+      use, intrinsic :: iso_c_binding
+      use kim_energy_unit_module, only : kim_energy_unit_type
+      implicit none
+      integer(c_int), intent(in), value :: index
+      type(kim_energy_unit_type), intent(out) :: energy_unit
+    end function get_energy_unit
   end interface
 end module kim_energy_unit_f_module
 
@@ -116,3 +134,24 @@ subroutine kim_energy_unit_string(energy_unit, string)
     string = ""
   end if
 end subroutine kim_energy_unit_string
+
+subroutine kim_energy_unit_get_number_of_energy_units(number_of_energy_units)
+  use, intrinsic :: iso_c_binding
+  use kim_energy_unit_f_module, only : get_number_of_energy_units
+  implicit none
+  integer(c_int), intent(out) :: number_of_energy_units
+
+  call get_number_of_energy_units(number_of_energy_units)
+end subroutine kim_energy_unit_get_number_of_energy_units
+
+subroutine kim_energy_unit_get_energy_unit(index, energy_unit, ierr)
+  use, intrinsic :: iso_c_binding
+  use kim_energy_unit_module, only : kim_energy_unit_type
+  use kim_energy_unit_f_module, only : get_energy_unit
+  implicit none
+  integer(c_int), intent(in), value :: index
+  type(kim_energy_unit_type), intent(out) :: energy_unit
+  integer(c_int), intent(out) :: ierr
+
+  ierr = get_energy_unit(index-1, energy_unit)
+end subroutine kim_energy_unit_get_energy_unit

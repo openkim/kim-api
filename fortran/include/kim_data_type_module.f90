@@ -44,7 +44,11 @@ module kim_data_type_module
     kim_data_type_string, &
 
     kim_data_type_integer, &
-    kim_data_type_double
+    kim_data_type_double, &
+
+    kim_data_type_get_number_of_data_types, &
+    kim_data_type_get_data_type
+
 
   type, bind(c) :: kim_data_type_type
     integer(c_int) :: data_type_id
@@ -91,5 +95,20 @@ module kim_data_type_module
       type(kim_data_type_type), intent(in), value :: data_type
       character(len=*), intent(out) :: string
     end subroutine kim_data_type_string
+
+    subroutine kim_data_type_get_number_of_data_types(number_of_data_types)
+      use, intrinsic :: iso_c_binding
+      implicit none
+      integer(c_int), intent(out) :: number_of_data_types
+    end subroutine kim_data_type_get_number_of_data_types
+
+    subroutine kim_data_type_get_data_type(index, data_type, ierr)
+      use, intrinsic :: iso_c_binding
+      import kim_data_type_type
+      implicit none
+      integer(c_int), intent(in), value :: index
+      type(kim_data_type_type), intent(out) :: data_type
+      integer(c_int), intent(out) :: ierr
+    end subroutine kim_data_type_get_data_type
   end interface
 end module kim_data_type_module

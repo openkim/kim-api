@@ -313,7 +313,7 @@ integer(c_int) code
 ! Initialize error flag
 ier = 1
 
-call kim_species_name_get_number_of_species(total_num_species)
+call kim_species_name_get_number_of_species_names(total_num_species)
 
 if (total_num_species .gt. max_species) return
 

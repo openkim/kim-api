@@ -50,6 +50,7 @@ module kim_compute_callback_name_module
     kim_compute_callback_name_get_number_of_compute_callback_names, &
     kim_compute_callback_name_get_compute_callback_name
 
+
   type, bind(c) :: kim_compute_callback_name_type
     integer(c_int) compute_callback_name_id
   end type kim_compute_callback_name_type

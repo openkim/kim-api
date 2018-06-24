@@ -45,7 +45,11 @@ module kim_language_name_module
 
     kim_language_name_cpp, &
     kim_language_name_c, &
-    kim_language_name_fortran
+    kim_language_name_fortran, &
+
+    kim_language_name_get_number_of_language_names, &
+    kim_language_name_get_language_name
+
 
   type, bind(c) :: kim_language_name_type
     integer(c_int) :: language_name_id
@@ -95,5 +99,21 @@ module kim_language_name_module
       type(kim_language_name_type), intent(in), value :: language_name
       character(len=*), intent(out) :: string
     end subroutine kim_language_name_string
+
+    subroutine kim_language_name_get_number_of_language_names( &
+      number_of_language_names)
+      use, intrinsic :: iso_c_binding
+      implicit none
+      integer(c_int), intent(out) :: number_of_language_names
+    end subroutine kim_language_name_get_number_of_language_names
+
+    subroutine kim_language_name_get_language_name(index, language_name, ierr)
+      use, intrinsic :: iso_c_binding
+      import kim_language_name_type
+      implicit none
+      integer(c_int), intent(in), value :: index
+      type(kim_language_name_type), intent(out) :: language_name
+      integer(c_int), intent(out) :: ierr
+    end subroutine kim_language_name_get_language_name
   end interface
 end module kim_language_name_module

@@ -43,7 +43,7 @@ module kim_compute_callback_name_f_module
 
   interface
     type(kim_compute_callback_name_type) function from_string(string) &
-      bind(c, name="KIM_ComputeCallbackNameFromString")
+      bind(c, name="KIM_ComputeCallbackName_FromString")
       use, intrinsic :: iso_c_binding
       use kim_compute_callback_name_module, only : &
         kim_compute_callback_name_type
@@ -52,7 +52,7 @@ module kim_compute_callback_name_f_module
     end function from_string
 
     type(c_ptr) function get_string(compute_callback_name) &
-      bind(c, name="KIM_ComputeCallbackNameString")
+      bind(c, name="KIM_ComputeCallbackName_String")
       use, intrinsic :: iso_c_binding
       use kim_compute_callback_name_module, only : &
         kim_compute_callback_name_type

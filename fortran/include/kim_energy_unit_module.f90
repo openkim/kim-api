@@ -49,7 +49,11 @@ module kim_energy_unit_module
     kim_energy_unit_ev, &
     kim_energy_unit_hartree, &
     kim_energy_unit_j, &
-    kim_energy_unit_kcal_mol
+    kim_energy_unit_kcal_mol, &
+
+    kim_energy_unit_get_number_of_energy_units, &
+    kim_energy_unit_get_energy_unit
+
 
   type, bind(c) :: kim_energy_unit_type
     integer(c_int) energy_unit_id
@@ -111,5 +115,21 @@ module kim_energy_unit_module
       type(kim_energy_unit_type), intent(in), value :: energy_unit
       character(len=*), intent(out) :: string
     end subroutine kim_energy_unit_string
+
+    subroutine kim_energy_unit_get_number_of_energy_units( &
+      number_of_energy_units)
+      use, intrinsic :: iso_c_binding
+      implicit none
+      integer(c_int), intent(out) :: number_of_energy_units
+    end subroutine kim_energy_unit_get_number_of_energy_units
+
+    subroutine kim_energy_unit_get_energy_unit(index, energy_unit, ierr)
+      use, intrinsic :: iso_c_binding
+      import kim_energy_unit_type
+      implicit none
+      integer(c_int), intent(in), value :: index
+      type(kim_energy_unit_type), intent(out) :: energy_unit
+      integer(c_int), intent(out) :: ierr
+    end subroutine kim_energy_unit_get_energy_unit
   end interface
 end module kim_energy_unit_module

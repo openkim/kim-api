@@ -37,11 +37,14 @@ module kim_support_status_f_module
 
   public &
     from_string, &
-    get_string
+    get_string, &
+    get_number_of_support_statuses, &
+    get_support_status
+
 
   interface
     type(kim_support_status_type) function from_string(string) &
-      bind(c, name="KIM_SupportStatusFromString")
+      bind(c, name="KIM_SupportStatus_FromString")
       use, intrinsic :: iso_c_binding
       use kim_support_status_module, only : &
         kim_support_status_type
@@ -50,12 +53,28 @@ module kim_support_status_f_module
     end function from_string
 
     type(c_ptr) function get_string(support_status) &
-      bind(c, name="KIM_SupportStatusString")
+      bind(c, name="KIM_SupportStatus_String")
       use, intrinsic :: iso_c_binding
       use kim_support_status_module, only : kim_support_status_type
       implicit none
       type(kim_support_status_type), intent(in), value :: support_status
     end function get_string
+
+    subroutine get_number_of_support_statuses(number_of_support_statuses) &
+      bind(c, name="KIM_SUPPORT_STATUS_GetNumberOfSupportStatuses")
+      use, intrinsic :: iso_c_binding
+      implicit none
+      integer(c_int), intent(out) :: number_of_support_statuses
+    end subroutine get_number_of_support_statuses
+
+    integer(c_int) function get_support_status(index, support_status) &
+      bind(c, name="KIM_SUPPORT_STATUS_GetSupportStatus")
+      use, intrinsic :: iso_c_binding
+      use kim_support_status_module, only : kim_support_status_type
+      implicit none
+      integer(c_int), intent(in), value :: index
+      type(kim_support_status_type), intent(out) :: support_status
+    end function get_support_status
   end interface
 end module kim_support_status_f_module
 
@@ -116,3 +135,25 @@ subroutine kim_support_status_string(support_status, string)
     string = ""
   end if
 end subroutine kim_support_status_string
+
+subroutine kim_support_status_get_number_of_support_statuses( &
+  number_of_support_statuses)
+  use, intrinsic :: iso_c_binding
+  use kim_support_status_f_module, only : get_number_of_support_statuses
+  implicit none
+  integer(c_int), intent(out) :: number_of_support_statuses
+
+  call get_number_of_support_statuses(number_of_support_statuses)
+end subroutine kim_support_status_get_number_of_support_statuses
+
+subroutine kim_support_status_get_support_status(index, support_status, ierr)
+  use, intrinsic :: iso_c_binding
+  use kim_support_status_module, only : kim_support_status_type
+  use kim_support_status_f_module, only : get_support_status
+  implicit none
+  integer(c_int), intent(in), value :: index
+  type(kim_support_status_type), intent(out) :: support_status
+  integer(c_int), intent(out) :: ierr
+
+  ierr = get_support_status(index-1, support_status)
+end subroutine kim_support_status_get_support_status

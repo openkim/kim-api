@@ -46,7 +46,11 @@ module kim_support_status_module
     kim_support_status_required_by_api, &
     kim_support_status_not_supported, &
     kim_support_status_required, &
-    kim_support_status_optional
+    kim_support_status_optional, &
+
+    kim_support_status_get_number_of_support_statuses, &
+    kim_support_status_get_support_status
+
 
   type, bind(c) :: kim_support_status_type
     integer(c_int) :: support_status_id
@@ -99,5 +103,22 @@ module kim_support_status_module
       type(kim_support_status_type), intent(in), value :: support_status
       character(len=*), intent(out) :: string
     end subroutine kim_support_status_string
+
+    subroutine kim_support_status_get_number_of_support_statuses( &
+      number_of_support_statuses)
+      use, intrinsic :: iso_c_binding
+      implicit none
+      integer(c_int), intent(out) :: number_of_support_statuses
+    end subroutine kim_support_status_get_number_of_support_statuses
+
+    subroutine kim_support_status_get_support_status(index, support_status, &
+      ierr)
+      use, intrinsic :: iso_c_binding
+      import kim_support_status_type
+      implicit none
+      integer(c_int), intent(in), value :: index
+      type(kim_support_status_type), intent(out) :: support_status
+      integer(c_int), intent(out) :: ierr
+    end subroutine kim_support_status_get_support_status
   end interface
 end module kim_support_status_module
