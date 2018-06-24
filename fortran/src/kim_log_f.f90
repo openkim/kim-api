@@ -172,11 +172,11 @@ subroutine kim_log_get_id(log_handle, id_string)
   use kim_log_f_module, only : get_id
   implicit none
   type(kim_log_handle_type), intent(in) :: log_handle
-  character(len=*), intent(out) :: id_string
+  character(len=*, kind=c_char), intent(out) :: id_string
   type(kim_log_type), pointer :: log
 
   type(c_ptr) :: p
-  character(len=len(id_string)+1), pointer :: fp
+  character(len=len(id_string)+1, kind=c_char), pointer :: fp
   integer(c_int) :: null_index
 
   call c_f_pointer(log_handle%p, log)
@@ -198,7 +198,7 @@ subroutine kim_log_set_id(log_handle, id_string)
   use kim_log_f_module, only : set_id
   implicit none
   type(kim_log_handle_type), intent(in) :: log_handle
-  character(len=*), intent(in) :: id_string
+  character(len=*, kind=c_char), intent(in) :: id_string
   type(kim_log_type), pointer :: log
 
   call c_f_pointer(log_handle%p, log)
@@ -243,9 +243,9 @@ subroutine kim_log_log_entry(log_handle, log_verbosity, message, &
   implicit none
   type(kim_log_handle_type), intent(in) :: log_handle
   type(kim_log_verbosity_type), intent(in), value :: log_verbosity
-  character(len=*), intent(in) :: message
+  character(len=*, kind=c_char), intent(in) :: message
   integer(c_int), intent(in), value :: line_number
-  character(len=*), intent(in) :: file_name
+  character(len=*, kind=c_char), intent(in) :: file_name
   type(kim_log_type), pointer :: log
 
   call c_f_pointer(log_handle%p, log)

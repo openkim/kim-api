@@ -113,18 +113,20 @@ module kim_compute_argument_name_module
   interface
     subroutine kim_compute_argument_name_from_string(string, &
       compute_argument_name)
+      use, intrinsic :: iso_c_binding
       import kim_compute_argument_name_type
       implicit none
-      character(len=*), intent(in) :: string
+      character(len=*, kind=c_char), intent(in) :: string
       type(kim_compute_argument_name_type), intent(out) :: compute_argument_name
     end subroutine kim_compute_argument_name_from_string
 
     subroutine kim_compute_argument_name_string(compute_argument_name, string)
+      use, intrinsic :: iso_c_binding
       import kim_compute_argument_name_type
       implicit none
       type(kim_compute_argument_name_type), intent(in), value :: &
         compute_argument_name
-      character(len=*), intent(out) :: string
+      character(len=*, kind=c_char), intent(out) :: string
     end subroutine kim_compute_argument_name_string
 
     subroutine kim_compute_argument_name_get_number_of_compute_argument_names( &

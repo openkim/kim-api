@@ -558,7 +558,7 @@ subroutine kim_compute_arguments_string(compute_arguments_handle, string)
   implicit none
   type(kim_compute_arguments_handle_type), intent(in) :: &
     compute_arguments_handle
-  character(len=*), intent(out) :: string
+  character(len=*, kind=c_char), intent(out) :: string
   type(kim_compute_arguments_type), pointer :: compute_arguments
 
   type(c_ptr) :: p
@@ -585,7 +585,7 @@ subroutine kim_compute_arguments_set_log_id(compute_arguments_handle, log_id)
   implicit none
   type(kim_compute_arguments_handle_type), intent(in) :: &
     compute_arguments_handle
-  character(len=*), intent(in) :: log_id
+  character(len=*, kind=c_char), intent(in) :: log_id
   type(kim_compute_arguments_type), pointer :: compute_arguments
 
   call c_f_pointer(compute_arguments_handle%p, compute_arguments)

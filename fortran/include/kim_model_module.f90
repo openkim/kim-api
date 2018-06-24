@@ -162,7 +162,7 @@ module kim_model_module
       type(kim_temperature_unit_type), intent(in), value :: &
         requested_temperature_unit
       type(kim_time_unit_type), intent(in), value :: requested_time_unit
-      character(len=*), intent(in) :: model_name
+      character(len=*, kind=c_char), intent(in) :: model_name
       type(kim_model_handle_type), intent(out) :: model_handle
       integer(c_int), intent(out) :: requested_units_accepted
       integer(c_int), intent(out) :: ierr
@@ -295,7 +295,7 @@ module kim_model_module
       integer(c_int), intent(in), value :: index
       type(kim_data_type_type), intent(out) :: data_type
       integer(c_int), intent(out) :: extent
-      character(len=*), intent(out) :: description
+      character(len=*, kind=c_char), intent(out) :: description
       integer(c_int), intent(out) :: ierr
     end subroutine kim_model_get_parameter_data_type_extent_and_description
 
@@ -320,7 +320,7 @@ module kim_model_module
       import kim_model_handle_type
       implicit none
       type(kim_model_handle_type), intent(in) :: model_handle
-      character(len=*), intent(out) :: string
+      character(len=*, kind=c_char), intent(out) :: string
     end subroutine kim_model_string
 
     subroutine kim_model_set_log_id(model_handle, log_id)
@@ -328,7 +328,7 @@ module kim_model_module
       import kim_model_handle_type
       implicit none
       type(kim_model_handle_type), intent(in) :: model_handle
-      character(len=*), intent(in) :: log_id
+      character(len=*, kind=c_char), intent(in) :: log_id
     end subroutine kim_model_set_log_id
 
     subroutine kim_model_push_log_verbosity(model_handle, log_verbosity)

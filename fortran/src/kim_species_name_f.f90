@@ -86,7 +86,7 @@ subroutine kim_species_name_from_string(string, species_name)
   use kim_species_name_module, only : kim_species_name_type
   use kim_species_name_f_module, only : from_string
   implicit none
-  character(len=*), intent(in) :: string
+  character(len=*, kind=c_char), intent(in) :: string
   type(kim_species_name_type), intent(out) :: species_name
 
   species_name = from_string(trim(string)//c_null_char)
@@ -120,7 +120,7 @@ subroutine kim_species_name_string(species_name, string)
   use kim_species_name_f_module, only : get_string
   implicit none
   type(kim_species_name_type), intent(in), value :: species_name
-  character(len=*), intent(out) :: string
+  character(len=*, kind=c_char), intent(out) :: string
 
   type(c_ptr) :: p
   character(len=len(string)+1, kind=c_char), pointer :: fp

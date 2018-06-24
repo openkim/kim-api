@@ -149,9 +149,9 @@ subroutine kim_model_compute_arguments_destroy_log_entry( &
   type(kim_model_compute_arguments_destroy_handle_type), intent(in) :: &
     model_compute_arguments_destroy_handle
   type(kim_log_verbosity_type), intent(in), value :: log_verbosity
-  character(len=*), intent(in) :: message
+  character(len=*, kind=c_char), intent(in) :: message
   integer(c_int), intent(in), value :: line_number
-  character(len=*), intent(in) :: file_name
+  character(len=*, kind=c_char), intent(in) :: file_name
   type(kim_model_compute_arguments_destroy_type), pointer :: &
     model_compute_arguments_destroy
 
@@ -172,7 +172,7 @@ subroutine kim_model_compute_arguments_destroy_string( &
   implicit none
   type(kim_model_compute_arguments_destroy_handle_type), intent(in) :: &
     model_compute_arguments_destroy_handle
-  character(len=*), intent(out) :: string
+  character(len=*, kind=c_char), intent(out) :: string
   type(kim_model_compute_arguments_destroy_type), pointer :: &
     model_compute_arguments_destroy
 

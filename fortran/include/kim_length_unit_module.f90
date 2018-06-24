@@ -99,17 +99,19 @@ module kim_length_unit_module
 
   interface
     subroutine kim_length_unit_from_string(string, length_unit)
+      use, intrinsic :: iso_c_binding
       import kim_length_unit_type
       implicit none
-      character(len=*), intent(in) :: string
+      character(len=*, kind=c_char), intent(in) :: string
       type(kim_length_unit_type), intent(out) :: length_unit
     end subroutine kim_length_unit_from_string
 
     subroutine kim_length_unit_string(length_unit, string)
+      use, intrinsic :: iso_c_binding
       import kim_length_unit_type
       implicit none
       type(kim_length_unit_type), intent(in), value :: length_unit
-      character(len=*), intent(out) :: string
+      character(len=*, kind=c_char), intent(out) :: string
     end subroutine kim_length_unit_string
 
     subroutine kim_length_unit_get_number_of_length_units( &

@@ -103,7 +103,7 @@ subroutine kim_compute_argument_name_from_string(string, compute_argument_name)
   use kim_compute_argument_name_module, only : kim_compute_argument_name_type
   use kim_compute_argument_name_f_module, only : from_string
   implicit none
-  character(len=*), intent(in) :: string
+  character(len=*, kind=c_char), intent(in) :: string
   type(kim_compute_argument_name_type), intent(out) :: compute_argument_name
 
   compute_argument_name = from_string(trim(string)//c_null_char)
@@ -138,7 +138,7 @@ subroutine kim_compute_argument_name_string(compute_argument_name, string)
   implicit none
   type(kim_compute_argument_name_type), intent(in), value :: &
     compute_argument_name
-  character(len=*), intent(out) :: string
+  character(len=*, kind=c_char), intent(out) :: string
 
   type(c_ptr) :: p
   character(len=len(string)+1, kind=c_char), pointer :: fp

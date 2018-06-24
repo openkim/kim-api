@@ -377,12 +377,12 @@ subroutine kim_model_driver_create_get_parameter_file_name( &
   type(kim_model_driver_create_handle_type), intent(in) &
     :: model_driver_create_handle
   integer(c_int), intent(in), value :: index
-  character(len=*), intent(out) :: parameter_file_name
+  character(len=*, kind=c_char), intent(out) :: parameter_file_name
   integer(c_int), intent(out) :: ierr
   type(kim_model_driver_create_type), pointer :: model_driver_create
 
   type(c_ptr) :: p
-  character(len=len(parameter_file_name)+1), pointer :: fp
+  character(len=len(parameter_file_name)+1, kind=c_char), pointer :: fp
   integer(c_int) :: null_index
 
   call c_f_pointer(model_driver_create_handle%p, model_driver_create)
@@ -587,7 +587,7 @@ subroutine kim_model_driver_create_set_parameter_pointer_integer( &
   type(kim_model_driver_create_handle_type), intent(in) &
     :: model_driver_create_handle
   integer(c_int), intent(in), target :: int1(:)
-  character(len=*), intent(in) :: description
+  character(len=*, kind=c_char), intent(in) :: description
   integer(c_int), intent(out) :: ierr
   type(kim_model_driver_create_type), pointer :: model_driver_create
 
@@ -609,7 +609,7 @@ contains
       :: model_driver_create
     integer(c_int), intent(in), value :: extent
     integer(c_int), intent(in), target :: int1(extent)
-    character(len=*), intent(in) :: description
+    character(len=*, kind=c_char), intent(in) :: description
     integer(c_int), intent(out) :: ierr
 
     ierr = set_parameter_pointer_integer(model_driver_create, extent, &
@@ -627,7 +627,7 @@ subroutine kim_model_driver_create_set_parameter_pointer_double( &
   type(kim_model_driver_create_handle_type), intent(in) &
     :: model_driver_create_handle
   real(c_double), intent(in), target :: double1(:)
-  character(len=*), intent(in) :: description
+  character(len=*, kind=c_char), intent(in) :: description
   integer(c_int), intent(out) :: ierr
   type(kim_model_driver_create_type), pointer :: model_driver_create
 
@@ -649,7 +649,7 @@ contains
       :: model_driver_create
     integer(c_int), intent(in), value :: extent
     real(c_double), intent(in), target :: double1(extent)
-    character(len=*), intent(in) :: description
+    character(len=*, kind=c_char), intent(in) :: description
     integer(c_int), intent(out) :: ierr
 
     ierr = set_parameter_pointer_double(model_driver_create, extent, &
@@ -762,9 +762,9 @@ subroutine kim_model_driver_create_log_entry(model_driver_create_handle, &
   type(kim_model_driver_create_handle_type), intent(in) &
     :: model_driver_create_handle
   type(kim_log_verbosity_type), intent(in), value :: log_verbosity
-  character(len=*), intent(in) :: message
+  character(len=*, kind=c_char), intent(in) :: message
   integer(c_int), intent(in), value :: line_number
-  character(len=*), intent(in) :: file_name
+  character(len=*, kind=c_char), intent(in) :: file_name
   type(kim_model_driver_create_type), pointer :: model_driver_create
 
   call c_f_pointer(model_driver_create_handle%p, model_driver_create)
@@ -782,7 +782,7 @@ subroutine kim_model_driver_create_string(model_driver_create_handle, &
   implicit none
   type(kim_model_driver_create_handle_type), intent(in) &
     :: model_driver_create_handle
-  character(len=*), intent(out) :: string
+  character(len=*, kind=c_char), intent(out) :: string
   type(kim_model_driver_create_type), pointer :: model_driver_create
 
   type(c_ptr) :: p

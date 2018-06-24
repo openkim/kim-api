@@ -85,7 +85,7 @@ subroutine kim_data_type_from_string(string, data_type)
   use kim_data_type_module, only : kim_data_type_type
   use kim_data_type_f_module, only : from_string
   implicit none
-  character(len=*), intent(in) :: string
+  character(len=*, kind=c_char), intent(in) :: string
   type(kim_data_type_type), intent(out) :: data_type
 
   data_type = from_string(trim(string)//c_null_char)
@@ -120,7 +120,7 @@ subroutine kim_data_type_string(data_type, string)
   use kim_data_type_f_module, only : get_string
   implicit none
   type(kim_data_type_type), intent(in), value :: data_type
-  character(len=*), intent(out) :: string
+  character(len=*, kind=c_char), intent(out) :: string
 
   type(c_ptr) :: p
   character(len=len(string)+1, kind=c_char), pointer :: fp

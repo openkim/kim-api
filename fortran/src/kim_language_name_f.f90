@@ -83,7 +83,7 @@ subroutine kim_language_name_from_string(string, language_name)
   use kim_language_name_module, only : kim_language_name_type
   use kim_language_name_f_module, only : from_string
   implicit none
-  character(len=*), intent(in) :: string
+  character(len=*, kind=c_char), intent(in) :: string
   type(kim_language_name_type), intent(out) :: language_name
 
   language_name = from_string(trim(string)//c_null_char)
@@ -117,7 +117,7 @@ subroutine kim_language_name_string(language_name, string)
   use kim_language_name_f_module, only : get_string
   implicit none
   type(kim_language_name_type), intent(in), value :: language_name
-  character(len=*), intent(out) :: string
+  character(len=*, kind=c_char), intent(out) :: string
 
   type(c_ptr) :: p
   character(len=len(string)+1, kind=c_char), pointer :: fp

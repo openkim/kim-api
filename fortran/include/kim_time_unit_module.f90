@@ -90,17 +90,19 @@ module kim_time_unit_module
 
   interface
     subroutine kim_time_unit_from_string(string, time_unit)
+      use, intrinsic :: iso_c_binding
       import kim_time_unit_type
       implicit none
-      character(len=*), intent(in) :: string
+      character(len=*, kind=c_char), intent(in) :: string
       type(kim_time_unit_type), intent(out) :: time_unit
     end subroutine kim_time_unit_from_string
 
     subroutine kim_time_unit_string(time_unit, string)
+      use, intrinsic :: iso_c_binding
       import kim_time_unit_type
       implicit none
       type(kim_time_unit_type), intent(in), value :: time_unit
-      character(len=*), intent(out) :: string
+      character(len=*, kind=c_char), intent(out) :: string
     end subroutine kim_time_unit_string
 
     subroutine kim_time_unit_get_number_of_time_units(number_of_time_units)

@@ -84,7 +84,7 @@ subroutine kim_numbering_from_string(string, numbering)
   use kim_numbering_module, only : kim_numbering_type
   use kim_numbering_f_module, only : from_string
   implicit none
-  character(len=*), intent(in) :: string
+  character(len=*, kind=c_char), intent(in) :: string
   type(kim_numbering_type), intent(out) :: numbering
 
   numbering = from_string(trim(string)//c_null_char)
@@ -118,7 +118,7 @@ subroutine kim_numbering_string(numbering, string)
   use kim_numbering_f_module, only : get_string
   implicit none
   type(kim_numbering_type), intent(in), value :: numbering
-  character(len=*), intent(out) :: string
+  character(len=*, kind=c_char), intent(out) :: string
 
   type(c_ptr) :: p
   character(len=len(string)+1, kind=c_char), pointer :: fp

@@ -84,7 +84,7 @@ subroutine kim_time_unit_from_string(string, time_unit)
   use kim_time_unit_module, only : kim_time_unit_type
   use kim_time_unit_f_module, only : from_string
   implicit none
-  character(len=*), intent(in) :: string
+  character(len=*, kind=c_char), intent(in) :: string
   type(kim_time_unit_type), intent(out) :: time_unit
 
   time_unit = from_string(trim(string)//c_null_char)
@@ -118,7 +118,7 @@ subroutine kim_time_unit_string(time_unit, string)
   use kim_time_unit_f_module, only : get_string
   implicit none
   type(kim_time_unit_type), intent(in), value :: time_unit
-  character(len=*), intent(out) :: string
+  character(len=*, kind=c_char), intent(out) :: string
 
   type(c_ptr) :: p
   character(len=len(string)+1, kind=c_char), pointer :: fp

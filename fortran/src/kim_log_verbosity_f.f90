@@ -85,7 +85,7 @@ subroutine kim_log_verbosity_from_string(string, log_verbosity)
   use kim_log_verbosity_module, only : kim_log_verbosity_type
   use kim_log_verbosity_f_module, only : from_string
   implicit none
-  character(len=*), intent(in) :: string
+  character(len=*, kind=c_char), intent(in) :: string
   type(kim_log_verbosity_type), intent(out) :: log_verbosity
 
   log_verbosity = from_string(trim(string)//c_null_char)
@@ -163,7 +163,7 @@ subroutine kim_log_verbosity_string(log_verbosity, string)
   use kim_log_verbosity_f_module, only : get_string
   implicit none
   type(kim_log_verbosity_type), intent(in), value :: log_verbosity
-  character(len=*), intent(out) :: string
+  character(len=*, kind=c_char), intent(out) :: string
 
   type(c_ptr) :: p
   character(len=len(string)+1, kind=c_char), pointer :: fp

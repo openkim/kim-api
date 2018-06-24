@@ -97,7 +97,7 @@ module kim_log_module
       import kim_log_handle_type
       implicit none
       type(kim_log_handle_type), intent(in) :: log_handle
-      character(len=*), intent(out) :: id_string
+      character(len=*, kind=c_char), intent(out) :: id_string
     end subroutine kim_log_get_id
 
     subroutine kim_log_set_id(log_handle, id_string)
@@ -105,7 +105,7 @@ module kim_log_module
       import kim_log_handle_type
       implicit none
       type(kim_log_handle_type), intent(in) :: log_handle
-      character(len=*), intent(in) :: id_string
+      character(len=*, kind=c_char), intent(in) :: id_string
     end subroutine kim_log_set_id
 
     subroutine kim_log_push_verbosity(log_handle, log_verbosity)
@@ -132,9 +132,9 @@ module kim_log_module
       implicit none
       type(kim_log_handle_type), intent(in) :: log_handle
       type(kim_log_verbosity_type), intent(in), value :: log_verbosity
-      character(len=*), intent(in) :: message
+      character(len=*, kind=c_char), intent(in) :: message
       integer(c_int), intent(in), value :: line_number
-      character(len=*), intent(in) :: file_name
+      character(len=*, kind=c_char), intent(in) :: file_name
     end subroutine kim_log_log_entry
   end interface
 end module kim_log_module

@@ -85,7 +85,7 @@ subroutine kim_support_status_from_string(string, support_status)
   use kim_support_status_module, only : kim_support_status_type
   use kim_support_status_f_module, only : from_string
   implicit none
-  character(len=*), intent(in) :: string
+  character(len=*, kind=c_char), intent(in) :: string
   type(kim_support_status_type), intent(out) :: support_status
 
   support_status = from_string(trim(string)//c_null_char)
@@ -119,7 +119,7 @@ subroutine kim_support_status_string(support_status, string)
   use kim_support_status_f_module, only : get_string
   implicit none
   type(kim_support_status_type), intent(in), value :: support_status
-  character(len=*), intent(out) :: string
+  character(len=*, kind=c_char), intent(out) :: string
 
   type(c_ptr) :: p
   character(len=len(string)+1, kind=c_char), pointer :: fp

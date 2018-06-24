@@ -264,7 +264,7 @@ module kim_compute_arguments_module
       implicit none
       type(kim_compute_arguments_handle_type), intent(in) :: &
         compute_arguments_handle
-      character(len=*), intent(out) :: string
+      character(len=*, kind=c_char), intent(out) :: string
     end subroutine kim_compute_arguments_string
 
     subroutine kim_compute_arguments_set_log_id(compute_arguments_handle, &
@@ -274,7 +274,7 @@ module kim_compute_arguments_module
       implicit none
       type(kim_compute_arguments_handle_type), intent(in) :: &
         compute_arguments_handle
-      character(len=*), intent(in) :: log_id
+      character(len=*, kind=c_char), intent(in) :: log_id
     end subroutine kim_compute_arguments_set_log_id
 
     subroutine kim_compute_arguments_push_log_verbosity( &

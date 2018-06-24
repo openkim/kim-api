@@ -81,10 +81,10 @@ subroutine kim_sem_ver_get_sem_ver(version)
   use, intrinsic :: iso_c_binding
   use kim_sem_ver_f_module, only : get_sem_ver
   implicit none
-  character(len=*), intent(out) :: version
+  character(len=*, kind=c_char), intent(out) :: version
 
   type(c_ptr) :: p
-  character(len=len(version)+1), pointer :: fp
+  character(len=len(version)+1, kind=c_char), pointer :: fp
   integer(c_int) :: null_index
 
   call get_sem_ver(p)
@@ -97,8 +97,8 @@ subroutine kim_sem_ver_is_less_than(version_a, version_b, is_less_than, ierr)
   use, intrinsic :: iso_c_binding
   use kim_sem_ver_f_module, only : is_less_than_func
   implicit none
-  character(len=*), intent(in) :: version_a
-  character(len=*), intent(in) :: version_b
+  character(len=*, kind=c_char), intent(in) :: version_a
+  character(len=*, kind=c_char), intent(in) :: version_b
   integer(c_int), intent(out) :: is_less_than
   integer(c_int), intent(out) :: ierr
 
@@ -111,12 +111,12 @@ subroutine kim_sem_ver_parse_sem_ver(version, major, minor, patch, &
   use, intrinsic :: iso_c_binding
   use kim_sem_ver_f_module, only : parse_sem_ver
   implicit none
-  character(len=*), intent(in) :: version
+  character(len=*, kind=c_char), intent(in) :: version
   integer(c_int), intent(out) :: major
   integer(c_int), intent(out) :: minor
   integer(c_int), intent(out) :: patch
-  character(len=*), intent(inout) :: prerelease
-  character(len=*), intent(inout) :: build_metadata
+  character(len=*, kind=c_char), intent(inout) :: prerelease
+  character(len=*, kind=c_char), intent(inout) :: build_metadata
   integer(c_int), intent(out) :: ierr
 
   character(c_char), target :: c_prerelease(len(prerelease))

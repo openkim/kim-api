@@ -29,15 +29,16 @@
 !
 
 module error
+  use, intrinsic :: iso_c_binding
   implicit none
   public
 
 contains
   subroutine my_error(message, line, file)
     implicit none
-    character(len=*), intent(in) :: message
+    character(len=*, kind=c_char), intent(in) :: message
     integer, intent(in) :: line
-    character(len=*), intent(in) :: file
+    character(len=*, kind=c_char), intent(in) :: file
 
     print *,"* Error : '", trim(message), "' ", line, ":", &
       trim(file)
@@ -46,9 +47,9 @@ contains
 
   subroutine my_warning(message, line, file)
     implicit none
-    character(len=*), intent(in) :: message
+    character(len=*, kind=c_char), intent(in) :: message
     integer, intent(in) :: line
-    character(len=*), intent(in) :: file
+    character(len=*, kind=c_char), intent(in) :: file
 
     print *,"* Error : '", trim(message), "' ", line, ":", &
       trim(file)
@@ -355,7 +356,7 @@ program ex_test_ar_fcc_cluster_fortran
   real(c_double) :: current_spacing
   real(c_double) :: force_norm
 
-  character(len=256) :: modelname
+  character(len=256, kind=c_char) :: modelname
 
   integer(c_int), parameter :: &
     N = 4*(nCellsPerSide)**3 + 6*(nCellsPerSide)**2 + 3*(nCellsPerSide) + 1

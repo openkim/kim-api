@@ -84,7 +84,7 @@ subroutine kim_energy_unit_from_string(string, energy_unit)
   use kim_energy_unit_module, only : kim_energy_unit_type
   use kim_energy_unit_f_module, only : from_string
   implicit none
-  character(len=*), intent(in) :: string
+  character(len=*, kind=c_char), intent(in) :: string
   type(kim_energy_unit_type), intent(out) :: energy_unit
 
   energy_unit = from_string(trim(string)//c_null_char)
@@ -118,7 +118,7 @@ subroutine kim_energy_unit_string(energy_unit, string)
   use kim_energy_unit_f_module, only : get_string
   implicit none
   type(kim_energy_unit_type), intent(in), value :: energy_unit
-  character(len=*), intent(out) :: string
+  character(len=*, kind=c_char), intent(out) :: string
 
   type(c_ptr) :: p
   character(len=len(string)+1, kind=c_char), pointer :: fp

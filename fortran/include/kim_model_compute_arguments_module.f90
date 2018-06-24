@@ -271,9 +271,9 @@ module kim_model_compute_arguments_module
       type(kim_model_compute_arguments_handle_type), intent(in) :: &
         model_compute_arguments_handle
       type(kim_log_verbosity_type), intent(in), value :: log_verbosity
-      character(len=*), intent(in) :: message
+      character(len=*, kind=c_char), intent(in) :: message
       integer(c_int), intent(in), value :: line_number
-      character(len=*), intent(in) :: file_name
+      character(len=*, kind=c_char), intent(in) :: file_name
     end subroutine kim_model_compute_arguments_log_entry
 
     subroutine kim_model_compute_arguments_string( &
@@ -283,7 +283,7 @@ module kim_model_compute_arguments_module
       implicit none
       type(kim_model_compute_arguments_handle_type), intent(in) :: &
         model_compute_arguments_handle
-      character(len=*), intent(out) :: string
+      character(len=*, kind=c_char), intent(out) :: string
     end subroutine kim_model_compute_arguments_string
 end interface
 end module kim_model_compute_arguments_module

@@ -91,17 +91,19 @@ module kim_support_status_module
 
   interface
     subroutine kim_support_status_from_string(string, support_status)
+      use, intrinsic :: iso_c_binding
       import kim_support_status_type
       implicit none
-      character(len=*), intent(in) :: string
+      character(len=*, kind=c_char), intent(in) :: string
       type(kim_support_status_type), intent(out) :: support_status
     end subroutine kim_support_status_from_string
 
     subroutine kim_support_status_string(support_status, string)
+      use, intrinsic :: iso_c_binding
       import kim_support_status_type
       implicit none
       type(kim_support_status_type), intent(in), value :: support_status
-      character(len=*), intent(out) :: string
+      character(len=*, kind=c_char), intent(out) :: string
     end subroutine kim_support_status_string
 
     subroutine kim_support_status_get_number_of_support_statuses( &

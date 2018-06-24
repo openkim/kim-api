@@ -83,17 +83,19 @@ module kim_temperature_unit_module
 
   interface
     subroutine kim_temperature_unit_from_string(string, temperature_unit)
+      use, intrinsic :: iso_c_binding
       import kim_temperature_unit_type
       implicit none
-      character(len=*), intent(in) :: string
+      character(len=*, kind=c_char), intent(in) :: string
       type(kim_temperature_unit_type), intent(out) :: temperature_unit
     end subroutine kim_temperature_unit_from_string
 
     subroutine kim_temperature_unit_string(temperature_unit, string)
+      use, intrinsic :: iso_c_binding
       import kim_temperature_unit_type
       implicit none
       type(kim_temperature_unit_type), intent(in), value :: temperature_unit
-      character(len=*), intent(out) :: string
+      character(len=*, kind=c_char), intent(out) :: string
     end subroutine kim_temperature_unit_string
 
     subroutine kim_temperature_unit_get_number_of_temperature_units( &

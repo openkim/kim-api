@@ -94,9 +94,9 @@ module kim_model_compute_arguments_destroy_module
       type(kim_model_compute_arguments_destroy_handle_type), intent(in) :: &
         model_destroy_handle
       type(kim_log_verbosity_type), intent(in), value :: log_verbosity
-      character(len=*), intent(in) :: message
+      character(len=*, kind=c_char), intent(in) :: message
       integer(c_int), intent(in), value :: line_number
-      character(len=*), intent(in) :: file_name
+      character(len=*, kind=c_char), intent(in) :: file_name
     end subroutine kim_model_compute_arguments_destroy_log_entry
 
     subroutine kim_model_compute_arguments_destroy_string( &
@@ -106,7 +106,7 @@ module kim_model_compute_arguments_destroy_module
       implicit none
       type(kim_model_compute_arguments_destroy_handle_type), intent(in) :: &
         model_destroy_handle
-      character(len=*), intent(out) :: string
+      character(len=*, kind=c_char), intent(out) :: string
     end subroutine kim_model_compute_arguments_destroy_string
 end interface
 end module kim_model_compute_arguments_destroy_module

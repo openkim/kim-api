@@ -663,14 +663,14 @@ integer(c_int), intent(out) :: ierr
 
 !-- Local variables
 integer(c_int) :: number_of_parameter_files
-character(len=1024) :: parameter_file_name
+character(len=1024, kind=c_char) :: parameter_file_name
 integer(c_int) :: ierr2
 integer(c_int), parameter :: one=1
 type(BUFFER_TYPE), pointer :: buf;
 type(kim_species_name_type) species_name
 ! define variables for all model parameters to be read in
 real(c_double) factor
-character(len=100) in_species
+character(len=100, kind=c_char) in_species
 real(c_double) in_cutoff
 real(c_double) in_epsilon
 real(c_double) in_sigma

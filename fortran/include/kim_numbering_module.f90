@@ -83,17 +83,19 @@ module kim_numbering_module
 
   interface
     subroutine kim_numbering_from_string(string, numbering)
+      use, intrinsic :: iso_c_binding
       import kim_numbering_type
       implicit none
-      character(len=*), intent(in) :: string
+      character(len=*, kind=c_char), intent(in) :: string
       type(kim_numbering_type), intent(out) :: numbering
     end subroutine kim_numbering_from_string
 
     subroutine kim_numbering_string(numbering, string)
+      use, intrinsic :: iso_c_binding
       import kim_numbering_type
       implicit none
       type(kim_numbering_type), intent(in), value :: numbering
-      character(len=*), intent(out) :: string
+      character(len=*, kind=c_char), intent(out) :: string
     end subroutine kim_numbering_string
 
     subroutine kim_numbering_get_number_of_numberings(number_of_numberings)

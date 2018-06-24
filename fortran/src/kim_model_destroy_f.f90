@@ -131,9 +131,9 @@ subroutine kim_model_destroy_log_entry(model_destroy_handle, log_verbosity, &
   implicit none
   type(kim_model_destroy_handle_type), intent(in) :: model_destroy_handle
   type(kim_log_verbosity_type), intent(in), value :: log_verbosity
-  character(len=*), intent(in) :: message
+  character(len=*, kind=c_char), intent(in) :: message
   integer(c_int), intent(in), value :: line_number
-  character(len=*), intent(in) :: file_name
+  character(len=*, kind=c_char), intent(in) :: file_name
   type(kim_model_destroy_type), pointer :: model_destroy
 
   call c_f_pointer(model_destroy_handle%p, model_destroy)
@@ -148,7 +148,7 @@ subroutine kim_model_destroy_string(model_destroy_handle, string)
     model_destroy_string
   implicit none
   type(kim_model_destroy_handle_type), intent(in) :: model_destroy_handle
-  character(len=*), intent(out) :: string
+  character(len=*, kind=c_char), intent(out) :: string
   type(kim_model_destroy_type), pointer :: model_destroy
 
   type(c_ptr) :: p

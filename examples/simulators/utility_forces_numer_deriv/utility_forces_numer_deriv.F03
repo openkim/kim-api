@@ -30,15 +30,16 @@
 
 
 module error
+  use, intrinsic :: iso_c_binding
   implicit none
   public
 
 contains
   subroutine my_error(message, line, file)
     implicit none
-    character(len=*), intent(in) :: message
+    character(len=*, kind=c_char), intent(in) :: message
     integer, intent(in) :: line
-    character(len=*), intent(in) :: file
+    character(len=*, kind=c_char), intent(in) :: file
 
     print *,"* Error : '", trim(message), "' ", line, ":", &
       trim(file)
@@ -47,9 +48,9 @@ contains
 
   subroutine my_warning(message, line, file)
     implicit none
-    character(len=*), intent(in) :: message
+    character(len=*, kind=c_char), intent(in) :: message
     integer, intent(in) :: line
-    character(len=*), intent(in) :: file
+    character(len=*, kind=c_char), intent(in) :: file
 
     print *,"* Warning : '", trim(message), "' ", line, ":", &
       trim(file)
@@ -791,7 +792,7 @@ program vc_forces_numer_deriv
   real(c_double), allocatable          :: forces_num_err(:,:)
   type(kim_species_name_type) :: model_species(max_species)
   integer(c_int), target               :: num_species
-  character(len=5)                     :: passfail
+  character(len=5, kind=c_char)        :: passfail
   real(c_double)                       :: forcediff
   real(c_double)                       :: forcediff_sumsq
   real(c_double)                       :: weight
@@ -814,8 +815,8 @@ program vc_forces_numer_deriv
   !
   ! KIM variables
   !
-  character(len=256) :: testname     = "vc_forces_numer_deriv"
-  character(len=256) :: modelname
+  character(len=256, kind=c_char) :: testname = "vc_forces_numer_deriv"
+  character(len=256, kind=c_char) :: modelname
 
   type(kim_model_handle_type) :: model_handle
   type(kim_compute_arguments_handle_type) :: compute_arguments_handle

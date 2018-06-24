@@ -354,7 +354,7 @@ subroutine kim_model_create(numbering, requested_length_unit, &
   type(kim_temperature_unit_type), intent(in), value :: &
     requested_temperature_unit
   type(kim_time_unit_type), intent(in), value :: requested_time_unit
-  character(len=*), intent(in) :: model_name
+  character(len=*, kind=c_char), intent(in) :: model_name
   integer(c_int), intent(out) :: requested_units_accepted
   type(kim_model_handle_type), intent(out) :: model_handle
   integer(c_int), intent(out) :: ierr
@@ -587,12 +587,12 @@ subroutine kim_model_get_parameter_data_type_extent_and_description( &
   integer(c_int), intent(in), value :: parameter_index
   type(kim_data_type_type), intent(out) :: data_type
   integer(c_int), intent(out) :: extent
-  character(len=*), intent(out) :: description
+  character(len=*, kind=c_char), intent(out) :: description
   integer(c_int), intent(out) :: ierr
   type(kim_model_type), pointer :: model
 
   type(c_ptr) :: p
-  character(len=len(description)+1), pointer :: fp
+  character(len=len(description)+1, kind=c_char), pointer :: fp
   integer(c_int) :: null_index
 
   call c_f_pointer(model_handle%p, model)
@@ -712,7 +712,7 @@ subroutine kim_model_string(model_handle, string)
   use kim_model_f_module, only : kim_model_type, model_string
   implicit none
   type(kim_model_handle_type), intent(in) :: model_handle
-  character(len=*), intent(out) :: string
+  character(len=*, kind=c_char), intent(out) :: string
   type(kim_model_type), pointer :: model
 
   type(c_ptr) :: p
@@ -737,7 +737,7 @@ subroutine kim_model_set_log_id(model_handle, log_id)
   use kim_model_f_module, only : kim_model_type, set_log_id
   implicit none
   type(kim_model_handle_type), intent(in) :: model_handle
-  character(len=*), intent(in) :: log_id
+  character(len=*, kind=c_char), intent(in) :: log_id
   type(kim_model_type), pointer :: model
 
   call c_f_pointer(model_handle%p, model)

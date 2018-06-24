@@ -193,9 +193,9 @@ subroutine kim_model_refresh_log_entry(model_refresh_handle, &
   implicit none
   type(kim_model_refresh_handle_type), intent(in) :: model_refresh_handle
   type(kim_log_verbosity_type), intent(in), value :: log_verbosity
-  character(len=*), intent(in) :: message
+  character(len=*, kind=c_char), intent(in) :: message
   integer(c_int), intent(in), value :: line_number
-  character(len=*), intent(in) :: file_name
+  character(len=*, kind=c_char), intent(in) :: file_name
   type(kim_model_refresh_type), pointer :: model_refresh
 
   call c_f_pointer(model_refresh_handle%p, model_refresh)
@@ -210,7 +210,7 @@ subroutine kim_model_refresh_string(model_refresh_handle, string)
     model_refresh_string
   implicit none
   type(kim_model_refresh_handle_type), intent(in) :: model_refresh_handle
-  character(len=*), intent(out) :: string
+  character(len=*, kind=c_char), intent(out) :: string
   type(kim_model_refresh_type), pointer :: model_refresh
 
   type(c_ptr) :: p

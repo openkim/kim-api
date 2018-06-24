@@ -633,15 +633,16 @@ module kim_species_name_module
       use, intrinsic :: iso_c_binding
       import kim_species_name_type
       implicit none
-      character(len=*), intent(in) :: string
+      character(len=*, kind=c_char), intent(in) :: string
       type(kim_species_name_type), intent(out) :: species_name
     end subroutine kim_species_name_from_string
 
     subroutine kim_species_name_string(species_name, string)
+      use, intrinsic :: iso_c_binding
       import kim_species_name_type
       implicit none
       type(kim_species_name_type), intent(in), value :: species_name
-      character(len=*), intent(out) :: string
+      character(len=*, kind=c_char), intent(out) :: string
     end subroutine kim_species_name_string
 
     subroutine kim_species_name_get_number_of_species_names(&

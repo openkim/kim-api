@@ -146,17 +146,19 @@ module kim_log_verbosity_module
 
   interface
     subroutine kim_log_verbosity_from_string(string, log_verbosity)
+      use, intrinsic :: iso_c_binding
       import kim_log_verbosity_type
       implicit none
-      character(len=*), intent(in) :: string
+      character(len=*, kind=c_char), intent(in) :: string
       type(kim_log_verbosity_type), intent(out) :: log_verbosity
     end subroutine kim_log_verbosity_from_string
 
     subroutine kim_log_verbosity_string(log_verbosity, string)
+      use, intrinsic :: iso_c_binding
       import kim_log_verbosity_type
       implicit none
       type(kim_log_verbosity_type), intent(in), value :: log_verbosity
-      character(len=*), intent(out) :: string
+      character(len=*, kind=c_char), intent(out) :: string
     end subroutine kim_log_verbosity_string
 
     subroutine kim_log_verbosity_get_number_of_log_verbosities( &
@@ -176,6 +178,6 @@ module kim_log_verbosity_module
     end subroutine kim_log_verbosity_get_log_verbosity
   end interface
 
-  character(len=4096) :: kim_log_file
-  character(len=65536) :: kim_log_message
+  character(len=4096, kind=c_char) :: kim_log_file
+  character(len=65536, kind=c_char) :: kim_log_message
 end module kim_log_verbosity_module

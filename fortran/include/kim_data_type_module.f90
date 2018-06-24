@@ -83,17 +83,19 @@ module kim_data_type_module
 
   interface
     subroutine kim_data_type_from_string(string, data_type)
+      use, intrinsic :: iso_c_binding
       import kim_data_type_type
       implicit none
-      character(len=*), intent(in) :: string
+      character(len=*, kind=c_char), intent(in) :: string
       type(kim_data_type_type), intent(out) :: data_type
     end subroutine kim_data_type_from_string
 
     subroutine kim_data_type_string(data_type, string)
+      use, intrinsic :: iso_c_binding
       import kim_data_type_type
       implicit none
       type(kim_data_type_type), intent(in), value :: data_type
-      character(len=*), intent(out) :: string
+      character(len=*, kind=c_char), intent(out) :: string
     end subroutine kim_data_type_string
 
     subroutine kim_data_type_get_number_of_data_types(number_of_data_types)

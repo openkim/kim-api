@@ -45,15 +45,15 @@ module kim_sem_ver_module
     subroutine kim_sem_ver_get_sem_ver(version)
       use, intrinsic :: iso_c_binding
       implicit none
-      character(len=*), intent(out) :: version
+      character(len=*, kind=c_char), intent(out) :: version
     end subroutine kim_sem_ver_get_sem_ver
 
     subroutine kim_sem_ver_is_less_than(version_a, version_b, is_less_than, &
       ierr)
       use, intrinsic :: iso_c_binding
       implicit none
-      character(len=*), intent(in) :: version_a
-      character(len=*), intent(in) :: version_b
+      character(len=*, kind=c_char), intent(in) :: version_a
+      character(len=*, kind=c_char), intent(in) :: version_b
       integer(c_int), intent(out) :: is_less_than
       integer(c_int), intent(out) :: ierr
     end subroutine kim_sem_ver_is_less_than
@@ -62,12 +62,12 @@ module kim_sem_ver_module
       prerelease, build_metadata, ierr)
       use, intrinsic :: iso_c_binding
       implicit none
-      character(len=*), intent(in) :: version
+      character(len=*, kind=c_char), intent(in) :: version
       integer(c_int), intent(out) :: major
       integer(c_int), intent(out) :: minor
       integer(c_int), intent(out) :: patch
-      character(len=*), intent(inout) :: prerelease
-      character(len=*), intent(inout) :: build_metadata
+      character(len=*, kind=c_char), intent(inout) :: prerelease
+      character(len=*, kind=c_char), intent(inout) :: build_metadata
       integer(c_int), intent(out) :: ierr
     end subroutine kim_sem_ver_parse_sem_ver
   end interface
