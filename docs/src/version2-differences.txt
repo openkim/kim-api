@@ -68,27 +68,26 @@ a guiding principle.
 
 - **Compute Routine Arguments and Callbacks Have Been Separated From the Model
     Object**: kim-api-v2 separates the arguments and callbacks of the compute
-    routine from the model object.  Instead, these items are now stored in a
-    separate compute-arguments object that must be provided to the model's
-    compute routine.  This new approach provided a cleaner conceptual
-    distinction between things the model is responsible for (influence
-    distance, cutoffs, parameters, and create / compute / destroy routines),
-    and things that the simulator is responsible for (the configuration,
-    compute-arguments, and compute-callback routines).  One practical advantage
-    of this separation occurs for multi-threaded simulators.  Such a simulator
-    can use a single model object with multiple compute-arguments objects to
-    compute (energy, forces, etc.) for many different configurations
-    simultaneously.  Without the model/compute-arguments separation multiple
-    model objects would be necessary.  This would require multiple in-memory
-    copies of the model's parameter set, which can be very wasteful since (in
-    particular, for "machine learning" models) a model's parameter set can be
-    very large.
+    routine from the model object.  These items are now stored in a separate
+    compute-arguments object that must be provided to the model's compute
+    routine.  This new approach provides a cleaner conceptual distinction
+    between things the model is responsible for (influence distance, cutoffs,
+    parameters, and create / compute / destroy routines), and things that the
+    simulator is responsible for (the configuration, compute-arguments, and
+    compute-callback routines).  One practical advantage of this separation
+    occurs for multi-threaded simulators.  Such a simulator can use a single
+    model object with multiple compute-arguments objects to compute (energy,
+    forces, etc.) for many different configurations simultaneously.  Without
+    the model/compute-arguments separation multiple model objects would be
+    necessary.  This would require multiple in-memory copies of the model's
+    parameter set, which can be very wasteful since (in particular, for
+    "machine learning" models) a model's parameter set can be very large.
 
 - **%KIM Descriptor Files Have Been Eliminated**: kim-api-v2 does not use *%KIM
   descriptor files*.  Instead, kim-api-v2 models register their units,
   conventions, and parameters in their *ModelCreate* initialization routine,
   and they register their arguments and callbacks in their
-  *ModelComputeArgumentsCreate* initialization routine.  Simulator--Model
+  * *ModelComputeArgumentsCreate* initialization routine.  Simulator--Model
   matching is now the responsibility of the simulator.  This is facilitated by
   kim-api-v2 through the availability of routines for obtaining the model's
   registered values of all necessary quantities at run-time.
@@ -127,7 +126,7 @@ a guiding principle.
   maintain consistency of the api across languages.
 
   This means that using the kim-api-v2 in your preferred language feels more
-  natural.  For example, the C++ api binding extensively use namespaces,
+  natural.  For example, the C++ api bindings extensively use namespaces,
   objects, std::string, and error codes as function return values.  The Fortran
   api binding provides error codes as arguments to SUBROUTINES, uses handles to
   objects, and hides (as much as possible) the effort of making Fortran
@@ -313,7 +312,7 @@ KIM_API_setm_method_by_index()         | N/A                                  |
 KIM_API_getm_index()                   | N/A                                  |
 
 
-Enumeration Identifier Name translation table:
+Extensible enumeration Identifier Name translation table:
 
 kim-api-v1                             | kim-api-v2 C++ Binding                               |
 -------------------------------------- | ---------------------------------------------------- |
@@ -384,7 +383,17 @@ N/A                                    | KIM::TEMPERATURE_UNIT::unused          
 N/A                                    | KIM::TIME_UNIT::unused                               |
 
 
+Each of the extensible enumerations in kim-api-v2 has an interface for
+discovering all of the members of the enumeration.  This is implemented using
+two functions.  One provides the number of members in the enumeration, and the
+other provides a copy of the \f$i\f$-th enumeration member.  (The ordering is
+undefined, but guaranteed to be stable during any single run-time program
+execution using the %KIM API.)  For example, the KIM::ChargeUnit enumeration has
+the KIM::CHARGE_UNIT::GetNumberOfChargeUnits() and the
+KIM::CHARGE_UNIT::GetChargeUnit() functions.
 
+In addition, the KIM::ComputeArgumentName enumeration also has the
+KIM::COMPUTE_ARGUMENT_NAME::GetComputeArgumentDataType() function.
 
 
 Next Section: \ref porting_content_from_v1_to_v2.

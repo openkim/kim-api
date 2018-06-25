@@ -68,7 +68,7 @@ simulator provides for use by the model.
 The %KIM API provides a list of all compute-arguments and compute-callbacks
 defined as part of the official API.  Each such argument and callback has a
 "Support Status" which can be one of four values: *requiredByAPI*,
-*notSupported*, *required*, or *optional*.  A model specifies a support status
+* *notSupported*, *required*, or *optional*.  A model specifies a support status
 value, as part of its *ModelComputeArgumentsCreate* routine, for every
 compute-argument and compute-callback defined by the %KIM API.  It is the
 responsibility of the simulator to use the compute-arguments object interface
@@ -76,14 +76,14 @@ to determine the support status of each compute-argument and compute-callback
 and to use this information to determine if the model is capable of performing
 the desired computation.
 
-Here lists of each input compute-argument, output compute-argument, and
+Next, lists of each input compute-argument, output compute-argument, and
 compute-callback are provided.  To be explicit, below zero-based particle
 numbering is used where necessary.
 
 Input compute-argument table:
 Compute Argument Name | Unit   | Data Type | Extent                | Memory Layout                                                      | Valid Support Statuses (bold -- default) |
 --------------------- | ------ | --------- | --------------------- | ------------------------------------------------------------------ | ---------------------------------------- |
-numberOfParticles     | N/A    | double    | 1                     |                                                                    | **requiredByAPI**                        |
+numberOfParticles     | N/A    | integer   | 1                     |                                                                    | **requiredByAPI**                        |
 particleSpeciesCodes  | N/A    | integer   | numberOfParticles     | \f$sc^{(0)}, sc^{(1)}, \dots\f$                                    | **requiredByAPI**                        |
 particleContributing  | N/A    | integer   | numberOfParticles     | \f$c^{(0)}, c^{(1)}, \dots\f$                                      | **requiredByAPI**                        |
 coordinates           | length | double    | numberOfParticles * 3 | \f$r^{(0)}_1, r^{(0)}_2, r^{(0)}_3, r^{(1)}_1, r^{(1)}_2, \dots\f$ | **requiredByAPI**                        |
@@ -160,7 +160,12 @@ ProcessD2EDr2Term     | required, optional, **notSupported**     |
   derivatives of the configuration's partial energy, \f$E^{\mathcal{C}}\f$,
   with respect to all pair-distances, \f$r^{(i,j)}, i,j \in C_{p}\f$.  That is,
   it allows the model to communicate the values of \f$\frac{\partial
-  E^{\mathcal{C}}}{\partial r^{(i,j)}}\f$ to the simulator.
+  E^{\mathcal{C}}}{\partial r^{(i,j)}}\f$ to the simulator.  Recall that
+  \f$r^{(i,j)}\f$ and \f$r^{(j,i)}\f$ are just two different notations for the
+  same quantity.  Thus, there are only \f$\frac{\text{numberOfParticles} \cdot
+  (\text{numberOfParticles} + 1)}{2}\f$ quantities (as opposed to
+  \f$(\text{numberOfParticles})^2\f$) referred to by the notation
+  \f$\frac{\partial E^{\mathcal{C}}}{\partial r^{(i,j)}}\f$.
 
   These quantities can be used to compute many quantities of interest
   associated with the configuration.  For example, it is possible to
@@ -174,7 +179,7 @@ ProcessD2EDr2Term     | required, optional, **notSupported**     |
   = \sum_{i \in C_p} \sum_{j \in \mathcal{N}^{(i)}_{r_{\text{infl}}}} \;\;
   \sum_{k \not= j; \; k \in \bar{\mathcal{N}}^{(i)}_{r_{\text{infl}}}}
   \frac{\partial \tilde{E}_i}{\partial r^{(j,k)}}
-  \frac{\partial \bar{r}^{(j,k)}}{\partial \mathbf{r}^{(j)}}
+  \frac{\partial r^{(j,k)}}{\partial \mathbf{r}^{(j)}}
   \otimes \mathbf{r}^{(j)}.
   \f]
 

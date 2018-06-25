@@ -45,7 +45,7 @@ Source License](http://www.opensource.org/licenses/CDDL-1.0).
 The current version of the %KIM API package supports the following features:
 
 - **Programming Languages**: Currently supported programming languages include
-  C, C++, FORTRAN 77, Fortran 90/95, Fortran 2003.
+  C, C++, Fortran.
 
 - **Best Practice API Design**: The guiding design principle for the %KIM API
     has been *simplicity*.  In addition to this, general API design *best
@@ -73,8 +73,8 @@ The current version of the %KIM API package supports the following features:
   one-based numbering (Fortran-style numbering beginning with one).
 
 - **Data Communication**: Communication of an arbitrary number of *arguments*
-  and *callback* routines between a *Model* (interatomic potential) and a
-  *Simulator* (simulation code that uses a Model).
+  and *callback* routines between a *Model* (interatomic potential) and
+  a *Simulator* (simulation code that uses a Model).
 
 - **Data types**: integer and double.
 

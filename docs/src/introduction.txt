@@ -71,7 +71,7 @@ This documentation is organized into the following components:
    and Fortran (ex_model_driver_P_LJ.F90).
 
 -# Example parameterized models (ex_model_Ar_P_LJ.params,
-   ex_model_Ar_P_Morse.params, LennardJones612_Universal.params)
+   ex_model_Ar_P_Morse.params, LennardJones612_UniversalShifted.params)
 
 -# \ref version2_differences
 

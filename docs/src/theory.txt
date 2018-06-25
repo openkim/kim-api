@@ -63,7 +63,7 @@ computation and passes the results back to the simulator.  Once the simulator
 has received the model's results it may use these values to advance its
 simulation and update the atomistic configuration.  Typically, this sequence of
 events is repeated in an iterative process until the simulator determines it
-has reached convergence or a predetermined stopping condition is achieved.
+has reached convergence or some other stopping condition is achieved.
 
 The purpose of the %KIM API is to coordinate the information exchange between
 %KIM Simulators and %KIM Models.  It does this through the definition of various
@@ -90,20 +90,12 @@ set of particles \f$C_p\f$ and their associated data.  For each particle \f$i
      "padding" particles) can be thought of as providing the appropriate
      boundary conditions for the configuration.
 
-Before proceeding further, introduce the notation \f$\mathbf{r}^{(j,i)} \equiv
-\mathbf{r}^{(j)} - \mathbf{r}^{(i)}\f$ for the relative position vector from
-particle \f$i\f$ to particle \f$j\f$, and the notation \f$r^{(j,i)}\f$ for the
-magnitude of the vector \f$\mathbf{r}^{(j,i)}\f$.  Note that \f$r^{(j,i)} =
+Before proceeding further, introduce the notation \f$\mathbf{r}^{(i,j)} \equiv
+\mathbf{r}^{(j)} - \mathbf{r}^{(i)}\f$ for the relative position vector <b>from
+particle \f$i\f$ to particle \f$j\f$</b>, and the notation \f$r^{(i,j)}\f$ for
+the magnitude of the vector \f$\mathbf{r}^{(i,j)}\f$.  Note that \f$r^{(j,i)} =
 r^{(i,j)}\f$ and these are simply two different notations for the same
-quantity.  However, when taken as a function of particle position vectors,
-\f$r^{(j,i)} = \bar{r}^{(j,i)}(\mathbf{r}^{(j)}, \mathbf{r}^{(i)}) \equiv \|
-\mathbf{r}^{(j)} - \mathbf{r}^{(i)}\|\f$, there is a difference.  In
-particular,
-
-\f[
-\frac{\partial \bar{r}^{(j,i)}}{\partial \mathbf{r}^{(j)}} = -
-\frac{\partial \bar{r}^{(i,j)}}{\partial \mathbf{r}^{(j)}}.
-\f]
+quantity.
 
 Returning to the definition and description of a configuration, a
 configuration's set of particles may be partitioned into two disjoint sets: The
@@ -123,7 +115,7 @@ is,
 
 \f[
 \mathcal{N}^{(i)}_{r_\text{infl}} \equiv \{ j \in C_p \;|\;
-0 < r^{(j,i)} \le r_{\text{infl}} \}.
+0 < r^{(i,j)} \le r_{\text{infl}} \}.
 \f]
 
 Finally, define the closure of the particle's influence neighborhood,
@@ -287,7 +279,7 @@ is, \f$A_p \cap B_p = \emptyset\f$ and \f$A_p \cup B_p = T_p\f$.
 \image latex square-lattice-configuration-2.pdf
 
 
-Then define configuration \f$\mathcal{C}\f$ to have particles \f$C_p=T_p\f$
+Next, define configuration \f$\mathcal{C}\f$ to have particles \f$C_p=T_p\f$
 with \f$C_{cp}=A_p\f$ and \f$C_{ncp}=B_p\f$, and configuration
 \f$\mathcal{D}\f$ to have particles \f$D_p=T_p\f$ with \f$D_{cp}=B_p\f$ and
 \f$D_{ncp}=A_p\f$.  Then,
