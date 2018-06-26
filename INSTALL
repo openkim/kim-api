@@ -100,8 +100,7 @@ Jump directly to sections D.1 or D.2.
 
 If you have any problems with the commands found there, please read the rest of
 this file.  If, however, you have successfully installed the KIM API and you
-would like to learn more, read the README file in the docs directory for a
-step-by-step guide to learning more about the KIM API.
+would like to learn more, read the documentation found in the docs directory.
 
 -------------------------------------------------------------------------------
 
@@ -248,8 +247,8 @@ $ make
 $ printf "EDIP_BOP_Bazant_Kaxiras_Si__MO_958932894036_001" | ./utility_forces_numer_deriv
 
 Congratulations, you have now successfully installed the KIM API.  If you would
-like to learn more about the KIM API, read the README file in the docs
-directory for a step-by-step guide.
+like to learn more about the KIM API, read the documentation in the docs
+directory.
 
 D.1.2 INSTALLED-(NONSTANDARD)-BUILD
 
@@ -273,8 +272,8 @@ $ make
 $ printf "EDIP_BOP_Belko_Gusakov_Dorozhkin_Ge__MO_129433059219_000" | ./utility_forces_numer_deriv
 
 Congratulations, you have now successfully installed the KIM API.  If you would
-like to learn more about the KIM API, read the README file in the docs
-directory for a step-by-step guide.
+like to learn more about the KIM API, read the documentation in the docs
+directory.
 
 -------------------------------------------------------------------------------
 
@@ -320,9 +319,9 @@ Adding Models and/or Model Drivers to the environment-variable-collection is
 similar.
 
 $ mkdir -p "${HOME}/my-env-collection/model_drivers"
-$ export KIM_API_MODEL_DRIVERS_DIR="${HOME}/my-env-collection/model_drivers"
+$ export KIM_API_VX_MODEL_DRIVERS_DIR="${HOME}/my-env-collection/model_drivers"
 $ mkdir -p "${HOME}/my-env-collection/models"
-$ export KIM_API_MODELS_DIR="${HOME}/my-env-collection/models"
+$ export KIM_API_VX_MODELS_DIR="${HOME}/my-env-collection/models"
 $ kim-api-vX-collections-management install environment Pair_Morse_Shifted_GirifalcoWeizer_HighCutoff_Cu__MO_151002396060_001
 $ kim-api-vX-collections-management list
 $ cd "${HOME}/utility_forces_numer_deriv"  # we'll assume this is already built
@@ -524,9 +523,6 @@ if necessary.
                 Makefile.KIM_Config file in order to avoid harmless compiler
                 errors:
                   `LDFLAGS += -read_only_relocs suppress'
-
-    * NOTE: For Cygwin systems add the following line `PICFLAG =' to avoid
-            warnings about the -fPIC option.
 
 (j) Override default name options, if necessary, by adding the desired variable
     name (after the "# override default name options" line) and filling in
