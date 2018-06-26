@@ -32,7 +32,7 @@
 #
 
 
-============================= The KIM API package ===========================--
+============================= The KIM API package =============================
 
 This file contains instructions for installing the KIM API package.  If you are
 new to KIM and the KIM API (application programming interface) start by reading
@@ -77,7 +77,7 @@ A. SYSTEM REQUIREMENTS
 
 To install and run the KIM API package you need the following:
 
-1. A Unix/Linux/Mac OSX/Cygwin system.
+1. A Unix/Linux/osX system.
 
 2. GNU make (3.81 or later).
 
@@ -89,7 +89,7 @@ To install and run the KIM API package you need the following:
 4. Standard utilities: xxd, ar, printf, sed, grep, find, cat, test, cp, touch,
    rm, rmdir, ln, chmod, install (needed for use in the build system).
 
-5. wget and tar (needed for by the kim-api-vX-collections-management utility).
+5. wget and tar (used by the kim-api-vX-collections-management utility).
 
 -------------------------------------------------------------------------------
 
@@ -116,7 +116,7 @@ regardless of the programming language in which the codes are written.
 C.1. BUILD TYPES
 
 The KIM API package consists of a main library and a small number of associated
-helper executables.
+helper utilities.
 
 C.1.1 INSTALLED-BUILD
 
@@ -161,8 +161,7 @@ available to all Simulators that use the KIM API library.  This collection is
 located in the same subdirectory as the KIM API main library.
 
 Models and Model Drivers may be built and installed to the system-collection at
-anytime after an installed-build of the KIM API has been completed and the
-original KIM API package source code directories have been deleted.
+anytime after an installed-build of the KIM API has been completed.
 
 C.2.2 THE USER-COLLECTION
 
@@ -255,8 +254,7 @@ directory for a step-by-step guide.
 D.1.2 INSTALLED-(NONSTANDARD)-BUILD
 
 To create an installed-(nonstandard)-build and install to the user's home
-directory "${HOME}/local" do the below.  Here we will add a line to the user's
-.bashrc file that puts "${HOME}/local/bin" on the user's PATH setting.
+directory "${HOME}/local" do the below.
 
 $ cd "${HOME}"
 $ wget https://s3.openkim.org/kim-api/kim-api-vX.Y.Z.txz  # replace X.Y.Z with the current version number
@@ -268,8 +266,7 @@ $ make install
 $ cp -r ./examples/openkim_tests/utility_forces_numer_deriv "${HOME}/"
 $ cd "${HOME}"
 $ rm -r kim-api-vX.Y.Z kim-api-vX.Y.Z.txz  # replace X.Y.Z with the current version number
-$ printf "PATH=${PATH}:${HOME}/local/bin\n" >> "${HOME}/.bashrc"
-$ source "${HOME}/.bashrc"
+$ source "${HOME}/local/bin/kim-api-vX-activate"  # add KIM API to the shell's ${PATH} and load bash tab-completions
 $ kim-api-vX-collections-management install system EDIP_BOP_Belko_Gusakov_Dorozhkin_Ge__MO_129433059219_000
 $ cd utility_forces_numer_deriv
 $ make
@@ -319,9 +316,20 @@ $ printf "Pair_Lennard_Jones_Shifted_Bernardes_HighCutoff_Ar__MO_242741380554_00
 
 E.3 ADDING MODELS AND/OR MODEL DRIVERS TO THE ENVIRONMENT-VARIABLE-COLLECTION
 
-The process for adding Models and Model Drivers to the
-environment-variable-collection involves just downloading and building the
-items.  Here, we'll illustrate the process with an example.
+Adding Models and/or Model Drivers to the environment-variable-collection is
+similar.
+
+$ mkdir -p "${HOME}/my-env-collection/model_drivers"
+$ export KIM_API_MODEL_DRIVERS_DIR="${HOME}/my-env-collection/model_drivers"
+$ mkdir -p "${HOME}/my-env-collection/models"
+$ export KIM_API_MODELS_DIR="${HOME}/my-env-collection/models"
+$ kim-api-vX-collections-management install environment Pair_Morse_Shifted_GirifalcoWeizer_HighCutoff_Cu__MO_151002396060_001
+$ kim-api-vX-collections-management list
+$ cd "${HOME}/utility_forces_numer_deriv"  # we'll assume this is already built
+$ printf "Pair_Morse_Shifted_GirifalcoWeizer_HighCutoff_Cu__MO_151002396060_001" | ./utility_forces_numer_deriv
+
+Alternatively, you can just download and build the items.  Here, we'll
+illustrate the process with an example.
 
 $ mkdir -p "${HOME}/my-env-collection/model_drivers"
 $ export KIM_API_VX_MODEL_DRIVERS_DIR="${HOME}/my-env-collection/model_drivers"
@@ -357,9 +365,15 @@ $ printf "Pair_Morse_Shifted_GirifalcoWeizer_HighCutoff_Cu__MO_151002396060_001"
 
 E.4 ADDING MODELS AND/OR MODEL DRIVERS TO THE CWD-COLLECTION
 
-The process for adding Models and Model Drivers to the CWD-collection involves
-just downloading and building the items.  Here, we'll illustrate the process
-with an example.
+Adding Models and/or Model Drivers to the CWD-collection is, again, similar.
+
+$ cd "${HOME}/utility_forces_numer_deriv"  # we'll assume this is already built
+$ kim-api-vX-collections-management install CWD Pair_Exp6_Hogervorst_Mixing_Kong_Chakrabarty_ArNe__MO_946046425752_001
+$ kim-api-vX-collections-management list
+$ printf "Pair_Exp6_Hogervorst_Mixing_Kong_Chakrabarty_ArNe__MO_946046425752_001" | ./utility_forces_numer_deriv
+
+Alternatively, you can just download and build the items.  Here, we'll
+illustrate the process with an example.
 
 $ cd "${HOME}/utility_forces_numer_deriv"  # we'll assume this is already built
 $ mo=Pair_Exp6_Hogervorst_Mixing_Kong_Chakrabarty_ArNe__MO_946046425752_001
@@ -535,12 +549,12 @@ if necessary.
 
     # override default install options
     prefix =       # default is '/usr/local'
-    includedir =   # default is '$(prefix)/include'
     exec_prefix =  # default is '$(prefix)'
-    libdir =       # default is '$(exec_prefix)/lib'
     bindir =       # default is '$(exec_prefix)/bin'
     libexecdir =   # default is '$(exec_prefix)/libexec'
     sysconfdir =   # default is '$(prefix)/etc'
+    libdir =       # default is '$(exec_prefix)/lib'
+    includedir =   # default is '$(prefix)/include'
 
 
     * NOTE: See item F.3 below for more details on the installation process.
@@ -557,17 +571,13 @@ The targets defined by the top level KIM API Makefile include:
 
 TARGETS FOR BUILDING AND CLEANING THE KIM API PACKAGE
 `help'                       -- print this list of targets
-`all'                        -- build the KIM API library and all "added"
-                                Model Drivers and Models; same as `make'
+`all'                        -- build the KIM API library; same as `make'
 `clean'                      -- delete appropriate .o, .mod, .a, .so and
-                                executable files from src/ directory and
-                                its subdirectories
+                                executable files.
 
 TARGETS FOR INSTALLING THE KIM API PACKAGE
 `install'                    -- install KIM API library, associated
-                                executable utilities, and "added" Model
-                                Drivers and Models to system-wide location
-                                as described in item 7 below.
+                                executable utilities.
 
 TARGETS FOR UNINSTALLING THE KIM API PACKAGE
 `uninstall'                  -- delete files installed by `make install'
@@ -584,14 +594,14 @@ The default values for libdir, bindir, libexec, includedir, and sysconfdir are
 exec_prefix is `$(prefix)', and the default value for prefix is `/usr/local'.
 Thus, the default values of libdir, bindir, libexec, includedir, and sysconfdir
 are `/usr/local/lib', `/usr/local/bin', `/usr/local/libexec',
-`/usr/local/include', `/usr/local/etc', respectively.  The value of
+`/usr/local/include', and `/usr/local/etc', respectively.  The value of
 full_package_name is `$(package_name)-v$(VERSION_MAJOR)'.  Additionally the
 supporting header and `.mod' files will be copied to
 `$(libdir)/$(full_package_name)/include' to support subsequent compilation
 against the installed KIM API package.
 
-See the makefiles `src/Makefile' and `src/utils/Makefile' for more details of
-the install process.
+See the Makefiles in the various include and src directories for more details
+of the install process.
 
 *******************************************************************************
 
