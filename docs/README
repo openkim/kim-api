@@ -31,9 +31,10 @@
 #
 
 
-Depending on how you obtained the kim-api package, this directory has 1 or 2
+Depending on how you obtained the kim-api package, this directory has 3 or 3
 sub-directories and a PDF file:
 
+porting-content-from-v1-to-v2-examples     example codes
 src         content files for kim-api documentation
 html        HTML version of the kim-api documentation (see html/index.html)
 refman.pdf  PDF version of the kim-api documentation
