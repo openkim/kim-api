@@ -32,6 +32,18 @@
 #
 
 
+=== kim-api-v1.9.6 ============== 26Jun2018 ====================================
+
+* Updated INSTALL file
+
+* Added 'install OpenKIM_with_history' and 'install --force' options to the
+  collections-management utility
+
+* Collections-management utility now cleanly handles an unaccessible openkim.org
+
+* Fixed bugs and made improvements to build system
+
+
 === kim-api-v1.9.5 ============== 12May2018 ====================================
 
 * Update build system to support parallel builds (make -j).
