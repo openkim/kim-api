@@ -32,6 +32,19 @@
 #
 
 
+=== kim-api-v2.0.0-beta.0 ======= 26Jun2018 ====================================
+
+* Added a 'Guide for porting content from KIM API v1 to v2' to documentation
+
+* Documentation updates and improvements
+
+* Implemented extensive error checking and logging within the API
+
+* Separated Model object into ComputeArguments and Model
+
+* Many refinements and corrections to the new API
+
+
 === kim-api-v1.9.6 ============== 26Jun2018 ====================================
 
 * Updated INSTALL file
