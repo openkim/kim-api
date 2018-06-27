@@ -31,12 +31,6 @@
 #
 
 
-ifeq ($(wildcard ../Makefile.KIM_Config),)
-  $(error Makefile.KIM_Config does not exist.  Something is wrong with your KIM API package setup)
-endif
-include ../Makefile.KIM_Config
-
-
 #
 # Main build settings and rules
 #
@@ -52,4 +46,4 @@ refman.pdf: all
 
 clean:
 	@printf "Cleaning... docs.\n"
-	$(QUELL)rm -rf "./html" "./latex" "refman.pdf"
+	@rm -rf "./html" "./latex" "refman.pdf"

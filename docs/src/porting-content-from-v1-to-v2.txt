@@ -1328,6 +1328,6 @@ compatible with v2.
 
 </ul>
 
-Next Seciton: \ref [Browse files](files.html).
+Next Seciton: [Browse files](files.html).
 
 */
