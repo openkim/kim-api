@@ -103,7 +103,8 @@ The current version of the %KIM API package supports the following features:
   distinct, but may repeat.  Repeated cutoff distances allow a model to
   simultaneously access the neighbors of multiple particles without needing to
   make copies of the neighbor list(s).)  A simulator must provide all such
-  requested lists.
+  requested lists and ensure that these lists contain only a small number of
+  particles that are located outside the cutoff distance.
 
 - **Particle Species**: The %KIM API provides the ability to designate the
   physical species of each particle in a simulation.  Currently, only one

@@ -156,6 +156,14 @@ ProcessD2EDr2Term     | required, optional, **notSupported**     |
   data (provided, via the Simulator, by the compute-arguments object) is
   consistent with the model's cutoff values.
 
+  <b>CAUTION - SIMULATOR DEVELOPERS:</b> In general, it is important that
+  neighbor lists provided by a simulator are "efficient" in the sense that the
+  list contains only a small number of particles that are located outside the
+  cutoff distance.  If the lists are not efficient, then the model
+  computational time may be *severely* impacted.  This is especially true for
+  models that request multiple neighbor lists with a wide range of cutoff
+  distances.
+
 - ProcessDEDrTerm is a callback function that allows for access to the
   derivatives of the configuration's partial energy, \f$E^{\mathcal{C}}\f$,
   with respect to all pair-distances, \f$r^{(i,j)}, i,j \in C_{p}\f$.  That is,
