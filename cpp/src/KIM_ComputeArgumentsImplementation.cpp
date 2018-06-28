@@ -1276,8 +1276,8 @@ ComputeArgumentsImplementation::ComputeArgumentsImplementation(
     inModelComputeRoutine_(false),
     numberOfCutoffs_(0),
     cutoffs_(NULL),
-    modelBuffer_(0),
-    simulatorBuffer_(0)
+    modelBuffer_(NULL),
+    simulatorBuffer_(NULL)
 {
 #if DEBUG_VERBOSITY
   std::string const callString = "ComputeArgumentsImplementation("

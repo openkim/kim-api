@@ -96,7 +96,7 @@ std::string const & ModelRefresh::String() const
   return pImpl->String();
 }
 
-ModelRefresh::ModelRefresh() : pimpl(0)
+ModelRefresh::ModelRefresh() : pimpl(NULL)
 {
 }
 

@@ -80,7 +80,7 @@ std::string const & ModelComputeArgumentsDestroy::String() const
   return pImpl->String();
 }
 
-ModelComputeArgumentsDestroy::ModelComputeArgumentsDestroy() : pimpl(0)
+ModelComputeArgumentsDestroy::ModelComputeArgumentsDestroy() : pimpl(NULL)
 {
 }
 

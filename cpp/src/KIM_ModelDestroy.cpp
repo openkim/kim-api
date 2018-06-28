@@ -80,7 +80,7 @@ std::string const & ModelDestroy::String() const
   return pImpl->String();
 }
 
-ModelDestroy::ModelDestroy() : pimpl(0)
+ModelDestroy::ModelDestroy() : pimpl(NULL)
 {
 }
 

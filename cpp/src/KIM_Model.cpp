@@ -68,7 +68,7 @@ void Model::Destroy(Model ** const model)
 {
   ModelImplementation::Destroy(&((*model)->pimpl));
   delete *model;
-  *model = 0;
+  *model = NULL;
 }
 
 void Model::GetInfluenceDistance(double * const influenceDistance) const
@@ -193,7 +193,7 @@ void Model::PopLogVerbosity()
   pimpl->PopLogVerbosity();
 }
 
-Model::Model() : pimpl(0)
+Model::Model() : pimpl(NULL)
 {
 }
 

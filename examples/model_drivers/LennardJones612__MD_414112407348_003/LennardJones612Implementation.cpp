@@ -62,18 +62,18 @@ LennardJones612Implementation::LennardJones612Implementation(
 : numberModelSpecies_(0),
   numberUniqueSpeciesPairs_(0),
   shift_(0),
-  cutoffs_(0),
-  epsilons_(0),
-  sigmas_(0),
+  cutoffs_(NULL),
+  epsilons_(NULL),
+  sigmas_(NULL),
   influenceDistance_(0.0),
-  cutoffsSq2D_(0),
-  fourEpsilonSigma6_2D_(0),
-  fourEpsilonSigma12_2D_(0),
-  twentyFourEpsilonSigma6_2D_(0),
-  fortyEightEpsilonSigma12_2D_(0),
-  oneSixtyEightEpsilonSigma6_2D_(0),
-  sixTwentyFourEpsilonSigma12_2D_(0),
-  shifts2D_(0),
+  cutoffsSq2D_(NULL),
+  fourEpsilonSigma6_2D_(NULL),
+  fourEpsilonSigma12_2D_(NULL),
+  twentyFourEpsilonSigma6_2D_(NULL),
+  fortyEightEpsilonSigma12_2D_(NULL),
+  oneSixtyEightEpsilonSigma6_2D_(NULL),
+  sixTwentyFourEpsilonSigma12_2D_(NULL),
+  shifts2D_(NULL),
   cachedNumberOfParticles_(0)
 {
   FILE* parameterFilePointers[MAX_PARAMETER_FILES];
@@ -169,16 +169,16 @@ int LennardJones612Implementation::Compute(
   bool isComputeParticleVirial = false;
   //
   // KIM API Model Input
-  int const* particleSpeciesCodes = 0;
-  int const* particleContributing = 0;
-  VectorOfSizeDIM const* coordinates = 0;
+  int const* particleSpeciesCodes = NULL;
+  int const* particleContributing = NULL;
+  VectorOfSizeDIM const* coordinates = NULL;
   //
   // KIM API Model Output
-  double* energy = 0;
-  double* particleEnergy = 0;
-  VectorOfSizeDIM* forces = 0;
-  VectorOfSizeSix* virial = 0;
-  VectorOfSizeSix* particleVirial = 0;
+  double* energy = NULL;
+  double* particleEnergy = NULL;
+  VectorOfSizeDIM* forces = NULL;
+  VectorOfSizeSix* virial = NULL;
+  VectorOfSizeSix* particleVirial = NULL;
   ier = SetComputeMutableValues(modelComputeArguments,
                                 isComputeProcess_dEdr,
                                 isComputeProcess_d2Edr2, isComputeEnergy,
@@ -850,11 +850,11 @@ int LennardJones612Implementation::SetComputeMutableValues(
     return ier;
   }
 
-  isComputeEnergy = (energy != 0);
-  isComputeParticleEnergy = (particleEnergy != 0);
-  isComputeForces = (forces != 0);
-  isComputeVirial = (virial != 0);
-  isComputeParticleVirial = (particleVirial != 0);
+  isComputeEnergy = (energy != NULL);
+  isComputeParticleEnergy = (particleEnergy != NULL);
+  isComputeForces = (forces != NULL);
+  isComputeVirial = (virial != NULL);
+  isComputeParticleVirial = (particleVirial != NULL);
 
   // update values
   cachedNumberOfParticles_ = *numberOfParticles;
@@ -1021,9 +1021,9 @@ void AllocateAndInitialize2DArray(double**& arrayPtr, int const extentZero,
 //******************************************************************************
 void Deallocate2DArray(double**& arrayPtr)
 { // deallocate memory
-  if (arrayPtr != 0) delete [] arrayPtr[0];
+  if (arrayPtr != NULL) delete [] arrayPtr[0];
   delete [] arrayPtr;
 
   // nullify pointer
-  arrayPtr = 0;
+  arrayPtr = NULL;
 }

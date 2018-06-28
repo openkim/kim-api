@@ -115,7 +115,7 @@ void ComputeArguments::PopLogVerbosity()
   pimpl->PopLogVerbosity();
 }
 
-ComputeArguments::ComputeArguments() : pimpl(0)
+ComputeArguments::ComputeArguments() : pimpl(NULL)
 {
 }
 

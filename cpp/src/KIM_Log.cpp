@@ -55,7 +55,7 @@ void Log::Destroy(Log ** const log)
 {
   LogImplementation::Destroy(&((*log)->pimpl));
   delete *log;
-  *log = 0;
+  *log = NULL;
 }
 
 std::string const & Log::GetID() const
@@ -91,7 +91,7 @@ void Log::LogEntry(LogVerbosity const logVerbosity,
   pimpl->LogEntry(logVerbosity, message.str(), lineNumber, fileName);
 }
 
-Log::Log() : pimpl(0)
+Log::Log() : pimpl(NULL)
 {
 }
 

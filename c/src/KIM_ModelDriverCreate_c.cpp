@@ -172,7 +172,7 @@ int KIM_ModelDriverCreate_GetParameterFileName(
 
   std::string const * pStr;
   std::string const ** ppStr;
-  if (parameterFileName == 0)
+  if (parameterFileName == NULL)
     ppStr = NULL;
   else
     ppStr = &pStr;
@@ -184,7 +184,7 @@ int KIM_ModelDriverCreate_GetParameterFileName(
     return true;
   else
   {
-    if (parameterFileName != 0) *parameterFileName = pStr->c_str();
+    if (parameterFileName != NULL) *parameterFileName = pStr->c_str();
     return false;
   }
 }

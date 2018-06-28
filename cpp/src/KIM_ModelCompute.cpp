@@ -78,7 +78,7 @@ std::string const & ModelCompute::String() const
   return pImpl->String();
 }
 
-ModelCompute::ModelCompute() : pimpl(0)
+ModelCompute::ModelCompute() : pimpl(NULL)
 {
 }
 

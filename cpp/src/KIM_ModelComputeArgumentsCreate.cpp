@@ -97,7 +97,7 @@ std::string const & ModelComputeArgumentsCreate::String() const
   return pImpl->String();
 }
 
-ModelComputeArgumentsCreate::ModelComputeArgumentsCreate() : pimpl(0)
+ModelComputeArgumentsCreate::ModelComputeArgumentsCreate() : pimpl(NULL)
 {
 }
 

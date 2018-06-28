@@ -164,7 +164,7 @@ std::string const & ModelComputeArguments::String() const
   return pImpl->String();
 }
 
-ModelComputeArguments::ModelComputeArguments() : pimpl(0)
+ModelComputeArguments::ModelComputeArguments() : pimpl(NULL)
 {
 }
 

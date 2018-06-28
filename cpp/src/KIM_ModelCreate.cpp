@@ -220,7 +220,7 @@ std::string const & ModelCreate::String() const
   return pImpl->String();
 }
 
-ModelCreate::ModelCreate() : pimpl(0)
+ModelCreate::ModelCreate() : pimpl(NULL)
 {
 }
 

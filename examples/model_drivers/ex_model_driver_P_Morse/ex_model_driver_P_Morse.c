@@ -257,9 +257,9 @@ static int compute(
     return ier;
   }
 
-  comp_energy = (energy != 0);
-  comp_force = (force != 0);
-  comp_particleEnergy = (particleEnergy != 0);
+  comp_energy = (energy != NULL);
+  comp_force = (force != NULL);
+  comp_particleEnergy = (particleEnergy != NULL);
 
   /* Check to be sure that the species are correct */
   /**/

@@ -1222,9 +1222,9 @@ int ModelImplementation::ClearInfluenceDistanceAndCutoffsThenRefreshModel()
 #endif
   LOG_DEBUG("Enter  " + callString);
 
-  influenceDistance_ = 0;
+  influenceDistance_ = NULL;
   numberOfCutoffs_ = 0;
-  cutoffs_ = 0;
+  cutoffs_ = NULL;
 
   typedef int ModelRefreshCpp(KIM::ModelRefresh * const);
   ModelRefreshCpp * CppRefresh
@@ -1714,16 +1714,16 @@ ModelImplementation::ModelImplementation(ModelLibrary * const modelLibrary,
     log_(log),
     numberingHasBeenSet_(false),
     unitsHaveBeenSet_(false),
-    influenceDistance_(0),
+    influenceDistance_(NULL),
     numberOfCutoffs_(0),
-    cutoffs_(0),
-    refreshFunction_(0),
-    destroyFunction_(0),
-    computeArgumentsCreateFunction_(0),
-    computeArgumentsDestroyFunction_(0),
-    computeFunction_(0),
-    modelBuffer_(0),
-    simulatorBuffer_(0)
+    cutoffs_(NULL),
+    refreshFunction_(NULL),
+    destroyFunction_(NULL),
+    computeArgumentsCreateFunction_(NULL),
+    computeArgumentsDestroyFunction_(NULL),
+    computeFunction_(NULL),
+    modelBuffer_(NULL),
+    simulatorBuffer_(NULL)
 {
 #if DEBUG_VERBOSITY
   std::string const callString = "ModelImplementation("
@@ -2214,7 +2214,7 @@ int ModelImplementation::InitializeStandAloneModel(
 #endif
 
   LanguageName languageName;
-  func * functionPointer = 0;
+  func * functionPointer = NULL;
   error = modelLibrary_->GetModelCreateFunctionPointer(
       &languageName, &functionPointer);
   if (error)
@@ -2391,7 +2391,7 @@ int ModelImplementation::InitializeParameterizedModel(
   }
 
   LanguageName languageName;
-  func * functionPointer = 0;
+  func * functionPointer = NULL;
   error = modelLibrary_->GetModelCreateFunctionPointer(
       &languageName, &functionPointer);
   if (error)

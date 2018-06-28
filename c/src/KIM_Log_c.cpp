@@ -94,7 +94,7 @@ void KIM_Log_Destroy(KIM_Log ** const log)
 
   KIM::Log::Destroy(&pLog);
   delete (*log);
-  *log = 0;
+  *log = NULL;
 }
 
 char const * const KIM_Log_GetID(KIM_Log const * const log)

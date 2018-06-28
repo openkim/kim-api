@@ -99,7 +99,7 @@ void LogImplementation::Destroy(LogImplementation ** const logImplementation)
                                  "Log object destroyed.",
                                  __LINE__, __FILE__);
   delete (*logImplementation);
-  *logImplementation = 0;
+  *logImplementation = NULL;
 }
 
 std::string const & LogImplementation::GetID() const

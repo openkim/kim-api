@@ -70,7 +70,7 @@ namespace KIM
 
 #include "KIM_ModelLibraryLogMacros.hpp"
 ModelLibrary::ModelLibrary(Log * const log) :
-    libraryHandle_(0),
+    libraryHandle_(NULL),
     log_(log)
 {
 #if DEBUG_VERBOSITY
@@ -102,7 +102,7 @@ int ModelLibrary::Open(bool const typeIsModel, std::string const & modelName)
 #endif
   LOG_DEBUG("Enter  " + callString);
 
-  if (libraryHandle_ != 0)
+  if (libraryHandle_ != NULL)
   {
     LOG_ERROR("");
     LOG_DEBUG("Exit 1=" + callString);
@@ -125,7 +125,7 @@ int ModelLibrary::Open(bool const typeIsModel, std::string const & modelName)
       + (typeIsModel ? MODELLIBFILE : MODELDRIVERLIBFILE) + ".so";
 
   libraryHandle_ = dlopen(libraryPath_.c_str(), RTLD_NOW);
-  if (libraryHandle_ == 0)
+  if (libraryHandle_ == NULL)
   {
     std::cout << dlerror() << std::endl;
     LOG_ERROR("");
@@ -144,7 +144,7 @@ int ModelLibrary::Close()
 #endif
   LOG_DEBUG("Enter  " + callString);
 
-  if (libraryHandle_ == 0) return true;  // not open
+  if (libraryHandle_ == NULL) return true;  // not open
 
   modelName_ = "";
   int error = dlclose(libraryHandle_);
@@ -156,7 +156,7 @@ int ModelLibrary::Close()
   }
   else
   {
-    libraryHandle_ = 0;
+    libraryHandle_ = NULL;
   }
 
   LOG_DEBUG("Exit 0=" + callString);
@@ -172,7 +172,7 @@ int ModelLibrary::GetModelType(ITEM_TYPE * const modelType) const
   LOG_DEBUG("Enter  " + callString);
 
   *modelType = SIMULATOR_MODEL;  // dummy value
-  if (libraryHandle_ == 0) return true;  // not open
+  if (libraryHandle_ == NULL) return true;  // not open
 
   char const * const KIM_ItemType
       = static_cast<char const * const>(dlsym(libraryHandle_, "kim_item_type"));
@@ -213,13 +213,13 @@ int ModelLibrary::GetModelCreateFunctionPointer(
 #endif
   LOG_DEBUG("Enter  " + callString);
 
-  if (libraryHandle_ == 0) return true;  // not open
+  if (libraryHandle_ == NULL) return true;  // not open
 
   std::string languageSymbol(modelName_ + "_language");
   char const * const languageNameString
       = reinterpret_cast<char const *>(dlsym(libraryHandle_,
                                              languageSymbol.c_str()));
-  if (languageNameString == 0)
+  if (languageNameString == NULL)
   {
     std::cout << dlerror() << std::endl;
     LOG_DEBUG("Exit 1=" + callString);
@@ -235,7 +235,7 @@ int ModelLibrary::GetModelCreateFunctionPointer(
       = reinterpret_cast<func **>(dlsym(libraryHandle_,
                                         createFunctionSymbol.c_str()));
 
-  if (pointerToFunctionPointer == 0)
+  if (pointerToFunctionPointer == NULL)
   {
     std::cout << dlerror() << std::endl;
     LOG_DEBUG("Exit 1=" + callString);
@@ -310,7 +310,7 @@ int ModelLibrary::GetParameterFileString(
   unsigned char const * const paramFileString
       = static_cast<unsigned char const * const>(
           dlsym(libraryHandle_, paramFileStringSymbol.str().c_str()));
-  if (paramFileString == 0)
+  if (paramFileString == NULL)
   {
     std::cout << dlerror() << std::endl;
     LOG_DEBUG("Exit 1=" + callString);
@@ -343,7 +343,7 @@ int ModelLibrary::GetModelDriverName(std::string * const modelDriverName) const
 #endif
   LOG_DEBUG("Enter  " + callString);
 
-  if (libraryHandle_ == 0)
+  if (libraryHandle_ == NULL)
   {
     LOG_DEBUG("Exit 1=" + callString);
     return true;  // not open
@@ -361,7 +361,7 @@ int ModelLibrary::GetModelDriverName(std::string * const modelDriverName) const
   char const * const modelDriverNameString
       = static_cast<char const * const>(
           dlsym(libraryHandle_, modelDriverNameSymbol.c_str()));
-  if (modelDriverNameString == 0)
+  if (modelDriverNameString == NULL)
   {
     std::cout << dlerror() << std::endl;
     LOG_DEBUG("Exit 1=" + callString);
@@ -383,7 +383,7 @@ int ModelLibrary::GetModelCompiledWithVersion(
 #endif
   LOG_DEBUG("Enter  " + callString);
 
-  if (libraryHandle_ == 0)
+  if (libraryHandle_ == NULL)
   {
     LOG_DEBUG("Exit GetModelCompiledWithVersion().");
     return true;  // not open
@@ -392,7 +392,7 @@ int ModelLibrary::GetModelCompiledWithVersion(
   std::string versionSymbol(modelName_ + "_compiled_with_version");
   char const * versionCharString
       = static_cast<char const *>(dlsym(libraryHandle_, versionSymbol.c_str()));
-  if (versionCharString == 0)
+  if (versionCharString == NULL)
   {
     std::cout << dlerror() << std::endl;
     LOG_DEBUG("Exit 1=" + callString);

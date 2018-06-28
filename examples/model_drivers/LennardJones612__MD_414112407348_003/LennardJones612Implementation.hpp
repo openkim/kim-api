@@ -343,7 +343,7 @@ int LennardJones612Implementation::Compute(
   // Setup loop over contributing particles
   int ii = 0;
   int numnei = 0;
-  int const * n1atom = 0;
+  int const * n1atom = NULL;
   double const* const* const  constCutoffsSq2D = cutoffsSq2D_;
   double const* const* const  constFourEpsSig6_2D = fourEpsilonSigma6_2D_;
   double const* const* const  constFourEpsSig12_2D = fourEpsilonSigma12_2D_;

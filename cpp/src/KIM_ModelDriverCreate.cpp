@@ -236,7 +236,7 @@ std::string const & ModelDriverCreate::String() const
   return pImpl->String();
 }
 
-ModelDriverCreate::ModelDriverCreate() : pimpl(0)
+ModelDriverCreate::ModelDriverCreate() : pimpl(NULL)
 {
 }
 
