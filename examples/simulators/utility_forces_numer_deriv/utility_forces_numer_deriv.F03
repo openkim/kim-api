@@ -839,6 +839,17 @@ program vc_forces_numer_deriv
   real(c_double) rnd, deriv, deriv_err
   real(c_double), pointer :: null_pointer
 
+  ! Set random number generator seed using systime
+  integer :: systime(8), seedsize
+  integer, dimension(:), allocatable :: seed
+
+  call date_and_time(values=systime)
+  call random_seed(size=seedsize)
+  allocate(seed(seedsize))
+  seed(:) = systime(:)
+  call random_seed(put=seed)
+  deallocate(seed)
+
   nullify(null_pointer)
 
   numberOfParticles = N
