@@ -275,10 +275,10 @@ class LennardJones612Implementation
 
 //******************************************************************************
 #include "KIM_ModelComputeLogMacros.hpp"
-  template< bool isComputeProcess_dEdr, bool isComputeProcess_d2Edr2,
-            bool isComputeEnergy, bool isComputeForces,
-            bool isComputeParticleEnergy, bool isComputeVirial,
-            bool isComputeParticleVirial, bool isShift >
+template< bool isComputeProcess_dEdr, bool isComputeProcess_d2Edr2,
+          bool isComputeEnergy, bool isComputeForces,
+          bool isComputeParticleEnergy, bool isComputeVirial,
+          bool isComputeParticleVirial, bool isShift >
 int LennardJones612Implementation::Compute(
     KIM::ModelCompute const * const modelCompute,
     KIM::ModelComputeArguments const * const modelComputeArguments,
@@ -370,141 +370,171 @@ int LennardJones612Implementation::Compute(
       for (int jj = 0; jj < numNei; ++jj)
       {
         int const j = n1Atom[jj];
-        int const jSpecies = particleSpeciesCodes[j];
-        double* r_ij;
-        double r_ijValue[DIMENSION];
-        // Compute r_ij
-        r_ij = r_ijValue;
-        for (int k = 0; k < DIMENSION; ++k)
-          r_ij[k] = coordinates[j][k] - coordinates[i][k];
-        double const* const r_ij_const = const_cast<double*>(r_ij);
 
-        // compute distance squared
-        double const rij2 =
-            r_ij_const[0] * r_ij_const[0] +
-            r_ij_const[1] * r_ij_const[1] +
-            r_ij_const[2] * r_ij_const[2];
+        if (i < j)  // effective half-list
+        {
+          int const jSpecies = particleSpeciesCodes[j];
+          double* r_ij;
+          double r_ijValue[DIMENSION];
+          // Compute r_ij
+          r_ij = r_ijValue;
+          for (int k = 0; k < DIMENSION; ++k)
+            r_ij[k] = coordinates[j][k] - coordinates[i][k];
+          double const* const r_ij_const = const_cast<double*>(r_ij);
 
-        if (rij2 <= constCutoffsSq2D[iSpecies][jSpecies])
-        { // compute contribution to energy, force, etc.
-          double phi = 0.0;
-          double dphiByR = 0.0;
-          double d2phi = 0.0;
-          double dEidrByR = 0.0;
-          double d2Eidr2 = 0.0;
-          double const r2iv = 1.0/rij2;
-          double const r6iv = r2iv*r2iv*r2iv;
-          // Compute pair potential and its derivatives
-          if (isComputeProcess_d2Edr2 == true)
-          { // Compute d2phi
-            d2phi =
-                r6iv * (constSixTwentyFourEpsSig12_2D[iSpecies][jSpecies]*r6iv -
-                        constOneSixtyEightEpsSig6_2D[iSpecies][jSpecies])
-                * r2iv;
-            d2Eidr2 = 0.5*d2phi;
-          }
+          // compute distance squared
+          double const rij2 =
+              r_ij_const[0] * r_ij_const[0] +
+              r_ij_const[1] * r_ij_const[1] +
+              r_ij_const[2] * r_ij_const[2];
 
-          if ((isComputeProcess_dEdr == true) || (isComputeForces == true) ||
-              (isComputeVirial == true) || (isComputeParticleVirial == true))
-          { // Compute dphi
-            dphiByR =
-                r6iv * (constTwentyFourEpsSig6_2D[iSpecies][jSpecies] -
-                        constFortyEightEpsSig12_2D[iSpecies][jSpecies]*r6iv)
-                * r2iv;
-            dEidrByR = 0.5*dphiByR;
-          }
-
-          if ((isComputeEnergy == true) || (isComputeParticleEnergy == true))
-          { // Compute phi
-            if (isShift == true)
-            {
-              LENNARD_JONES_PHI(- constShifts2D[iSpecies][jSpecies]);
-            }
-            else
-            {
-              LENNARD_JONES_PHI(;);
-            }
-          }
-
-          // Contribution to energy
-          if (isComputeEnergy == true)
-          {
-            *energy += 0.5*phi;
-          }
-
-          // Contribution to particleEnergy
-          if (isComputeParticleEnergy == true)
-          {
-            double const halfPhi = 0.5*phi;
-            particleEnergy[i] += halfPhi;
-          }
-
-          // Contribution to forces
-          if (isComputeForces == true)
-          {
-            for (int k = 0; k < DIMENSION; ++k)
-            {
-              double const contrib = dEidrByR * r_ij_const[k];
-              forces[i][k] += contrib;
-              forces[j][k] -= contrib;
-            }
-          }
-
-          // Call process_dEdr
-          if ((isComputeProcess_dEdr == true) ||
-              (isComputeVirial == true) ||
-              (isComputeParticleVirial == true))
-          {
-            double const rij = sqrt(rij2);
-            double const dEidr = dEidrByR*rij;
-
-            if (isComputeProcess_dEdr == true)
-            {
-              ier = modelComputeArguments
-                  ->ProcessDEDrTerm(dEidr, rij, r_ij_const, i, j);
-              if (ier)
+          if (rij2 <= constCutoffsSq2D[iSpecies][jSpecies])
+          { // compute contribution to energy, force, etc.
+            double phi = 0.0;
+            double dphiByR = 0.0;
+            double d2phi = 0.0;
+            double dEidrByR = 0.0;
+            double d2Eidr2 = 0.0;
+            double const r2iv = 1.0/rij2;
+            double const r6iv = r2iv*r2iv*r2iv;
+            // Compute pair potential and its derivatives
+            if (isComputeProcess_d2Edr2 == true)
+            { // Compute d2phi
+              d2phi =
+                  r6iv * (constSixTwentyFourEpsSig12_2D[iSpecies][jSpecies]
+                          *r6iv -
+                          constOneSixtyEightEpsSig6_2D[iSpecies][jSpecies])
+                  * r2iv;
+              if (particleContributing[j] == 1)
               {
-                LOG_ERROR("process_dEdr");
-                return ier;
+                d2Eidr2 = d2phi;
+              }
+              else
+              {
+                d2Eidr2 = 0.5*d2phi;
               }
             }
 
-            if (isComputeVirial == true)
-            {
-              ProcessVirialTerm(dEidr, rij, r_ij_const, i, j, virial);
+            if ((isComputeProcess_dEdr == true) || (isComputeForces == true) ||
+                (isComputeVirial == true) || (isComputeParticleVirial == true))
+            { // Compute dphi
+              dphiByR =
+                  r6iv * (constTwentyFourEpsSig6_2D[iSpecies][jSpecies] -
+                          constFortyEightEpsSig12_2D[iSpecies][jSpecies]*r6iv)
+                  * r2iv;
+              if (particleContributing[j] == 1)
+              {
+                dEidrByR = dphiByR;
+              }
+              else
+              {
+                dEidrByR = 0.5*dphiByR;
+              }
             }
 
-            if (isComputeParticleVirial == true)
-            {
-              ProcessParticleVirialTerm(dEidr, rij, r_ij_const, i, j,
-                                        particleVirial);
+            if ((isComputeEnergy == true) || (isComputeParticleEnergy == true))
+            { // Compute phi
+              if (isShift == true)
+              {
+                LENNARD_JONES_PHI(- constShifts2D[iSpecies][jSpecies]);
+              }
+              else
+              {
+                LENNARD_JONES_PHI(;);
+              }
             }
-          }
 
-          // Call process_d2Edr2
-          if (isComputeProcess_d2Edr2 == true)
-          {
-            double const rij = sqrt(rij2);
-            double const R_pairs[2] = {rij, rij};
-            double const* const pRs = &R_pairs[0];
-            double const Rij_pairs[6]
-                = {r_ij_const[0], r_ij_const[1], r_ij_const[2],
-                   r_ij_const[0], r_ij_const[1], r_ij_const[2]};
-            double const* const pRijConsts = &Rij_pairs[0];
-            int const i_pairs[2] = {i, i};
-            int const j_pairs[2] = {j, j};
-            int const* const pis = &i_pairs[0];
-            int const* const pjs = &j_pairs[0];
-
-            ier = modelComputeArguments
-                ->ProcessD2EDr2Term(d2Eidr2, pRs, pRijConsts, pis, pjs);
-            if (ier)
+            // Contribution to energy
+            if (isComputeEnergy == true)
             {
-              LOG_ERROR("process_d2Edr2");
-              return ier;
+              if (particleContributing[j] == 1)
+              {
+                *energy += phi;
+              }
+              else
+              {
+                *energy += 0.5*phi;
+              }
             }
-          }
-        }  // if particleContributing
+
+            // Contribution to particleEnergy
+            if (isComputeParticleEnergy == true)
+            {
+              double const halfPhi = 0.5*phi;
+              particleEnergy[i] += halfPhi;
+              if (particleContributing[j] == 1)
+              {
+                particleEnergy[j] += halfPhi;
+              }
+            }
+
+            // Contribution to forces
+            if (isComputeForces == true)
+            {
+              for (int k = 0; k < DIMENSION; ++k)
+              {
+                double const contrib = dEidrByR * r_ij_const[k];
+                forces[i][k] += contrib;
+                forces[j][k] -= contrib;
+              }
+            }
+
+            // Call process_dEdr
+            if ((isComputeProcess_dEdr == true) ||
+                (isComputeVirial == true) ||
+                (isComputeParticleVirial == true))
+            {
+              double const rij = sqrt(rij2);
+              double const dEidr = dEidrByR*rij;
+
+              if (isComputeProcess_dEdr == true)
+              {
+                ier = modelComputeArguments
+                    ->ProcessDEDrTerm(dEidr, rij, r_ij_const, i, j);
+                if (ier)
+                {
+                  LOG_ERROR("process_dEdr");
+                  return ier;
+                }
+              }
+
+              if (isComputeVirial == true)
+              {
+                ProcessVirialTerm(dEidr, rij, r_ij_const, i, j, virial);
+              }
+
+              if (isComputeParticleVirial == true)
+              {
+                ProcessParticleVirialTerm(dEidr, rij, r_ij_const, i, j,
+                                          particleVirial);
+              }
+            }
+
+            // Call process_d2Edr2
+            if (isComputeProcess_d2Edr2 == true)
+            {
+              double const rij = sqrt(rij2);
+              double const R_pairs[2] = {rij, rij};
+              double const* const pRs = &R_pairs[0];
+              double const Rij_pairs[6]
+                  = {r_ij_const[0], r_ij_const[1], r_ij_const[2],
+                     r_ij_const[0], r_ij_const[1], r_ij_const[2]};
+              double const* const pRijConsts = &Rij_pairs[0];
+              int const i_pairs[2] = {i, i};
+              int const j_pairs[2] = {j, j};
+              int const* const pis = &i_pairs[0];
+              int const* const pjs = &j_pairs[0];
+
+              ier = modelComputeArguments
+                  ->ProcessD2EDr2Term(d2Eidr2, pRs, pRijConsts, pis, pjs);
+              if (ier)
+              {
+                LOG_ERROR("process_d2Edr2");
+                return ier;
+              }
+            }
+          }  // if particleContributing
+        }  // if i < j
       }  // if particles i and j interact
     }  // end of first neighbor loop
   }  // end of loop over contributing particles
