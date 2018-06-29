@@ -87,11 +87,22 @@ program TEST_NAME_STR
   integer(c_int) middleDum
   character(len=10000) :: test_descriptor_string
   real(c_double) rnd, deriv, deriv_err
+  integer(c_int) seed_size
+  integer(c_int), dimension(:), allocatable :: seed
 
   term_max = 0.0_cd ! initialize
 
   ! Initialize error flag
   ier = KIM_STATUS_OK
+
+  ! Initialize seed for random number generator
+  !
+  ! NOTE: Here, we set the seed to a fixed value for reproducibility
+  call random_seed(size=seed_size) ! Get seed size for this CPU
+  allocate(seed(seed_size))
+  seed(:) = 13
+  call random_seed(put=seed)
+  deallocate(seed)
 
   ! Get KIM Model name to use
   print '("Please enter a valid KIM model name: ")'
