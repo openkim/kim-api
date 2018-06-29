@@ -804,6 +804,8 @@ program vc_forces_numer_deriv
   real(c_double), allocatable          :: cluster_disps(:,:)
   type(kim_species_name_type), allocatable :: cluster_species(:)
   integer(c_int) I,J,Imax,Jmax,species_code
+  integer(c_int) seed_size
+  integer(c_int), allocatable :: seed(:)
 
   !
   ! neighbor list
@@ -847,6 +849,15 @@ program vc_forces_numer_deriv
 
   ! Initialize error flag
   ierr = 0
+
+  ! Initialize seed for random number generator
+  !
+  ! NOTE: Here, we set the seed to a fixed value for reproducibility
+  call random_seed(size=seed_size) ! Get seed size for this CPU
+  allocate(seed(seed_size))
+  seed(:) = 13
+  call random_seed(put=seed)
+  deallocate(seed)
 
   ! Get KIM Model name to use
   print '("Please enter a valid KIM model name: ")'
