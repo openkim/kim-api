@@ -36,6 +36,7 @@
 #include <vector>
 #include <cstring>
 #include "KIM_Log.hpp"
+#include "KIM_LogVerbosity.hpp"
 #include "old_KIM_API_DIRS.h"
 using namespace OLD_KIM;
 
@@ -352,6 +353,7 @@ int processItems(int argc, char* argv[])
       argc--;
       argv = &(argv[1]);
       KIM::Log::Create(&log);
+      log->PushVerbosity(KIM::LOG_VERBOSITY::debug);
     }
   }
 
