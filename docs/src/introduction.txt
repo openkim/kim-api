@@ -63,8 +63,9 @@ This documentation is organized into the following components:
    (\ref ex_test_Ar_fcc_cluster.c), and Fortran
    (\ref ex_test_Ar_fcc_cluster_fortran.F90).
 
--# Example stand-alone models written in C (\ref ex_model_Ar_P_Morse_07C.c) and
-   Fortran (\ref ex_model_Ar_P_MLJ_F03.F03)
+-# Example stand-alone models written in C++ (\ref LennardJones_Ar.cpp), C
+   (\ref ex_model_Ar_P_Morse_07C.c) and Fortran (\ref
+   ex_model_Ar_P_MLJ_F03.F03)
 
 -# Example model drivers written in C++
    (LennardJones612Implementation.hpp), C (ex_model_driver_P_Morse.c),

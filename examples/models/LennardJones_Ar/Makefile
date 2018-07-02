@@ -19,26 +19,37 @@
 #
 
 #
-# Copyright (c) 2015--2018, Regents of the University of Minnesota.
+# Copyright (c) 2013--2018, Regents of the University of Minnesota.
 # All rights reserved.
 #
 # Contributors:
 #    Ryan S. Elliott
-#    Andrew Akerson
 #
 
 
-This directory (LennardJones612_Ar) contains a Lennard-Jones model defined for
-Ar.
+# load all basic KIM make configuration
+KIM_API_BUILD_CONFIG = kim-api-v2-build-config
+ifeq ($(shell $(KIM_API_BUILD_CONFIG) --version 2> /dev/null),)
+  $(error $(KIM_API_BUILD_CONFIG) utility is not available.  Something is wrong with your KIM API package setup)
+endif
+include $(shell $(KIM_API_BUILD_CONFIG) --master-config)
 
-* Sigma parameter is set to (2^{-1/6})*r_0, where r_0 is the atomic covalent
-  radius.  The covalent radius was taken from Wolfram Mathematica's
-  `ElementData["CovalentRadius"]' command.
 
-* Epsilon parameter is set to the bond dissociation energy.  The bond
-  dissociation energy was taken from the CRC Handbook of Chemistry and Physics,
-  91st Edition, Ed. W.H. Haynes, 2010. (as posted here:
-  http://staff.ustc.edu.cn/~luo971/2010-91-CRC-BDEs-Tables.pdf)
+# set model specific details
+MODEL_NAME := LennardJones_Ar
+MODEL_CREATE_FUNCTION_NAME := model_create
+MODEL_CREATE_FUNCTION_LANG := cpp
 
-* Cutoff parameter is set to 4.0*sigma.  This corresponds to a cutoff energy
-  of approximately epsilon/1024.
+LOCALOBJ = LennardJones_Ar.o
+
+LOCALCLEAN =
+
+# APPEND to compiler option flag lists
+#FFLAGS   +=
+#CFLAGS   +=
+#CXXFLAGS +=
+#LDFLAGS  +=
+#LDLIBS   +=
+
+# load remaining KIM make configuration
+include $(KIM_DIR)/$(builddir)/Makefile.StandAloneModel
