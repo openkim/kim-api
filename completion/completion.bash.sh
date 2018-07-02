@@ -82,12 +82,18 @@ _###FULL#PACKAGE#NAME###-collections-management()
   else
     case "${COMP_WORDS[1]}" in
       list)
-        if test ${COMP_CWORD} -gt 2; then
-          return 1
+        opts=""
+        if test ${COMP_CWORD} -eq 2; then
+          opts="--with-version --log"
+        elif test ${COMP_CWORD} -eq 3 -a x"--with-version" = x"${COMP_WORDS[2]}"; then
+          opts="--log"
+        elif test ${COMP_CWORD} -eq 3 -a x"--log" = x"${COMP_WORDS[2]}"; then
+          opts="--with-version"
         else
-          COMPREPLY=( "--with-version" )
-          return 0
+          return 1
         fi
+        COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+        return 0
         ;;
       set-user-*)
         if test ${COMP_CWORD} -gt 2; then
@@ -153,7 +159,7 @@ _###FULL#PACKAGE#NAME###-collections-management()
           _cd
         fi
         COMPREPLY=( "${COMPREPLY[@]}" $(compgen -W "${opts}" -- "${cur}") )
-        return 0;
+        return 0
         ;;
       remove-all)
         opts=""

@@ -47,7 +47,7 @@ usage () {
 
   # Follows docopt.org format
   printf "Usage:\n"
-  printf "  ${command} list [--with-version]\n"
+  printf "  ${command} list [--with-version] [--log]\n"
   printf "  ${command} set-user-models-dir <directory>\n"
   printf "  ${command} set-user-drivers-dir <directory>\n"
   printf "  ${command} install [--force]\n"
@@ -62,6 +62,9 @@ usage () {
 
   printf "list:\n"
   printf "  List installed kim-api models and model drivers\n"
+  printf "    * '--with-version' print the kim-api version used to compiled the item.\n"
+  printf "    * '--log' generate a kim.log file.  This will show any errors that\n"
+  printf "      occur as the utility searches for installed items.\n"
   printf "\n"
   printf "set-user-models-dir:\n"
   printf "  Rewrite configuration file with provided directory\n"
@@ -544,6 +547,12 @@ print_separator_line () {
 
 print_list_of_drivers_and_models () {
   local with_version=$1
+  local with_log
+  if test x"$2" = x"yes"; then
+    with_log="--log"
+  else
+    with_log=""
+  fi
 
   config_env_name="`${collections_info} config_file env | sed -e 's/ .*//'`"
   config_env="`${collections_info} config_file env | sed -e 's/^[^ ]* //'`"
@@ -579,9 +588,9 @@ print_list_of_drivers_and_models () {
   print_separator_line "="
 
 
-  model_drivers_list="`${collections_info} model_drivers`"
+  model_drivers_list="`${collections_info} model_drivers ${with_log}`"
   split_drivers_list_into_collections "${model_drivers_list}" "${with_version}"
-  models_list="`${collections_info} models`"
+  models_list="`${collections_info} models ${with_log}`"
   split_models_list_into_collections "${models_list}" "${with_version}"
 
   printf "\n\n\n"
@@ -723,14 +732,29 @@ fi
 
 case $command in
   list)
-    if test $# -gt 2; then
+    if test $# -gt 3; then
       usage
       exit 1
-    elif test x"$2" = x"--with-version"; then
-      print_list_of_drivers_and_models "yes"
-    else
-      print_list_of_drivers_and_models "no"
     fi
+    shift
+    list_with_version="no"
+    list_with_log="no"
+    for arg in "$@"; do
+      case "$arg" in
+        --with-version)
+          list_with_version="yes"
+          ;;
+        --log)
+          list_with_log="yes"
+          ;;
+        *)
+          printf "unknown option %s\n\n" "$arg"
+          usage
+          exit 1
+          ;;
+      esac
+    done
+    print_list_of_drivers_and_models "${list_with_version}" "${list_with_log}"
     ;;
   set-user-models-dir)
     if test $# -lt 2; then
