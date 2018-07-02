@@ -833,7 +833,8 @@ program vc_forces_numer_deriv
   real(c_double) :: cutoff
   real(c_double), target :: energy
   real(c_double), target :: coords(3,N)
-  real(c_double), target :: forces(3,N)
+  real(c_double), target :: forces_kim(3,N)
+  real(c_double) :: forces(3,N)
   integer(c_int) middleDum
   logical forces_optional
   logical model_is_compatible
@@ -958,7 +959,7 @@ program vc_forces_numer_deriv
     kim_compute_argument_name_partial_energy, energy, ierr2)
   ierr = ierr + ierr2
   call kim_compute_arguments_set_argument_pointer(compute_arguments_handle, &
-    kim_compute_argument_name_partial_forces, forces, ierr2)
+    kim_compute_argument_name_partial_forces, forces_kim, ierr2)
   ierr = ierr + ierr2
   if (ierr /= 0) then
      call my_error("set_argument_pointer", __LINE__, __FILE__)
@@ -1030,6 +1031,10 @@ program vc_forces_numer_deriv
   if (ierr /= 0) then
      call my_error("kim_api_model_compute", __LINE__, __FILE__)
   endif
+
+  ! Copy forces in case model will overwrite forces_kim below
+  !
+  forces = forces_kim
 
   ! Print results to screen
   !
