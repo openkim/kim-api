@@ -203,7 +203,7 @@ int main()
     if (supportStatus == KIM::SUPPORT_STATUS::required)
     {
       if ((computeArgumentName != KIM::COMPUTE_ARGUMENT_NAME::partialEnergy)
-          ||
+          &&
           (computeArgumentName != KIM::COMPUTE_ARGUMENT_NAME::partialForces))
       {
         MY_ERROR("unsupported required ComputeArgument");

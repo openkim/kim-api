@@ -179,7 +179,7 @@ int main()
     {
       if ((KIM_ComputeArgumentName_NotEqual(
               computeArgumentName,
-              KIM_COMPUTE_ARGUMENT_NAME_partialEnergy)) ||
+              KIM_COMPUTE_ARGUMENT_NAME_partialEnergy)) &&
           (KIM_ComputeArgumentName_NotEqual(
               computeArgumentName,
               KIM_COMPUTE_ARGUMENT_NAME_partialForces)))
