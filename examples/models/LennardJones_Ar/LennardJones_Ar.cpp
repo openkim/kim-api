@@ -51,7 +51,9 @@ class LennardJones_Ar
       sigma_(3.4000),
       influenceDistance_(8.1500),
       cutoff_(influenceDistance_),
-      cutoffSq_(cutoff_*cutoff_)
+      cutoffSq_(cutoff_*cutoff_),
+      paddingNeighborHints_(1),
+      halfListHints_(1)
   {
     *error = ConvertUnits(modelCreate,
                           requestedLengthUnit,
@@ -64,7 +66,10 @@ class LennardJones_Ar
     modelCreate->SetModelNumbering(KIM::NUMBERING::zeroBased);
 
     modelCreate->SetInfluenceDistancePointer(&influenceDistance_);
-    modelCreate->SetNeighborListCutoffsPointer(1, &influenceDistance_);
+    modelCreate->SetNeighborListPointers(1,
+                                         &cutoff_,
+                                         &paddingNeighborHints_,
+                                         &halfListHints_);
 
     modelCreate->SetSpeciesCode(KIM::SPECIES_NAME::Ar, 0);
 
@@ -123,7 +128,10 @@ class LennardJones_Ar
     // nothing to do
 
     modelRefresh->SetInfluenceDistancePointer(&(model->influenceDistance_));
-    modelRefresh->SetNeighborListCutoffsPointer(1, &(model->cutoff_));
+    modelRefresh->SetNeighborListPointers(1,
+                                          &(model->cutoff_),
+                                          &(model->paddingNeighborHints_),
+                                          &(model->halfListHints_));
 
     // everything is good
     return false;
@@ -296,6 +304,8 @@ class LennardJones_Ar
   double influenceDistance_;
   double cutoff_;
   double cutoffSq_;
+  int const paddingNeighborHints_;
+  int const halfListHints_;
 
   //****************************************************************************
 #include "KIM_ModelCreateLogMacros.hpp"

@@ -75,7 +75,8 @@ void fcc_cluster_neighborlist(int half, int numberOfParticles, double* coords,
                               double cutoff, NeighList* nl);
 
 int get_cluster_neigh(void const * const dataObject,
-                      int const numberOfCutoffs, double const * const cutoffs,
+                      int const numberOfNeighborLists,
+                      double const * const cutoffs,
                       int const neighborListIndex, int const particleNumber,
                       int * const numberOfNeighbors,
                       int const ** const neighborsOfParticle);
@@ -105,7 +106,7 @@ int main()
   NeighList nl_cluster_model;
   /* model outputs */
   double influence_distance_cluster_model;
-  int number_of_cutoffs;
+  int number_of_neighbor_lists;
   double const * cutoff_cluster_model;
   double energy_cluster_model;
   double forces_cluster[NCLUSTERPARTS*DIM];
@@ -290,9 +291,26 @@ int main()
   if (error) MY_ERROR("set_call_back");
 
   kim_cluster_model->GetInfluenceDistance(&influence_distance_cluster_model);
-  kim_cluster_model->GetNeighborListCutoffsPointer(&number_of_cutoffs,
-                                                   &cutoff_cluster_model);
-  if (number_of_cutoffs != 1) MY_ERROR("too many cutoffs");
+  int const * paddingNeighborHints;
+  int const * halfListHints;
+  kim_cluster_model->GetNeighborListPointers(&number_of_neighbor_lists,
+                                             &cutoff_cluster_model,
+                                             &paddingNeighborHints,
+                                             &halfListHints);
+  std::cout << "Model has influence distance of : "
+            << influence_distance_cluster_model << std::endl;
+  std::cout << "Model has numberOfNeighborLists : " << number_of_neighbor_lists
+            << std::endl;
+  for (int i=0; i<number_of_neighbor_lists; ++i)
+  {
+    std::cout << "\t" << "Neighbor list " << i << " has cutoff "
+              << cutoff_cluster_model[i] << " with paddingNeighborHint "
+              << paddingNeighborHints[i] << " and halfListHint "
+              << halfListHints[i]
+              << std::endl;
+  }
+  // ignoring hints from here on...
+  if (number_of_neighbor_lists != 1) MY_ERROR("too many neighbor lists");
 
   /* setup particleSpecies */
   int isSpeciesSupported;
@@ -536,7 +554,8 @@ void fcc_cluster_neighborlist(int half, int numberOfParticles, double* coords,
 }
 
 int get_cluster_neigh(void const * const dataObject,
-                      int const numberOfCutoffs, double const * const cutoffs,
+                      int const numberOfNeighborLists,
+                      double const * const cutoffs,
                       int const neighborListIndex, int const particleNumber,
                       int * const numberOfNeighbors,
                       int const ** const neighborsOfParticle)
@@ -546,7 +565,7 @@ int get_cluster_neigh(void const * const dataObject,
   NeighList* nl = (NeighList*) dataObject;
   int numberOfParticles = nl->numberOfParticles;
 
-  if ((numberOfCutoffs != 1) || (cutoffs[0] > nl->cutoff)) return error;
+  if ((numberOfNeighborLists != 1) || (cutoffs[0] > nl->cutoff)) return error;
 
   if (neighborListIndex != 0) return error;
 

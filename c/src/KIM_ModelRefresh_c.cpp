@@ -79,13 +79,19 @@ void KIM_ModelRefresh_SetInfluenceDistancePointer(
   pModelRefresh->SetInfluenceDistancePointer(influenceDistance);
 }
 
-void KIM_ModelRefresh_SetNeighborListCutoffsPointer(
+void KIM_ModelRefresh_SetNeighborListPointers(
     KIM_ModelRefresh * const modelRefresh,
-    int const numberOfCutoffs, double const * const cutoffs)
+    int const numberOfNeighborLists,
+    double const * const cutoffs,
+    int const * const paddingNeighborHints,
+    int const * const halfListHints)
 {
   CONVERT_POINTER;
 
-  pModelRefresh->SetNeighborListCutoffsPointer(numberOfCutoffs, cutoffs);
+  pModelRefresh->SetNeighborListPointers(numberOfNeighborLists,
+                                         cutoffs,
+                                         paddingNeighborHints,
+                                         halfListHints);
 }
 
 void KIM_ModelRefresh_GetModelBufferPointer(

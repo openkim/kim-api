@@ -104,7 +104,9 @@ The current version of the %KIM API package supports the following features:
   simultaneously access the neighbors of multiple particles without needing to
   make copies of the neighbor list(s).)  A simulator must provide all such
   requested lists and ensure that these lists contain only a small number of
-  particles that are located outside the cutoff distance.
+  particles that are located outside the cutoff distance.  Models must provide
+  "hints" about how they use neighbor lists.  These hints allow the simulator
+  to, optionally, optimize its neighbor list build algorithm.
 
 - **Particle Species**: The %KIM API provides the ability to designate the
   physical species of each particle in a simulation.  Currently, only one

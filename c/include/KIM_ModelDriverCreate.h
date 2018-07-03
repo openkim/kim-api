@@ -116,9 +116,12 @@ void KIM_ModelDriverCreate_SetInfluenceDistancePointer(
     KIM_ModelDriverCreate * const modelDriverCreate,
     double * const influenceDistance);
 
-void KIM_ModelDriverCreate_SetNeighborListCutoffsPointer(
+void KIM_ModelDriverCreate_SetNeighborListPointers(
     KIM_ModelDriverCreate * const modelDriverCreate,
-    int const numberOfCutoffs, double const * const cutoffs);
+    int const numberOfNeighborLists,
+    double const * const cutoffs,
+    int const * const paddingNeighborHints,
+    int const * const halfListHints);
 
 int KIM_ModelDriverCreate_SetRefreshPointer(
     KIM_ModelDriverCreate * const modelDriverCreate,

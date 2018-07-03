@@ -73,8 +73,10 @@ class Model
 
   void GetInfluenceDistance(double * const influenceDistance) const;
 
-  void GetNeighborListCutoffsPointer(int * const numberOfCutoffs,
-                                     double const ** const cutoffs) const;
+  void GetNeighborListPointers(int * const numberOfNeighborLists,
+                               double const ** const cutoffs,
+                               int const ** const paddingNeighborHints,
+                               int const ** const halfListHints) const;
 
   void GetUnits(LengthUnit * const lengthUnit,
                 EnergyUnit * const energyUnit,
@@ -86,7 +88,7 @@ class Model
   int ComputeArgumentsDestroy(ComputeArguments ** const computeArguments) const;
   int Compute(ComputeArguments const * const computeArguments) const;
 
-  int ClearInfluenceDistanceAndCutoffsThenRefreshModel();
+  int ClearThenRefresh();
 
   int GetSpeciesSupportAndCode(SpeciesName const speciesName,
                                int * const speciesIsSupported,

@@ -94,15 +94,15 @@ contains
 ! This function implements Locator and Iterator mode
 !
 !-------------------------------------------------------------------------------
-subroutine get_neigh(data_object, number_of_cutoffs, cutoffs, &
+subroutine get_neigh(data_object, number_of_neighbor_lists, cutoffs, &
   neighbor_list_index, request, numnei, pnei1part, ierr) bind(c)
   use error
   implicit none
 
   !-- Transferred variables
   type(c_ptr),    value, intent(in) :: data_object
-  integer(c_int), value, intent(in) :: number_of_cutoffs
-  real(c_double),        intent(in) :: cutoffs(number_of_cutoffs)
+  integer(c_int), value, intent(in) :: number_of_neighbor_lists
+  real(c_double),        intent(in) :: cutoffs(number_of_neighbor_lists)
   integer(c_int), value, intent(in) :: neighbor_list_index
   integer(c_int), value, intent(in)  :: request
   integer(c_int),        intent(out) :: numnei
@@ -116,8 +116,8 @@ subroutine get_neigh(data_object, number_of_cutoffs, cutoffs, &
 
   call c_f_pointer(data_object, neighObject)
 
-  if (number_of_cutoffs /= 1) then
-    call my_warning("invalid number of cutoffs", __LINE__, __FILE__)
+  if (number_of_neighbor_lists /= 1) then
+    call my_warning("invalid number of neighbor_lists", __LINE__, __FILE__)
     ierr = 1
     return
   endif
@@ -828,8 +828,10 @@ program vc_forces_numer_deriv
   integer(c_int), target :: particleSpeciesCodes(N)
   integer(c_int), target :: particleContributing(N)
   real(c_double) :: influence_distance
-  integer(c_int) :: number_of_cutoffs
+  integer(c_int) :: number_of_neighbor_lists
   real(c_double) :: cutoffs(1)
+  integer(c_int) :: padding_neighbor_hints(1)
+  integer(c_int) :: half_list_hints(1)
   real(c_double) :: cutoff
   real(c_double), target :: energy
   real(c_double), target :: coords(3,N)
@@ -981,14 +983,15 @@ program vc_forces_numer_deriv
   end if
 
   call kim_model_get_influence_distance(model_handle, influence_distance)
-  call kim_model_get_number_of_neighbor_list_cutoffs(model_handle, &
-    number_of_cutoffs)
-  if (number_of_cutoffs /= 1) then
-    call my_error("too many cutoffs", __LINE__, __FILE__)
+  call kim_model_get_number_of_neighbor_lists(model_handle, &
+    number_of_neighbor_lists)
+  if (number_of_neighbor_lists /= 1) then
+    call my_error("too many neighbor lists", __LINE__, __FILE__)
   endif
-  call kim_model_get_neighbor_list_cutoffs(model_handle, cutoffs, ierr)
+  call kim_model_get_neighbor_list_values(model_handle, cutoffs, &
+    padding_neighbor_hints, half_list_hints, ierr)
   if (ierr /= 0) then
-    call my_error("get_cutoffs", __LINE__, __FILE__)
+    call my_error("get_neighbor_list_values", __LINE__, __FILE__)
   end if
   cutoff = cutoffs(1)
 

@@ -76,7 +76,7 @@ void fcc_cluster_neighborlist(int half, int numberOfParticles, double* coords,
 
 int get_cluster_neigh(
     void const * const dataObject,
-    int const numberOfCutoffs, double const * const cutoffs,
+    int const numberOfNeighborLists, double const * const cutoffs,
     int const neighborListIndex,
     int const particleNumber, int * const numberOfNeighbors,
     int const ** const neighborsOfParticle);
@@ -108,7 +108,7 @@ int main()
   double coords_cluster[NCLUSTERPARTS][DIM];
   NeighList nl_cluster_model;
   /* model outputs */
-  int number_of_cutoffs_cluster_model;
+  int number_of_neighbor_lists_cluster_model;
   double influence_distance_cluster_model;
   double const * cutoff_cluster_model;
   double energy_cluster_model;
@@ -266,10 +266,13 @@ int main()
       &nl_cluster_model);
 
   KIM_Model_GetInfluenceDistance(model, &influence_distance_cluster_model);
-  KIM_Model_GetNeighborListCutoffsPointer(model,
-                                          &number_of_cutoffs_cluster_model,
-                                          &cutoff_cluster_model);
-  if (number_of_cutoffs_cluster_model != 1) MY_ERROR("too many cutoffs");
+  KIM_Model_GetNeighborListPointers(model,
+                                    &number_of_neighbor_lists_cluster_model,
+                                    &cutoff_cluster_model,
+                                    NULL,  /* ignoring hints */
+                                    NULL);  /* ignoring hints */
+  if (number_of_neighbor_lists_cluster_model != 1)
+    MY_ERROR("too many neighbor lists");
 
   /* setup particleSpecies */
   error = KIM_Model_GetSpeciesSupportAndCode(
@@ -511,7 +514,8 @@ void fcc_cluster_neighborlist(int half, int numberOfParticles, double* coords,
 }
 
 int get_cluster_neigh(void const * const dataObject,
-                      int const numberOfCutoffs, double const * const cutoffs,
+                      int const numberOfNeighborLists,
+                      double const * const cutoffs,
                       int const neighborListIndex,
                       int const particleNumber, int * const numberOfNeighbors,
                       int const ** const neighborsOfParticle)
@@ -521,7 +525,7 @@ int get_cluster_neigh(void const * const dataObject,
   NeighList* nl = (NeighList*) dataObject;
   int numberOfParticles = nl->numberOfParticles;
 
-  if ((numberOfCutoffs != 1) || (cutoffs[0] > nl->cutoff)) return error;
+  if ((numberOfNeighborLists != 1) || (cutoffs[0] > nl->cutoff)) return error;
 
   if (neighborListIndex != 0) return error;
 

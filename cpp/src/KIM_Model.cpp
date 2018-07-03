@@ -76,10 +76,15 @@ void Model::GetInfluenceDistance(double * const influenceDistance) const
   pimpl->GetInfluenceDistance(influenceDistance);
 }
 
-void Model::GetNeighborListCutoffsPointer(int * const numberOfCutoffs,
-                                          double const ** cutoffs) const
+void Model::GetNeighborListPointers(int * const numberOfNeighborLists,
+                                    double const ** const cutoffs,
+                                    int const ** const paddingNeighborHints,
+                                    int const ** const halfListHints) const
 {
-  pimpl->GetNeighborListCutoffsPointer(numberOfCutoffs, cutoffs);
+  pimpl->GetNeighborListPointers(numberOfNeighborLists,
+                                 cutoffs,
+                                 paddingNeighborHints,
+                                 halfListHints);
 }
 
 void Model::GetUnits(LengthUnit * const lengthUnit,
@@ -109,9 +114,9 @@ int Model::Compute(ComputeArguments const * const computeArguments) const
   return pimpl->Compute(computeArguments);
 }
 
-int Model::ClearInfluenceDistanceAndCutoffsThenRefreshModel()
+int Model::ClearThenRefresh()
 {
-  return pimpl->ClearInfluenceDistanceAndCutoffsThenRefreshModel();
+  return pimpl->ClearThenRefresh();
 }
 
 int Model::GetSpeciesSupportAndCode(SpeciesName const speciesName,

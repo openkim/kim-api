@@ -39,7 +39,7 @@ module kim_model_refresh_f_module
   public &
     kim_model_refresh_type, &
     set_influence_distance_pointer, &
-    set_neighbor_list_cutoffs_pointer, &
+    set_neighbor_list_pointers, &
     get_model_buffer_pointer, &
     log_entry, &
     model_refresh_string
@@ -61,17 +61,20 @@ module kim_model_refresh_f_module
       type(c_ptr), intent(in), value :: influence_distance
     end subroutine set_influence_distance_pointer
 
-    subroutine set_neighbor_list_cutoffs_pointer(model_refresh, &
-      number_of_cutoffs, cutoffs_ptr) &
-      bind(c, name="KIM_ModelRefresh_SetNeighborListCutoffsPointer")
+    subroutine set_neighbor_list_pointers(model_refresh, &
+      number_of_neighbor_lists, cutoffs_ptr, padding_neighbor_hints_ptr, &
+      half_list_hints_ptr) &
+      bind(c, name="KIM_ModelRefresh_SetNeighborListPointers")
       use, intrinsic :: iso_c_binding
       import kim_model_refresh_type
       implicit none
       type(kim_model_refresh_type), intent(inout) :: &
         model_refresh
-      integer(c_int), intent(in), value :: number_of_cutoffs
+      integer(c_int), intent(in), value :: number_of_neighbor_lists
       type(c_ptr), intent(in), value :: cutoffs_ptr
-    end subroutine set_neighbor_list_cutoffs_pointer
+      type(c_ptr), intent(in), value :: padding_neighbor_hints_ptr
+      type(c_ptr), intent(in), value :: half_list_hints_ptr
+    end subroutine set_neighbor_list_pointers
 
     subroutine get_model_buffer_pointer(model_refresh, ptr) &
       bind(c, name="KIM_ModelRefresh_GetModelBufferPointer")
@@ -152,22 +155,27 @@ subroutine kim_model_refresh_set_influence_distance_pointer( &
     c_loc(influence_distance))
 end subroutine kim_model_refresh_set_influence_distance_pointer
 
-subroutine kim_model_refresh_set_neighbor_list_cutoffs_pointer( &
-  model_refresh_handle, number_of_cutoffs, cutoffs)
+subroutine kim_model_refresh_set_neighbor_list_pointers( &
+  model_refresh_handle, number_of_neighbor_lists, cutoffs, &
+  padding_neighbor_hints, half_list_hints)
   use, intrinsic :: iso_c_binding
   use kim_model_refresh_module, only : kim_model_refresh_handle_type
   use kim_model_refresh_f_module, only : kim_model_refresh_type, &
-    set_neighbor_list_cutoffs_pointer
+    set_neighbor_list_pointers
   implicit none
   type(kim_model_refresh_handle_type), intent(inout) :: model_refresh_handle
-  integer(c_int), intent(in), value :: number_of_cutoffs
-  real(c_double), intent(in), target :: cutoffs(number_of_cutoffs)
+  integer(c_int), intent(in), value :: number_of_neighbor_lists
+  real(c_double), intent(in), target :: cutoffs(number_of_neighbor_lists)
+  integer(c_int), intent(in), target :: &
+    padding_neighbor_hints(number_of_neighbor_lists)
+  integer(c_int), intent(in), target :: &
+    half_list_hints(number_of_neighbor_lists)
   type(kim_model_refresh_type), pointer :: model_refresh
 
   call c_f_pointer(model_refresh_handle%p, model_refresh)
-  call set_neighbor_list_cutoffs_pointer(model_refresh, number_of_cutoffs, &
-    c_loc(cutoffs))
-end subroutine kim_model_refresh_set_neighbor_list_cutoffs_pointer
+  call set_neighbor_list_pointers(model_refresh, number_of_neighbor_lists, &
+    c_loc(cutoffs), c_loc(padding_neighbor_hints), c_loc(half_list_hints))
+end subroutine kim_model_refresh_set_neighbor_list_pointers
 
 subroutine kim_model_refresh_get_model_buffer_pointer( &
   model_refresh_handle, ptr)

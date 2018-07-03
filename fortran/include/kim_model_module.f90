@@ -45,13 +45,13 @@ module kim_model_module
     kim_model_create, &
     kim_model_destroy, &
     kim_model_get_influence_distance, &
-    kim_model_get_number_of_neighbor_list_cutoffs, &
-    kim_model_get_neighbor_list_cutoffs, &
+    kim_model_get_number_of_neighbor_lists, &
+    kim_model_get_neighbor_list_values, &
     kim_model_get_units, &
     kim_model_compute_arguments_create, &
     kim_model_compute_arguments_destroy, &
     kim_model_compute, &
-    kim_model_clear_influence_dist_and_cutoffs_then_refresh_model, &
+    kim_model_clear_then_refresh, &
     kim_model_get_species_support_and_code, &
     kim_model_get_number_of_parameters, &
     kim_model_get_parameter_data_type_extent_and_description, &
@@ -184,23 +184,26 @@ module kim_model_module
       real(c_double), intent(out) :: influence_distance
     end subroutine kim_model_get_influence_distance
 
-    subroutine kim_model_get_number_of_neighbor_list_cutoffs(model_handle, &
-      number_of_cutoffs)
+    subroutine kim_model_get_number_of_neighbor_lists(model_handle, &
+      number_of_neighbor_lists)
       use, intrinsic :: iso_c_binding
       import kim_model_handle_type
       implicit none
       type(kim_model_handle_type), intent(in) :: model_handle
-      integer(c_int), intent(out) :: number_of_cutoffs
-    end subroutine kim_model_get_number_of_neighbor_list_cutoffs
+      integer(c_int), intent(out) :: number_of_neighbor_lists
+    end subroutine kim_model_get_number_of_neighbor_lists
 
-    subroutine kim_model_get_neighbor_list_cutoffs(model_handle, cutoffs, ierr)
+    subroutine kim_model_get_neighbor_list_values(model_handle, cutoffs, &
+      padding_neighbor_hints, half_list_hints, ierr)
       use, intrinsic :: iso_c_binding
       import kim_model_handle_type
       implicit none
       type(kim_model_handle_type), intent(in) :: model_handle
       real(c_double), intent(out) :: cutoffs(:)
+      integer(c_int), intent(out) :: padding_neighbor_hints(:)
+      integer(c_int), intent(out) :: half_list_hints(:)
       integer(c_int), intent(out) :: ierr
-    end subroutine kim_model_get_neighbor_list_cutoffs
+    end subroutine kim_model_get_neighbor_list_values
 
     subroutine kim_model_get_units(model_handle, length_unit, energy_unit, &
       charge_unit, temperature_unit, time_unit)
@@ -254,14 +257,14 @@ module kim_model_module
       integer(c_int), intent(out) :: ierr
     end subroutine kim_model_compute
 
-    subroutine kim_model_clear_influence_dist_and_cutoffs_then_refresh_model( &
+    subroutine kim_model_clear_then_refresh( &
       model_handle, ierr)
       use, intrinsic :: iso_c_binding
       import kim_model_handle_type
       implicit none
       type(kim_model_handle_type), intent(in) :: model_handle
       integer(c_int), intent(out) :: ierr
-    end subroutine kim_model_clear_influence_dist_and_cutoffs_then_refresh_model
+    end subroutine kim_model_clear_then_refresh
 
     subroutine kim_model_get_species_support_and_code(model_handle, &
       species_name, species_is_supported, code, ierr)

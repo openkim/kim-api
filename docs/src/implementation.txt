@@ -140,13 +140,13 @@ ProcessDEDrTerm       | required, optional, **notSupported**     |
 ProcessD2EDr2Term     | required, optional, **notSupported**     |
 
 - GetNeighborList is a callback function that allows a model to obtain the list
-  of neighbors of a particle.  The model may request any number of neighbor
-  lists with different (or equal) cutoff distances.  The GetNeighborList
-  callback function must support the return of the appropriate list of
-  neighbors.  The returned list of neighbors consists of a contiguous-in-memory
-  list of integers corresponding to an unordered full list of a particle's
-  neighbors.  Each such neighbor list must contain at least all particles
-  within the corresponding cutoff distance of the specified particle.
+  of neighbors of a particle.  The model may request any number (\f$\ge1\f$) of
+  neighbor lists with different (or equal) cutoff distances.  The
+  GetNeighborList callback function must support the return of the appropriate
+  list of neighbors.  The returned list of neighbors consists of a
+  contiguous-in-memory list of integers corresponding to an unordered full list
+  of a particle's neighbors.  Each such neighbor list must contain at least all
+  particles within the corresponding cutoff distance of the specified particle.
   (However, the returned list may contain particles beyond the cutoff
   distance.)  Neighbor lists provided by the simulator must be consistent with
   the configuration coordinates and the model's cutoff values.  In particular,
@@ -163,6 +163,23 @@ ProcessD2EDr2Term     | required, optional, **notSupported**     |
   computational time may be *severely* impacted.  This is especially true for
   models that request multiple neighbor lists with a wide range of cutoff
   distances.
+
+  <b>Neighbor List Hints \anchor neighbor_list_hints</b> The above describes
+  the default behavior and all models must work correctly when provided with
+  neighbor lists of this type.  However, based on the neighbor list hints
+  provided by the model a simulator may provide the model with a modified
+  neighbor list that is more efficient.  If the model sets its
+  "paddingNeighborHint" to 1 (true), it is guaranteeing that it will not need
+  access to the neighbors of non-contributing (padding) particles.  So, the
+  simulator does not need to generate a neighbor list for such particles.  If
+  the model sets its "halfListHint" to 1 (true), it is guaranteeing that it
+  will only use neighbors \f$j\f$ of particle \f$i\f$ if \f$i < j\f$.  So, the
+  simulator can construct a "half list" of neighbors where each pair of
+  neighbors is listed only once in such a way that the list of neighbors for
+  particle \f$i\f$ contains only particles \f$j\f$ numbered greater than
+  \f$i\f$.  The model has no way of known if the simulator is taking advantage
+  of its hints, so it must work correctly for all types of neighbor lists
+  consistent with its provided hints.
 
 - ProcessDEDrTerm is a callback function that allows for access to the
   derivatives of the configuration's partial energy, \f$E^{\mathcal{C}}\f$,

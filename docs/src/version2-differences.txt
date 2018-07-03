@@ -59,6 +59,7 @@ a guiding principle.
   roughly, to the kim-api-v1 NEIGH_PURE_F NBC.  Additionally:
 
   - All neighbor lists in kim-api-v2 are full, unordered, and random-access.
+    (However, see \ref neighbor_list_hints "Neighbor List Hints".)
 
   - Particle Contributing (a.k.a., padding or ghost-atom) status (contributing
     or non-contributing) is explicitly specified in the *particleContributing*
@@ -240,8 +241,8 @@ KIM_API_set_compute()                  | N/A                                  |
 KIM_API_get_compute()                  | N/A                                  |
 N/A                                    | KIM::ModelCreate::SetInfluenceDistancePointer(), KIM::ModelDriverCreate::SetInfluenceDistancePointer(), KIM::ModelRefresh::SetInfluenceDistancePointer() |
 N/A                                    | KIM::Model::GetInfluenceDistance()   |
-N/A                                    | KIM::Model::GetNeighborListCutoffsPointer() |
-N/A                                    | KIM::ModelCreate::SetNeighborListCutoffsPointer(), KIM::ModelDriverCreate::SetNeighborListCutoffsPointer(), KIM::ModelRefresh::SetNeighborListCutoffsPointer() |
+N/A                                    | KIM::Model::GetNeighborListPointers() |
+N/A                                    | KIM::ModelCreate::SetNeighborListPointers(), KIM::ModelDriverCreate::SetNeighborListPointers(), KIM::ModelRefresh::SetNeighborListPointers() |
 N/A                                    | KIM::ModelCreate::SetRefreshPointer(), KIM::ModelDriverCreate::SetRefreshPointer() |
 N/A                                    | KIM::ModelCreate::SetDestroyPointer(), KIM::ModelDriverCreate::SetDestroyPointer() |
 N/A                                    | KIM::ModelCreate::SetComputeArgumentsCreatePointer(), KIM::ModelDriverCreate::SetComputeArgumentsCreatePointer() |
@@ -249,7 +250,7 @@ N/A                                    | KIM::ModelCreate::SetComputeArgumentsDe
 N/A                                    | KIM::ModelCreate::SetComputePointer(), KIM::ModelDriverCreate::SetComputePointer() |
 KIM_API_get_index()                    | N/A                                  |
 KIM_API_model_init()                   | N/A                                  |
-KIM_API_model_reinit()                 | KIM::Model::ClearInfluenceDistanceAndCutoffsThenRefreshModel() |
+KIM_API_model_reinit()                 | KIM::Model::ClearThenRefresh()       |
 KIM_API_get_num_model_species()        | N/A                                  |
 KIM_API_get_model_species()            | KIM::Model::GetSpeciesSupportAndCode() |
 KIM_API_get_num_sim_species()          | N/A                                  |

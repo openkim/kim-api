@@ -220,13 +220,18 @@ void KIM_Model_GetInfluenceDistance(KIM_Model const * const model,
   pModel->GetInfluenceDistance(influenceDistance);
 }
 
-void KIM_Model_GetNeighborListCutoffsPointer(KIM_Model const * const model,
-                                             int * const numberOfCutoffs,
-                                             double const ** const cutoffs)
+void KIM_Model_GetNeighborListPointers(KIM_Model const * const model,
+                                       int * const numberOfNeighborLists,
+                                       double const ** const cutoffs,
+                                       int const ** const paddingNeighborHints,
+                                       int const ** const halfListHints)
 {
   CONVERT_POINTER;
 
-  pModel->GetNeighborListCutoffsPointer(numberOfCutoffs, cutoffs);
+  pModel->GetNeighborListPointers(numberOfNeighborLists,
+                                  cutoffs,
+                                  paddingNeighborHints,
+                                  halfListHints);
 }
 
 void KIM_Model_GetUnits(KIM_Model const * const model,
@@ -302,12 +307,11 @@ int KIM_Model_Compute(KIM_Model const * const model,
   return pModel->Compute(pComputeArguments);
 }
 
-int KIM_Model_ClearInfluenceDistanceAndCutoffsThenRefreshModel(
-    KIM_Model * const model)
+int KIM_Model_ClearThenRefresh(KIM_Model * const model)
 {
   CONVERT_POINTER;
 
-  return pModel->ClearInfluenceDistanceAndCutoffsThenRefreshModel();
+  return pModel->ClearThenRefresh();
 }
 
 int KIM_Model_GetSpeciesSupportAndCode(KIM_Model const * const model,

@@ -118,9 +118,11 @@ void KIM_Model_Destroy(KIM_Model ** const model);
 void KIM_Model_GetInfluenceDistance(KIM_Model const * const model,
                                     double * const influenceDistance);
 
-void KIM_Model_GetNeighborListCutoffsPointer(KIM_Model const * const model,
-                                             int * const numberOfCutoffs,
-                                             double const ** const cutoffs);
+void KIM_Model_GetNeighborListPointers(KIM_Model const * const model,
+                                       int * const numberOfNeighborLists,
+                                       double const ** const cutoffs,
+                                       int const ** const paddingNeighborHints,
+                                       int const ** const halfListHints);
 
 void KIM_Model_GetUnits(KIM_Model const * const model,
                         KIM_LengthUnit * const lengthUnit,
@@ -138,8 +140,7 @@ int KIM_Model_ComputeArgumentsDestroy(
 int KIM_Model_Compute(KIM_Model const * const model,
                       KIM_ComputeArguments const * const computeArguments);
 
-int KIM_Model_ClearInfluenceDistanceAndCutoffsThenRefreshModel(
-    KIM_Model * const model);
+int KIM_Model_ClearThenRefresh(KIM_Model * const model);
 
 int KIM_Model_GetSpeciesSupportAndCode(KIM_Model const * const model,
                                        KIM_SpeciesName const speciesName,

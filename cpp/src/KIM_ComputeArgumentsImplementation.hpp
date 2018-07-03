@@ -185,7 +185,7 @@ class ComputeArgumentsImplementation
   int const numberingOffset_;
 
   mutable bool inModelComputeRoutine_;
-  mutable int numberOfCutoffs_;
+  mutable int numberOfNeighborLists_;
   mutable double const * cutoffs_;
 
   std::map<ComputeArgumentName const, SupportStatus,

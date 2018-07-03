@@ -722,7 +722,7 @@ int ComputeArgumentsImplementation::GetNeighborList(
   //   LOG_DEBUG("Enter  " + callString);
 
 #if ERROR_VERBOSITY
-  if ((neighborListIndex < 0) || (neighborListIndex >= numberOfCutoffs_))
+  if ((neighborListIndex < 0) || (neighborListIndex >= numberOfNeighborLists_))
   {
     LOG_ERROR("Invalid neighborListIndex, " + SNUM(neighborListIndex)
               + ".");
@@ -762,7 +762,7 @@ int ComputeArgumentsImplementation::GetNeighborList(
       = (computeCallbackFunctionPointer_.find(
           COMPUTE_CALLBACK_NAME::GetNeighborList))->second;
   typedef int GetNeighborListCpp(void const * const dataObject,
-                                 int const numberOfCutoffs,
+                                 int const numberOfNeighborLists,
                                  double const * const cutoffs,
                                  int const neighborListIndex,
                                  int const particleNumber,
@@ -771,7 +771,7 @@ int ComputeArgumentsImplementation::GetNeighborList(
   GetNeighborListCpp * CppGetNeighborList
       = reinterpret_cast<GetNeighborListCpp *>(functionPointer);
   typedef int GetNeighborListC(void const * const dataObject,
-                               int const numberOfCutoffs,
+                               int const numberOfNeighborLists,
                                double const * const cutoffs,
                                int const neighborListIndex,
                                int const particleNumber,
@@ -780,7 +780,7 @@ int ComputeArgumentsImplementation::GetNeighborList(
   GetNeighborListC * CGetNeighborList
       = reinterpret_cast<GetNeighborListC *>(functionPointer);
   typedef void GetNeighborListF(void const * const dataObject,
-                                int const numberOfCutoffs,
+                                int const numberOfNeighborLists,
                                 double const * const cutoffs,
                                 int const neighborListIndex,
                                 int const particleNumber,
@@ -797,20 +797,20 @@ int ComputeArgumentsImplementation::GetNeighborList(
   int error;
   if (languageName == LANGUAGE_NAME::cpp)
   {
-    error = CppGetNeighborList(dataObject, numberOfCutoffs_, cutoffs_,
+    error = CppGetNeighborList(dataObject, numberOfNeighborLists_, cutoffs_,
                                neighborListIndex, simulatorParticleNumber,
                                numberOfNeighbors,
                                &simulatorNeighborsOfParticle);
   }
   else if (languageName == LANGUAGE_NAME::c)
   {
-    error = CGetNeighborList(dataObject, numberOfCutoffs_, cutoffs_,
+    error = CGetNeighborList(dataObject, numberOfNeighborLists_, cutoffs_,
                              neighborListIndex, simulatorParticleNumber,
                              numberOfNeighbors, &simulatorNeighborsOfParticle);
   }
   else if (languageName == LANGUAGE_NAME::fortran)
   {
-    FGetNeighborList(dataObject, numberOfCutoffs_, cutoffs_,
+    FGetNeighborList(dataObject, numberOfNeighborLists_, cutoffs_,
                      neighborListIndex+1, simulatorParticleNumber,
                      numberOfNeighbors, &simulatorNeighborsOfParticle, &error);
   }
@@ -1290,7 +1290,7 @@ ComputeArgumentsImplementation::ComputeArgumentsImplementation(
     simulatorNumbering_(simulatorNumbering),
     numberingOffset_(numberingOffset),
     inModelComputeRoutine_(false),
-    numberOfCutoffs_(0),
+    numberOfNeighborLists_(0),
     cutoffs_(NULL),
     modelBuffer_(NULL),
     simulatorBuffer_(NULL)

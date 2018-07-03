@@ -106,10 +106,14 @@ class ModelImplementation
   void GetInfluenceDistance(double * const influenceDistance) const;
 
 
-  void SetNeighborListCutoffsPointer(int const numberOfCutoffs,
-                                     double const * const cutoffs);
-  void GetNeighborListCutoffsPointer(int * const numberOfCutoffs,
-                                     double const ** const cutoffs) const;
+  void SetNeighborListPointers(int const numberOfNeighborLists,
+                               double const * const cutoffs,
+                               int const * const paddingNeighborHints,
+                               int const * const halfListHints);
+  void GetNeighborListPointers(int * const numberOfNeighborLists,
+                               double const ** const cutoffs,
+                               int const ** const paddingNeighborHints,
+                               int const ** const halfListHints) const;
 
 
   int SetRefreshPointer(LanguageName const languageName, func * const fptr);
@@ -167,7 +171,7 @@ class ModelImplementation
 
 
   int Compute(ComputeArguments const * const computeArguments) const;
-  int ClearInfluenceDistanceAndCutoffsThenRefreshModel();
+  int ClearThenRefresh();
 
 
   void SetModelBufferPointer(void * const ptr);
@@ -282,8 +286,10 @@ class ModelImplementation
   double const * influenceDistance_;
 
 
-  int numberOfCutoffs_;
+  int numberOfNeighborLists_;
   double const * cutoffs_;
+  int const * paddingNeighborHints_;
+  int const * halfListHints_;
 
 
   LanguageName refreshLanguage_;

@@ -392,42 +392,64 @@ void ModelImplementation::GetInfluenceDistance(
 }
 
 
-void ModelImplementation::SetNeighborListCutoffsPointer(
-    int const numberOfCutoffs, double const * const cutoffs)
+void ModelImplementation::SetNeighborListPointers(
+    int const numberOfNeighborLists,
+    double const * const cutoffs,
+    int const * const paddingNeighborHints,
+    int const * const halfListHints)
 {
 #if DEBUG_VERBOSITY
-  std::string const callString = "SetNeighborListCutoffsPointer("
-      + SNUM(numberOfCutoffs) + ", " + SPTR(cutoffs) + ").";
+  std::string const callString = "SetNeighborListPointers("
+      + SNUM(numberOfNeighborLists) + ", "
+      + SPTR(cutoffs) + ", "
+      + SPTR(paddingNeighborHints) + ", "
+      + SPTR(halfListHints) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
 #if ERROR_VERBOSITY
-  if (numberOfCutoffs < 1)
-    LOG_ERROR("Number of neighbor list cutoffs, " + SNUM(numberOfCutoffs)
+  if (numberOfNeighborLists < 1)
+    LOG_ERROR("Number of neighbor lists, " + SNUM(numberOfNeighborLists)
               + ", must be >= 1.");
   if (cutoffs == NULL)
     LOG_ERROR("Null pointer provided for cutoffs.");
+  if (paddingNeighborHints == NULL)
+    LOG_ERROR("Null pointer provided for paddingNeighborHints.");
+  if (halfListHints == NULL)
+    LOG_ERROR("Null pointer provided for halfListHints.");
 #endif
 
-  numberOfCutoffs_ = numberOfCutoffs;
+  numberOfNeighborLists_ = numberOfNeighborLists;
   cutoffs_ = cutoffs;
+  paddingNeighborHints_ = paddingNeighborHints;
+  halfListHints_ = halfListHints;
 
   LOG_DEBUG("Exit   " + callString);
 }
 
-void ModelImplementation::GetNeighborListCutoffsPointer(
-    int * const numberOfCutoffs, double const ** const cutoffs) const
+void ModelImplementation::GetNeighborListPointers(
+    int * const numberOfNeighborLists,
+    double const ** const cutoffs,
+    int const ** const paddingNeighborHints,
+    int const ** const halfListHints) const
 {
 #if DEBUG_VERBOSITY
-  std::string const callString = "GetNeighborListCutoffsPointer("
-      + SPTR(numberOfCutoffs) + ", " + SPTR(cutoffs) + ").";
+  std::string const callString = "GetNeighborListPointers("
+      + SPTR(numberOfNeighborLists) + ", "
+      + SPTR(cutoffs) + ", "
+      + SPTR(paddingNeighborHints) + ", "
+      + SPTR(halfListHints) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
-  if (numberOfCutoffs != NULL)
-    *numberOfCutoffs = numberOfCutoffs_;
+  if (numberOfNeighborLists != NULL)
+    *numberOfNeighborLists = numberOfNeighborLists_;
   if (cutoffs != NULL)
     *cutoffs = cutoffs_;
+  if (paddingNeighborHints != NULL)
+    *paddingNeighborHints = paddingNeighborHints_;
+  if (halfListHints != NULL)
+    *halfListHints = halfListHints_;
 
   LOG_DEBUG("Exit   " + callString);
 }
@@ -1128,12 +1150,13 @@ int ModelImplementation::Compute(
 
   // Set cutoffs data within computeArguments
   computeArguments->pimpl->inModelComputeRoutine_ = true;
-  computeArguments->pimpl->numberOfCutoffs_ = numberOfCutoffs_;
+  computeArguments->pimpl->numberOfNeighborLists_ = numberOfNeighborLists_;
   computeArguments->pimpl->cutoffs_ = cutoffs_;
   // Resize computeArguments storage if needed
   if (simulatorNumbering_ != modelNumbering_)
   {
-    computeArguments->pimpl->getNeighborListStorage_.resize(numberOfCutoffs_);
+    computeArguments->pimpl
+        ->getNeighborListStorage_.resize(numberOfNeighborLists_);
   }
 
 
@@ -1193,7 +1216,7 @@ int ModelImplementation::Compute(
 
   // Unset cutoffs data within computeArguments
   computeArguments->pimpl->inModelComputeRoutine_ = false;
-  computeArguments->pimpl->numberOfCutoffs_ = 0;
+  computeArguments->pimpl->numberOfNeighborLists_ = 0;
   computeArguments->pimpl->cutoffs_ = NULL;
 
   if (error)
@@ -1214,17 +1237,19 @@ struct KIM_ModelRefresh
   void * p;
 };
 
-int ModelImplementation::ClearInfluenceDistanceAndCutoffsThenRefreshModel()
+int ModelImplementation::ClearThenRefresh()
 {
 #if DEBUG_VERBOSITY
   std::string const callString =
-      "ClearInfluenceDistanceAndCutoffsThenRefreshModel().";
+      "ClearThenRefresh().";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
   influenceDistance_ = NULL;
-  numberOfCutoffs_ = 0;
+  numberOfNeighborLists_ = 0;
   cutoffs_ = NULL;
+  paddingNeighborHints_ = NULL;
+  halfListHints_ = NULL;
 
   typedef int ModelRefreshCpp(KIM::ModelRefresh * const);
   ModelRefreshCpp * CppRefresh
@@ -1279,14 +1304,35 @@ int ModelImplementation::ClearInfluenceDistanceAndCutoffsThenRefreshModel()
     if (influenceDistance_ == NULL)
     {
       LOG_ERROR("Model supplied Refresh() routine did not set "
-                "InfluenceDistancePointer");
+                "influenceDistance.");
+      LOG_DEBUG("Exit 1=" + callString);
+      return true;
+    }
+    if (numberOfNeighborLists_ < 1)
+    {
+      LOG_ERROR("Number of neighbor lists, " + SNUM(numberOfNeighborLists_)
+                + ", must be >= 1.");
       LOG_DEBUG("Exit 1=" + callString);
       return true;
     }
     if (cutoffs_ == NULL)
     {
       LOG_ERROR("Model supplied Refresh() routine did not "
-                "set CutoffsPointer");
+                "set cutoffs.");
+      LOG_DEBUG("Exit 1=" + callString);
+      return true;
+    }
+    if (paddingNeighborHints_ == NULL)
+    {
+      LOG_ERROR("Model supplied Refresh() routine did not "
+                "set paddingNeighborHints.");
+      LOG_DEBUG("Exit 1=" + callString);
+      return true;
+    }
+    if (halfListHints_ == NULL)
+    {
+      LOG_ERROR("Model supplied Refresh() routine did not "
+                "set halfListHints.");
       LOG_DEBUG("Exit 1=" + callString);
       return true;
     }
@@ -1630,11 +1676,20 @@ std::string const & ModelImplementation::String() const
 
   ss << "Influence Distance : " << *influenceDistance_ << "\n\n";
 
-  ss << "Number Of Neighbor List Cutoffs : " << numberOfCutoffs_ << "\n";
+  ss << "Number Of Neighbor Lists : " << numberOfNeighborLists_ << "\n";
   ss << "Neighbor List Cutoffs :\n";
-  for (int i=0; i<numberOfCutoffs_; ++i)
+  ss << "\t" << "index" << " : " << std::setw(20) << "cutoff distance"
+     << std::setw(25) << "paddingNeighborHint"
+     << std::setw(15) << "halfListHint" << "\n";
+  ss << "\t" << "-----" << "---" << std::setw(20) << "--------------------"
+     << std::setw(25) << "-------------------------"
+     << std::setw(15) << "---------------" << "\n";
+  for (int i=0; i<numberOfNeighborLists_; ++i)
   {
-    ss << "\t" << i << " : " << cutoffs_[i] << "\n";
+    ss << "\t" << std::setw(5) << i << " : " << std::setw(20) << cutoffs_[i]
+       << std::setw(25) << paddingNeighborHints_[i]
+       << std::setw(15) << halfListHints_[i]
+       << "\n";
   }
   ss << "\n\n";
 
@@ -1715,8 +1770,10 @@ ModelImplementation::ModelImplementation(ModelLibrary * const modelLibrary,
     numberingHasBeenSet_(false),
     unitsHaveBeenSet_(false),
     influenceDistance_(NULL),
-    numberOfCutoffs_(0),
+    numberOfNeighborLists_(0),
     cutoffs_(NULL),
+    paddingNeighborHints_(NULL),
+    halfListHints_(NULL),
     refreshFunction_(NULL),
     destroyFunction_(NULL),
     computeArgumentsCreateFunction_(NULL),
@@ -1871,7 +1928,15 @@ int ModelImplementation::ModelCreate(
   if (influenceDistance_ == NULL)
   {
     LOG_ERROR("Model supplied Create() routine did not set "
-              "InfluenceDistancePointer.");
+              "influenceDistance.");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
+
+  if (numberOfNeighborLists_ < 1)
+  {
+    LOG_ERROR("Model supplied Create() routine did not set "
+              "valid numberOfNeighborLists, must be >= 1.");
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
@@ -1879,7 +1944,23 @@ int ModelImplementation::ModelCreate(
   if (cutoffs_ == NULL)
   {
     LOG_ERROR("Model supplied Create() routine did not set "
-              "CutoffsPointer.");
+              "cutoffs.");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
+
+  if (paddingNeighborHints_ == NULL)
+  {
+    LOG_ERROR("Model supplied Create() routine did not set "
+              "paddingNeighborHints.");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
+
+  if (halfListHints_ == NULL)
+  {
+    LOG_ERROR("Model supplied Create() routine did not set "
+              "halfListHints.");
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }

@@ -77,12 +77,18 @@ void ModelDriverCreate::SetInfluenceDistancePointer(
   pImpl->SetInfluenceDistancePointer(influenceDistance);
 }
 
-void ModelDriverCreate::SetNeighborListCutoffsPointer(
-    int const numberOfCutoffs, double const * const cutoffs)
+void ModelDriverCreate::SetNeighborListPointers(
+    int const numberOfNeighborLists,
+    double const * const cutoffs,
+    int const * const paddingNeighborHints,
+    int const * const halfListHints)
 {
   CONVERT_POINTER;
 
-  pImpl->SetNeighborListCutoffsPointer(numberOfCutoffs, cutoffs);
+  pImpl->SetNeighborListPointers(numberOfNeighborLists,
+                                 cutoffs,
+                                 paddingNeighborHints,
+                                 halfListHints);
 }
 
 int ModelDriverCreate::SetRefreshPointer(

@@ -101,7 +101,10 @@ static void calc_phi_dphi(double const* epsilon,
 struct model_buffer
 {
   double influenceDistance;
+  double cutoff;
   double cutsq;
+  int paddingNeighborHint;
+  int halfListHint;
   double epsilon;
   double C;
   double Rzero;
@@ -522,7 +525,10 @@ int model_driver_create(
   /* setup buffer */
   /* set value of parameters */
   buffer->influenceDistance = cutoff;
+  buffer->cutoff = cutoff;
   buffer->cutsq = (cutoff)*(cutoff);
+  buffer->paddingNeighborHint = 1;
+  buffer->halfListHint = 0;
   buffer->epsilon = epsilon;
   buffer->C = C;
   buffer->Rzero = Rzero;
@@ -547,9 +553,12 @@ int model_driver_create(
   KIM_ModelDriverCreate_SetInfluenceDistancePointer(
       modelDriverCreate,
       &(buffer->influenceDistance));
-  KIM_ModelDriverCreate_SetNeighborListCutoffsPointer(
-      modelDriverCreate, 1,
-      &(buffer->influenceDistance));
+  KIM_ModelDriverCreate_SetNeighborListPointers(
+      modelDriverCreate,
+      1,
+      &(buffer->cutoff),
+      &(buffer->paddingNeighborHint),
+      &(buffer->halfListHint));
 
   return FALSE;
 }
@@ -565,8 +574,12 @@ static int refresh(KIM_ModelRefresh * const modelRefresh)
 
   KIM_ModelRefresh_SetInfluenceDistancePointer(
       modelRefresh, &(buffer->influenceDistance));
-  KIM_ModelRefresh_SetNeighborListCutoffsPointer(
-      modelRefresh, 1, &(buffer->influenceDistance));
+  KIM_ModelRefresh_SetNeighborListPointers(
+      modelRefresh,
+      1,
+      &(buffer->cutoff),
+      &(buffer->paddingNeighborHint),
+      &(buffer->halfListHint));
 
   return FALSE;
 }

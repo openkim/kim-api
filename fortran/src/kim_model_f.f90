@@ -41,12 +41,12 @@ module kim_model_f_module
     create, &
     destroy, &
     get_influence_distance, &
-    get_neighbor_list_cutoffs_pointer, &
+    get_neighbor_list_pointers, &
     get_units, &
     compute_arguments_create, &
     compute_arguments_destroy, &
     compute, &
-    clear_and_refresh_model, &
+    clear_then_refresh, &
     get_species_support_and_code, &
     get_number_of_parameters, &
     get_parameter_data_type_extent_and_description, &
@@ -104,15 +104,18 @@ module kim_model_f_module
       real(c_double), intent(out) :: influence_distance
     end subroutine get_influence_distance
 
-    subroutine get_neighbor_list_cutoffs_pointer(model, number_of_cutoffs, &
-      cutoffs_ptr) bind(c, name="KIM_Model_GetNeighborListCutoffsPointer")
+    subroutine get_neighbor_list_pointers(model, number_of_neighbor_lists, &
+      cutoffs_ptr, padding_neighbor_hints_ptr, half_list_hints_ptr) &
+      bind(c, name="KIM_Model_GetNeighborListPointers")
       use, intrinsic :: iso_c_binding
       import kim_model_type
       implicit none
       type(kim_model_type), intent(in) :: model
-      integer(c_int), intent(out) :: number_of_cutoffs
+      integer(c_int), intent(out) :: number_of_neighbor_lists
       type(c_ptr), intent(out) :: cutoffs_ptr
-    end subroutine get_neighbor_list_cutoffs_pointer
+      type(c_ptr), intent(out) :: padding_neighbor_hints_ptr
+      type(c_ptr), intent(out) :: half_list_hints_ptr
+    end subroutine get_neighbor_list_pointers
 
     subroutine get_units(model, length_unit, energy_unit, charge_unit, &
       temperature_unit, time_unit) bind(c, name="KIM_Model_GetUnits")
@@ -157,15 +160,15 @@ module kim_model_f_module
       type(kim_compute_arguments_type), intent(in) :: compute_arguments
     end function compute
 
-    integer(c_int) function clear_and_refresh_model(&
+    integer(c_int) function clear_then_refresh(&
       model) &
       bind(c, &
-      name="KIM_Model_ClearInfluenceDistanceAndCutoffsThenRefreshModel")
+      name="KIM_Model_ClearThenRefresh")
       use, intrinsic :: iso_c_binding
       import kim_model_type
       implicit none
       type(kim_model_type), intent(inout) :: model
-    end function clear_and_refresh_model
+    end function clear_then_refresh
 
     integer(c_int) function get_species_support_and_code(model, species_name, &
       species_is_supported, code) &
@@ -393,53 +396,88 @@ subroutine kim_model_get_influence_distance(model_handle, influence_distance)
   call get_influence_distance(model, influence_distance)
 end subroutine kim_model_get_influence_distance
 
-subroutine kim_model_get_number_of_neighbor_list_cutoffs(model_handle, &
-  number_of_cutoffs)
+subroutine kim_model_get_number_of_neighbor_lists(model_handle, &
+  number_of_neighbor_lists)
   use, intrinsic :: iso_c_binding
   use kim_model_module, only : kim_model_handle_type
   use kim_model_f_module, only : kim_model_type, &
-    get_neighbor_list_cutoffs_pointer
+    get_neighbor_list_pointers
   implicit none
   type(kim_model_handle_type), intent(in) :: model_handle
-  integer(c_int), intent(out) :: number_of_cutoffs
+  integer(c_int), intent(out) :: number_of_neighbor_lists
   type(kim_model_type), pointer :: model
 
-  type(c_ptr) cutoffs_ptr
+  type(c_ptr) cutoffs_ptr, padding_neighbor_hints_ptr, half_list_hints_ptr
 
   call c_f_pointer(model_handle%p, model)
-  call get_neighbor_list_cutoffs_pointer(model, number_of_cutoffs, cutoffs_ptr)
-end subroutine kim_model_get_number_of_neighbor_list_cutoffs
+  call get_neighbor_list_pointers(model, number_of_neighbor_lists, &
+    cutoffs_ptr, padding_neighbor_hints_ptr, half_list_hints_ptr)
+end subroutine kim_model_get_number_of_neighbor_lists
 
-subroutine kim_model_get_neighbor_list_cutoffs(model_handle, cutoffs, ierr)
+subroutine kim_model_get_neighbor_list_values(model_handle, cutoffs, &
+  padding_neighbor_hints, half_list_hints, ierr)
   use, intrinsic :: iso_c_binding
   use kim_model_module, only : kim_model_handle_type
   use kim_model_f_module, only : kim_model_type, &
-    get_neighbor_list_cutoffs_pointer
+    get_neighbor_list_pointers
   implicit none
   type(kim_model_handle_type), intent(in) :: model_handle
   real(c_double), intent(out) :: cutoffs(:)
+  integer(c_int), intent(out) :: padding_neighbor_hints(:)
+  integer(c_int), intent(out) :: half_list_hints(:)
   integer(c_int), intent(out) :: ierr
   type(kim_model_type), pointer :: model
 
-  integer(c_int) number_of_cutoffs
+  integer(c_int) number_of_neighbor_lists
   real(c_double), pointer :: cutoffs_fpointer(:)
+  integer(c_int), pointer :: padding_neighbor_hints_fpointer(:)
+  integer(c_int), pointer :: half_list_hints_fpointer(:)
   type(c_ptr) cutoffs_ptr
+  type(c_ptr) padding_neighbor_hints_ptr
+  type(c_ptr) half_list_hints_ptr
 
   call c_f_pointer(model_handle%p, model)
-  call get_neighbor_list_cutoffs_pointer(model, number_of_cutoffs, cutoffs_ptr)
+  call get_neighbor_list_pointers(model, number_of_neighbor_lists, &
+    cutoffs_ptr, padding_neighbor_hints_ptr, half_list_hints_ptr)
   if (c_associated(cutoffs_ptr)) then
-    call c_f_pointer(cutoffs_ptr, cutoffs_fpointer, [number_of_cutoffs])
+    call c_f_pointer(cutoffs_ptr, cutoffs_fpointer, [number_of_neighbor_lists])
   else
     nullify(cutoffs_fpointer)
   end if
-
-  if (size(cutoffs) < number_of_cutoffs) then
+  if (size(cutoffs) < number_of_neighbor_lists) then
     ierr = 1
   else
     ierr = 0
-    cutoffs = cutoffs_fpointer(1:number_of_cutoffs)
+    cutoffs = cutoffs_fpointer(1:number_of_neighbor_lists)
   end if
-end subroutine kim_model_get_neighbor_list_cutoffs
+
+  if (c_associated(padding_neighbor_hints_ptr)) then
+    call c_f_pointer(padding_neighbor_hints_ptr, &
+      padding_neighbor_hints_fpointer, [number_of_neighbor_lists])
+  else
+    nullify(padding_neighbor_hints_fpointer)
+  end if
+  if (size(padding_neighbor_hints) < number_of_neighbor_lists) then
+    ierr = 1
+  else
+    ierr = 0
+    padding_neighbor_hints &
+      = padding_neighbor_hints_fpointer(1:number_of_neighbor_lists)
+  end if
+
+  if (c_associated(half_list_hints_ptr)) then
+    call c_f_pointer(half_list_hints_ptr, &
+      half_list_hints_fpointer, [number_of_neighbor_lists])
+  else
+    nullify(half_list_hints_fpointer)
+  end if
+  if (size(half_list_hints) < number_of_neighbor_lists) then
+    ierr = 1
+  else
+    ierr = 0
+    half_list_hints = half_list_hints_fpointer(1:number_of_neighbor_lists)
+  end if
+end subroutine kim_model_get_neighbor_list_values
 
 subroutine kim_model_get_units(model_handle, length_unit, energy_unit, &
   charge_unit, temperature_unit, time_unit)
@@ -527,20 +565,18 @@ subroutine kim_model_compute(model_handle, compute_arguments_handle, ierr)
   ierr = compute(model, compute_arguments)
 end subroutine kim_model_compute
 
-subroutine &
-  kim_model_clear_influence_dist_and_cutoffs_then_refresh_model(model_handle, &
-  ierr)
+subroutine kim_model_clear_then_refresh(model_handle, ierr)
   use, intrinsic :: iso_c_binding
   use kim_model_module, only : kim_model_handle_type
-  use kim_model_f_module, only : kim_model_type, clear_and_refresh_model
+  use kim_model_f_module, only : kim_model_type, clear_then_refresh
   implicit none
   type(kim_model_handle_type), intent(in) :: model_handle
   integer(c_int), intent(out) :: ierr
   type(kim_model_type), pointer :: model
 
   call c_f_pointer(model_handle%p, model)
-  ierr = clear_and_refresh_model(model)
-end subroutine kim_model_clear_influence_dist_and_cutoffs_then_refresh_model
+  ierr = clear_then_refresh(model)
+end subroutine kim_model_clear_then_refresh
 
 subroutine kim_model_get_species_support_and_code(model_handle, species_name, &
   species_is_supported, code, ierr)

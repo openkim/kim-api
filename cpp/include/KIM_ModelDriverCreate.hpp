@@ -69,8 +69,10 @@ class ModelDriverCreate
 
   void SetInfluenceDistancePointer(double const * const influenceDistance);
 
-  void SetNeighborListCutoffsPointer(int const numberOfCutoffs,
-                                     double const * const cutoffs);
+  void SetNeighborListPointers(int const numberOfNeighborLists,
+                               double const * const cutoffs,
+                               int const * const paddingNeighborHints,
+                               int const * const halfListHints);
 
   int SetRefreshPointer(LanguageName const languageName, func * const fptr);
   int SetDestroyPointer(LanguageName const languageName, func * const fptr);

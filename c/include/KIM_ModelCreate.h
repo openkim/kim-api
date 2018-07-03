@@ -108,9 +108,12 @@ void KIM_ModelCreate_SetInfluenceDistancePointer(
     KIM_ModelCreate * const modelCreate,
     double * const influenceDistance);
 
-void KIM_ModelCreate_SetNeighborListCutoffsPointer(
+void KIM_ModelCreate_SetNeighborListPointers(
     KIM_ModelCreate * const modelCreate,
-    int const numberOfCutoffs, double const * const cutoffs);
+    int const numberOfNeighborLists,
+    double const * const cutoffs,
+    int const * const paddingNeighborHints,
+    int const * const halfListHints);
 
 int KIM_ModelCreate_SetRefreshPointer(
     KIM_ModelCreate * const modelCreate,

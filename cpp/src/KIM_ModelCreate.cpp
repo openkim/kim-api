@@ -60,12 +60,18 @@ void ModelCreate::SetInfluenceDistancePointer(
   pImpl->SetInfluenceDistancePointer(influenceDistance);
 }
 
-void ModelCreate::SetNeighborListCutoffsPointer(int const numberOfCutoffs,
-                                                double const * const cutoffs)
+void ModelCreate::SetNeighborListPointers(
+    int const numberOfNeighborLists,
+    double const * const cutoffs,
+    int const * const paddingNeighborHints,
+    int const * const halfListHints)
 {
   CONVERT_POINTER;
 
-  pImpl->SetNeighborListCutoffsPointer(numberOfCutoffs, cutoffs);
+  pImpl->SetNeighborListPointers(numberOfNeighborLists,
+                                 cutoffs,
+                                 paddingNeighborHints,
+                                 halfListHints);
 }
 
 int ModelCreate::SetRefreshPointer(LanguageName const languageName,

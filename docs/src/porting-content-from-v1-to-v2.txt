@@ -76,19 +76,19 @@ KIM::ModelDriverCreate::GetParameterFileName().)
   $ mkdir kim-api-porting
   $ cd kim-api-porting
 
-  $ wget https://s3.openkim.org/kim-api/kim-api-v1.9.5.txz
-  $ tar Jxf kim-api-v1.9.5.txz
-  $ rm kim-api-v1.9.5.txz
-  $ cd kim-api-v1.9.5
+  $ wget https://s3.openkim.org/kim-api/kim-api-v1.9.6.txz
+  $ tar Jxf kim-api-v1.9.6.txz
+  $ rm kim-api-v1.9.6.txz
+  $ cd kim-api-v1.9.6
   $ ./configure --prefix=${HOME}/kim-api-porting/kim-api-installed
   $ make
   $ make install
   $ cd ..
 
-  $ wget https://s3.openkim.org/kim-api/kim-api-v2.0.0-beta.0.txz
-  $ tar Jxf kim-api-v2.0.0-beta.0.txz
-  $ rm kim-api-v2.0.0-beta.0.txz
-  $ cd kim-api-v2.0.0-beta.0
+  $ wget https://s3.openkim.org/kim-api/kim-api-v2.0.0-beta.1.txz
+  $ tar Jxf kim-api-v2.0.0-beta.2.txz
+  $ rm kim-api-v2.0.0-beta.1.txz
+  $ cd kim-api-v2.0.0-beta.1
   $ ./configure --prefix=${HOME}/kim-api-porting/kim-api-installed
   $ make
   $ make install
@@ -119,7 +119,7 @@ KIM::ModelDriverCreate::GetParameterFileName().)
   <li> Next, copy the example codes associated with these instructions
 
   \code{.sh}
-  $ cp -r ./kim-api-v2.0.0-beta-0/docs/porting-content-from-v1-to-v2-examples v1-v2-porting
+  $ cp -r ./kim-api-v2.0.0-beta.1/docs/porting-content-from-v1-to-v2-examples v1-v2-porting
   \endcode
 
   The \ref porting-content-from-v1-to-v2-examples codes include two models (one
@@ -252,7 +252,7 @@ KIM::ModelDriverCreate::GetParameterFileName().)
   ===============================================================================
 
   kim-api library:
-  	/.../kim-api-porting/lib/kim-api-v1/libkim-api-v1.9.5.GCC.linux.64bit.dynamic-load.so
+  	/.../kim-api-porting/lib/kim-api-v1/libkim-api-v1.9.6.GCC.linux.64bit.dynamic-load.so
 
   .
   .
@@ -431,8 +431,8 @@ routine described in the next step) to make it available to the API.
       <li> Register the model's influence distance pointer with a call to
       KIM::ModelCreate::SetInfluenceDistancePointer().
 
-      <li> Register the model's neighbor list cutoff values pointer with a call
-      to KIM::ModelCreate::SetNeighborListCutoffsPointer().
+      <li> Register the model's neighbor list cutoffs and hints pointers with a
+      call to KIM::ModelCreate::SetNeighborListPointers().
 
       <li> Register the parameters with call(s) to
       KIM::ModelCreate::SetParameterPointer(), if necessary.
@@ -739,9 +739,9 @@ compute-arguments object's model buffer pointer.
       values of private data in its model buffer based on changes to the
       published parameter values in the model buffer which have been changed by
       the simulator.  Additionally, at the end of the `ModelRefresh` routine,
-      the model must re-register pointers to its influence distance and cutoffs
-      data (since, generally, these values will change due to the changes made
-      to the published parameters by the simulator).
+      the model must re-register pointers to its influence distance, neighbor
+      list cutoffs and hints data (since, generally, these values will change
+      due to the changes made to the published parameters by the simulator).
 
         <ul>
 
@@ -757,8 +757,8 @@ compute-arguments object's model buffer pointer.
           <li> Register the influence distance with a call to
           KIM::ModelRefresh::SetInfluenceDistancePointer().
 
-          <li> Register the cutoff values pointer with a call to
-          KIM::ModelRefresh::SetNeighborListCutoffsPointer().
+          <li> Register the cutoffs and hints pointers with a call to
+          KIM::ModelRefresh::SetNeighborListPointers().
 
         </ul>
 

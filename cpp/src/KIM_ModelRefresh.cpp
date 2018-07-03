@@ -54,12 +54,18 @@ void ModelRefresh::SetInfluenceDistancePointer(
   pImpl->SetInfluenceDistancePointer(influenceDistance);
 }
 
-void ModelRefresh::SetNeighborListCutoffsPointer(int const numberOfCutoffs,
-                                                 double const * const cutoffs)
+void ModelRefresh::SetNeighborListPointers(
+    int const numberOfNeighborLists,
+    double const * const cutoffs,
+    int const * const paddingNeighborHints,
+    int const * const halfListHints)
 {
   CONVERT_POINTER;
 
-  pImpl->SetNeighborListCutoffsPointer(numberOfCutoffs, cutoffs);
+  pImpl->SetNeighborListPointers(numberOfNeighborLists,
+                                 cutoffs,
+                                 paddingNeighborHints,
+                                 halfListHints);
 }
 
 void ModelRefresh::GetModelBufferPointer(void ** const ptr) const
