@@ -337,6 +337,14 @@ int ComputeArgumentsImplementation::SetArgumentPointer(
 
 int ComputeArgumentsImplementation::SetArgumentPointer(
     ComputeArgumentName const computeArgumentName,
+    int * const ptr)
+{
+  return SetArgumentPointer(computeArgumentName,
+                            const_cast<int const * const>(ptr));
+}
+
+int ComputeArgumentsImplementation::SetArgumentPointer(
+    ComputeArgumentName const computeArgumentName,
     double const * const ptr)
 {
 #if DEBUG_VERBOSITY
@@ -371,6 +379,14 @@ int ComputeArgumentsImplementation::SetArgumentPointer(
 
   LOG_DEBUG("Exit 0=" + callString);
   return false;
+}
+
+int ComputeArgumentsImplementation::SetArgumentPointer(
+    ComputeArgumentName const computeArgumentName,
+    double * const ptr)
+{
+  return SetArgumentPointer(computeArgumentName,
+                            const_cast<double const * const>(ptr));
 }
 
 int ComputeArgumentsImplementation::GetArgumentPointer(

@@ -64,7 +64,11 @@ class ComputeArguments
   int SetArgumentPointer(ComputeArgumentName const computeArgumentName,
                          int const * const ptr);
   int SetArgumentPointer(ComputeArgumentName const computeArgumentName,
+                         int * const ptr);
+  int SetArgumentPointer(ComputeArgumentName const computeArgumentName,
                          double const * const ptr);
+  int SetArgumentPointer(ComputeArgumentName const computeArgumentName,
+                         double * const ptr);
 
   int SetCallbackPointer(ComputeCallbackName const computeCallbackName,
                          LanguageName const languageName,

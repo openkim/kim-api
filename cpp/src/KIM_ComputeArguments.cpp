@@ -64,7 +64,21 @@ int ComputeArguments::SetArgumentPointer(
 
 int ComputeArguments::SetArgumentPointer(
     ComputeArgumentName const computeArgumentName,
+    int * const ptr)
+{
+  return pimpl->SetArgumentPointer(computeArgumentName, ptr);
+}
+
+int ComputeArguments::SetArgumentPointer(
+    ComputeArgumentName const computeArgumentName,
     double const * const ptr)
+{
+  return pimpl->SetArgumentPointer(computeArgumentName, ptr);
+}
+
+int ComputeArguments::SetArgumentPointer(
+    ComputeArgumentName const computeArgumentName,
+    double * const ptr)
 {
   return pimpl->SetArgumentPointer(computeArgumentName, ptr);
 }

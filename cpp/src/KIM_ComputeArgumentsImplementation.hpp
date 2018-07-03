@@ -103,7 +103,11 @@ class ComputeArgumentsImplementation
   int SetArgumentPointer(ComputeArgumentName const computeArgumentName,
                          int const * const ptr);
   int SetArgumentPointer(ComputeArgumentName const computeArgumentName,
+                         int * const ptr);
+  int SetArgumentPointer(ComputeArgumentName const computeArgumentName,
                          double const * const ptr);
+  int SetArgumentPointer(ComputeArgumentName const computeArgumentName,
+                         double * const ptr);
   int GetArgumentPointer(ComputeArgumentName const computeArgumentName,
                          int const ** const ptr) const;
   int GetArgumentPointer(ComputeArgumentName const computeArgumentName,
