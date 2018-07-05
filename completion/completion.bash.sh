@@ -30,7 +30,7 @@
 # Release: This file is part of the kim-api.git repository.
 #
 
-_###FULL#PACKAGE#NAME###-build-config()
+_###SANITIZED#FULL#PACKAGE#NAME###_build_config()
 {
   local cur stand_alone_opts combine_opts
   # NOTE: leading and trailing spaces are necessary for the below two vars.
@@ -61,10 +61,10 @@ _###FULL#PACKAGE#NAME###-build-config()
 
   return 1
 }
-complete -F _###FULL#PACKAGE#NAME###-build-config ###FULL#PACKAGE#NAME###-build-config
+complete -F _###SANITIZED#FULL#PACKAGE#NAME###_build_config ###FULL#PACKAGE#NAME###-build-config
 
 
-_###FULL#PACKAGE#NAME###-collections-management()
+_###SANITIZED#FULL#PACKAGE#NAME###_collections_management()
 {
   local collections_info
   collections_info=###COLLECTIONS#INFO#UTILITY###
@@ -180,4 +180,4 @@ _###FULL#PACKAGE#NAME###-collections-management()
   fi
   return 1
 }
-complete -F _###FULL#PACKAGE#NAME###-collections-management ###FULL#PACKAGE#NAME###-collections-management
+complete -F _###SANITIZED#FULL#PACKAGE#NAME###_collections_management ###FULL#PACKAGE#NAME###-collections-management
