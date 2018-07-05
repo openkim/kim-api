@@ -84,7 +84,8 @@ void fcc_cluster_neighborlist(int half, int numberOfParticles, double* coords,
                               double cutoff, NeighList* nl);
 
 int get_cluster_neigh(void const * const dataObject,
-                      int const numberOfCutoffs, double const * const cutoffs,
+                      int const numberOfNeighborLists,
+                      double const * const cutoffs,
                       int const neighborListIndex, int const particleNumber,
                       int * const numberOfNeighbors,
                       int const ** const neighborsOfParticle);
@@ -377,7 +378,8 @@ void fcc_cluster_neighborlist(int half, int numberOfParticles, double* coords,
 }
 
 int get_cluster_neigh(void const * const dataObject,
-                      int const numberOfCutoffs, double const * const cutoffs,
+                      int const numberOfNeighborLists,
+                      double const * const cutoffs,
                       int const neighborListIndex, int const particleNumber,
                       int * const numberOfNeighbors,
                       int const ** const neighborsOfParticle)
@@ -387,7 +389,7 @@ int get_cluster_neigh(void const * const dataObject,
   NeighList* nl = (NeighList*) dataObject;
   int numberOfParticles = nl->numberOfParticles;
 
-  if ((numberOfCutoffs != 1) || (cutoffs[0] > nl->cutoff)) return error;
+  if ((numberOfNeighborLists != 1) || (cutoffs[0] > nl->cutoff)) return error;
 
   if (neighborListIndex != 0) return error;
 

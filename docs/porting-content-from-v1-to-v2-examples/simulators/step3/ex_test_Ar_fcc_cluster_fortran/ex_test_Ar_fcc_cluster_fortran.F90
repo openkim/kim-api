@@ -84,15 +84,15 @@ contains
 ! This function implements Locator and Iterator mode
 !
 !-------------------------------------------------------------------------------
-subroutine get_neigh(data_object, number_of_cutoffs, cutoffs, &
+subroutine get_neigh(data_object, number_of_neighbor_lists, cutoffs, &
   neighbor_list_index, request, numnei, pnei1part, ierr) bind(c)
   use error
   implicit none
 
   !-- Transferred variables
   type(c_ptr),    value, intent(in) :: data_object
-  integer(c_int), value, intent(in) :: number_of_cutoffs
-  real(c_double),        intent(in) :: cutoffs(number_of_cutoffs)
+  integer(c_int), value, intent(in) :: number_of_neighbor_lists
+  real(c_double),        intent(in) :: cutoffs(number_of_neighbor_lists)
   integer(c_int), value, intent(in) :: neighbor_list_index
   integer(c_int), value, intent(in)  :: request
   integer(c_int),        intent(out) :: numnei
@@ -106,7 +106,7 @@ subroutine get_neigh(data_object, number_of_cutoffs, cutoffs, &
 
   call c_f_pointer(data_object, neighObject)
 
-  if (number_of_cutoffs /= 1) then
+  if (number_of_neighbor_lists /= 1) then
     call my_warning("invalid number of cutoffs", __LINE__, __FILE__)
     ierr = 1
     return

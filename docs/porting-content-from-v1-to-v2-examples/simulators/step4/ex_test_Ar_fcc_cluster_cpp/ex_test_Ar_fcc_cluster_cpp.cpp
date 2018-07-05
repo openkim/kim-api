@@ -83,7 +83,8 @@ void fcc_cluster_neighborlist(int half, int numberOfParticles, double* coords,
                               double cutoff, NeighList* nl);
 
 int get_cluster_neigh(void const * const dataObject,
-                      int const numberOfCutoffs, double const * const cutoffs,
+                      int const numberOfNeighborLists,
+                      double const * const cutoffs,
                       int const neighborListIndex, int const particleNumber,
                       int * const numberOfNeighbors,
                       int const ** const neighborsOfParticle);
@@ -113,7 +114,7 @@ int main()
   NeighList nl_cluster_model;
   /* model outputs */
   double influence_distance_cluster_model;
-  int number_of_cutoffs;
+  int number_of_neighbor_lists;
   double const * cutoff_cluster_model;
   double energy_cluster_model;
   double forces_cluster[NCLUSTERPARTS*DIM];
@@ -211,7 +212,7 @@ int main()
     if (supportStatus == KIM::SUPPORT_STATUS::required)
     {
       if ((computeArgumentName != KIM::COMPUTE_ARGUMENT_NAME::partialEnergy)
-          ||
+          &&
           (computeArgumentName != KIM::COMPUTE_ARGUMENT_NAME::partialForces))
       {
         MY_ERROR("unsupported required ComputeArgument");
@@ -504,7 +505,8 @@ void fcc_cluster_neighborlist(int half, int numberOfParticles, double* coords,
 }
 
 int get_cluster_neigh(void const * const dataObject,
-                      int const numberOfCutoffs, double const * const cutoffs,
+                      int const numberOfNeighborLists,
+                      double const * const cutoffs,
                       int const neighborListIndex, int const particleNumber,
                       int * const numberOfNeighbors,
                       int const ** const neighborsOfParticle)
@@ -514,7 +516,7 @@ int get_cluster_neigh(void const * const dataObject,
   NeighList* nl = (NeighList*) dataObject;
   int numberOfParticles = nl->numberOfParticles;
 
-  if ((numberOfCutoffs != 1) || (cutoffs[0] > nl->cutoff)) return error;
+  if ((numberOfNeighborLists != 1) || (cutoffs[0] > nl->cutoff)) return error;
 
   if (neighborListIndex != 0) return error;
 

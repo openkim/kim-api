@@ -64,6 +64,8 @@ struct buffer
 {
   double influenceDistance;
   double cutoff;
+  int paddingNeighborHint;
+  int halfListHint;
 };
 typedef struct buffer buffer;
 
@@ -456,6 +458,8 @@ int model_create(KIM_ModelCreate * const modelCreate,
   /* set buffer values */
   bufferPointer->influenceDistance = CUTOFF;
   bufferPointer->cutoff = CUTOFF;
+  bufferPointer->paddingNeighborHint = 1;
+  bufferPointer->halfListHint = 0;
 
   /* register influence distance */
   KIM_ModelCreate_SetInfluenceDistancePointer(
@@ -463,8 +467,12 @@ int model_create(KIM_ModelCreate * const modelCreate,
       &(bufferPointer->influenceDistance));
 
   /* register cutoff */
-  KIM_ModelCreate_SetNeighborListCutoffsPointer(modelCreate, 1,
-                                                &(bufferPointer->cutoff));
+  KIM_ModelCreate_SetNeighborListPointers(
+      modelCreate,
+      1,
+      &(bufferPointer->cutoff),
+      &(bufferPointer->paddingNeighborHint),
+      &(bufferPointer->halfListHint));
 
   if (error)
   {
@@ -491,8 +499,12 @@ static int model_refresh(KIM_ModelRefresh * const modelRefresh)
   LOG_INFORMATION("Resetting influence distance and cutoffs");
   KIM_ModelRefresh_SetInfluenceDistancePointer(
       modelRefresh, &(bufferPointer->influenceDistance));
-  KIM_ModelRefresh_SetNeighborListCutoffsPointer(modelRefresh, 1,
-                                                 &(bufferPointer->cutoff));
+  KIM_ModelRefresh_SetNeighborListPointers(
+      modelRefresh,
+      1,
+      &(bufferPointer->cutoff),
+      &(bufferPointer->paddingNeighborHint),
+      &(bufferPointer->halfListHint));
 
   return FALSE;
 }

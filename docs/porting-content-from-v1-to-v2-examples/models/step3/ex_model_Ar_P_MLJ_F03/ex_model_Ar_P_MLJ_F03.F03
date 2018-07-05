@@ -92,6 +92,8 @@ real(c_double), parameter :: lj_C = 28.0_cd*lj_epsilon*(-13.0_cd &
 type, bind(c) :: buffer_type
   real(c_double) :: influence_distance
   real(c_double) :: cutoff(1)
+  integer(c_int) :: padding_neighbor_hints(1)
+  integer(c_int) :: half_list_hints(1)
 end type buffer_type
 
 contains
@@ -416,14 +418,16 @@ call kim_model_create_set_model_buffer_pointer(model_create_handle, &
 ! set buffer values
 buf%influence_distance = model_cutoff
 buf%cutoff = model_cutoff
+buf%padding_neighbor_hints = 1
+buf%half_list_hints = 0
 
 ! register influence distance
 call kim_model_create_set_influence_distance_pointer( &
   model_create_handle, buf%influence_distance)
 
 ! register cutoff
-call kim_model_create_set_neighbor_list_cutoffs_pointer(model_create_handle, &
-  1, buf%cutoff)
+call kim_model_create_set_neighbor_list_pointers(model_create_handle, &
+  1, buf%cutoff, buf%padding_neighbor_hints, buf%half_list_hints)
 
 if (ierr /= 0) then
   ierr = 1
@@ -434,6 +438,7 @@ endif
 
 call kim_model_create_string(model_create_handle, model_create_string)
 print '(A)', trim(model_create_string)
+stop
 
 return
 

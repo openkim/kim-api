@@ -76,7 +76,7 @@ void fcc_cluster_neighborlist(int half, int numberOfParticles, double* coords,
 
 int get_cluster_neigh(
     void const * const dataObject,
-    int const numberOfCutoffs, double const * const cutoffs,
+    int const numberOfNeighborLists, double const * const cutoffs,
     int const neighborListIndex,
     int const particleNumber, int * const numberOfNeighbors,
     int const ** const neighborsOfParticle);
@@ -108,7 +108,7 @@ int main()
   double coords_cluster[NCLUSTERPARTS][DIM];
   NeighList nl_cluster_model;
   /* model outputs */
-  int number_of_cutoffs_cluster_model;
+  int number_of_neighbor_lists_cluster_model;
   double influence_distance_cluster_model;
   double const * cutoff_cluster_model;
   double energy_cluster_model;
@@ -179,7 +179,7 @@ int main()
     {
       if ((KIM_ComputeArgumentName_NotEqual(
               computeArgumentName,
-              KIM_COMPUTE_ARGUMENT_NAME_partialEnergy)) ||
+              KIM_COMPUTE_ARGUMENT_NAME_partialEnergy)) &&
           (KIM_ComputeArgumentName_NotEqual(
               computeArgumentName,
               KIM_COMPUTE_ARGUMENT_NAME_partialForces)))
@@ -459,7 +459,8 @@ void fcc_cluster_neighborlist(int half, int numberOfParticles, double* coords,
 }
 
 int get_cluster_neigh(void const * const dataObject,
-                      int const numberOfCutoffs, double const * const cutoffs,
+                      int const numberOfNeighborLists,
+                      double const * const cutoffs,
                       int const neighborListIndex,
                       int const particleNumber, int * const numberOfNeighbors,
                       int const ** const neighborsOfParticle)
@@ -469,7 +470,7 @@ int get_cluster_neigh(void const * const dataObject,
   NeighList* nl = (NeighList*) dataObject;
   int numberOfParticles = nl->numberOfParticles;
 
-  if ((numberOfCutoffs != 1) || (cutoffs[0] > nl->cutoff)) return error;
+  if ((numberOfNeighborLists != 1) || (cutoffs[0] > nl->cutoff)) return error;
 
   if (neighborListIndex != 0) return error;
 
