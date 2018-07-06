@@ -38,6 +38,7 @@ program TEST_NAME_STR
   integer(c_int), parameter :: &
        N = 4*(nCellsPerSide)**3 + 6*(nCellsPerSide)**2 + 3*(nCellsPerSide) + 1
   integer(c_int), parameter            :: SizeOne = 1
+  real(c_double), allocatable          :: forces_orig(:,:)
   real(c_double), allocatable          :: forces_num(:,:)
   real(c_double), allocatable          :: forces_num_err(:,:)
   character(len=KIM_KEY_STRING_LENGTH) :: model_species(max_species)
@@ -372,7 +373,12 @@ program TEST_NAME_STR
 
      ! Compute gradient using numerical differentiation
      !
-     allocate(forces_num(DIM,N),forces_num_err(DIM,N))
+     allocate(forces_orig(DIM,N),forces_num(DIM,N),forces_num_err(DIM,N))
+
+     ! Save original forces
+     !
+     forces_orig = forces
+
      do I=1,N
         do J=1,DIM
            call compute_numer_deriv(I,J,pkim,DIM,N,coords,cutoff,cutpad,   &
@@ -397,7 +403,7 @@ program TEST_NAME_STR
      weight_sum = 0.0_cd
      do I=1,N
         do J=1,DIM
-           forcediff = abs(forces(J,I)-forces_num(J,I))
+           forcediff = abs(forces_orig(J,I)-forces_num(J,I))
            if (forcediff<forces_num_err(J,I)) then
               passfail = "ideal"
            else
@@ -415,11 +421,11 @@ program TEST_NAME_STR
            weight_sum = weight_sum + weight
            if (J.eq.1) then
               print '(I6,2X,I4,2X,I3,2X,2ES25.15,3ES15.5,2X,A5)', &
-                     I,particleSpecies(I),J,forces(J,I),forces_num(J,I), &
+                     I,particleSpecies(I),J,forces_orig(J,I),forces_num(J,I), &
                      forcediff,forces_num_err(J,I),weight,passfail
            else
               print '(14X,I3,2X,2ES25.15,3ES15.5,2X,A5)', &
-                     J,forces(J,I),forces_num(J,I), &
+                     J,forces_orig(J,I),forces_num(J,I), &
                      forcediff,forces_num_err(J,I),weight,passfail
            endif
         enddo
@@ -432,11 +438,12 @@ program TEST_NAME_STR
      print *
      print '(''Maximum term obtained for Part = '',I6,'', Dir = '',I1,' // &
         ''', forcediff = '',ES15.5, '', forcediff/force_model = '',ES15.5)', &
-        Imax,Jmax,abs(forces(Jmax,Imax)-forces_num(Jmax,Imax)),           &
-        abs(forces(Jmax,Imax)-forces_num(Jmax,Imax))/abs(forces(Jmax,Imax))
+        Imax,Jmax,abs(forces_orig(Jmax,Imax)-forces_num(Jmax,Imax)),           &
+        abs(forces_orig(Jmax,Imax)-forces_num(Jmax,Imax))/abs(forces_orig(Jmax,Imax))
 
      ! Free temporary storage
      !
+     deallocate(forces_orig)
      deallocate(forces_num)
      deallocate(forces_num_err)
      if (nbc.le.5) then ! deallocate neighbor list storage
