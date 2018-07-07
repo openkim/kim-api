@@ -177,7 +177,7 @@ ProcessD2EDr2Term     | required, optional, **notSupported**     |
   simulator can construct a "half list" of neighbors where each pair of
   neighbors is listed only once in such a way that the list of neighbors for
   particle \f$i\f$ contains only particles \f$j\f$ numbered greater than
-  \f$i\f$.  The model has no way of known if the simulator is taking advantage
+  \f$i\f$.  The model has no way of knowing if the simulator is taking advantage
   of its hints, so it must work correctly for all types of neighbor lists
   consistent with its provided hints.
 
