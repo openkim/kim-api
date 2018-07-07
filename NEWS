@@ -32,6 +32,19 @@
 #
 
 
+=== kim-api-v1.9.7 ============== 07Jul2018 ====================================
+
+* Check for errors from mkdir() in KIM_API_DIRS.cpp (id'ed by coverity scan).
+
+* Fix support for required-compute of forces in utility-forces-numer-deriv.
+
+* Fix identifiers in bash-completions.
+
+* Added --log option to CM 'list' command.
+
+* Use fixed seed for random number generator in utility-forces-numer-deriv.
+
+
 === kim-api-v2.0.0-beta.0 ======= 26Jun2018 ====================================
 
 * Added a 'Guide for porting content from KIM API v1 to v2' to documentation
