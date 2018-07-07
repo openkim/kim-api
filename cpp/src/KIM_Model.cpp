@@ -53,15 +53,25 @@ int Model::Create(Numbering const numbering,
 {
   *model = new Model();
 
-  return ModelImplementation::Create(numbering,
-                                     requestedLengthUnit,
-                                     requestedEnergyUnit,
-                                     requestedChargeUnit,
-                                     requestedTemperatureUnit,
-                                     requestedTimeUnit,
-                                     modelName,
-                                     requestedUnitsAccepted,
-                                     &((*model)->pimpl));
+  int error = ModelImplementation::Create(numbering,
+                                          requestedLengthUnit,
+                                          requestedEnergyUnit,
+                                          requestedChargeUnit,
+                                          requestedTemperatureUnit,
+                                          requestedTimeUnit,
+                                          modelName,
+                                          requestedUnitsAccepted,
+                                          &((*model)->pimpl));
+  if (error)
+  {
+    delete *model;
+    *model = NULL;
+    return true;
+  }
+  else
+  {
+    return false;
+  }
 }
 
 void Model::Destroy(Model ** const model)

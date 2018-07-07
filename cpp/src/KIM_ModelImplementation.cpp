@@ -836,6 +836,13 @@ int ModelImplementation::GetParameterFileName(
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
+
+  if (parameterFileName == NULL)
+  {
+    LOG_ERROR("Null pointer provided for parameterFileName.");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
 #endif
 
   *parameterFileName = &(parameterFileNames_[index]);
@@ -1765,22 +1772,40 @@ std::string const & ModelImplementation::String() const
 
 ModelImplementation::ModelImplementation(ModelLibrary * const modelLibrary,
                                          Log * const log) :
+    modelType_(ModelLibrary::STAND_ALONE_MODEL),
+    modelName_(""),
+    modelDriverName_(""),
     modelLibrary_(modelLibrary),
+    numberOfParameterFiles_(0),
     log_(log),
     numberingHasBeenSet_(false),
+    modelNumbering_(NUMBERING::zeroBased),
+    simulatorNumbering_(NUMBERING::zeroBased),
+    numberingOffset_(0),
     unitsHaveBeenSet_(false),
+    lengthUnit_(LENGTH_UNIT::unused),
+    energyUnit_(ENERGY_UNIT::unused),
+    chargeUnit_(CHARGE_UNIT::unused),
+    temperatureUnit_(TEMPERATURE_UNIT::unused),
+    timeUnit_(TIME_UNIT::unused),
     influenceDistance_(NULL),
     numberOfNeighborLists_(0),
     cutoffs_(NULL),
     paddingNeighborHints_(NULL),
     halfListHints_(NULL),
+    refreshLanguage_(LANGUAGE_NAME::cpp),
     refreshFunction_(NULL),
+    destroyLanguage_(LANGUAGE_NAME::cpp),
     destroyFunction_(NULL),
+    computeArgumentsCreateLanguage_(LANGUAGE_NAME::cpp),
     computeArgumentsCreateFunction_(NULL),
+    computeArgumentsDestroyLanguage_(LANGUAGE_NAME::cpp),
     computeArgumentsDestroyFunction_(NULL),
+    computeLanguage_(LANGUAGE_NAME::cpp),
     computeFunction_(NULL),
     modelBuffer_(NULL),
-    simulatorBuffer_(NULL)
+    simulatorBuffer_(NULL),
+    string_("")
 {
 #if DEBUG_VERBOSITY
   std::string const callString = "ModelImplementation("
