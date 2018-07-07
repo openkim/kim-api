@@ -183,9 +183,10 @@ get_local_build_item_name () {
 }
 
 check_config_file () {
-  local config_file_name="`${collections_info} config_file name`"
-  local drivers_dir="`${collections_info} config_file model_drivers`"
-  local models_dir="`${collections_info} config_file models`"
+  local config_file_name drivers_dir models_dir
+  config_file_name="`${collections_info} config_file name`"; if test $? -ne 0; then return 1; fi
+  drivers_dir="`${collections_info} config_file model_drivers`"; if test $? -ne 0; then return 1; fi
+  models_dir="`${collections_info} config_file models`"; if test $? -ne 0; then return 1; fi
 
   if test \! -f "${config_file_name}" -o x"" = x"${drivers_dir}" -o x"" = x"${models_dir}"; then
     printf "Invalid kim-api configuration file.\n"
@@ -195,12 +196,13 @@ check_config_file () {
 
 rewrite_config_file_models_dir () {
   if test -d "$1"; then
-     local config_file_name="`${collections_info} config_file name`"
-     local drivers_dir="`${collections_info} config_file model_drivers`"
-     local models_dir="`cd "$1" && pwd`"
+    local config_file_name drivers_dir models_dir
+    config_file_name="`${collections_info} config_file name`"; if test $? -ne 0; then return 1; fi
+    drivers_dir="`${collections_info} config_file model_drivers`"; if test $? -ne 0; then return 1; fi
+    models_dir="`cd "$1" && pwd`"; if test $? -ne 0; then return 1; fi
 
-     printf "model_drivers_dir = %s\n" "${drivers_dir}" >  "${config_file_name}" || return 1
-     printf "models_dir = %s\n" "${models_dir}"         >> "${config_file_name}"
+    printf "model_drivers_dir = %s\n" "${drivers_dir}" >  "${config_file_name}" || return 1
+    printf "models_dir = %s\n" "${models_dir}"         >> "${config_file_name}"
   else
     printf "Directory '%s' does not exist.\n" "$1"
     return 1
@@ -209,9 +211,10 @@ rewrite_config_file_models_dir () {
 
 rewrite_config_file_drivers_dir () {
   if test -d "$1"; then
-    local config_file_name="`${collections_info} config_file name`"
-    local drivers_dir="`cd "$1" && pwd`"
-    local models_dir="`${collections_info} config_file models`"
+    local config_file_name drivers_dir models_dir
+    config_file_name="`${collections_info} config_file name`"; if test $? -ne 0; then return 1; fi
+    drivers_dir="`cd "$1" && pwd`"; if test $? -ne 0; then return 1; fi
+    models_dir="`${collections_info} config_file models`"; if test $? -ne 0; then return 1; fi
 
     printf "model_drivers_dir = %s\n" "${drivers_dir}" >  "${config_file_name}" || return 1
     printf "models_dir = %s\n" "${models_dir}"         >> "${config_file_name}"
@@ -260,8 +263,8 @@ get_build_install_item () {
     found_item=""
     item_type="OpenKIM_with_history"
   else
-    found_item="`${collections_info} model_drivers find "${item_name}"`"
-    found_item="${found_item}""`${collections_info} models find "${item_name}"`"
+    found_item="`${collections_info} model_drivers find "${item_name}"`"; if test $? -ne 0; then return 1; fi
+    found_item="${found_item}""`${collections_info} models find "${item_name}"`"; if test $? -ne 0; then return 1; fi
   fi
   if test x"" != x"${found_item}"; then
     local item_collection="`printf -- "${found_item}" | sed -e 's/ .*//'`"
@@ -402,7 +405,8 @@ remove_item () {
     item_type="model_drivers"
   fi
 
-  local item_dir="`${collections_info} "${item_type}" find "${item_name}" | sed -e 's/^[^ ]* [^ ]* \([^ ]*\).*/\1/'`""/${item_name}"
+  local item_dir
+  item_dir="`${collections_info} "${item_type}" find "${item_name}" | sed -e 's/^[^ ]* [^ ]* \([^ ]*\).*/\1/'`""/${item_name}"; if test $? -ne 0; then return 1; fi
 
   printf "Removing '%s'. " "${item_dir}"
   if test x"${interactive}" = x"interactive"; then
@@ -432,53 +436,53 @@ split_drivers_list_into_collections () {
   drivers_env_collection=""; number_drivers_env=0
   drivers_usr_collection=""; number_drivers_usr=0
   drivers_sys_collection=""; number_drivers_sys=0
-    while read line; do
-      local collection="`printf -- "$line" | sed -e 's/\([^ ]*\) .*/\1/'`"
-      local name="`printf -- "$line" | sed -e 's/[^ ]* \([^ ]*\) .*/\1/'`"
-      local directory="`printf -- "$line" | sed -e 's/[^ ]* [^ ]* \([^ ]*\) .*/\1/'`"
-      local version="`printf -- "$line" | sed -e 's/[^ ]* [^ ]* [^ ]* \([^ ]*\).*/\1/'`"
-      case $collection in
-        "")
-        # empty do nothing
+  while read line; do
+    local collection="`printf -- "$line" | sed -e 's/\([^ ]*\) .*/\1/'`"
+    local name="`printf -- "$line" | sed -e 's/[^ ]* \([^ ]*\) .*/\1/'`"
+    local directory="`printf -- "$line" | sed -e 's/[^ ]* [^ ]* \([^ ]*\) .*/\1/'`"
+    local version="`printf -- "$line" | sed -e 's/[^ ]* [^ ]* [^ ]* \([^ ]*\).*/\1/'`"
+    case $collection in
+      "")
+      # empty do nothing
+      ;;
+      CWD)
+        number_drivers_cwd="`expr $number_drivers_cwd \+ 1`"
+        drivers_cwd_collection="${drivers_cwd_collection}\t${name}"
+        if test x"${with_version}" = x"yes"; then
+          drivers_cwd_collection="${drivers_cwd_collection}\n\t\t${version}"
+        fi
+        drivers_cwd_collection="${drivers_cwd_collection}\n"
         ;;
-        CWD)
-          number_drivers_cwd="`expr $number_drivers_cwd \+ 1`"
-          drivers_cwd_collection="${drivers_cwd_collection}\t${name}"
-          if test x"${with_version}" = x"yes"; then
-            drivers_cwd_collection="${drivers_cwd_collection}\n\t\t${version}"
-          fi
-          drivers_cwd_collection="${drivers_cwd_collection}\n"
-          ;;
-        environment)
-          number_drivers_env="`expr $number_drivers_env \+ 1`"
-          drivers_env_collection="${drivers_env_collection}\t${name}"
-          if test x"${with_version}" = x"yes"; then
-            drivers_env_collection="${drivers_env_collection}\n\t\t${version}"
-          fi
-          drivers_env_collection="${drivers_env_collection}\n"
-          ;;
-        user)
-          number_drivers_usr="`expr $number_drivers_usr \+ 1`"
-          drivers_usr_collection="${drivers_usr_collection}\t${name}"
-          if test x"${with_version}" = x"yes"; then
-            drivers_usr_collection="${drivers_usr_collection}\n\t\t${version}"
-          fi
-          drivers_usr_collection="${drivers_usr_collection}\n"
-          ;;
-        system)
-          number_drivers_sys="`expr $number_drivers_sys \+ 1`"
-          drivers_sys_collection="${drivers_sys_collection}\t${name}"
-          if test x"${with_version}" = x"yes"; then
-            drivers_sys_collection="${drivers_sys_collection}\n\t\t${version}"
-          fi
-          drivers_sys_collection="${drivers_sys_collection}\n"
-          ;;
-        *)
-          printf "Error unknown collection!\n"
-          exit 1
-          ;;
-      esac
-    done <<EOF
+      environment)
+        number_drivers_env="`expr $number_drivers_env \+ 1`"
+        drivers_env_collection="${drivers_env_collection}\t${name}"
+        if test x"${with_version}" = x"yes"; then
+          drivers_env_collection="${drivers_env_collection}\n\t\t${version}"
+        fi
+        drivers_env_collection="${drivers_env_collection}\n"
+        ;;
+      user)
+        number_drivers_usr="`expr $number_drivers_usr \+ 1`"
+        drivers_usr_collection="${drivers_usr_collection}\t${name}"
+        if test x"${with_version}" = x"yes"; then
+          drivers_usr_collection="${drivers_usr_collection}\n\t\t${version}"
+        fi
+        drivers_usr_collection="${drivers_usr_collection}\n"
+        ;;
+      system)
+        number_drivers_sys="`expr $number_drivers_sys \+ 1`"
+        drivers_sys_collection="${drivers_sys_collection}\t${name}"
+        if test x"${with_version}" = x"yes"; then
+          drivers_sys_collection="${drivers_sys_collection}\n\t\t${version}"
+        fi
+        drivers_sys_collection="${drivers_sys_collection}\n"
+        ;;
+      *)
+        printf "Error unknown collection!\n"
+        exit 1
+        ;;
+    esac
+  done <<EOF
 $1
 EOF
 }
@@ -490,53 +494,53 @@ split_models_list_into_collections () {
   models_env_collection=""; number_models_env=0
   models_usr_collection=""; number_models_usr=0
   models_sys_collection=""; number_models_sys=0
-    while read line; do
-      local collection="`printf -- "$line" | sed -e 's/\([^ ]*\) .*/\1/'`"
-      local name="`printf -- "$line" | sed -e 's/[^ ]* \([^ ]*\) .*/\1/'`"
-      local directory="`printf -- "$line" | sed -e 's/[^ ]* [^ ]* \([^ ]*\) .*/\1/'`"
-      local version="`printf -- "$line" | sed -e 's/[^ ]* [^ ]* [^ ]* \([^ ]*\).*/\1/'`"
-      case $collection in
-        "")
-        # empty do nothing
+  while read line; do
+    local collection="`printf -- "$line" | sed -e 's/\([^ ]*\) .*/\1/'`"
+    local name="`printf -- "$line" | sed -e 's/[^ ]* \([^ ]*\) .*/\1/'`"
+    local directory="`printf -- "$line" | sed -e 's/[^ ]* [^ ]* \([^ ]*\) .*/\1/'`"
+    local version="`printf -- "$line" | sed -e 's/[^ ]* [^ ]* [^ ]* \([^ ]*\).*/\1/'`"
+    case $collection in
+      "")
+      # empty do nothing
+      ;;
+      CWD)
+        number_models_cwd="`expr $number_models_cwd \+ 1`"
+        models_cwd_collection="${models_cwd_collection}\t${name}"
+        if test x"${with_version}" = x"yes"; then
+          models_cwd_collection="${models_cwd_collection}\n\t\t${version}"
+        fi
+        models_cwd_collection="${models_cwd_collection}\n"
         ;;
-        CWD)
-          number_models_cwd="`expr $number_models_cwd \+ 1`"
-          models_cwd_collection="${models_cwd_collection}\t${name}"
-          if test x"${with_version}" = x"yes"; then
-            models_cwd_collection="${models_cwd_collection}\n\t\t${version}"
-          fi
-          models_cwd_collection="${models_cwd_collection}\n"
-          ;;
-        environment)
-          number_models_env="`expr $number_models_env \+ 1`"
-          models_env_collection="${models_env_collection}\t${name}"
-          if test x"${with_version}" = x"yes"; then
-            models_env_collection="${models_env_collection}\n\t\t${version}"
-          fi
-          models_env_collection="${models_env_collection}\n"
-          ;;
-        user)
-          number_models_usr="`expr $number_models_usr \+ 1`"
-          models_usr_collection="${models_usr_collection}\t${name}"
-          if test x"${with_version}" = x"yes"; then
-            models_usr_collection="${models_usr_collection}\n\t\t${version}"
-          fi
-          models_usr_collection="${models_usr_collection}\n"
-          ;;
-        system)
-          number_models_sys="`expr $number_models_sys \+ 1`"
-          models_sys_collection="${models_sys_collection}\t${name}"
-          if test x"${with_version}" = x"yes"; then
-            models_sys_collection="${models_sys_collection}\n\t\t${version}"
-          fi
-          models_sys_collection="${models_sys_collection}\n"
-          ;;
-        *)
-          printf "Error unknown collection!\n"
-          exit 1
-          ;;
-      esac
-    done <<EOF
+      environment)
+        number_models_env="`expr $number_models_env \+ 1`"
+        models_env_collection="${models_env_collection}\t${name}"
+        if test x"${with_version}" = x"yes"; then
+          models_env_collection="${models_env_collection}\n\t\t${version}"
+        fi
+        models_env_collection="${models_env_collection}\n"
+        ;;
+      user)
+        number_models_usr="`expr $number_models_usr \+ 1`"
+        models_usr_collection="${models_usr_collection}\t${name}"
+        if test x"${with_version}" = x"yes"; then
+          models_usr_collection="${models_usr_collection}\n\t\t${version}"
+        fi
+        models_usr_collection="${models_usr_collection}\n"
+        ;;
+      system)
+        number_models_sys="`expr $number_models_sys \+ 1`"
+        models_sys_collection="${models_sys_collection}\t${name}"
+        if test x"${with_version}" = x"yes"; then
+          models_sys_collection="${models_sys_collection}\n\t\t${version}"
+        fi
+        models_sys_collection="${models_sys_collection}\n"
+        ;;
+      *)
+        printf "Error unknown collection!\n"
+        exit 1
+        ;;
+    esac
+  done <<EOF
 $1
 EOF
 }
@@ -554,14 +558,14 @@ print_list_of_drivers_and_models () {
     with_log=""
   fi
 
-  config_env_name="`${collections_info} config_file env | sed -e 's/ .*//'`"
-  config_env="`${collections_info} config_file env | sed -e 's/^[^ ]* //'`"
+  config_env_name="`${collections_info} config_file env | sed -e 's/ .*//'`"; if test $? -ne 0; then return 1; fi
+  config_env="`${collections_info} config_file env | sed -e 's/^[^ ]* //'`"; if test $? -ne 0; then return 1; fi
   if test x"" = x"${config_env}"; then config_env="--empty--"; fi
-  drivers_env_name="`${collections_info} env env | sed -e 's/^[^ ]* //'`"
-  drivers_env="`${collections_info} env model_drivers`"
+  drivers_env_name="`${collections_info} env env | sed -e 's/^[^ ]* //'`"; if test $? -ne 0; then return 1; fi
+  drivers_env="`${collections_info} env model_drivers`"; if test $? -ne 0; then return 1; fi
   if test x"" = x"${drivers_env}"; then drivers_env="--empty--"; fi
-  models_env_name="`${collections_info} env env | sed -e 's/ .*//'`"
-  models_env="`${collections_info} env models`"
+  models_env_name="`${collections_info} env env | sed -e 's/ .*//'`; if test $? -ne 0; then return 1; fi"
+  models_env="`${collections_info} env models`"; if test $? -ne 0; then return 1; fi
   if test x"" = x"${models_env}"; then models_env="--empty--"; fi
 
   printf "\n\n"
@@ -580,17 +584,17 @@ print_list_of_drivers_and_models () {
   printf -- "\t${config_env}\n"
   printf "\n"
   printf -- "${drivers_env_name}:\n"
-  printf -- "%s\n" "`printf -- "${drivers_env}" | sed -e 's/^/	/g'`"
+  printf -- "%s\n" "`printf -- "${drivers_env}" | sed -e 's/^/  /g'`"
   printf "\n"
   printf -- "${models_env_name}:\n"
-  printf -- "%s\n" "`printf -- "${models_env}" | sed -e 's/^/	/g'`"
+  printf -- "%s\n" "`printf -- "${models_env}" | sed -e 's/^/   /g'`"
   printf "\n"
   print_separator_line "="
 
 
-  model_drivers_list="`${collections_info} model_drivers ${with_log}`"
+  model_drivers_list="`${collections_info} model_drivers ${with_log}`"; if test $? -ne 0; then return 1; fi
   split_drivers_list_into_collections "${model_drivers_list}" "${with_version}"
-  models_list="`${collections_info} models ${with_log}`"
+  models_list="`${collections_info} models ${with_log}`"; if test $? -ne 0; then return 1; fi
   split_models_list_into_collections "${models_list}" "${with_version}"
 
   printf "\n\n\n"
@@ -604,7 +608,7 @@ print_list_of_drivers_and_models () {
   fi
   printf "\n"
 
-    printf "Models: %s\n" "${PWD}"
+  printf "Models: %s\n" "${PWD}"
   if test $number_models_cwd -gt 0; then
     printf -- "${models_cwd_collection}"
   else
@@ -641,9 +645,9 @@ print_list_of_drivers_and_models () {
   fi
   printf "\n\n"
 
-  drivers_usr="`${collections_info} config_file model_drivers`"
+  drivers_usr="`${collections_info} config_file model_drivers`"; if test $? -ne 0; then return 1; fi
   if test x"" = x"${drivers_usr}"; then drivers_usr="--empty--"; fi
-  models_usr="`${collections_info} config_file models`"
+  models_usr="`${collections_info} config_file models`"; if test $? -ne 0; then return 1; fi
   if test x"" = x"${models_usr}"; then models_usr="--empty--"; fi
   printf "User Collection\n"
   print_separator_line "-"
