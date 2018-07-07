@@ -32,6 +32,27 @@
 #
 
 
+=== kim-api-v2.0.0-beta.1 ======= 07Jul2018 ====================================
+
+* Fix memory leak and uninitialized variables id'ed by coverity scan.
+
+* Update docs and porting guide for neighbor list hints changes.
+
+* Implement neighbor list hints (paddingNeighbor & halfList); update examples.
+
+* Add SetArgumentPointer(xxx * const ptr) to C++ bindings for consistency.
+
+* Add C++ LennardJones_Ar stand-alone model example.
+
+* Fix compatibility checking code in example simulators.
+
+* Update LennardJones612 example to use 1/2 list short-circuit mechanism.
+
+* Fix collections-info to set log verbosity to debug.
+
+* Use NULL consistently to initialize pointers in implemenation code.
+
+
 === kim-api-v1.9.7 ============== 07Jul2018 ====================================
 
 * Check for errors from mkdir() in KIM_API_DIRS.cpp (id'ed by coverity scan).
