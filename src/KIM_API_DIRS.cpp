@@ -40,10 +40,27 @@
 #include <vector>
 #include <dirent.h>
 #include <sys/stat.h>
+#include <errno.h>
 #include <dlfcn.h>
 #include "KIM_API_DIRS.h"
 
 #define LINELEN 256
+
+int makeDirWrapper(const char * const path, mode_t mode)
+{
+  if (mkdir(path, mode))
+  {
+    if (EEXIST == errno)
+      return false;
+    else
+    {
+      std::cerr << "Unable to make directory '" << path << "', exiting.\n";
+      return true;
+    }
+  }
+  else
+    return false;
+}
 
 char const * const DirectoryPathTypeString(DirectoryPathType const type)
 {
@@ -137,7 +154,7 @@ std::vector<std::string> getUserDirs()
     std::string const name = configFile[0].substr(pos+1);
     std::ofstream fl;
 
-    mkdir(path.c_str(), 0755);
+    if (makeDirWrapper(path.c_str(), 0755)) exit(1);
     fl.open(configFile[0].c_str(), std::ofstream::out);
     fl << "model_drivers_dir = " << path
        << "/v" << VERSION_MAJOR << "_model_drivers\n";
@@ -145,9 +162,9 @@ std::vector<std::string> getUserDirs()
        << "/v" << VERSION_MAJOR << "_models\n";
     fl.close();
     userDirs[0] = path + "/v" + VERSION_MAJOR + "_model_drivers";
-    mkdir(userDirs[0].c_str(), 0755);
+    if (makeDirWrapper(userDirs[0].c_str(), 0755)) exit(1);
     userDirs[1] = path + "/v" + VERSION_MAJOR + "_models";
-    mkdir(userDirs[1].c_str(), 0755);
+    if (makeDirWrapper(userDirs[1].c_str(), 0755)) exit(1);
   }
   else
   {
