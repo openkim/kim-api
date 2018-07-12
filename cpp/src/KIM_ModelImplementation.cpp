@@ -467,7 +467,7 @@ int ModelImplementation::SetRefreshPointer(LanguageName const languageName,
   int error = Validate(languageName);
   if (error)
   {
-    LOG_ERROR("Invalid arguemnts.");
+    LOG_ERROR("Invalid arguments.");
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
@@ -493,7 +493,7 @@ int ModelImplementation::SetDestroyPointer(LanguageName const languageName,
   int error = Validate(languageName);
   if (error)
   {
-    LOG_ERROR("Invalid arguemnts.");
+    LOG_ERROR("Invalid arguments.");
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
@@ -520,7 +520,7 @@ int ModelImplementation::SetComputeArgumentsCreatePointer(
   int error = Validate(languageName);
   if (error)
   {
-    LOG_ERROR("Invalid arguemnts.");
+    LOG_ERROR("Invalid arguments.");
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
@@ -547,7 +547,7 @@ int ModelImplementation::SetComputeArgumentsDestroyPointer(
   int error = Validate(languageName);
   if (error)
   {
-    LOG_ERROR("Invalid arguemnts.");
+    LOG_ERROR("Invalid arguments.");
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
@@ -573,7 +573,7 @@ int ModelImplementation::SetComputePointer(LanguageName const languageName,
   int error = Validate(languageName);
   if (error)
   {
-    LOG_ERROR("Invalid arguemnts.");
+    LOG_ERROR("Invalid arguments.");
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
@@ -599,7 +599,7 @@ int ModelImplementation::SetSpeciesCode(SpeciesName const speciesName,
   int error = Validate(speciesName);
   if (error)
   {
-    LOG_ERROR("Invalid arguemnts.");
+    LOG_ERROR("Invalid arguments.");
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
