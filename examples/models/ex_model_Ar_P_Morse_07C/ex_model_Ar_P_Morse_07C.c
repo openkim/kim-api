@@ -329,8 +329,7 @@ static int compute(
   /* loop over particles and compute enregy and forces */
   LOG_INFORMATION("Starting main compute loop");
   for (i = 0; i< *nParts; ++i) {
-    if (particleContributing[i])
-    {
+    if (particleContributing[i]) {
       ier = KIM_ModelComputeArguments_GetNeighborList(
           modelComputeArguments,
           0, i, &numOfPartNeigh, &neighListOfCurrentPart);
@@ -344,77 +343,91 @@ static int compute(
       for (jj = 0; jj < numOfPartNeigh; ++ jj) {
         j = neighListOfCurrentPart[jj];  /* get neighbor ID */
 
-        /* compute relative position vector and squared distance */
-        Rsqij = 0.0;
-        for (k = 0; k < DIM; ++k) {
-          Rij[k] = coords[j*DIM + k] - coords[i*DIM + k];
+        if (i < j) {  /* short-circuit half-list */
+          /* compute relative position vector and squared distance */
+          Rsqij = 0.0;
+          for (k = 0; k < DIM; ++k) {
+            Rij[k] = coords[j*DIM + k] - coords[i*DIM + k];
 
-          /* compute squared distance */
-          Rsqij += Rij[k]*Rij[k]; }
+            /* compute squared distance */
+            Rsqij += Rij[k]*Rij[k]; }
 
-        /* compute energy and force */
-        if (Rsqij < cutsq) {
-          /* particles are interacting ? */
-          R = sqrt(Rsqij);
-          if (comp_process_d2Edr2) {
-            /* compute pair potential and its derivatives */
-            calc_phi_d2phi(&epsilon,
-                           &C,
-                           &Rzero,
-                           &shift,
-                           cutoff, R, &phi, &dphi, &d2phi);
+          /* compute energy and force */
+          if (Rsqij < cutsq) {
+            /* particles are interacting ? */
+            R = sqrt(Rsqij);
+            if (comp_process_d2Edr2) {
+              /* compute pair potential and its derivatives */
+              calc_phi_d2phi(&epsilon,
+                             &C,
+                             &Rzero,
+                             &shift,
+                             cutoff, R, &phi, &dphi, &d2phi);
 
-            /* compute dEidr */
-            dEidr = 0.5*dphi;
-            d2Eidr = 0.5*d2phi; }
-          else if (comp_force || comp_process_dEdr) {
-            /* compute pair potential and its derivative */
-            calc_phi_dphi(&epsilon,
-                          &C,
-                          &Rzero,
-                          &shift,
-                          cutoff, R, &phi, &dphi);
+              /* compute dEidr */
+              if (particleContributing[j]) {
+                dEidr = dphi;
+                d2Eidr = d2phi; }
+              else {
+                dEidr = 0.5*dphi;
+                d2Eidr = 0.5*d2phi; } }
+            else if (comp_force || comp_process_dEdr) {
+              /* compute pair potential and its derivative */
+              calc_phi_dphi(&epsilon,
+                            &C,
+                            &Rzero,
+                            &shift,
+                            cutoff, R, &phi, &dphi);
 
-            /* compute dEidr */
-            dEidr = 0.5*dphi; }
-          else {
-            /* compute just pair potential */
-            calc_phi(&epsilon,
-                     &C,
-                     &Rzero,
-                     &shift,
-                     cutoff, R, &phi); }
+              /* compute dEidr */
+              if (particleContributing[j]) {
+                dEidr = dphi; }
+              else {
+                dEidr = 0.5*dphi; } }
+            else {
+              /* compute just pair potential */
+              calc_phi(&epsilon,
+                       &C,
+                       &Rzero,
+                       &shift,
+                       cutoff, R, &phi); }
 
-          /* contribution to energy */
-          if (comp_particleEnergy) {
-            particleEnergy[i] += 0.5*phi; }
-          if (comp_energy) {
-            *energy += 0.5*phi; }
+            /* contribution to energy */
+            if (comp_particleEnergy) {
+              particleEnergy[i] += 0.5*phi;
+              if (particleContributing[j]) {
+                particleEnergy[j] += 0.5*phi; } }
+            if (comp_energy) {
+              if (particleContributing[j]) {
+                *energy += phi; }
+              else {
+                *energy += 0.5*phi; } }
 
-          /* contribution to process_dEdr */
-          if (comp_process_dEdr) {
-            ier = KIM_ModelComputeArguments_ProcessDEDrTerm(
-                modelComputeArguments, dEidr, R, pRij, i, j); }
+            /* contribution to process_dEdr */
+            if (comp_process_dEdr) {
+              ier = KIM_ModelComputeArguments_ProcessDEDrTerm(
+                  modelComputeArguments, dEidr, R, pRij, i, j); }
 
-          /* contribution to process_d2Edr2 */
-          if (comp_process_d2Edr2) {
-            R_pairs[0] = R_pairs[1] = R;
-            Rij_pairs[0][0] = Rij_pairs[1][0] = Rij[0];
-            Rij_pairs[0][1] = Rij_pairs[1][1] = Rij[1];
-            Rij_pairs[0][2] = Rij_pairs[1][2] = Rij[2];
-            i_pairs[0] = i_pairs[1] = i;
-            j_pairs[0] = j_pairs[1] = j;
+            /* contribution to process_d2Edr2 */
+            if (comp_process_d2Edr2) {
+              R_pairs[0] = R_pairs[1] = R;
+              Rij_pairs[0][0] = Rij_pairs[1][0] = Rij[0];
+              Rij_pairs[0][1] = Rij_pairs[1][1] = Rij[1];
+              Rij_pairs[0][2] = Rij_pairs[1][2] = Rij[2];
+              i_pairs[0] = i_pairs[1] = i;
+              j_pairs[0] = j_pairs[1] = j;
 
-            ier = KIM_ModelComputeArguments_ProcessD2EDr2Term(
-                modelComputeArguments,
-                d2Eidr, pR_pairs, pRij_pairs, pi_pairs, pj_pairs);
-          }
+              ier = KIM_ModelComputeArguments_ProcessD2EDr2Term(
+                  modelComputeArguments,
+                  d2Eidr, pR_pairs, pRij_pairs, pi_pairs, pj_pairs);
+            }
 
-          /* contribution to forces */
-          if (comp_force) {
-            for (k = 0; k < DIM; ++k) {
-              force[i*DIM + k] += dEidr*Rij[k]/R;  /* accumulate force on i */
-              force[j*DIM + k] -= dEidr*Rij[k]/R;  /* accumulate force on j */ } } }
+            /* contribution to forces */
+            if (comp_force) {
+              for (k = 0; k < DIM; ++k) {
+                force[i*DIM + k] += dEidr*Rij[k]/R;  /* accumulate force on i */
+                force[j*DIM + k] -= dEidr*Rij[k]/R;  /* accumulate force on j */ } } }
+        }  /* if (i < j) */
       }  /* loop on jj */
     } /* if contributing */
   }  /* loop on i */
@@ -498,7 +511,7 @@ int model_create(KIM_ModelCreate * const modelCreate,
   bufferPointer->influenceDistance = CUTOFF;
   bufferPointer->cutoff = CUTOFF;
   bufferPointer->paddingNeighborHint = 1;
-  bufferPointer->halfListHint = 0;
+  bufferPointer->halfListHint = 1;
 
   /* register influence distance */
   KIM_ModelCreate_SetInfluenceDistancePointer(

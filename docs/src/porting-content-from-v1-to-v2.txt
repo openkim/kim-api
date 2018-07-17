@@ -556,6 +556,15 @@ compute-arguments object's model buffer pointer.
       the v1 `KIM_API_process_dEdr()` and `KIM_API_process_d2Edr2()` routines,
       if necessary.
 
+      <li> If appropriate (as in the case of pair potentials and other simple
+      models), make changes to the code so that it uses the "short-circuit
+      half-list" technique.  In this case, the model assumes it receives a full
+      neighbor list, but only uses the neighbors `j` of particle `i` if `i <
+      j`.  This saves computation, making the model faster.  Remember to set
+      the `halfListHint` to 1 (true) in the `ModelCreate` routine.  The Fortran
+      example model is implemented using a full-list and the C example model is
+      implemented using the half-list short-circuit approach.
+
       <li> Make sure to update all error codes from the v1 codes to the v2
       codes.  v2 has just two error codes `error = 1` (true, an error has
       occurred) and `error = 0` (false, no error has occurred).

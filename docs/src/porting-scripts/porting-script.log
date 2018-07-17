@@ -41,19 +41,19 @@ $ mkdir kim-api-porting
 $ cd kim-api-porting
 
 #//! [Setup kim-api v1 and v2]
-$ wget https://s3.openkim.org/kim-api/kim-api-v1.9.7.txz
-$ tar Jxf kim-api-v1.9.7.txz
-$ rm kim-api-v1.9.7.txz
-$ cd kim-api-v1.9.7
+$ wget https://s3.openkim.org/kim-api/kim-api-v1.9.8.txz
+$ tar Jxf kim-api-v1.9.8.txz
+$ rm kim-api-v1.9.8.txz
+$ cd kim-api-v1.9.8
 $ ./configure --prefix=${HOME}/kim-api-porting/kim-api-installed
 $ make
 $ make install
 $ cd ..
 
-$ wget https://s3.openkim.org/kim-api/kim-api-v2.0.0-beta..txz
-$ tar Jxf kim-api-v2.0.0-beta..txz
-$ rm kim-api-v2.0.0-beta..txz
-$ cd kim-api-v2.0.0-beta.1
+$ wget https://s3.openkim.org/kim-api/kim-api-v2.0.0-beta.2.txz
+$ tar Jxf kim-api-v2.0.0-beta.2.txz
+$ rm kim-api-v2.0.0-beta.2.txz
+$ cd kim-api-v2.0.0-beta.2
 $ ./configure --prefix=${HOME}/kim-api-porting/kim-api-installed --log-maximum-level=KIM_LOG_VERBOSITY_DEBUG_
 $ make
 $ make install
@@ -546,7 +546,7 @@ unset _full_package_name
 #//! [Activate kim-api]
 
 #//! [Copy porting examples]
-$ cp -r ./kim-api-v2.0.0-beta.1/docs/porting-content-from-v1-to-v2-examples v1-v2-porting
+$ cp -r ./kim-api-v2.0.0-beta.2/docs/porting-content-from-v1-to-v2-examples v1-v2-porting
 #//! [Copy porting examples]
 
 #//! [Install step0 models]
@@ -636,7 +636,7 @@ Knowledgebase of Interatomic Models (KIM)  ---  Model Collections Listing
 ===============================================================================
 
 kim-api library:
-	.../kim-api-porting/kim-api-installed/lib/kim-api-v1/libkim-api-v1.9.7+GCC.darwin.32bit.dynamic-load.so
+	.../kim-api-porting/kim-api-installed/lib/kim-api-v1/libkim-api-v1.9.8+GCC.darwin.32bit.dynamic-load.so
 
 kim-api configuration file:
 	/Users/relliott/.kim-api/config-v1
@@ -752,7 +752,7 @@ Model object
 ------------
 
 Model Name : ex_model_Ar_P_Morse_07C_step3
-Log ID : 0x7a645d90
+Log ID : 0x7be324c0
 
 Model Supplied Functions :
 	Function Name            Language  Pointer (1-set / 0-unset)
@@ -797,7 +797,7 @@ Buffers
 	Buffer         Pointer
 	------------------------------
 
-	Model          0x7b841970
+	Model          0x7bf2e930
 	Simulator      0
 
 ================================================================================
@@ -828,7 +828,7 @@ Model object
 ------------
 
 Model Name : ex_model_Ar_P_Morse_07C_step4
-Log ID : 0x7864b310
+Log ID : 0x7ae53930
 
 Model Supplied Functions :
 	Function Name            Language  Pointer (1-set / 0-unset)
@@ -873,7 +873,7 @@ Buffers
 	Buffer         Pointer
 	------------------------------
 
-	Model          0x7864ba50
+	Model          0x7c04f5f0
 	Simulator      0
 
 ================================================================================
@@ -884,7 +884,7 @@ ComputeArguments object
 -----------------------
 
 Model Name : ex_model_Ar_P_Morse_07C_step4
-Log ID : 0x7864b310_0x78747ed0
+Log ID : 0x7ae53930_0x7af501e0
 
 Compute Arguments :
 	Compute Argument Name    SupportStatus            Pointer
@@ -1093,7 +1093,7 @@ ComputeCallback Name "ProcessDEDrTerm" has supportStatus "optional"
 ComputeCallback Name "ProcessD2EDr2Term" has supportStatus "optional"
 Model has influence distance of : 8.15
 Model has numberOfNeighborLists : 1
-	Neighbor list 0 has cutoff 8.15 with paddingNeighborHint 1 and halfListHint 0
+	Neighbor list 0 has cutoff 8.15 with paddingNeighborHint 1 and halfListHint 1
 This is Test : ex_test_Ar_fcc_cluster_cpp
 --------------------------------------------------------------------------------
 Results for KIM Model : ex_model_Ar_P_Morse_07C

@@ -41,11 +41,11 @@ ${PRMPT} mkdir kim-api-porting
 ${PRMPT} cd kim-api-porting
 
 #//! [Setup kim-api v1 and v2]
-git clone ~/unison-sync/KIM/git/kim-api kim-api-v1.9.7
-#${PRMPT} wget https://s3.openkim.org/kim-api/kim-api-v1.9.7.txz >&${REDIRECT_DEV_NULL}
-#${PRMPT} tar Jxf kim-api-v1.9.7.txz
-#${PRMPT} rm kim-api-v1.9.7.txz
-${PRMPT} cd kim-api-v1.9.7
+git clone ~/unison-sync/KIM/git/kim-api kim-api-v1.9.8
+#${PRMPT} wget https://s3.openkim.org/kim-api/kim-api-v1.9.8.txz >&${REDIRECT_DEV_NULL}
+#${PRMPT} tar Jxf kim-api-v1.9.8.txz
+#${PRMPT} rm kim-api-v1.9.8.txz
+${PRMPT} cd kim-api-v1.9.8
 git checkout -b devel origin/devel
 #${PRMPT} ./configure --prefix=${HOME}/kim-api-porting/kim-api-installed
 ./configure --prefix=${HOME}/kim-api-porting/kim-api-installed --system-arch=32bit LDFLAGS+="-read_only_relocs suppress" CXX=g++-4.8 CC=gcc-4.8 FC=gfortran-4.8 >&${REDIRECT_DEV_NULL}
@@ -53,12 +53,12 @@ ${PRMPT} make >&${REDIRECT_DEV_NULL}
 ${PRMPT} make install >&${REDIRECT_DEV_NULL}
 ${PRMPT} cd ..
 
-git clone ~/unison-sync/KIM/git/kim-api kim-api-v2.0.0-beta.1
-#${PRMPT} wget https://s3.openkim.org/kim-api/kim-api-v2.0.0-beta..txz >&${REDIRECT_DEV_NULL}
-#${PRMPT} tar Jxf kim-api-v2.0.0-beta..txz
-#${PRMPT} rm kim-api-v2.0.0-beta..txz
-${PRMPT} cd kim-api-v2.0.0-beta.1
-git checkout hints
+git clone ~/unison-sync/KIM/git/kim-api kim-api-v2.0.0-beta.2
+#${PRMPT} wget https://s3.openkim.org/kim-api/kim-api-v2.0.0-beta.2.txz >&${REDIRECT_DEV_NULL}
+#${PRMPT} tar Jxf kim-api-v2.0.0-beta.2.txz
+#${PRMPT} rm kim-api-v2.0.0-beta.2.txz
+${PRMPT} cd kim-api-v2.0.0-beta.2
+git checkout devel-v2
 #${PRMPT} ./configure --prefix=${HOME}/kim-api-porting/kim-api-installed --log-maximum-level=KIM_LOG_VERBOSITY_DEBUG_
 ./configure --prefix=${HOME}/kim-api-porting/kim-api-installed --system-arch=32bit --log-maximum-level=KIM_LOG_VERBOSITY_DEBUG_ LDFLAGS+="-read_only_relocs suppress" CXX=g++-4.8 CC=gcc-4.8 FC=gfortran-4.8 >&${REDIRECT_DEV_NULL}
 ${PRMPT} make >&${REDIRECT_DEV_NULL}
@@ -72,7 +72,7 @@ ${PRMPT} source ${HOME}/kim-api-porting/kim-api-installed/bin/kim-api-v2-activat
 #//! [Activate kim-api]
 
 #//! [Copy porting examples]
-${PRMPT} cp -r ./kim-api-v2.0.0-beta.1/docs/porting-content-from-v1-to-v2-examples v1-v2-porting
+${PRMPT} cp -r ./kim-api-v2.0.0-beta.2/docs/porting-content-from-v1-to-v2-examples v1-v2-porting
 #//! [Copy porting examples]
 
 #//! [Install step0 models]
