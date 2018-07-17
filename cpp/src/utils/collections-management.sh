@@ -564,7 +564,7 @@ print_list_of_drivers_and_models () {
   drivers_env_name="`${collections_info} env env | sed -e 's/^[^ ]* //'`"; if test $? -ne 0; then return 1; fi
   drivers_env="`${collections_info} env model_drivers`"; if test $? -ne 0; then return 1; fi
   if test x"" = x"${drivers_env}"; then drivers_env="--empty--"; fi
-  models_env_name="`${collections_info} env env | sed -e 's/ .*//'`; if test $? -ne 0; then return 1; fi"
+  models_env_name="`${collections_info} env env | sed -e 's/ .*//'`"; if test $? -ne 0; then return 1; fi
   models_env="`${collections_info} env models`"; if test $? -ne 0; then return 1; fi
   if test x"" = x"${models_env}"; then models_env="--empty--"; fi
 
@@ -584,10 +584,10 @@ print_list_of_drivers_and_models () {
   printf -- "\t${config_env}\n"
   printf "\n"
   printf -- "${drivers_env_name}:\n"
-  printf -- "%s\n" "`printf -- "${drivers_env}" | sed -e 's/^/  /g'`"
+  printf -- "%s\n" "`printf -- "${drivers_env}" | sed -e 's/^/	/g'`"
   printf "\n"
   printf -- "${models_env_name}:\n"
-  printf -- "%s\n" "`printf -- "${models_env}" | sed -e 's/^/   /g'`"
+  printf -- "%s\n" "`printf -- "${models_env}" | sed -e 's/^/	/g'`"
   printf "\n"
   print_separator_line "="
 
