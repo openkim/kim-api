@@ -121,7 +121,7 @@ _###SANITIZED#FULL#PACKAGE#NAME###_collections_management()
           collection_position=2
         fi
         opts=""
-        if test ${COMP_CWORD} -eq ${collection_position} \
+        if test ${COMP_CWORD} -eq `expr ${collection_position} + 1` \
                 -a x"system" = x"${COMP_WORDS[${collection_position}]}"; then
           opts="--sudo OpenKIM OpenKIM_with_history"
         elif test ${COMP_CWORD} -eq 3; then
