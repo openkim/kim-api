@@ -209,7 +209,7 @@ int ModelLibrary::GetModelCreateFunctionPointer(
 {
 #if DEBUG_VERBOSITY
   std::string const callString = "GetModelCreateFunctionPointer("
-      + languageName->String() + ", " + SFUNCP(functionPointer) + ").";
+      + SPTR(languageName) + ", " + SFUNCP(functionPointer) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
