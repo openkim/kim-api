@@ -500,11 +500,11 @@ implicit none
 
 !-- Transferred variables
 type(kim_model_create_handle_type), intent(inout) :: model_create_handle
-type(kim_length_unit_type), intent(in) :: requested_length_unit
-type(kim_energy_unit_type), intent(in) :: requested_energy_unit
-type(kim_charge_unit_type), intent(in) :: requested_charge_unit
-type(kim_temperature_unit_type), intent(in) :: requested_temperature_unit
-type(kim_time_unit_type), intent(in) :: requested_time_unit
+type(kim_length_unit_type), intent(in), value :: requested_length_unit
+type(kim_energy_unit_type), intent(in), value :: requested_energy_unit
+type(kim_charge_unit_type), intent(in), value :: requested_charge_unit
+type(kim_temperature_unit_type), intent(in), value :: requested_temperature_unit
+type(kim_time_unit_type), intent(in), value :: requested_time_unit
 integer(c_int), intent(out) :: ierr
 
 !-- KIM variables
