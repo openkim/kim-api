@@ -238,7 +238,7 @@ $ cd kim-api-vX.Y.Z
 $ ./configure
 $ make
 $ sudo make install
-$ sudo ldconfig  # on Redhat-like systems you may need to first add /usr/local/lib to /etc/ld.so.conf
+$ sudo ldconfig  # All linux systems should do this; on Redhat-like systems you may need to first add /usr/local/lib to /etc/ld.so.conf
 $ cp -r ./examples/openkim_tests/utility_forces_numer_deriv "${HOME}/"
 $ cd "${HOME}"
 $ rm -r kim-api-vX.Y.Z  kim-api-vX.Y.Z.txz # replace X.Y.Z with the current version number
