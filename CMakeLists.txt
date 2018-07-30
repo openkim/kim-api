@@ -40,6 +40,12 @@ mark_as_advanced(USER_CONFIG_FILE_DIR_NAME)
 set(KIM_LOG_MAXIMUM_LEVEL "ERROR" CACHE STRING "TODO add description here")
 set_property(CACHE KIM_LOG_MAXIMUM_LEVEL PROPERTY STRINGS SILENT FATAL ERROR WARNING INFORMATION DEBUG)
 
+configure_file(cpp/include/KIM_LOG_DEFINES.inc.in KIM_LOG_DEFINES.inc)
+configure_file(cpp/include/KIM_Version.hpp.in KIM_Version.hpp)
+
+
+
+add_subdirectory(c/src)
 add_subdirectory(cpp/src)
 
-add_library(kim-api SHARED $<TARGET_OBJECTS:cpp>)
+add_library(kim-api SHARED $<TARGET_OBJECTS:cpp> $<TARGET_OBJECTS:c>)
