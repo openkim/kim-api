@@ -50,3 +50,60 @@ target_compile_definitions(kim-api PUBLIC
     MODELLIBFILE="lib${MODEL_LIB}"
     MODELDRIVERLIBFILE="lib${MODEL_DRIVER_LIB}"
 )
+
+set(CPP_HEADERS
+    ${CMAKE_CURRENT_SOURCE_DIR}/../include/KIM_ChargeUnit.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../include/KIM_ChargeUnit.inc
+    ${CMAKE_CURRENT_SOURCE_DIR}/../include/KIM_ComputeArgumentName.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../include/KIM_ComputeArgumentName.inc
+    ${CMAKE_CURRENT_SOURCE_DIR}/../include/KIM_ComputeArguments.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../include/KIM_ComputeCallbackName.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../include/KIM_ComputeCallbackName.inc
+    ${CMAKE_CURRENT_SOURCE_DIR}/../include/KIM_DataType.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../include/KIM_DataType.inc
+    ${CMAKE_CURRENT_SOURCE_DIR}/../include/KIM_EnergyUnit.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../include/KIM_EnergyUnit.inc
+    ${CMAKE_CURRENT_SOURCE_DIR}/../include/KIM_func.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../include/KIM_LanguageName.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../include/KIM_LanguageName.inc
+    ${CMAKE_CURRENT_SOURCE_DIR}/../include/KIM_LengthUnit.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../include/KIM_LengthUnit.inc
+    ${CMAKE_CURRENT_SOURCE_DIR}/../include/KIM_Log.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../include/KIM_LogVerbosity.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../include/KIM_ModelComputeArgumentsCreate.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../include/KIM_ModelComputeArgumentsCreateLogMacros.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../include/KIM_ModelComputeArgumentsDestroy.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../include/KIM_ModelComputeArgumentsDestroyLogMacros.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../include/KIM_ModelComputeArguments.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../include/KIM_ModelComputeArgumentsLogMacros.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../include/KIM_ModelCompute.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../include/KIM_ModelComputeLogMacros.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../include/KIM_ModelCreate.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../include/KIM_ModelCreateLogMacros.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../include/KIM_ModelDestroy.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../include/KIM_ModelDestroyLogMacros.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../include/KIM_ModelDriverCreate.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../include/KIM_ModelDriverCreateLogMacros.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../include/KIM_ModelDriverHeaders.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../include/KIM_ModelHeaders.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../include/KIM_Model.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../include/KIM_ModelRefresh.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../include/KIM_ModelRefreshLogMacros.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../include/KIM_Numbering.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../include/KIM_Numbering.inc
+    ${CMAKE_CURRENT_SOURCE_DIR}/../include/KIM_SemVer.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../include/KIM_SimulatorHeaders.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../include/KIM_SpeciesName.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../include/KIM_SpeciesName.inc
+    ${CMAKE_CURRENT_SOURCE_DIR}/../include/KIM_SupportStatus.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../include/KIM_SupportStatus.inc
+    ${CMAKE_CURRENT_SOURCE_DIR}/../include/KIM_TemperatureUnit.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../include/KIM_TemperatureUnit.inc
+    ${CMAKE_CURRENT_SOURCE_DIR}/../include/KIM_TimeUnit.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../include/KIM_TimeUnit.inc
+    ${CMAKE_CURRENT_SOURCE_DIR}/../include/KIM_UnitSystem.hpp
+    ${CMAKE_BINARY_DIR}/KIM_LOG_DEFINES.inc
+    ${CMAKE_BINARY_DIR}/KIM_Version.hpp
+)
+
+install(FILES ${CPP_HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${FULL_PACKAGE_NAME})

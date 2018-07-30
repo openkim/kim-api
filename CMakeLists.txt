@@ -44,6 +44,8 @@ set_property(CACHE KIM_LOG_MAXIMUM_LEVEL PROPERTY STRINGS SILENT FATAL ERROR WAR
 
 configure_file(cpp/include/KIM_LOG_DEFINES.inc.in KIM_LOG_DEFINES.inc)
 configure_file(cpp/include/KIM_Version.hpp.in KIM_Version.hpp)
+configure_file(c/include/KIM_Version.h.in KIM_Version.h)
+configure_file(fortran/include/kim_version.fd.in kim_version.fd)
 
 
 add_library(kim-api SHARED)
