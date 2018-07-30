@@ -55,3 +55,5 @@ add_subdirectory(fortran/src)
 add_subdirectory(fortran/include)
 
 add_subdirectory(cpp/src/utils)
+
+install(TARGETS kim-api DESTINATION ${CMAKE_INSTALL_LIBDIR})
