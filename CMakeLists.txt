@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.0)
 
-project(kim-api VERSION 2.0.0 LANGUAGES CXX)
+project(kim-api VERSION 2.0.0 LANGUAGES C CXX Fortran)
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
@@ -47,5 +47,7 @@ configure_file(cpp/include/KIM_Version.hpp.in KIM_Version.hpp)
 
 add_subdirectory(c/src)
 add_subdirectory(cpp/src)
+add_subdirectory(fortran/src)
+add_subdirectory(fortran/include)
 
-add_library(kim-api SHARED $<TARGET_OBJECTS:cpp> $<TARGET_OBJECTS:c>)
+add_library(kim-api SHARED $<TARGET_OBJECTS:cpp> $<TARGET_OBJECTS:c> $<TARGET_OBJECTS:fortran_impl> $<TARGET_OBJECTS:fortran_mods>)
