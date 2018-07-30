@@ -34,9 +34,9 @@
 # Release: This file is part of the kim-api.git repository.
 #
 
-collections_info=###COLLECTIONS#INFO#UTILITY###
-build_config=###BUILD#CONFIG###
-major_version=###MAJOR#VERSION###
+collections_info=@PACKAGE_DIR@/libexec/@FULL_PACKAGE_NAME@/@FULL_PACKAGE_NAME@-collections-info
+build_config=@PACKAGE_DIR@/bin/@FULL_PACKAGE_NAME@-build-config
+major_version=@KIM_MAJOR_VERSION@
 
 make_command="make --no-print-directory"
 
@@ -284,7 +284,7 @@ get_build_install_item () {
 
   # create private temporary directory
   if test x"" = x"${TMPDIR}"; then TMPDIR="/tmp"; fi
-  local build_dir="`mktemp -d "${TMPDIR}/###FULL#PACKAGE#NAME###-build-XXXXXXXXXX"`"
+  local build_dir="`mktemp -d "${TMPDIR}/@FULL_PACKAGE_NAME@-build-XXXXXXXXXX"`"
   if test $? -ne 0; then
     printf "Unable to create temporary directory.\n"
     return 1;

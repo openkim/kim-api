@@ -1,41 +1,42 @@
-set(CPP_SOURCES KIM_ChargeUnit.cpp
-                KIM_ComputeArgumentName.cpp
-                KIM_ComputeArguments.cpp
-                KIM_ComputeCallbackName.cpp
-                KIM_DataType.cpp
-                KIM_EnergyUnit.cpp
-                KIM_LanguageName.cpp
-                KIM_LengthUnit.cpp
-                KIM_Log.cpp
-                KIM_LogVerbosity.cpp
-                KIM_Model.cpp
-                KIM_ModelCompute.cpp
-                KIM_ModelComputeArguments.cpp
-                KIM_ModelComputeArgumentsCreate.cpp
-                KIM_ModelComputeArgumentsDestroy.cpp
-                KIM_ModelCreate.cpp
-                KIM_ModelDestroy.cpp
-                KIM_ModelDriverCreate.cpp
-                KIM_ModelRefresh.cpp
-                KIM_Numbering.cpp
-                KIM_SemVer.cpp
-                KIM_SpeciesName.cpp
-                KIM_SupportStatus.cpp
-                KIM_TemperatureUnit.cpp
-                KIM_TimeUnit.cpp
-                KIM_ComputeArgumentsImplementation.cpp
-                KIM_LogImplementation.cpp
-                KIM_ModelImplementation.cpp
-                KIM_ModelLibrary.cpp
-                old_KIM_API_DIRS.cpp)
+set(CPP_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ChargeUnit.cpp
+                ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ComputeArgumentName.cpp
+                ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ComputeArguments.cpp
+                ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ComputeCallbackName.cpp
+                ${CMAKE_CURRENT_SOURCE_DIR}/KIM_DataType.cpp
+                ${CMAKE_CURRENT_SOURCE_DIR}/KIM_EnergyUnit.cpp
+                ${CMAKE_CURRENT_SOURCE_DIR}/KIM_LanguageName.cpp
+                ${CMAKE_CURRENT_SOURCE_DIR}/KIM_LengthUnit.cpp
+                ${CMAKE_CURRENT_SOURCE_DIR}/KIM_Log.cpp
+                ${CMAKE_CURRENT_SOURCE_DIR}/KIM_LogVerbosity.cpp
+                ${CMAKE_CURRENT_SOURCE_DIR}/KIM_Model.cpp
+                ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ModelCompute.cpp
+                ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ModelComputeArguments.cpp
+                ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ModelComputeArgumentsCreate.cpp
+                ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ModelComputeArgumentsDestroy.cpp
+                ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ModelCreate.cpp
+                ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ModelDestroy.cpp
+                ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ModelDriverCreate.cpp
+                ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ModelRefresh.cpp
+                ${CMAKE_CURRENT_SOURCE_DIR}/KIM_Numbering.cpp
+                ${CMAKE_CURRENT_SOURCE_DIR}/KIM_SemVer.cpp
+                ${CMAKE_CURRENT_SOURCE_DIR}/KIM_SpeciesName.cpp
+                ${CMAKE_CURRENT_SOURCE_DIR}/KIM_SupportStatus.cpp
+                ${CMAKE_CURRENT_SOURCE_DIR}/KIM_TemperatureUnit.cpp
+                ${CMAKE_CURRENT_SOURCE_DIR}/KIM_TimeUnit.cpp
+                ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ComputeArgumentsImplementation.cpp
+                ${CMAKE_CURRENT_SOURCE_DIR}/KIM_LogImplementation.cpp
+                ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ModelImplementation.cpp
+                ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ModelLibrary.cpp
+                ${CMAKE_CURRENT_SOURCE_DIR}/old_KIM_API_DIRS.cpp)
 
-add_library(cpp OBJECT ${CPP_SOURCES})
+target_sources(kim-api PRIVATE ${CPP_SOURCES})
 
-target_include_directories(cpp PRIVATE ../include)
-target_include_directories(cpp PRIVATE ../../c/include)
-target_include_directories(cpp PRIVATE ${CMAKE_BINARY_DIR})
+target_include_directories(kim-api PUBLIC ../include)
+target_include_directories(kim-api PUBLIC ../../c/include)
+target_include_directories(kim-api PUBLIC ${CMAKE_BINARY_DIR})
+target_include_directories(kim-api PUBLIC ../src)
 
-target_compile_definitions(cpp PRIVATE
+target_compile_definitions(kim-api PUBLIC
     PACKAGEDIR="${PACKAGE_DIR}"
     KIMDIR="${KIM_DIR}"
     KIMLIBBUILD="${KIM_LIB_BUILD}.so"

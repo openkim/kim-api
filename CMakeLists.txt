@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.0)
 
 project(kim-api VERSION 2.0.0 LANGUAGES C CXX Fortran)
 
-set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+include(GNUInstallDirs)
 
 set(KIM_VERSION_MAJOR ${PROJECT_VERSION_MAJOR})
 set(KIM_VERSION_MINOR ${PROJECT_VERSION_MINOR})
@@ -21,6 +21,8 @@ if(KIM_VERSION_BUILD_METADATA)
 endif()
 
 set(PACKAGE_NAME "kim-api" CACHE STRING "TODO add description here")
+set(FULL_PACKAGE_NAME "${PACKAGE_NAME}-v${KIM_VERSION_MAJOR}")
+set(PACKAGE_DIR "${CMAKE_INSTALL_FULL_LIBDIR}/${FULL_PACKAGE_NAME}")
 
 set(LIB_ROOT       ${PACKAGE_NAME})
 set(KIM_DIR        "${CMAKE_SOURCE_DIR}")
@@ -44,10 +46,12 @@ configure_file(cpp/include/KIM_LOG_DEFINES.inc.in KIM_LOG_DEFINES.inc)
 configure_file(cpp/include/KIM_Version.hpp.in KIM_Version.hpp)
 
 
+add_library(kim-api SHARED)
+target_link_libraries(kim-api ${CMAKE_DL_LIBS})
 
 add_subdirectory(c/src)
 add_subdirectory(cpp/src)
 add_subdirectory(fortran/src)
 add_subdirectory(fortran/include)
 
-add_library(kim-api SHARED $<TARGET_OBJECTS:cpp> $<TARGET_OBJECTS:c> $<TARGET_OBJECTS:fortran_impl> $<TARGET_OBJECTS:fortran_mods>)
+add_subdirectory(cpp/src/utils)
