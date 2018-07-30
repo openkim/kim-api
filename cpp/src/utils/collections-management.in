@@ -34,8 +34,8 @@
 # Release: This file is part of the kim-api.git repository.
 #
 
-collections_info=@PACKAGE_DIR@/libexec/@FULL_PACKAGE_NAME@/@FULL_PACKAGE_NAME@-collections-info
-build_config=@PACKAGE_DIR@/bin/@FULL_PACKAGE_NAME@-build-config
+collections_info=@CMAKE_INSTALL_FULL_LIBEXECDIR@/@FULL_PACKAGE_NAME@-collections-info
+build_config=@CMAKE_INSTALL_FULL_BINDIR@/@FULL_PACKAGE_NAME@-build-config
 major_version=@KIM_MAJOR_VERSION@
 
 make_command="make --no-print-directory"

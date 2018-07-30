@@ -14,7 +14,7 @@ target_link_libraries(${SIMULATOR_MODEL} kim-api)
 add_executable(${COLLECTIONS_INFO} collections-info.cpp)
 target_link_libraries(${COLLECTIONS_INFO} kim-api)
 
-install(TARGETS ${COLLECTIONS_INFO} DESTINATION ${CMAKE_INSTALL_BINDIR})
+install(TARGETS ${COLLECTIONS_INFO} DESTINATION ${CMAKE_INSTALL_LIBEXECDIR})
 
 install(
   FILES ${CMAKE_CURRENT_BINARY_DIR}/${ACTIVATE_SCRIPT}
