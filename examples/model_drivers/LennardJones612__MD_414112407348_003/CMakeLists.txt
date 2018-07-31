@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 3.0)
 find_package(PkgConfig)
-pkg_check_modules(KIM-API REQUIRED libkim-api-v2)
+if(TARGET kim-api)
+  set(KIM-API_LDFLAGS kim-api)
+else()
+  pkg_check_modules(KIM-API REQUIRED libkim-api-v2)
+endif()
 
 set(MODEL_DRIVER_NAME "LennardJones612__MD_414112407348_003")
 set(MODEL_DRIVER_CREATE_FUNCTION_NAME "model_driver_create")
