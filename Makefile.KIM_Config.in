@@ -30,7 +30,7 @@
 # Release: This file is part of the kim-api.git repository.
 #
 
-KIM_DIR = $(HOME)/kim-api-vX.Y.Z
+KIM_DIR = @CMAKE_INSTALL_LIBDIR@/@FULL_PACKAGE_NAME@
 
 KIM_COMPILERSUITE = GCC
 KIM_SYSTEMLINKER = linux
@@ -47,7 +47,7 @@ include $(KIM_DIR)/build_system/Makefile.LoadDefaults
 # override default kim-api maximum log verbosity value
 # See the INSTALL file for valid options
 # (uncomment the line below if desired)
-# KIM_LOG_MAXIMUM_LEVEL = KIM_LOG_VERBOSITY_DEBUG_
+KIM_LOG_MAXIMUM_LEVEL = KIM_LOG_VERBOSITY_@KIM_LOG_MAXIMUM_LEVEL@_
 
 # override default compiler options and other variables here
 
@@ -57,7 +57,7 @@ include $(KIM_DIR)/build_system/Makefile.LoadDefaults
 #user_config_file_dir_name =
 
 # override default install options
-#prefix =
+prefix = @CMAKE_INSTALL_PREFIX@
 #exec_prefix =
 #bindir =
 #libexecdir =

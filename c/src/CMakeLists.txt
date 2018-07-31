@@ -25,11 +25,11 @@ set(C_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ChargeUnit_c.cpp
               ${CMAKE_CURRENT_SOURCE_DIR}/KIM_TimeUnit_c.cpp
               )
 
-target_sources(kim-api PRIVATE ${C_SOURCES})
+target_sources(${FULL_PACKAGE_NAME} PRIVATE ${C_SOURCES})
 
-target_include_directories(kim-api PRIVATE ../include)
-target_include_directories(kim-api PRIVATE ../../cpp/include)
-target_include_directories(kim-api PRIVATE ${CMAKE_BINARY_DIR})
+target_include_directories(${FULL_PACKAGE_NAME} PRIVATE ../include)
+target_include_directories(${FULL_PACKAGE_NAME} PRIVATE ../../cpp/include)
+target_include_directories(${FULL_PACKAGE_NAME} PRIVATE ${CMAKE_BINARY_DIR})
 
 set(C_HEADERS
     ${CMAKE_CURRENT_SOURCE_DIR}/../include/KIM_ChargeUnit.h

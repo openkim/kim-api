@@ -25,6 +25,6 @@ set(F_SOURCES
    ${CMAKE_CURRENT_SOURCE_DIR}/kim_temperature_unit_f.f90
    ${CMAKE_CURRENT_SOURCE_DIR}/kim_time_unit_f.f90)
 
-target_sources(kim-api PRIVATE ${F_SOURCES})
+target_sources(${FULL_PACKAGE_NAME} PRIVATE ${F_SOURCES})
 
-target_include_directories(kim-api PRIVATE ../include)
+target_include_directories(${FULL_PACKAGE_NAME} PRIVATE ../include)

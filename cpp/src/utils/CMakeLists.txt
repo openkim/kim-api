@@ -9,10 +9,10 @@ configure_file(activate.sh.in ${ACTIVATE_SCRIPT})
 configure_file(deactivate.sh.in ${DEACTIVATE_SCRIPT})
 
 add_executable(${SIMULATOR_MODEL} simulator-model.cpp)
-target_link_libraries(${SIMULATOR_MODEL} kim-api)
+target_link_libraries(${SIMULATOR_MODEL} ${FULL_PACKAGE_NAME})
 
 add_executable(${COLLECTIONS_INFO} collections-info.cpp)
-target_link_libraries(${COLLECTIONS_INFO} kim-api)
+target_link_libraries(${COLLECTIONS_INFO} ${FULL_PACKAGE_NAME})
 
 install(TARGETS ${COLLECTIONS_INFO} DESTINATION ${CMAKE_INSTALL_LIBEXECDIR})
 
