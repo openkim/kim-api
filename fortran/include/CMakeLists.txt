@@ -16,10 +16,13 @@ set(F_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/kim_model_create_module.f90
     ${CMAKE_CURRENT_SOURCE_DIR}/kim_model_destroy_module.f90
     ${CMAKE_CURRENT_SOURCE_DIR}/kim_model_driver_create_module.f90
+    ${CMAKE_CURRENT_SOURCE_DIR}/kim_model_driver_headers_module.f90
+    ${CMAKE_CURRENT_SOURCE_DIR}/kim_model_headers_module.f90
     ${CMAKE_CURRENT_SOURCE_DIR}/kim_model_module.f90
     ${CMAKE_CURRENT_SOURCE_DIR}/kim_model_refresh_module.f90
     ${CMAKE_CURRENT_SOURCE_DIR}/kim_numbering_module.f90
     ${CMAKE_CURRENT_SOURCE_DIR}/kim_sem_ver_module.f90
+    ${CMAKE_CURRENT_SOURCE_DIR}/kim_simulator_headers_module.f90
     ${CMAKE_CURRENT_SOURCE_DIR}/kim_species_name_module.f90
     ${CMAKE_CURRENT_SOURCE_DIR}/kim_support_status_module.f90
     ${CMAKE_CURRENT_SOURCE_DIR}/kim_temperature_unit_module.f90
@@ -46,10 +49,13 @@ set(FORTRAN_INCLUDES
     ${CMAKE_BINARY_DIR}/kim_model_create_module.mod
     ${CMAKE_BINARY_DIR}/kim_model_destroy_module.mod
     ${CMAKE_BINARY_DIR}/kim_model_driver_create_module.mod
+    ${CMAKE_BINARY_DIR}/kim_model_driver_headers_module.mod
+    ${CMAKE_BINARY_DIR}/kim_model_headers_module.mod
     ${CMAKE_BINARY_DIR}/kim_model_module.mod
     ${CMAKE_BINARY_DIR}/kim_model_refresh_module.mod
     ${CMAKE_BINARY_DIR}/kim_numbering_module.mod
     ${CMAKE_BINARY_DIR}/kim_sem_ver_module.mod
+    ${CMAKE_BINARY_DIR}/kim_simulator_headers_module.mod
     ${CMAKE_BINARY_DIR}/kim_species_name_module.mod
     ${CMAKE_BINARY_DIR}/kim_support_status_module.mod
     ${CMAKE_BINARY_DIR}/kim_temperature_unit_module.mod
