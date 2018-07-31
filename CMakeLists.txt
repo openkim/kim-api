@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.0)
 
 set(PACKAGE_NAME "kim-api" CACHE STRING "TODO add description here")
+set(SANITIZED_PACKAGE_NAME "kim_api")
 
 project(${PACKAGE_NAME} VERSION 2.0.0 LANGUAGES C CXX Fortran)
 include(GNUInstallDirs)

@@ -30,7 +30,7 @@
 # Release: This file is part of the kim-api.git repository.
 #
 
-_@SANITIZED_FULL_PROJECT_NAME@_build_config()
+_@SANITIZED_FULL_PACKAGE_NAME@_build_config()
 {
   local cur stand_alone_opts combine_opts
   # NOTE: leading and trailing spaces are necessary for the below two vars.
@@ -61,7 +61,7 @@ _@SANITIZED_FULL_PROJECT_NAME@_build_config()
 
   return 1
 }
-complete -F _@SANITIZED_FULL_PROJECT_NAME@_build_config @FULL_PACKAGE_NAME@-build-config
+complete -F _@SANITIZED_FULL_PACKAGE_NAME@_build_config @FULL_PACKAGE_NAME@-build-config
 
 
 _@SANITIZED_FULL_PACKAGE_NAME@_collections_management()

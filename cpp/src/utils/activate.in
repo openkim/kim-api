@@ -47,7 +47,7 @@ if test x"`basename "$0" 2> /dev/null`" \
   exit 1
 fi
 
-export PATH="${_package_dir}/bin:${PATH}"
+export PATH="@CMAKE_INSTALL_FULL_BINDIR@:${PATH}"
 
 source "${_sysconfdir}/bash_completion.d/${_full_package_name}-completion.bash"
 

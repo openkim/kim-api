@@ -30,7 +30,7 @@
 # Release: This file is part of the kim-api.git repository.
 #
 
-KIM_DIR = @CMAKE_INSTALL_LIBDIR@/@FULL_PACKAGE_NAME@
+KIM_DIR = @CMAKE_INSTALL_FULL_LIBDIR@/@FULL_PACKAGE_NAME@
 
 KIM_COMPILERSUITE = GCC
 KIM_SYSTEMLINKER = linux
@@ -57,7 +57,7 @@ KIM_LOG_MAXIMUM_LEVEL = KIM_LOG_VERBOSITY_@KIM_LOG_MAXIMUM_LEVEL@_
 #user_config_file_dir_name =
 
 # override default install options
-prefix = @CMAKE_INSTALL_PREFIX@
+prefix = @CMAKE_INSTALL_FULL_PREFIX@
 #exec_prefix =
 #bindir =
 #libexecdir =
