@@ -1,0 +1,58 @@
+FROM fedora:latest
+
+ARG COVERAGE
+ARG CC
+ARG CXX
+ARG CXXFLAGS
+ARG FC
+ARG CMAKE_BUILD_TYPE
+
+#for coverage
+ARG CI
+ARG TRAVIS
+ARG TRAVIS_BRANCH
+ARG TRAVIS_JOB_NUMBER
+ARG TRAVIS_PULL_REQUEST
+ARG TRAVIS_JOB_ID
+ARG TRAVIS_TAG
+ARG TRAVIS_REPO_SLUG
+ARG TRAVIS_COMMIT
+ARG TRAVIS_OS_NAME
+
+RUN dnf -y install make cmake git gcc-c++ gcc-gfortran ccache wget
+RUN wget -O /usr/bin/codecov https://codecov.io/bash
+RUN chmod +x /usr/bin/codecov
+
+RUN useradd -m kim
+USER kim
+ENV PATH=/usr/lib64/ccache:${PATH}
+ENV CCACHE_MAXSIZE=250M
+
+COPY kim-api/ /home/kim/kim-api
+RUN rm -rf /home/kim/.ccache
+COPY ccache/ /home/kim/.ccache
+USER root
+RUN chown -R kim:kim /home/kim/kim-api /home/kim/.ccache
+USER kim
+
+WORKDIR /home/kim/kim-api
+RUN mkdir build
+WORKDIR build
+RUN ccache -z
+RUN cmake -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} \
+          -DCMAKE_INSTALL_PREFIX=/usr \
+          ${COVERAGE:+-DENABLE_COVERAGE_BUILD=ON} \
+  ..
+RUN make -j2
+RUN ccache -s
+RUN make install DESTDIR=${PWD}/install && rm -rf ${PWD}/install/usr && rmdir ${PWD}/install
+RUN if [ ${COVERAGE} ]; then \
+  if [ ${CC} = clang ]; then \
+    codecov -R ${PWD}/../${TRAVIS_REPO_SLUG#*/} -F "${CC}" -x "llvm-cov gcov" 2>&1 | grep -v "arcs.*block"; \
+  else \
+    codecov -R ${PWD}/../${TRAVIS_REPO_SLUG#*/} -F "${CC}" 2>&1 | grep -v "arcs.*block"; \
+  fi; \
+fi
+USER root
+RUN make install
+USER kim

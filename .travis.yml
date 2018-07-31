@@ -1,11 +1,42 @@
 language: cpp
 
-addons:
-  apt:
-    packages:
-      - gfortran
-      - cmake
+sudo: required
+
+services:
+- docker
+
+env:
+  matrix:
+    - DISTRO=fedora DOCKERHUB=true
+
+before_script:
+  - mkdir ${HOME}/docker
+  - cp -v docker/Dockerfile.${DISTRO} ${HOME}/docker/Dockerfile
+  - cd ../../
+  - mv -v ${TRAVIS_REPO_SLUG} $HOME/docker
+  - cp -r $HOME/.ccache ${HOME}/docker/ccache
 
 script:
- - mkdir build && cd build && cmake .. && make
- - make install DESTDIR=$PWD && rm -rf ./usr/local/* && rmdir ./usr/local
+  - travis_retry docker build -t ${TRAVIS_REPO_SLUG}:${DISTRO}
+                 --build-arg CC=${CC} --build-arg CXX=${CXX} --build-arg FC=${FC}
+                 --build-arg CXXFLAGS="${CXXFLAGS}" --build-arg CMAKE_BUILD_TYPE="${CMAKE_BUILD_TYPE}"
+                 --build-arg COVERAGE="${COVERAGE}"
+                 --build-arg CI=${CI} --build-arg TRAVIS=${TRAVIS} --build-arg TRAVIS_OS_NAME=${DISTRO:-fedora}
+                 --build-arg TRAVIS_BRANCH=${TRAVIS_BRANCH} --build-arg TRAVIS_JOB_NUMBER=${TRAVIS_JOB_NUMBER}
+                 --build-arg TRAVIS_PULL_REQUEST=${TRAVIS_PULL_REQUEST} --build-arg TRAVIS_JOB_ID=${TRAVIS_JOB_ID}
+                 --build-arg TRAVIS_TAG=${TRAVIS_TAG} --build-arg TRAVIS_REPO_SLUG=${TRAVIS_REPO_SLUG}
+                 --build-arg TRAVIS_COMMIT=${TRAVIS_COMMIT}
+                 ${HOME}/docker/ &&
+    rm -rf $HOME/.ccache &&
+    CON=$(docker run -d ${TRAVIS_REPO_SLUG}:${DISTRO} /bin/bash) &&
+    docker cp ${CON}:/home/kim/.ccache ${HOME}/;
+
+after_success:
+  - if [[ ${DOCKERHUB} && ${DOCKER_USERNAME} && ${DOCKER_PASSWORD} && ${TRAVIS_BRANCH} && ${TRAVIS_PULL_REQUEST} == false ]]; then
+      docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
+      docker push "${TRAVIS_REPO_SLUG}:${DISTRO}";
+    fi
+
+cache:
+  - ccache
+
