@@ -2,7 +2,7 @@ set(BASH_COMPLETIONS ${FULL_PACKAGE_NAME}-completion.bash)
 
 set(SANITIZED_FULL_PACKAGE_NAME ${PACKAGE_NAME}_v${KIM_VERSION_MAJOR})
 
-configure_file(completion.bash.sh.in ${BASH_COMPLETIONS} @ONLY)
+configure_file(completion.bash.in ${BASH_COMPLETIONS} @ONLY)
 
 install(
   FILES ${CMAKE_CURRENT_BINARY_DIR}/${BASH_COMPLETIONS}
