@@ -4,16 +4,8 @@ addons:
   apt:
     packages:
       - gfortran
+      - cmake
 
 script:
- - ./configure --prefix="${PWD}/install"
- - make
- - make install
- - cd examples
- - make all-system
- - cd simulators/ex_test_Ar_fcc_cluster_cpp
- - printf LennardJones612_UniversalShifted__MO_959249795837_003 | ./ex_test_Ar_fcc_cluster_cpp
- - printf ex_model_Ar_P_LJ | ./ex_test_Ar_fcc_cluster_cpp
- - printf ex_model_Ar_P_MLJ_F03 | ./ex_test_Ar_fcc_cluster_cpp
- - printf ex_model_Ar_P_Morse | ./ex_test_Ar_fcc_cluster_cpp
- - printf ex_model_Ar_P_Morse_07C | ./ex_test_Ar_fcc_cluster_cpp
+ - mkdir build && cd build && cmake .. && make
+ - make install DESTDIR=$PWD && rm -rf ./usr/local/* && rmdir ./usr/local
