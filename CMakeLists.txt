@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.0)
 set(PACKAGE_NAME "kim-api" CACHE STRING "TODO add description here")
 set(SANITIZED_PACKAGE_NAME "kim_api")
 
-project(${PACKAGE_NAME} VERSION 2.0.0 LANGUAGES C CXX Fortran)
+project(kim-api VERSION 2.0.0 LANGUAGES C CXX Fortran)
 include(GNUInstallDirs)
 
 set(KIM_VERSION_MAJOR ${PROJECT_VERSION_MAJOR})
@@ -11,7 +11,8 @@ set(KIM_VERSION_MINOR ${PROJECT_VERSION_MINOR})
 set(KIM_VERSION_PATCH ${PROJECT_VERSION_PATCH})
 set(KIM_VERSION_PRERELEASE git)
 set(KIM_VERSION_BUILD_METADATA)
-# TODO : translate next line for metadata
+# TODO : translate next line for metadata :: http://xit0.org/2013/04/cmake-use-git-branch-and-commit-details-in-project/
+# more complex: https://github.com/votca/tools/blob/master/CMakeModules/gitversion.cmake
 # $(shell git rev-parse --short HEAD)$(shell if ! (git diff --quiet && git diff --cached --quiet); then printf ".dirty"; fi).$(KIM_COMPILERSUITE).$(KIM_SYSTEMLINKER).$(KIM_SYSTEMARCH).$(KIM_LINK)
 
 set(KIM_VERSION_STRING "${KIM_VERSION_MAJOR}.${KIM_VERSION_MINOR}.${KIM_VERSION_PATCH}")
@@ -53,8 +54,9 @@ configure_file(fortran/include/kim_version.fd.in kim_version.fd)
 configure_file(Makefile.KIM_Config.in Makefile.KIM_Config)
 configure_file(Makefile.Version.in Makefile.Version)
 
-add_library(${FULL_PACKAGE_NAME} SHARED)
-target_link_libraries(${FULL_PACKAGE_NAME} ${CMAKE_DL_LIBS})
+add_library(kim-api SHARED)
+target_link_libraries(kim-api ${CMAKE_DL_LIBS})
+set_target_properties(kim-api PROPERTIES OUTPUT_NAME ${FULL_PACKAGE_NAME})
 
 add_subdirectory(c/src)
 add_subdirectory(cpp/src)
@@ -64,7 +66,7 @@ add_subdirectory(fortran/include)
 add_subdirectory(completion)
 add_subdirectory(cpp/src/utils)
 
-install(TARGETS ${FULL_PACKAGE_NAME} DESTINATION ${CMAKE_INSTALL_LIBDIR})
+install(TARGETS kim-api DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
 install(FILES ${CMAKE_BINARY_DIR}/Makefile.KIM_Config DESTINATION ${CMAKE_INSTALL_LIBDIR}/${FULL_PACKAGE_NAME})
 install(FILES ${CMAKE_BINARY_DIR}/Makefile.Version DESTINATION ${CMAKE_INSTALL_LIBDIR}/${FULL_PACKAGE_NAME})

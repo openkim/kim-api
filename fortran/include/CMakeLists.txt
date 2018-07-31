@@ -26,7 +26,7 @@ set(F_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/kim_time_unit_module.f90
     ${CMAKE_CURRENT_SOURCE_DIR}/kim_unit_system_module.f90)
 
-target_sources(${FULL_PACKAGE_NAME} PRIVATE ${F_SOURCES})
+target_sources(kim-api PRIVATE ${F_SOURCES})
 
 set(FORTRAN_INCLUDES
     ${CMAKE_BINARY_DIR}/kim_charge_unit_module.mod

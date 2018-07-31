@@ -29,14 +29,14 @@ set(CPP_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ChargeUnit.cpp
                 ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ModelLibrary.cpp
                 ${CMAKE_CURRENT_SOURCE_DIR}/old_KIM_API_DIRS.cpp)
 
-target_sources(${FULL_PACKAGE_NAME} PRIVATE ${CPP_SOURCES})
+target_sources(kim-api PRIVATE ${CPP_SOURCES})
 
-target_include_directories(${FULL_PACKAGE_NAME} PUBLIC ../include)
-target_include_directories(${FULL_PACKAGE_NAME} PUBLIC ../../c/include)
-target_include_directories(${FULL_PACKAGE_NAME} PUBLIC ${CMAKE_BINARY_DIR})
-target_include_directories(${FULL_PACKAGE_NAME} PUBLIC ../src)
+target_include_directories(kim-api PUBLIC ../include)
+target_include_directories(kim-api PUBLIC ../../c/include)
+target_include_directories(kim-api PUBLIC ${CMAKE_BINARY_DIR})
+target_include_directories(kim-api PUBLIC ../src)
 
-target_compile_definitions(${FULL_PACKAGE_NAME} PUBLIC
+target_compile_definitions(kim-api PUBLIC
     PACKAGEDIR="${PACKAGE_DIR}"
     KIMDIR="${KIM_DIR}"
     KIMLIBBUILD="${KIM_LIB_BUILD}.so"

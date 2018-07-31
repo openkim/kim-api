@@ -9,14 +9,16 @@ configure_file(collections-management.in ${COLLECTIONS_MANAGEMENT} @ONLY)
 configure_file(activate.in ${ACTIVATE_SCRIPT} @ONLY)
 configure_file(deactivate.in ${DEACTIVATE_SCRIPT} @ONLY)
 
-add_executable(${SIMULATOR_MODEL} simulator-model.cpp)
-target_link_libraries(${SIMULATOR_MODEL} ${FULL_PACKAGE_NAME})
+add_executable(simulator-model simulator-model.cpp)
+target_link_libraries(simulator-model kim-api)
+set_target_properties(simulator-model PROPERTIES OUTPUT_NAME ${SIMULATOR_MODEL})
 
-add_executable(${COLLECTIONS_INFO} collections-info.cpp)
-target_link_libraries(${COLLECTIONS_INFO} ${FULL_PACKAGE_NAME})
+add_executable(collections-info collections-info.cpp)
+target_link_libraries(collections-info kim-api)
+set_target_properties(collections-info PROPERTIES OUTPUT_NAME ${COLLECTIONS_INFO})
 
-add_executable(${BUILD_CONFIG} build-config.cpp)
-target_compile_definitions(${BUILD_CONFIG} PRIVATE
+add_executable(build-config build-config.cpp)
+target_compile_definitions(build-config PRIVATE
   CC_STRING="${CMAKE_C_COMPILER}"
   CXX_STRING="${CMAKE_CXX_COMPILER}"
   FC_STRING="${CMAKE_Fortran_COMPILER}"
@@ -35,9 +37,10 @@ target_compile_definitions(${BUILD_CONFIG} PRIVATE
   LIBEXECPATH_STRING="${CMAKE_INSTALL_FULL_LIBEXECDIR}/${FULL_PACKAGE_NAME}"
   VERSION_STRING="${KIM_VERSION_STRING}"
   )
+set_target_properties(build-config PROPERTIES OUTPUT_NAME ${BUILD_CONFIG})
 
-install(TARGETS ${BUILD_CONFIG} DESTINATION  ${CMAKE_INSTALL_BINDIR})
-install(TARGETS ${COLLECTIONS_INFO} ${SIMULATOR_MODEL} DESTINATION ${CMAKE_INSTALL_LIBEXECDIR}/${FULL_PACKAGE_NAME})
+install(TARGETS build-config DESTINATION  ${CMAKE_INSTALL_BINDIR})
+install(TARGETS collections-info simulator-model DESTINATION ${CMAKE_INSTALL_LIBEXECDIR}/${FULL_PACKAGE_NAME})
 
 install(
   PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/${ACTIVATE_SCRIPT}

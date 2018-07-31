@@ -34,7 +34,6 @@
 #
 
 
-_package_dir=@PACKAGE_DIR@
 _sysconfdir=@CMAKE_INSTALL_FULL_SYSCONFDIR@
 _full_package_name=@FULL_PACKAGE_NAME@
 
@@ -51,6 +50,5 @@ export PATH="@CMAKE_INSTALL_FULL_BINDIR@:${PATH}"
 
 source "${_sysconfdir}/bash_completion.d/${_full_package_name}-completion.bash"
 
-unset _package_dir
 unset _sysconfdir
 unset _full_package_name

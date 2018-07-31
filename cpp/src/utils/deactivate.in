@@ -34,7 +34,6 @@
 #
 
 
-_package_dir=@PACKAGE_DIR@
 _sysconfdir=@CMAKE_INSTALL_FULL_SYSCONFDIR@
 _full_package_name=@FULL_PACKAGE_NAME@
 
@@ -59,6 +58,5 @@ for _func in `grep "_${_full_package_name}-.*[[:space:]]*()" \
 done
 
 unset _func
-unset _package_dir
 unset _sysconfdir
 unset _full_package_name
