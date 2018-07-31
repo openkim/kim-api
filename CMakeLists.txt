@@ -60,6 +60,7 @@ add_subdirectory(cpp/src)
 add_subdirectory(fortran/src)
 add_subdirectory(fortran/include)
 
+add_subdirectory(completion)
 add_subdirectory(cpp/src/utils)
 
 install(TARGETS ${FULL_PACKAGE_NAME} DESTINATION ${CMAKE_INSTALL_LIBDIR})
@@ -68,7 +69,6 @@ install(FILES ${CMAKE_BINARY_DIR}/Makefile.KIM_Config DESTINATION ${CMAKE_INSTAL
 install(FILES ${CMAKE_BINARY_DIR}/Makefile.Version DESTINATION ${CMAKE_INSTALL_LIBDIR}/${FULL_PACKAGE_NAME})
 
 set(BUILD_SYSTEM
-  ${CMAKE_CURRENT_SOURCE_DIR}/build_system/Makefile
   ${CMAKE_CURRENT_SOURCE_DIR}/build_system/Makefile.Generic
   ${CMAKE_CURRENT_SOURCE_DIR}/build_system/Makefile.LoadDefaults
   ${CMAKE_CURRENT_SOURCE_DIR}/build_system/Makefile.ModelDriver

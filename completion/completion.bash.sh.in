@@ -30,7 +30,7 @@
 # Release: This file is part of the kim-api.git repository.
 #
 
-_###SANITIZED#FULL#PACKAGE#NAME###_build_config()
+_@SANITIZED_FULL_PROJECT_NAME@_build_config()
 {
   local cur stand_alone_opts combine_opts
   # NOTE: leading and trailing spaces are necessary for the below two vars.
@@ -61,13 +61,13 @@ _###SANITIZED#FULL#PACKAGE#NAME###_build_config()
 
   return 1
 }
-complete -F _###SANITIZED#FULL#PACKAGE#NAME###_build_config ###FULL#PACKAGE#NAME###-build-config
+complete -F _@SANITIZED_FULL_PROJECT_NAME@_build_config @FULL_PACKAGE_NAME@-build-config
 
 
-_###SANITIZED#FULL#PACKAGE#NAME###_collections_management()
+_@SANITIZED_FULL_PACKAGE_NAME@_collections_management()
 {
   local collections_info
-  collections_info=###COLLECTIONS#INFO#UTILITY###
+  collections_info=@CMAKE_INSTALL_LIBEXECDIR@/@FULL_PACKAGE_NAME@-collections-info
 
   local cur subcommands opts
   subcommands="list set-user-models-dir set-user-drivers-dir install reinstall"
@@ -128,7 +128,7 @@ _###SANITIZED#FULL#PACKAGE#NAME###_collections_management()
           opts="OpenKIM OpenKIM_with_history"
         fi
 
-        local query='query={"type":"mo","kim-api-version":{"$regex":"^###MAJOR#VERSION###\\."}}'
+        local query='query={"type":"mo","kim-api-version":{"$regex":"^@KIM_VERSION_MAJOR@\\."}}'
         query="${query}"'&fields={"kimcode":1}'
         query="${query}"'&database=obj&history=on'
         local list=`wget -q -O - --post-data="${query}" \
@@ -180,4 +180,4 @@ _###SANITIZED#FULL#PACKAGE#NAME###_collections_management()
   fi
   return 1
 }
-complete -F _###SANITIZED#FULL#PACKAGE#NAME###_collections_management ###FULL#PACKAGE#NAME###-collections-management
+complete -F _@SANITIZED_FULL_PACKAGE_NAME@_collections_management @FULL_PACKAGE_NAME@-collections-management
