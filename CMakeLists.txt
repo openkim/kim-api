@@ -1,16 +1,16 @@
 cmake_minimum_required(VERSION 3.0)
 
-# TODO : figure this RPATH stuff all out
-#SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
-#SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
-#SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_FULL_LIBDIR}")
-#SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-
 set(PACKAGE_NAME "kim-api" CACHE STRING "TODO add description here")
 set(SANITIZED_PACKAGE_NAME "kim_api")
 
 project(kim-api VERSION 2.0.0 LANGUAGES C CXX Fortran)
 include(GNUInstallDirs)
+
+# TODO : figure this RPATH stuff all out
+#SET(CMAKE_SKIP_BUILD_RPATH FALSE)
+#SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
+SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_FULL_LIBDIR}")
+#SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 set(KIM_VERSION_MAJOR ${PROJECT_VERSION_MAJOR})
 set(KIM_VERSION_MINOR ${PROJECT_VERSION_MINOR})
@@ -63,7 +63,7 @@ configure_file(Makefile.Version.in Makefile.Version)
 add_library(kim-api SHARED)
 target_link_libraries(kim-api ${CMAKE_DL_LIBS})
 set_target_properties(kim-api PROPERTIES OUTPUT_NAME ${FULL_PACKAGE_NAME})
-set_target_properties(kim-api PROPERTIES INSTALL_RPATH "${CMAKE_INSTALL_FULL_LIBDIR}")
+set_target_properties(kim-api PROPERTIES INSTALL_NAME_DIR "${CMAKE_INSTALL_FULL_LIBDIR}")
 
 add_subdirectory(c/src)
 add_subdirectory(cpp/src)
