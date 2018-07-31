@@ -52,6 +52,13 @@ mark_as_advanced(USER_CONFIG_FILE_DIR_NAME)
 set(KIM_LOG_MAXIMUM_LEVEL "ERROR" CACHE STRING "TODO add description here")
 set_property(CACHE KIM_LOG_MAXIMUM_LEVEL PROPERTY STRINGS SILENT FATAL ERROR WARNING INFORMATION DEBUG)
 
+if (APPLE)
+  set(SYSTEM_TYPE "darwin")
+else ()
+  set(SYSTEM_TYPE "linux")
+endif ()
+# add free-bsd here....
+
 configure_file(cpp/include/KIM_LOG_DEFINES.inc.in KIM_LOG_DEFINES.inc)
 configure_file(cpp/include/KIM_Version.hpp.in KIM_Version.hpp)
 configure_file(c/include/KIM_Version.h.in KIM_Version.h)

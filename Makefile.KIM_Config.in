@@ -33,7 +33,7 @@
 KIM_DIR = @CMAKE_INSTALL_FULL_LIBDIR@/@FULL_PACKAGE_NAME@
 
 KIM_COMPILERSUITE = GCC
-KIM_SYSTEMLINKER = linux
+KIM_SYSTEMLINKER = @SYSTEM_TYPE@
 KIM_SYSTEMARCH = 64bit
 KIM_LINK = dynamic-load
 
@@ -53,17 +53,17 @@ KIM_LOG_MAXIMUM_LEVEL = KIM_LOG_VERBOSITY_@KIM_LOG_MAXIMUM_LEVEL@_
 
 
 # override default name options
-#package_name =
+package_name = @PACKAGE_NAME@
 #user_config_file_dir_name =
 
 # override default install options
-prefix = @CMAKE_INSTALL_FULL_PREFIX@
-#exec_prefix =
-#bindir =
-#libexecdir =
-#sysconfdir =
-#libdir =
-#includedir =
+prefix = @CMAKE_INSTALL_PREFIX@
+exec_prefix = @CMAKE_INSTALL_PREFIX@
+bindir = @CMAKE_INSTALL_FULL_BINDIR@
+libexecdir = @CMAKE_INSTALL_FULL_LIBEXECDIR@
+sysconfdir = @CMAKE_INSTALL_FULL_SYSCONFDIR@
+libdir = @CMAKE_INSTALL_FULL_LIBDIR@
+includedir = @CMAKE_INSTALL_FULL_INCLUDEDIR@
 
 # load rest of generic make settings
 include $(KIM_DIR)/build_system/Makefile.Generic
