@@ -26,12 +26,13 @@
 #    Ryan S. Elliott
 #
 
-
-ifeq ($(wildcard ../Makefile.KIM_Config),)
-  $(error Makefile.KIM_Config does not exist.  Something is wrong with your KIM API package setup)
+ifneq (clean,$(MAKECMDGOALS))
+  KIM_API_BUILD_CONFIG = kim-api-v2-build-config
+  ifeq ($(shell $(KIM_API_BUILD_CONFIG) --version 2> /dev/null),)
+    $(error $(KIM_API_BUILD_CONFIG) utility is not available.  Something is wrong with your KIM API package setup)
+  endif
 endif
-include ../Makefile.KIM_Config
-KIM_API_BUILD_CONFIG=$(bindir)/$(full_package_name)-build-config
+include $(shell $(KIM_API_BUILD_CONFIG) --master-config)
 
 
 #
