@@ -2,22 +2,39 @@ language: cpp
 
 sudo: required
 
+os:
+ - linux
+ - osx
+
 services:
-- docker
+ - docker
 
 env:
   matrix:
     - DISTRO=fedora DOCKERHUB=true
 
 before_script:
-  - mkdir ${HOME}/docker
-  - cp -v docker/Dockerfile.${DISTRO} ${HOME}/docker/Dockerfile
-  - cd ../../
-  - mv -v ${TRAVIS_REPO_SLUG} $HOME/docker
-  - cp -r $HOME/.ccache ${HOME}/docker/ccache
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+      brew update &> /dev/null &&
+      rm /usr/local/include/c++ &&
+      brew install gcc@6 &&
+      export CC=gcc-6 &&
+      export CXX=g++-6 &&
+      export FC=gfortran-6;
+    else
+       mkdir ${HOME}/docker &&
+       cp -v docker/Dockerfile.${DISTRO} ${HOME}/docker/Dockerfile &&
+       cd ../../ &&
+       mv -v ${TRAVIS_REPO_SLUG} $HOME/docker && 
+       cp -r $HOME/.ccache ${HOME}/docker/ccache;
+    fi
 
 script:
-  - travis_retry docker build -t ${TRAVIS_REPO_SLUG}:${DISTRO}
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+      mkdir build && cd build && cmake .. && make &&
+      make install DESTDIR=$PWD && rm -rf ./usr/local/* && rmdir ./usr/local;
+    else
+       travis_retry docker build -t ${TRAVIS_REPO_SLUG}:${DISTRO}
                  --build-arg CC=${CC} --build-arg CXX=${CXX} --build-arg FC=${FC}
                  --build-arg CXXFLAGS="${CXXFLAGS}" --build-arg CMAKE_BUILD_TYPE="${CMAKE_BUILD_TYPE}"
                  --build-arg COVERAGE="${COVERAGE}"
@@ -27,12 +44,13 @@ script:
                  --build-arg TRAVIS_TAG=${TRAVIS_TAG} --build-arg TRAVIS_REPO_SLUG=${TRAVIS_REPO_SLUG}
                  --build-arg TRAVIS_COMMIT=${TRAVIS_COMMIT}
                  ${HOME}/docker/ &&
-    rm -rf $HOME/.ccache &&
-    CON=$(docker run -d ${TRAVIS_REPO_SLUG}:${DISTRO} /bin/bash) &&
-    docker cp ${CON}:/home/kim/.ccache ${HOME}/;
+      rm -rf $HOME/.ccache &&
+      CON=$(docker run -d ${TRAVIS_REPO_SLUG}:${DISTRO} /bin/bash) &&
+      docker cp ${CON}:/home/kim/.ccache ${HOME}/;
+    fi
 
 after_success:
-  - if [[ ${DOCKERHUB} && ${DOCKER_USERNAME} && ${DOCKER_PASSWORD} && ${TRAVIS_BRANCH} && ${TRAVIS_PULL_REQUEST} == false ]]; then
+  - if [[ ${DOCKERHUB} && ${DOCKER_USERNAME} && ${DOCKER_PASSWORD} && ${TRAVIS_BRANCH} == cmake && ${TRAVIS_PULL_REQUEST} == false && ${TRAVIS_OS_NAME} = "linux" ]]; then
       docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
       docker push "${TRAVIS_REPO_SLUG}:${DISTRO}";
     fi
