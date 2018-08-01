@@ -12,17 +12,22 @@ find_program(XXD_EXECUTABLE "xxd")
 if(TARGET kim-api)
     set(KIM_TARGET kim-api)
     set(KIM_CMAKE_DIR ${CMAKE_SOURCE_DIR}/cmake)
+    set(KIM_COLLECTION_INFO_EXECUTABLE "") # invalid in build directory
+    set(MODEL_INSTALL_PREFIX ${CMAKE_INSTALL_FULL_LIBDIR}/${FULL_PACKAGE_NAME}/models)
+    set(MODEL_DRIVER_INSTALL_PREFIX ${CMAKE_INSTALL_FULL_LIBDIR}/${FULL_PACKAGE_NAME}/model_drivers)
 else()
     pkg_check_modules(KIM libkim-api-v2 IMPORTED_TARGET QUIET)
     if(KIM_FOUND)
       set(KIM_TARGET PkgConfig::KIM)
       set(KIM_CMAKE_DIR ${KIM_LIBDIR}/kim-api-v2/cmake)
+      find_program(KIM_COLLECTION_INFO_EXECUTABLE kim-api-v2-collections-info PATH_SUFFIXES libexec/kim-api-v2 PATHS ${KIM_PREFIX})
     else()
       find_path(KIM_INCLUDE_DIRS KIM_Version.h PATH_SUFFIXES kim-api-v2)
       find_library(KIM_LIBRARIES NAMES kim-api-v2)
       find_path(KIM_CMAKE_DIR parameterized-model_init_wrapper.cpp.in PATH_SUFFIXES lib/kim-api-v2/cmake lib64/kim-api-v2/cmake)
+      find_program(KIM_COLLECTION_INFO_EXECUTABLE kim-api-v2-collections-info PATH_SUFFIXES libexec/kim-api-v2)
       add_library(KIM::KIM UNKNOWN IMPORTED)
-      set_target_properties(KIM::KIM PROPERTIES IMPORTED_LOCATION ${KIM_LIBRARYS} INTERFACE_INCLUDE_DIRECTORIES ${KIM_NCLUDE_DIRS})
+      set_target_properties(KIM::KIM PROPERTIES IMPORTED_LOCATION ${KIM_LIBRARYS} INTERFACE_INCLUDE_DIRECTORIES ${KIM_INCLUDE_DIRS})
       set(KIM_TARGET KIM::KIM)
     endif()
     set(KIM_VERSION 2)
@@ -33,9 +38,26 @@ else()
     find_package_handle_standard_args(KIM REQUIRED_VARS KIM_INCLUDE_DIRS KIM_LIBRARIES KIM_CMAKE_DIR VERSION_VAR KIM_VERSION)
     mark_as_advanced(KIM_LIBRARIES KIM_INCLUDE_DIRS)
 
+    set(KIM_INSTALL_TYPE "SYSTEM" CACHE STRING "TODO add description here")
+    set_property(CACHE KIM_INSTALL_TYPE PROPERTY STRINGS SYSTEM USER ENV)
+
+    if(KIM_INSTALL_TYPE STREQUAL "SYSTEM")
+        execute_process(COMMAND ${KIM_COLLECTION_INFO_EXECUTABLE} system models        OUTPUT_VARIABLE MODEL_INSTALL_PREFIX OUTPUT_STRIP_TRAILING_WHITESPACE)
+        execute_process(COMMAND ${KIM_COLLECTION_INFO_EXECUTABLE} system model_drivers OUTPUT_VARIABLE MODEL_DRIVER_INSTALL_PREFIX OUTPUT_STRIP_TRAILING_WHITESPACE)
+    elseif(KIM_INSTALL_TYPE STREQUAL "USER")
+        execute_process(COMMAND ${KIM_COLLECTION_INFO_EXECUTABLE} config_file models        OUTPUT_VARIABLE MODEL_INSTALL_PREFIX OUTPUT_STRIP_TRAILING_WHITESPACE)
+        execute_process(COMMAND ${KIM_COLLECTION_INFO_EXECUTABLE} config_file model_drivers OUTPUT_VARIABLE MODEL_DRIVER_INSTALL_PREFIX OUTPUT_STRIP_TRAILING_WHITESPACE)
+    elseif(KIM_INSTALL_TYPE STREQUAL "ENV")
+        execute_process(COMMAND ${KIM_COLLECTION_INFO_EXECUTABLE} env models        OUTPUT_VARIABLE MODEL_INSTALL_PREFIX OUTPUT_STRIP_TRAILING_WHITESPACE)
+        execute_process(COMMAND ${KIM_COLLECTION_INFO_EXECUTABLE} env model_drivers OUTPUT_VARIABLE MODEL_DRIVER_INSTALL_PREFIX OUTPUT_STRIP_TRAILING_WHITESPACE)
+        # TODO error if empty
+        # TODO split env var if necessary and select first element
+    endif()
 endif()
 
 set(KIM_VERSION_FULL ${KIM_VERSION})
+
+
 
 function(kim_add_model)
     set(options "")
@@ -75,6 +97,8 @@ function(kim_add_model)
                                                    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/models/${MODEL_NAME})
 
     target_link_libraries(${MODEL_NAME} ${KIM_TARGET})
+
+    install(TARGETS ${MODEL_NAME} LIBRARY DESTINATION "${MODEL_INSTALL_PREFIX}/${MODEL_NAME}")
 endfunction(kim_add_model)
 
 function(kim_add_model_driver)
@@ -93,4 +117,6 @@ function(kim_add_model_driver)
                                                           LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/model_drivers/${MODEL_DRIVER_NAME})
 
     target_link_libraries(${MODEL_DRIVER_NAME} ${KIM_TARGET})
+
+    install(TARGETS ${MODEL_DRIVER_NAME} LIBRARY DESTINATION "${MODEL_DRIVER_INSTALL_PREFIX}/${MODEL_DRIVER_NAME}")
 endfunction(kim_add_model_driver)
