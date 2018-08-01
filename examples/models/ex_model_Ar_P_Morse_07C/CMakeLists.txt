@@ -8,8 +8,8 @@ set(CMAKE_MODULE_PATH
 find_package(KIM REQUIRED)
 
 kim_add_standalone_model(
-    NAME "LennardJones_Ar"
+    NAME "ex_model_Ar_P_Morse_07C"
     CREATE_FUNCTION_NAME "model_create"
-    CREATE_FUNCTION_LANG "cpp"
-    SOURCES LennardJones_Ar.cpp
+    CREATE_FUNCTION_LANG "c"
+    SOURCES ex_model_Ar_P_Morse_07C.c
 )

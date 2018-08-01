@@ -7,9 +7,8 @@ set(CMAKE_MODULE_PATH
 
 find_package(KIM REQUIRED)
 
-kim_add_standalone_model(
-    NAME "LennardJones_Ar"
-    CREATE_FUNCTION_NAME "model_create"
-    CREATE_FUNCTION_LANG "cpp"
-    SOURCES LennardJones_Ar.cpp
+kim_add_parameterized_model(
+    NAME "ex_model_Ar_P_Morse"
+    DRIVER_NAME "ex_model_driver_P_Morse"
+    PARAMETER_FILES ex_model_Ar_P_Morse.params
 )

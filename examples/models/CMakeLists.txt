@@ -1,0 +1,8 @@
+cmake_minimum_required(VERSION 3.0)
+
+add_subdirectory(ex_model_Ar_P_LJ)
+add_subdirectory(ex_model_Ar_P_MLJ_F03)
+add_subdirectory(ex_model_Ar_P_Morse)
+add_subdirectory(ex_model_Ar_P_Morse_07C)
+add_subdirectory(LennardJones612_UniversalShifted__MO_959249795837_003)
+add_subdirectory(LennardJones_Ar)
