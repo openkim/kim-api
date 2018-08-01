@@ -68,14 +68,17 @@ configure_file(Makefile.KIM_Config.in Makefile.KIM_Config)
 configure_file(Makefile.Version.in Makefile.Version)
 
 add_library(kim-api SHARED)
+target_include_directories(kim-api PUBLIC ${CMAKE_BINARY_DIR})
 target_link_libraries(kim-api ${CMAKE_DL_LIBS})
 set_target_properties(kim-api PROPERTIES OUTPUT_NAME ${FULL_PACKAGE_NAME})
 set_target_properties(kim-api PROPERTIES INSTALL_NAME_DIR "${CMAKE_INSTALL_FULL_LIBDIR}")
 
+add_subdirectory(c/include)
 add_subdirectory(c/src)
+add_subdirectory(cpp/include)
 add_subdirectory(cpp/src)
-add_subdirectory(fortran/src)
 add_subdirectory(fortran/include)
+add_subdirectory(fortran/src)
 
 add_subdirectory(completion)
 add_subdirectory(cpp/src/utils)
