@@ -51,6 +51,13 @@ export PATH=`printf "${PATH}" | sed -e "s|:@CMAKE_INSTALL_FULL_BINDIR@|:|g" \
                                     -e "s|^@CMAKE_INSTALL_FULL_BINDIR@||" \
                                     -e "s|:@CMAKE_INSTALL_FULL_BINDIR@$||"`
 
+export PKG_CONFIG_PATH=`printf "${PKG_CONFIG_PATH}" | \
+                                sed -e "s|:${CMAKE_INSTALL_FULL_LIBDIR}/pkgconfig|:|g" \
+                                    -e "s|^${CMAKE_INSTALL_FULL_LIBDIR}/pkgconfig||" \
+                                    -e "s|:${CMAKE_INSTALL_FULL_LIBDIR}/pkgconfig||"`
+
+unset KIM_CMAKE_MODULES_DIR
+
 for _func in `grep "_${_full_package_name}-.*[[:space:]]*()" \
   "${_sysconfdir}/bash_completion.d/${_full_package_name}-completion.bash"`; do
   _func=`printf "${_func}" | sed -e 's|[[:space:]]*().*||'`
