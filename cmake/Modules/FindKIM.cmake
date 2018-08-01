@@ -10,11 +10,12 @@ find_package(PkgConfig)
 find_program(XXD_EXECUTABLE "xxd")
 
 if(TARGET kim-api)
-    set(KIM_LDFLAGS kim-api)
+    set(KIM_TARGET kim-api)
     set(KIM_CMAKE_DIR ${CMAKE_SOURCE_DIR}/cmake)
 else()
-    pkg_check_modules(KIM REQUIRED libkim-api-v2)
+    pkg_check_modules(KIM REQUIRED libkim-api-v2 IMPORTED_TARGET)
 
+    set(KIM_TARGET PkgConfig::KIM)
     include(FindPackageHandleStandardArgs)
     # handle the QUIETLY and REQUIRED arguments and set KIM_FOUND to TRUE
     # if all listed variables are TRUE
@@ -64,12 +65,8 @@ function(kim_add_model)
     add_library(${MODEL_NAME} MODULE ${MODEL_SOURCES})
     set_target_properties(${MODEL_NAME} PROPERTIES OUTPUT_NAME "kim-api-model-v2"
                                                    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/models/${MODEL_NAME})
-    link_directories(${KIM_LIBRARY_DIRS})
 
-    target_include_directories(${MODEL_NAME} PRIVATE ${KIM_INCLUDE_DIRS})
-    target_link_libraries(${MODEL_NAME} ${KIM_LDFLAGS})
-    target_compile_options(${MODEL_NAME} PUBLIC ${KIM_CFLAGS})
-    target_compile_definitions(${MODEL_NAME} PUBLIC ${KIM_DEFINITIONS})
+    target_link_libraries(${MODEL_NAME} ${KIM_TARGET})
 endfunction(kim_add_model)
 
 function(kim_add_model_driver)
@@ -86,10 +83,6 @@ function(kim_add_model_driver)
     add_library(${MODEL_DRIVER_NAME} MODULE ${MODEL_DRIVER_SOURCES})
     set_target_properties(${MODEL_DRIVER_NAME} PROPERTIES OUTPUT_NAME "kim-api-model-driver-v2"
                                                           LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/model_drivers/${MODEL_DRIVER_NAME})
-    link_directories(${KIM_LIBRARY_DIRS})
 
-    target_include_directories(${MODEL_DRIVER_NAME} PRIVATE ${KIM_INCLUDE_DIRS})
-    target_link_libraries(${MODEL_DRIVER_NAME} ${KIM_LDFLAGS})
-    target_compile_options(${MODEL_DRIVER_NAME} PUBLIC ${KIM_CFLAGS})
-    target_compile_definitions(${MODEL_DRIVER_NAME} PUBLIC ${KIM_DEFINITIONS})
+    target_link_libraries(${MODEL_DRIVER_NAME} ${KIM_TARGET})
 endfunction(kim_add_model_driver)
