@@ -80,6 +80,7 @@ add_subdirectory(fortran/include)
 add_subdirectory(completion)
 add_subdirectory(cpp/src/utils)
 
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/Modules)
 option(BUILD_MODULES "TODO Build model" OFF)
 if(BUILD_MODULES)
   add_subdirectory(examples/model_drivers/LennardJones612__MD_414112407348_003)

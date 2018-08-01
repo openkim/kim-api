@@ -1,10 +1,6 @@
 cmake_minimum_required(VERSION 3.0)
-set(CMAKE_MODULE_PATH
-    ${CMAKE_MODULE_PATH}
-    ${CMAKE_SOURCE_DIR}/cmake/Modules
-    $ENV{KIM_DIR}/cmake/Modules
-)
 
+list(APPEND CMAKE_MODULE_PATH $ENV{KIM_CMAKE_DIR})
 find_package(KIM REQUIRED)
 
 kim_add_model(
