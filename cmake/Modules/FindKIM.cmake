@@ -13,18 +13,26 @@ if(TARGET kim-api)
     set(KIM_TARGET kim-api)
     set(KIM_CMAKE_DIR ${CMAKE_SOURCE_DIR}/cmake)
 else()
-    pkg_check_modules(KIM REQUIRED libkim-api-v2 IMPORTED_TARGET)
-
-    set(KIM_TARGET PkgConfig::KIM)
+    pkg_check_modules(KIM libkim-api-v2 IMPORTED_TARGET QUIET)
+    if(KIM_FOUND)
+      set(KIM_TARGET PkgConfig::KIM)
+      set(KIM_CMAKE_DIR ${KIM_LIBDIR}/kim-api-v2/cmake)
+    else()
+      find_path(KIM_INCLUDE_DIRS KIM_Version.h PATH_SUFFIXES kim-api-v2)
+      find_library(KIM_LIBRARIES NAMES kim-api-v2)
+      find_path(KIM_CMAKE_DIR parameterized-model_init_wrapper.cpp.in PATH_SUFFIXES lib/kim-api-v2/cmake lib64/kim-api-v2/cmake)
+      add_library(KIM::KIM UNKNOWN IMPORTED)
+      set_target_properties(KIM::KIM PROPERTIES IMPORTED_LOCATION ${KIM_LIBRARYS} INTERFACE_INCLUDE_DIRECTORIES ${KIM_NCLUDE_DIRS})
+      set(KIM_TARGET KIM::KIM)
+    endif()
+    set(KIM_VERSION 2)
     include(FindPackageHandleStandardArgs)
+
     # handle the QUIETLY and REQUIRED arguments and set KIM_FOUND to TRUE
     # if all listed variables are TRUE
-
-    find_package_handle_standard_args(KIM DEFAULT_MSG KIM_LIBRARIES KIM_INCLUDE_DIRS)
-
+    find_package_handle_standard_args(KIM REQUIRED_VARS KIM_INCLUDE_DIRS KIM_LIBRARIES KIM_CMAKE_DIR VERSION_VAR KIM_VERSION)
     mark_as_advanced(KIM_LIBRARIES KIM_INCLUDE_DIRS)
 
-    set(KIM_CMAKE_DIR ${KIM_LIBDIR}/kim-api-v2/cmake)
 endif()
 
 set(KIM_VERSION_FULL ${KIM_VERSION})
