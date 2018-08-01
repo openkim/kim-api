@@ -35,7 +35,7 @@ else()
 
     # handle the QUIETLY and REQUIRED arguments and set KIM_FOUND to TRUE
     # if all listed variables are TRUE
-    find_package_handle_standard_args(KIM REQUIRED_VARS KIM_INCLUDE_DIRS KIM_LIBRARIES KIM_CMAKE_DIR VERSION_VAR KIM_VERSION)
+    find_package_handle_standard_args(KIM REQUIRED_VARS KIM_INCLUDE_DIRS KIM_LIBRARIES KIM_CMAKE_DIR KIM_COLLECTION_INFO_EXECUTABLE VERSION_VAR KIM_VERSION)
     mark_as_advanced(KIM_LIBRARIES KIM_INCLUDE_DIRS)
 
     set(KIM_INSTALL_TYPE "SYSTEM" CACHE STRING "TODO add description here")
