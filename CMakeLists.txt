@@ -80,6 +80,13 @@ add_subdirectory(fortran/include)
 add_subdirectory(completion)
 add_subdirectory(cpp/src/utils)
 
+option(BUILD_MODULES "TODO Build model" OFF)
+if(BUILD_MODULES)
+  add_subdirectory(examples/model_drivers/LennardJones612__MD_414112407348_003)
+  add_subdirectory(examples/simulators/ex_test_Ar_fcc_cluster_cpp)
+  add_subdirectory(examples/models)
+endif()
+
 install(TARGETS kim-api DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
 install(FILES ${CMAKE_BINARY_DIR}/Makefile.KIM_Config DESTINATION ${CMAKE_INSTALL_LIBDIR}/${FULL_PACKAGE_NAME})
