@@ -7,7 +7,7 @@ set(CMAKE_MODULE_PATH
 
 find_package(KIM REQUIRED)
 
-kim_add_standalone_model(
+kim_add_model(
     NAME "LennardJones_Ar"
     CREATE_FUNCTION_NAME "model_create"
     CREATE_FUNCTION_LANG "cpp"

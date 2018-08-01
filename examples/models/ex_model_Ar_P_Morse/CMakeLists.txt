@@ -7,7 +7,7 @@ set(CMAKE_MODULE_PATH
 
 find_package(KIM REQUIRED)
 
-kim_add_parameterized_model(
+kim_add_model(
     NAME "ex_model_Ar_P_Morse"
     DRIVER_NAME "ex_model_driver_P_Morse"
     PARAMETER_FILES ex_model_Ar_P_Morse.params
