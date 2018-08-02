@@ -19,7 +19,7 @@ ARG TRAVIS_REPO_SLUG
 ARG TRAVIS_COMMIT
 ARG TRAVIS_OS_NAME
 
-RUN dnf -y install make cmake git gcc-c++ gcc-gfortran ccache wget
+RUN dnf -y install make cmake git gcc-c++ gcc-gfortran ccache wget vim-common
 RUN wget -O /usr/bin/codecov https://codecov.io/bash
 RUN chmod +x /usr/bin/codecov
 

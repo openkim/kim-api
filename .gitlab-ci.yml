@@ -1,7 +1,7 @@
 test:default:
   image: fedora:latest
   script:
-    - dnf -y install make cmake git gcc-c++ gcc-gfortran ccache wget
+    - dnf -y install make cmake git gcc-c++ gcc-gfortran ccache wget vim-common
     - mkdir build
     - cd build
     - cmake -DBUILD_MODULES=ON ..
