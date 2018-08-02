@@ -7,7 +7,6 @@
 #
 
 find_package(PkgConfig)
-find_program(XXD_EXECUTABLE "xxd")
 
 if(TARGET kim-api)
     set(KIM_TARGET kim-api)
@@ -69,6 +68,11 @@ function(kim_add_model_target)
 
     set(MODEL_SOURCES "")
 
+    find_program(XXD_EXECUTABLE "xxd")
+    find_package_handle_standard_args(XXD REQUIRED_VARS XXD_EXECUTABLE)
+    if(NOT XXD_FOUND)
+      message(FATAL_ERROR "Ryan will put an error message here")
+    endif()
     if(MODEL_PARAMETER_FILES)
         list(LENGTH MODEL_PARAMETER_FILES NUMBER_OF_PARAMETER_FILES)
         set(INIT_WRAPPER_FILE "${KIM_CMAKE_DIR}/parameterized-model_init_wrapper.cpp.in")
