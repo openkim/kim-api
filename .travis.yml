@@ -31,8 +31,8 @@ before_script:
 
 script:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
-      mkdir build && cd build && cmake -DBUILD_MODULES=ON .. && make &&
-      make test &&
+      mkdir build && cd build && cmake -DBUILD_MODULES=ON -DENABLE_COVERAGE=ON .. && make &&
+      make test && bash <(curl -s https://codecov.io/bash) &&
       make install DESTDIR=$PWD && rm -rf ./usr/local/* && rmdir ./usr/local;
     else
        travis_retry docker build -t ${TRAVIS_REPO_SLUG}:${DISTRO}
