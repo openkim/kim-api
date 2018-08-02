@@ -59,13 +59,15 @@ set(KIM_VERSION_FULL ${KIM_VERSION})
 
 
 
-function(kim_add_model)
+function(kim_add_model_target)
     set(options "")
     set(oneValueArgs NAME CREATE_FUNCTION_NAME CREATE_FUNCTION_LANG)
-    set(multiValueArgs SOURCES PARAMETER_FILES)
+    set(multiValueArgs PARAMETER_FILES)
     cmake_parse_arguments(MODEL "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
     # TODO sanity checks to ensure all arguments are passed
+
+    set(MODEL_SOURCES "")
 
     if(MODEL_PARAMETER_FILES)
         list(LENGTH MODEL_PARAMETER_FILES NUMBER_OF_PARAMETER_FILES)
@@ -99,18 +101,18 @@ function(kim_add_model)
     target_link_libraries(${MODEL_NAME} ${KIM_TARGET})
 
     install(TARGETS ${MODEL_NAME} LIBRARY DESTINATION "${MODEL_INSTALL_PREFIX}/${MODEL_NAME}")
-endfunction(kim_add_model)
+endfunction(kim_add_model_target)
 
-function(kim_add_model_driver)
+function(kim_add_model_driver_target)
     set(options "")
     set(oneValueArgs NAME CREATE_FUNCTION_NAME CREATE_FUNCTION_LANG)
-    set(multiValueArgs SOURCES)
+    set(multiValueArgs "")
     cmake_parse_arguments(MODEL_DRIVER "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
     configure_file(${KIM_CMAKE_DIR}/driver_init_wrapper.cpp.in
                    ${CMAKE_CURRENT_BINARY_DIR}/driver_init_wrapper.cpp @ONLY)
 
-    list(APPEND MODEL_DRIVER_SOURCES ${CMAKE_CURRENT_BINARY_DIR}/driver_init_wrapper.cpp)
+    set(MODEL_DRIVER_SOURCES ${CMAKE_CURRENT_BINARY_DIR}/driver_init_wrapper.cpp)
 
     add_library(${MODEL_DRIVER_NAME} MODULE ${MODEL_DRIVER_SOURCES})
     set_target_properties(${MODEL_DRIVER_NAME} PROPERTIES OUTPUT_NAME "kim-api-model-driver-v2"
@@ -119,4 +121,4 @@ function(kim_add_model_driver)
     target_link_libraries(${MODEL_DRIVER_NAME} ${KIM_TARGET})
 
     install(TARGETS ${MODEL_DRIVER_NAME} LIBRARY DESTINATION "${MODEL_DRIVER_INSTALL_PREFIX}/${MODEL_DRIVER_NAME}")
-endfunction(kim_add_model_driver)
+endfunction(kim_add_model_driver_target)

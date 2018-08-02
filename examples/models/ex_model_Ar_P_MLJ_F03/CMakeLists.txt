@@ -39,12 +39,16 @@ list(APPEND CMAKE_MODULE_PATH $ENV{KIM_CMAKE_MODULES_DIR})
 find_package(KIM 2 REQUIRED)
 
 enable_language(Fortran)
-# workaround for F03 files, use F90 instead if possible
-set_source_files_properties(ex_model_Ar_P_MLJ_F03.F03 PROPERTIES LANGUAGE Fortran)
 
-kim_add_model(
-    NAME "ex_model_Ar_P_MLJ_F03"
+set(MODEL_NAME "ex_model_Ar_P_MLJ_F03")
+
+kim_add_model_target(
+    NAME ${MODEL_NAME}
     CREATE_FUNCTION_NAME "model_create_routine"
     CREATE_FUNCTION_LANG "fortran"
-    SOURCES ex_model_Ar_P_MLJ_F03.F03
 )
+
+target_sources(${MODEL_NAME} PRIVATE ${MODEL_NAME}.F03)
+
+# workaround for F03 files, use F90 instead if possible
+set_source_files_properties(${MODEL_NAME}.F03 PROPERTIES LANGUAGE Fortran)

@@ -38,9 +38,12 @@ cmake_minimum_required(VERSION 3.0)
 list(APPEND CMAKE_MODULE_PATH $ENV{KIM_CMAKE_MODULES_DIR})
 find_package(KIM 2 REQUIRED)
 
-kim_add_model(
-    NAME "LennardJones_Ar"
+set(MODEL_NAME "LennardJones_Ar")
+
+kim_add_model_target(
+    NAME ${MODEL_NAME}
     CREATE_FUNCTION_NAME "model_create"
     CREATE_FUNCTION_LANG "cpp"
-    SOURCES LennardJones_Ar.cpp
 )
+
+target_sources(${MODEL_NAME} PRIVATE ${MODEL_NAME}.cpp)

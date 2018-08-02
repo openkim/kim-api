@@ -38,7 +38,7 @@ cmake_minimum_required(VERSION 3.0)
 list(APPEND CMAKE_MODULE_PATH $ENV{KIM_CMAKE_MODULES_DIR})
 find_package(KIM 2 REQUIRED)
 
-kim_add_model(
+kim_add_model_target(
     NAME "LennardJones612_UniversalShifted__MO_959249795837_003"
     DRIVER_NAME "LennardJones612__MD_414112407348_003"
     PARAMETER_FILES LennardJones612_UniversalShifted.params

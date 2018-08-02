@@ -38,9 +38,12 @@ cmake_minimum_required(VERSION 3.0)
 list(APPEND CMAKE_MODULE_PATH $ENV{KIM_CMAKE_MODULES_DIR})
 find_package(KIM 2 REQUIRED)
 
-kim_add_model(
-    NAME "ex_model_Ar_P_Morse_07C"
+set(MODEL_NAME "ex_model_Ar_P_Morse_07C")
+
+kim_add_model_target(
+    NAME ${MODEL_NAME}
     CREATE_FUNCTION_NAME "model_create"
     CREATE_FUNCTION_LANG "c"
-    SOURCES ex_model_Ar_P_Morse_07C.c
 )
+
+target_sources(${MODEL_NAME} PRIVATE ${MODEL_NAME}.c)
