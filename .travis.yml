@@ -57,4 +57,3 @@ after_success:
 
 cache:
   - ccache
-

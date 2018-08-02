@@ -4,6 +4,7 @@ test:default:
     - dnf -y install make cmake git gcc-c++ gcc-gfortran ccache wget
     - mkdir build
     - cd build
-    - cmake ..
+    - cmake -DBUILD_MODULES=ON ..
     - make
+    - make test
     - make install DESTDIR=${PWD}/install && rm -rf ${PWD}/install/usr && rmdir ${PWD}/install

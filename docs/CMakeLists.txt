@@ -79,7 +79,7 @@ set(SOURCES
 )
 
 if(DOXYGEN_FOUND)
-  doxygen_add_doc(
+  doxygen_add_docs(
       docs
       ${SOURCES}
       COMMENT "Generate documentation"
