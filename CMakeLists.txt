@@ -40,6 +40,7 @@ set(SANITIZED_PACKAGE_NAME "kim_api")
 
 project(kim-api VERSION 2.0.0 LANGUAGES C CXX Fortran)
 include(GNUInstallDirs)
+enable_testing()
 
 include(CheckFortranCompilerFlag)
 check_fortran_compiler_flag("-ffree-line-length-none" HAS_FREE_LINE_LENGTH_FLAG)
