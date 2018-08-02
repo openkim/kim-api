@@ -61,7 +61,7 @@ set(KIM_VERSION_FULL ${KIM_VERSION})
 
 function(kim_add_model_target)
     set(options "")
-    set(oneValueArgs NAME CREATE_FUNCTION_NAME CREATE_FUNCTION_LANG)
+    set(oneValueArgs NAME DRIVER_NAME CREATE_FUNCTION_NAME CREATE_FUNCTION_LANG)
     set(multiValueArgs PARAMETER_FILES)
     cmake_parse_arguments(MODEL "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
@@ -96,11 +96,11 @@ function(kim_add_model_target)
 
     add_library(${MODEL_NAME} MODULE ${MODEL_SOURCES})
     set_target_properties(${MODEL_NAME} PROPERTIES OUTPUT_NAME "kim-api-model-v2"
-                                                   LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/models/${MODEL_NAME})
+                                                   LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${MODEL_NAME})
 
     target_link_libraries(${MODEL_NAME} ${KIM_TARGET})
 
-    install(TARGETS ${MODEL_NAME} LIBRARY DESTINATION "${MODEL_INSTALL_PREFIX}/${MODEL_NAME}")
+    install(TARGETS ${MODEL_NAME} LIBRARY DESTINATION "${MODEL_INSTALL_PREFIX}/models/${MODEL_NAME}")
 endfunction(kim_add_model_target)
 
 function(kim_add_model_driver_target)
@@ -116,9 +116,9 @@ function(kim_add_model_driver_target)
 
     add_library(${MODEL_DRIVER_NAME} MODULE ${MODEL_DRIVER_SOURCES})
     set_target_properties(${MODEL_DRIVER_NAME} PROPERTIES OUTPUT_NAME "kim-api-model-driver-v2"
-                                                          LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/model_drivers/${MODEL_DRIVER_NAME})
+                                                          LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${MODEL_DRIVER_NAME})
 
     target_link_libraries(${MODEL_DRIVER_NAME} ${KIM_TARGET})
 
-    install(TARGETS ${MODEL_DRIVER_NAME} LIBRARY DESTINATION "${MODEL_DRIVER_INSTALL_PREFIX}/${MODEL_DRIVER_NAME}")
+    install(TARGETS ${MODEL_DRIVER_NAME} LIBRARY DESTINATION "${MODEL_DRIVER_INSTALL_PREFIX}/models_drivers/${MODEL_DRIVER_NAME}")
 endfunction(kim_add_model_driver_target)

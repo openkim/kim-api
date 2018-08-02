@@ -3,6 +3,6 @@ extern "C"
 char kim_item_type[] = "model-driver";
 int @MODEL_DRIVER_CREATE_FUNCTION_NAME@();
 int (* @MODEL_DRIVER_NAME@_create_pointer)() = @MODEL_DRIVER_CREATE_FUNCTION_NAME@;
-char @MODEL_DRIVER_NAME@_compiled_with_version[] = "@KIM_VERSION_FULL@";
+char @MODEL_DRIVER_NAME@_compiled_with_version[] = "@KIM_VERSION_STRING@";
 char @MODEL_DRIVER_NAME@_language[] = "@MODEL_DRIVER_CREATE_FUNCTION_LANG@";
 }

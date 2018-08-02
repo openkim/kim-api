@@ -42,7 +42,7 @@ set(MODEL_DRIVER_NAME "ex_model_driver_P_LJ")
 
 kim_add_model_driver_target(
     NAME ${MODEL_DRIVER_NAME}
-    CREATE_FUNCTION_NAME "model_driver_create"
+    CREATE_FUNCTION_NAME "model_driver_create_routine"
     CREATE_FUNCTION_LANG "fortran"
 )
 
