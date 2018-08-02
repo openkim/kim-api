@@ -78,21 +78,23 @@ set(SOURCES
     "../examples/simulators/"
 )
 
-doxygen_add_docs(
-    docs
-    ${SOURCES}
-    COMMENT "Generate documentation"
-)
-
-add_custom_command(OUTPUT refman.pdf
-                   COMMAND make
-                   COMMAND ${CMAKE_COMMAND} -E copy refman.pdf ${CMAKE_CURRENT_BINARY_DIR}/refman.pdf
-                   WORKING_DIRECTORY latex
-                   DEPENDS docs
-                   )
-
-#TODO fix dependencies
-add_custom_target(pdf DEPENDS docs refman.pdf SOURCES ${SOURCES})
+if(DOXYGEN_FOUND)
+  doxygen_add_doc(
+      docs
+      ${SOURCES}
+      COMMENT "Generate documentation"
+  )
+  
+  add_custom_command(OUTPUT refman.pdf
+                     COMMAND make
+                     COMMAND ${CMAKE_COMMAND} -E copy refman.pdf ${CMAKE_CURRENT_BINARY_DIR}/refman.pdf
+                     WORKING_DIRECTORY latex
+                     DEPENDS docs
+                     )
+  
+  #TODO fix dependencies
+  add_custom_target(pdf DEPENDS docs refman.pdf SOURCES ${SOURCES})
+endif(DOXYGEN_FOUND)
 
 install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/html DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/docs/${FULL_PACKAGE_NAME} OPTIONAL)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/refman.pdf DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/docs/${FULL_PACKAGE_NAME} OPTIONAL)
