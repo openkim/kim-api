@@ -42,4 +42,4 @@ set(TEST_NAME "ex_test_Ar_fcc_cluster")
 
 add_executable(${TEST_NAME} ${TEST_NAME}.c)
 target_link_libraries(${TEST_NAME} ${KIM_TARGET} m)
-add_test(NAME Run_${TEST_NAME} COMMAND ${CMAKE_COMMAND} -E echo "bla" | ${TEST_NAME})
+add_test(NAME Run_${TEST_NAME} COMMAND sh -c "echo ex_model_Ar_P_LJ | ${CMAKE_CURRENT_BINARY_DIR}/${TEST_NAME}" WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
