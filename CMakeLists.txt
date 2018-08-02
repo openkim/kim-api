@@ -117,6 +117,7 @@ add_subdirectory(fortran/src)
 
 add_subdirectory(completion)
 add_subdirectory(cpp/src/utils)
+add_subdirectory(docs)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/Modules)
 option(BUILD_MODULES "TODO Build model" OFF)

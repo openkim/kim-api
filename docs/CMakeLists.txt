@@ -32,7 +32,6 @@
 # Release: This file is part of the kim-api.git repository.
 #
 
-cmake_minimum_required(VERSION 3.0)
 cmake_policy(SET CMP0057 NEW)
 cmake_policy(SET CMP0054 NEW)
 
@@ -94,3 +93,6 @@ add_custom_command(OUTPUT refman.pdf
 
 #TODO fix dependencies
 add_custom_target(pdf DEPENDS docs refman.pdf SOURCES ${SOURCES})
+
+install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/html DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/docs/${FULL_PACKAGE_NAME} OPTIONAL)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/refman.pdf DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/docs/${FULL_PACKAGE_NAME} OPTIONAL)
