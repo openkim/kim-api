@@ -72,11 +72,10 @@ module mod_neighborlist
 
   public get_neigh
 
-  type neighObject_type
+  type, bind(c) :: neighObject_type
      real(c_double) :: cutoff
      integer(c_int) :: number_of_particles
-     integer(c_int), pointer :: neighborList(:,:)
-     real(c_double), pointer :: RijList(:,:,:)
+     type(c_ptr) :: neighbor_list_pointer
   end type neighObject_type
 contains
 
@@ -113,8 +112,12 @@ subroutine get_neigh(data_object, number_of_neighbor_lists, cutoffs, &
   integer(c_int), parameter :: DIM = 3
   integer(c_int) numberOfParticles
   type(neighObject_type), pointer :: neighObject
+  integer(c_int), pointer :: neighborList(:,:)
 
   call c_f_pointer(data_object, neighObject)
+  numberOfParticles = neighObject%number_of_particles
+  call c_f_pointer(neighObject%neighbor_list_pointer, neighborList, &
+    [numberOfParticles+1, numberOfParticles])
 
   if (number_of_neighbor_lists /= 1) then
     call my_warning("invalid number of neighbor_lists", __LINE__, __FILE__)
@@ -135,8 +138,6 @@ subroutine get_neigh(data_object, number_of_neighbor_lists, cutoffs, &
     return
   endif
 
-  numberOfParticles = neighObject%number_of_particles
-
   if ( (request.gt.numberOfParticles) .or. (request.lt.1)) then
     print *, request
     call my_warning("Invalid part ID in get_neigh", &
@@ -146,10 +147,10 @@ subroutine get_neigh(data_object, number_of_neighbor_lists, cutoffs, &
   endif
 
   ! set the returned number of neighbors for the returned part
-  numnei = neighObject%neighborList(1,request)
+  numnei = neighborList(1,request)
 
   ! set the location for the returned neighbor list
-  pnei1part = c_loc(neighObject%neighborList(2,request))
+  pnei1part = c_loc(neighborList(2,request))
 
   ierr = 0
   return
@@ -425,10 +426,14 @@ subroutine NEIGH_PURE_cluster_neighborlist(half, numberOfParticles, coords, &
   type(neighObject_type), intent(inout) :: neighObject
 
   !-- Local variables
+  integer(c_int), pointer :: neighborList(:,:)
   integer(c_int) i, j, a
   real(c_double) dx(3)
   real(c_double) r2
   real(c_double) cutoff2
+
+  call c_f_pointer(neighObject%neighbor_list_pointer, neighborList, &
+    [numberOfParticles+1, numberOfParticles])
 
   neighObject%cutoff = cutoff
 
@@ -443,12 +448,12 @@ subroutine NEIGH_PURE_cluster_neighborlist(half, numberOfParticles, coords, &
            ! part j is a neighbor of part i
            if ( (j .gt. i) .OR. ((.not. half) .AND. (i.ne.j)) ) then
                a = a+1
-               neighObject%neighborList(a,i) = j
+               neighborList(a,i) = j
            endif
         endif
      enddo
      ! part i has a-1 neighbors
-     neighObject%neighborList(1,i) = a-1
+     neighborList(1,i) = a-1
   enddo
 
   return
@@ -811,6 +816,7 @@ program vc_forces_numer_deriv
   ! neighbor list
   !
   type(neighObject_type), target :: neighObject
+  integer(c_int), allocatable, target :: neighborList(:,:)
   real(c_double), allocatable :: coordsave(:,:)
   logical do_update_list
 
@@ -970,7 +976,8 @@ program vc_forces_numer_deriv
   ! Allocate storage for neighbor lists and
   ! store pointers to neighbor list object and access function
   !
-  allocate(neighObject%neighborList(N+1,N))
+  allocate(neighborList(N+1,N))
+  neighObject%neighbor_list_pointer = c_loc(neighborList)
   neighObject%number_of_particles = N
 
   ! Set pointer in KIM object to neighbor list routine and object
@@ -1124,7 +1131,7 @@ program vc_forces_numer_deriv
   !
   deallocate(forces_num)
   deallocate(forces_num_err)
-  deallocate(neighObject%neighborList)
+  deallocate(neighborList)
   deallocate(coordsave)
 
   call kim_model_compute_arguments_destroy(model_handle, &
