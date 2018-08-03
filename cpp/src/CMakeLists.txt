@@ -65,7 +65,7 @@ set(CPP_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ChargeUnit.cpp
                 ${CMAKE_CURRENT_SOURCE_DIR}/old_KIM_API_DIRS.cpp)
 
 target_sources(kim-api PRIVATE ${CPP_SOURCES})
-target_include_directories(kim-api PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(kim-api PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
 target_compile_definitions(kim-api PUBLIC
     PACKAGEDIR="${PACKAGE_DIR}"

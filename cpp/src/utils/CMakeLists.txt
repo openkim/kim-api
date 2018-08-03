@@ -46,11 +46,15 @@ configure_file(activate.in ${ACTIVATE_SCRIPT} @ONLY)
 configure_file(deactivate.in ${DEACTIVATE_SCRIPT} @ONLY)
 configure_file(libkim-api.pc.in ${PKG_CONFIG_FILE} @ONLY)
 
+set(KIM_CPP_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/..")
+
 add_executable(simulator-model simulator-model.cpp)
+target_include_directories(simulator-model PRIVATE ${KIM_CPP_SRC_DIR})
 target_link_libraries(simulator-model kim-api)
 set_target_properties(simulator-model PROPERTIES OUTPUT_NAME ${SIMULATOR_MODEL})
 
 add_executable(collections-info collections-info.cpp)
+target_include_directories(collections-info PRIVATE ${KIM_CPP_SRC_DIR})
 target_link_libraries(collections-info kim-api)
 set_target_properties(collections-info PROPERTIES OUTPUT_NAME ${COLLECTIONS_INFO})
 
