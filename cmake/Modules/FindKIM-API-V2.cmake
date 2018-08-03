@@ -1,5 +1,5 @@
-# - Find KIM
-# Find the KIM headers and libraries.
+# - Find KIM-API-V2
+# Find the KIM-API-V2 headers and libraries.
 #
 #  KIM_INCLUDE_DIRS - where to find KIM headers, etc.
 #  KIM_LIBRARIES    - List of libraries when using KIM.
@@ -104,7 +104,7 @@ function(kim_add_model_target)
 
     target_link_libraries(${MODEL_NAME} ${KIM_TARGET})
 
-    install(TARGETS ${MODEL_NAME} LIBRARY DESTINATION "${MODEL_INSTALL_PREFIX}/models/${MODEL_NAME}")
+    install(TARGETS ${MODEL_NAME} LIBRARY DESTINATION "${MODEL_INSTALL_PREFIX}/${MODEL_NAME}")
 endfunction(kim_add_model_target)
 
 function(kim_add_model_driver_target)
@@ -124,5 +124,5 @@ function(kim_add_model_driver_target)
 
     target_link_libraries(${MODEL_DRIVER_NAME} ${KIM_TARGET})
 
-    install(TARGETS ${MODEL_DRIVER_NAME} LIBRARY DESTINATION "${MODEL_DRIVER_INSTALL_PREFIX}/models_drivers/${MODEL_DRIVER_NAME}")
+    install(TARGETS ${MODEL_DRIVER_NAME} LIBRARY DESTINATION "${MODEL_DRIVER_INSTALL_PREFIX}/${MODEL_DRIVER_NAME}")
 endfunction(kim_add_model_driver_target)
