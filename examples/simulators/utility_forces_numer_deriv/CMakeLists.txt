@@ -36,7 +36,7 @@
 cmake_minimum_required(VERSION 3.0)
 enable_language(Fortran)
 
-list(APPEND CMAKE_MODULE_PATH $ENV{KIM_CMAKE_MODULES_DIR})
+list(APPEND CMAKE_MODULE_PATH $ENV{KIM_API_V2_CMAKE_MODULES_DIR})
 find_package(KIM-API-V2 2 REQUIRED)
 
 set(TEST_NAME "utility_forces_numer_deriv")
