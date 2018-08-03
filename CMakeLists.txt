@@ -104,20 +104,10 @@ mark_as_advanced(USER_CONFIG_FILE_DIR_NAME)
 set(KIM_LOG_MAXIMUM_LEVEL "ERROR" CACHE STRING "TODO add description here")
 set_property(CACHE KIM_LOG_MAXIMUM_LEVEL PROPERTY STRINGS SILENT FATAL ERROR WARNING INFORMATION DEBUG)
 
-if (APPLE)
-  set(SYSTEM_TYPE "darwin")
-else ()
-  set(SYSTEM_TYPE "linux")
-endif ()
-# add free-bsd here....
-
 configure_file(cpp/include/KIM_LOG_DEFINES.inc.in KIM_LOG_DEFINES.inc)
 configure_file(cpp/include/KIM_Version.hpp.in KIM_Version.hpp)
 configure_file(c/include/KIM_Version.h.in KIM_Version.h)
 configure_file(fortran/include/kim_version.fd.in kim_version.fd)
-
-configure_file(Makefile.KIM_Config.in Makefile.KIM_Config)
-configure_file(Makefile.Version.in Makefile.Version)
 
 add_library(kim-api SHARED)
 target_include_directories(kim-api PUBLIC ${CMAKE_BINARY_DIR})
@@ -163,30 +153,4 @@ endif()
 
 install(TARGETS kim-api DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
-install(FILES ${CMAKE_BINARY_DIR}/Makefile.KIM_Config DESTINATION ${CMAKE_INSTALL_LIBDIR}/${FULL_PACKAGE_NAME})
-install(FILES ${CMAKE_BINARY_DIR}/Makefile.Version DESTINATION ${CMAKE_INSTALL_LIBDIR}/${FULL_PACKAGE_NAME})
 install(DIRECTORY cmake DESTINATION ${CMAKE_INSTALL_LIBDIR}/${FULL_PACKAGE_NAME})
-
-set(BUILD_SYSTEM
-  ${CMAKE_CURRENT_SOURCE_DIR}/build_system/Makefile.Generic
-  ${CMAKE_CURRENT_SOURCE_DIR}/build_system/Makefile.LoadDefaults
-  ${CMAKE_CURRENT_SOURCE_DIR}/build_system/Makefile.ModelDriver
-  ${CMAKE_CURRENT_SOURCE_DIR}/build_system/Makefile.ParameterizedModel
-  ${CMAKE_CURRENT_SOURCE_DIR}/build_system/Makefile.SanityCheck
-  ${CMAKE_CURRENT_SOURCE_DIR}/build_system/Makefile.SimulatorModel
-  ${CMAKE_CURRENT_SOURCE_DIR}/build_system/Makefile.StandAloneModel
-  )
-install(FILES ${BUILD_SYSTEM} DESTINATION ${CMAKE_INSTALL_LIBDIR}/${FULL_PACKAGE_NAME}/build_system)
-
-set(BUILD_COMPILER
-  ${CMAKE_CURRENT_SOURCE_DIR}/build_system/compiler_defaults/Makefile.GCC
-  ${CMAKE_CURRENT_SOURCE_DIR}/build_system/compiler_defaults/Makefile.INTEL
-  )
-install(FILES ${BUILD_COMPILER} DESTINATION ${CMAKE_INSTALL_LIBDIR}/${FULL_PACKAGE_NAME}/build_system/compiler_defaults)
-
-set(BUILD_LINKER
-  ${CMAKE_CURRENT_SOURCE_DIR}/build_system/linker_defaults/Makefile.DARWIN
-  ${CMAKE_CURRENT_SOURCE_DIR}/build_system/linker_defaults/Makefile.FREEBSD
-  ${CMAKE_CURRENT_SOURCE_DIR}/build_system/linker_defaults/Makefile.LINUX
-  )
-install(FILES ${BUILD_LINKER} DESTINATION ${CMAKE_INSTALL_LIBDIR}/${FULL_PACKAGE_NAME}/build_system/linker_defaults)

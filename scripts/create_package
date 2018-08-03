@@ -108,11 +108,6 @@ w
 EOF
 done
 
-ed build_system/Makefile.LoadDefaults <<EOF
-,s/^ *package_name *=.*/package_name = $packagename/
-w
-EOF
-
 cd ./docs
 
 make pdf

@@ -305,7 +305,6 @@ int ModelLibrary::GetParameterFileString(
   }
 
   std::stringstream paramFileStringSymbol;
-  //@@@@@@ should we make the file numbering in Makefile start from zero? @@@@
   paramFileStringSymbol << "parameter_file_" << (index+1);
   unsigned char const * const paramFileString
       = static_cast<unsigned char const * const>(

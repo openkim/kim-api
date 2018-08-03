@@ -48,7 +48,6 @@ void usage(std::string name)
   std::cerr << "Usage:\n"
             << "  " << name << " <option> [<option>]...\n"
             << "    Stand-alone Options:\n"
-            << "      --master-config\n"
             << "      --libexec-path\n"
             << "      --cc\n"
             << "      --cxx\n"
@@ -146,12 +145,7 @@ int main(int argc, char* argv[])
   }
   else if (argc == 2)
   {
-    if (!strcmp(argv[1], "--master-config"))
-    {
-      printf(MAKEFILEKIMCONFIG_STRING "\n");
-      return result;
-    }
-    else if (!strcmp(argv[1], "--libexec-path"))
+    if (!strcmp(argv[1], "--libexec-path"))
     {
       printf(LIBEXECPATH_STRING "\n");
       return result;
