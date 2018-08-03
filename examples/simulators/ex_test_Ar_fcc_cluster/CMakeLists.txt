@@ -36,7 +36,7 @@
 cmake_minimum_required(VERSION 3.0)
 
 list(APPEND CMAKE_MODULE_PATH $ENV{KIM_CMAKE_MODULES_DIR})
-find_package(KIM 2 REQUIRED)
+find_package(KIM-API-V2 2 REQUIRED)
 
 set(TEST_NAME "ex_test_Ar_fcc_cluster")
 
