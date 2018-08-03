@@ -144,6 +144,23 @@ if(BUILD_MODULES)
   add_subdirectory(examples/simulators)
 endif()
 
+option(DOWNLOAD_ALL "TODO Download all models, model drivers and simulators" OFF)
+if(DOWNLOAD_ALL)
+    # TODO insert full model/model_driver/simulator git repo or tarball here
+    set(GIT_REPOSITORY "https://github.com/openkim/kim-api.git")
+    set(GIT_BRANCH "cmake")
+
+    if(EXISTS ${CMAKE_BINARY_DIR}/download)
+        execute_process(COMMAND git pull  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/download)
+    else()
+        execute_process(COMMAND git clone -b ${GIT_BRANCH} ${GIT_REPOSITORY} download WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+    endif()
+
+    add_subdirectory(${CMAKE_BINARY_DIR}/download/examples/models)
+    add_subdirectory(${CMAKE_BINARY_DIR}/download/examples/model_drivers)
+    add_subdirectory(${CMAKE_BINARY_DIR}/download/examples/simulators)
+endif()
+
 install(TARGETS kim-api DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
 install(FILES ${CMAKE_BINARY_DIR}/Makefile.KIM_Config DESTINATION ${CMAKE_INSTALL_LIBDIR}/${FULL_PACKAGE_NAME})
