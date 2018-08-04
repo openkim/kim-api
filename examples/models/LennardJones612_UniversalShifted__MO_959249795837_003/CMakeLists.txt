@@ -36,10 +36,10 @@
 cmake_minimum_required(VERSION 3.0)
 
 list(APPEND CMAKE_MODULE_PATH $ENV{KIM_API_V2_CMAKE_MODULES_DIR})
-find_package(KIM-API-V2 2 REQUIRED)
+find_package(KIM-API-V2 2.0 REQUIRED)
 
 kim_add_model_target(
-    NAME "LennardJones612_UniversalShifted__MO_959249795837_003"
-    DRIVER_NAME "LennardJones612__MD_414112407348_003"
-    PARAMETER_FILES LennardJones612_UniversalShifted.params
-)
+  NAME            "LennardJones612_UniversalShifted__MO_959249795837_003"
+  DRIVER_NAME     "LennardJones612__MD_414112407348_003"
+  PARAMETER_FILES LennardJones612_UniversalShifted.params
+  )

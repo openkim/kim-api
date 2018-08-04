@@ -37,12 +37,12 @@ cmake_minimum_required(VERSION 3.0)
 enable_language(Fortran)
 
 list(APPEND CMAKE_MODULE_PATH $ENV{KIM_API_V2_CMAKE_MODULES_DIR})
-find_package(KIM-API-V2 2 REQUIRED)
+find_package(KIM-API-V2 2.0 REQUIRED)
 
 set(TEST_NAME "ex_test_Ar_fcc_cluster_fortran")
 
 add_executable(${TEST_NAME} ${TEST_NAME}.F90)
-target_link_libraries(${TEST_NAME} ${KIM_TARGET})
+target_link_libraries(${TEST_NAME} ${KIM-API-V2_TARGET})
 
 set(TEST_MODELS ex_model_Ar_P_LJ
                 ex_model_Ar_P_MLJ_F03

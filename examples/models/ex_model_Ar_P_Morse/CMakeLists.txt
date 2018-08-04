@@ -36,10 +36,10 @@
 cmake_minimum_required(VERSION 3.0)
 
 list(APPEND CMAKE_MODULE_PATH $ENV{KIM_API_V2_CMAKE_MODULES_DIR})
-find_package(KIM-API-V2 2 REQUIRED)
+find_package(KIM-API-V2 2.0 REQUIRED)
 
 kim_add_model_target(
-    NAME "ex_model_Ar_P_Morse"
-    DRIVER_NAME "ex_model_driver_P_Morse"
-    PARAMETER_FILES ex_model_Ar_P_Morse.params
-)
+  NAME            "ex_model_Ar_P_Morse"
+  DRIVER_NAME     "ex_model_driver_P_Morse"
+  PARAMETER_FILES "ex_model_Ar_P_Morse.params"
+  )

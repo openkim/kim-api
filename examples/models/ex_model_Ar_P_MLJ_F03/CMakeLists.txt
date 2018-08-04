@@ -36,17 +36,17 @@
 cmake_minimum_required(VERSION 3.0)
 
 list(APPEND CMAKE_MODULE_PATH $ENV{KIM_API_V2_CMAKE_MODULES_DIR})
-find_package(KIM-API-V2 2 REQUIRED)
+find_package(KIM-API-V2 2.0 REQUIRED)
 
 enable_language(Fortran)
 
 set(MODEL_NAME "ex_model_Ar_P_MLJ_F03")
 
 kim_add_model_target(
-    NAME ${MODEL_NAME}
-    CREATE_FUNCTION_NAME "model_create_routine"
-    CREATE_FUNCTION_LANG "fortran"
-)
+  NAME                     ${MODEL_NAME}
+  CREATE_FUNCTION_NAME     "model_create_routine"
+  CREATE_FUNCTION_LANGUAGE "fortran"
+  )
 
 target_sources(${MODEL_NAME} PRIVATE ${MODEL_NAME}.F03)
 

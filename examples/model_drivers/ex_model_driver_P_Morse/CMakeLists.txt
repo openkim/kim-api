@@ -36,14 +36,14 @@
 cmake_minimum_required(VERSION 3.0)
 
 list(APPEND CMAKE_MODULE_PATH $ENV{KIM_API_V2_CMAKE_MODULES_DIR})
-find_package(KIM-API-V2 2 REQUIRED)
+find_package(KIM-API-V2 2.0 REQUIRED)
 
 set(MODEL_DRIVER_NAME "ex_model_driver_P_Morse")
 
 kim_add_model_driver_target(
-    NAME ${MODEL_DRIVER_NAME}
-    CREATE_FUNCTION_NAME "model_driver_create"
-    CREATE_FUNCTION_LANG "c"
-)
+  NAME                     ${MODEL_DRIVER_NAME}
+  CREATE_FUNCTION_NAME     "model_driver_create"
+  CREATE_FUNCTION_LANGUAGE "c"
+  )
 
 target_sources(${MODEL_DRIVER_NAME} PRIVATE ${MODEL_DRIVER_NAME}.c)
