@@ -30,10 +30,10 @@
 # Release: This file is part of the kim-api.git repository.
 #
 
-_@SANITIZED_FULL_PACKAGE_NAME@_collections_management()
+_@SANITIZED_PROJECT_NAME@_collections_management()
 {
   local collections_info
-  collections_info=@CMAKE_INSTALL_LIBEXECDIR@/@FULL_PACKAGE_NAME@-collections-info
+  collections_info=@CMAKE_INSTALL_LIBEXECDIR@/@PROJECT_NAME@-collections-info
 
   local cur subcommands opts
   subcommands="list set-user-models-dir set-user-drivers-dir install reinstall"
@@ -146,4 +146,4 @@ _@SANITIZED_FULL_PACKAGE_NAME@_collections_management()
   fi
   return 1
 }
-complete -F _@SANITIZED_FULL_PACKAGE_NAME@_collections_management @FULL_PACKAGE_NAME@-collections-management
+complete -F _@SANITIZED_PROJECT_NAME@_collections_management @PROJECT_NAME@-collections-management

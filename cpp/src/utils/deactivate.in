@@ -35,14 +35,14 @@
 
 
 _sysconfdir=@CMAKE_INSTALL_FULL_SYSCONFDIR@
-_full_package_name=@FULL_PACKAGE_NAME@
+_project_name=@PROJECT_NAME@
 
 # Ensure that this script is sourced, not executed
 if test x"`basename "$0" 2> /dev/null`" \
-        = x"${_full_package_name}-deactivate"; then
-  (>&2 printf "Error:\t${_full_package_name}-deactivate must be sourced.\n"
-   printf "\tRun 'source ${_full_package_name}-deactivate' not "
-   printf "'${_full_package_name}-deactivate'.\n")
+        = x"${_project_name}-deactivate"; then
+  (>&2 printf "Error:\t${_project_name}-deactivate must be sourced.\n"
+   printf "\tRun 'source ${_project_name}-deactivate' not "
+   printf "'${_project_name}-deactivate'.\n")
   exit 1
 fi
 
@@ -58,12 +58,12 @@ export PKG_CONFIG_PATH=`printf "${PKG_CONFIG_PATH}" | \
 
 unset KIM_API_V2_CMAKE_MODULES_DIR
 
-for _func in `grep "_${_full_package_name}-.*[[:space:]]*()" \
-  "${_sysconfdir}/bash_completion.d/${_full_package_name}-completion.bash"`; do
+for _func in `grep "_${_project_name}-.*[[:space:]]*()" \
+  "${_sysconfdir}/bash_completion.d/${_project_name}-completion.bash"`; do
   _func=`printf "${_func}" | sed -e 's|[[:space:]]*().*||'`
   unset -f "${_func}"
 done
 
 unset _func
 unset _sysconfdir
-unset _full_package_name
+unset _project_name

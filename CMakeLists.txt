@@ -35,7 +35,11 @@
 
 cmake_minimum_required(VERSION 3.0)
 
-project(kim-api VERSION 2.0.0 LANGUAGES C CXX Fortran)
+set(PROJECT_PREFIX "kim-api" CACHE STRING "TODO add description here")
+mark_as_advanced(PROJECT_PREFIX)
+
+
+project(${PROJECT_PREFIX}-v2 VERSION 2.0.0 LANGUAGES C CXX Fortran)
 include(GNUInstallDirs)
 enable_testing()
 
@@ -81,15 +85,11 @@ SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_FULL_LIBDIR}")
 
 
 
-set(PACKAGE_NAME "kim-api" CACHE STRING "TODO add description here")
-
-
 set(USER_CONFIG_FILE_ROOT_NAME "$ENV{HOME}" CACHE STRING "TODO add description")
 mark_as_advanced(USER_CONFIG_FILE_ROOT_NAME)
-set(USER_CONFIG_FILE_DIR_NAME ".${PACKAGE_NAME}" CACHE STRING "TODO add description")
+set(USER_CONFIG_FILE_DIR_NAME ".${PROJECT_PREFIX}" CACHE STRING "TODO add description")
 mark_as_advanced(USER_CONFIG_FILE_DIR_NAME)
 
-set(FULL_PACKAGE_NAME "${PACKAGE_NAME}-v${PROJECT_VERSION_MAJOR}")
 
 set(KIM_LOG_MAXIMUM_LEVEL "ERROR" CACHE STRING "TODO add description here")
 set_property(CACHE KIM_LOG_MAXIMUM_LEVEL PROPERTY STRINGS SILENT FATAL ERROR WARNING INFORMATION DEBUG)
@@ -105,7 +105,7 @@ set_target_properties(kim-api PROPERTIES
 target_include_directories(kim-api PUBLIC $<TARGET_PROPERTY:kim-api,Fortran_MODULE_DIRECTORY>)
 target_include_directories(kim-api PUBLIC ${CMAKE_BINARY_DIR})
 target_link_libraries(kim-api ${CMAKE_DL_LIBS})
-set_target_properties(kim-api PROPERTIES OUTPUT_NAME ${FULL_PACKAGE_NAME}
+set_target_properties(kim-api PROPERTIES OUTPUT_NAME ${PROJECT_NAME}
     INSTALL_NAME_DIR "${CMAKE_INSTALL_FULL_LIBDIR}" SOVERSION 2)
 
 add_subdirectory(c/include)
@@ -146,4 +146,4 @@ endif()
 
 install(TARGETS kim-api DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
-install(DIRECTORY cmake DESTINATION ${CMAKE_INSTALL_LIBDIR}/${FULL_PACKAGE_NAME})
+install(DIRECTORY cmake DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME})
