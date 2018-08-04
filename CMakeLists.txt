@@ -110,6 +110,9 @@ configure_file(c/include/KIM_Version.h.in KIM_Version.h)
 configure_file(fortran/include/kim_version.fd.in kim_version.fd)
 
 add_library(kim-api SHARED)
+set_target_properties(kim-api PROPERTIES
+  Fortran_MODULE_DIRECTORY "${CMAKE_BINARY_DIR}/Fortran_MODULES")
+target_include_directories(kim-api PUBLIC $<TARGET_PROPERTY:kim-api,Fortran_MODULE_DIRECTORY>)
 target_include_directories(kim-api PUBLIC ${CMAKE_BINARY_DIR})
 target_link_libraries(kim-api ${CMAKE_DL_LIBS})
 set_target_properties(kim-api PROPERTIES OUTPUT_NAME ${FULL_PACKAGE_NAME}
