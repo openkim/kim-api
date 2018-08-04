@@ -33,7 +33,6 @@
 #
 
 
-set(BUILD_CONFIG           ${FULL_PACKAGE_NAME}-build-config)
 set(COLLECTIONS_MANAGEMENT ${FULL_PACKAGE_NAME}-collections-management)
 set(COLLECTIONS_INFO       ${FULL_PACKAGE_NAME}-collections-info)
 set(ACTIVATE_SCRIPT        ${FULL_PACKAGE_NAME}-activate)
@@ -58,34 +57,6 @@ target_include_directories(collections-info PRIVATE ${KIM_CPP_SRC_DIR})
 target_link_libraries(collections-info kim-api)
 set_target_properties(collections-info PROPERTIES OUTPUT_NAME ${COLLECTIONS_INFO})
 
-add_executable(build-config build-config.cpp)
-
-set(LD_FORTRAN_LIB_STRING "")
-foreach(impl_lib ${CMAKE_Fortran_IMPLICIT_LINK_LIBRARIES})
-    set(LD_FORTRAN_LIB_STRING "${LD_FORTRAN_LIB_STRING} -l${impl_lib}")
-endforeach()
-
-target_compile_definitions(build-config PRIVATE
-  CC_STRING="${CMAKE_C_COMPILER}"
-  CXX_STRING="${CMAKE_CXX_COMPILER}"
-  FC_STRING="${CMAKE_Fortran_COMPILER}"
-  LD_STRING="${CMAKE_CXX_COMPILER}"
-  INCLUDES_STRING="-I${CMAKE_INSTALL_FULL_INCLUDEDIR}/${FULL_PACKAGE_NAME}"
-  CFLAGS_STRING="${CMAKE_C_FLAGS}"
-  CXXFLAGS_STRING="${CMAKE_CXX_FLAGS}"
-  FFLAGS_STRING="${CMAKE_Fortran_FLAGS}"
-  LDFLAGS_STRING="-L${CMAKE_INSTALL_FULL_LIBDIR}"
-  LDLIBS_STRING="-l${FULL_PACKAGE_NAME} ${LD_FORTRAN_LIB_STRING}"
-  XLANGLDLIBS_STRING=""
-  FNOMAINFLAG_STRING=""
-  OBJONLYFLAG_STRING="-c"
-  OUTPUTINFLAG_STRING="-o"
-  LIBEXECPATH_STRING="${CMAKE_INSTALL_FULL_LIBEXECDIR}/${FULL_PACKAGE_NAME}"
-  VERSION_STRING="${KIM_VERSION_STRING}"
-  )
-set_target_properties(build-config PROPERTIES OUTPUT_NAME ${BUILD_CONFIG})
-
-install(TARGETS build-config DESTINATION  ${CMAKE_INSTALL_BINDIR})
 install(TARGETS collections-info simulator-model DESTINATION ${CMAKE_INSTALL_LIBEXECDIR}/${FULL_PACKAGE_NAME})
 
 install(
