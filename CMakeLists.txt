@@ -39,6 +39,23 @@ project(kim-api VERSION 2.0.0 LANGUAGES C CXX Fortran)
 include(GNUInstallDirs)
 enable_testing()
 
+set(PROJECT_VERSION_PRERELEASE git)
+set(PROJECT_VERSION_BUILD_METADATA)
+# TODO : translate next line for metadata :: http://xit0.org/2013/04/cmake-use-git-branch-and-commit-details-in-project/
+# more complex: https://github.com/votca/tools/blob/master/CMakeModules/gitversion.cmake
+# $(shell git rev-parse --short HEAD)$(shell if ! (git diff --quiet && git diff --cached --quiet); then printf ".dirty"; fi).$(KIM_COMPILERSUITE).$(KIM_SYSTEMLINKER).$(KIM_SYSTEMARCH).$(KIM_LINK)
+set(PROJECT_VERSION_STRING "${PROJECT_VERSION}")
+if(PROJECT_VERSION_PRERELEASE)
+  set(PROJECT_VERSION_STRING
+    "${PROJECT_VERSION_STRING}-${PROJECT_VERSION_PRERELEASE}")
+endif()
+if(PROJECT_VERSION_BUILD_METADATA)
+  set(PROJECT_VERSION_STRING
+    "${PROJECT_VERSION_STRING}+${PROJECT_VERSION_BUILD_METADATA}")
+endif()
+
+
+
 if (${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
   option(ENABLE_COVERAGE "Enable code coverage" OFF)
   mark_as_advanced(ENABLE_COVERAGE)
@@ -61,24 +78,7 @@ endif()
 SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_FULL_LIBDIR}")
 #SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
-set(KIM_VERSION_MAJOR ${PROJECT_VERSION_MAJOR})
-set(KIM_VERSION_MINOR ${PROJECT_VERSION_MINOR})
-set(KIM_VERSION_PATCH ${PROJECT_VERSION_PATCH})
-set(KIM_VERSION_PRERELEASE git)
-set(KIM_VERSION_BUILD_METADATA)
-# TODO : translate next line for metadata :: http://xit0.org/2013/04/cmake-use-git-branch-and-commit-details-in-project/
-# more complex: https://github.com/votca/tools/blob/master/CMakeModules/gitversion.cmake
-# $(shell git rev-parse --short HEAD)$(shell if ! (git diff --quiet && git diff --cached --quiet); then printf ".dirty"; fi).$(KIM_COMPILERSUITE).$(KIM_SYSTEMLINKER).$(KIM_SYSTEMARCH).$(KIM_LINK)
 
-set(KIM_VERSION_STRING "${KIM_VERSION_MAJOR}.${KIM_VERSION_MINOR}.${KIM_VERSION_PATCH}")
-
-if(KIM_VERSION_PRERELEASE)
-    set(KIM_VERSION_STRING "${KIM_VERSION_STRING}-${KIM_VERSION_PRERELEASE}")
-endif()
-
-if(KIM_VERSION_BUILD_METADATA)
-    set(KIM_VERSION_STRING "${KIM_VERSION_STRING}+${KIM_VERSION_BUILD_METADATA}")
-endif()
 
 
 set(PACKAGE_NAME "kim-api" CACHE STRING "TODO add description here")
@@ -89,7 +89,7 @@ mark_as_advanced(USER_CONFIG_FILE_ROOT_NAME)
 set(USER_CONFIG_FILE_DIR_NAME ".${PACKAGE_NAME}" CACHE STRING "TODO add description")
 mark_as_advanced(USER_CONFIG_FILE_DIR_NAME)
 
-set(FULL_PACKAGE_NAME "${PACKAGE_NAME}-v${KIM_VERSION_MAJOR}")
+set(FULL_PACKAGE_NAME "${PACKAGE_NAME}-v${PROJECT_VERSION_MAJOR}")
 
 set(KIM_LOG_MAXIMUM_LEVEL "ERROR" CACHE STRING "TODO add description here")
 set_property(CACHE KIM_LOG_MAXIMUM_LEVEL PROPERTY STRINGS SILENT FATAL ERROR WARNING INFORMATION DEBUG)

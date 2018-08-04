@@ -3,7 +3,7 @@ extern "C"
 char kim_item_type[] = "parameterized-model";
 int number_of_parameter_files = @NUMBER_OF_PARAMETER_FILES@;
 int (* @MODEL_NAME@_create_pointer)() = 0;
-char @MODEL_NAME@_compiled_with_version[] = "@KIM_VERSION_STRING@";
+char @MODEL_NAME@_compiled_with_version[] = "@PROJECT_VERSION_STRING@";
 char @MODEL_NAME@_language[] = "cpp";
 char @MODEL_NAME@_driver_name[] = "@MODEL_DRIVER_NAME@";
 }

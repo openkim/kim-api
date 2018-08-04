@@ -35,7 +35,7 @@
 #
 
 collections_info=@CMAKE_INSTALL_FULL_LIBEXECDIR@/@FULL_PACKAGE_NAME@/@FULL_PACKAGE_NAME@-collections-info
-major_version=@KIM_MAJOR_VERSION@
+major_version=@PROJECT_MAJOR_VERSION@
 
 make_command="make --no-print-directory"
 

@@ -94,7 +94,7 @@ _@SANITIZED_FULL_PACKAGE_NAME@_collections_management()
           opts="OpenKIM OpenKIM_with_history"
         fi
 
-        local query='query={"type":"mo","kim-api-version":{"$regex":"^@KIM_VERSION_MAJOR@\\."}}'
+        local query='query={"type":"mo","kim-api-version":{"$regex":"^@PROJECT_VERSION_MAJOR@\\."}}'
         query="${query}"'&fields={"kimcode":1}'
         query="${query}"'&database=obj&history=on'
         local list=`wget -q -O - --post-data="${query}" \
