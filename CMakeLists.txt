@@ -141,6 +141,7 @@ add_subdirectory(fortran/include)
 # Add other subdirectories
 #
 add_subdirectory(completion)
+add_subdirectory(pkg-config)
 add_subdirectory(utility)
 add_subdirectory(documentation)
 

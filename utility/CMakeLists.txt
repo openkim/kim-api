@@ -38,14 +38,12 @@ set(COLLECTIONS_INFO       ${PROJECT_NAME}-collections-info)
 set(COLLECTIONS_MANAGEMENT ${PROJECT_NAME}-collections-management)
 set(ACTIVATE_SCRIPT        ${PROJECT_NAME}-activate)
 set(DEACTIVATE_SCRIPT      ${PROJECT_NAME}-deactivate)
-set(PKG_CONFIG_FILE        "lib${PROJECT_NAME}.pc")
 
 configure_file(collections-management.in ${COLLECTIONS_MANAGEMENT} @ONLY)
 configure_file(activate.in ${ACTIVATE_SCRIPT} @ONLY)
 configure_file(deactivate.in ${DEACTIVATE_SCRIPT} @ONLY)
-configure_file(libkim-api.pc.in ${PKG_CONFIG_FILE} @ONLY)
 
-set(KIM_CPP_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/..")
+set(KIM_CPP_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../cpp/src")
 
 add_executable(simulator-model simulator-model.cpp)
 target_include_directories(simulator-model PRIVATE ${KIM_CPP_SRC_DIR})
@@ -57,7 +55,10 @@ target_include_directories(collections-info PRIVATE ${KIM_CPP_SRC_DIR})
 target_link_libraries(collections-info kim-api)
 set_target_properties(collections-info PROPERTIES OUTPUT_NAME ${COLLECTIONS_INFO})
 
-install(TARGETS collections-info simulator-model DESTINATION ${CMAKE_INSTALL_LIBEXECDIR}/${PROJECT_NAME})
+install(
+  TARGETS simulator-model collections-info
+  DESTINATION ${CMAKE_INSTALL_LIBEXECDIR}/${PROJECT_NAME}
+  )
 
 install(
   PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/${ACTIVATE_SCRIPT}
@@ -65,5 +66,3 @@ install(
            ${CMAKE_CURRENT_BINARY_DIR}/${DEACTIVATE_SCRIPT}
   DESTINATION ${CMAKE_INSTALL_BINDIR}
   )
-
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${PKG_CONFIG_FILE} DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
