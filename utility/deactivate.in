@@ -34,36 +34,32 @@
 #
 
 
-_sysconfdir=@CMAKE_INSTALL_FULL_SYSCONFDIR@
-_project_name=@PROJECT_NAME@
-
 # Ensure that this script is sourced, not executed
 if test x"`basename "$0" 2> /dev/null`" \
-        = x"${_project_name}-deactivate"; then
-  (>&2 printf "Error:\t${_project_name}-deactivate must be sourced.\n"
-   printf "\tRun 'source ${_project_name}-deactivate' not "
-   printf "'${_project_name}-deactivate'.\n")
+        = x"@PROJECT_NAME@-deactivate"; then
+  (>&2 printf "Error:\t@PROJECT_NAME@-deactivate must be sourced.\n"
+   printf "\tRun 'source @PROJECT_NAME@-deactivate' not "
+   printf "'@PROJECT_NAME@-deactivate'.\n")
   exit 1
 fi
 
 
 export PATH=`printf "${PATH}" | sed -e "s|:@CMAKE_INSTALL_FULL_BINDIR@|:|g" \
-                                    -e "s|^@CMAKE_INSTALL_FULL_BINDIR@||" \
+                                    -e "s|^@CMAKE_INSTALL_FULL_BINDIR@:*||" \
                                     -e "s|:@CMAKE_INSTALL_FULL_BINDIR@$||"`
 
 export PKG_CONFIG_PATH=`printf "${PKG_CONFIG_PATH}" | \
-                                sed -e "s|:${CMAKE_INSTALL_FULL_LIBDIR}/pkgconfig|:|g" \
-                                    -e "s|^${CMAKE_INSTALL_FULL_LIBDIR}/pkgconfig||" \
-                                    -e "s|:${CMAKE_INSTALL_FULL_LIBDIR}/pkgconfig||"`
+                                sed -e "s|:@CMAKE_INSTALL_FULL_LIBDIR@/pkgconfig|:|g" \
+                                    -e "s|^@CMAKE_INSTALL_FULL_LIBDIR@/pkgconfig:*||" \
+                                    -e "s|:@CMAKE_INSTALL_FULL_LIBDIR@/pkgconfig$||"`
+if test x"" = x"${PKG_CONFIG_PATH}"; then unset PKG_CONFIG_PATH; fi
 
 unset KIM_API_V2_CMAKE_MODULES_DIR
 
-for _func in `grep "_${_project_name}-.*[[:space:]]*()" \
-  "${_sysconfdir}/bash_completion.d/${_project_name}-completion.bash"`; do
+for _func in `grep "_@SANITIZED_PROJECT_NAME@_.*[[:space:]]*()" \
+  "@CMAKE_INSTALL_FULL_SYSCONFDIR@/bash_completion.d/@PROJECT_NAME@-completion.bash"`; do
   _func=`printf "${_func}" | sed -e 's|[[:space:]]*().*||'`
   unset -f "${_func}"
 done
 
 unset _func
-unset _sysconfdir
-unset _project_name
