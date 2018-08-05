@@ -35,6 +35,8 @@
 
 target_include_directories(kim-api PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
+configure_file(KIM_Version.h.in ${CMAKE_BINARY_DIR}/KIM_Version.h)
+
 set(C_HEADERS
     KIM_ChargeUnit.h
     KIM_ComputeArgumentName.h

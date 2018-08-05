@@ -35,6 +35,9 @@
 
 target_include_directories(kim-api PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
+configure_file(KIM_LOG_DEFINES.inc.in ${CMAKE_BINARY_DIR}/KIM_LOG_DEFINES.inc)
+configure_file(KIM_Version.hpp.in ${CMAKE_BINARY_DIR}/KIM_Version.hpp)
+
 set(CPP_HEADERS
     KIM_ChargeUnit.hpp
     KIM_ChargeUnit.inc

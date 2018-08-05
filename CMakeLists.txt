@@ -85,14 +85,6 @@ if(PROJECT_VERSION_BUILD_METADATA)
 endif()
 
 
-# Configure files
-#
-configure_file(cpp/include/KIM_LOG_DEFINES.inc.in KIM_LOG_DEFINES.inc)
-configure_file(cpp/include/KIM_Version.hpp.in KIM_Version.hpp)
-configure_file(c/include/KIM_Version.h.in KIM_Version.h)
-configure_file(fortran/include/kim_version.fd.in kim_version.fd)
-
-
 # Set global compiler options
 #
 include(CheckFortranCompilerFlag)

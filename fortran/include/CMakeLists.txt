@@ -35,6 +35,8 @@
 
 target_include_directories(kim-api PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
+configure_file(kim_version.fd.in ${CMAKE_BINARY_DIR}/kim_version.fd)
+
 set(F_MOD_DIR $<TARGET_PROPERTY:kim-api,Fortran_MODULE_DIRECTORY>)
 set(FORTRAN_INCLUDES
     ${F_MOD_DIR}/kim_charge_unit_module.mod
