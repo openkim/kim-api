@@ -141,15 +141,15 @@ add_subdirectory(fortran/include)
 # Add other subdirectories
 #
 add_subdirectory(completion)
-add_subdirectory(cpp/src/utils)
-add_subdirectory(docs)
+add_subdirectory(utility)
+add_subdirectory(documentation)
 
 
 # Add Models & Drivers, if appropriate
 if(BUILD_MODULES)
-  add_subdirectory(examples/models)
-  add_subdirectory(examples/model_drivers)
-  add_subdirectory(examples/simulators)
+  add_subdirectory(example/models)
+  add_subdirectory(example/model_drivers)
+  add_subdirectory(example/simulators)
 endif()
 
 
@@ -166,9 +166,9 @@ if(DOWNLOAD_ALL)
         execute_process(COMMAND git clone -b ${GIT_BRANCH} ${GIT_REPOSITORY} download WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
     endif()
 
-    add_subdirectory(${CMAKE_BINARY_DIR}/download/examples/models)
-    add_subdirectory(${CMAKE_BINARY_DIR}/download/examples/model_drivers)
-    add_subdirectory(${CMAKE_BINARY_DIR}/download/examples/simulators)
+    add_subdirectory(${CMAKE_BINARY_DIR}/download/example/models)
+    add_subdirectory(${CMAKE_BINARY_DIR}/download/example/model_drivers)
+    add_subdirectory(${CMAKE_BINARY_DIR}/download/example/simulators)
 endif()
 
 
