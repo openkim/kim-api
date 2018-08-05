@@ -21,23 +21,22 @@ if(TARGET kim-api)
     set(KIM-API-V2_COLLECTION_INFO_EXECUTABLE "") # invalid in build directory
     set(KIM-API-V2_TARGET kim-api)
 else()
-    pkg_check_modules(KIM-API-V2 libkim-api-v2 IMPORTED_TARGET QUIET)
-    # IMPORTED_TARGET support from pkg_check_modules() requires CMAKE >= 3.6 ?
+    pkg_check_modules(KIM-API-V2 libkim-api-v2 QUIET)
     if(KIM-API-V2_FOUND)
       set(KIM-API-V2_CMAKE_DIR ${KIM-API-V2_LIBDIR}/kim-api-v2/cmake)
-      find_program(KIM-API-V2_COLLECTION_INFO_EXECUTABLE kim-api-v2-collections-info
-          PATH_SUFFIXES libexec/kim-api-v2 PATHS ${KIM-API-V2_PREFIX})
-      set(KIM-API-V2_TARGET PkgConfig::KIM-API-V2)
+      set(KIM-API-V2_LIBRARIES ${KIM-API-V2_LIBDIR}/${CMAKE_SHARED_LIBRARY_PREFIX}${KIM-API-V2_LIBRARIES}${CMAKE_SHARED_LIBRARY_SUFFIX})
     else()
       find_path(KIM-API-V2_INCLUDE_DIRS KIM_Version.h PATH_SUFFIXES kim-api-v2)
       find_library(KIM-API-V2_LIBRARIES NAMES kim-api-v2)
       find_path(KIM-API-V2_CMAKE_DIR parameterized-model_init_wrapper.cpp.in PATH_SUFFIXES lib/kim-api-v2/cmake lib64/kim-api-v2/cmake)
-      find_program(KIM-API-V2_COLLECTION_INFO_EXECUTABLE kim-api-v2-collections-info PATH_SUFFIXES libexec/kim-api-v2)
-      add_library(KIM-API-V2::KIM-API-V2 UNKNOWN IMPORTED)
-      set_target_properties(KIM-API-V2::KIM-API-V2 PROPERTIES IMPORTED_LOCATION ${KIM-API-V2_LIBRARIES}
-          INTERFACE_INCLUDE_DIRECTORIES ${KIM-API-V2_INCLUDE_DIRS})
-      set(KIM-API-V2_TARGET KIM-API-V2::KIM-API-V2)
     endif()
+    find_program(KIM-API-V2_COLLECTION_INFO_EXECUTABLE kim-api-v2-collections-info
+      PATH_SUFFIXES libexec/kim-api-v2 PATHS ${KIM-API-V2_PREFIX})
+    add_library(KIM-API-V2::kim-api UNKNOWN IMPORTED)
+    set_target_properties(KIM-API-V2::kim-api PROPERTIES IMPORTED_LOCATION ${KIM-API-V2_LIBRARIES}
+      INTERFACE_INCLUDE_DIRECTORIES ${KIM-API-V2_INCLUDE_DIRS})
+    set(KIM-API-V2_TARGET KIM-API-V2::kim-api)
+
     set(KIM-API-V2_VERSION 2.0)
     include(FindPackageHandleStandardArgs)
 
