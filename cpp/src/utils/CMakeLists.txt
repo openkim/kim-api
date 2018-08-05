@@ -33,11 +33,11 @@
 #
 
 
-set(COLLECTIONS_MANAGEMENT ${PROJECT_NAME}-collections-management)
+set(SIMULATOR_MODEL        ${PROJECT_NAME}-simulator-model)
 set(COLLECTIONS_INFO       ${PROJECT_NAME}-collections-info)
+set(COLLECTIONS_MANAGEMENT ${PROJECT_NAME}-collections-management)
 set(ACTIVATE_SCRIPT        ${PROJECT_NAME}-activate)
 set(DEACTIVATE_SCRIPT      ${PROJECT_NAME}-deactivate)
-set(SIMULATOR_MODEL        ${PROJECT_NAME}-simulator-model)
 set(PKG_CONFIG_FILE        "lib${PROJECT_NAME}.pc")
 
 configure_file(collections-management.in ${COLLECTIONS_MANAGEMENT} @ONLY)
@@ -64,6 +64,6 @@ install(
            ${CMAKE_CURRENT_BINARY_DIR}/${COLLECTIONS_MANAGEMENT}
            ${CMAKE_CURRENT_BINARY_DIR}/${DEACTIVATE_SCRIPT}
   DESTINATION ${CMAKE_INSTALL_BINDIR}
-)
+  )
 
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${PKG_CONFIG_FILE} DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)

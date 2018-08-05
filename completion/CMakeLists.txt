@@ -34,7 +34,6 @@
 
 
 set(BASH_COMPLETIONS ${PROJECT_NAME}-completion.bash)
-
 string(MAKE_C_IDENTIFIER ${PROJECT_NAME} SANITIZED_PROJECT_NAME)
 
 configure_file(completion.bash.in ${BASH_COMPLETIONS} @ONLY)

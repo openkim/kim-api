@@ -41,5 +41,5 @@ find_package(KIM-API-V2 2.0 REQUIRED)
 kim_add_model_target(
   NAME            "LennardJones612_UniversalShifted__MO_959249795837_003"
   DRIVER_NAME     "LennardJones612__MD_414112407348_003"
-  PARAMETER_FILES LennardJones612_UniversalShifted.params
+  PARAMETER_FILES "LennardJones612_UniversalShifted.params"
   )

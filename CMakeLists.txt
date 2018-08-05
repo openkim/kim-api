@@ -34,15 +34,41 @@
 
 
 cmake_minimum_required(VERSION 3.0)
-
-set(PROJECT_PREFIX "kim-api" CACHE STRING "TODO add description here")
-mark_as_advanced(PROJECT_PREFIX)
-
-
-project(${PROJECT_PREFIX}-v2 VERSION 2.0.0 LANGUAGES C CXX Fortran)
 include(GNUInstallDirs)
 enable_testing()
 
+
+# Update paths
+#
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/Modules)
+
+
+# Define options
+#
+set(KIM_LOG_MAXIMUM_LEVEL "ERROR" CACHE STRING "TODO add description here")
+set_property(CACHE KIM_LOG_MAXIMUM_LEVEL PROPERTY STRINGS SILENT FATAL ERROR WARNING INFORMATION DEBUG)
+#
+option(BUILD_MODULES "TODO Build model" OFF)
+#
+option(DOWNLOAD_ALL "TODO Download all models, model drivers and simulators" OFF)
+#
+set(PROJECT_PREFIX "kim-api" CACHE STRING "TODO add description here")
+mark_as_advanced(PROJECT_PREFIX)
+#
+set(USER_CONFIG_FILE_DIR_NAME ".${PROJECT_PREFIX}" CACHE STRING "TODO add description")
+mark_as_advanced(USER_CONFIG_FILE_DIR_NAME)
+#
+set(USER_CONFIG_FILE_ROOT_NAME "$ENV{HOME}" CACHE STRING "TODO add description")
+mark_as_advanced(USER_CONFIG_FILE_ROOT_NAME)
+
+
+#
+# Define main project
+#
+project(${PROJECT_PREFIX}-v2 VERSION 2.0.0 LANGUAGES C CXX Fortran)
+#
+# Define remaining version variables
+#
 set(PROJECT_VERSION_PRERELEASE git)
 set(PROJECT_VERSION_BUILD_METADATA)
 # TODO : translate next line for metadata :: http://xit0.org/2013/04/cmake-use-git-branch-and-commit-details-in-project/
@@ -59,7 +85,30 @@ if(PROJECT_VERSION_BUILD_METADATA)
 endif()
 
 
+# Configure files
+#
+configure_file(cpp/include/KIM_LOG_DEFINES.inc.in KIM_LOG_DEFINES.inc)
+configure_file(cpp/include/KIM_Version.hpp.in KIM_Version.hpp)
+configure_file(c/include/KIM_Version.h.in KIM_Version.h)
+configure_file(fortran/include/kim_version.fd.in kim_version.fd)
 
+
+# Set global compiler options
+#
+include(CheckFortranCompilerFlag)
+check_fortran_compiler_flag("-ffree-line-length-none" HAS_FREE_LINE_LENGTH_FLAG)
+if(HAS_FREE_LINE_LENGTH_FLAG)
+  set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -ffree-line-length-none")
+endif()
+#
+###
+# TODO : figure this RPATH stuff all out
+#SET(CMAKE_SKIP_BUILD_RPATH FALSE)
+#SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
+SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_FULL_LIBDIR}")
+#SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+####
+#
 if (${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
   option(ENABLE_COVERAGE "Enable code coverage" OFF)
   mark_as_advanced(ENABLE_COVERAGE)
@@ -70,64 +119,50 @@ if (${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
   endif()
 endif()
 
-include(CheckFortranCompilerFlag)
-check_fortran_compiler_flag("-ffree-line-length-none" HAS_FREE_LINE_LENGTH_FLAG)
-if(HAS_FREE_LINE_LENGTH_FLAG)
-  set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -ffree-line-length-none")
-endif()
 
-# TODO : figure this RPATH stuff all out
-#SET(CMAKE_SKIP_BUILD_RPATH FALSE)
-#SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
-SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_FULL_LIBDIR}")
-#SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-
-
-
-
-set(USER_CONFIG_FILE_ROOT_NAME "$ENV{HOME}" CACHE STRING "TODO add description")
-mark_as_advanced(USER_CONFIG_FILE_ROOT_NAME)
-set(USER_CONFIG_FILE_DIR_NAME ".${PROJECT_PREFIX}" CACHE STRING "TODO add description")
-mark_as_advanced(USER_CONFIG_FILE_DIR_NAME)
-
-
-set(KIM_LOG_MAXIMUM_LEVEL "ERROR" CACHE STRING "TODO add description here")
-set_property(CACHE KIM_LOG_MAXIMUM_LEVEL PROPERTY STRINGS SILENT FATAL ERROR WARNING INFORMATION DEBUG)
-
-configure_file(cpp/include/KIM_LOG_DEFINES.inc.in KIM_LOG_DEFINES.inc)
-configure_file(cpp/include/KIM_Version.hpp.in KIM_Version.hpp)
-configure_file(c/include/KIM_Version.h.in KIM_Version.h)
-configure_file(fortran/include/kim_version.fd.in kim_version.fd)
-
+# Define kim-api target
+#
 add_library(kim-api SHARED)
-set_target_properties(kim-api PROPERTIES
-  Fortran_MODULE_DIRECTORY "${CMAKE_BINARY_DIR}/Fortran_MODULES")
+set_target_properties(kim-api
+  PROPERTIES
+    OUTPUT_NAME ${PROJECT_NAME}
+    INSTALL_NAME_DIR "${CMAKE_INSTALL_FULL_LIBDIR}"
+    SOVERSION 2
+    Fortran_MODULE_DIRECTORY "${CMAKE_BINARY_DIR}/Fortran_MODULES"
+    )
 target_include_directories(kim-api PUBLIC $<TARGET_PROPERTY:kim-api,Fortran_MODULE_DIRECTORY>)
 target_include_directories(kim-api PUBLIC ${CMAKE_BINARY_DIR})
 target_link_libraries(kim-api ${CMAKE_DL_LIBS})
-set_target_properties(kim-api PROPERTIES OUTPUT_NAME ${PROJECT_NAME}
-    INSTALL_NAME_DIR "${CMAKE_INSTALL_FULL_LIBDIR}" SOVERSION 2)
 
-add_subdirectory(c/include)
-add_subdirectory(c/src)
+# Add include subdirectories
+#
 add_subdirectory(cpp/include)
-add_subdirectory(cpp/src)
-add_subdirectory(fortran/include)
+add_subdirectory(c/include)
 add_subdirectory(fortran/src)
 
+# Add src subdirectories
+#
+add_subdirectory(cpp/src)
+add_subdirectory(c/src)
+add_subdirectory(fortran/include)
+
+# Add other subdirectories
+#
 add_subdirectory(completion)
 add_subdirectory(cpp/src/utils)
 add_subdirectory(docs)
 
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/Modules)
-option(BUILD_MODULES "TODO Build model" OFF)
+
+# Add Models & Drivers, if appropriate
 if(BUILD_MODULES)
   add_subdirectory(examples/models)
   add_subdirectory(examples/model_drivers)
   add_subdirectory(examples/simulators)
 endif()
 
-option(DOWNLOAD_ALL "TODO Download all models, model drivers and simulators" OFF)
+
+# Add downloads, if appropriate
+#
 if(DOWNLOAD_ALL)
     # TODO insert full model/model_driver/simulator git repo or tarball here
     set(GIT_REPOSITORY "https://github.com/openkim/kim-api.git")
@@ -144,6 +179,11 @@ if(DOWNLOAD_ALL)
     add_subdirectory(${CMAKE_BINARY_DIR}/download/examples/simulators)
 endif()
 
+
+# Add install rules for kim-api
+#
 install(TARGETS kim-api DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
+# Add install of cmake files
+#
 install(DIRECTORY cmake DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME})

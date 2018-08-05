@@ -41,7 +41,7 @@ find_package(KIM-API-V2 2.0 REQUIRED)
 set(MODEL_NAME "LennardJones_Ar")
 
 kim_add_model_target(
-  NAME ${MODEL_NAME}
+  NAME                     ${MODEL_NAME}
   CREATE_FUNCTION_NAME     "model_create"
   CREATE_FUNCTION_LANGUAGE "cpp"
   )

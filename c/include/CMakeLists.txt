@@ -75,6 +75,6 @@ set(C_HEADERS
     KIM_TimeUnit.h
     KIM_UnitSystem.h
     ${CMAKE_BINARY_DIR}/KIM_Version.h
-)
+    )
 
 install(FILES ${C_HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME})

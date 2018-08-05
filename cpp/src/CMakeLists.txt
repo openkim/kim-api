@@ -33,6 +33,8 @@
 #
 
 
+target_include_directories(kim-api PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+
 set(CPP_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ChargeUnit.cpp
                 ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ComputeArgumentName.cpp
                 ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ComputeArguments.cpp
@@ -62,10 +64,10 @@ set(CPP_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ChargeUnit.cpp
                 ${CMAKE_CURRENT_SOURCE_DIR}/KIM_LogImplementation.cpp
                 ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ModelImplementation.cpp
                 ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ModelLibrary.cpp
-                ${CMAKE_CURRENT_SOURCE_DIR}/old_KIM_API_DIRS.cpp)
+                ${CMAKE_CURRENT_SOURCE_DIR}/old_KIM_API_DIRS.cpp
+                )
 
 target_sources(kim-api PRIVATE ${CPP_SOURCES})
-target_include_directories(kim-api PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
 target_compile_definitions(kim-api PUBLIC
     PACKAGEDIR="${CMAKE_INSTALL_FULL_LIBDIR}/${PROJECT_NAME}"
@@ -81,4 +83,4 @@ target_compile_definitions(kim-api PUBLIC
 
     MODELLIBFILE="lib${PROJECT_PREFIX}-model-v${PROJECT_VERSION_MAJOR}"
     MODELDRIVERLIBFILE="lib${PROJECT_PREFIX}-model-driver-v${PROJECT_VERSION_MAJOR}"
-)
+    )

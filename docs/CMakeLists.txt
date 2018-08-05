@@ -37,11 +37,11 @@ cmake_policy(SET CMP0054 NEW)
 
 find_package(Doxygen)
 
-set(DOXYGEN_PROJECT_NAME    "KIM API V2")
-set(DOXYGEN_STRIP_FROM_PATH "../../")
-set(DOXYGEN_TAB_SIZE        2)
-set(DOXYGEN_EXTRACT_ALL     YES)
-set(DOXYGEN_EXTRACT_STATIC  YES)
+set(DOXYGEN_PROJECT_NAME         "KIM API V2")
+set(DOXYGEN_STRIP_FROM_PATH      "../../")
+set(DOXYGEN_TAB_SIZE             2)
+set(DOXYGEN_EXTRACT_ALL          YES)
+set(DOXYGEN_EXTRACT_STATIC       YES)
 set(DOXYGEN_EXTRACT_ANON_NSPACES YES)
 set(DOXYGEN_FILE_PATTERNS
     "*.c" "*.cc" "*.cxx" "*.cpp" "*.c++" "*.java" "*.ii" "*.ixx" "*.ipp"
@@ -53,14 +53,14 @@ set(DOXYGEN_FILE_PATTERNS
 )
 
 
-set(DOXYGEN_RECURSIVE              YES)
-set(DOXYGEN_EXAMPLE_PATH           "src/porting-scripts")
-set(DOXYGEN_IMAGE_PATH             "src/asymptote-figures")
-set(DOXYGEN_SOURCE_BROWSER         YES)
-set(DOXYGEN_USE_MATHJAX            YES)
-set(DOXYGEN_MATHJAX_RELPATH        "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.3")
-set(DOXYGEN_EXTRA_PACKAGES         "amsmath")
-set(DOXYGEN_GENERATE_LATEX         YES)
+set(DOXYGEN_RECURSIVE            YES)
+set(DOXYGEN_EXAMPLE_PATH         "src/porting-scripts")
+set(DOXYGEN_IMAGE_PATH           "src/asymptote-figures")
+set(DOXYGEN_SOURCE_BROWSER       YES)
+set(DOXYGEN_USE_MATHJAX          YES)
+set(DOXYGEN_MATHJAX_RELPATH      "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.3")
+set(DOXYGEN_EXTRA_PACKAGES       "amsmath")
+set(DOXYGEN_GENERATE_LATEX       YES)
 
 set(SOURCES
     "src/introduction.txt"
@@ -76,14 +76,14 @@ set(SOURCES
     "../examples/model_drivers/"
     "../examples/models/"
     "../examples/simulators/"
-)
+    )
 
 if(DOXYGEN_FOUND)
   doxygen_add_docs(
       docs
       ${SOURCES}
       COMMENT "Generate documentation"
-  )
+      )
 
   add_custom_command(OUTPUT refman.pdf
                      COMMAND make
