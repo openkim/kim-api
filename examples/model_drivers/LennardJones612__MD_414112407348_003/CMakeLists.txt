@@ -40,7 +40,7 @@ find_package(KIM-API-V2 2.0 REQUIRED)
 
 set(MODEL_DRIVER_NAME "LennardJones612__MD_414112407348_003")
 
-kim_add_model_driver_target(
+add_kim_api_v2_model_driver_library(
   NAME                     ${MODEL_DRIVER_NAME}
   CREATE_FUNCTION_NAME     "model_driver_create"
   CREATE_FUNCTION_LANGUAGE "cpp"

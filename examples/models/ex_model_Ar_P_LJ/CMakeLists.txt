@@ -38,7 +38,7 @@ cmake_minimum_required(VERSION 3.0)
 list(APPEND CMAKE_MODULE_PATH $ENV{KIM_API_V2_CMAKE_MODULES_DIR})
 find_package(KIM-API-V2 2.0 REQUIRED)
 
-kim_add_model_target(
+add_kim_api_v2_model_library(
   NAME            "ex_model_Ar_P_LJ"
   DRIVER_NAME     "ex_model_driver_P_LJ"
   PARAMETER_FILES "ex_model_Ar_P_LJ.params"

@@ -1,6 +1,7 @@
 # - Find KIM-API-V2
 # Find the KIM-API-V2 headers and libraries.
 #
+#  KIM-API-V2_TARGET                      - the target name for the kim-api library
 #  KIM-API-V2_INCLUDE_DIRS                - where to find KIM-API-V2 headers, etc.
 #  KIM-API-V2_LIBRARIES                   - List of libraries when using KIM-API-V2.
 #  KIM-API-V2_CMAKE_DIR                   - directory containing KIM-API-V2 cmake files.
@@ -8,6 +9,9 @@
 #  KIM-API-V2_MODEL_INSTALL_PREFIX        - where to install models.
 #  KIM-API-V2_MODEL_DRIVER_INSTALL_PREFIX - where to install model drivers.
 #  KIM-API-V2_FOUND                       - TRUE if KIM-API-V2 found.
+#
+#  add_kim_api_v2_model_library()         - set up kim-api model target
+#  add_kim_api_v2_model_driver_library()  - set up kim-api model driver target
 #
 
 find_package(PkgConfig)
@@ -68,7 +72,7 @@ endif()
 
 
 
-function(kim_add_model_target)
+function(add_kim_api_v2_model_library)
     set(options "")
     set(oneValueArgs NAME DRIVER_NAME CREATE_FUNCTION_NAME CREATE_FUNCTION_LANGUAGE)
     set(multiValueArgs PARAMETER_FILES)
@@ -116,9 +120,9 @@ function(kim_add_model_target)
     target_link_libraries(${MODEL_NAME} ${KIM-API-V2_TARGET})
 
     install(TARGETS ${MODEL_NAME} LIBRARY DESTINATION "${KIM-API-V2_MODEL_INSTALL_PREFIX}/${MODEL_NAME}")
-endfunction(kim_add_model_target)
+endfunction(add_kim_api_v2_model_library)
 
-function(kim_add_model_driver_target)
+function(add_kim_api_v2_model_driver_library)
     set(options "")
     set(oneValueArgs NAME CREATE_FUNCTION_NAME CREATE_FUNCTION_LANGUAGE)
     set(multiValueArgs "")
@@ -136,4 +140,4 @@ function(kim_add_model_driver_target)
     target_link_libraries(${MODEL_DRIVER_NAME} ${KIM-API-V2_TARGET})
 
     install(TARGETS ${MODEL_DRIVER_NAME} LIBRARY DESTINATION "${KIM-API-V2_MODEL_DRIVER_INSTALL_PREFIX}/${MODEL_DRIVER_NAME}")
-endfunction(kim_add_model_driver_target)
+endfunction(add_kim_api_v2_model_driver_library)
