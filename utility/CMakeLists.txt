@@ -43,16 +43,26 @@ configure_file(collections-management.in ${COLLECTIONS_MANAGEMENT} @ONLY)
 configure_file(activate.in ${ACTIVATE_SCRIPT} @ONLY)
 configure_file(deactivate.in ${DEACTIVATE_SCRIPT} @ONLY)
 
+
 set(KIM_CPP_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../cpp/src")
+add_library(kim-loader OBJECT
+  ${KIM_CPP_SRC_DIR}/KIM_LogVerbosity.cpp
+  ${KIM_CPP_SRC_DIR}/KIM_Log.cpp
+  ${KIM_CPP_SRC_DIR}/KIM_LogImplementation.cpp
+  ${KIM_CPP_SRC_DIR}/old_KIM_API_DIRS.cpp
+  )
+target_include_directories(kim-loader PUBLIC
+  ${KIM_CPP_SRC_DIR}/../include
+  ${KIM_CPP_SRC_DIR}
+  ${CMAKE_BINARY_DIR}
+  )
 
 add_executable(simulator-model simulator-model.cpp)
-target_include_directories(simulator-model PRIVATE ${KIM_CPP_SRC_DIR})
-target_link_libraries(simulator-model kim-api)
+target_link_libraries(simulator-model kim-loader)
 set_target_properties(simulator-model PROPERTIES OUTPUT_NAME ${SIMULATOR_MODEL})
 
 add_executable(collections-info collections-info.cpp)
-target_include_directories(collections-info PRIVATE ${KIM_CPP_SRC_DIR})
-target_link_libraries(collections-info kim-api)
+target_link_libraries(collections-info kim-loader)
 set_target_properties(collections-info PROPERTIES OUTPUT_NAME ${COLLECTIONS_INFO})
 
 install(

@@ -38,12 +38,8 @@
 #include <dlfcn.h>
 #include <cstdio>
 #include "old_KIM_API_DIRS.h"
+#include "KIM_Configuration.hpp"
 using namespace OLD_KIM;
-
-#ifndef MODELLIBFILE
-#error
-#endif
-
 
 void usage(std::string name)
 {
@@ -132,7 +128,8 @@ int main(int argc, char* argv[])
   if (accessible)
   {
     std::string libFileName
-        = item[IE_DIR] + "/" + item[IE_NAME] + "/" + MODELLIBFILE + ".so";
+        = item[IE_DIR] + "/" + item[IE_NAME]
+        +  "/" KIM_SHARED_MODULE_PREFIX KIM_MODEL_IDENTIFIER KIM_SHARED_MODULE_SUFFIX;
     model_lib_handle = dlopen(libFileName.c_str(), RTLD_NOW);
   }
   if(!accessible)

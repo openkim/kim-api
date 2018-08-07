@@ -45,27 +45,31 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/Modules)
 
 # Define options
 #
-set(KIM_LOG_MAXIMUM_LEVEL "ERROR" CACHE STRING "TODO add description here")
-set_property(CACHE KIM_LOG_MAXIMUM_LEVEL PROPERTY STRINGS SILENT FATAL ERROR WARNING INFORMATION DEBUG)
-#
-option(BUILD_MODULES "TODO Build model" OFF)
-#
-option(DOWNLOAD_ALL "TODO Download all models, model drivers and simulators" OFF)
-#
 set(PROJECT_PREFIX "kim-api" CACHE STRING "TODO add description here")
-mark_as_advanced(PROJECT_PREFIX)
+mark_as_advanced(KIM_API_PROJECT_PREFIX)
 #
-set(USER_CONFIG_FILE_DIR_NAME ".${PROJECT_PREFIX}" CACHE STRING "TODO add description")
-mark_as_advanced(USER_CONFIG_FILE_DIR_NAME)
+set(KIM_API_LOG_MAXIMUM_LEVEL "ERROR" CACHE STRING "TODO add description here")
+set_property(CACHE KIM_API_LOG_MAXIMUM_LEVEL PROPERTY STRINGS SILENT FATAL ERROR WARNING INFORMATION DEBUG)
 #
-set(USER_CONFIG_FILE_ROOT_NAME "$ENV{HOME}" CACHE STRING "TODO add description")
-mark_as_advanced(USER_CONFIG_FILE_ROOT_NAME)
+option(KIM_API_BUILD_MODULES "TODO Build model" OFF)
+#
+option(KIM_API_DOWNLOAD_ALL "TODO Download all models, model drivers and simulators" OFF)
+#
+set(KIM_API_USER_CONFIGURATION_DIR ".${PROJECT_PREFIX}" CACHE STRING "TODO if starts with / absolute, otherwise homedir.")
+mark_as_advanced(KIM_API_USER_CONFIGURATION_)
+#
+set(KIM_API_MODEL_DRIVER_IDENTIFIER "model-driver" CACHE STRING "TODO add description here")
+mark_as_advanced(KIM_API_MODEL_DRIVER_IDENTIFIER)
+#
+set(KIM_API_MODEL_IDENTIFIER "model" CACHE STRING "TODO add description here")
+mark_as_advanced(KIM_API_MODEL_IDENTIFIER)
+
 
 
 #
 # Define main project
 #
-project(${PROJECT_PREFIX}-v2 VERSION 2.0.0 LANGUAGES C CXX Fortran)
+project(${PROJECT_PREFIX}-v2 VERSION 2.0.0 LANGUAGES CXX C Fortran)
 #
 # Define remaining version variables
 #
@@ -147,7 +151,7 @@ add_subdirectory(documentation)
 
 
 # Add Models & Drivers, if appropriate
-if(BUILD_MODULES)
+if(KIM_API_BUILD_MODULES)
   add_subdirectory(example/models)
   add_subdirectory(example/model_drivers)
   add_subdirectory(example/simulators)

@@ -4,7 +4,7 @@ test:default:
     - dnf -y install make cmake git gcc-c++ gcc-gfortran ccache wget vim-common
     - mkdir build
     - cd build
-    - cmake -DBUILD_MODULES=ON ..
+    - cmake -DKIM_API_BUILD_MODULES=ON ..
     - make
     - make test
     - make install DESTDIR=${PWD}/install && rm -rf ${PWD}/install/usr && rmdir ${PWD}/install

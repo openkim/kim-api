@@ -14,6 +14,7 @@
 #  add_kim_api_v2_model_driver_library()  - set up kim-api model driver target
 #
 
+
 find_package(PkgConfig)
 
 if(TARGET kim-api)
@@ -21,17 +22,27 @@ if(TARGET kim-api)
     set(KIM-API-V2_COLLECTION_INFO_EXECUTABLE "") # invalid in build directory
     set(KIM-API-V2_TARGET kim-api)
 else()
-    pkg_check_modules(KIM-API-V2 libkim-api-v2 QUIET)
-    if(KIM-API-V2_FOUND)
-      set(KIM-API-V2_CMAKE_DIR ${KIM-API-V2_LIBDIR}/kim-api-v2/cmake)
-      set(KIM-API-V2_LIBRARIES ${KIM-API-V2_LIBDIR}/${CMAKE_SHARED_LIBRARY_PREFIX}${KIM-API-V2_LIBRARIES}${CMAKE_SHARED_LIBRARY_SUFFIX})
+    pkg_check_modules(KIM-API-INTERNAL libkim-api-v2 QUIET)
+    if(KIM-API-INTERNAL_FOUND)
+      set(KIM-API-V2_LIBDIR ${KIM-API-INTERNAL_LIBDIR})
+      set(KIM-API-V2_INCLUDE_DIRS ${KIM-API-INTERNAL_INCLUDE_DIRS})
+      set(KIM-API-V2_LIBRARIES ${KIM-API-INTERNAL_LIBDIR}/${CMAKE_SHARED_LIBRARY_PREFIX}${KIM-API-INTERNAL_LIBRARIES}${CMAKE_SHARED_LIBRARY_SUFFIX})
+      set(KIM-API-V2_CMAKE_DIR ${KIM-API-INTERNAL_LIBDIR}/kim-api-v2/cmake)
+      string(REGEX REPLACE "^([0-9]+\\.[0-9]+\\.[0-9]+).*" "\\1" KIM-API-INTERNAL_VERSION "${KIM-API-INTERNAL_VERSION}")
     else()
       find_path(KIM-API-V2_INCLUDE_DIRS KIM_Version.h PATH_SUFFIXES kim-api-v2)
       find_library(KIM-API-V2_LIBRARIES NAMES kim-api-v2)
       find_path(KIM-API-V2_CMAKE_DIR parameterized-model_init_wrapper.cpp.in PATH_SUFFIXES lib/kim-api-v2/cmake lib64/kim-api-v2/cmake)
+      set(KIM-API-INTERNAL_VERSION 2)
     endif()
+    project(kim-api-v2 VERSION ${KIM-API-INTERNAL_VERSION} LANGUAGES CXX C Fortran)
     find_program(KIM-API-V2_COLLECTION_INFO_EXECUTABLE kim-api-v2-collections-info
-      PATH_SUFFIXES libexec/kim-api-v2 PATHS ${KIM-API-V2_PREFIX})
+      PATH_SUFFIXES libexec/kim-api-v2 PATHS ${KIM-API-INTERNAL_PREFIX})
+    execute_process(COMMAND ${KIM-API-V2_COLLECTION_INFO_EXECUTABLE} system models        OUTPUT_VARIABLE KIM_API_MODEL_IDENTIFIER        OUTPUT_STRIP_TRAILING_WHITESPACE)
+    string(REGEX REPLACE "^.*/([^/]+)" "\\1" KIM_API_MODEL_IDENTIFIER "${KIM_API_MODEL_IDENTIFIER}")
+    execute_process(COMMAND ${KIM-API-V2_COLLECTION_INFO_EXECUTABLE} system model_drivers OUTPUT_VARIABLE KIM_API_MODEL_DRIVER_IDENTIFIER OUTPUT_STRIP_TRAILING_WHITESPACE)
+    string(REGEX REPLACE "^.*/([^/]+)" "\\1" KIM_API_MODEL_DRIVER_IDENTIFIER "${KIM_API_MODEL_DRIVER_IDENTIFIER}")
+
     add_library(KIM-API-V2::kim-api UNKNOWN IMPORTED)
     set_target_properties(KIM-API-V2::kim-api PROPERTIES IMPORTED_LOCATION ${KIM-API-V2_LIBRARIES}
       INTERFACE_INCLUDE_DIRECTORIES ${KIM-API-V2_INCLUDE_DIRS})
@@ -49,26 +60,27 @@ else()
 endif()
 
 if(TARGET kim-api)
-    set(KIM-API-V2_MODEL_INSTALL_PREFIX ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME}/models)
-    set(KIM-API-V2_MODEL_DRIVER_INSTALL_PREFIX ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME}/model_drivers)
+    set(KIM-API-V2_MODEL_INSTALL_PREFIX ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME}/${KIM_API_MODEL_IDENTIFIER})
+    set(KIM-API-V2_MODEL_DRIVER_INSTALL_PREFIX ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME}/${KIM_API_MODEL_DRIVER_IDENTIFIER})
 else()
     set(KIM-API-V2_INSTALL_TYPE "SYSTEM" CACHE STRING "TODO add description here")
     set_property(CACHE KIM-API-V2_INSTALL_TYPE PROPERTY STRINGS SYSTEM USER ENV)
 
-    if(KIM_INSTALL_TYPE STREQUAL "SYSTEM")
+    if(KIM-API-V2_INSTALL_TYPE STREQUAL "SYSTEM")
         execute_process(COMMAND ${KIM-API-V2_COLLECTION_INFO_EXECUTABLE} system models        OUTPUT_VARIABLE KIM-API-V2_MODEL_INSTALL_PREFIX OUTPUT_STRIP_TRAILING_WHITESPACE)
         execute_process(COMMAND ${KIM-API-V2_COLLECTION_INFO_EXECUTABLE} system model_drivers OUTPUT_VARIABLE KIM-API-V2_MODEL_DRIVER_INSTALL_PREFIX OUTPUT_STRIP_TRAILING_WHITESPACE)
-    elseif(KIM_INSTALL_TYPE STREQUAL "USER")
+    elseif(KIM-API-V2_INSTALL_TYPE STREQUAL "USER")
         execute_process(COMMAND ${KIM-API-V2_COLLECTION_INFO_EXECUTABLE} config_file models        OUTPUT_VARIABLE KIM-API-V2_MODEL_INSTALL_PREFIX OUTPUT_STRIP_TRAILING_WHITESPACE)
         execute_process(COMMAND ${KIM-API-V2_COLLECTION_INFO_EXECUTABLE} config_file model_drivers OUTPUT_VARIABLE KIM-API-V2_MODEL_DRIVER_INSTALL_PREFIX OUTPUT_STRIP_TRAILING_WHITESPACE)
-    elseif(KIM_INSTALL_TYPE STREQUAL "ENV")
+    elseif(KIM-API-V2_INSTALL_TYPE STREQUAL "ENV")
         execute_process(COMMAND ${KIM-API-V2_COLLECTION_INFO_EXECUTABLE} env models        OUTPUT_VARIABLE KIM-API-V2_MODEL_INSTALL_PREFIX OUTPUT_STRIP_TRAILING_WHITESPACE)
         execute_process(COMMAND ${KIM-API-V2_COLLECTION_INFO_EXECUTABLE} env model_drivers OUTPUT_VARIABLE KIM-API-V2_MODEL_DRIVER_INSTALL_PREFIX OUTPUT_STRIP_TRAILING_WHITESPACE)
         # TODO error if empty
         # TODO split env var if necessary and select first element
+    else()
+        # TODO handle unknown value
     endif()
 endif()
-
 
 
 function(add_kim_api_v2_model_library)
@@ -113,7 +125,7 @@ function(add_kim_api_v2_model_library)
     list(APPEND MODEL_SOURCES ${CMAKE_CURRENT_BINARY_DIR}/init_wrapper.cpp)
 
     add_library(${MODEL_NAME} MODULE ${MODEL_SOURCES})
-    set_target_properties(${MODEL_NAME} PROPERTIES OUTPUT_NAME "kim-api-model-v2"
+    set_target_properties(${MODEL_NAME} PROPERTIES OUTPUT_NAME "${PROJECT_NAME}-${KIM_API_MODEL_IDENTIFIER}"
                                                    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${MODEL_NAME})
 
     target_link_libraries(${MODEL_NAME} ${KIM-API-V2_TARGET})
@@ -133,7 +145,7 @@ function(add_kim_api_v2_model_driver_library)
     set(MODEL_DRIVER_SOURCES ${CMAKE_CURRENT_BINARY_DIR}/driver_init_wrapper.cpp)
 
     add_library(${MODEL_DRIVER_NAME} MODULE ${MODEL_DRIVER_SOURCES})
-    set_target_properties(${MODEL_DRIVER_NAME} PROPERTIES OUTPUT_NAME "kim-api-model-driver-v2"
+    set_target_properties(${MODEL_DRIVER_NAME} PROPERTIES OUTPUT_NAME "${PROJECT_NAME}-${KIM_API_MODEL_DRIVER_IDENTIFIER}"
                                                           LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${MODEL_DRIVER_NAME})
 
     target_link_libraries(${MODEL_DRIVER_NAME} ${KIM-API-V2_TARGET})

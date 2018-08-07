@@ -25,13 +25,13 @@ before_script:
        mkdir ${HOME}/docker &&
        cp -v docker/Dockerfile.${DISTRO} ${HOME}/docker/Dockerfile &&
        cd ../../ &&
-       mv -v ${TRAVIS_REPO_SLUG} $HOME/docker && 
+       mv -v ${TRAVIS_REPO_SLUG} $HOME/docker &&
        cp -r $HOME/.ccache ${HOME}/docker/ccache;
     fi
 
 script:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
-      mkdir build && cd build && cmake -DBUILD_MODULES=ON -DENABLE_COVERAGE=ON .. && make &&
+      mkdir build && cd build && cmake -DKIM_API_BUILD_MODULES=ON -DENABLE_COVERAGE=ON .. && make &&
       make test && bash <(curl -s https://codecov.io/bash) -x gcov-6 &&
       make install DESTDIR=$PWD && rm -rf ./usr/local/* && rmdir ./usr/local;
     else

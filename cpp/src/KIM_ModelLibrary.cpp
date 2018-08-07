@@ -37,6 +37,7 @@
 #include <dlfcn.h>
 
 #include "old_KIM_API_DIRS.h"
+#include "KIM_Configuration.hpp"
 
 #ifndef KIM_MODEL_LIBRARY_HPP_
 #include "KIM_ModelLibrary.hpp"
@@ -48,13 +49,6 @@
 
 #ifndef KIM_LANGUAGE_NAME_HPP_
 #include "KIM_LanguageName.hpp"
-#endif
-
-#ifndef MODELLIBFILE
-#error
-#endif
-#ifndef MODELDRIVERLIBFILE
-#error
 #endif
 
 namespace KIM
@@ -121,8 +115,10 @@ int ModelLibrary::Open(bool const typeIsModel, std::string const & modelName)
     LOG_DEBUG("Exit 1=" + callString);
     return true;  // cannot find modelName
   }
-  libraryPath_ = item[OLD_KIM::IE_DIR] + "/" + item[OLD_KIM::IE_NAME] + "/"
-      + (typeIsModel ? MODELLIBFILE : MODELDRIVERLIBFILE) + ".so";
+  libraryPath_ = item[OLD_KIM::IE_DIR] + "/" + item[OLD_KIM::IE_NAME]
+      + "/" KIM_SHARED_MODULE_PREFIX  KIM_PROJECT_NAME "-"
+      + (typeIsModel ? KIM_MODEL_IDENTIFIER : KIM_MODEL_DRIVER_IDENTIFIER)
+      + KIM_SHARED_MODULE_SUFFIX;
 
   libraryHandle_ = dlopen(libraryPath_.c_str(), RTLD_NOW);
   if (libraryHandle_ == NULL)

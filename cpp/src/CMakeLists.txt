@@ -35,6 +35,8 @@
 
 target_include_directories(kim-api PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
+configure_file(KIM_Configuration.hpp.in ${CMAKE_BINARY_DIR}/KIM_Configuration.hpp)
+
 set(CPP_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ChargeUnit.cpp
                 ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ComputeArgumentName.cpp
                 ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ComputeArguments.cpp
@@ -68,19 +70,3 @@ set(CPP_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ChargeUnit.cpp
                 )
 
 target_sources(kim-api PRIVATE ${CPP_SOURCES})
-
-target_compile_definitions(kim-api PUBLIC
-    PACKAGEDIR="${CMAKE_INSTALL_FULL_LIBDIR}/${PROJECT_NAME}"
-    KIMDIR="${CMAKE_SOURCE_DIR}"
-    KIMLIBBUILD="${PROJECT_PREFIX}-v${PROJECT_VERSION_STRING}.so"
-    MODELDRIVERSDIR="model_drivers"
-    MODELSDIR="models"
-    PACKAGENAME="${PROJECT_PREFIX}"
-    USERROOT=1
-    USERCONFIGFILEROOTNAME="${USER_CONFIG_FILE_ROOT_NAME}"
-    USERCONFIGFILEDIRNAME="${USER_CONFIG_FILE_DIR_NAME}"
-    VERSION_MAJOR="${PROJECT_VERSION_MAJOR}"
-
-    MODELLIBFILE="lib${PROJECT_PREFIX}-model-v${PROJECT_VERSION_MAJOR}"
-    MODELDRIVERLIBFILE="lib${PROJECT_PREFIX}-model-driver-v${PROJECT_VERSION_MAJOR}"
-    )

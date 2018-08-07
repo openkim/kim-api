@@ -42,46 +42,14 @@
 #include <dlfcn.h>
 #include "old_KIM_API_DIRS.h"
 #include "KIM_LogVerbosity.hpp"
+#include "KIM_Version.hpp"
+#include "KIM_Configuration.hpp"
 
 #define LINELEN 256
 
-#ifndef PACKAGEDIR
-#error
-#endif
-#ifndef KIMDIR
-#error
-#endif
-#ifndef KIMLIBBUILD
-#error
-#endif
-#ifndef MODELDRIVERSDIR
-#error
-#endif
-#ifndef MODELSDIR
-#error
-#endif
-#ifndef PACKAGENAME
-#error
-#endif
-#ifndef USERROOT
-#error
-#endif
-#ifndef USERCONFIGFILEROOTNAME
-#error
-#endif
-#ifndef USERCONFIGFILEDIRNAME
-#error
-#endif
-#ifndef VERSION_MAJOR
-#error
-#endif
-#ifndef MODELLIBFILE
-#error
-#endif
-#ifndef MODELDRIVERLIBFILE
-#error
-#endif
-
+// helper
+#define SNUM( x ) static_cast<std::ostringstream &>(    \
+    std::ostringstream() << std::dec << x).str()
 
 namespace OLD_KIM
 {
@@ -122,19 +90,16 @@ std::vector<std::string> getConfigFileName()
 {
   std::vector<std::string> configFileName(3);
 
-  if (USERROOT)
-  {
-    configFileName[0] = USERCONFIGFILEROOTNAME;
-  }
-  else
-  {
-    configFileName[0] = getenv("HOME");
-  }
-  configFileName[0].append("/").append(USERCONFIGFILEDIRNAME);
-  configFileName[0].append("/config-v").append(VERSION_MAJOR);
+  configFileName[0] = KIM_USER_CONFIGURATION_DIRECTORY;
 
-  std::string varName(PACKAGENAME);
-  varName.append("_V" VERSION_MAJOR);
+  if (configFileName[0][0] != '/')
+  {
+    configFileName[0] = std::string(getenv("HOME")).append("/")
+        .append(configFileName[0]);
+  }
+  configFileName[0].append("/config-v").append(SNUM(KIM_VERSION_MAJOR));
+
+  std::string varName(KIM_PROJECT_NAME);
   sanitizeString(varName);
   varName.append("_USER_CONFIG_FILE");
   configFileName[1] = varName;
@@ -164,14 +129,23 @@ std::vector<std::string> getConfigFileName()
 
 std::string getSystemLibraryFileName()
 {
-  return std::string(PACKAGEDIR).append("/").append("lib" KIMLIBBUILD);
+  return std::string(KIM_LIBDIR).append("/")
+      .append(KIM_SHARED_LIBRARY_PREFIX)
+      .append(KIM_PROJECT_NAME)
+      .append(".")
+      .append(KIM_VERSION_STRING)
+      .append(KIM_SHARED_LIBRARY_SUFFIX);
 }
 
 std::vector<std::string> getSystemDirs()
 {
   std::vector<std::string> systemDirs(2);
-  systemDirs[0] = std::string(PACKAGEDIR).append("/").append(MODELDRIVERSDIR);
-  systemDirs[1] = std::string(PACKAGEDIR).append("/").append(MODELSDIR);
+  systemDirs[0] = std::string(KIM_LIBDIR).append("/")
+      .append(KIM_PROJECT_NAME).append("/")
+      .append(KIM_MODEL_DRIVER_IDENTIFIER);
+  systemDirs[1] = std::string(KIM_LIBDIR).append("/")
+      .append(KIM_PROJECT_NAME).append("/")
+      .append(KIM_MODEL_IDENTIFIER);
 
   return systemDirs;
 }
@@ -193,13 +167,13 @@ std::vector<std::string> getUserDirs(KIM::Log * const log)
     if (makeDirWrapper(path.c_str(), 0755)) exit(1);
     fl.open(configFile[0].c_str(), std::ofstream::out);
     fl << "model_drivers_dir = " << path
-       << "/v" << VERSION_MAJOR << "_model_drivers\n";
+       << "/v" << KIM_VERSION_MAJOR << "_model_drivers\n";
     fl << "models_dir = " << path
-       << "/v" << VERSION_MAJOR << "_models\n";
+       << "/v" << KIM_VERSION_MAJOR << "_models\n";
     fl.close();
-    userDirs[0] = path + "/v" + VERSION_MAJOR + "_model_drivers";
+    userDirs[0] = path + "/v" + SNUM(KIM_VERSION_MAJOR) + "_model_drivers";
     if (makeDirWrapper(userDirs[0].c_str(), 0755)) exit(1);
-    userDirs[1] = path + "/v" + VERSION_MAJOR + "_models";
+    userDirs[1] = path + "/v" + SNUM(KIM_VERSION_MAJOR) + "_models";
     if (makeDirWrapper(userDirs[1].c_str(), 0755)) exit(1);
   }
   else
@@ -308,8 +282,7 @@ std::string pushEnvDirs(
     DirectoryPathType type,
     std::list<std::pair<std::string,std::string> >* const lst)
 {
-  std::string varName = PACKAGENAME;
-  varName.append("_V" VERSION_MAJOR);
+  std::string varName = KIM_PROJECT_NAME;
   sanitizeString(varName);
   switch (type)
   {
@@ -342,6 +315,7 @@ void searchPaths(DirectoryPathType type,
                  KIM::Log * const log)
 {
   std::vector<std::string> userDirs = getUserDirs(log);
+  std::vector<std::string> systemDirs = getSystemDirs();
 
   switch (type)
   {
@@ -352,10 +326,7 @@ void searchPaths(DirectoryPathType type,
       {
         lst->push_back(std::make_pair(std::string("user"), userDirs[0]));
       }
-      lst->push_back(
-          std::make_pair(
-              std::string("system"),
-              std::string(PACKAGEDIR).append("/").append(MODELDRIVERSDIR)));
+      lst->push_back(std::make_pair(std::string("system"), systemDirs[0]));
       break;
     case KIM_MODELS_DIR:
       lst->push_back(std::make_pair(std::string("CWD"), std::string(".")));
@@ -364,10 +335,7 @@ void searchPaths(DirectoryPathType type,
       {
         lst->push_back(std::make_pair(std::string("user"), userDirs[1]));
       }
-      lst->push_back(
-          std::make_pair(
-              std::string("system"),
-              std::string(PACKAGEDIR).append("/").append(MODELSDIR)));
+      lst->push_back(std::make_pair(std::string("system"), systemDirs[1]));
       break;
     default:
       break;
@@ -433,19 +401,22 @@ void getAvailableItems(DirectoryPathType type,
       entry[IE_NAME] = itemItr->substr(split+1);
       entry[IE_DIR] = itemItr->substr(0,split);
 
-      std::string lib = entry[IE_DIR] + "/" + entry[IE_NAME] + "/";
+      std::string lib = entry[IE_DIR] + "/"
+          + entry[IE_NAME]
+          + "/" KIM_SHARED_MODULE_PREFIX
+          + KIM_PROJECT_NAME "-";
       switch (type)
       {
         case KIM_MODELS_DIR:
-          lib.append(MODELLIBFILE);
+          lib.append(KIM_MODEL_IDENTIFIER);
           break;
         case KIM_MODEL_DRIVERS_DIR:
-          lib.append(MODELDRIVERLIBFILE);
+          lib.append(KIM_MODEL_DRIVER_IDENTIFIER);
           break;
         default:
           break;
       }
-      lib.append(".so");
+      lib.append(KIM_SHARED_MODULE_SUFFIX);
       void* tmp_lib_handle = NULL;
       tmp_lib_handle = dlopen(lib.c_str(), RTLD_NOW);
       if (tmp_lib_handle != NULL)
