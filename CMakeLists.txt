@@ -56,7 +56,7 @@ option(KIM_API_BUILD_MODULES "TODO Build model" OFF)
 option(KIM_API_DOWNLOAD_ALL "TODO Download all models, model drivers and simulators" OFF)
 #
 set(KIM_API_USER_CONFIGURATION_DIR ".${PROJECT_PREFIX}" CACHE STRING "TODO if starts with / absolute, otherwise homedir.")
-mark_as_advanced(KIM_API_USER_CONFIGURATION_)
+mark_as_advanced(KIM_API_USER_CONFIGURATION_DIR)
 #
 set(KIM_API_MODEL_DRIVER_IDENTIFIER "model-driver" CACHE STRING "TODO add description here")
 mark_as_advanced(KIM_API_MODEL_DRIVER_IDENTIFIER)
