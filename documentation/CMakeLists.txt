@@ -37,7 +37,7 @@ cmake_policy(SET CMP0054 NEW)
 
 find_package(Doxygen)
 
-set(DOXYGEN_PROJECT_NAME         "KIM API V2")
+set(DOXYGEN_PROJECT_NAME         "${PROJECT_NAME}")
 set(DOXYGEN_STRIP_FROM_PATH      "../../")
 set(DOXYGEN_TAB_SIZE             2)
 set(DOXYGEN_EXTRACT_ALL          YES)
@@ -96,5 +96,6 @@ if(DOXYGEN_FOUND)
   add_custom_target(pdf DEPENDS docs refman.pdf SOURCES ${SOURCES})
 endif(DOXYGEN_FOUND)
 
+# TODO : are the install locations below standard?
 install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/html DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/docs/${PROJECT_NAME} OPTIONAL)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/refman.pdf DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/docs/${PROJECT_NAME} OPTIONAL)

@@ -33,7 +33,7 @@
 #
 
 
-set(PKG_CONFIG_FILE "lib${PROJECT_NAME}.pc")
+set(PKG_CONFIG_FILE "${CMAKE_SHARED_LIBRARY_PREFIX}${PROJECT_NAME}.pc")
 
 configure_file(libkim-api.pc.in ${PKG_CONFIG_FILE} @ONLY)
 

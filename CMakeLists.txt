@@ -73,8 +73,8 @@ project(${PROJECT_PREFIX}-v2 VERSION 2.0.0 LANGUAGES CXX C Fortran)
 #
 # Define remaining version variables
 #
-set(PROJECT_VERSION_PRERELEASE git)
-set(PROJECT_VERSION_BUILD_METADATA)
+set(PROJECT_VERSION_PRERELEASE "git" CACHE STRING "TODO ...")
+set(PROJECT_VERSION_BUILD_METADATA "" CACHE STRING "TODO ...") #@@@ this should be updated at build time, not configuration time...
 # TODO : translate next line for metadata :: http://xit0.org/2013/04/cmake-use-git-branch-and-commit-details-in-project/
 # more complex: https://github.com/votca/tools/blob/master/CMakeModules/gitversion.cmake
 # $(shell git rev-parse --short HEAD)$(shell if ! (git diff --quiet && git diff --cached --quiet); then printf ".dirty"; fi).$(KIM_COMPILERSUITE).$(KIM_SYSTEMLINKER).$(KIM_SYSTEMARCH).$(KIM_LINK)
