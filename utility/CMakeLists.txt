@@ -45,7 +45,7 @@ configure_file(deactivate.in ${DEACTIVATE_SCRIPT} @ONLY)
 
 
 set(KIM_CPP_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../cpp/src")
-add_library(kim-loader OBJECT
+add_library(kim-loader STATIC
   ${KIM_CPP_SRC_DIR}/KIM_LogVerbosity.cpp
   ${KIM_CPP_SRC_DIR}/KIM_Log.cpp
   ${KIM_CPP_SRC_DIR}/KIM_LogImplementation.cpp
