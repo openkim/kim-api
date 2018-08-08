@@ -111,6 +111,7 @@ function(add_kim_api_v2_model_library)
           add_custom_command(OUTPUT ${PARAM_FILE}
             COMMAND ${CMAKE_COMMAND} -E copy_if_different "${PARAM_FILE_IN}" "${PARAM_FILE_XXD_IN}"
             COMMAND ${XXD_EXECUTABLE} -i "parameter_file_${IDX}" "${PARAM_FILE}"
+            DEPENDS ${PARAM_FILE_IN}
             WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
             )
           MATH(EXPR IDX "${IDX}+1")
