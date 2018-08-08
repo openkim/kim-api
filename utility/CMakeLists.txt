@@ -56,6 +56,8 @@ target_include_directories(kim-loader PUBLIC
   ${KIM_CPP_SRC_DIR}
   ${CMAKE_BINARY_DIR}
   )
+target_link_libraries(kim-loader ${CMAKE_DL_LIBS})
+
 
 add_executable(simulator-model simulator-model.cpp)
 target_link_libraries(simulator-model kim-loader)
