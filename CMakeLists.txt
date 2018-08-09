@@ -62,7 +62,9 @@ mark_as_advanced(KIM_API_MODEL_DRIVER_IDENTIFIER)
 #
 set(KIM_API_MODEL_IDENTIFIER "model" CACHE STRING "TODO add description here")
 mark_as_advanced(KIM_API_MODEL_IDENTIFIER)
-
+#
+#
+# option(KIM_API_ENABLE_COVERAGE) --- defined below
 
 
 #
@@ -98,9 +100,9 @@ if(HAS_FREE_LINE_LENGTH_FLAG)
 endif()
 #
 if (${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
-  option(ENABLE_COVERAGE "Enable code coverage" OFF)
-  mark_as_advanced(ENABLE_COVERAGE)
-  if(ENABLE_COVERAGE)
+  option(KIM_API_ENABLE_COVERAGE "Enable code coverage" OFF)
+  mark_as_advanced(KIM_API_ENABLE_COVERAGE)
+  if(KIM_API_ENABLE_COVERAGE)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --coverage")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage")
     set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} --coverage")
