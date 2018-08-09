@@ -136,17 +136,17 @@ add_subdirectory(fortran/include)
 
 # Add other subdirectories
 #
-add_subdirectory(completion)
+add_subdirectory(completions)
 add_subdirectory(pkg-config)
-add_subdirectory(utility)
+add_subdirectory(utilities)
 add_subdirectory(documentation)
 
 
 # Add Models & Drivers, if appropriate
 if(KIM_API_BUILD_MODULES)
-  add_subdirectory(example/models)
-  add_subdirectory(example/model_drivers)
-  add_subdirectory(example/simulators)
+  add_subdirectory(examples/models)
+  add_subdirectory(examples/model_drivers)
+  add_subdirectory(examples/simulators)
 endif()
 
 
@@ -165,9 +165,9 @@ if(KIM_API_DOWNLOAD_ALL)
     endif()
 
     # TODO don't hardcode these directories
-    add_subdirectory(${CMAKE_BINARY_DIR}/download/example/models)
-    add_subdirectory(${CMAKE_BINARY_DIR}/download/example/model_drivers)
-    add_subdirectory(${CMAKE_BINARY_DIR}/download/example/simulators)
+    add_subdirectory(${CMAKE_BINARY_DIR}/download/examples/models)
+    add_subdirectory(${CMAKE_BINARY_DIR}/download/examples/model_drivers)
+    add_subdirectory(${CMAKE_BINARY_DIR}/download/examples/simulators)
 endif()
 
 
