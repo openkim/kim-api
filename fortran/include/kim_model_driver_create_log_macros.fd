@@ -39,7 +39,7 @@
 #endif
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_FATAL_)
 #define LOG_FATAL()\
-call kim_model_driver_create_log_entry(model_driver_create_handle, kim_log_verbosity_fatal, kim_log_message, __LINE__, kim_log_file)
+call kmdcle(model_driver_create_handle, klvf, klm, __LINE__, klf)
 #else
 #define LOG_FATAL()
 #endif
@@ -51,7 +51,7 @@ call kim_model_driver_create_log_entry(model_driver_create_handle, kim_log_verbo
 #endif
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_ERROR_)
 #define LOG_ERROR()\
-call kim_model_driver_create_log_entry(model_driver_create_handle, kim_log_verbosity_error, kim_log_message, __LINE__, kim_log_file)
+call kmdcle(model_driver_create_handle, klve, klm, __LINE__, klf)
 #else
 #define LOG_ERROR()
 #endif
@@ -63,7 +63,7 @@ call kim_model_driver_create_log_entry(model_driver_create_handle, kim_log_verbo
 #endif
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_WARNING_)
 #define LOG_WARNING()\
-call kim_model_driver_create_log_entry(model_driver_create_handle, kim_log_verbosity_warning, kim_log_message, __LINE__, kim_log_file)
+call kmdcle(model_driver_create_handle, klvw, klm, __LINE__, klf)
 #else
 #define LOG_WARNING()
 #endif
@@ -75,7 +75,7 @@ call kim_model_driver_create_log_entry(model_driver_create_handle, kim_log_verbo
 #endif
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_INFORMATION_)
 #define LOG_INFORMATION()\
-call kim_model_driver_create_log_entry(model_driver_create_handle, kim_log_verbosity_information, kim_log_message, __LINE__, kim_log_file)
+call kmdcle(model_driver_create_handle, klvi, klm, __LINE__, klf)
 #else
 #define LOG_INFORMATION()
 #endif
@@ -87,7 +87,7 @@ call kim_model_driver_create_log_entry(model_driver_create_handle, kim_log_verbo
 #endif
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_DEBUG_)
 #define LOG_DEBUG()\
-call kim_model_driver_create_log_entry(model_driver_create_handle, kim_log_verbosity_debug, kim_log_message, __LINE__, kim_log_file)
+call kmdcle(model_driver_create_handle, klvd, klm, __LINE__, klf)
 #else
 #define LOG_DEBUG()
 #endif
