@@ -34,7 +34,6 @@
 
 
 cmake_minimum_required(VERSION 3.0)
-include(GNUInstallDirs)
 enable_testing()
 
 
@@ -70,6 +69,7 @@ mark_as_advanced(KIM_API_MODEL_IDENTIFIER)
 # Define main project
 #
 project(${PROJECT_PREFIX}-v2 VERSION 2.0.0 LANGUAGES CXX C Fortran)
+include(GNUInstallDirs)  # needs to come after call to project()
 #
 # Define remaining version variables
 #
