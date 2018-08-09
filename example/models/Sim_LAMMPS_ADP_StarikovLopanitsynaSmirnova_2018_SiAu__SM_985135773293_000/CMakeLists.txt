@@ -35,10 +35,11 @@
 
 cmake_minimum_required(VERSION 3.0)
 
-add_subdirectory(ex_model_Ar_P_LJ)
-add_subdirectory(ex_model_Ar_P_MLJ_F03)
-add_subdirectory(ex_model_Ar_P_Morse)
-add_subdirectory(ex_model_Ar_P_Morse_07C)
-add_subdirectory(LennardJones612_UniversalShifted__MO_959249795837_003)
-add_subdirectory(LennardJones_Ar)
-add_subdirectory(Sim_LAMMPS_ADP_StarikovLopanitsynaSmirnova_2018_SiAu__SM_985135773293_000)
+list(APPEND CMAKE_MODULE_PATH $ENV{KIM_API_V2_CMAKE_MODULES_DIR})
+find_package(KIM-API-V2 2.0 REQUIRED)
+
+add_kim_api_v2_model_library(
+  NAME "Sim_LAMMPS_ADP_StarikovLopanitsynaSmirnova_2018_SiAu__SM_985135773293_000"
+  METADATA_FILE "kim-simulator-model.json"
+  PARAMETER_FILES "Si_Au.adp"
+  )

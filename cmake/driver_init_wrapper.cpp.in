@@ -1,6 +1,6 @@
 extern "C"
 {
-char kim_item_type[] = "model-driver";
+char kim_item_type[] = "model-driver"; //@@@@ TODO change this to a config. value too?
 int @MODEL_DRIVER_CREATE_FUNCTION_NAME@();
 int (* @MODEL_DRIVER_NAME@_create_pointer)() = @MODEL_DRIVER_CREATE_FUNCTION_NAME@;
 char @MODEL_DRIVER_NAME@_compiled_with_version[] = "@PROJECT_VERSION_STRING@";

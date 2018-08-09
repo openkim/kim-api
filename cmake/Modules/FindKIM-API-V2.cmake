@@ -85,7 +85,7 @@ endif()
 
 function(add_kim_api_v2_model_library)
     set(options "")
-    set(oneValueArgs NAME DRIVER_NAME CREATE_FUNCTION_NAME CREATE_FUNCTION_LANGUAGE)
+    set(oneValueArgs NAME DRIVER_NAME CREATE_FUNCTION_NAME CREATE_FUNCTION_LANGUAGE METADATA_FILE)
     set(multiValueArgs PARAMETER_FILES)
     cmake_parse_arguments(MODEL "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
@@ -98,10 +98,39 @@ function(add_kim_api_v2_model_library)
     if(NOT XXD_FOUND)
       message(FATAL_ERROR "TODO Ryan will put an error message here")
     endif()
-    if(MODEL_PARAMETER_FILES)
-        list(LENGTH MODEL_PARAMETER_FILES NUMBER_OF_PARAMETER_FILES)
-        set(INIT_WRAPPER_FILE "${KIM-API-V2_CMAKE_DIR}/parameterized-model_init_wrapper.cpp.in")
+    if(MODEL_METADATA_FILE)
+        # TODO : consider if this can be abstracted, with parameterfiles below, to a function
+        set(METADATA_FILE_IN "${CMAKE_CURRENT_SOURCE_DIR}/${MODEL_METADATA_FILE}")
+        set(METADATA_FILE_XXD_IN "${CMAKE_CURRENT_BINARY_DIR}/metadata_file")
+        set(METADATA_FILE "${METADATA_FILE_XXD_IN}.c")
+        list(APPEND MODEL_SOURCES ${METADATA_FILE})
+        add_custom_command(OUTPUT ${METADATA_FILE}
+          COMMAND ${CMAKE_COMMAND} -E copy_if_different "${METADATA_FILE_IN}" "${METADATA_FILE_XXD_IN}"
+          COMMAND ${XXD_EXECUTABLE} -i "metadata_file" "${METADATA_FILE}"
+          DEPENDS ${METADATA_FILE_IN}
+          WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+          )
 
+        set(PARAM_FILE_NAMES "")
+        set(IDX 1)
+        foreach(FNAME ${MODEL_PARAMETER_FILES})
+          set(PARAM_FILE_NAMES "${PARAM_FILE_NAMES}\nchar parameter_file_${IDX}_name[] = \"${FNAME}\";")
+          set(PARAM_FILE_IN "${CMAKE_CURRENT_SOURCE_DIR}/${FNAME}")
+          set(PARAM_FILE_XXD_IN "${CMAKE_CURRENT_BINARY_DIR}/parameter_file_${IDX}")
+          set(PARAM_FILE "${PARAM_FILE_XXD_IN}.c")
+          list(APPEND MODEL_SOURCES ${PARAM_FILE})
+          add_custom_command(OUTPUT ${PARAM_FILE}
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different "${PARAM_FILE_IN}" "${PARAM_FILE_XXD_IN}"
+            COMMAND ${XXD_EXECUTABLE} -i "parameter_file_${IDX}" "${PARAM_FILE}"
+            DEPENDS ${PARAM_FILE_IN}
+            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+            )
+          MATH(EXPR IDX "${IDX}+1")
+        endforeach()
+
+        list(LENGTH MODEL_PARAMETER_FILES NUMBER_OF_PARAMETER_FILES)
+        set(INIT_WRAPPER_FILE "${KIM-API-V2_CMAKE_DIR}/simulator-model_init_wrapper.cpp.in")
+    elseif(MODEL_PARAMETER_FILES)
         set(IDX 1)
         foreach(FNAME ${MODEL_PARAMETER_FILES})
           set(PARAM_FILE_IN "${CMAKE_CURRENT_SOURCE_DIR}/${FNAME}")
@@ -116,9 +145,11 @@ function(add_kim_api_v2_model_library)
             )
           MATH(EXPR IDX "${IDX}+1")
         endforeach()
+
+        list(LENGTH MODEL_PARAMETER_FILES NUMBER_OF_PARAMETER_FILES)
+        set(INIT_WRAPPER_FILE "${KIM-API-V2_CMAKE_DIR}/parameterized-model_init_wrapper.cpp.in")
     else()
         set(INIT_WRAPPER_FILE "${KIM-API-V2_CMAKE_DIR}/stand-alone-model_init_wrapper.cpp.in")
-        # TODO add simulator model case
     endif()
 
     configure_file(${INIT_WRAPPER_FILE} ${CMAKE_CURRENT_BINARY_DIR}/init_wrapper.cpp @ONLY)

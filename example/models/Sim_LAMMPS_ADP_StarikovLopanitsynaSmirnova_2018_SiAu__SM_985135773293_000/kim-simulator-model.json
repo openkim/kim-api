@@ -1,0 +1,9 @@
+{
+  "simulator-version" : "22-Sep-2017",
+  "simulator-name" : "LAMMPS",
+  "extended-id" : "Sim_LAMMPS_ADP_StarikovLopanitsynaSmirnova_2018_SiAu__SM_985135773293_000",
+  "model-init" : [ "" ],
+  "model-defn" : [ "pair_style adp", "pair_coeff * * @<parameter-file-1>@ @<atom-type-sym-list>@" ],
+  "supported-species" : "Au Si",
+  "units" : "metal"
+}

@@ -129,7 +129,7 @@ int main(int argc, char* argv[])
   {
     std::string libFileName
         = item[IE_DIR] + "/" + item[IE_NAME]
-        +  "/" KIM_SHARED_MODULE_PREFIX KIM_MODEL_IDENTIFIER KIM_SHARED_MODULE_SUFFIX;
+        +  "/" KIM_SHARED_MODULE_PREFIX KIM_PROJECT_NAME "-" KIM_MODEL_IDENTIFIER KIM_SHARED_MODULE_SUFFIX;
     model_lib_handle = dlopen(libFileName.c_str(), RTLD_NOW);
   }
   if(!accessible)

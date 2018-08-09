@@ -1,7 +1,9 @@
 extern "C"
 {
-char kim_item_type[] = "parameterized-model"; //@@@@ TODO change this to a config. value too?
+char kim_item_type[] = "simulator-model"; //@@@@ TODO Change this to a config. value too?
+char metadata_file_name[] = "@MODEL_METADATA_FILE@";
 int number_of_parameter_files = @NUMBER_OF_PARAMETER_FILES@;
+@PARAM_FILE_NAMES@
 int (* @MODEL_NAME@_create_pointer)() = 0;
 char @MODEL_NAME@_compiled_with_version[] = "@PROJECT_VERSION_STRING@";
 char @MODEL_NAME@_language[] = "cpp";
