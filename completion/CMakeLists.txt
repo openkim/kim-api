@@ -33,6 +33,7 @@
 #
 
 
+# TODO clean this up using cmake c_identifier and upper/lower case
 set(BASH_COMPLETIONS ${PROJECT_NAME}-completion.bash)
 string(MAKE_C_IDENTIFIER ${PROJECT_NAME} SANITIZED_PROJECT_NAME)
 
@@ -40,5 +41,5 @@ configure_file(completion.bash.in ${BASH_COMPLETIONS} @ONLY)
 
 install(
   FILES ${CMAKE_CURRENT_BINARY_DIR}/${BASH_COMPLETIONS}
-  DESTINATION ${CMAKE_INSTALL_SYSCONFDIR}/bash_completion.d
+  DESTINATION ${CMAKE_INSTALL_SYSCONFDIR}/bash_completion.d  # TODO make this a variable to be condigured in de/activate
   )

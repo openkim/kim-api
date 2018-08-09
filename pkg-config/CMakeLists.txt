@@ -39,5 +39,5 @@ configure_file(libkim-api.pc.in ${PKG_CONFIG_FILE} @ONLY)
 
 install(
   FILES ${CMAKE_CURRENT_BINARY_DIR}/${PKG_CONFIG_FILE}
-  DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig  # TODO make this a variable to be configured in de/activate
   )

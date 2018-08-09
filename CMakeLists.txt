@@ -152,17 +152,19 @@ endif()
 
 # Add downloads, if appropriate
 #
-if(DOWNLOAD_ALL)
+if(KIM_API_DOWNLOAD_ALL)
     # TODO insert full model/model_driver/simulator git repo or tarball here
     set(GIT_REPOSITORY "https://github.com/openkim/kim-api.git")
     set(GIT_BRANCH "cmake")
 
+    # TODO don't hardcode the directory "download"
     if(EXISTS ${CMAKE_BINARY_DIR}/download)
         execute_process(COMMAND git pull  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/download)
     else()
         execute_process(COMMAND git clone -b ${GIT_BRANCH} ${GIT_REPOSITORY} download WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
     endif()
 
+    # TODO don't hardcode these directories
     add_subdirectory(${CMAKE_BINARY_DIR}/download/example/models)
     add_subdirectory(${CMAKE_BINARY_DIR}/download/example/model_drivers)
     add_subdirectory(${CMAKE_BINARY_DIR}/download/example/simulators)
