@@ -73,9 +73,9 @@ set(SOURCES
     "../cpp/include/"
     "../c/include/"
     "../fortran/include/"
-    "../example/model_drivers/"
-    "../example/models/"
-    "../example/simulators/"
+    "../examples/model_drivers/"
+    "../examples/models/"
+    "../examples/simulators/"
     )
 
 if(DOXYGEN_FOUND)
