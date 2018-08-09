@@ -553,8 +553,6 @@ end subroutine destroy
 #include "kim_model_compute_arguments_create_log_macros.fd"
 subroutine compute_arguments_create(model_compute_handle, &
   model_compute_arguments_create_handle, ierr) bind(c)
-use kim_model_compute_arguments_create_module, &
-    log_entry=>kim_model_compute_arguments_create_log_entry
 implicit none
 
 !-- Transferred variables
@@ -619,8 +617,6 @@ end subroutine compute_arguments_create
 #include "kim_model_compute_arguments_destroy_log_macros.fd"
 subroutine compute_arguments_destroy(model_compute_handle, &
   model_compute_arguments_destroy_handle, ierr) bind(c)
-use kim_model_compute_arguments_destroy_module, &
-    log_entry=>kim_model_compute_arguments_destroy_log_entry
 implicit none
 
 !-- Transferred variables

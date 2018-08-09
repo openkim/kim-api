@@ -31,15 +31,6 @@
 !
 
 
-!
-! Line length limits require renaming the log functions in the use statement.
-! To employ the macros contained in this file use the following syntax in your
-! Fortran source code:
-!
-!   use kim_model_compute_arguments_destroy_module, &
-!      log_entry => kim_model_compute_arguments_destroy_log_entry
-!
-
 #include "KIM_LOG_DEFINES.inc"
 
 #undef FATAL_VERBOSITY
@@ -49,7 +40,7 @@
 #endif
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_FATAL_)
 #define LOG_FATAL()\
-call log_entry(model_compute_arguments_destroy_handle, kim_log_verbosity_fatal, kim_log_message, __LINE__, kim_log_file)
+call kmcadlm(model_compute_arguments_destroy_handle, klvf, klm, __LINE__, klf)
 #else
 #define LOG_FATAL()
 #endif
@@ -61,7 +52,7 @@ call log_entry(model_compute_arguments_destroy_handle, kim_log_verbosity_fatal, 
 #endif
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_ERROR_)
 #define LOG_ERROR()\
-call log_entry(model_compute_arguments_destroy_handle, kim_log_verbosity_error, kim_log_message, __LINE__, kim_log_file)
+call kmcadlm(model_compute_arguments_destroy_handle, klve, klm, __LINE__, klf)
 #else
 #define LOG_ERROR()
 #endif
@@ -73,7 +64,7 @@ call log_entry(model_compute_arguments_destroy_handle, kim_log_verbosity_error, 
 #endif
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_WARNING_)
 #define LOG_WARNING()\
-call log_entry(model_compute_arguments_destroy_handle, kim_log_verbosity_warning, kim_log_message, __LINE__, kim_log_file)
+call kmcadlm(model_compute_arguments_destroy_handle, klvw, klm, __LINE__, klf)
 #else
 #define LOG_WARNING()
 #endif
@@ -85,7 +76,7 @@ call log_entry(model_compute_arguments_destroy_handle, kim_log_verbosity_warning
 #endif
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_INFORMATION_)
 #define LOG_INFORMATION()\
-call log_entry(model_compute_arguments_destroy_handle, kim_log_verbosity_information, kim_log_message, __LINE__, kim_log_file)
+call kmcadlm(model_compute_arguments_destroy_handle, klvi, klm, __LINE__, klf)
 #else
 #define LOG_INFORMATION()
 #endif
@@ -97,7 +88,7 @@ call log_entry(model_compute_arguments_destroy_handle, kim_log_verbosity_informa
 #endif
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_DEBUG_)
 #define LOG_DEBUG()\
-call log_entry(model_compute_arguments_destroy_handle, kim_log_verbosity_debug, kim_log_message, __LINE__, kim_log_file)
+call kmcadlm(model_compute_arguments_destroy_handle, klvd, klm, __LINE__, klf)
 #else
 #define LOG_DEBUG()
 #endif

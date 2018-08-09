@@ -31,28 +31,29 @@
 module error
   use, intrinsic :: iso_c_binding
   implicit none
+
   public
 
+  character(len=4096, kind=c_char) :: myfile
+
 contains
-  subroutine my_error(message, line, file)
+  subroutine my_error(message, line)
     implicit none
     character(len=*, kind=c_char), intent(in) :: message
     integer, intent(in) :: line
-    character(len=*, kind=c_char), intent(in) :: file
 
     print *,"* Error : '", trim(message), "' ", line, ":", &
-      trim(file)
+      trim(myfile)
     stop
   end subroutine my_error
 
-  subroutine my_warning(message, line, file)
+  subroutine my_warning(message, line)
     implicit none
     character(len=*, kind=c_char), intent(in) :: message
     integer, intent(in) :: line
-    character(len=*, kind=c_char), intent(in) :: file
 
     print *,"* Error : '", trim(message), "' ", line, ":", &
-      trim(file)
+      trim(myfile)
   end subroutine my_warning
 end module error
 
@@ -71,10 +72,10 @@ module mod_neighborlist
 
   public get_neigh
 
-  type neighObject_type
+  type, bind(c) :: neighObject_type
      real(c_double) :: cutoff
      integer(c_int) :: number_of_particles
-     integer(c_int), pointer :: neighborList(:,:)
+     type(c_ptr) :: neighbor_list_pointer
   end type neighObject_type
 contains
 
@@ -104,43 +105,47 @@ subroutine get_neigh(data_object, number_of_neighbor_lists, cutoffs, &
   integer(c_int), parameter :: DIM = 3
   integer(c_int) numberOfParticles
   type(neighObject_type), pointer :: neighObject
+  integer(c_int), pointer :: neighborList(:,:)
+
+  myfile = __FILE__
 
   call c_f_pointer(data_object, neighObject)
+  numberOfParticles = neighObject%number_of_particles
+  call c_f_pointer(neighObject%neighbor_list_pointer, neighborList, &
+    [numberOfParticles+1, numberOfParticles])
 
   if (number_of_neighbor_lists /= 1) then
-    call my_warning("invalid number of cutoffs", __LINE__, __FILE__)
+    call my_warning("invalid number of cutoffs", __LINE__)
     ierr = 1
     return
   endif
 
   if (cutoffs(1) > neighObject%cutoff) then
     call my_warning("neighbor list cutoff too small for model cutoff", &
-      __LINE__, __FILE__)
+      __LINE__)
     ierr = 1
     return
   endif
 
   if (neighbor_list_index /= 1) then
-    call my_warning("wrong list index", __LINE__, __FILE__)
+    call my_warning("wrong list index", __LINE__)
     ierr = 1
     return
   endif
 
-  numberOfParticles = neighObject%number_of_particles
-
   if ( (request.gt.numberOfParticles) .or. (request.lt.1)) then
     print *, request
     call my_warning("Invalid part ID in get_neigh", &
-      __LINE__, __FILE__)
+      __LINE__)
     ierr = 1
     return
   endif
 
   ! set the returned number of neighbors for the returned part
-  numnei = neighObject%neighborList(1,request)
+  numnei = neighborList(1,request)
 
   ! set the location for the returned neighbor list
-  pnei1part = c_loc(neighObject%neighborList(2,request))
+  pnei1part = c_loc(neighborList(2,request))
 
   ierr = 0
   return
@@ -179,6 +184,10 @@ subroutine NEIGH_PURE_cluster_neighborlist(half, numberOfParticles, coords, &
   real(c_double) dx(3)
   real(c_double) r2
   real(c_double) cutoff2
+  integer(c_int), pointer :: neighborList(:,:)
+
+  call c_f_pointer(neighObject%neighbor_list_pointer, neighborList, &
+    [numberOfParticles+1, numberOfParticles])
 
   neighObject%cutoff = cutoff
 
@@ -193,12 +202,12 @@ subroutine NEIGH_PURE_cluster_neighborlist(half, numberOfParticles, coords, &
            ! part j is a neighbor of part i
            if ( (j .gt. i) .OR. ((.not. half) .AND. (i.ne.j)) ) then
                a = a+1
-               neighObject%neighborList(a,i) = j
+               neighborList(a,i) = j
            endif
         endif
      enddo
      ! part i has a-1 neighbors
-     neighObject%neighborList(1,i) = a-1
+     neighborList(1,i) = a-1
   enddo
 
   return
@@ -362,6 +371,7 @@ program ex_test_ar_fcc_cluster_fortran
     N = 4*(nCellsPerSide)**3 + 6*(nCellsPerSide)**2 + 3*(nCellsPerSide) + 1
 
   type(neighObject_type), target :: neighObject
+  integer(c_int), allocatable, target :: neighborList(:,:)
 
   type(kim_model_handle_type) :: model_handle
   type(kim_compute_arguments_handle_type) :: compute_arguments_handle
@@ -383,6 +393,8 @@ program ex_test_ar_fcc_cluster_fortran
   integer(c_int) requested_units_accepted
 
   integer :: middledum
+
+  myfile = __FILE__
 
   ! Initialize error flag
   ierr = 0
@@ -411,12 +423,12 @@ program ex_test_ar_fcc_cluster_fortran
     requested_units_accepted, &
     model_handle, ierr)
   if (ierr /= 0) then
-    call my_error("kim_api_create", __LINE__, __FILE__)
+    call my_error("kim_api_create", __LINE__)
   endif
 
   ! check that we are compatible
   if (requested_units_accepted == 0) then
-    call my_error("Must adapt to model units", __LINE__, __FILE__)
+    call my_error("Must adapt to model units", __LINE__)
   end if
 
   ! check that model supports Ar
@@ -424,7 +436,7 @@ program ex_test_ar_fcc_cluster_fortran
   call kim_model_get_species_support_and_code(model_handle, &
     kim_species_name_ar, species_is_supported, species_code, ierr)
   if ((ierr /= 0) .or. (species_is_supported /= 1)) then
-    call my_error("Model does not support Ar", __LINE__, __FILE__)
+    call my_error("Model does not support Ar", __LINE__)
   endif
 
   ! Best-practice is to check that the model is compatible
@@ -434,7 +446,7 @@ program ex_test_ar_fcc_cluster_fortran
   call kim_model_compute_arguments_create( &
     model_handle, compute_arguments_handle, ierr)
   if (ierr /= 0) then
-    call my_error("kim_model_compute_arguments_create", __LINE__, __FILE__)
+    call my_error("kim_model_compute_arguments_create", __LINE__)
   endif
 
   ! register memory with the KIM system
@@ -460,12 +472,13 @@ program ex_test_ar_fcc_cluster_fortran
     kim_compute_argument_name_partial_forces, forces, ierr2)
   ierr = ierr + ierr2
   if (ierr /= 0) then
-     call my_error("set_argument_pointer", __LINE__, __FILE__)
+     call my_error("set_argument_pointer", __LINE__)
   endif
 
   ! Allocate storage for neighbor lists
   !
-  allocate(neighObject%neighborList(N+1,N))
+  allocate(neighborList(N+1,N))
+  neighObject%neighbor_list_pointer = c_loc(neighborList)
   neighObject%number_of_particles = N
 
   ! Set pointer in KIM object to neighbor list routine and object
@@ -474,19 +487,19 @@ program ex_test_ar_fcc_cluster_fortran
     kim_compute_callback_name_get_neighbor_list, kim_language_name_fortran, &
     c_funloc(get_neigh), c_loc(neighobject), ierr)
   if (ierr /= 0) then
-    call my_error("set_callback_pointer", __LINE__, __FILE__)
+    call my_error("set_callback_pointer", __LINE__)
   end if
 
   call kim_model_get_influence_distance(model_handle, influence_distance)
   call kim_model_get_number_of_neighbor_lists(model_handle, &
     number_of_neighbor_lists)
   if (number_of_neighbor_lists /= 1) then
-    call my_error("too many neighbor lists", __LINE__, __FILE__)
+    call my_error("too many neighbor lists", __LINE__)
   endif
   call kim_model_get_neighbor_list_values(model_handle, cutoffs, &
     padding_neighbor_hints, half_list_hints, ierr)
   if (ierr /= 0) then
-    call my_error("get_neighbor_list_values", __LINE__, __FILE__)
+    call my_error("get_neighbor_list_values", __LINE__)
   end if
   cutoff = cutoffs(1)
 
@@ -516,7 +529,7 @@ program ex_test_ar_fcc_cluster_fortran
     ! Call model compute
     call kim_model_compute(model_handle, compute_arguments_handle, ierr)
     if (ierr /= 0) then
-      call my_error("kim_api_model_compute", __LINE__, __FILE__)
+      call my_error("kim_api_model_compute", __LINE__)
     endif
 
     ! compue force_norm
@@ -536,12 +549,12 @@ program ex_test_ar_fcc_cluster_fortran
   enddo
 
   ! Deallocate neighbor list object
-  deallocate( neighObject%neighborList )
+  deallocate( neighborList )
 
   call kim_model_compute_arguments_destroy(&
     model_handle, compute_arguments_handle, ierr)
   if (ierr /= 0) then
-    call my_error("compute_arguments_destroy", __LINE__, __FILE__)
+    call my_error("compute_arguments_destroy", __LINE__)
   endif
   call kim_model_destroy(model_handle)
 
