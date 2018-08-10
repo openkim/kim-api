@@ -291,23 +291,23 @@ int main()
   if (error) MY_ERROR("set_call_back");
 
   kim_cluster_model->GetInfluenceDistance(&influence_distance_cluster_model);
-  int const * paddingNeighborHints;
-  int const * halfListHints;
-  kim_cluster_model->GetNeighborListPointers(&number_of_neighbor_lists,
-                                             &cutoff_cluster_model,
-                                             &paddingNeighborHints,
-                                             &halfListHints);
+  int const * modelWillNotRequestNeighborsOfNoncontributingParticles;
+  kim_cluster_model->GetNeighborListPointers(
+      &number_of_neighbor_lists,
+      &cutoff_cluster_model,
+      &modelWillNotRequestNeighborsOfNoncontributingParticles);
   std::cout << "Model has influence distance of : "
             << influence_distance_cluster_model << std::endl;
   std::cout << "Model has numberOfNeighborLists : " << number_of_neighbor_lists
             << std::endl;
   for (int i=0; i<number_of_neighbor_lists; ++i)
   {
-    std::cout << "\t" << "Neighbor list " << i << " has cutoff "
-              << cutoff_cluster_model[i] << " with paddingNeighborHint "
-              << paddingNeighborHints[i] << " and halfListHint "
-              << halfListHints[i]
-              << std::endl;
+    std::cout
+        << "\t" << "Neighbor list " << i << " has cutoff "
+        << cutoff_cluster_model[i] << " with "
+        "model_will_not_request_neighbors_of_noncontributing_particles "
+        << modelWillNotRequestNeighborsOfNoncontributingParticles[i]
+        << std::endl;
   }
   // ignoring hints from here on...
   if (number_of_neighbor_lists != 1) MY_ERROR("too many neighbor lists");

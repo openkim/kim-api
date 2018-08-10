@@ -83,15 +83,14 @@ void KIM_ModelRefresh_SetNeighborListPointers(
     KIM_ModelRefresh * const modelRefresh,
     int const numberOfNeighborLists,
     double const * const cutoffs,
-    int const * const paddingNeighborHints,
-    int const * const halfListHints)
+    int const * const modelWillNotRequestNeighborsOfNoncontributingParticles)
 {
   CONVERT_POINTER;
 
-  pModelRefresh->SetNeighborListPointers(numberOfNeighborLists,
-                                         cutoffs,
-                                         paddingNeighborHints,
-                                         halfListHints);
+  pModelRefresh->SetNeighborListPointers(
+      numberOfNeighborLists,
+      cutoffs,
+      modelWillNotRequestNeighborsOfNoncontributingParticles);
 }
 
 void KIM_ModelRefresh_GetModelBufferPointer(

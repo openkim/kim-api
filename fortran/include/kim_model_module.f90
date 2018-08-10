@@ -194,14 +194,14 @@ module kim_model_module
     end subroutine kim_model_get_number_of_neighbor_lists
 
     subroutine kim_model_get_neighbor_list_values(model_handle, cutoffs, &
-      padding_neighbor_hints, half_list_hints, ierr)
+      model_will_not_request_neighbors_of_noncontributing_particles, ierr)
       use, intrinsic :: iso_c_binding
       import kim_model_handle_type
       implicit none
       type(kim_model_handle_type), intent(in) :: model_handle
       real(c_double), intent(out) :: cutoffs(:)
-      integer(c_int), intent(out) :: padding_neighbor_hints(:)
-      integer(c_int), intent(out) :: half_list_hints(:)
+      integer(c_int), intent(out) :: &
+        model_will_not_request_neighbors_of_noncontributing_particles(:)
       integer(c_int), intent(out) :: ierr
     end subroutine kim_model_get_neighbor_list_values
 

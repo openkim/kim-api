@@ -103,8 +103,7 @@ struct model_buffer
   double influenceDistance;
   double cutoff;
   double cutsq;
-  int paddingNeighborHint;
-  int halfListHint;
+  int modelWillNotRequestNeighborsOfNoncontributingParticles;
   double epsilon;
   double C;
   double Rzero;
@@ -527,8 +526,7 @@ int model_driver_create(
   buffer->influenceDistance = cutoff;
   buffer->cutoff = cutoff;
   buffer->cutsq = (cutoff)*(cutoff);
-  buffer->paddingNeighborHint = 1;
-  buffer->halfListHint = 0;
+  buffer->modelWillNotRequestNeighborsOfNoncontributingParticles = 1;
   buffer->epsilon = epsilon;
   buffer->C = C;
   buffer->Rzero = Rzero;
@@ -557,8 +555,7 @@ int model_driver_create(
       modelDriverCreate,
       1,
       &(buffer->cutoff),
-      &(buffer->paddingNeighborHint),
-      &(buffer->halfListHint));
+      &(buffer->modelWillNotRequestNeighborsOfNoncontributingParticles));
 
   return FALSE;
 }
@@ -578,8 +575,7 @@ static int refresh(KIM_ModelRefresh * const modelRefresh)
       modelRefresh,
       1,
       &(buffer->cutoff),
-      &(buffer->paddingNeighborHint),
-      &(buffer->halfListHint));
+      &(buffer->modelWillNotRequestNeighborsOfNoncontributingParticles));
 
   return FALSE;
 }

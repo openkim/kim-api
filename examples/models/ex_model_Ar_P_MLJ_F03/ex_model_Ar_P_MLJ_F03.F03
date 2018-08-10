@@ -96,8 +96,8 @@ real(c_double), parameter :: lj_C = 28.0_cd*lj_epsilon*(-13.0_cd &
 type, bind(c) :: buffer_type
   real(c_double) :: influence_distance
   real(c_double) :: cutoff(1)
-  integer(c_int) :: padding_neighbor_hints(1)
-  integer(c_int) :: half_list_hints(1)
+  integer(c_int) :: &
+    model_will_not_request_neighbors_of_noncontributing_particles(1)
 end type buffer_type
 
 contains
@@ -420,8 +420,8 @@ subroutine model_refresh_func(model_refresh_handle, ierr) bind(c)
   call kim_model_refresh_set_influence_distance_pointer( &
     model_refresh_handle, buf%cutoff(1))
   call kim_model_refresh_set_neighbor_list_pointers( &
-    model_refresh_handle, 1, buf%cutoff, buf%padding_neighbor_hints, &
-    buf%half_list_hints)
+    model_refresh_handle, 1, buf%cutoff, &
+    buf%model_will_not_request_neighbors_of_noncontributing_particles)
 
   ierr = 0  ! everything is good
 end subroutine model_refresh_func
@@ -593,8 +593,7 @@ call kim_model_create_set_model_buffer_pointer(model_create_handle, &
 ! set buffer values
 buf%influence_distance = model_cutoff
 buf%cutoff = model_cutoff
-buf%padding_neighbor_hints = 1
-buf%half_list_hints = 0
+buf%model_will_not_request_neighbors_of_noncontributing_particles = 1
 
 ! register influence distance
 call kim_model_create_set_influence_distance_pointer( &
@@ -602,7 +601,8 @@ call kim_model_create_set_influence_distance_pointer( &
 
 ! register cutoff
 call kim_model_create_set_neighbor_list_pointers(model_create_handle, &
-  1, buf%cutoff, buf%padding_neighbor_hints, buf%half_list_hints)
+  1, buf%cutoff, &
+  buf%model_will_not_request_neighbors_of_noncontributing_particles)
 
 if (ierr /= 0) then
   ierr = 1

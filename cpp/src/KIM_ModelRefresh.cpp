@@ -57,15 +57,14 @@ void ModelRefresh::SetInfluenceDistancePointer(
 void ModelRefresh::SetNeighborListPointers(
     int const numberOfNeighborLists,
     double const * const cutoffs,
-    int const * const paddingNeighborHints,
-    int const * const halfListHints)
+    int const * const modelWillNotRequestNeighborsOfNoncontributingParticles)
 {
   CONVERT_POINTER;
 
-  pImpl->SetNeighborListPointers(numberOfNeighborLists,
-                                 cutoffs,
-                                 paddingNeighborHints,
-                                 halfListHints);
+  pImpl->SetNeighborListPointers(
+      numberOfNeighborLists,
+      cutoffs,
+      modelWillNotRequestNeighborsOfNoncontributingParticles);
 }
 
 void ModelRefresh::GetModelBufferPointer(void ** const ptr) const

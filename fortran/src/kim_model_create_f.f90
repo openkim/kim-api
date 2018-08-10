@@ -82,8 +82,8 @@ module kim_model_create_f_module
     end subroutine set_influence_distance_pointer
 
     subroutine set_neighbor_list_pointers(model_create, &
-      number_of_neighbor_lists, cutoffs_ptr, padding_neighbor_hints_ptr, &
-      half_list_hints_ptr) &
+      number_of_neighbor_lists, cutoffs_ptr, &
+      model_will_not_request_neighbors_of_noncontributing_particles) &
       bind(c, name="KIM_ModelCreate_SetNeighborListPointers")
       use, intrinsic :: iso_c_binding
       import kim_model_create_type
@@ -91,8 +91,8 @@ module kim_model_create_f_module
       type(kim_model_create_type), intent(inout) :: model_create
       integer(c_int), intent(in), value :: number_of_neighbor_lists
       type(c_ptr), intent(in), value :: cutoffs_ptr
-      type(c_ptr), intent(in), value :: padding_neighbor_hints_ptr
-      type(c_ptr), intent(in), value :: half_list_hints_ptr
+      type(c_ptr), intent(in), value :: &
+        model_will_not_request_neighbors_of_noncontributing_particles
     end subroutine set_neighbor_list_pointers
 
     integer(c_int) function set_refresh_pointer(model_create, &
@@ -342,7 +342,7 @@ end subroutine kim_model_create_set_influence_distance_pointer
 
 subroutine kim_model_create_set_neighbor_list_pointers( &
   model_create_handle, number_of_neighbor_lists, cutoffs, &
-  padding_neighbor_hints, half_list_hints)
+  model_will_not_request_neighbors_of_noncontributing_particles)
   use, intrinsic :: iso_c_binding
   use kim_model_create_module, only : kim_model_create_handle_type
   use kim_model_create_f_module, only : kim_model_create_type, &
@@ -352,14 +352,14 @@ subroutine kim_model_create_set_neighbor_list_pointers( &
   integer(c_int), intent(in), value :: number_of_neighbor_lists
   real(c_double), intent(in), target :: cutoffs(number_of_neighbor_lists)
   integer(c_int), intent(in), target :: &
-    padding_neighbor_hints(number_of_neighbor_lists)
-  integer(c_int), intent(in), target :: &
-    half_list_hints(number_of_neighbor_lists)
+    model_will_not_request_neighbors_of_noncontributing_particles( &
+    number_of_neighbor_lists)
   type(kim_model_create_type), pointer :: model_create
 
   call c_f_pointer(model_create_handle%p, model_create)
   call set_neighbor_list_pointers(model_create, number_of_neighbor_lists, &
-    c_loc(cutoffs), c_loc(padding_neighbor_hints), c_loc(half_list_hints))
+    c_loc(cutoffs), &
+    c_loc(model_will_not_request_neighbors_of_noncontributing_particles))
 end subroutine kim_model_create_set_neighbor_list_pointers
 
 subroutine kim_model_create_set_refresh_pointer( &

@@ -220,18 +220,18 @@ void KIM_Model_GetInfluenceDistance(KIM_Model const * const model,
   pModel->GetInfluenceDistance(influenceDistance);
 }
 
-void KIM_Model_GetNeighborListPointers(KIM_Model const * const model,
-                                       int * const numberOfNeighborLists,
-                                       double const ** const cutoffs,
-                                       int const ** const paddingNeighborHints,
-                                       int const ** const halfListHints)
+void KIM_Model_GetNeighborListPointers(
+    KIM_Model const * const model,
+    int * const numberOfNeighborLists,
+    double const ** const cutoffs,
+    int const ** const modelWillNotRequestNeighborsOfNoncontributingParticles)
 {
   CONVERT_POINTER;
 
-  pModel->GetNeighborListPointers(numberOfNeighborLists,
-                                  cutoffs,
-                                  paddingNeighborHints,
-                                  halfListHints);
+  pModel->GetNeighborListPointers(
+      numberOfNeighborLists,
+      cutoffs,
+      modelWillNotRequestNeighborsOfNoncontributingParticles);
 }
 
 void KIM_Model_GetUnits(KIM_Model const * const model,

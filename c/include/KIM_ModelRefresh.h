@@ -56,8 +56,7 @@ void KIM_ModelRefresh_SetNeighborListPointers(
     KIM_ModelRefresh * const modelRefresh,
     int const numberOfNeighborLists,
     double const * const cutoffs,
-    int const * const paddingNeighborHints,
-    int const * const halfListHints);
+    int const * const modelWillNotRequestNeighborsOfNoncontributingParticles);
 
 void KIM_ModelRefresh_GetModelBufferPointer(
     KIM_ModelRefresh const * const modelRefresh,

@@ -65,10 +65,10 @@ class ModelCreate
 
   void SetInfluenceDistancePointer(double const * const influenceDistance);
 
-  void SetNeighborListPointers(int const numberOfNeighborLists,
-                               double const * const cutoffs,
-                               int const * const paddingNeighborHints,
-                               int const * const halfListHints);
+  void SetNeighborListPointers(
+      int const numberOfNeighborLists,
+      double const * const cutoffs,
+      int const * const modelWillNotRequestNeighborsOfNoncontributingParticles);
 
   int SetRefreshPointer(LanguageName const languageName, func * const fptr);
   int SetDestroyPointer(LanguageName const languageName, func * const fptr);

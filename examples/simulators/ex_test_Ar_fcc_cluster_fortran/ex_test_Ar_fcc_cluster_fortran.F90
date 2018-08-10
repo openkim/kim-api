@@ -379,8 +379,8 @@ program ex_test_ar_fcc_cluster_fortran
   integer(c_int) :: number_of_neighbor_lists
   real(c_double) :: cutoff
   real(c_double) :: cutoffs(1)
-  integer(c_int) :: padding_neighbor_hints(1)
-  integer(c_int) :: half_list_hints(1)
+  integer(c_int) :: &
+    model_will_not_request_neighbors_of_noncontributing_particles(1)
   integer(c_int), target :: particle_species_codes(N)
   integer(c_int), target :: particle_contributing(N)
   real(c_double), target :: energy
@@ -497,7 +497,7 @@ program ex_test_ar_fcc_cluster_fortran
     call my_error("too many neighbor lists", __LINE__)
   endif
   call kim_model_get_neighbor_list_values(model_handle, cutoffs, &
-    padding_neighbor_hints, half_list_hints, ierr)
+    model_will_not_request_neighbors_of_noncontributing_particles, ierr)
   if (ierr /= 0) then
     call my_error("get_neighbor_list_values", __LINE__)
   end if

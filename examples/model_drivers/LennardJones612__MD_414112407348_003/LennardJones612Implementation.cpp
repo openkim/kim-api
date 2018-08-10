@@ -67,8 +67,7 @@ LennardJones612Implementation::LennardJones612Implementation(
   sigmas_(NULL),
   influenceDistance_(0.0),
   cutoffsSq2D_(NULL),
-  paddingNeighborHints_(1),
-  halfListHints_(1),
+  modelWillNotRequestNeighborsOfNoncontributingParticles_(1),
   fourEpsilonSigma6_2D_(NULL),
   fourEpsilonSigma12_2D_(NULL),
   twentyFourEpsilonSigma6_2D_(NULL),
@@ -752,10 +751,10 @@ int LennardJones612Implementation::SetRefreshMutableValues(
 
   influenceDistance_ = sqrt(influenceDistance_);
   modelObj->SetInfluenceDistancePointer(&influenceDistance_);
-  modelObj->SetNeighborListPointers(1,
-                                    &influenceDistance_,
-                                    &paddingNeighborHints_,
-                                    &halfListHints_);
+  modelObj->SetNeighborListPointers(
+      1,
+      &influenceDistance_,
+      &modelWillNotRequestNeighborsOfNoncontributingParticles_);
 
   // update shifts
   // compute and set shifts2D_ check if minus sign
