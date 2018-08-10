@@ -1,1 +1,1 @@
-../../../../../example/models/ex_model_Ar_P_Morse_07C/CMakeLists.txt
+../../../../../examples/models/ex_model_Ar_P_Morse_07C/CMakeLists.txt

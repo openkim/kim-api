@@ -47,24 +47,29 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/Modules)
 set(PROJECT_PREFIX "kim-api" CACHE STRING "TODO add description here")
 mark_as_advanced(KIM_API_PROJECT_PREFIX)
 #
-set(KIM_API_LOG_MAXIMUM_LEVEL "ERROR" CACHE STRING "TODO add description here")
-set_property(CACHE KIM_API_LOG_MAXIMUM_LEVEL PROPERTY STRINGS SILENT FATAL ERROR WARNING INFORMATION DEBUG)
+set(KIM_API_V2_LOG_MAXIMUM_LEVEL "ERROR" CACHE STRING "TODO add description here")
+set_property(CACHE KIM_API_V2_LOG_MAXIMUM_LEVEL PROPERTY STRINGS SILENT FATAL ERROR WARNING INFORMATION DEBUG)
+set(KIM_API_LOG_MAXIMUM_LEVEL ${KIM_API_V2_LOG_MAXIMUM_LEVEL} CACHE INTERNAL "Versionless copy")
 #
-option(KIM_API_BUILD_MODULES "TODO Build model" OFF)
+option(KIM_API_V2_BUILD_MODELS_AND_DRIVERS "TODO Build model" OFF)
+set(KIM_API_BUILD_MODELS_AND_DRIVERS ${KIM_API_V2_BUILD_MODELS_AND_DRIVERS} CACHE INTERNAL "Versionless copy")
 #
 # option(KIM_API_DOWNLOAD_OPENKIM "TODO Download all models, model drivers and simulators" OFF)
 #
-set(KIM_API_USER_CONFIGURATION_DIR ".${PROJECT_PREFIX}" CACHE STRING "TODO if starts with / absolute, otherwise homedir.")
-mark_as_advanced(KIM_API_USER_CONFIGURATION_DIR)
-#
-set(KIM_API_MODEL_DRIVER_IDENTIFIER "model-driver" CACHE STRING "TODO add description here")
-mark_as_advanced(KIM_API_MODEL_DRIVER_IDENTIFIER)
-#
-set(KIM_API_MODEL_IDENTIFIER "model" CACHE STRING "TODO add description here")
-mark_as_advanced(KIM_API_MODEL_IDENTIFIER)
-#
+set(KIM_API_V2_USER_CONFIGURATION_FILE ".${PROJECT_PREFIX}/config" STRING "TODO if starts with / absolute, otherwise homedir.")
+mark_as_advanced(KIM_API_USER_CONFIGURATION_FILE)
+set(KIM_API_USER_CONFIGURATION_FILE ${KIM_API_V2_USER_CONFIGURATION_FILE} CACHE INTERNAL "Versionless copy")
 #
 # option(KIM_API_ENABLE_COVERAGE) --- defined below
+
+
+# Define other internal variables
+#
+set(KIM_API_MODEL_DRIVER_IDENTIFIER "model-driver" CACHE INTERNAL "Canonical id for a model driver")
+set(KIM_API_MODEL_DRIVER_IDENTIFIER_PLURAL "${KIM_API_MODEL_DRIVER_IDENTIFIER}s" CACHE INTERNAL "plural")
+#
+set(KIM_API_MODEL_IDENTIFIER "model" CACHE INTERNAL "Canonical id for a model")
+set(KIM_API_MODEL_IDENTIFIER_PLURAL "${KIM_API_MODEL_IDENTIFIER}s" CACHE INTERNAL "plural")
 
 
 #
@@ -145,9 +150,9 @@ add_subdirectory(documentation)
 
 
 # Add Models & Drivers, if appropriate
-if(KIM_API_BUILD_MODULES)
+if(KIM_API_BUILD_MODELS_AND_DRIVERS)
   add_subdirectory(examples/models)
-  add_subdirectory(examples/model_drivers)
+  add_subdirectory(examples/model-drivers)
   add_subdirectory(examples/simulators)
 endif()
 
@@ -168,7 +173,7 @@ endif()
 #
 #     # TODO don't hardcode these directories
 #     add_subdirectory(${CMAKE_BINARY_DIR}/download/examples/models)
-#     add_subdirectory(${CMAKE_BINARY_DIR}/download/examples/model_drivers)
+#     add_subdirectory(${CMAKE_BINARY_DIR}/download/examples/model-drivers)
 #     add_subdirectory(${CMAKE_BINARY_DIR}/download/examples/simulators)
 # endif()
 

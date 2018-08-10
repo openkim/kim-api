@@ -1,1 +1,1 @@
-../../../../../example/simulators/ex_test_Ar_fcc_cluster_cpp/CMakeLists.txt
+../../../../../examples/simulators/ex_test_Ar_fcc_cluster_cpp/CMakeLists.txt

@@ -38,15 +38,12 @@ cmake_minimum_required(VERSION 3.0)
 list(APPEND CMAKE_MODULE_PATH $ENV{KIM_API_V2_CMAKE_MODULES_DIR})
 find_package(KIM-API-V2 2.0 REQUIRED)
 
-set(MODEL_DRIVER_NAME "LennardJones612__MD_414112407348_003")
+set(MODEL_DRIVER_NAME "ex_model_driver_P_LJ")
 
 add_kim_api_v2_model_driver_library(
-  NAME                     ${MODEL_DRIVER_NAME}
-  CREATE_FUNCTION_NAME     "model_driver_create"
-  CREATE_FUNCTION_LANGUAGE "cpp"
+  NAME                    ${MODEL_DRIVER_NAME}
+  CREATE_ROUTINE_NAME     "model_driver_create_routine"
+  CREATE_ROUTINE_LANGUAGE "fortran"
   )
 
-target_sources(${MODEL_DRIVER_NAME} PRIVATE
-  LennardJones612.cpp
-  LennardJones612Implementation.cpp
-  )
+target_sources(${MODEL_DRIVER_NAME} PRIVATE ${MODEL_DRIVER_NAME}.F90)

@@ -82,10 +82,11 @@ else()
     endif()
 endif()
 
+# TODO clean up names of configured files
 
 function(add_kim_api_v2_model_library)
     set(options "")
-    set(oneValueArgs NAME DRIVER_NAME CREATE_FUNCTION_NAME CREATE_FUNCTION_LANGUAGE METADATA_FILE)
+    set(oneValueArgs NAME DRIVER_NAME CREATE_ROUTINE_NAME CREATE_ROUTINE_LANGUAGE METADATA_FILE)
     set(multiValueArgs PARAMETER_FILES)
     cmake_parse_arguments(MODEL "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
@@ -167,7 +168,7 @@ endfunction(add_kim_api_v2_model_library)
 
 function(add_kim_api_v2_model_driver_library)
     set(options "")
-    set(oneValueArgs NAME CREATE_FUNCTION_NAME CREATE_FUNCTION_LANGUAGE)
+    set(oneValueArgs NAME CREATE_ROUTINE_NAME CREATE_ROUTINE_LANGUAGE)
     set(multiValueArgs "")
     cmake_parse_arguments(MODEL_DRIVER "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 

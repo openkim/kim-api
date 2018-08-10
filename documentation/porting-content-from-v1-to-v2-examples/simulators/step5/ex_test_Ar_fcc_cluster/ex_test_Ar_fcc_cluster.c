@@ -1,1 +1,1 @@
-../../../../../example/simulators/ex_test_Ar_fcc_cluster/ex_test_Ar_fcc_cluster.c
+../../../../../examples/simulators/ex_test_Ar_fcc_cluster/ex_test_Ar_fcc_cluster.c

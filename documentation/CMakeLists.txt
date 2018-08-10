@@ -73,7 +73,7 @@ set(SOURCES
     "../cpp/include/"
     "../c/include/"
     "../fortran/include/"
-    "../examples/model_drivers/"
+    "../examples/model-drivers/"
     "../examples/models/"
     "../examples/simulators/"
     )
@@ -92,7 +92,7 @@ if(DOXYGEN_FOUND)
                      DEPENDS docs
                      )
 
-  #TODO fix dependencies
+  # TODO fix dependencies
   add_custom_target(pdf DEPENDS docs refman.pdf SOURCES ${SOURCES})
 endif(DOXYGEN_FOUND)
 

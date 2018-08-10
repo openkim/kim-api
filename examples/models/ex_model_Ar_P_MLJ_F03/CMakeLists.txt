@@ -43,9 +43,9 @@ enable_language(Fortran)
 set(MODEL_NAME "ex_model_Ar_P_MLJ_F03")
 
 add_kim_api_v2_model_library(
-  NAME                     ${MODEL_NAME}
-  CREATE_FUNCTION_NAME     "model_create_routine"
-  CREATE_FUNCTION_LANGUAGE "fortran"
+  NAME                    ${MODEL_NAME}
+  CREATE_ROUTINE_NAME     "model_create_routine"
+  CREATE_ROUTINE_LANGUAGE "fortran"
   )
 
 target_sources(${MODEL_NAME} PRIVATE ${MODEL_NAME}.F03)

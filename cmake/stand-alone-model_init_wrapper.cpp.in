@@ -1,8 +1,8 @@
 extern "C"
 {
 char kim_item_type[] = "stand-alone-model"; //@@@@ TODO change this to a config. value too?
-int @MODEL_CREATE_FUNCTION_NAME@();
-int (* @MODEL_NAME@_create_pointer)() = @MODEL_CREATE_FUNCTION_NAME@;
+int @MODEL_CREATE_ROUTINE_NAME@();
+int (* @MODEL_NAME@_create_pointer)() = @MODEL_CREATE_ROUTINE_NAME@;
 char @MODEL_NAME@_compiled_with_version[] = "@PROJECT_VERSION_STRING@";
-char @MODEL_NAME@_language[] = "@MODEL_CREATE_FUNCTION_LANGUAGE@";
+char @MODEL_NAME@_language[] = "@MODEL_CREATE_ROUTINE_LANGUAGE@";
 }

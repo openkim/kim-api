@@ -41,9 +41,9 @@ find_package(KIM-API-V2 2.0 REQUIRED)
 set(MODEL_NAME "ex_model_Ar_P_Morse_07C")
 
 add_kim_api_v2_model_library(
-  NAME                     ${MODEL_NAME}
-  CREATE_FUNCTION_NAME     "model_create"
-  CREATE_FUNCTION_LANGUAGE "c"
+  NAME                    ${MODEL_NAME}
+  CREATE_ROUTINE_NAME     "model_create"
+  CREATE_ROUTINE_LANGUAGE "c"
   )
 
 target_sources(${MODEL_NAME} PRIVATE ${MODEL_NAME}.c)

@@ -49,6 +49,7 @@ set(TEST_MODELS ex_model_Ar_P_LJ
                 ex_model_Ar_P_Morse_07C)
 
 foreach(TEST_MODEL ${TEST_MODELS})
+    # TODO make a variable for "Testing" directory name
     set(TEST_DIR ${CMAKE_BINARY_DIR}/Testing/Run_${TEST_NAME}_${TEST_MODEL})
     FILE(MAKE_DIRECTORY ${TEST_DIR})
     add_test(NAME Run_${TEST_NAME}_${TEST_MODEL} COMMAND sh -c "echo ${TEST_MODEL} | ${CMAKE_CURRENT_BINARY_DIR}/${TEST_NAME} > stdout" WORKING_DIRECTORY ${TEST_DIR})
