@@ -52,7 +52,7 @@ set_property(CACHE KIM_API_LOG_MAXIMUM_LEVEL PROPERTY STRINGS SILENT FATAL ERROR
 #
 option(KIM_API_BUILD_MODULES "TODO Build model" OFF)
 #
-option(KIM_API_DOWNLOAD_ALL "TODO Download all models, model drivers and simulators" OFF)
+# option(KIM_API_DOWNLOAD_OPENKIM "TODO Download all models, model drivers and simulators" OFF)
 #
 set(KIM_API_USER_CONFIGURATION_DIR ".${PROJECT_PREFIX}" CACHE STRING "TODO if starts with / absolute, otherwise homedir.")
 mark_as_advanced(KIM_API_USER_CONFIGURATION_DIR)
@@ -152,25 +152,25 @@ if(KIM_API_BUILD_MODULES)
 endif()
 
 
-# Add downloads, if appropriate
+# # Add downloads, if appropriate
+# #
+# if(KIM_API_DOWNLOAD_OPENKIM)
+#     # TODO insert full model/model_driver/simulator git repo or tarball here
+#     set(GIT_REPOSITORY "https://github.com/openkim/kim-api.git")
+#     set(GIT_BRANCH "cmake")
 #
-if(KIM_API_DOWNLOAD_ALL)
-    # TODO insert full model/model_driver/simulator git repo or tarball here
-    set(GIT_REPOSITORY "https://github.com/openkim/kim-api.git")
-    set(GIT_BRANCH "cmake")
-
-    # TODO don't hardcode the directory "download"
-    if(EXISTS ${CMAKE_BINARY_DIR}/download)
-        execute_process(COMMAND git pull  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/download)
-    else()
-        execute_process(COMMAND git clone -b ${GIT_BRANCH} ${GIT_REPOSITORY} download WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
-    endif()
-
-    # TODO don't hardcode these directories
-    add_subdirectory(${CMAKE_BINARY_DIR}/download/examples/models)
-    add_subdirectory(${CMAKE_BINARY_DIR}/download/examples/model_drivers)
-    add_subdirectory(${CMAKE_BINARY_DIR}/download/examples/simulators)
-endif()
+#     # TODO don't hardcode the directory "download"
+#     if(EXISTS ${CMAKE_BINARY_DIR}/download)
+#         execute_process(COMMAND git pull  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/download)
+#     else()
+#         execute_process(COMMAND git clone -b ${GIT_BRANCH} ${GIT_REPOSITORY} download WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+#     endif()
+#
+#     # TODO don't hardcode these directories
+#     add_subdirectory(${CMAKE_BINARY_DIR}/download/examples/models)
+#     add_subdirectory(${CMAKE_BINARY_DIR}/download/examples/model_drivers)
+#     add_subdirectory(${CMAKE_BINARY_DIR}/download/examples/simulators)
+# endif()
 
 
 # Add install rules for kim-api
