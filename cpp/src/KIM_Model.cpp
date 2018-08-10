@@ -86,15 +86,16 @@ void Model::GetInfluenceDistance(double * const influenceDistance) const
   pimpl->GetInfluenceDistance(influenceDistance);
 }
 
-void Model::GetNeighborListPointers(int * const numberOfNeighborLists,
-                                    double const ** const cutoffs,
-                                    int const ** const paddingNeighborHints,
-                                    int const ** const halfListHints) const
+void Model::GetNeighborListPointers(
+    int * const numberOfNeighborLists,
+    double const ** const cutoffs,
+    int const ** const modelWillNotRequestNeighborsOfNoncontributingParticles)
+    const
 {
-  pimpl->GetNeighborListPointers(numberOfNeighborLists,
-                                 cutoffs,
-                                 paddingNeighborHints,
-                                 halfListHints);
+  pimpl->GetNeighborListPointers(
+      numberOfNeighborLists,
+      cutoffs,
+      modelWillNotRequestNeighborsOfNoncontributingParticles);
 }
 
 void Model::GetUnits(LengthUnit * const lengthUnit,

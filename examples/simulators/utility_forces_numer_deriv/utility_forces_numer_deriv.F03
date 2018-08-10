@@ -836,8 +836,8 @@ program vc_forces_numer_deriv
   real(c_double) :: influence_distance
   integer(c_int) :: number_of_neighbor_lists
   real(c_double) :: cutoffs(1)
-  integer(c_int) :: padding_neighbor_hints(1)
-  integer(c_int) :: half_list_hints(1)
+  integer(c_int) :: &
+    model_will_not_request_neighbors_of_noncontributing_particles(1)
   real(c_double) :: cutoff
   real(c_double), target :: energy
   real(c_double), target :: coords(3,N)
@@ -996,7 +996,7 @@ program vc_forces_numer_deriv
     call my_error("too many neighbor lists", __LINE__, __FILE__)
   endif
   call kim_model_get_neighbor_list_values(model_handle, cutoffs, &
-    padding_neighbor_hints, half_list_hints, ierr)
+    model_will_not_request_neighbors_of_noncontributing_particles, ierr)
   if (ierr /= 0) then
     call my_error("get_neighbor_list_values", __LINE__, __FILE__)
   end if

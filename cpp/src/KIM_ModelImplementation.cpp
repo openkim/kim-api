@@ -395,15 +395,13 @@ void ModelImplementation::GetInfluenceDistance(
 void ModelImplementation::SetNeighborListPointers(
     int const numberOfNeighborLists,
     double const * const cutoffs,
-    int const * const paddingNeighborHints,
-    int const * const halfListHints)
+    int const * const modelWillNotRequestNeighborsOfNoncontributingParticles)
 {
 #if DEBUG_VERBOSITY
   std::string const callString = "SetNeighborListPointers("
       + SNUM(numberOfNeighborLists) + ", "
       + SPTR(cutoffs) + ", "
-      + SPTR(paddingNeighborHints) + ", "
-      + SPTR(halfListHints) + ").";
+      + SPTR(modelWillNotRequestNeighborsOfNoncontributingParticles) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -413,16 +411,15 @@ void ModelImplementation::SetNeighborListPointers(
               + ", must be >= 1.");
   if (cutoffs == NULL)
     LOG_ERROR("Null pointer provided for cutoffs.");
-  if (paddingNeighborHints == NULL)
-    LOG_ERROR("Null pointer provided for paddingNeighborHints.");
-  if (halfListHints == NULL)
-    LOG_ERROR("Null pointer provided for halfListHints.");
+  if (modelWillNotRequestNeighborsOfNoncontributingParticles == NULL)
+    LOG_ERROR("Null pointer provided for "
+              "modelWillNotRequestNeighborsOfNoncontributingParticles.");
 #endif
 
   numberOfNeighborLists_ = numberOfNeighborLists;
   cutoffs_ = cutoffs;
-  paddingNeighborHints_ = paddingNeighborHints;
-  halfListHints_ = halfListHints;
+  modelWillNotRequestNeighborsOfNoncontributingParticles_ =
+      modelWillNotRequestNeighborsOfNoncontributingParticles;
 
   LOG_DEBUG("Exit   " + callString);
 }
@@ -430,15 +427,14 @@ void ModelImplementation::SetNeighborListPointers(
 void ModelImplementation::GetNeighborListPointers(
     int * const numberOfNeighborLists,
     double const ** const cutoffs,
-    int const ** const paddingNeighborHints,
-    int const ** const halfListHints) const
+    int const ** const modelWillNotRequestNeighborsOfNoncontributingParticles)
+    const
 {
 #if DEBUG_VERBOSITY
   std::string const callString = "GetNeighborListPointers("
       + SPTR(numberOfNeighborLists) + ", "
       + SPTR(cutoffs) + ", "
-      + SPTR(paddingNeighborHints) + ", "
-      + SPTR(halfListHints) + ").";
+      + SPTR(modelWillNotRequestNeighborsOfNoncontributingParticles) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -446,10 +442,9 @@ void ModelImplementation::GetNeighborListPointers(
     *numberOfNeighborLists = numberOfNeighborLists_;
   if (cutoffs != NULL)
     *cutoffs = cutoffs_;
-  if (paddingNeighborHints != NULL)
-    *paddingNeighborHints = paddingNeighborHints_;
-  if (halfListHints != NULL)
-    *halfListHints = halfListHints_;
+  if (modelWillNotRequestNeighborsOfNoncontributingParticles != NULL)
+    *modelWillNotRequestNeighborsOfNoncontributingParticles =
+        modelWillNotRequestNeighborsOfNoncontributingParticles_;
 
   LOG_DEBUG("Exit   " + callString);
 }
@@ -1255,8 +1250,7 @@ int ModelImplementation::ClearThenRefresh()
   influenceDistance_ = NULL;
   numberOfNeighborLists_ = 0;
   cutoffs_ = NULL;
-  paddingNeighborHints_ = NULL;
-  halfListHints_ = NULL;
+  modelWillNotRequestNeighborsOfNoncontributingParticles_ = NULL;
 
   typedef int ModelRefreshCpp(KIM::ModelRefresh * const);
   ModelRefreshCpp * CppRefresh
@@ -1329,17 +1323,10 @@ int ModelImplementation::ClearThenRefresh()
       LOG_DEBUG("Exit 1=" + callString);
       return true;
     }
-    if (paddingNeighborHints_ == NULL)
+    if (modelWillNotRequestNeighborsOfNoncontributingParticles_ == NULL)
     {
       LOG_ERROR("Model supplied Refresh() routine did not "
-                "set paddingNeighborHints.");
-      LOG_DEBUG("Exit 1=" + callString);
-      return true;
-    }
-    if (halfListHints_ == NULL)
-    {
-      LOG_ERROR("Model supplied Refresh() routine did not "
-                "set halfListHints.");
+                "set modelWillNotRequestNeighborsOfNoncontributingParticles.");
       LOG_DEBUG("Exit 1=" + callString);
       return true;
     }
@@ -1686,16 +1673,15 @@ std::string const & ModelImplementation::String() const
   ss << "Number Of Neighbor Lists : " << numberOfNeighborLists_ << "\n";
   ss << "Neighbor List Cutoffs :\n";
   ss << "\t" << "index" << " : " << std::setw(20) << "cutoff distance"
-     << std::setw(25) << "paddingNeighborHint"
-     << std::setw(15) << "halfListHint" << "\n";
+     << std::setw(40)
+     << "modelWillNotRequestNeighborsOfNoncontributingParticles" << "\n";
   ss << "\t" << "-----" << "---" << std::setw(20) << "--------------------"
-     << std::setw(25) << "-------------------------"
-     << std::setw(15) << "---------------" << "\n";
+     << std::setw(40) << "----------------------------------------" << "\n";
   for (int i=0; i<numberOfNeighborLists_; ++i)
   {
     ss << "\t" << std::setw(5) << i << " : " << std::setw(20) << cutoffs_[i]
-       << std::setw(25) << paddingNeighborHints_[i]
-       << std::setw(15) << halfListHints_[i]
+       << std::setw(40)
+       << modelWillNotRequestNeighborsOfNoncontributingParticles_[i]
        << "\n";
   }
   ss << "\n\n";
@@ -1791,8 +1777,7 @@ ModelImplementation::ModelImplementation(ModelLibrary * const modelLibrary,
     influenceDistance_(NULL),
     numberOfNeighborLists_(0),
     cutoffs_(NULL),
-    paddingNeighborHints_(NULL),
-    halfListHints_(NULL),
+    modelWillNotRequestNeighborsOfNoncontributingParticles_(NULL),
     refreshLanguage_(LANGUAGE_NAME::cpp),
     refreshFunction_(NULL),
     destroyLanguage_(LANGUAGE_NAME::cpp),
@@ -1974,18 +1959,10 @@ int ModelImplementation::ModelCreate(
     return true;
   }
 
-  if (paddingNeighborHints_ == NULL)
+  if (modelWillNotRequestNeighborsOfNoncontributingParticles_ == NULL)
   {
     LOG_ERROR("Model supplied Create() routine did not set "
-              "paddingNeighborHints.");
-    LOG_DEBUG("Exit 1=" + callString);
-    return true;
-  }
-
-  if (halfListHints_ == NULL)
-  {
-    LOG_ERROR("Model supplied Create() routine did not set "
-              "halfListHints.");
+              "modelWillNotRequestNeighborsOfNoncontributingParticles.");
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }

@@ -106,14 +106,15 @@ class ModelImplementation
   void GetInfluenceDistance(double * const influenceDistance) const;
 
 
-  void SetNeighborListPointers(int const numberOfNeighborLists,
-                               double const * const cutoffs,
-                               int const * const paddingNeighborHints,
-                               int const * const halfListHints);
-  void GetNeighborListPointers(int * const numberOfNeighborLists,
-                               double const ** const cutoffs,
-                               int const ** const paddingNeighborHints,
-                               int const ** const halfListHints) const;
+  void SetNeighborListPointers(
+      int const numberOfNeighborLists,
+      double const * const cutoffs,
+      int const * const modelWillNotRequestNeighborsOfNoncontributingParticles);
+  void GetNeighborListPointers(
+      int * const numberOfNeighborLists,
+      double const ** const cutoffs,
+      int const ** const
+      modelWillNotRequestNeighborsOfNoncontributingParticles) const;
 
 
   int SetRefreshPointer(LanguageName const languageName, func * const fptr);
@@ -288,8 +289,7 @@ class ModelImplementation
 
   int numberOfNeighborLists_;
   double const * cutoffs_;
-  int const * paddingNeighborHints_;
-  int const * halfListHints_;
+  int const * modelWillNotRequestNeighborsOfNoncontributingParticles_;
 
 
   LanguageName refreshLanguage_;

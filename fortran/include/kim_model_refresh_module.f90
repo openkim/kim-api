@@ -87,7 +87,7 @@ module kim_model_refresh_module
 
     subroutine kim_model_refresh_set_neighbor_list_pointers( &
       model_refresh_handle, number_of_neighbor_lists, cutoffs, &
-      padding_neighbor_hints, half_list_hints)
+      modelWillNotRequestNeighborsOfNoncontributingParticles)
       use, intrinsic :: iso_c_binding
       import kim_model_refresh_handle_type
       implicit none
@@ -96,9 +96,8 @@ module kim_model_refresh_module
       integer(c_int), intent(in), value :: number_of_neighbor_lists
       real(c_double), intent(in), target :: cutoffs(number_of_neighbor_lists)
       integer(c_int), intent(in), target :: &
-        padding_neighbor_hints(number_of_neighbor_lists)
-      integer(c_int), intent(in), target :: &
-        half_list_hints(number_of_neighbor_lists)
+        modelWillNotRequestNeighborsOfNoncontributingParticles( &
+        number_of_neighbor_lists)
     end subroutine kim_model_refresh_set_neighbor_list_pointers
 
     subroutine kim_model_refresh_get_model_buffer_pointer( &

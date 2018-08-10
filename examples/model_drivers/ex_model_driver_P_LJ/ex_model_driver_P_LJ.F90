@@ -74,8 +74,8 @@ type, bind(c) :: BUFFER_TYPE
   real(c_double) :: influence_distance(1)
   real(c_double) :: Pcutoff(1)
   real(c_double) :: cutsq(1)
-  integer(c_int) :: padding_neighbor_hints(1)
-  integer(c_int) :: half_list_hints(1)
+  integer(c_int) :: &
+    model_will_not_request_neighbors_of_noncontributing_particles(1)
   real(c_double) :: epsilon(1)
   real(c_double) :: sigma(1)
   real(c_double) :: shift(1)
@@ -500,7 +500,8 @@ call c_f_pointer(pbuf, buf)
 call kim_model_refresh_set_influence_distance_pointer(model_refresh_handle, &
   buf%influence_distance(1))
 call kim_model_refresh_set_neighbor_list_pointers(model_refresh_handle, &
-  1, buf%influence_distance, buf%padding_neighbor_hints, buf%half_list_hints)
+  1, buf%influence_distance, &
+  buf%model_will_not_request_neighbors_of_noncontributing_particles)
 
 ! Set new values in KIM object and buffer
 !
@@ -849,8 +850,7 @@ allocate( buf )
 buf%influence_distance(1) = in_cutoff
 buf%Pcutoff(1) = in_cutoff
 buf%cutsq(1)   = in_cutoff**2
-buf%padding_neighbor_hints = 1
-buf%half_list_hints = 0
+buf%model_will_not_request_neighbors_of_noncontributing_particles = 1
 buf%epsilon(1) = in_epsilon
 buf%sigma(1)   = in_sigma
 call calc_phi(in_epsilon, &
@@ -865,7 +865,7 @@ call kim_model_driver_create_set_influence_distance_pointer( &
   model_driver_create_handle, buf%influence_distance(1))
 call kim_model_driver_create_set_neighbor_list_pointers( &
   model_driver_create_handle, 1, buf%influence_distance, &
-  buf%padding_neighbor_hints, buf%half_list_hints)
+  buf%model_will_not_request_neighbors_of_noncontributing_particles)
 
 ! end setup buffer
 

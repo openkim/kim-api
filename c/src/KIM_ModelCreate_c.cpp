@@ -174,15 +174,14 @@ void KIM_ModelCreate_SetNeighborListPointers(
     KIM_ModelCreate * const modelCreate,
     int const numberOfNeighborLists,
     double const * const cutoffs,
-    int const * const paddingNeighborHints,
-    int const * const halfListHints)
+    int const * const modelWillNotRequestNeighborsOfNoncontributingParticles)
 {
   CONVERT_POINTER;
 
-  pModelCreate->SetNeighborListPointers(numberOfNeighborLists,
-                                        cutoffs,
-                                        paddingNeighborHints,
-                                        halfListHints);
+  pModelCreate->SetNeighborListPointers(
+      numberOfNeighborLists,
+      cutoffs,
+      modelWillNotRequestNeighborsOfNoncontributingParticles);
 }
 
 int KIM_ModelCreate_SetRefreshPointer(

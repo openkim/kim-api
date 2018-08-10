@@ -159,7 +159,7 @@ module kim_model_driver_create_module
 
     subroutine kim_model_driver_create_set_neighbor_list_pointers( &
       model_driver_create_handle, number_of_neighbor_lists, cutoffs, &
-      padding_neighbor_hints, half_list_hints)
+      model_will_not_request_neighbors_of_noncontributing_particles)
       use, intrinsic :: iso_c_binding
       import kim_model_driver_create_handle_type
       implicit none
@@ -168,9 +168,8 @@ module kim_model_driver_create_module
       integer(c_int), intent(in), value :: number_of_neighbor_lists
       real(c_double), intent(in), target :: cutoffs(number_of_neighbor_lists)
       integer(c_int), intent(in), target :: &
-        padding_neighbor_hints(number_of_neighbor_lists)
-      integer(c_int), intent(in), target :: &
-        half_list_hints(number_of_neighbor_lists)
+        model_will_not_request_neighbors_of_noncontributing_particles( &
+        number_of_neighbor_lists)
     end subroutine kim_model_driver_create_set_neighbor_list_pointers
 
     subroutine kim_model_driver_create_set_refresh_pointer( &

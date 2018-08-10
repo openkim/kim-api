@@ -52,8 +52,7 @@ class LennardJones_Ar
       influenceDistance_(8.1500),
       cutoff_(influenceDistance_),
       cutoffSq_(cutoff_*cutoff_),
-      paddingNeighborHints_(1),
-      halfListHints_(1)
+      modelWillNotRequestNeighborsOfNoncontributingParticles_(1)
   {
     *error = ConvertUnits(modelCreate,
                           requestedLengthUnit,
@@ -66,10 +65,10 @@ class LennardJones_Ar
     modelCreate->SetModelNumbering(KIM::NUMBERING::zeroBased);
 
     modelCreate->SetInfluenceDistancePointer(&influenceDistance_);
-    modelCreate->SetNeighborListPointers(1,
-                                         &cutoff_,
-                                         &paddingNeighborHints_,
-                                         &halfListHints_);
+    modelCreate->SetNeighborListPointers(
+        1,
+        &cutoff_,
+        &modelWillNotRequestNeighborsOfNoncontributingParticles_);
 
     modelCreate->SetSpeciesCode(KIM::SPECIES_NAME::Ar, 0);
 
@@ -128,10 +127,10 @@ class LennardJones_Ar
     // nothing to do
 
     modelRefresh->SetInfluenceDistancePointer(&(model->influenceDistance_));
-    modelRefresh->SetNeighborListPointers(1,
-                                          &(model->cutoff_),
-                                          &(model->paddingNeighborHints_),
-                                          &(model->halfListHints_));
+    modelRefresh->SetNeighborListPointers(
+        1,
+        &(model->cutoff_),
+        &(model->modelWillNotRequestNeighborsOfNoncontributingParticles_));
 
     // everything is good
     return false;
@@ -304,8 +303,7 @@ class LennardJones_Ar
   double influenceDistance_;
   double cutoff_;
   double cutoffSq_;
-  int const paddingNeighborHints_;
-  int const halfListHints_;
+  int const modelWillNotRequestNeighborsOfNoncontributingParticles_;
 
   //****************************************************************************
 #include "KIM_ModelCreateLogMacros.hpp"

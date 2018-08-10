@@ -73,10 +73,11 @@ class Model
 
   void GetInfluenceDistance(double * const influenceDistance) const;
 
-  void GetNeighborListPointers(int * const numberOfNeighborLists,
-                               double const ** const cutoffs,
-                               int const ** const paddingNeighborHints,
-                               int const ** const halfListHints) const;
+  void GetNeighborListPointers(
+      int * const numberOfNeighborLists,
+      double const ** const cutoffs,
+      int const ** const modelWillNotRequestNeighborsOfNoncontributingParticles)
+      const;
 
   void GetUnits(LengthUnit * const lengthUnit,
                 EnergyUnit * const energyUnit,

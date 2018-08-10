@@ -48,10 +48,10 @@ class ModelRefresh{
  public:
   void SetInfluenceDistancePointer(double const * const influenceDistance);
 
-  void SetNeighborListPointers(int const numberOfNeighborLists,
-                               double const * const cutoffs,
-                               int const * const paddingNeighborHints,
-                               int const * const halfListHints);
+  void SetNeighborListPointers(
+      int const numberOfNeighborLists,
+      double const * const cutoffs,
+      int const * const modelWillNotRequestNeighborsOfNoncontributingParticles);
 
   void GetModelBufferPointer(void ** const ptr) const;
 

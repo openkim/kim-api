@@ -64,8 +64,7 @@ struct buffer
 {
   double influenceDistance;
   double cutoff;
-  int paddingNeighborHint;
-  int halfListHint;
+  int modelWillNotRequestNeighborsOfNoncontributingParticles;
 };
 typedef struct buffer buffer;
 
@@ -510,8 +509,7 @@ int model_create(KIM_ModelCreate * const modelCreate,
   /* set buffer values */
   bufferPointer->influenceDistance = CUTOFF;
   bufferPointer->cutoff = CUTOFF;
-  bufferPointer->paddingNeighborHint = 1;
-  bufferPointer->halfListHint = 1;
+  bufferPointer->modelWillNotRequestNeighborsOfNoncontributingParticles = 1;
 
   /* register influence distance */
   KIM_ModelCreate_SetInfluenceDistancePointer(
@@ -523,8 +521,8 @@ int model_create(KIM_ModelCreate * const modelCreate,
       modelCreate,
       1,
       &(bufferPointer->cutoff),
-      &(bufferPointer->paddingNeighborHint),
-      &(bufferPointer->halfListHint));
+      &(bufferPointer
+        ->modelWillNotRequestNeighborsOfNoncontributingParticles));
 
   if (error)
   {
@@ -555,8 +553,7 @@ static int model_refresh(KIM_ModelRefresh * const modelRefresh)
       modelRefresh,
       1,
       &(bufferPointer->cutoff),
-      &(bufferPointer->paddingNeighborHint),
-      &(bufferPointer->halfListHint));
+      &(bufferPointer->modelWillNotRequestNeighborsOfNoncontributingParticles));
 
   return FALSE;
 }

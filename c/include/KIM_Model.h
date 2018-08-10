@@ -118,11 +118,12 @@ void KIM_Model_Destroy(KIM_Model ** const model);
 void KIM_Model_GetInfluenceDistance(KIM_Model const * const model,
                                     double * const influenceDistance);
 
-void KIM_Model_GetNeighborListPointers(KIM_Model const * const model,
-                                       int * const numberOfNeighborLists,
-                                       double const ** const cutoffs,
-                                       int const ** const paddingNeighborHints,
-                                       int const ** const halfListHints);
+void KIM_Model_GetNeighborListPointers(
+    KIM_Model const * const model,
+    int * const numberOfNeighborLists,
+    double const ** const cutoffs,
+    int const ** const modelWillNotRequestNeighborsOfNoncontributingParticles);
+
 
 void KIM_Model_GetUnits(KIM_Model const * const model,
                         KIM_LengthUnit * const lengthUnit,

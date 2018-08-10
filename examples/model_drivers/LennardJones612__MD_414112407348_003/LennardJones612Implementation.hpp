@@ -138,8 +138,7 @@ class LennardJones612Implementation
   // LennardJones612Implementation: values (changed only by Refresh())
   double influenceDistance_;
   double** cutoffsSq2D_;
-  int paddingNeighborHints_;
-  int halfListHints_;
+  int modelWillNotRequestNeighborsOfNoncontributingParticles_;
   double** fourEpsilonSigma6_2D_;
   double** fourEpsilonSigma12_2D_;
   double** twentyFourEpsilonSigma6_2D_;
