@@ -55,7 +55,7 @@ module kim_model_driver_headers_module
     kim_model_driver_create_set_units, &
     kim_model_driver_create_convert_unit, &
     kim_model_driver_create_log_entry, &
-    kmdcmle => kim_model_driver_create_log_entry, &
+    kmdcle => kim_model_driver_create_log_entry, &
     kim_model_driver_create_string
 
 

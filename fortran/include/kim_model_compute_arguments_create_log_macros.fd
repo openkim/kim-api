@@ -40,7 +40,7 @@
 #endif
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_FATAL_)
 #define LOG_FATAL()\
-call kmcaclm(model_compute_arguments_create_handle, klvf, klm, __LINE__, klf)
+call kmcacle(model_compute_arguments_create_handle, klvf, klm, __LINE__, klf)
 #else
 #define LOG_FATAL()
 #endif
@@ -52,7 +52,7 @@ call kmcaclm(model_compute_arguments_create_handle, klvf, klm, __LINE__, klf)
 #endif
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_ERROR_)
 #define LOG_ERROR()\
-call kmcaclm(model_compute_arguments_create_handle, klve, klm, __LINE__, klf)
+call kmcacle(model_compute_arguments_create_handle, klve, klm, __LINE__, klf)
 #else
 #define LOG_ERROR()
 #endif
@@ -64,7 +64,7 @@ call kmcaclm(model_compute_arguments_create_handle, klve, klm, __LINE__, klf)
 #endif
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_WARNING_)
 #define LOG_WARNING()\
-call kmcaclm(model_compute_arguments_create_handle, klvw, klm, __LINE__, klf)
+call kmcacle(model_compute_arguments_create_handle, klvw, klm, __LINE__, klf)
 #else
 #define LOG_WARNING()
 #endif
@@ -76,7 +76,7 @@ call kmcaclm(model_compute_arguments_create_handle, klvw, klm, __LINE__, klf)
 #endif
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_INFORMATION_)
 #define LOG_INFORMATION()\
-call kmcaclm(model_compute_arguments_create_handle, klvi, klm, __LINE__, klf)
+call kmcacle(model_compute_arguments_create_handle, klvi, klm, __LINE__, klf)
 #else
 #define LOG_INFORMATION()
 #endif
@@ -88,7 +88,7 @@ call kmcaclm(model_compute_arguments_create_handle, klvi, klm, __LINE__, klf)
 #endif
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_DEBUG_)
 #define LOG_DEBUG()\
-call kmcaclm(model_compute_arguments_create_handle, klvd, klm, __LINE__, klf)
+call kmcacle(model_compute_arguments_create_handle, klvd, klm, __LINE__, klf)
 #else
 #define LOG_DEBUG()
 #endif
