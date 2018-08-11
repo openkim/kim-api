@@ -60,7 +60,7 @@ set(KIM_API_V2_USER_CONFIGURATION_FILE ".${PROJECT_PREFIX}/config" STRING "TODO 
 mark_as_advanced(KIM_API_USER_CONFIGURATION_FILE)
 set(KIM_API_USER_CONFIGURATION_FILE ${KIM_API_V2_USER_CONFIGURATION_FILE} CACHE INTERNAL "Versionless copy")
 #
-# option(KIM_API_ENABLE_COVERAGE) --- defined below
+# option(KIM_API_V2_ENABLE_COVERAGE) --- defined below
 
 
 # Define other internal variables
@@ -105,8 +105,9 @@ if(HAS_FREE_LINE_LENGTH_FLAG)
 endif()
 #
 if (${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
-  option(KIM_API_ENABLE_COVERAGE "Enable code coverage" OFF)
-  mark_as_advanced(KIM_API_ENABLE_COVERAGE)
+  option(KIM_API_V2_ENABLE_COVERAGE "Enable code coverage" OFF)
+  mark_as_advanced(KIM_API_V2_ENABLE_COVERAGE)
+  set(KIM_API_ENABLE_COVERAGE${KIM_API_V2_ENABLE_COVERAGE} CACHE INTERNAL "Versionless copy")
   if(KIM_API_ENABLE_COVERAGE)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --coverage")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage")
@@ -145,8 +146,8 @@ add_subdirectory(fortran/include)
 #
 add_subdirectory(completions)
 add_subdirectory(pkg-config)
-add_subdirectory(utilities)
-#add_subdirectory(documentation)
+add_subdirectory(utils)
+#add_subdirectory(doc)
 
 
 # Add Models & Drivers, if appropriate
