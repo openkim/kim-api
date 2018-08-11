@@ -33,7 +33,7 @@
 #
 
 
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.4)
 
 add_subdirectory(ex_test_Ar_fcc_cluster)
 add_subdirectory(ex_test_Ar_fcc_cluster_cpp)

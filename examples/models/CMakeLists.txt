@@ -33,7 +33,7 @@
 #
 
 
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.4)
 
 add_subdirectory(ex_model_Ar_P_LJ)
 add_subdirectory(ex_model_Ar_P_MLJ_F03)

@@ -33,7 +33,7 @@
 #
 
 
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.4)
 enable_testing()
 
 
@@ -117,7 +117,7 @@ endif()
 
 # Define kim-api target
 #
-add_library(kim-api SHARED)
+add_library(kim-api SHARED "")
 set_target_properties(kim-api
   PROPERTIES
     OUTPUT_NAME ${PROJECT_NAME}
@@ -146,7 +146,7 @@ add_subdirectory(fortran/include)
 add_subdirectory(completions)
 add_subdirectory(pkg-config)
 add_subdirectory(utilities)
-add_subdirectory(documentation)
+#add_subdirectory(documentation)
 
 
 # Add Models & Drivers, if appropriate

@@ -33,7 +33,7 @@
 #
 
 
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.4)
 
 add_subdirectory(ex_model_driver_P_LJ)
 add_subdirectory(ex_model_driver_P_Morse)

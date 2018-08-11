@@ -32,6 +32,8 @@
 # Release: This file is part of the kim-api.git repository.
 #
 
+cmake_minimum_required(VERSION 3.9)
+
 cmake_policy(SET CMP0057 NEW)
 cmake_policy(SET CMP0054 NEW)
 
