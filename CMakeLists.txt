@@ -56,20 +56,7 @@ set(KIM_API_BUILD_MODELS_AND_DRIVERS ${KIM_API_V2_BUILD_MODELS_AND_DRIVERS} CACH
 #
 # option(KIM_API_DOWNLOAD_OPENKIM "TODO Download all models, model drivers and simulators" OFF)
 #
-set(KIM_API_V2_USER_CONFIGURATION_FILE ".${PROJECT_PREFIX}/config" STRING "TODO if starts with / absolute, otherwise homedir.")
-mark_as_advanced(KIM_API_USER_CONFIGURATION_FILE)
-set(KIM_API_USER_CONFIGURATION_FILE ${KIM_API_V2_USER_CONFIGURATION_FILE} CACHE INTERNAL "Versionless copy")
-#
-# option(KIM_API_V2_ENABLE_COVERAGE) --- defined below
-
-
-# Define other internal variables
-#
-set(KIM_API_MODEL_DRIVER_IDENTIFIER "model-driver" CACHE INTERNAL "Canonical id for a model driver")
-set(KIM_API_MODEL_DRIVER_IDENTIFIER_PLURAL "${KIM_API_MODEL_DRIVER_IDENTIFIER}s" CACHE INTERNAL "plural")
-#
-set(KIM_API_MODEL_IDENTIFIER "model" CACHE INTERNAL "Canonical id for a model")
-set(KIM_API_MODEL_IDENTIFIER_PLURAL "${KIM_API_MODEL_IDENTIFIER}s" CACHE INTERNAL "plural")
+# Additional options (that depend on call to project()) defined below
 
 
 #
@@ -77,6 +64,7 @@ set(KIM_API_MODEL_IDENTIFIER_PLURAL "${KIM_API_MODEL_IDENTIFIER}s" CACHE INTERNA
 #
 project(${PROJECT_PREFIX}-v2 VERSION 2.0.0 LANGUAGES CXX C Fortran)
 include(GNUInstallDirs)  # needs to come after call to project()
+
 #
 # Define remaining version variables
 #
@@ -96,6 +84,52 @@ if(PROJECT_VERSION_BUILD_METADATA)
 endif()
 
 
+# Define options dependent on PROJECT_NAME
+#
+set(KIM_API_V2_USER_CONFIGURATION_FILE ".${PROJECT_NAME}/config" CACHE STRING "TODO if starts with / absolute, otherwise homedir")
+mark_as_advanced(KIM_API_USER_CONFIGURATION_FILE)
+set(KIM_API_USER_CONFIGURATION_FILE ${KIM_API_V2_USER_CONFIGURATION_FILE} CACHE INTERNAL "Versionless copy")
+#
+if (${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
+  option(KIM_API_V2_ENABLE_COVERAGE "Enable code coverage" OFF)
+  mark_as_advanced(KIM_API_V2_ENABLE_COVERAGE)
+  set(KIM_API_ENABLE_COVERAGE ${KIM_API_V2_ENABLE_COVERAGE} CACHE INTERNAL "Versionless copy")
+endif()
+
+
+# Define other internal variables
+#
+set(KIM_API_MODEL_DRIVER_IDENTIFIER "model-driver" CACHE INTERNAL "Canonical id for a model driver")
+set(KIM_API_MODEL_DRIVER_PLURAL_IDENTIFIER "${KIM_API_MODEL_DRIVER_IDENTIFIER}s" CACHE INTERNAL "plural")
+#
+set(KIM_API_MODEL_IDENTIFIER "model" CACHE INTERNAL "Canonical id for a model")
+set(KIM_API_MODEL_PLURAL_IDENTIFIER "${KIM_API_MODEL_IDENTIFIER}s" CACHE INTERNAL "plural")
+#
+set(KIM_API_STAND_ALONE_MODEL_IDENTIFIER "stand-alone-model" CACHE INTERNAL "Canonical id for a stand-alone model")
+#
+set(KIM_API_PARAMETERIZED_MODEL_IDENTIFIER "parameterized-model" CACHE INTERNAL "Canonical id for a parameterized model")
+#
+set(KIM_API_SIMULATOR_MODEL_IDENTIFIER "simulator-model" CACHE INTERNAL "Canonical id for a simulator model")
+#
+string(MAKE_C_IDENTIFIER "${PROJECT_NAME}_CONFIGURATION_FILE" KIM_API_ENVIRONMENT_CONFIGURATION_FILE)
+string(TOUPPER ${KIM_API_ENVIRONMENT_CONFIGURATION_FILE} KIM_API_ENVIRONMENT_CONFIGURATION_FILE)
+set(KIM_API_ENVIRONEMT_CONFIGURATION_FILE "${KIM_API_ENVIRONMENT_CONFIGURATION_FILE}" CACHE INTERNAL "Configuration file environment variable name")
+#
+set(KIM_API_MODEL_DRIVER_PLURAL_DIR_IDENTIFIER "${KIM_API_MODEL_DRIVER_PLURAL_IDENTIFIER}-dir" CACHE INTERNAL "Model drivers directory identifier")
+set(KIM_API_USER_MODEL_DRIVER_PLURAL_DIR_DEFAULT "~/.${PROJECT_NAME}/${KIM_API_MODEL_DRIVER_PLURAL_DIR_IDENTIFIER}" CACHE INTERNAL "Default user collection model drivers dir")
+#
+string(MAKE_C_IDENTIFIER "${PROJECT_NAME}_${KIM_API_MODEL_DRIVER_PLURAL_DIR_IDENTIFIER}" KIM_API_ENVIRONMENT_MODEL_DRIVER_PLURAL_DIR)
+string(TOUPPER ${KIM_API_ENVIRONMENT_MODEL_DRIVER_PLURAL_DIR} KIM_API_ENVIRONMENT_MODEL_DRIVER_PLURAL_DIR)
+set(KIM_API_ENVIRONMENT_MODEL_DRIVER_PLURAL_DIR "${KIM_API_ENVIRONMENT_MODEL_DRIVER_PLURAL_DIR}" CACHE INTERNAL "Model drivers directory environment variable name")
+#
+set(KIM_API_MODEL_PLURAL_DIR_IDENTIFIER "${KIM_API_MODEL_PLURAL_IDENTIFIER}-dir" CACHE INTERNAL "Models directory identifier")
+set(KIM_API_USER_MODEL_PLURAL_DIR_DEFAULT "~/.${PROJECT_NAME}/${KIM_API_MODEL_PLURAL_DIR_IDENTIFIER}" CACHE INTERNAL "Default user collection models dir")
+#
+string(MAKE_C_IDENTIFIER "${PROJECT_NAME}_${KIM_API_MODEL_PLURAL_DIR_IDENTIFIER}" KIM_API_ENVIRONMENT_MODEL_PLURAL_DIR)
+string(TOUPPER ${KIM_API_ENVIRONMENT_MODEL_PLURAL_DIR} KIM_API_ENVIRONMENT_MODEL_PLURAL_DIR)
+set(KIM_API_ENVIRONMENT_MODEL_PLURAL_DIR "${KIM_API_ENVIRONMENT_MODEL_PLURAL_DIR}" CACHE INTERNAL "Models directory environment variable name")
+
+
 # Set global compiler options
 #
 include(CheckFortranCompilerFlag)
@@ -104,15 +138,10 @@ if(HAS_FREE_LINE_LENGTH_FLAG)
   set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -ffree-line-length-none")
 endif()
 #
-if (${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
-  option(KIM_API_V2_ENABLE_COVERAGE "Enable code coverage" OFF)
-  mark_as_advanced(KIM_API_V2_ENABLE_COVERAGE)
-  set(KIM_API_ENABLE_COVERAGE${KIM_API_V2_ENABLE_COVERAGE} CACHE INTERNAL "Versionless copy")
-  if(KIM_API_ENABLE_COVERAGE)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --coverage")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage")
-    set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} --coverage")
-  endif()
+if(KIM_API_ENABLE_COVERAGE)
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --coverage")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage")
+  set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} --coverage")
 endif()
 
 

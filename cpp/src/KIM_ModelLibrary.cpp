@@ -180,13 +180,13 @@ int ModelLibrary::GetModelType(ITEM_TYPE * const modelType) const
     return true;
   }
 
-  if (std::string(KIM_ItemType) == "stand-alone-model")
+  if (std::string(KIM_ItemType) == KIM_STAND_ALONE_MODEL_IDENTIFIER)
     *modelType = STAND_ALONE_MODEL;
-  else if (std::string(KIM_ItemType) == "parameterized-model")
+  else if (std::string(KIM_ItemType) == KIM_PARAMETERIZED_MODEL_IDENTIFIER)
     *modelType = PARAMETERIZED_MODEL;
-  else if (std::string(KIM_ItemType) == "simulator-model")
+  else if (std::string(KIM_ItemType) == KIM_SIMULATOR_MODEL_IDENTIFIER)
     *modelType = SIMULATOR_MODEL;
-  else if (std::string(KIM_ItemType) == "model-driver")
+  else if (std::string(KIM_ItemType) == KIM_MODEL_DRIVER_IDENTIFIER)
     *modelType = MODEL_DRIVER;
   else
   {

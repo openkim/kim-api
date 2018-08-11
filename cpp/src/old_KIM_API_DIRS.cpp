@@ -70,45 +70,27 @@ int makeDirWrapper(const char * const path, mode_t mode)
     return false;
 }
 
-void sanitizeString(std::string &str)
-{
-  std::string::iterator itr;
-  for (itr=str.begin(); itr != str.end(); ++itr)
-  {
-    if (isalnum(*itr))
-    {
-      *itr = toupper(*itr);
-    }
-    else
-    {
-      *itr = '_';
-    }
-  }
-}
-
 std::vector<std::string> getConfigFileName()
 {
   std::vector<std::string> configFileName(3);
 
-  configFileName[0] = KIM_USER_CONFIGURATION_DIRECTORY;
+  configFileName[0] = KIM_USER_CONFIGURATION_FILE;
 
   if (configFileName[0][0] != '/')
   {
+    // probably need a better way to get HOME
     configFileName[0] = std::string(getenv("HOME")).append("/")
         .append(configFileName[0]);
   }
-  configFileName[0].append("/config-v").append(SNUM(KIM_VERSION_MAJOR));
 
-  std::string varName(KIM_PROJECT_NAME);
-  sanitizeString(varName);
-  varName.append("_USER_CONFIG_FILE");
-  configFileName[1] = varName;
-  char const* const varVal = getenv(varName.c_str());
+  configFileName[1] = KIM_ENVIRONMENT_CONFIGURATION_FILE;
+  char const* const varVal = getenv(KIM_ENVIRONMENT_CONFIGURATION_FILE);
   if (NULL != varVal)
   {
     // ensure we have an absolute path
     if (varVal[0] != '/')
     {
+      // probably need a better way to get PWD
       configFileName[2] = std::string(getenv("PWD"));
       configFileName[2].append("/");
       configFileName[2].append(varVal);
@@ -129,25 +111,44 @@ std::vector<std::string> getConfigFileName()
 
 std::string getSystemLibraryFileName()
 {
-  return std::string(KIM_LIBDIR).append("/")
-      .append(KIM_SHARED_LIBRARY_PREFIX)
-      .append(KIM_PROJECT_NAME)
-      .append(".")
-      .append(KIM_VERSION_STRING)
-      .append(KIM_SHARED_LIBRARY_SUFFIX);
+  return std::string(
+      KIM_LIBDIR "/" KIM_SHARED_LIBRARY_PREFIX KIM_PROJECT_NAME
+      "."
+      KIM_VERSION_STRING KIM_SHARED_LIBRARY_SUFFIX);
 }
 
 std::vector<std::string> getSystemDirs()
 {
   std::vector<std::string> systemDirs(2);
-  systemDirs[0] = std::string(KIM_LIBDIR).append("/")
-      .append(KIM_PROJECT_NAME).append("/")
-      .append(KIM_MODEL_DRIVER_IDENTIFIER);
-  systemDirs[1] = std::string(KIM_LIBDIR).append("/")
-      .append(KIM_PROJECT_NAME).append("/")
-      .append(KIM_MODEL_IDENTIFIER);
+  systemDirs[0] = std::string(
+      KIM_LIBDIR "/" KIM_PROJECT_NAME "/" KIM_MODEL_DRIVER_PLURAL_IDENTIFIER);
+  systemDirs[1] = std::string(
+      KIM_LIBDIR "/" KIM_PROJECT_NAME "/" KIM_MODEL_PLURAL_IDENTIFIER);
 
   return systemDirs;
+}
+
+std::string ProcessConfigFileDirectoryString(std::string const & dir)
+{
+  std::string returnString = dir;
+  // must be absolute "/...." or home "~/..."
+  std::size_t found_home = returnString.find("~/");
+  std::size_t found_root = returnString.find("/");
+  if (found_home == 0)
+  {
+    // probably need a better way to get HOME
+    returnString.replace(0, 1, getenv("HOME"));
+  }
+  else if (found_root != 0)  // error
+  {
+    returnString = "";
+  }
+  else
+  {
+    // nothing to do
+  }
+
+  return returnString;  // "" indicated an error
 }
 
 std::vector<std::string> getUserDirs(KIM::Log * const log)
@@ -161,20 +162,23 @@ std::vector<std::string> getUserDirs(KIM::Log * const log)
     // unable to open file; create with default locations
     size_t const pos = configFile[0].find_last_of('/');
     std::string const path = configFile[0].substr(0,pos);
-    std::string const name = configFile[0].substr(pos+1);
+    // std::string const name = configFile[0].substr(pos+1);  // NOT USED
     std::ofstream fl;
 
     if (makeDirWrapper(path.c_str(), 0755)) exit(1);
-    fl.open(configFile[0].c_str(), std::ofstream::out);
-    fl << "model_drivers_dir = " << path
-       << "/v" << KIM_VERSION_MAJOR << "_model_drivers\n";
-    fl << "models_dir = " << path
-       << "/v" << KIM_VERSION_MAJOR << "_models\n";
-    fl.close();
-    userDirs[0] = path + "/v" + SNUM(KIM_VERSION_MAJOR) + "_model_drivers";
+    userDirs[0] = ProcessConfigFileDirectoryString(
+        KIM_USER_MODEL_DRIVER_PLURAL_DIR_DEFAULT);
     if (makeDirWrapper(userDirs[0].c_str(), 0755)) exit(1);
-    userDirs[1] = path + "/v" + SNUM(KIM_VERSION_MAJOR) + "_models";
+    userDirs[1] = ProcessConfigFileDirectoryString(
+        KIM_USER_MODEL_PLURAL_DIR_DEFAULT);
     if (makeDirWrapper(userDirs[1].c_str(), 0755)) exit(1);
+
+    fl.open(configFile[0].c_str(), std::ofstream::out);
+    fl << KIM_MODEL_DRIVER_PLURAL_DIR_IDENTIFIER " = "
+        KIM_USER_MODEL_DRIVER_PLURAL_DIR_DEFAULT "\n";
+    fl << KIM_MODEL_PLURAL_DIR_IDENTIFIER " = "
+        KIM_USER_MODEL_PLURAL_DIR_DEFAULT "\n";
+    fl.close();
   }
   else
   {
@@ -185,7 +189,7 @@ std::vector<std::string> getUserDirs(KIM::Log * const log)
       char const* const sep = " \t=";
 
       word = strtok(line, sep);
-      if (strcmp("model_drivers_dir", word))
+      if (strcmp(KIM_MODEL_DRIVER_PLURAL_DIR_IDENTIFIER, word))
       {
         if (log)
         {
@@ -199,14 +203,8 @@ std::vector<std::string> getUserDirs(KIM::Log * const log)
         goto cleanUp;
       }
       word = strtok(NULL, sep);
-      userDirs[0] = word;
-      std::size_t found_home = userDirs[0].find("~/");
-      std::size_t found_root = userDirs[0].find("/");
-      if (found_home == 0)
-      {
-        userDirs[0].replace(0, 1, getenv("HOME"));
-      }
-      else if (found_root != 0)
+      userDirs[0] = ProcessConfigFileDirectoryString(word);
+      if (userDirs[0] == "")  // error
       {
         if (log)
         {
@@ -216,12 +214,7 @@ std::vector<std::string> getUserDirs(KIM::Log * const log)
           log->LogEntry(KIM::LOG_VERBOSITY::error, ss,
                         __LINE__, __FILE__);
         }
-        userDirs[0] = "";
         goto cleanUp;
-      }
-      else
-      {
-        // nothing to do
       }
     }
 
@@ -231,7 +224,7 @@ std::vector<std::string> getUserDirs(KIM::Log * const log)
       char const* const sep = " \t=";
 
       word = strtok(line, sep);
-      if (strcmp("models_dir", word))
+      if (strcmp(KIM_MODEL_PLURAL_DIR_IDENTIFIER, word))
       {
         if (log)
         {
@@ -245,14 +238,8 @@ std::vector<std::string> getUserDirs(KIM::Log * const log)
         goto cleanUp;
       }
       word = strtok(NULL, sep);
-      userDirs[1] = word;
-      std::size_t found_home = userDirs[1].find("~/");
-      std::size_t found_root = userDirs[1].find("/");
-      if (found_home == 0)
-      {
-        userDirs[1].replace(0, 1, getenv("HOME"));
-      }
-      else if (found_root != 0)
+      userDirs[1] = ProcessConfigFileDirectoryString(word);
+      if (userDirs[1] == "")  // error
       {
         if (log)
         {
@@ -262,12 +249,7 @@ std::vector<std::string> getUserDirs(KIM::Log * const log)
           log->LogEntry(KIM::LOG_VERBOSITY::error, ss,
                         __LINE__, __FILE__);
         }
-        userDirs[1] = "";
         goto cleanUp;
-      }
-      else
-      {
-        // nothing to do
       }
     }
 
@@ -282,15 +264,14 @@ std::string pushEnvDirs(
     DirectoryPathType type,
     std::list<std::pair<std::string,std::string> >* const lst)
 {
-  std::string varName = KIM_PROJECT_NAME;
-  sanitizeString(varName);
+  std::string varName;
   switch (type)
   {
     case KIM_MODEL_DRIVERS_DIR:
-      varName.append("_MODEL_DRIVERS_DIR");
+      varName = KIM_ENVIRONMENT_MODEL_DRIVER_PLURAL_DIR;
       break;
     case KIM_MODELS_DIR:
-      varName.append("_MODELS_DIR");
+      varName = KIM_ENVIRONMENT_MODEL_PLURAL_DIR;
       break;
     default:
       break;
