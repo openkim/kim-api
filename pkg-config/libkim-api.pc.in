@@ -1,11 +1,20 @@
+CMAKE_C_COMPILER=@CMAKE_C_COMPILER@
+CMAKE_CXX_COMPILER=@CMAKE_CXX_COMPILER@
+CMAKE_Fortran_COMPILER=@CMAKE_Fortran_COMPILER@
+PROJECT_NAME=@PROJECT_NAME@
+
 prefix=@CMAKE_INSTALL_PREFIX@
+bindir=@CMAKE_INSTALL_FULL_BINDIR@
+libexecdir=@CMAKE_INSTALL_FULL_LIBEXECDIR@
+sysconfdir=@CMAKE_INSTALL_FULL_SYSCONFDIR@
 libdir=@CMAKE_INSTALL_FULL_LIBDIR@
 includedir=@CMAKE_INSTALL_FULL_INCLUDEDIR@/@PROJECT_NAME@
+docdir=@CMAKE_INSTALL_FULL_DOCDIR@
 
-Name: lib@PROJECT_NAME@
-Description: OpenKIM is an online framework for making molecular simulations reliable, reproducible, and portable.
-URL: https://openkim.org/
+Name: @CMAKE_SHARED_LIBRARY_PREFIX@@PROJECT_NAME@
+Description: The KIM API package is a system-level library that aims to give computer programmers the ability to write atomistic or molecular simulation programs that can seamlessly interface with implementations of interatomic models, regardless of the programming language (C, C++, Fortran, Python, etc.) in which the codes are written.
+URL: https://openkim.org/kim-api
 Version: @PROJECT_VERSION_STRING@
 Requires:
 Cflags: -I${includedir}
-Libs: -L${libdir} -l@PROJECT_NAME@
+Libs: -L${libdir} -l${PROJECT_NAME}
