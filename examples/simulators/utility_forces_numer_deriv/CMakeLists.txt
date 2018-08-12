@@ -47,16 +47,18 @@ target_link_libraries(${TEST_NAME} ${KIM-API-V2_TARGET})
 # workaround for F03 files, use F90 instead if possible
 set_source_files_properties(${TEST_NAME}.F03 PROPERTIES LANGUAGE Fortran)
 
-set(TEST_MODELS ex_model_Ar_P_LJ
-                ex_model_Ar_P_MLJ_F03
-                ex_model_Ar_P_Morse
-                ex_model_Ar_P_Morse_07C)
+set(TEST_MODELS
+  ex_model_Ar_P_LJ
+  ex_model_Ar_P_MLJ_F03
+  ex_model_Ar_P_Morse
+  ex_model_Ar_P_Morse_07C
+  )
 
 foreach(TEST_MODEL ${TEST_MODELS})
-    # TODO make a variable for "Testing" directory name
-    set(TEST_DIR ${CMAKE_BINARY_DIR}/Testing/Run_${TEST_NAME}_${TEST_MODEL})
-    FILE(MAKE_DIRECTORY ${TEST_DIR})
-    add_test(NAME Run_${TEST_NAME}_${TEST_MODEL} COMMAND sh -c "echo ${TEST_MODEL} | ${CMAKE_CURRENT_BINARY_DIR}/${TEST_NAME} > stdout" WORKING_DIRECTORY ${TEST_DIR})
-    # TODO : the environment variables can be abstracted for generality
-    set_tests_properties(Run_${TEST_NAME}_${TEST_MODEL} PROPERTIES ENVIRONMENT "KIM_API_V2_MODELS_DIR=${CMAKE_BINARY_DIR};KIM_API_V2_MODEL_DRIVERS_DIR=${CMAKE_BINARY_DIR}")
+  # TODO make a variable for "Testing" directory name
+  set(TEST_DIR ${CMAKE_BINARY_DIR}/Testing/Run_${TEST_NAME}_${TEST_MODEL})
+  FILE(MAKE_DIRECTORY ${TEST_DIR})
+  add_test(NAME Run_${TEST_NAME}_${TEST_MODEL} COMMAND sh -c "echo ${TEST_MODEL} | ${CMAKE_CURRENT_BINARY_DIR}/${TEST_NAME} > stdout" WORKING_DIRECTORY ${TEST_DIR})
+  # TODO : the environment variables can be abstracted for generality
+  set_tests_properties(Run_${TEST_NAME}_${TEST_MODEL} PROPERTIES ENVIRONMENT "KIM_API_V2_MODELS_DIR=${CMAKE_BINARY_DIR};KIM_API_V2_MODEL_DRIVERS_DIR=${CMAKE_BINARY_DIR}")
 endforeach()

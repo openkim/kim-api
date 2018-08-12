@@ -46,12 +46,12 @@ set(DOXYGEN_EXTRACT_ALL          YES)
 set(DOXYGEN_EXTRACT_STATIC       YES)
 set(DOXYGEN_EXTRACT_ANON_NSPACES YES)
 set(DOXYGEN_FILE_PATTERNS
-    "*.c" "*.cc" "*.cxx" "*.cpp" "*.c++" "*.java" "*.ii" "*.ixx" "*.ipp"
-    "*.i++" "*.inl" "*.idl" "*.ddl" "*.odl" "*.h" "*.hh" "*.hxx" "*.hpp" "*.h++"
-    "*.cs" "*.d" "*.php" "*.php4" "*.php5" "*.phtml" "*.inc" "*.m" "*.markdown"
-    "*.md" "*.mm" "*.dox" "*.py" "*.pyw" "*.f90" "*.f95" "*.f03" "*.f08" "*.f"
-    "*.for" "*.tcl" "*.vhd" "*.vhdl" "*.ucf" "*.qsf" "Makefile" "CMakeLists.txt"
-    "*.inc" "*.tpl" "*.sh" "*.fd" "*.params" "README"
+  "*.c" "*.cc" "*.cxx" "*.cpp" "*.c++" "*.java" "*.ii" "*.ixx" "*.ipp"
+  "*.i++" "*.inl" "*.idl" "*.ddl" "*.odl" "*.h" "*.hh" "*.hxx" "*.hpp" "*.h++"
+  "*.cs" "*.d" "*.php" "*.php4" "*.php5" "*.phtml" "*.inc" "*.m" "*.markdown"
+  "*.md" "*.mm" "*.dox" "*.py" "*.pyw" "*.f90" "*.f95" "*.f03" "*.f08" "*.f"
+  "*.for" "*.tcl" "*.vhd" "*.vhdl" "*.ucf" "*.qsf" "Makefile" "CMakeLists.txt"
+  "*.inc" "*.tpl" "*.sh" "*.fd" "*.params" "README"
 )
 
 
@@ -65,34 +65,34 @@ set(DOXYGEN_EXTRA_PACKAGES       "amsmath")
 set(DOXYGEN_GENERATE_LATEX       YES)
 
 set(SOURCES
-    "src/introduction.txt"
-    "src/features.txt"
-    "src/theory.txt"
-    "src/implementation.txt"
-    "src/version2-differences.txt"
-    "src/porting-content-from-v1-to-v2.txt"
-    "porting-content-from-v1-to-v2-examples/"
-    "../cpp/include/"
-    "../c/include/"
-    "../fortran/include/"
-    "../examples/model-drivers/"
-    "../examples/models/"
-    "../examples/simulators/"
-    )
+  "src/introduction.txt"
+  "src/features.txt"
+  "src/theory.txt"
+  "src/implementation.txt"
+  "src/version2-differences.txt"
+  "src/porting-content-from-v1-to-v2.txt"
+  "porting-content-from-v1-to-v2-examples/"
+  "../cpp/include/"
+  "../c/include/"
+  "../fortran/include/"
+  "../examples/model-drivers/"
+  "../examples/models/"
+  "../examples/simulators/"
+  )
 
 if(DOXYGEN_FOUND)
   doxygen_add_docs(
-      docs
-      ${SOURCES}
-      COMMENT "Generate documentation"
-      )
+    docs
+    ${SOURCES}
+    COMMENT "Generate documentation"
+    )
 
   add_custom_command(OUTPUT refman.pdf
-                     COMMAND make
-                     COMMAND ${CMAKE_COMMAND} -E copy refman.pdf ${CMAKE_CURRENT_BINARY_DIR}/refman.pdf
-                     WORKING_DIRECTORY latex
-                     DEPENDS docs
-                     )
+    COMMAND make
+    COMMAND ${CMAKE_COMMAND} -E copy refman.pdf ${CMAKE_CURRENT_BINARY_DIR}/refman.pdf
+    WORKING_DIRECTORY latex
+    DEPENDS docs
+    )
 
   # TODO fix dependencies
   add_custom_target(pdf DEPENDS docs refman.pdf SOURCES ${SOURCES})
