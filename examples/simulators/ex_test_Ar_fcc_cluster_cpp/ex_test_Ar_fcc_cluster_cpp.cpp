@@ -305,7 +305,7 @@ int main()
     std::cout
         << "\t" << "Neighbor list " << i << " has cutoff "
         << cutoff_cluster_model[i] << " with "
-        "model_will_not_request_neighbors_of_noncontributing_particles "
+        "modelWillNotRequestNeighborsOfNoncontributingParticles "
         << modelWillNotRequestNeighborsOfNoncontributingParticles[i]
         << std::endl;
   }

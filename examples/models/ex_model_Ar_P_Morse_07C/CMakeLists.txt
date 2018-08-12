@@ -33,10 +33,21 @@
 #
 
 
+#
+# Requied preamble
+#
+
 cmake_minimum_required(VERSION 3.4)
 
 list(APPEND CMAKE_MODULE_PATH $ENV{KIM_API_V2_CMAKE_MODULES_DIR})
 find_package(KIM-API-V2 2.0 REQUIRED)
+if(NOT TARGET kim-api)
+  project("${KIM_API_PROJECT_NAME}" VERSION "${KIM_API_VERSION}"
+    LANGUAGES CXX C Fortran)
+endif()
+
+# End preamble
+
 
 set(MODEL_NAME "ex_model_Ar_P_Morse_07C")
 

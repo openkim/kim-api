@@ -33,16 +33,27 @@
 #
 
 
+#
+# Requied preamble
+#
+
 cmake_minimum_required(VERSION 3.4)
-enable_language(Fortran)
 
 list(APPEND CMAKE_MODULE_PATH $ENV{KIM_API_V2_CMAKE_MODULES_DIR})
 find_package(KIM-API-V2 2.0 REQUIRED)
+if(NOT TARGET kim-api)
+  project("${KIM_API_PROJECT_NAME}" VERSION "${KIM_API_VERSION}"
+    LANGUAGES CXX C Fortran)
+  add_kim_api_imported_library()
+endif()
+
+# End preamble
+
 
 set(TEST_NAME "utility_forces_numer_deriv")
 
 add_executable(${TEST_NAME} ${TEST_NAME}.F03)
-target_link_libraries(${TEST_NAME} ${KIM-API-V2_TARGET})
+target_link_libraries(${TEST_NAME} kim-api)
 
 # workaround for F03 files, use F90 instead if possible
 set_source_files_properties(${TEST_NAME}.F03 PROPERTIES LANGUAGE Fortran)

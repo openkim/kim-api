@@ -33,10 +33,21 @@
 #
 
 
+#
+# Requied preamble
+#
+
 cmake_minimum_required(VERSION 3.4)
 
 list(APPEND CMAKE_MODULE_PATH $ENV{KIM_API_V2_CMAKE_MODULES_DIR})
 find_package(KIM-API-V2 2.0 REQUIRED)
+if(NOT TARGET kim-api)
+  project("${KIM_API_PROJECT_NAME}" VERSION "${KIM_API_VERSION}"
+    LANGUAGES CXX C Fortran)
+endif()
+
+# End preamble
+
 
 add_kim_api_v2_model_library(
   NAME            "LennardJones612_UniversalShifted__MO_959249795837_003"

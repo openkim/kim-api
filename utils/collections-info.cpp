@@ -40,6 +40,8 @@
 #include "old_KIM_API_DIRS.h"
 using namespace OLD_KIM;
 
+// TODO add KIM_API_V2_CMAKE_MODULES_DIR environment var.
+
 void usage(std::string name)
 {
   size_t beg = name.find_last_of("/");
@@ -350,8 +352,8 @@ int processItems(int argc, char* argv[])
   {
     if (0 == strcmp("--log", argv[2]))
     {
+      for (int i=3; i < argc; ++i) argv[i-1] = argv[i];
       argc--;
-      argv = &(argv[1]);
       KIM::Log::Create(&log);
       log->PushVerbosity(KIM::LOG_VERBOSITY::debug);
     }

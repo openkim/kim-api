@@ -37,11 +37,6 @@ cmake_minimum_required(VERSION 3.4)
 enable_testing()
 
 
-# Update paths
-#
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/Modules)
-
-
 # Define options
 #
 set(PROJECT_PREFIX "kim-api" CACHE STRING "TODO add description here")
@@ -99,6 +94,11 @@ endif()
 
 # Define other internal variables
 #
+string(MAKE_C_IDENTIFIER "${PROJECT_NAME}" KIM_API_C_ID_PROJECT_NAME)
+set(KIM_API_C_ID_PROJECT_NAME "${KIM_API_C_ID_PROJECT_NAME}" CACHE INTERNAL "Canonical C-id for project name")
+#
+set(KIM_API_CMAKE_DIR_IDENTIFIER "cmake" CACHE INTERNAL "Canonical id for the CMake dir")
+#
 set(KIM_API_MODEL_DRIVER_IDENTIFIER "model-driver" CACHE INTERNAL "Canonical id for a model driver")
 set(KIM_API_MODEL_DRIVER_PLURAL_IDENTIFIER "${KIM_API_MODEL_DRIVER_IDENTIFIER}s" CACHE INTERNAL "plural")
 #
@@ -114,6 +114,10 @@ set(KIM_API_SIMULATOR_MODEL_IDENTIFIER "simulator-model" CACHE INTERNAL "Canonic
 string(MAKE_C_IDENTIFIER "${PROJECT_NAME}_CONFIGURATION_FILE" KIM_API_ENVIRONMENT_CONFIGURATION_FILE)
 string(TOUPPER ${KIM_API_ENVIRONMENT_CONFIGURATION_FILE} KIM_API_ENVIRONMENT_CONFIGURATION_FILE)
 set(KIM_API_ENVIRONEMT_CONFIGURATION_FILE "${KIM_API_ENVIRONMENT_CONFIGURATION_FILE}" CACHE INTERNAL "Configuration file environment variable name")
+#
+string(MAKE_C_IDENTIFIER "${PROJECT_NAME}_CMAKE_MODULES_DIR" KIM_API_ENVIRONMENT_CMAKE_MODULES_DIR)
+string(TOUPPER ${KIM_API_ENVIRONMENT_CMAKE_MODULES_DIR} KIM_API_ENVIRONMENT_CMAKE_MODULES_DIR)
+set(KIM_API_ENVIRONEMT_CMAKE_MODULES_DIR "${KIM_API_ENVIRONMENT_CMAKE_MODULES_DIR}" CACHE INTERNAL "CMake Modules dir environment variable name")
 #
 set(KIM_API_MODEL_DRIVER_PLURAL_DIR_IDENTIFIER "${KIM_API_MODEL_DRIVER_PLURAL_IDENTIFIER}-dir" CACHE INTERNAL "Model drivers directory identifier")
 set(KIM_API_USER_MODEL_DRIVER_PLURAL_DIR_DEFAULT "~/.${PROJECT_NAME}/${KIM_API_MODEL_DRIVER_PLURAL_DIR_IDENTIFIER}" CACHE INTERNAL "Default user collection model drivers dir")
@@ -173,6 +177,7 @@ add_subdirectory(fortran/include)
 
 # Add other subdirectories
 #
+add_subdirectory(cmake)
 add_subdirectory(completions)
 add_subdirectory(pkg-config)
 add_subdirectory(utils)
@@ -180,7 +185,10 @@ add_subdirectory(utils)
 
 
 # Add Models & Drivers, if appropriate
+#
 if(KIM_API_BUILD_MODELS_AND_DRIVERS)
+  # Update paths
+  list(APPEND CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR}/cmake/Modules)
   add_subdirectory(examples/models)
   add_subdirectory(examples/model-drivers)
   add_subdirectory(examples/simulators)
@@ -211,7 +219,3 @@ endif()
 # Add install rules for kim-api
 #
 install(TARGETS kim-api DESTINATION ${CMAKE_INSTALL_LIBDIR})
-
-# Add install of cmake files
-#
-install(DIRECTORY cmake DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME})

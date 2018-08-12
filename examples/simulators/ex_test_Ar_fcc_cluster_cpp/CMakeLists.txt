@@ -33,15 +33,27 @@
 #
 
 
+#
+# Requied preamble
+#
+
 cmake_minimum_required(VERSION 3.4)
 
 list(APPEND CMAKE_MODULE_PATH $ENV{KIM_API_V2_CMAKE_MODULES_DIR})
 find_package(KIM-API-V2 2.0 REQUIRED)
+if(NOT TARGET kim-api)
+  project("${KIM_API_PROJECT_NAME}" VERSION "${KIM_API_VERSION}"
+    LANGUAGES CXX C Fortran)
+  add_kim_api_imported_library()
+endif()
+
+# End preamble
+
 
 set(TEST_NAME "ex_test_Ar_fcc_cluster_cpp")
 
 add_executable(${TEST_NAME} ${TEST_NAME}.cpp)
-target_link_libraries(${TEST_NAME} ${KIM-API-V2_TARGET})
+target_link_libraries(${TEST_NAME} kim-api)
 
 set(TEST_MODELS
   ex_model_Ar_P_LJ

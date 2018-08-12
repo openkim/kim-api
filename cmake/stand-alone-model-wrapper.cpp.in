@@ -1,6 +1,6 @@
 extern "C"
 {
-char kim_item_type[] = "stand-alone-model"; //@@@@ TODO change this to a config. value too?
+char kim_item_type[] = "@KIM_API_STAND_ALONE_MODEL_IDENTIFIER@";
 int @MODEL_CREATE_ROUTINE_NAME@();
 int (* @MODEL_NAME@_create_pointer)() = @MODEL_CREATE_ROUTINE_NAME@;
 char @MODEL_NAME@_compiled_with_version[] = "@PROJECT_VERSION_STRING@";

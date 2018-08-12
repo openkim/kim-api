@@ -54,7 +54,7 @@ export PKG_CONFIG_PATH=`printf "${PKG_CONFIG_PATH}" | \
                                     -e "s|:@CMAKE_INSTALL_FULL_LIBDIR@/pkgconfig$||"`
 if test x"" = x"${PKG_CONFIG_PATH}"; then unset PKG_CONFIG_PATH; fi
 
-unset KIM_API_V2_CMAKE_MODULES_DIR
+unset @KIM_API_ENVIRONMENT_CMAKE_MODULES_DIR@
 
 for _func in `grep "_@SANITIZED_PROJECT_NAME@_.*[[:space:]]*()" \
   "@CMAKE_INSTALL_FULL_SYSCONFDIR@/bash_completion.d/@PROJECT_NAME@-completion.bash"`; do

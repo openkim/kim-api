@@ -33,24 +33,13 @@
 #
 
 
-#
-# Requied preamble
-#
+set(FIND_PACKAGE_FILE FindKIM-API-V2.cmake)
 
-cmake_minimum_required(VERSION 3.4)
+configure_file(${FIND_PACKAGE_FILE}.in
+  ${CMAKE_CURRENT_BINARY_DIR}/${FIND_PACKAGE_FILE} @ONLY
+  )
 
-list(APPEND CMAKE_MODULE_PATH $ENV{KIM_API_V2_CMAKE_MODULES_DIR})
-find_package(KIM-API-V2 2.0 REQUIRED)
-if(NOT TARGET kim-api)
-  project("${KIM_API_PROJECT_NAME}" VERSION "${KIM_API_VERSION}"
-    LANGUAGES CXX C Fortran)
-endif()
-
-# End preamble
-
-
-add_kim_api_v2_model_library(
-  NAME            "Sim_LAMMPS_ADP_StarikovLopanitsynaSmirnova_2018_SiAu__SM_985135773293_000"
-  METADATA_FILE   "kim-simulator-model.json"
-  PARAMETER_FILES "Si_Au.adp"
+install(
+  FILES ${CMAKE_CURRENT_BINARY_DIR}/${FIND_PACKAGE_FILE}
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME}/${KIM_API_CMAKE_DIR_IDENTIFIER}/Modules
   )
