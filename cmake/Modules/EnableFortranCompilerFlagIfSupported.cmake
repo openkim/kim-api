@@ -36,13 +36,13 @@
 include(CheckFortranCompilerFlag)
 
 function(enable_fortran_compiler_flag_if_supported _flag)
-    string(FIND "${CMAKE_Fortran_FLAGS}" "${_flag}" _flag_already_set)
-    if(_flag_already_set EQUAL -1)
-        check_fortran_compiler_flag("${_flag}" fortran_support_for_${_flag})
-        if(fortran_support_for_${flag})
-          set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} ${_flag}"
-            PARENT_SCOPE)
-        endif()
-        unset(fortran_support_for_${_flag} CACHE)
+  string(FIND "${KIM_API_Fortran_FLAGS}" "${_flag}" _flag_already_set)
+  if(_flag_already_set EQUAL -1)
+    check_fortran_compiler_flag("${_flag}" fortran_support_for_${_flag})
+    if(fortran_support_for_${flag})
+      set(KIM_API_Fortran_FLAGS "${KIM_API_Fortran_FLAGS} ${_flag}"
+        PARENT_SCOPE)
     endif()
-endfunction()
+    unset(fortran_support_for_${_flag} CACHE)
+  endif()
+endfunction(enable_fortran_compiler_flag_if_supported)
