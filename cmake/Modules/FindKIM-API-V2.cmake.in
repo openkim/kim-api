@@ -34,13 +34,13 @@ else()
   set(CMAKE_BUILD_TYPE "@CMAKE_BUILD_TYPE@" CACHE STRING "Build Type")
   #
   set(CMAKE_CXX_COMPILER "@CMAKE_CXX_COMPILER@" CACHE FILEPATH "C++ compiler")
-  set(CMAKE_CXX_FLAGS "@CMAKE_CXX_FLAGS@ ${CMAKE_CXX_FLAGS}" CACHE STRING "C++ flags")
+  set(KIM_API_CXX_FLAGS "@KIM_API_CXX_FLAGS@" CACHE STRING "TODO add description")
   #
   set(CMAKE_C_COMPILER "@CMAKE_C_COMPILER@" CACHE FILEPATH "C compiler")
-  set(CMAKE_C_FLAGS "@CMAKE_C_FLAGS@ ${CMAKE_C_FLAGS}" CACHE STRING "C flags")
+  set(KIM_API_C_FLAGS "@KIM_API_C_FLAGS@" CACHE STRING "TODO add description")
   #
   set(CMAKE_Fortran_COMPILER "@CMAKE_Fortran_COMPILER@" CACHE FILEPATH "Fortran compiler")
-  set(CMAKE_Fortran_FLAGS "@CMAKE_Fortran_FLAGS@ ${CMAKE_Fortran_FLAGS}" CACHE STRING "Fortran Flags")
+  set(KIM_API_Fortran_FLAGS "@KIM_API_Fortran_FLAGS@" CACHE STRING "TODO add description")
 
   set(KIM_API_PROJECT_NAME @PROJECT_NAME@)
   set(KIM_API_VERSION @PROJECT_VERSION@)
@@ -48,7 +48,9 @@ else()
   set(KIM_API_CMAKE_DIR @CMAKE_INSTALL_FULL_LIBDIR@/@PROJECT_NAME@/@KIM_API_CMAKE_DIR_IDENTIFIER@)
   set(KIM_API_COLLECTIONS_INFO_EXECUTABLE @CMAKE_INSTALL_FULL_LIBEXECDIR@/@PROJECT_NAME@/@PROJECT_NAME@-collections-info)
 
+
   set(KIM_API_MODEL_DRIVER_IDENTIFIER @KIM_API_MODEL_DRIVER_IDENTIFIER@ CACHE INTERNAL "Model driver id")
+  set(KIM_API_MODEL_IDENTIFIER @KIM_API_MODEL_IDENTIFIER@ CACHE INTERNAL "Model id" )
   set(KIM_API_PARAMETERIZED_MODEL_IDENTIFIER @KIM_API_PARAMETERIZED_MODEL_IDENTIFIER@ CACHE INTERNAL "Parameterized model id")
   set(KIM_API_SIMULATOR_MODEL_IDENTIFIER @KIM_API_SIMULATOR_MODEL_IDENTIFIER@ CACHE INTERNAL "Simulator model id")
   set(KIM_API_STAND_ALONE_MODEL_IDENTIFIER @KIM_API_STAND_ALONE_MODEL_IDENTIFIER@ CACHE INTERNAL "Stand-alone model id")
@@ -104,6 +106,12 @@ macro(add_kim_api_imported_library)
     )
 endmacro(add_kim_api_imported_library)
 
+macro(update_compiler_flags_with_kim_api_values)
+  set(CMAKE_CXX_FLAGS "${KIM_API_CXX_FLAGS} ${CMAKE_CXX_FLAGS}" PARENT_SCOPE)
+  set(CMAKE_C_FLAGS "${KIM_API_C_FLAGS} ${CMAKE_C_FLAGS}" PARENT_SCOPE)
+  set(CMAKE_Fortran_FLAGS "${KIM_API_Fortran_FLAGS} ${CMAKE_Fortran_FLAGS}" PARENT_SCOPE)
+endmacro(update_compiler_flags_with_kim_api_values)
+
 function(add_kim_api_model_library)
   set(options "")
   set(oneValueArgs NAME DRIVER_NAME CREATE_ROUTINE_NAME CREATE_ROUTINE_LANGUAGE METADATA_FILE)
@@ -113,6 +121,7 @@ function(add_kim_api_model_library)
   # TODO sanity checks to ensure all arguments are passed
 
   if (NOT TARGET kim-api)
+    update_compiler_flags_with_kim_api_values()
     add_kim_api_imported_library()
   endif()
 
@@ -195,6 +204,7 @@ function(add_kim_api_model_driver_library)
   cmake_parse_arguments(MODEL_DRIVER "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   if (NOT TARGET kim-api)
+    update_compiler_flags_with_kim_api_values()
     add_kim_api_imported_library()
   endif()
 

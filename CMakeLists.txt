@@ -113,13 +113,13 @@ set(KIM_API_MODEL_DRIVER_PLURAL_IDENTIFIER "${KIM_API_MODEL_DRIVER_IDENTIFIER}s"
 set(KIM_API_MODEL_IDENTIFIER "model" CACHE INTERNAL "Canonical id for a model")
 set(KIM_API_MODEL_PLURAL_IDENTIFIER "${KIM_API_MODEL_IDENTIFIER}s" CACHE INTERNAL "plural")
 #
-set(KIM_API_STAND_ALONE_MODEL_IDENTIFIER "stand-alone-model" CACHE INTERNAL "Canonical id for a stand-alone model")
-#
 set(KIM_API_PARAMETERIZED_MODEL_IDENTIFIER "parameterized-model" CACHE INTERNAL "Canonical id for a parameterized model")
 #
 set(KIM_API_SIMULATOR_MODEL_IDENTIFIER "simulator-model" CACHE INTERNAL "Canonical id for a simulator model")
 #
+set(KIM_API_STAND_ALONE_MODEL_IDENTIFIER "stand-alone-model" CACHE INTERNAL "Canonical id for a stand-alone model")
 string(MAKE_C_IDENTIFIER "${PROJECT_NAME}_CONFIGURATION_FILE" KIM_API_ENVIRONMENT_CONFIGURATION_FILE)
+#
 string(TOUPPER ${KIM_API_ENVIRONMENT_CONFIGURATION_FILE} KIM_API_ENVIRONMENT_CONFIGURATION_FILE)
 set(KIM_API_ENVIRONEMT_CONFIGURATION_FILE "${KIM_API_ENVIRONMENT_CONFIGURATION_FILE}" CACHE INTERNAL "Configuration file environment variable name")
 #
@@ -147,25 +147,25 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules)
 # Set global compiler options
 #
 include(EnableCXXCompilerFlagIfSupported)
-enable_cxx_compiler_flag_if_supported("-std=c++${CMAKE_CXX_STANDARD}")
+#enable_cxx_compiler_flag_if_supported("-std=c++${CMAKE_CXX_STANDARD}")
 enable_cxx_compiler_flag_if_supported("-Wall")
-enable_cxx_compiler_flag_if_supported("-Wextra")
+#enable_cxx_compiler_flag_if_supported("-Wextra")
 enable_cxx_compiler_flag_if_supported("-pedantic")
 set(KIM_API_CXX_FLAGS "${KIM_API_CXX_FLAGS}" CACHE STRING "TODO add description")
 set(CMAKE_CXX_FLAGS "${KIM_API_CXX_FLAGS} ${CMAKE_CXX_FLAGS}")
 #
 include(EnableCCompilerFlagIfSupported)
-enable_c_compiler_flag_if_supported("-std=c${CMAKE_C_STANDARD}")
+#enable_c_compiler_flag_if_supported("-std=c${CMAKE_C_STANDARD}")
 enable_c_compiler_flag_if_supported("-Wall")
-enable_c_compiler_flag_if_supported("-Wextra")
+#enable_c_compiler_flag_if_supported("-Wextra")
 enable_c_compiler_flag_if_supported("-pedantic")
 set(KIM_API_C_FLAGS "${KIM_API_C_FLAGS}" CACHE STRING "TODO add description")
 set(CMAKE_C_FLAGS "${KIM_API_C_FLAGS} ${CMAKE_C_FLAGS}")
 #
 include(EnableFortranCompilerFlagIfSupported)
-enable_fortran_compiler_flag_if_supported("-std=f2003")
+#enable_fortran_compiler_flag_if_supported("-std=f2003")
 enable_fortran_compiler_flag_if_supported("-Wall")
-enable_fortran_compiler_flag_if_supported("-Wextra")
+#enable_fortran_compiler_flag_if_supported("-Wextra")
 enable_fortran_compiler_flag_if_supported("-Wimplicit-interface")
 enable_fortran_compiler_flag_if_supported("-pedantic")
 enable_fortran_compiler_flag_if_supported("-ffree-line-length-none")
