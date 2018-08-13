@@ -219,7 +219,7 @@ class LennardJones_Ar
           j = neighbors[jj];
           jContributing = particleContributing[j];
 
-          if (i < j)
+          if (! (jContributing && (j < i)))
           {
             xrij = coordinates[j*DIMENSION + 0] - xcoord;
             yrij = coordinates[j*DIMENSION + 1] - ycoord;
