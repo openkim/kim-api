@@ -36,6 +36,18 @@
 cmake_minimum_required(VERSION 3.4)
 enable_testing()
 
+# Language standards (also enforced with FLAGS below)
+#
+set(CMAKE_CXX_STANDARD 98)
+set(CMAKE_CXX_STANDARD_REQUIRED YES)
+set(CMAKE_CXX_EXTENSIONS OFF)
+#
+set(CMAKE_C_STANDARD 90)
+set(CMAKE_C_STANDARD_REQUIRED)
+set(CMAKE_C_EXTENSIONS OFF)
+#
+# NO similar setting exist yet in CMake for Fortran
+
 
 # Define options
 #
@@ -134,13 +146,30 @@ string(TOUPPER ${KIM_API_ENVIRONMENT_MODEL_PLURAL_DIR} KIM_API_ENVIRONMENT_MODEL
 set(KIM_API_ENVIRONMENT_MODEL_PLURAL_DIR "${KIM_API_ENVIRONMENT_MODEL_PLURAL_DIR}" CACHE INTERNAL "Models directory environment variable name")
 
 
+# TODO figure out how to make these stick the first time...
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules)
 # Set global compiler options
 #
-include(CheckFortranCompilerFlag)
-check_fortran_compiler_flag("-ffree-line-length-none" HAS_FREE_LINE_LENGTH_FLAG)
-if(HAS_FREE_LINE_LENGTH_FLAG)
-  set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -ffree-line-length-none")
-endif()
+include(EnableCXXCompilerFlagIfSupported)
+enable_cxx_compiler_flag_if_supported("-std=c++${CMAKE_CXX_STANDARD}")
+enable_cxx_compiler_flag_if_supported("-Wall")
+enable_cxx_compiler_flag_if_supported("-Wextra")
+enable_cxx_compiler_flag_if_supported("-pedantic")
+#
+include(EnableCCompilerFlagIfSupported)
+enable_c_compiler_flag_if_supported("-std=c${CMAKE_C_STANDARD}")
+enable_c_compiler_flag_if_supported("-Wall")
+enable_c_compiler_flag_if_supported("-Wextra")
+enable_c_compiler_flag_if_supported("-pedantic")
+#
+include(EnableFortranCompilerFlagIfSupported)
+enable_fortran_compiler_flag_if_supported("-std=f2003")
+enable_fortran_compiler_flag_if_supported("-Wall")
+enable_fortran_compiler_flag_if_supported("-Wextra")
+enable_fortran_compiler_flag_if_supported("-Wimplicit-interface")
+enable_fortran_compiler_flag_if_supported("-pedantic")
+enable_fortran_compiler_flag_if_supported("-ffree-line-length-none")
+
 #
 if(KIM_API_ENABLE_COVERAGE)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --coverage")
@@ -187,7 +216,6 @@ add_subdirectory(utils)
 # Add Models & Drivers, if appropriate
 #
 if(KIM_API_BUILD_MODELS_AND_DRIVERS)
-  # Update paths
   list(APPEND CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR}/cmake/Modules)
   add_subdirectory(examples/models)
   add_subdirectory(examples/model-drivers)
