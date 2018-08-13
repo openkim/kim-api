@@ -51,7 +51,7 @@ endif()
 
 set(MODEL_DRIVER_NAME "LennardJones612__MD_414112407348_003")
 
-add_kim_api_v2_model_driver_library(
+add_kim_api_model_driver_library(
   NAME                    ${MODEL_DRIVER_NAME}
   CREATE_ROUTINE_NAME     "model_driver_create"
   CREATE_ROUTINE_LANGUAGE "cpp"

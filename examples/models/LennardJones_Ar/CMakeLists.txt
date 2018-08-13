@@ -51,7 +51,7 @@ endif()
 
 set(MODEL_NAME "LennardJones_Ar")
 
-add_kim_api_v2_model_library(
+add_kim_api_model_library(
   NAME                    ${MODEL_NAME}
   CREATE_ROUTINE_NAME     "model_create"
   CREATE_ROUTINE_LANGUAGE "cpp"

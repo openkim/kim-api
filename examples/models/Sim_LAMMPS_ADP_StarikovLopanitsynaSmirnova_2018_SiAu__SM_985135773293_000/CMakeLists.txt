@@ -49,7 +49,7 @@ endif()
 # End preamble
 
 
-add_kim_api_v2_model_library(
+add_kim_api_model_library(
   NAME            "Sim_LAMMPS_ADP_StarikovLopanitsynaSmirnova_2018_SiAu__SM_985135773293_000"
   METADATA_FILE   "kim-simulator-model.json"
   PARAMETER_FILES "Si_Au.adp"

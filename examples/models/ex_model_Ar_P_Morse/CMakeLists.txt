@@ -49,7 +49,7 @@ endif()
 # End preamble
 
 
-add_kim_api_v2_model_library(
+add_kim_api_model_library(
   NAME            "ex_model_Ar_P_Morse"
   DRIVER_NAME     "ex_model_driver_P_Morse"
   PARAMETER_FILES "ex_model_Ar_P_Morse.params"
