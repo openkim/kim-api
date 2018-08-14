@@ -1519,21 +1519,66 @@ int ModelImplementation::ConvertUnit(
   }
 #endif
 
+  bool lengthUnused = ((fromLengthUnit == KIM::LENGTH_UNIT::unused) ||
+                       (toLengthUnit == KIM::LENGTH_UNIT::unused));
+  if ((lengthExponent != 0.0) && lengthUnused)
+  {
+    LOG_ERROR("Unable to convert unit.");
+    LOG_DEBUG("Exit 1=" + callString);
+  }
   double const lengthConversion
-      = lengthConvertToSI.find(toLengthUnit)->second /
-      lengthConvertToSI.find(fromLengthUnit)->second;
+      = (lengthUnused) ? 1 : (
+          lengthConvertToSI.find(toLengthUnit)->second /
+          lengthConvertToSI.find(fromLengthUnit)->second);
+
+  bool energyUnused = ((fromEnergyUnit == KIM::ENERGY_UNIT::unused) ||
+                       (toEnergyUnit == KIM::ENERGY_UNIT::unused));
+  if ((energyExponent != 0.0) && energyUnused)
+  {
+    LOG_ERROR("Unable to convert unit.");
+    LOG_DEBUG("Exit 1=" + callString);
+  }
   double const energyConversion
-      = energyConvertToSI.find(toEnergyUnit)->second /
-      energyConvertToSI.find(fromEnergyUnit)->second;
+      = (energyUnused) ? 1 : (
+          energyConvertToSI.find(toEnergyUnit)->second /
+          energyConvertToSI.find(fromEnergyUnit)->second);
+
+  bool chargeUnused = ((fromChargeUnit == KIM::CHARGE_UNIT::unused) ||
+                       (toChargeUnit == KIM::CHARGE_UNIT::unused));
+  if ((chargeExponent != 0.0) && chargeUnused)
+  {
+    LOG_ERROR("Unable to convert unit.");
+    LOG_DEBUG("Exit 1=" + callString);
+  }
   double const chargeConversion
-      = chargeConvertToSI.find(toChargeUnit)->second /
-      chargeConvertToSI.find(fromChargeUnit)->second;
+      = (chargeUnused) ? 1 : (
+          chargeConvertToSI.find(toChargeUnit)->second /
+          chargeConvertToSI.find(fromChargeUnit)->second);
+
+  bool temperatureUnused =
+      ((fromTemperatureUnit == KIM::TEMPERATURE_UNIT::unused) ||
+       (toTemperatureUnit == KIM::TEMPERATURE_UNIT::unused));
+  if ((temperatureExponent != 0.0) && temperatureUnused)
+  {
+    LOG_ERROR("Unable to convert unit.");
+    LOG_DEBUG("Exit 1=" + callString);
+  }
   double const temperatureConversion
-      = temperatureConvertToSI.find(toTemperatureUnit)->second /
-      temperatureConvertToSI.find(fromTemperatureUnit)->second;
+      = (temperatureUnused) ? 1 : (
+          temperatureConvertToSI.find(toTemperatureUnit)->second /
+          temperatureConvertToSI.find(fromTemperatureUnit)->second);
+
+  bool timeUnused = ((fromTimeUnit == KIM::TIME_UNIT::unused) ||
+                     (toTimeUnit == KIM::TIME_UNIT::unused));
+  if ((timeExponent != 0.0) && timeUnused)
+  {
+    LOG_ERROR("Unable to convert unit.");
+    LOG_DEBUG("Exit 1=" + callString);
+  }
   double const timeConversion
-      = timeConvertToSI.find(toTimeUnit)->second /
-      timeConvertToSI.find(fromTimeUnit)->second;
+      = (timeUnused) ? 1 : (
+          timeConvertToSI.find(toTimeUnit)->second /
+          timeConvertToSI.find(fromTimeUnit)->second);
 
   *conversionFactor
       = pow(lengthConversion, lengthExponent)
