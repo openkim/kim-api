@@ -176,6 +176,7 @@ function(add_kim_api_model_library)
 
     list(LENGTH MODEL_PARAMETER_FILES NUMBER_OF_PARAMETER_FILES)
     set(WRAPPER_FILE "${KIM_API_CMAKE_DIR}/simulator-model-wrapper.cpp.in")
+    set(IDENTIFIER_FILE "${KIM_API_CMAKE_DIR}/simulator-model-identifier.txt.in")
   elseif(MODEL_PARAMETER_FILES)
     set(IDX 1)
     foreach(FNAME ${MODEL_PARAMETER_FILES})
@@ -194,10 +195,13 @@ function(add_kim_api_model_library)
 
     list(LENGTH MODEL_PARAMETER_FILES NUMBER_OF_PARAMETER_FILES)
     set(WRAPPER_FILE "${KIM_API_CMAKE_DIR}/parameterized-model-wrapper.cpp.in")
+    set(IDENTIFIER_FILE "${KIM_API_CMAKE_DIR}/parameterized-model-identifier.txt.in")
   else()
     set(WRAPPER_FILE "${KIM_API_CMAKE_DIR}/stand-alone-model-wrapper.cpp.in")
+    set(IDENTIFIER_FILE "${KIM_API_CMAKE_DIR}/stand-alone-model-identifier.txt.in")
   endif()
 
+  configure_file(${IDENTIFIER_FILE} ${CMAKE_CURRENT_BINARY_DIR}/model-type.txt @ONLY)
   configure_file(${WRAPPER_FILE} ${CMAKE_CURRENT_BINARY_DIR}/wrapper.cpp @ONLY)
   list(APPEND MODEL_SOURCES ${CMAKE_CURRENT_BINARY_DIR}/wrapper.cpp)
 
@@ -220,6 +224,8 @@ function(add_kim_api_model_driver_library)
     add_kim_api_imported_library()
   endif()
 
+  configure_file(${KIM_API_CMAKE_DIR}/model-driver-identifier.txt.in
+    ${CMAKE_CURRENT_BINARY_DIR}/model-type.txt @ONLY)
   configure_file(${KIM_API_CMAKE_DIR}/model-driver-wrapper.cpp.in
     ${CMAKE_CURRENT_BINARY_DIR}/wrapper.cpp @ONLY)
 
