@@ -33,9 +33,9 @@
 #
 
 
-# TODO clean this up using cmake c_identifier and upper/lower case
 set(BASH_COMPLETIONS ${PROJECT_NAME}-completion.bash)
-string(MAKE_C_IDENTIFIER ${PROJECT_NAME} SANITIZED_PROJECT_NAME)
+
+string(MAKE_C_IDENTIFIER "${PROJECT_NAME}" KIM_API_C_ID_PROJECT_NAME)
 
 configure_file(completion.bash.in ${BASH_COMPLETIONS} @ONLY)
 

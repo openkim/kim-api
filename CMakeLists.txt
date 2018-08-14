@@ -102,9 +102,6 @@ endif()
 
 # Define other internal variables
 #
-string(MAKE_C_IDENTIFIER "${PROJECT_NAME}" KIM_API_C_ID_PROJECT_NAME)
-set(KIM_API_C_ID_PROJECT_NAME "${KIM_API_C_ID_PROJECT_NAME}" CACHE INTERNAL "Canonical C-id for project name")
-#
 set(KIM_API_CMAKE_DIR_IDENTIFIER "cmake" CACHE INTERNAL "Canonical id for the CMake dir")
 #
 set(KIM_API_MODEL_DRIVER_IDENTIFIER "model-driver" CACHE INTERNAL "Canonical id for a model driver")
@@ -142,7 +139,6 @@ string(TOUPPER ${KIM_API_ENVIRONMENT_MODEL_PLURAL_DIR} KIM_API_ENVIRONMENT_MODEL
 set(KIM_API_ENVIRONMENT_MODEL_PLURAL_DIR "${KIM_API_ENVIRONMENT_MODEL_PLURAL_DIR}" CACHE INTERNAL "Models directory environment variable name")
 
 
-# TODO figure out how to make these stick the first time...
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules)
 # Set global compiler options
 #
