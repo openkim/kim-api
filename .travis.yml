@@ -31,7 +31,7 @@ before_script:
 
 script:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
-      mkdir build && cd build && cmake -DKIM_API_BUILD_MODELS_AND_DRIVERS=ON -DENABLE_COVERAGE=ON .. && make &&
+      mkdir build && cd build && cmake -DKIM_API_BUILD_MODELS_AND_DRIVERS=ON -DKIM_API_ENABLE_COVERAGE=ON .. && make &&
       make test && bash <(curl -s https://codecov.io/bash) -x gcov-6 &&
       make install DESTDIR=$PWD && rm -rf ./usr/local/* && rmdir ./usr/local;
     else

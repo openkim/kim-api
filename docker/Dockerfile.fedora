@@ -42,7 +42,7 @@ RUN ccache -z
 RUN cmake -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} \
           -DKIM_API_BUILD_MODELS_AND_DRIVERS=ON \
           -DCMAKE_INSTALL_PREFIX=/usr \
-          ${COVERAGE:+-DENABLE_COVERAGE_BUILD=ON} \
+          ${COVERAGE:+-DKIM_API_COVERAGE=ON} \
   ..
 RUN make -j2
 RUN ccache -s
