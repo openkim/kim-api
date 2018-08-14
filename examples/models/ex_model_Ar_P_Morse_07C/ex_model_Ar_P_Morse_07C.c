@@ -342,7 +342,9 @@ static int compute(
       for (jj = 0; jj < numOfPartNeigh; ++ jj) {
         j = neighListOfCurrentPart[jj];  /* get neighbor ID */
 
-        if (i < j) {  /* short-circuit half-list */
+        if (! (particleContributing[j] && (j < i))) {
+          /* short-circuit half-list */
+
           /* compute relative position vector and squared distance */
           Rsqij = 0.0;
           for (k = 0; k < DIM; ++k) {

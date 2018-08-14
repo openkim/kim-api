@@ -372,7 +372,7 @@ int LennardJones612Implementation::Compute(
       {
         int const j = n1Atom[jj];
 
-        if (i < j)  // effective half-list
+        if (! (particleContributing[j] && (j < i)))  // effective half-list
         {
           int const jSpecies = particleSpeciesCodes[j];
           double* r_ij;
