@@ -208,7 +208,7 @@ add_subdirectory(cmake)
 add_subdirectory(completions)
 add_subdirectory(pkg-config)
 add_subdirectory(utils)
-#add_subdirectory(doc)
+#add_subdirectory(docs)
 
 
 # Add Models & Drivers, if appropriate
