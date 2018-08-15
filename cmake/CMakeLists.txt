@@ -40,8 +40,15 @@ set(WRAPPER_SOURCES
   stand-alone-model-wrapper.cpp.in
   )
 
+set(INFORMATION_FILES
+  model-driver-info.txt.in
+  parameterized-model-info.txt.in
+  simulator-model-info.txt.in
+  stand-alone-model-info.txt.in
+  )
+
 install(
-  FILES ${WRAPPER_SOURCES}
+  FILES ${WRAPPER_SOURCES} ${INFORMATION_FILES}
   DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME}/${KIM_API_CMAKE_DIR_IDENTIFIER}
   )
 

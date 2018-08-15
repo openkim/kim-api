@@ -37,7 +37,8 @@
 collections_info=@CMAKE_INSTALL_FULL_LIBEXECDIR@/@PROJECT_NAME@/@PROJECT_NAME@-collections-info
 major_version=@PROJECT_MAJOR_VERSION@
 
-make_command="make --no-print-directory"
+make_command="make"
+cmake_command="cmake"
 
 
 # define usage function
@@ -158,26 +159,45 @@ get_local_build_item_name () {
     return 1
   fi
 
-  local item_type="`${make_command} -C "${build_path}" kim-item-type`"
-  case "${item_type}" in
-    Model|ParameterizedModel|SimulatorModel)
-      item_name="`${make_command} -C "${build_path}" model-name`"
-      ;;
-    ModelDriver)
-      item_name="`${make_command} -C "${build_path}" model-driver-name`"
-      ;;
-    *)
-      item_name=""
-      printf "Item type '${item_type}' unknown.\n"
-      error="true"
-      ;;
-  esac
-
-  if test x"true" = x"${error}"; then
-    return 1
-  else
-    return 0
+  # create private temporary directory
+  if test x"" = x"${TMPDIR}"; then TMPDIR="/tmp"; fi
+  local build_dir="`mktemp -d "${TMPDIR}/@PROJECT_NAME@-build-XXXXXXXXXX"`"
+  if test $? -ne 0; then
+    printf "Unable to create temporary directory.\n"
+    return 1;
   fi
+
+  (  # subshell
+    cd "${build_dir}" || return 1
+    cp -r "${build_path}" "./item-source"
+    cd item-source && mkdir build && cd build
+    ${cmake_command} ../ > ./cmake-log.txt 2>&1
+
+    local item_type="`grep -- "model-type:" model-info.txt | sed -e 's/^model-type://'`"
+    case "${item_type}" in
+      stand-alone-model|parameterized-model|simulator-model)
+        item_name="`grep -- "model-name:" model-info.txt | sed -e 's/^model-name://'`"
+        ;;
+      model-driver)
+        item_name="`grep -- "driver-name:" model-info.txt | sed -e 's/^driver-name://'`"
+        ;;
+      *)
+        item_name=""
+        printf "Item type '${item_type}' unknown.\n"
+        error="true"
+        ;;
+    esac
+
+    if test x"true" = x"${error}"; then
+      return 1
+    else
+      return 0
+    fi
+  ) || return 1  # exit subshell
+
+  rm -rf "${build_dir}" || return 1
+
+  return 0
   # output is: item_name
 }
 
@@ -332,10 +352,14 @@ get_build_install_item () {
       else
         cp -r "${local_build_path}" "./${item_name}"
       fi
-      cd "./${item_name}"
-      item_type="`${make_command} kim-item-type`"
-      if test x"ParameterizedModel" = x"${item_type}"; then
-        dvr="`${make_command} model-driver-name`"
+      cd "./${item_name}" && mkdir build && cd build
+      if ! ${cmake_command} ../ -DKIM_API_INSTALL_TYPE="`printf ${install_collection} | tr "[:lower:]" "[:upper:]"`" > ./cmake-log.txt 2>&1; then
+        cat ./cmake-log.txt
+        return 1
+      fi
+      item_type="`grep "model-type:" model-info.txt | sed -e 's/model-type://'`"
+      if test x"parameterized-model" = x"${item_type}"; then
+        dvr="`grep "driver-name:" model-info.txt | sed -e 's/driver-name://'`"
         if test x"" != x"`${collections_info} model_drivers find "${dvr}"`"; then
           printf "Using@installed@driver...@%s\n" "${dvr}" | sed -e 's/ /./g' -e 's/@/ /g' || return 1
         else
@@ -352,21 +376,21 @@ get_build_install_item () {
         fi
         if ! ((${make_command} clean && ${make_command}) > ./make-log.txt 2>&1 && \
                 if test x"sudo-yes" = x"${use_sudo}"; then
-                  printf -- "${PASSWORD}\n" | sudo -k -S ${make_command} "install-${install_collection}" 2> /dev/null
+                  printf -- "${PASSWORD}\n" | sudo -k -S ${make_command} install 2> /dev/null
                 else
-                  ${make_command} "install-${install_collection}"
+                  ${make_command} install
                 fi); then
           cat ./make-log.txt
           return 1
         fi
-      elif test x"Model"          = x"${item_type}" -o \
-                x"ModelDriver"    = x"${item_type}" -o \
-                x"SimulatorModel" = x"${item_type}"; then
+      elif test x"stand-alone-model" = x"${item_type}" -o \
+                x"model-driver"      = x"${item_type}" -o \
+                x"simulator-model"   = x"${item_type}"; then
         if ! ((${make_command} clean && ${make_command}) > ./make-log.txt 2>&1 && \
                 if test x"sudo-yes" = x"${use_sudo}"; then
-                  printf -- "${PASSWORD}\n" | sudo -k -S ${make_command} "install-${install_collection}" 2> /dev/null
+                  printf -- "${PASSWORD}\n" | sudo -k -S ${make_command} install 2> /dev/null
                 else
-                  ${make_command} "install-${install_collection}"
+                  ${make_command} install
                 fi); then
           cat ./make-log.txt
           return 1
