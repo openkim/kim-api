@@ -1,4 +1,3 @@
-//
 // CDDL HEADER START
 //
 // The contents of this file are subject to the terms of the Common Development
@@ -974,13 +973,14 @@ void LennardJones612Implementation::ProcessParticleVirialTerm(
     const double& dEidr,
     const double& rij,
     const double* const r_ij,
-    const int& i,
-    const int& j,
+    const int& i, const int& iContrib,
+    const int& j, const int& jContrib,
     VectorOfSizeSix* const particleVirial) const
 {
   double const v = dEidr/rij;
   VectorOfSizeSix vir;
 
+  // assumes each ij pair is processed only once.
   vir[0] = 0.5 * v * r_ij[0] * r_ij[0];
   vir[1] = 0.5 * v * r_ij[1] * r_ij[1];
   vir[2] = 0.5 * v * r_ij[2] * r_ij[2];
@@ -990,8 +990,8 @@ void LennardJones612Implementation::ProcessParticleVirialTerm(
 
   for (int k = 0; k < 6; ++k)
   {
-    particleVirial[i][k] += vir[k];
-    particleVirial[j][k] += vir[k];
+    if (iContrib) particleVirial[i][k] += vir[k];
+    if (jContrib) particleVirial[j][k] += vir[k];
   }
 }
 

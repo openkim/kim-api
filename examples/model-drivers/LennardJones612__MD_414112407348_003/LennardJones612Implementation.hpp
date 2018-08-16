@@ -234,8 +234,8 @@ class LennardJones612Implementation
   void ProcessParticleVirialTerm(const double& dEidr,
                                  const double& rij,
                                  const double* const r_ij,
-                                 const int& i,
-                                 const int& j,
+                                 const int& i, const int& iContrib,
+                                 const int& j, const int& jContrib,
                                  VectorOfSizeSix* const particleVirial) const;
 
   // compute functions
@@ -365,14 +365,16 @@ int LennardJones612Implementation::Compute(
       int const numNei = numnei;
       int const * const n1Atom = n1atom;
       int const i = ii;
+      int const iContrib = 1;
       int const iSpecies = particleSpeciesCodes[i];
 
       // Setup loop over neighbors of current particle
       for (int jj = 0; jj < numNei; ++jj)
       {
         int const j = n1Atom[jj];
+        int const jContrib = particleContributing[j];
 
-        if (! (particleContributing[j] && (j < i)))  // effective half-list
+        if (! (jContrib && (j < i)))  // effective half-list
         {
           int const jSpecies = particleSpeciesCodes[j];
           double* r_ij;
@@ -406,7 +408,7 @@ int LennardJones612Implementation::Compute(
                           *r6iv -
                           constOneSixtyEightEpsSig6_2D[iSpecies][jSpecies])
                   * r2iv;
-              if (particleContributing[j] == 1)
+              if (jContrib == 1)
               {
                 d2Eidr2 = d2phi;
               }
@@ -423,7 +425,7 @@ int LennardJones612Implementation::Compute(
                   r6iv * (constTwentyFourEpsSig6_2D[iSpecies][jSpecies] -
                           constFortyEightEpsSig12_2D[iSpecies][jSpecies]*r6iv)
                   * r2iv;
-              if (particleContributing[j] == 1)
+              if (jContrib == 1)
               {
                 dEidrByR = dphiByR;
               }
@@ -448,7 +450,7 @@ int LennardJones612Implementation::Compute(
             // Contribution to energy
             if (isComputeEnergy == true)
             {
-              if (particleContributing[j] == 1)
+              if (jContrib == 1)
               {
                 *energy += phi;
               }
@@ -463,7 +465,7 @@ int LennardJones612Implementation::Compute(
             {
               double const halfPhi = 0.5*phi;
               particleEnergy[i] += halfPhi;
-              if (particleContributing[j] == 1)
+              if (jContrib == 1)
               {
                 particleEnergy[j] += halfPhi;
               }
@@ -506,7 +508,8 @@ int LennardJones612Implementation::Compute(
 
               if (isComputeParticleVirial == true)
               {
-                ProcessParticleVirialTerm(dEidr, rij, r_ij_const, i, j,
+                ProcessParticleVirialTerm(dEidr, rij, r_ij_const,
+                                          i, iContrib, j, jContrib,
                                           particleVirial);
               }
             }
