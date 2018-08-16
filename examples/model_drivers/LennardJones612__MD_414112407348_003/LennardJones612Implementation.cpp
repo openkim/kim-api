@@ -980,18 +980,27 @@ void LennardJones612Implementation::ProcessParticleVirialTerm(
   double const v = dEidr/rij;
   VectorOfSizeSix vir;
 
+  // if iContrib && jContrib then v is dphi/dr
+  // otherwise v is 0.5*dphi/dr
+
   // assumes each ij pair is processed only once.
-  vir[0] = 0.5 * v * r_ij[0] * r_ij[0];
-  vir[1] = 0.5 * v * r_ij[1] * r_ij[1];
-  vir[2] = 0.5 * v * r_ij[2] * r_ij[2];
-  vir[3] = 0.5 * v * r_ij[1] * r_ij[2];
-  vir[4] = 0.5 * v * r_ij[0] * r_ij[2];
-  vir[5] = 0.5 * v * r_ij[0] * r_ij[1];
+  vir[0] = v * r_ij[0] * r_ij[0];
+  vir[1] = v * r_ij[1] * r_ij[1];
+  vir[2] = v * r_ij[2] * r_ij[2];
+  vir[3] = v * r_ij[1] * r_ij[2];
+  vir[4] = v * r_ij[0] * r_ij[2];
+  vir[5] = v * r_ij[0] * r_ij[1];
 
   for (int k = 0; k < 6; ++k)
   {
-    if (iContrib) particleVirial[i][k] += vir[k];
-    if (jContrib) particleVirial[j][k] += vir[k];
+    // assuming iContrib == 1
+    if (jContrib)
+    {
+      particleVirial[i][k] += 0.5*vir[k];
+      particleVirial[j][k] += 0.5*vir[k];
+    }
+    else
+      particleVirial[i][k] += vir[k];
   }
 }
 
