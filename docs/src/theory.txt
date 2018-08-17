@@ -186,8 +186,9 @@ vector:
 
 Note that, in general, *every* particle (both contributing and
 non-contributing) has a partial force.  As a special case, consider a
-configuration, \f$\mathcal{C}^i\f$, equivalent to \f$\mathcal{C}\f$ except that
-only particle \f$i\f$ is contributing.  In this case, the partial forces are
+configuration, \f$\mathcal{C}^i, i \in C_{cp}\f$, equivalent to
+\f$\mathcal{C}\f$ except that only particle \f$i\f$ is contributing.  In this
+case, the partial forces are
 
 \f[
 \mathbf{f}^{\mathcal{C}^i(j)} =
