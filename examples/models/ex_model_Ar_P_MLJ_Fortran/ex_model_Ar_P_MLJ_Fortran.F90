@@ -237,6 +237,7 @@ ierr = ierr + ierr2
 if (ierr /= 0) then
   kim_log_message = "get data"
   LOG_ERROR()
+  ierr = 1
   return
 endif
 
@@ -271,6 +272,7 @@ do i = 1,N
   if (particleSpeciesCodes(i).ne.speccode) then
     kim_log_message = "Unexpected species code detected"
     LOG_ERROR()
+    ierr = 1
     return
   endif
 enddo
@@ -479,6 +481,7 @@ subroutine model_compute_arguments_create(model_compute_handle, &
     LOG_ERROR()
   endif
 
+  ierr = 0
   return
 end subroutine model_compute_arguments_create
 
@@ -611,6 +614,7 @@ if (ierr /= 0) then
   LOG_ERROR()
 endif
 
+ierr = 0
 return
 
 end subroutine model_create_routine

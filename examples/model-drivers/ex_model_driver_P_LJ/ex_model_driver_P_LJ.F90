@@ -261,6 +261,7 @@ ierr = ierr + ierr2
 if (ierr /= 0) then
    kim_log_message = "get_compute"
    LOG_ERROR()
+   ierr=1
    return
 endif
 
@@ -301,6 +302,7 @@ ierr = ierr + ierr2
 if (ierr /= 0) then
   kim_log_message = "get_argument_pointer"
   LOG_ERROR()
+  ierr=1
   return
 endif
 
@@ -336,6 +338,7 @@ do i = 1,N
    if (particleSpeciesCodes(i).ne.speccode) then
      kim_log_message = "Unexpected species code detected"
      LOG_ERROR()
+     ierr=1
      return
    endif
 enddo
@@ -606,6 +609,7 @@ end if
 
 ierr = 0
 42 continue
+ierr = 1
 return
 
 end subroutine compute_arguments_create
@@ -900,6 +904,7 @@ endif
 
 ierr = 0
 42 continue
+ierr = 1
 return
 
 end subroutine model_driver_create_routine
