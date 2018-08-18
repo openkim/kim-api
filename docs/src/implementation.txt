@@ -107,13 +107,13 @@ non-contributing if \f$c^{(i)} = 0\f$.
   \mathbf{e}_2 + r^{(i)}_3 \mathbf{e}_3\f$.
 
 Output compute-argument table:
-Compute Argument Name | Unit                       | Data Type | Extent                | Memory Layout                                                           | Valid Support Statuses (bold -- default) |
---------------------- | -------------------------- | --------- | --------------------- | ----------------------------------------------------------------------- | ---------------------------------------- |
-partialEnergy         | energy                     | double    | 1                     |                                                                         | required, optional, **notSupported**     |
-partialForces         | force                      | double    | numberOfParticles * 3 | \f$f^{\mathcal{C}(0)}_1, f^{\mathcal{C}(0)}_2, f^{\mathcal{C}(0)}_3, f^{\mathcal{C}(1)}_1, f^{\mathcal{C}(1)}_2\dots\f$ | required, optional, **notSupported**     |
-partialParticleEnergy | energy                     | double    | numberOfParticles     | \f$E^{\mathcal{C}(0)}, E^{\mathcal{C}(1)}, E^{\mathcal{C}(2)}, \dots\f$ | required, optional, **notSupported**     |
-partialVirial         | energy                     | double    | 6                     | \f$V^{\mathcal{C}}_{11}, V^{\mathcal{C}}_{22}, V^{\mathcal{C}}_{33}, V^{\mathcal{C}}_{23}, V^{\mathcal{C}}_{32}, V^{\mathcal{C}}_{13}\f$ | required, optional, **notSupported**     |
-partialParticleVirial | energy                     | double    | numberOfParticles * 6 | \f$\mathbf{V}^{\mathcal{C}(0)}, \mathbf{V}^{\mathcal{C}(1)}, \mathbf{V}^{\mathcal{C}(2)}, \dots\f$ | required, optional, **notSupported**     |
+Compute Argument Name                                | Unit                       | Data Type | Extent                | Memory Layout                                                           | Valid Support Statuses (bold -- default) |
+---------------------------------------------------- | -------------------------- | --------- | --------------------- | ----------------------------------------------------------------------- | ---------------------------------------- |
+\ref partial_energy "partialEnergy"                  | energy                     | double    | 1                     |                                                                         | required, optional, **notSupported**     |
+\ref partial_forces "partialForces"                  | force                      | double    | numberOfParticles * 3 | \f$f^{\mathcal{C}(0)}_1, f^{\mathcal{C}(0)}_2, f^{\mathcal{C}(0)}_3, f^{\mathcal{C}(1)}_1, f^{\mathcal{C}(1)}_2\dots\f$ | required, optional, **notSupported**     |
+\ref partial_particle_energy "partialParticleEnergy" | energy                     | double    | numberOfParticles     | \f$E^{\mathcal{C}(0)}, E^{\mathcal{C}(1)}, E^{\mathcal{C}(2)}, \dots\f$ | required, optional, **notSupported**     |
+\ref partial_virial "partialVirial"                  | energy                     | double    | 6                     | \f$V^{\mathcal{C}}_{11}, V^{\mathcal{C}}_{22}, V^{\mathcal{C}}_{33}, V^{\mathcal{C}}_{23}, V^{\mathcal{C}}_{32}, V^{\mathcal{C}}_{13}\f$ | required, optional, **notSupported**     |
+\ref partial_particle_virial "partialParticleVirial" | energy                     | double    | numberOfParticles * 6 | \f$\mathbf{V}^{\mathcal{C}(0)}, \mathbf{V}^{\mathcal{C}(1)}, \mathbf{V}^{\mathcal{C}(2)}, \dots\f$ | required, optional, **notSupported**     |
 
 - partialEnergy is the configuration's partial energy \f$E^{\mathcal{C}}\f$.
 
