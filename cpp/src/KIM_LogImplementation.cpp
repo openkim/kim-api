@@ -262,7 +262,7 @@ std::string LogImplementation::GetTimeStamp() const
   struct tm * timeInfo;
   timeInfo = localtime(&rawTime);
   char date[1024];
-  strftime(date, 1023, "%F:%T%z", timeInfo);
+  strftime(date, 1023, "%Y-%m-%d:%H:%M:%S%Z", timeInfo);
 
   std::string dateString(date);
   if (dateString == latestTimeStamp_)
