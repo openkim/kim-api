@@ -23,9 +23,38 @@
 # All rights reserved.
 #
 # Contributors:
+#    Richard Berger
+#    Christoph Junghans
 #    Ryan S. Elliott
 #
 
+#
+# Release: This file is part of the kim-api.git repository.
+#
 
-This directory (ex_model_Ar_P_MLJ_F03) contains a modified Lennard Jones (LJ)
-Model with smoothed cutoff radius written in F03.
+
+#
+# Requied preamble
+#
+
+cmake_minimum_required(VERSION 3.4)
+
+list(APPEND CMAKE_MODULE_PATH $ENV{KIM_API_V2_CMAKE_MODULES_DIR})
+find_package(KIM-API-V2 2.0 REQUIRED)
+if(NOT TARGET kim-api)
+  project("${KIM_API_PROJECT_NAME}" VERSION "${KIM_API_VERSION}"
+    LANGUAGES CXX C Fortran)
+endif()
+
+# End preamble
+
+
+set(MODEL_NAME "ex_model_Ar_P_MLJ_Fortran")
+
+add_kim_api_model_library(
+  NAME                    ${MODEL_NAME}
+  CREATE_ROUTINE_NAME     "model_create_routine"
+  CREATE_ROUTINE_LANGUAGE "fortran"
+  )
+
+target_sources(${MODEL_NAME} PRIVATE ${MODEL_NAME}.F90)

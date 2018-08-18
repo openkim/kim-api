@@ -52,15 +52,12 @@ endif()
 
 set(TEST_NAME "utility_forces_numer_deriv")
 
-add_executable(${TEST_NAME} ${TEST_NAME}.F03)
+add_executable(${TEST_NAME} ${TEST_NAME}.F90)
 target_link_libraries(${TEST_NAME} kim-api)
-
-# workaround for F03 files, use F90 instead if possible
-set_source_files_properties(${TEST_NAME}.F03 PROPERTIES LANGUAGE Fortran)
 
 set(TEST_MODELS
   ex_model_Ar_P_LJ
-  ex_model_Ar_P_MLJ_F03
+  ex_model_Ar_P_MLJ_Fortran
   ex_model_Ar_P_Morse
   ex_model_Ar_P_Morse_07C
   )
