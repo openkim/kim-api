@@ -1323,6 +1323,17 @@ int ModelImplementation::ClearThenRefresh()
       LOG_DEBUG("Exit 1=" + callString);
       return true;
     }
+    double maxCutoff = 0.0;
+    for (int i=0; i < numberOfNeighborLists_; ++i)
+    {
+      if (maxCutoff < cutoffs_[i]) maxCutoff = cutoffs_[i];
+    }
+    if (maxCutoff > *influenceDistance_)
+    {
+      LOG_ERROR("Model max(cutoffs) > influenceDistance.");
+      LOG_DEBUG("Exit 1=" + callString);
+      return true;
+    }
     if (modelWillNotRequestNeighborsOfNoncontributingParticles_ == NULL)
     {
       LOG_ERROR("Model supplied Refresh() routine did not "
@@ -2000,6 +2011,18 @@ int ModelImplementation::ModelCreate(
   {
     LOG_ERROR("Model supplied Create() routine did not set "
               "cutoffs.");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
+
+  double maxCutoff = 0.0;
+  for (int i=0; i < numberOfNeighborLists_; ++i)
+  {
+    if (maxCutoff < cutoffs_[i]) maxCutoff = cutoffs_[i];
+  }
+  if (maxCutoff > *influenceDistance_)
+  {
+    LOG_ERROR("Model max(cutoffs) > influenceDistance.");
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
