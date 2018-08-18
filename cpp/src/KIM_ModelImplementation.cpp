@@ -1528,8 +1528,8 @@ int ModelImplementation::ConvertUnit(
   }
   double const lengthConversion
       = (lengthUnused) ? 1 : (
-          lengthConvertToSI.find(toLengthUnit)->second /
-          lengthConvertToSI.find(fromLengthUnit)->second);
+          lengthConvertToSI.find(fromLengthUnit)->second /
+          lengthConvertToSI.find(toLengthUnit)->second);
 
   bool energyUnused = ((fromEnergyUnit == KIM::ENERGY_UNIT::unused) ||
                        (toEnergyUnit == KIM::ENERGY_UNIT::unused));
@@ -1540,8 +1540,8 @@ int ModelImplementation::ConvertUnit(
   }
   double const energyConversion
       = (energyUnused) ? 1 : (
-          energyConvertToSI.find(toEnergyUnit)->second /
-          energyConvertToSI.find(fromEnergyUnit)->second);
+          energyConvertToSI.find(fromEnergyUnit)->second /
+          energyConvertToSI.find(toEnergyUnit)->second);
 
   bool chargeUnused = ((fromChargeUnit == KIM::CHARGE_UNIT::unused) ||
                        (toChargeUnit == KIM::CHARGE_UNIT::unused));
@@ -1552,8 +1552,8 @@ int ModelImplementation::ConvertUnit(
   }
   double const chargeConversion
       = (chargeUnused) ? 1 : (
-          chargeConvertToSI.find(toChargeUnit)->second /
-          chargeConvertToSI.find(fromChargeUnit)->second);
+          chargeConvertToSI.find(fromChargeUnit)->second /
+          chargeConvertToSI.find(toChargeUnit)->second);
 
   bool temperatureUnused =
       ((fromTemperatureUnit == KIM::TEMPERATURE_UNIT::unused) ||
@@ -1565,8 +1565,8 @@ int ModelImplementation::ConvertUnit(
   }
   double const temperatureConversion
       = (temperatureUnused) ? 1 : (
-          temperatureConvertToSI.find(toTemperatureUnit)->second /
-          temperatureConvertToSI.find(fromTemperatureUnit)->second);
+          temperatureConvertToSI.find(fromTemperatureUnit)->second /
+          temperatureConvertToSI.find(toTemperatureUnit)->second);
 
   bool timeUnused = ((fromTimeUnit == KIM::TIME_UNIT::unused) ||
                      (toTimeUnit == KIM::TIME_UNIT::unused));
@@ -1577,8 +1577,8 @@ int ModelImplementation::ConvertUnit(
   }
   double const timeConversion
       = (timeUnused) ? 1 : (
-          timeConvertToSI.find(toTimeUnit)->second /
-          timeConvertToSI.find(fromTimeUnit)->second);
+          timeConvertToSI.find(fromTimeUnit)->second /
+          timeConvertToSI.find(toTimeUnit)->second);
 
   *conversionFactor
       = pow(lengthConversion, lengthExponent)
