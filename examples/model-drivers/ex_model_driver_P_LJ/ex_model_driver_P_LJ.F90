@@ -567,6 +567,9 @@ integer(c_int), intent(out) :: ierr
 
 integer(c_int) ierr2
 
+! avoid unsed dummy argument warnings
+if (model_compute_handle .eq. kim_model_compute_null_handle) continue
+
 ierr = 0
 ierr2 = 0
 
@@ -629,6 +632,11 @@ type(kim_model_compute_handle_type), intent(in) :: model_compute_handle
 type(kim_model_compute_arguments_destroy_handle_type), intent(inout) :: &
   model_compute_arguments_destroy_handle
 integer(c_int), intent(out) :: ierr
+
+! avoid unsed dummy argument warnings
+if (model_compute_handle .eq. kim_model_compute_null_handle) continue
+if (model_compute_arguments_destroy_handle &
+  .eq. kim_model_compute_arguments_destroy_null_handle) continue
 
 ! nothing to be done
 

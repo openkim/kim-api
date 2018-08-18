@@ -447,6 +447,9 @@ subroutine model_compute_arguments_create(model_compute_handle, &
 
   integer(c_int) :: ierr2
 
+  ! avoid unsed dummy argument warnings
+  if (model_compute_handle .eq. kim_model_compute_null_handle) continue
+
   ierr = 0
   ierr2 = 0
 
@@ -502,13 +505,14 @@ subroutine model_compute_arguments_destroy(model_compute_handle, &
     model_compute_arguments_destroy_handle
   integer(c_int), intent(out) :: ierr
 
-  integer(c_int) :: ierr2
-
-  ierr = 0
-  ierr2 = 0
+  ! avoid unsed dummy argument warnings
+  if (model_compute_handle .eq. kim_model_compute_null_handle) continue
+  if (model_compute_arguments_destroy_handle &
+    .eq. kim_model_compute_arguments_destroy_null_handle) continue
 
   ! nothing to do
 
+  ierr = 0
   return
 end subroutine model_compute_arguments_destroy
 
@@ -545,6 +549,13 @@ kim_log_file = __FILE__
 
 ierr = 0
 ierr2 = 0
+
+! avoid unsed dummy argument warnings
+if (requested_length_unit .eq. kim_length_unit_unused) continue
+if (requested_energy_unit .eq. kim_energy_unit_unused) continue
+if (requested_charge_unit .eq. kim_charge_unit_unused) continue
+if (requested_temperature_unit .eq. kim_temperature_unit_unused) continue
+if (requested_time_unit .eq. kim_time_unit_unused) continue
 
 ! set units
 call kim_model_create_set_units(model_create_handle, &
