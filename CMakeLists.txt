@@ -112,7 +112,10 @@ add_subdirectory(cmake)
 add_subdirectory(completions)
 add_subdirectory(pkg-config)
 add_subdirectory(utils)
-#add_subdirectory(docs)
+
+if(${CMAKE_MINOR_VERSION} GREATER 8)
+  add_subdirectory(docs)
+endif()
 
 
 # Add Models & Drivers, if appropriate
