@@ -38,6 +38,8 @@ enable_testing()
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules)
 
+include(DefaultCompilerStandards)
+
 # Define options
 #
 set(PROJECT_PREFIX "kim-api" CACHE STRING "TODO add description here")
@@ -85,9 +87,9 @@ include(DefaultCompilerFlags)
 add_library(kim-api SHARED "")
 set_target_properties(kim-api
   PROPERTIES
-    OUTPUT_NAME ${PROJECT_NAME}
+    OUTPUT_NAME "${PROJECT_NAME}"
     INSTALL_NAME_DIR "${CMAKE_INSTALL_FULL_LIBDIR}"
-    SOVERSION 2
+    SOVERSION ${PROJECT_VERSION_MAJOR}
     Fortran_MODULE_DIRECTORY "${CMAKE_BINARY_DIR}/Fortran_MODULES"
     )
 target_include_directories(kim-api PUBLIC $<TARGET_PROPERTY:kim-api,Fortran_MODULE_DIRECTORY>)
