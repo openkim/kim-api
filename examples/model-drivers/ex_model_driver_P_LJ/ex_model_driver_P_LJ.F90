@@ -591,6 +591,7 @@ ierr = ierr + ierr2
 if (ierr /= 0) then
   kim_log_message = "Unable to register arguments support_statuss"
   LOG_ERROR()
+  ierr = 1
   goto 42
 end if
 
@@ -607,12 +608,12 @@ ierr = ierr + ierr2
 if (ierr /= 0) then
   kim_log_message = "Unable to register callbacks support_statuss"
   LOG_ERROR()
+  ierr = 1
   goto 42
 end if
 
 ierr = 0
 42 continue
-ierr = 1
 return
 
 end subroutine compute_arguments_create
@@ -699,6 +700,7 @@ call kim_model_driver_create_set_units( &
 if (ierr /= 0) then
   kim_log_message = "Unable to set units"
   LOG_ERROR()
+  ierr = 1
   goto 42
 end if
 
@@ -708,6 +710,7 @@ call kim_model_driver_create_set_model_numbering( &
 if (ierr /= 0) then
   kim_log_message = "Unable to set numbering"
   LOG_ERROR()
+  ierr = 1
   goto 42
 end if
 
@@ -735,6 +738,7 @@ ierr = ierr + ierr2
 if (ierr /= 0) then
   kim_log_message = "Unable to store callback pointers"
   LOG_ERROR()
+  ierr = 1
   goto 42
 end if
 
@@ -769,9 +773,9 @@ close(10)
 goto 200
 100 continue
 ! reading parameters failed
-ierr = 1
 kim_log_message = "Unable to read LJ parameters"
 LOG_ERROR()
+ierr = 1
 goto 42
 
 200 continue
@@ -782,6 +786,7 @@ call kim_species_name_from_string(in_species, species_name)
 if (ierr /= 0) then
   kim_log_message = "Unable to set species_name"
   LOG_ERROR()
+  ierr = 1
   goto 42
 end if
 
@@ -790,6 +795,7 @@ call kim_model_driver_create_set_species_code( &
 if (ierr /= 0) then
   kim_log_message = "Unable to set species code"
   LOG_ERROR()
+  ierr = 1
   goto 42
 end if
 
@@ -810,6 +816,7 @@ call kim_model_driver_create_convert_unit( &
 if (ierr /= 0) then
   kim_log_message = "kim_api_convert_to_act_unit"
   LOG_ERROR()
+  ierr = 1
   goto 42
 endif
 in_cutoff = in_cutoff * factor
@@ -830,6 +837,7 @@ call kim_model_driver_create_convert_unit( &
 if (ierr /= 0) then
   kim_log_message = "kim_api_convert_to_act_unit"
   LOG_ERROR()
+  ierr = 1
   goto 42
 endif
 in_epsilon = in_epsilon * factor
@@ -850,6 +858,7 @@ call kim_model_driver_create_convert_unit( &
 if (ierr /= 0) then
   kim_log_message = "kim_api_convert_to_act_unit"
   LOG_ERROR()
+  ierr = 1
   goto 42
 endif
 in_sigma = in_sigma * factor
@@ -890,7 +899,8 @@ call kim_model_driver_create_set_parameter_pointer( &
 if (ierr /= 0) then
   kim_log_message = "set_parameter"
   LOG_ERROR()
-   goto 42
+  ierr = 1
+  goto 42
 endif
 
 call kim_model_driver_create_set_parameter_pointer( &
@@ -898,7 +908,8 @@ call kim_model_driver_create_set_parameter_pointer( &
 if (ierr /= 0) then
   kim_log_message = "set_parameter"
   LOG_ERROR()
-   goto 42
+  ierr = 1
+  goto 42
 endif
 
 call kim_model_driver_create_set_parameter_pointer( &
@@ -906,12 +917,12 @@ call kim_model_driver_create_set_parameter_pointer( &
 if (ierr /= 0) then
   kim_log_message = "set_parameter"
   LOG_ERROR()
-   goto 42
+  ierr = 1
+  goto 42
 endif
 
 ierr = 0
 42 continue
-ierr = 1
 return
 
 end subroutine model_driver_create_routine
