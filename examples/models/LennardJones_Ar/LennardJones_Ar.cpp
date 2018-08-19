@@ -167,13 +167,13 @@ class LennardJones_Ar
             &particleContributing)
         || modelComputeArguments->GetArgumentPointer(
             KIM::COMPUTE_ARGUMENT_NAME::coordinates,
-            (double const ** const) &coordinates)
+            (double const **) &coordinates)
         || modelComputeArguments->GetArgumentPointer(
             KIM::COMPUTE_ARGUMENT_NAME::partialEnergy,
             &partialEnergy)
         || modelComputeArguments->GetArgumentPointer(
             KIM::COMPUTE_ARGUMENT_NAME::partialForces,
-            (double const ** const) &partialForces);
+            (double const **) &partialForces);
     if (error)
     {
       LOG_ERROR("Unable to get argument pointers");
@@ -278,6 +278,8 @@ class LennardJones_Ar
             KIM::COMPUTE_ARGUMENT_NAME::partialForces,
             KIM::SUPPORT_STATUS::required);
 
+    (void)modelCompute;  // avoid unused parameter warning
+
     // register callbacks
     //
     // none
@@ -290,6 +292,9 @@ class LennardJones_Ar
       KIM::ModelComputeArgumentsDestroy * const modelComputeArgumentsDestroy)
   {
     // noting to do
+
+    (void)modelCompute;  // avoid unused parameter warnings
+    (void)modelComputeArgumentsDestroy;
 
     // everything is good
     return false;

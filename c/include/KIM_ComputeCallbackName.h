@@ -53,7 +53,7 @@ int KIM_ComputeCallbackName_Equal(KIM_ComputeCallbackName const left,
 int KIM_ComputeCallbackName_NotEqual(KIM_ComputeCallbackName const left,
                                      KIM_ComputeCallbackName const right);
 
-char const * const KIM_ComputeCallbackName_String(
+char const * KIM_ComputeCallbackName_String(
     KIM_ComputeCallbackName const computeCallbackName);
 
 extern KIM_ComputeCallbackName const KIM_COMPUTE_CALLBACK_NAME_GetNeighborList;

@@ -51,7 +51,7 @@ int KIM_LanguageName_Equal(KIM_LanguageName const left,
                            KIM_LanguageName const right);
 int KIM_LanguageName_NotEqual(KIM_LanguageName const left,
                               KIM_LanguageName const right);
-char const * const KIM_LanguageName_String(KIM_LanguageName const languageName);
+char const * KIM_LanguageName_String(KIM_LanguageName const languageName);
 
 extern KIM_LanguageName const KIM_LANGUAGE_NAME_cpp;
 extern KIM_LanguageName const KIM_LANGUAGE_NAME_c;

@@ -57,7 +57,7 @@ namespace KIM
 #define SNUM( x ) static_cast<std::ostringstream &>(    \
     std::ostringstream() << std::dec << x).str()
 #define SPTR( x ) static_cast<std::ostringstream &>(                    \
-    std::ostringstream() << static_cast<void const * const>(x) ).str()
+    std::ostringstream() << static_cast<void const *>(x) ).str()
 #define SFUNCP( x ) static_cast<std::ostringstream &>(           \
     std::ostringstream() << static_cast<func **>(x)).str()
 #define SBOOL( x ) std::string((x ? "true" : "false"))
@@ -171,7 +171,7 @@ int ModelLibrary::GetModelType(ITEM_TYPE * const modelType) const
   if (libraryHandle_ == NULL) return true;  // not open
 
   char const * const KIM_ItemType
-      = static_cast<char const * const>(dlsym(libraryHandle_, "kim_item_type"));
+      = static_cast<char const *>(dlsym(libraryHandle_, "kim_item_type"));
   if (KIM_ItemType == 0)
   {
     std::cout << dlerror() << std::endl;
@@ -257,7 +257,7 @@ int ModelLibrary::GetNumberOfParameterFiles(int * const numberOfParameterFiles)
   GetModelType(&itemType);
   if (itemType != PARAMETERIZED_MODEL) return true;
 
-  int const * const numParamFiles = static_cast<int const * const>(
+  int const * const numParamFiles = static_cast<int const *>(
       dlsym(libraryHandle_, "number_of_parameter_files"));
   if (numParamFiles == 0)
   {
@@ -303,7 +303,7 @@ int ModelLibrary::GetParameterFileString(
   std::stringstream paramFileStringSymbol;
   paramFileStringSymbol << "parameter_file_" << (index+1);
   unsigned char const * const paramFileString
-      = static_cast<unsigned char const * const>(
+      = static_cast<unsigned char const *>(
           dlsym(libraryHandle_, paramFileStringSymbol.str().c_str()));
   if (paramFileString == NULL)
   {
@@ -354,7 +354,7 @@ int ModelLibrary::GetModelDriverName(std::string * const modelDriverName) const
 
   std::string modelDriverNameSymbol(modelName_ + "_driver_name");
   char const * const modelDriverNameString
-      = static_cast<char const * const>(
+      = static_cast<char const *>(
           dlsym(libraryHandle_, modelDriverNameSymbol.c_str()));
   if (modelDriverNameString == NULL)
   {

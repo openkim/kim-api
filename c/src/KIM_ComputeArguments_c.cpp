@@ -107,7 +107,7 @@ makeLanguageNameCpp(KIM_LanguageName const languageName)
   return KIM::LanguageName(languageName.languageNameID);
 }
 
-KIM_SupportStatus const makeSupportStatusC(KIM::SupportStatus supportStatus)
+KIM_SupportStatus makeSupportStatusC(KIM::SupportStatus supportStatus)
 {
   KIM_SupportStatus supportStatusC = {supportStatus.supportStatusID};
   return supportStatusC;
@@ -241,7 +241,7 @@ void KIM_ComputeArguments_GetSimulatorBufferPointer(
   pComputeArguments->GetSimulatorBufferPointer(ptr);
 }
 
-char const * const KIM_ComputeArguments_String(
+char const * KIM_ComputeArguments_String(
     KIM_ComputeArguments const * const computeArguments)
 {
   CONVERT_POINTER;

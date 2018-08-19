@@ -45,17 +45,17 @@ extern "C"
 
 namespace
 {
-KIM::LengthUnit const makeLengthUnitCpp(KIM_LengthUnit const lengthUnit)
+KIM::LengthUnit makeLengthUnitCpp(KIM_LengthUnit const lengthUnit)
 {
   KIM::LengthUnit const * const lengthUnitCpp
-      = reinterpret_cast <KIM::LengthUnit const * const>(&lengthUnit);
+      = reinterpret_cast <KIM::LengthUnit const *>(&lengthUnit);
   return *lengthUnitCpp;
 }
 
-KIM_LengthUnit const makeLengthUnitC(KIM::LengthUnit const lengthUnit)
+KIM_LengthUnit makeLengthUnitC(KIM::LengthUnit const lengthUnit)
 {
   KIM_LengthUnit const * const lengthUnitC
-      = reinterpret_cast <KIM_LengthUnit const * const>(&lengthUnit);
+      = reinterpret_cast <KIM_LengthUnit const *>(&lengthUnit);
   return *lengthUnitC;
 }
 }  // namespace
@@ -77,7 +77,7 @@ int KIM_LengthUnit_NotEqual(KIM_LengthUnit left, KIM_LengthUnit right)
   return (!KIM_LengthUnit_Equal(left, right));
 }
 
-char const * const KIM_LengthUnit_String(KIM_LengthUnit const lengthUnit)
+char const * KIM_LengthUnit_String(KIM_LengthUnit const lengthUnit)
 {
   return makeLengthUnitCpp(lengthUnit).String().c_str();
 }

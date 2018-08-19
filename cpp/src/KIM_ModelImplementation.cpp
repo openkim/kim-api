@@ -136,7 +136,7 @@ KIM_TimeUnit makeTimeUnitC(KIM::TimeUnit const timeUnit)
 #define SNUM( x ) static_cast<std::ostringstream &>(    \
     std::ostringstream() << std::dec << x).str()
 #define SPTR( x ) static_cast<std::ostringstream &>(                    \
-    std::ostringstream() << static_cast<void const * const>(x) ).str()
+    std::ostringstream() << static_cast<void const *>(x) ).str()
 #define SFUNC( x ) static_cast<std::ostringstream &>(           \
     std::ostringstream() << static_cast<func *>(x)).str()
 
@@ -1183,8 +1183,8 @@ int ModelImplementation::Compute(
   if (computeLanguage_ == LANGUAGE_NAME::cpp)
   {
     error = CppCompute(
-        reinterpret_cast<KIM::ModelCompute const * const>(&M),
-        reinterpret_cast<KIM::ModelComputeArguments const * const>(
+        reinterpret_cast<KIM::ModelCompute const *>(&M),
+        reinterpret_cast<KIM::ModelComputeArguments const *>(
             computeArguments));
   }
   else if (computeLanguage_ == LANGUAGE_NAME::c)
@@ -2198,7 +2198,7 @@ int ModelImplementation::ModelComputeArgumentsCreate(ComputeArguments * const
   if (computeArgumentsCreateLanguage_ == LANGUAGE_NAME::cpp)
   {
     error = CppComputeArgumentsCreate(
-        reinterpret_cast<KIM::ModelCompute const * const>(&M),
+        reinterpret_cast<KIM::ModelCompute const *>(&M),
         reinterpret_cast<KIM::ModelComputeArgumentsCreate *>(computeArguments));
   }
   else if (computeArgumentsCreateLanguage_ == LANGUAGE_NAME::c)
@@ -2259,19 +2259,19 @@ int ModelImplementation::ModelComputeArgumentsDestroy(ComputeArguments * const
       KIM::ModelCompute const * const,
       KIM::ModelComputeArgumentsDestroy * const);
   ModelComputeArgumentsDestroyCpp * CppComputeArgumentsDestroy
-      = reinterpret_cast<ModelComputeArgumentsDestroyCpp * const>(
+      = reinterpret_cast<ModelComputeArgumentsDestroyCpp *>(
           computeArgumentsDestroyFunction_);
   typedef int ModelComputeArgumentsDestroyC(
       KIM_ModelCompute const * const,
       KIM_ModelComputeArgumentsDestroy * const);
   ModelComputeArgumentsDestroyC * CComputeArgumentsDestroy
-      = reinterpret_cast<ModelComputeArgumentsDestroyC * const>(
+      = reinterpret_cast<ModelComputeArgumentsDestroyC *>(
           computeArgumentsDestroyFunction_);
   typedef void ModelComputeArgumentsDestroyF(
       KIM_ModelCompute const * const,
       KIM_ModelComputeArgumentsDestroy * const, int * const);
   ModelComputeArgumentsDestroyF * FComputeArgumentsDestroy
-      = reinterpret_cast<ModelComputeArgumentsDestroyF * const>(
+      = reinterpret_cast<ModelComputeArgumentsDestroyF *>(
           computeArgumentsDestroyFunction_);
 
   int error;
@@ -2281,8 +2281,8 @@ int ModelImplementation::ModelComputeArgumentsDestroy(ComputeArguments * const
   if (computeArgumentsDestroyLanguage_ == LANGUAGE_NAME::cpp)
   {
     error = CppComputeArgumentsDestroy(
-        reinterpret_cast<KIM::ModelCompute const * const>(&M),
-        reinterpret_cast<KIM::ModelComputeArgumentsDestroy * const>(
+        reinterpret_cast<KIM::ModelCompute const *>(&M),
+        reinterpret_cast<KIM::ModelComputeArgumentsDestroy *>(
             computeArguments));
   }
   else if (computeArgumentsDestroyLanguage_ == LANGUAGE_NAME::c)

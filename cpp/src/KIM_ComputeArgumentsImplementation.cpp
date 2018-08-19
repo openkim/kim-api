@@ -60,7 +60,7 @@ extern std::vector<ComputeCallbackName> const requiredByAPI_ComputeCallbacks;
 #define SNUM( x ) static_cast<std::ostringstream &>(    \
     std::ostringstream() << std::dec << x).str()
 #define SPTR( x ) static_cast<std::ostringstream &>(                    \
-    std::ostringstream() << static_cast<void const * const>(x) ).str()
+    std::ostringstream() << static_cast<void const *>(x) ).str()
 #define SFUNC( x ) static_cast<std::ostringstream &>(           \
     std::ostringstream() << static_cast<func *>(x)).str()
 
@@ -339,8 +339,7 @@ int ComputeArgumentsImplementation::SetArgumentPointer(
     ComputeArgumentName const computeArgumentName,
     int * const ptr)
 {
-  return SetArgumentPointer(computeArgumentName,
-                            const_cast<int const * const>(ptr));
+  return SetArgumentPointer(computeArgumentName, const_cast<int const *>(ptr));
 }
 
 int ComputeArgumentsImplementation::SetArgumentPointer(
@@ -386,7 +385,7 @@ int ComputeArgumentsImplementation::SetArgumentPointer(
     double * const ptr)
 {
   return SetArgumentPointer(computeArgumentName,
-                            const_cast<double const * const>(ptr));
+                            const_cast<double const *>(ptr));
 }
 
 int ComputeArgumentsImplementation::GetArgumentPointer(

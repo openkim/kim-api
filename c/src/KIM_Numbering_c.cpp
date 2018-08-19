@@ -47,14 +47,14 @@ namespace
 KIM::Numbering makeNumberingCpp(KIM_Numbering const numbering)
 {
   KIM::Numbering const * const numberingCpp
-      = reinterpret_cast <KIM::Numbering const * const>(&numbering);
+      = reinterpret_cast <KIM::Numbering const *>(&numbering);
   return *numberingCpp;
 }
 
 KIM_Numbering makeNumberingC(KIM::Numbering const numbering)
 {
   KIM_Numbering const * const numberingC
-      = reinterpret_cast <KIM_Numbering const * const>(&numbering);
+      = reinterpret_cast <KIM_Numbering const *>(&numbering);
   return *numberingC;
 }
 }  // namespace
@@ -76,8 +76,7 @@ int KIM_Numbering_NotEqual(KIM_Numbering const left, KIM_Numbering const right)
   return (!KIM_Numbering_Equal(left, right));
 }
 
-char const * const KIM_Numbering_String(
-    KIM_Numbering const numbering)
+char const * KIM_Numbering_String(KIM_Numbering const numbering)
 {
   return makeNumberingCpp(numbering).String().c_str();
 }

@@ -51,7 +51,7 @@ int KIM_TemperatureUnit_Equal(KIM_TemperatureUnit const left,
                               KIM_TemperatureUnit const right);
 int KIM_TemperatureUnit_NotEqual(KIM_TemperatureUnit const left,
                                  KIM_TemperatureUnit const right);
-char const * const KIM_TemperatureUnit_String(
+char const * KIM_TemperatureUnit_String(
     KIM_TemperatureUnit const temperatureUnit);
 
 extern KIM_TemperatureUnit const KIM_TEMPERATURE_UNIT_unused;

@@ -89,7 +89,7 @@ void KIM_ModelComputeArgumentsCreate_LogEntry(
     KIM_LogVerbosity const logVerbosity, char const * const message,
     int const lineNumber, char const * const fileName);
 
-char const * const KIM_ModelComputeArgumentsCreate_String(
+char const * KIM_ModelComputeArgumentsCreate_String(
     KIM_ModelComputeArgumentsCreate const * const modelComputeArgumentsCreate);
 
 #endif  /* KIM_MODEL_COMPUTE_ARGUMENTS_CREATE_H_ */

@@ -52,7 +52,7 @@ int KIM_SpeciesName_Equal(KIM_SpeciesName const left,
                           KIM_SpeciesName const right);
 int KIM_SpeciesName_NotEqual(KIM_SpeciesName const left,
                              KIM_SpeciesName const right);
-char const * const KIM_SpeciesName_String(KIM_SpeciesName const speciesName);
+char const * KIM_SpeciesName_String(KIM_SpeciesName const speciesName);
 
 extern KIM_SpeciesName const KIM_SPECIES_NAME_electron;
 extern KIM_SpeciesName const KIM_SPECIES_NAME_H;

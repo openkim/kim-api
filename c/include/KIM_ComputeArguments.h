@@ -110,7 +110,7 @@ void KIM_ComputeArguments_GetSimulatorBufferPointer(
     KIM_ComputeArguments const * const computeArguments,
     void ** const ptr);
 
-char const * const KIM_ComputeArguments_String(
+char const * KIM_ComputeArguments_String(
     KIM_ComputeArguments const * const computeArguments);
 
 void KIM_ComputeArguments_SetLogID(

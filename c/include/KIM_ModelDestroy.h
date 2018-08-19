@@ -58,7 +58,7 @@ void KIM_ModelDestroy_LogEntry(
     KIM_LogVerbosity const logVerbosity, char const * const message,
     int const lineNumber, char const * const fileName);
 
-char const * const KIM_ModelDestroy_String(
+char const * KIM_ModelDestroy_String(
     KIM_ModelDestroy const * const modelDestroy);
 
 #endif  /* KIM_MODEL_DESTROY_H_ */

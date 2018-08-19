@@ -45,17 +45,17 @@ extern "C"
 
 namespace
 {
-KIM::LanguageName const makeLanguageNameCpp(KIM_LanguageName languageName)
+KIM::LanguageName makeLanguageNameCpp(KIM_LanguageName languageName)
 {
   KIM::LanguageName const * const languageNameCpp
-      = reinterpret_cast <KIM::LanguageName const * const>(&languageName);
+      = reinterpret_cast <KIM::LanguageName const *>(&languageName);
   return *languageNameCpp;
 }
 
-KIM_LanguageName const makeLanguageNameC(KIM::LanguageName languageName)
+KIM_LanguageName makeLanguageNameC(KIM::LanguageName languageName)
 {
   KIM_LanguageName const * const languageNameC
-      = reinterpret_cast <KIM_LanguageName const * const>(&languageName);
+      = reinterpret_cast <KIM_LanguageName const *>(&languageName);
   return *languageNameC;
 }
 }  // namespace
@@ -79,7 +79,7 @@ int KIM_LanguageName_NotEqual(KIM_LanguageName const left,
   return (!KIM_LanguageName_Equal(left, right));
 }
 
-char const * const KIM_LanguageName_String(KIM_LanguageName languageName)
+char const * KIM_LanguageName_String(KIM_LanguageName languageName)
 {
   return makeLanguageNameCpp(languageName).String().c_str();
 }

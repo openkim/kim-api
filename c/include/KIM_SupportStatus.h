@@ -51,8 +51,7 @@ int KIM_SupportStatus_Equal(KIM_SupportStatus const left,
                             KIM_SupportStatus const right);
 int KIM_SupportStatus_NotEqual(KIM_SupportStatus const left,
                                KIM_SupportStatus const right);
-char const * const KIM_SupportStatus_String(
-    KIM_SupportStatus const supportStatus);
+char const * KIM_SupportStatus_String(KIM_SupportStatus const supportStatus);
 
 extern KIM_SupportStatus const KIM_SUPPORT_STATUS_requiredByAPI;
 extern KIM_SupportStatus const KIM_SUPPORT_STATUS_notSupported;

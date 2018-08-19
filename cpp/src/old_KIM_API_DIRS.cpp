@@ -403,7 +403,7 @@ void getAvailableItems(DirectoryPathType type,
       if (tmp_lib_handle != NULL)
       {
         std::string verSymbolName = entry[IE_NAME] + "_compiled_with_version";
-        char const* const verSymbolPtr = (char const* const)
+        char const* const verSymbolPtr = (char const*)
             dlsym(tmp_lib_handle, verSymbolName.c_str());
         char* dlsym_error = dlerror();
         if (dlsym_error)

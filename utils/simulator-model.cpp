@@ -179,7 +179,7 @@ int main(int argc, char* argv[])
     if (nameFlag)
     {
       char const * const namePointer
-          = (char const * const) dlsym(model_lib_handle, symbol.c_str());
+          = (char const *) dlsym(model_lib_handle, symbol.c_str());
       dlsym_error = dlerror();
       if (dlsym_error) {
         std::cout << "* Error: Cannot load symbol: " << dlsym_error <<std::endl;
@@ -194,8 +194,7 @@ int main(int argc, char* argv[])
     else
     {
       unsigned char const * const filePointer
-          = (unsigned char const * const) dlsym(model_lib_handle,
-                                                symbol.c_str());
+          = (unsigned char const *) dlsym(model_lib_handle, symbol.c_str());
       dlsym_error = dlerror();
       if (dlsym_error) {
         std::cout << "* Error: Cannot load symbol: " << dlsym_error <<std::endl;

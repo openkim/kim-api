@@ -451,6 +451,12 @@ int model_create(KIM_ModelCreate * const modelCreate,
   buffer * bufferPointer;
   int error;
 
+  (void)requestedLengthUnit;  /* avoid unused parameter warnings */
+  (void)requestedEnergyUnit;
+  (void)requestedChargeUnit;
+  (void)requestedTemperatureUnit;
+  (void)requestedTimeUnit;
+
   /* set units */
   LOG_INFORMATION("Set model units");
   error = KIM_ModelCreate_SetUnits(
@@ -580,6 +586,9 @@ static int compute_arguments_create(
     KIM_ModelComputeArgumentsCreate * const modelComputeArgumentsCreate)
 {
   int error;
+
+  (void)modelCompute;  /* avoid unused parameter warning */
+
   /* register arguments */
   LOG_INFORMATION("Register argument supportStatus");
   error =
@@ -624,6 +633,10 @@ static int compute_arguments_destroy(
     KIM_ModelCompute const * const modelCompute,
     KIM_ModelComputeArgumentsDestroy * const modelComputeArgumentsDestroy)
 {
+
+  (void)modelCompute;  /* avoid unused parameter warnings */
+  (void)modelComputeArgumentsDestroy;
+
   /* nothing to be done */
 
   return FALSE;

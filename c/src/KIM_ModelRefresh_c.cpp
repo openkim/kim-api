@@ -113,7 +113,7 @@ void KIM_ModelRefresh_LogEntry(
                           lineNumber, fileName);
 }
 
-char const * const KIM_ModelRefresh_String(
+char const * KIM_ModelRefresh_String(
     KIM_ModelRefresh const * const modelRefresh)
 {
   CONVERT_POINTER;

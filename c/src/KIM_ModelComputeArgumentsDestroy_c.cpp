@@ -95,7 +95,7 @@ void KIM_ModelComputeArgumentsDestroy_LogEntry(
                                           message, lineNumber, fileName);
 }
 
-char const * const KIM_ModelComputeArgumentsDestroy_String(
+char const * KIM_ModelComputeArgumentsDestroy_String(
     KIM_ModelComputeArgumentsDestroy const * const modelComputeArgumentsDestroy)
 {
   CONVERT_POINTER;

@@ -49,7 +49,7 @@ KIM_Numbering KIM_Numbering_FromString(char const * const str);
 
 int KIM_Numbering_Equal(KIM_Numbering const left, KIM_Numbering const right);
 int KIM_Numbering_NotEqual(KIM_Numbering const left, KIM_Numbering const right);
-char const * const KIM_Numbering_String(KIM_Numbering const numbering);
+char const * KIM_Numbering_String(KIM_Numbering const numbering);
 
 extern KIM_Numbering const KIM_NUMBERING_zeroBased;
 extern KIM_Numbering const KIM_NUMBERING_oneBased;

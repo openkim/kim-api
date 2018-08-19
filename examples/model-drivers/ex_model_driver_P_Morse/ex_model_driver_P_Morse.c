@@ -415,6 +415,12 @@ int model_driver_create(
   double dummy;
   struct model_buffer* buffer;
 
+  (void)requestedLengthUnit;  /* avoid unused parameter warnings */
+  (void)requestedEnergyUnit;
+  (void)requestedChargeUnit;
+  (void)requestedTemperatureUnit;
+  (void)requestedTimeUnit;
+
 
   /* using fixed units */
   ier = KIM_ModelDriverCreate_SetUnits(modelDriverCreate,
@@ -604,6 +610,9 @@ static int compute_arguments_create(
     KIM_ModelComputeArgumentsCreate * const modelComputeArgumentsCreate)
 {
   int ier;
+
+  (void)modelCompute;  /* avoid unused parameter warning */
+
   /* register arguments */
   ier = KIM_ModelComputeArgumentsCreate_SetArgumentSupportStatus(
       modelComputeArgumentsCreate,
@@ -636,6 +645,10 @@ static int compute_arguments_destroy(
     KIM_ModelCompute const * const modelCompute,
     KIM_ModelComputeArgumentsDestroy * const modelComputeArgumentsDestroy)
 {
+
+  (void)modelCompute;  /* avoid unused parameter warning */
+  (void)modelComputeArgumentsDestroy;
+
   /* nothing to be done */
 
   return FALSE;

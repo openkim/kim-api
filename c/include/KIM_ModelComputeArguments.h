@@ -104,7 +104,7 @@ void KIM_ModelComputeArguments_LogEntry(
     KIM_LogVerbosity const logVerbosity, char const * const message,
     int const lineNumber, char const * const fileName);
 
-char const * const KIM_ModelComputeArguments_String(
+char const * KIM_ModelComputeArguments_String(
     KIM_ModelComputeArguments const * const modelComputeArguments);
 
 #endif  /* KIM_MODEL_COMPUTE_ARGUMENTS_H_ */

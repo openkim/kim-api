@@ -225,6 +225,8 @@ int LennardJones612Implementation::ComputeArgumentsDestroy(
 
   // nothing else to do for this case
 
+  (void)modelComputeArgumentsDestroy;  // avoid unused parameter warning
+
   // everything is good
   ier = false;
   return ier;
@@ -331,6 +333,9 @@ int LennardJones612Implementation::ProcessParameterFiles(
   char *nextLinePtr;
   int iIndex, jIndex , indx, iiIndex, jjIndex;
   double nextCutoff, nextEpsilon, nextSigma;
+
+  (void)numberParameterFiles;  // avoid unused parameter warning
+
   nextLinePtr = nextLine;
 
   getNextDataLine(parameterFilePointers[0], nextLinePtr,
@@ -831,7 +836,7 @@ int LennardJones612Implementation::SetComputeMutableValues(
           &particleContributing)
       || modelComputeArguments->GetArgumentPointer(
           KIM::COMPUTE_ARGUMENT_NAME::coordinates,
-          (double const ** const) &coordinates)
+          (double const **) &coordinates)
       || modelComputeArguments->GetArgumentPointer(
           KIM::COMPUTE_ARGUMENT_NAME::partialEnergy,
           &energy)
@@ -840,13 +845,13 @@ int LennardJones612Implementation::SetComputeMutableValues(
           &particleEnergy)
       || modelComputeArguments->GetArgumentPointer(
           KIM::COMPUTE_ARGUMENT_NAME::partialForces,
-          (double const ** const) &forces)
+          (double const **) &forces)
       || modelComputeArguments->GetArgumentPointer(
           KIM::COMPUTE_ARGUMENT_NAME::partialVirial,
-          (double const ** const) &virial)
+          (double const **) &virial)
       || modelComputeArguments->GetArgumentPointer(
           KIM::COMPUTE_ARGUMENT_NAME::partialParticleVirial,
-          (double const ** const) &particleVirial);
+          (double const **) &particleVirial);
   if (ier)
   {
     LOG_ERROR("GetArgumentPointer");
@@ -958,6 +963,9 @@ void LennardJones612Implementation::ProcessVirialTerm(
     const int& j,
     VectorOfSizeSix virial) const
 {
+  (void)i;  // avoid unused parameter warning
+  (void)j;
+
   double const v = dEidr/rij;
 
   virial[0] += v * r_ij[0] * r_ij[0];
@@ -977,6 +985,8 @@ void LennardJones612Implementation::ProcessParticleVirialTerm(
     const int& j, const int& jContrib,
     VectorOfSizeSix* const particleVirial) const
 {
+  (void)iContrib;  // avoid unused parameter warning
+
   double const v = dEidr/rij;
   VectorOfSizeSix vir;
 

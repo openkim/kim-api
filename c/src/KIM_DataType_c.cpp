@@ -45,17 +45,17 @@ extern "C"
 
 namespace
 {
-KIM::DataType const makeDataTypeCpp(KIM_DataType const dataType)
+KIM::DataType makeDataTypeCpp(KIM_DataType const dataType)
 {
   KIM::DataType const * const dataTypeCpp
-      = reinterpret_cast <KIM::DataType const * const>(&dataType);
+      = reinterpret_cast <KIM::DataType const *>(&dataType);
   return *dataTypeCpp;
 }
 
-KIM_DataType const makeDataTypeC(KIM::DataType const dataType)
+KIM_DataType makeDataTypeC(KIM::DataType const dataType)
 {
   KIM_DataType const * const dataTypeC
-      = reinterpret_cast <KIM_DataType const * const>(&dataType);
+      = reinterpret_cast <KIM_DataType const *>(&dataType);
   return *dataTypeC;
 }
 }  // namespace
@@ -77,7 +77,7 @@ int KIM_DataType_NotEqual(KIM_DataType const left, KIM_DataType const right)
   return (!KIM_DataType_Equal(left, right));
 }
 
-char const * const KIM_DataType_String(KIM_DataType const dataType)
+char const * KIM_DataType_String(KIM_DataType const dataType)
 {
   return makeDataTypeCpp(dataType).String().c_str();
 }
