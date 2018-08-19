@@ -36,18 +36,7 @@
 cmake_minimum_required(VERSION 3.4)
 enable_testing()
 
-# Language standards (also enforced with FLAGS below)
-#
-set(CMAKE_CXX_STANDARD 98)
-set(CMAKE_CXX_STANDARD_REQUIRED YES)
-set(CMAKE_CXX_EXTENSIONS OFF)
-#
-set(CMAKE_C_STANDARD 90)
-set(CMAKE_C_STANDARD_REQUIRED YES)
-set(CMAKE_C_EXTENSIONS OFF)
-#
-# NO similar setting exist yet in CMake for Fortran
-
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules)
 
 # Define options
 #
@@ -74,24 +63,7 @@ option(KIM_API_BUILD_MODELS_AND_DRIVERS "TODO Build model" OFF)
 #
 project(${PROJECT_PREFIX}-v2 VERSION 2.0.0 LANGUAGES CXX C Fortran)
 include(GNUInstallDirs)  # needs to come after call to project()
-
-#
-# Define remaining version variables
-#
-set(PROJECT_VERSION_PRERELEASE "git" CACHE STRING "TODO ...")
-set(PROJECT_VERSION_BUILD_METADATA "" CACHE STRING "TODO ...") #@@@ this should be updated at build time, not configuration time...
-# TODO : translate next line for metadata :: http://xit0.org/2013/04/cmake-use-git-branch-and-commit-details-in-project/
-# more complex: https://github.com/votca/tools/blob/master/CMakeModules/gitversion.cmake
-# $(shell git rev-parse --short HEAD)$(shell if ! (git diff --quiet && git diff --cached --quiet); then printf ".dirty"; fi).$(KIM_COMPILERSUITE).$(KIM_SYSTEMLINKER).$(KIM_SYSTEMARCH).$(KIM_LINK)
-set(PROJECT_VERSION_STRING "${PROJECT_VERSION}")
-if(PROJECT_VERSION_PRERELEASE)
-  set(PROJECT_VERSION_STRING
-    "${PROJECT_VERSION_STRING}-${PROJECT_VERSION_PRERELEASE}")
-endif()
-if(PROJECT_VERSION_BUILD_METADATA)
-  set(PROJECT_VERSION_STRING
-    "${PROJECT_VERSION_STRING}+${PROJECT_VERSION_BUILD_METADATA}")
-endif()
+include(DefineVersionVariables)
 
 
 # Define options dependent on PROJECT_NAME
@@ -104,82 +76,9 @@ if (${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
   mark_as_advanced(KIM_API_ENABLE_COVERAGE)
 endif()
 
+include(DefineInternalVariables)
 
-# Define other internal variables
-#
-set(KIM_API_CMAKE_DIR_IDENTIFIER "cmake" CACHE INTERNAL "Canonical id for the CMake dir")
-#
-set(KIM_API_MODEL_DRIVER_IDENTIFIER "model-driver" CACHE INTERNAL "Canonical id for a model driver")
-set(KIM_API_MODEL_DRIVER_PLURAL_IDENTIFIER "${KIM_API_MODEL_DRIVER_IDENTIFIER}s" CACHE INTERNAL "plural")
-#
-set(KIM_API_MODEL_IDENTIFIER "model" CACHE INTERNAL "Canonical id for a model")
-set(KIM_API_MODEL_PLURAL_IDENTIFIER "${KIM_API_MODEL_IDENTIFIER}s" CACHE INTERNAL "plural")
-#
-set(KIM_API_PARAMETERIZED_MODEL_IDENTIFIER "parameterized-model" CACHE INTERNAL "Canonical id for a parameterized model")
-#
-set(KIM_API_SIMULATOR_MODEL_IDENTIFIER "simulator-model" CACHE INTERNAL "Canonical id for a simulator model")
-#
-set(KIM_API_STAND_ALONE_MODEL_IDENTIFIER "stand-alone-model" CACHE INTERNAL "Canonical id for a stand-alone model")
-string(MAKE_C_IDENTIFIER "${PROJECT_NAME}_CONFIGURATION_FILE" KIM_API_ENVIRONMENT_CONFIGURATION_FILE)
-#
-string(TOUPPER ${KIM_API_ENVIRONMENT_CONFIGURATION_FILE} KIM_API_ENVIRONMENT_CONFIGURATION_FILE)
-set(KIM_API_ENVIRONEMT_CONFIGURATION_FILE "${KIM_API_ENVIRONMENT_CONFIGURATION_FILE}" CACHE INTERNAL "Configuration file environment variable name")
-#
-string(MAKE_C_IDENTIFIER "${PROJECT_NAME}_CMAKE_MODULES_DIR" KIM_API_ENVIRONMENT_CMAKE_MODULES_DIR)
-string(TOUPPER ${KIM_API_ENVIRONMENT_CMAKE_MODULES_DIR} KIM_API_ENVIRONMENT_CMAKE_MODULES_DIR)
-set(KIM_API_ENVIRONEMT_CMAKE_MODULES_DIR "${KIM_API_ENVIRONMENT_CMAKE_MODULES_DIR}" CACHE INTERNAL "CMake Modules dir environment variable name")
-#
-set(KIM_API_MODEL_DRIVER_PLURAL_DIR_IDENTIFIER "${KIM_API_MODEL_DRIVER_PLURAL_IDENTIFIER}-dir" CACHE INTERNAL "Model drivers directory identifier")
-set(KIM_API_USER_MODEL_DRIVER_PLURAL_DIR_DEFAULT "~/.${PROJECT_NAME}/${KIM_API_MODEL_DRIVER_PLURAL_DIR_IDENTIFIER}" CACHE INTERNAL "Default user collection model drivers dir")
-#
-string(MAKE_C_IDENTIFIER "${PROJECT_NAME}_${KIM_API_MODEL_DRIVER_PLURAL_DIR_IDENTIFIER}" KIM_API_ENVIRONMENT_MODEL_DRIVER_PLURAL_DIR)
-string(TOUPPER ${KIM_API_ENVIRONMENT_MODEL_DRIVER_PLURAL_DIR} KIM_API_ENVIRONMENT_MODEL_DRIVER_PLURAL_DIR)
-set(KIM_API_ENVIRONMENT_MODEL_DRIVER_PLURAL_DIR "${KIM_API_ENVIRONMENT_MODEL_DRIVER_PLURAL_DIR}" CACHE INTERNAL "Model drivers directory environment variable name")
-#
-set(KIM_API_MODEL_PLURAL_DIR_IDENTIFIER "${KIM_API_MODEL_PLURAL_IDENTIFIER}-dir" CACHE INTERNAL "Models directory identifier")
-set(KIM_API_USER_MODEL_PLURAL_DIR_DEFAULT "~/.${PROJECT_NAME}/${KIM_API_MODEL_PLURAL_DIR_IDENTIFIER}" CACHE INTERNAL "Default user collection models dir")
-#
-string(MAKE_C_IDENTIFIER "${PROJECT_NAME}_${KIM_API_MODEL_PLURAL_DIR_IDENTIFIER}" KIM_API_ENVIRONMENT_MODEL_PLURAL_DIR)
-string(TOUPPER ${KIM_API_ENVIRONMENT_MODEL_PLURAL_DIR} KIM_API_ENVIRONMENT_MODEL_PLURAL_DIR)
-set(KIM_API_ENVIRONMENT_MODEL_PLURAL_DIR "${KIM_API_ENVIRONMENT_MODEL_PLURAL_DIR}" CACHE INTERNAL "Models directory environment variable name")
-
-
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules)
-# Set global compiler options
-#
-include(EnableCXXCompilerFlagIfSupported)
-enable_cxx_compiler_flag_if_supported("-std=c++${CMAKE_CXX_STANDARD}")
-enable_cxx_compiler_flag_if_supported("-Wall")
-enable_cxx_compiler_flag_if_supported("-Wextra")
-enable_cxx_compiler_flag_if_supported("-pedantic")
-set(KIM_API_CXX_FLAGS "${KIM_API_CXX_FLAGS}" CACHE STRING "TODO add description")
-set(CMAKE_CXX_FLAGS "${KIM_API_CXX_FLAGS} ${CMAKE_CXX_FLAGS}")
-#
-include(EnableCCompilerFlagIfSupported)
-enable_c_compiler_flag_if_supported("-std=c${CMAKE_C_STANDARD}")
-enable_c_compiler_flag_if_supported("-Wall")
-enable_c_compiler_flag_if_supported("-Wextra")
-enable_c_compiler_flag_if_supported("-pedantic")
-set(KIM_API_C_FLAGS "${KIM_API_C_FLAGS}" CACHE STRING "TODO add description")
-set(CMAKE_C_FLAGS "${KIM_API_C_FLAGS} ${CMAKE_C_FLAGS}")
-#
-include(EnableFortranCompilerFlagIfSupported)
-enable_fortran_compiler_flag_if_supported("-std=f2003")
-enable_fortran_compiler_flag_if_supported("-Wall")
-enable_fortran_compiler_flag_if_supported("-Wextra")
-enable_fortran_compiler_flag_if_supported("-Wimplicit-interface")
-enable_fortran_compiler_flag_if_supported("-pedantic")
-enable_fortran_compiler_flag_if_supported("-ffree-line-length-none")
-set(KIM_API_Fortran_FLAGS "${KIM_API_Fortran_FLAGS}" CACHE STRING "TODO add description")
-set(CMAKE_Fortran_FLAGS "${KIM_API_Fortran_FLAGS} ${CMAKE_Fortran_FLAGS}")
-
-#
-if(KIM_API_ENABLE_COVERAGE)
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --coverage")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage")
-  set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} --coverage")
-endif()
-
+include(DefaultCompilerFlags)
 
 # Define kim-api target
 #
