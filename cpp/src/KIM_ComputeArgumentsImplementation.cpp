@@ -321,10 +321,22 @@ int ComputeArgumentsImplementation::SetArgumentPointer(
       result = computeArgumentSupportStatus_.find(computeArgumentName);
   if (result->second == SUPPORT_STATUS::notSupported)
   {
-    LOG_ERROR("Pointer value cannot be set for ComputeArgument '"
-              + computeArgumentName.String() + "' which is 'notSupported'.");
-    LOG_DEBUG("Exit 1=" + callString);
-    return true;
+    if (ptr == NULL)
+    {
+      LOG_WARNING("Setting 'notSupported' ComputeArgument '" +
+                  computeArgumentName.String() +
+                  "' pointer to NULL.  This action, although innocuous, "
+                  "is considered an error and should be avoided.");
+      LOG_DEBUG("Exit 0=" + callString);
+      return false;  // allow innocuous behavior
+    }
+    else
+    {
+      LOG_ERROR("Pointer value cannot be set for ComputeArgument '"
+                + computeArgumentName.String() + "' which is 'notSupported'.");
+      LOG_DEBUG("Exit 1=" + callString);
+      return true;
+    }
   }
 #endif
 
@@ -366,10 +378,22 @@ int ComputeArgumentsImplementation::SetArgumentPointer(
       result = computeArgumentSupportStatus_.find(computeArgumentName);
   if (result->second == SUPPORT_STATUS::notSupported)
   {
-    LOG_ERROR("Pointer value cannot be set for ComputeArguments '"
-              + computeArgumentName.String() + "' which is 'notSupported'.");
-    LOG_DEBUG("Exit 1=" + callString);
-    return true;
+    if (ptr == NULL)
+    {
+      LOG_WARNING("Setting 'notSupported' ComputeArgument '" +
+                  computeArgumentName.String() +
+                  "' pointer to NULL.  This action, although innocuous, "
+                  "is considered an error and should be avoided.");
+      LOG_DEBUG("Exit 0=" + callString);
+      return false;  // allow innocuous behavior
+    }
+    else
+    {
+      LOG_ERROR("Pointer value cannot be set for ComputeArgument '"
+                + computeArgumentName.String() + "' which is 'notSupported'.");
+      LOG_DEBUG("Exit 1=" + callString);
+      return true;
+    }
   }
 #endif
 
@@ -585,10 +609,22 @@ int ComputeArgumentsImplementation::SetCallbackPointer(
 
   if (result->second == SUPPORT_STATUS::notSupported)
   {
-    LOG_ERROR("Pointer value cannot be set for ComputeCallback '"
-              + computeCallbackName.String() + "' that is 'notSupported'.");
-    LOG_DEBUG("Exit 1=" + callString);
-    return true;
+    if (fptr == NULL)
+    {
+      LOG_WARNING("Setting 'notSupported' ComputeCallback '" +
+                  computeCallbackName.String() +
+                  "' pointer to NULL.  This action, although innocuous, "
+                  "is considered an error and should be avoided.");
+      LOG_DEBUG("Exit 0=" + callString);
+      return false;  // allow innocuous behavior
+    }
+    else
+    {
+      LOG_ERROR("Pointer value cannot be set for ComputeCallback '"
+                + computeCallbackName.String() + "' that is 'notSupported'.");
+      LOG_DEBUG("Exit 1=" + callString);
+      return true;
+    }
   }
 #endif
 
