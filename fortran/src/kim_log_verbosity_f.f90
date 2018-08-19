@@ -161,21 +161,17 @@ subroutine kim_log_verbosity_string(log_verbosity, string)
   use, intrinsic :: iso_c_binding
   use kim_log_verbosity_module, only : kim_log_verbosity_type
   use kim_log_verbosity_f_module, only : get_string
+  use kim_convert_string_module, only : kim_convert_string
   implicit none
   type(kim_log_verbosity_type), intent(in), value :: log_verbosity
   character(len=*, kind=c_char), intent(out) :: string
 
   type(c_ptr) :: p
-  character(len=len(string)+1, kind=c_char), pointer :: fp
-  integer(c_int) :: null_index
 
   p = get_string(log_verbosity)
   if (c_associated(p)) then
-    call c_f_pointer(p, fp)
-    null_index = scan(fp, char(0))-1
-    string = fp(1:null_index)
+    call kim_convert_string(p, string)
   else
-    nullify(fp)
     string = ""
   end if
 end subroutine kim_log_verbosity_string

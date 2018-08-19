@@ -376,6 +376,7 @@ subroutine kim_model_driver_create_get_parameter_file_name( &
     : kim_model_driver_create_handle_type
   use kim_model_driver_create_f_module, only &
     : kim_model_driver_create_type, get_parameter_file_name
+  use kim_convert_string_module, only : kim_convert_string
   implicit none
   type(kim_model_driver_create_handle_type), intent(in) &
     :: model_driver_create_handle
@@ -385,18 +386,13 @@ subroutine kim_model_driver_create_get_parameter_file_name( &
   type(kim_model_driver_create_type), pointer :: model_driver_create
 
   type(c_ptr) :: p
-  character(len=len(parameter_file_name)+1, kind=c_char), pointer :: fp
-  integer(c_int) :: null_index
 
   call c_f_pointer(model_driver_create_handle%p, model_driver_create)
   ierr = get_parameter_file_name(model_driver_create, &
     index-1, p)
   if (c_associated(p)) then
-    call c_f_pointer(p, fp)
-    null_index = scan(fp, char(0))-1
-    parameter_file_name = fp(1:null_index)
+    call kim_convert_string(p, parameter_file_name)
   else
-    nullify(fp)
     parameter_file_name = ""
   end if
 end subroutine kim_model_driver_create_get_parameter_file_name
@@ -788,6 +784,7 @@ subroutine kim_model_driver_create_string(model_driver_create_handle, &
     : kim_model_driver_create_handle_type
   use kim_model_driver_create_f_module, only &
     : kim_model_driver_create_type, model_driver_create_string
+  use kim_convert_string_module, only : kim_convert_string
   implicit none
   type(kim_model_driver_create_handle_type), intent(in) &
     :: model_driver_create_handle
@@ -795,17 +792,12 @@ subroutine kim_model_driver_create_string(model_driver_create_handle, &
   type(kim_model_driver_create_type), pointer :: model_driver_create
 
   type(c_ptr) :: p
-  character(len=len(string)+1, kind=c_char), pointer :: fp
-  integer(c_int) :: null_index
 
   call c_f_pointer(model_driver_create_handle%p, model_driver_create)
   p = model_driver_create_string(model_driver_create)
   if (c_associated(p)) then
-    call c_f_pointer(p, fp)
-    null_index = scan(fp, char(0))-1
-    string = fp(1:null_index)
+    call kim_convert_string(p, string)
   else
-    nullify(fp)
     string = ""
   end if
 end subroutine kim_model_driver_create_string

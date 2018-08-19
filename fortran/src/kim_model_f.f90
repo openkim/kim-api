@@ -613,6 +613,7 @@ subroutine kim_model_get_parameter_data_type_extent_and_description( &
   use kim_data_type_module, only : kim_data_type_type
   use kim_model_f_module, only : kim_model_type, &
     get_parameter_data_type_extent_and_description
+  use kim_convert_string_module, only : kim_convert_string
   implicit none
   type(kim_model_handle_type), intent(in) :: model_handle
   integer(c_int), intent(in), value :: parameter_index
@@ -623,18 +624,13 @@ subroutine kim_model_get_parameter_data_type_extent_and_description( &
   type(kim_model_type), pointer :: model
 
   type(c_ptr) :: p
-  character(len=len(description)+1, kind=c_char), pointer :: fp
-  integer(c_int) :: null_index
 
   call c_f_pointer(model_handle%p, model)
   ierr = get_parameter_data_type_extent_and_description(model, &
     parameter_index-1, data_type, extent, p)
   if (c_associated(p)) then
-    call c_f_pointer(p, fp)
-    null_index = scan(fp, char(0))-1
-    description = fp(1:null_index)
+    call kim_convert_string(p, description)
   else
-    nullify(fp)
     description = ""
   end if
 end subroutine kim_model_get_parameter_data_type_extent_and_description
@@ -741,23 +737,19 @@ subroutine kim_model_string(model_handle, string)
   use, intrinsic :: iso_c_binding
   use kim_model_module, only : kim_model_handle_type
   use kim_model_f_module, only : kim_model_type, model_string
+  use kim_convert_string_module, only : kim_convert_string
   implicit none
   type(kim_model_handle_type), intent(in) :: model_handle
   character(len=*, kind=c_char), intent(out) :: string
   type(kim_model_type), pointer :: model
 
   type(c_ptr) :: p
-  character(len=len(string)+1, kind=c_char), pointer :: fp
-  integer(c_int) :: null_index
 
   call c_f_pointer(model_handle%p, model)
   p = model_string(model)
   if (c_associated(p)) then
-    call c_f_pointer(p, fp)
-    null_index = scan(fp, char(0))-1
-    string = fp(1:null_index)
+    call kim_convert_string(p, string)
   else
-    nullify(fp)
     string = ""
   end if
 end subroutine kim_model_string

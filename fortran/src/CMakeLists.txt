@@ -38,6 +38,7 @@ set(F_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/kim_compute_argument_name_f.f90
   ${CMAKE_CURRENT_SOURCE_DIR}/kim_compute_arguments_f.f90
   ${CMAKE_CURRENT_SOURCE_DIR}/kim_compute_callback_name_f.f90
+  ${CMAKE_CURRENT_SOURCE_DIR}/kim_convert_string_module.f90
   ${CMAKE_CURRENT_SOURCE_DIR}/kim_data_type_f.f90
   ${CMAKE_CURRENT_SOURCE_DIR}/kim_energy_unit_f.f90
   ${CMAKE_CURRENT_SOURCE_DIR}/kim_language_name_f.f90

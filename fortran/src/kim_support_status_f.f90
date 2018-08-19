@@ -117,21 +117,17 @@ subroutine kim_support_status_string(support_status, string)
   use, intrinsic :: iso_c_binding
   use kim_support_status_module, only : kim_support_status_type
   use kim_support_status_f_module, only : get_string
+  use kim_convert_string_module, only : kim_convert_string
   implicit none
   type(kim_support_status_type), intent(in), value :: support_status
   character(len=*, kind=c_char), intent(out) :: string
 
   type(c_ptr) :: p
-  character(len=len(string)+1, kind=c_char), pointer :: fp
-  integer(c_int) :: null_index
 
   p = get_string(support_status)
   if (c_associated(p)) then
-    call c_f_pointer(p, fp)
-    null_index = scan(fp, char(0))-1
-    string = fp(1:null_index)
+    call kim_convert_string(p, string)
   else
-    nullify(fp)
     string = ""
   end if
 end subroutine kim_support_status_string

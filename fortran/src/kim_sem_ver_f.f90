@@ -80,17 +80,14 @@ end module kim_sem_ver_f_module
 subroutine kim_sem_ver_get_sem_ver(version)
   use, intrinsic :: iso_c_binding
   use kim_sem_ver_f_module, only : get_sem_ver
+  use kim_convert_string_module, only : kim_convert_string
   implicit none
   character(len=*, kind=c_char), intent(out) :: version
 
   type(c_ptr) :: p
-  character(len=len(version)+1, kind=c_char), pointer :: fp
-  integer(c_int) :: null_index
 
   call get_sem_ver(p)
-  call c_f_pointer(p, fp)
-  null_index = scan(fp, char(0))-1
-  version = fp(1:null_index)
+  call kim_convert_string(p, version)
 end subroutine kim_sem_ver_get_sem_ver
 
 subroutine kim_sem_ver_is_less_than(version_a, version_b, is_less_than, ierr)
