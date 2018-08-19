@@ -102,7 +102,6 @@ subroutine get_neigh(data_object, number_of_neighbor_lists, cutoffs, &
   integer(c_int), intent(out) :: ierr
 
   !-- Local variables
-  integer(c_int), parameter :: DIM = 3
   integer(c_int) numberOfParticles
   type(neighObject_type), pointer :: neighObject
   integer(c_int), pointer :: neighborList(:,:)

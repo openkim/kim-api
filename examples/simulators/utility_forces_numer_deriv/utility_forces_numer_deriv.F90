@@ -109,7 +109,6 @@ subroutine get_neigh(data_object, number_of_neighbor_lists, cutoffs, &
   integer(c_int), intent(out) :: ierr
 
   !-- Local variables
-  integer(c_int), parameter :: DIM = 3
   integer(c_int) numberOfParticles
   type(neighObject_type), pointer :: neighObject
   integer(c_int), pointer :: neighborList(:,:)
@@ -675,7 +674,7 @@ contains
 
    dfridr = 0.0_cd ! initialize
 
-   if (h.eq.0.0_cd) then
+   if (abs(h).le.tiny(0.0_cd)) then  ! avoid division by zero
       ierr = 1
       return
    endif

@@ -676,7 +676,6 @@ integer(c_int), intent(out) :: ierr
 integer(c_int) :: number_of_parameter_files
 character(len=1024, kind=c_char) :: parameter_file_name
 integer(c_int) :: ierr2
-integer(c_int), parameter :: one=1
 type(BUFFER_TYPE), pointer :: buf;
 type(kim_species_name_type) species_name
 ! define variables for all model parameters to be read in
