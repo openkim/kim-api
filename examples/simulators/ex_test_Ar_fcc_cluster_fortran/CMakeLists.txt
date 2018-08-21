@@ -55,13 +55,6 @@ set(TEST_NAME "ex_test_Ar_fcc_cluster_fortran")
 add_executable(${TEST_NAME} ${TEST_NAME}.F90)
 target_link_libraries(${TEST_NAME} kim-api)
 
-set(TEST_MODELS
-  ex_model_Ar_P_LJ
-  ex_model_Ar_P_MLJ_Fortran
-  ex_model_Ar_P_Morse
-  ex_model_Ar_P_Morse_07C
-  )
-
 foreach(TEST_MODEL ${TEST_MODELS})
   # TODO make a variable for "Testing" directory name
   set(TEST_DIR ${CMAKE_BINARY_DIR}/Testing/Run_${TEST_NAME}_${TEST_MODEL})

@@ -54,19 +54,3 @@ set(TEST_NAME "utility_forces_numer_deriv")
 
 add_executable(${TEST_NAME} ${TEST_NAME}.F90)
 target_link_libraries(${TEST_NAME} kim-api)
-
-set(TEST_MODELS
-  ex_model_Ar_P_LJ
-  ex_model_Ar_P_MLJ_Fortran
-  ex_model_Ar_P_Morse
-  ex_model_Ar_P_Morse_07C
-  )
-
-foreach(TEST_MODEL ${TEST_MODELS})
-  # TODO make a variable for "Testing" directory name
-  set(TEST_DIR ${CMAKE_BINARY_DIR}/Testing/Run_${TEST_NAME}_${TEST_MODEL})
-  FILE(MAKE_DIRECTORY ${TEST_DIR})
-  add_test(NAME Run_${TEST_NAME}_${TEST_MODEL} COMMAND sh -c "echo ${TEST_MODEL} | ${CMAKE_CURRENT_BINARY_DIR}/${TEST_NAME} > stdout" WORKING_DIRECTORY ${TEST_DIR})
-  # TODO : the environment variables can be abstracted for generality
-  set_tests_properties(Run_${TEST_NAME}_${TEST_MODEL} PROPERTIES ENVIRONMENT "KIM_API_V2_MODELS_DIR=${CMAKE_BINARY_DIR};KIM_API_V2_MODEL_DRIVERS_DIR=${CMAKE_BINARY_DIR}")
-endforeach()

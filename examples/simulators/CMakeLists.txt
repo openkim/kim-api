@@ -35,6 +35,15 @@
 
 cmake_minimum_required(VERSION 3.4)
 
+set(TEST_MODELS
+  LennardJones612_UniversalShifted__MO_959249795837_003
+  LennardJones_Ar
+  ex_model_Ar_P_LJ
+  ex_model_Ar_P_MLJ_Fortran
+  ex_model_Ar_P_Morse
+  ex_model_Ar_P_Morse_07C
+  )
+
 add_subdirectory(ex_test_Ar_fcc_cluster)
 add_subdirectory(ex_test_Ar_fcc_cluster_cpp)
 add_subdirectory(ex_test_Ar_fcc_cluster_fortran)
