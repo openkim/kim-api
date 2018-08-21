@@ -583,7 +583,7 @@ int ComputeArgumentsImplementation::SetCallbackPointer(
     ComputeCallbackName const computeCallbackName,
     LanguageName const languageName,
     func * const fptr,
-    void const * const dataObject)
+    void * const dataObject)
 {
 #if DEBUG_VERBOSITY
   std::string const callString = "SetCallbackPointer("
@@ -796,7 +796,7 @@ int ComputeArgumentsImplementation::GetNeighborList(
   func * functionPointer
       = (computeCallbackFunctionPointer_.find(
           COMPUTE_CALLBACK_NAME::GetNeighborList))->second;
-  typedef int GetNeighborListCpp(void const * const dataObject,
+  typedef int GetNeighborListCpp(void * const dataObject,
                                  int const numberOfNeighborLists,
                                  double const * const cutoffs,
                                  int const neighborListIndex,
@@ -805,7 +805,7 @@ int ComputeArgumentsImplementation::GetNeighborList(
                                  int const ** const neighborsOfParticle);
   GetNeighborListCpp * CppGetNeighborList
       = reinterpret_cast<GetNeighborListCpp *>(functionPointer);
-  typedef int GetNeighborListC(void const * const dataObject,
+  typedef int GetNeighborListC(void * const dataObject,
                                int const numberOfNeighborLists,
                                double const * const cutoffs,
                                int const neighborListIndex,
@@ -814,7 +814,7 @@ int ComputeArgumentsImplementation::GetNeighborList(
                                int const ** const neighborsOfParticle);
   GetNeighborListC * CGetNeighborList
       = reinterpret_cast<GetNeighborListC *>(functionPointer);
-  typedef void GetNeighborListF(void const * const dataObject,
+  typedef void GetNeighborListF(void * const dataObject,
                                 int const numberOfNeighborLists,
                                 double const * const cutoffs,
                                 int const neighborListIndex,
@@ -832,20 +832,23 @@ int ComputeArgumentsImplementation::GetNeighborList(
   int error;
   if (languageName == LANGUAGE_NAME::cpp)
   {
-    error = CppGetNeighborList(dataObject, numberOfNeighborLists_, cutoffs_,
+    error = CppGetNeighborList(const_cast<void *>(dataObject),
+                               numberOfNeighborLists_, cutoffs_,
                                neighborListIndex, simulatorParticleNumber,
                                numberOfNeighbors,
                                &simulatorNeighborsOfParticle);
   }
   else if (languageName == LANGUAGE_NAME::c)
   {
-    error = CGetNeighborList(dataObject, numberOfNeighborLists_, cutoffs_,
+    error = CGetNeighborList(const_cast<void *>(dataObject),
+                             numberOfNeighborLists_, cutoffs_,
                              neighborListIndex, simulatorParticleNumber,
                              numberOfNeighbors, &simulatorNeighborsOfParticle);
   }
   else if (languageName == LANGUAGE_NAME::fortran)
   {
-    FGetNeighborList(dataObject, numberOfNeighborLists_, cutoffs_,
+    FGetNeighborList(const_cast<void *>(dataObject),
+                     numberOfNeighborLists_, cutoffs_,
                      neighborListIndex+1, simulatorParticleNumber,
                      numberOfNeighbors, &simulatorNeighborsOfParticle, &error);
   }
@@ -913,17 +916,17 @@ int ComputeArgumentsImplementation::ProcessDEDrTerm(
   func * functionPointer
       = (computeCallbackFunctionPointer_.find(
           COMPUTE_CALLBACK_NAME::ProcessDEDrTerm))->second;
-  typedef int ProcessDEDrTermCpp(void const * const dataObject, double const de,
+  typedef int ProcessDEDrTermCpp(void * const dataObject, double const de,
                                  double const r, double const * const dx,
                                  int const i, int const j);
   ProcessDEDrTermCpp * CppProcess_dEdr
       = reinterpret_cast<ProcessDEDrTermCpp *>(functionPointer);
-  typedef int ProcessDEDrTermC(void const * const dataObject, double const de,
+  typedef int ProcessDEDrTermC(void * const dataObject, double const de,
                                double const r, double const * const dx,
                                int const i, int const j);
   ProcessDEDrTermC * CProcess_dEdr
       = reinterpret_cast<ProcessDEDrTermC *>(functionPointer);
-  typedef void ProcessDEDrTermF(void const * const dataObject, double const de,
+  typedef void ProcessDEDrTermF(void * const dataObject, double const de,
                                 double const r, double const * const dx,
                                 int const i, int const j, int * const ierr);
   ProcessDEDrTermF * FProcess_dEdr
@@ -937,15 +940,18 @@ int ComputeArgumentsImplementation::ProcessDEDrTerm(
   int error;
   if (languageName == LANGUAGE_NAME::cpp)
   {
-    error = CppProcess_dEdr(dataObject, de, r, dx, simulatorI, simulatorJ);
+    error = CppProcess_dEdr(const_cast<void *>(dataObject),
+                            de, r, dx, simulatorI, simulatorJ);
   }
   else if (languageName == LANGUAGE_NAME::c)
   {
-    error = CProcess_dEdr(dataObject, de, r, dx, simulatorI, simulatorJ);
+    error = CProcess_dEdr(const_cast<void *>(dataObject),
+                          de, r, dx, simulatorI, simulatorJ);
   }
   else if (languageName == LANGUAGE_NAME::fortran)
   {
-    FProcess_dEdr(dataObject, de, r, dx, simulatorI, simulatorJ, &error);
+    FProcess_dEdr(const_cast<void *>(dataObject),
+                  de, r, dx, simulatorI, simulatorJ, &error);
   }
   else
   {
@@ -994,19 +1000,19 @@ int ComputeArgumentsImplementation::ProcessD2EDr2Term(
   func * functionPointer
       = (computeCallbackFunctionPointer_.find(
           COMPUTE_CALLBACK_NAME::ProcessD2EDr2Term))->second;
-  typedef int ProcessD2EDr2TermCpp(void const * const dataObject,
+  typedef int ProcessD2EDr2TermCpp(void * const dataObject,
                                    double const de, double const * const r,
                                    double const * const dx,
                                    int const * const i, int const * const j);
   ProcessD2EDr2TermCpp * CppProcess_d2Edr2
       = reinterpret_cast<ProcessD2EDr2TermCpp *>(functionPointer);
-  typedef int ProcessD2EDr2TermC(void const * const dataObject, double const de,
+  typedef int ProcessD2EDr2TermC(void * const dataObject, double const de,
                                  double const * const r,
                                  double const * const dx,
                                  int const * const i, int const * const j);
   ProcessD2EDr2TermC * CProcess_d2Edr2
       = reinterpret_cast<ProcessD2EDr2TermC *>(functionPointer);
-  typedef void ProcessD2EDr2TermF(void const * const dataObject,
+  typedef void ProcessD2EDr2TermF(void * const dataObject,
                                   double const de, double const * const r,
                                   double const * const dx,
                                   int const * const i, int const * const j,
@@ -1027,15 +1033,18 @@ int ComputeArgumentsImplementation::ProcessD2EDr2Term(
   int error;
   if (languageName == LANGUAGE_NAME::cpp)
   {
-    error = CppProcess_d2Edr2(dataObject, de, r, dx, simulatorI, simulatorJ);
+    error = CppProcess_d2Edr2(const_cast<void *>(dataObject),
+                              de, r, dx, simulatorI, simulatorJ);
   }
   else if (languageName == LANGUAGE_NAME::c)
   {
-    error = CProcess_d2Edr2(dataObject, de, r, dx, simulatorI, simulatorJ);
+    error = CProcess_d2Edr2(const_cast<void *>(dataObject),
+                            de, r, dx, simulatorI, simulatorJ);
   }
   else if (languageName == LANGUAGE_NAME::fortran)
   {
-    FProcess_d2Edr2(dataObject, de, r, dx, simulatorI, simulatorJ, &error);
+    FProcess_d2Edr2(const_cast<void *>(dataObject),
+                    de, r, dx, simulatorI, simulatorJ, &error);
   }
   else
   {
@@ -1263,7 +1272,7 @@ std::string const & ComputeArgumentsImplementation::String() const
       if (ptr != computeCallbackLanguage_.end())
       {
         ss << std::setw(cbWl) << (ptr->second).String();
-        std::map<ComputeCallbackName const, void const *,
+        std::map<ComputeCallbackName const, void *,
                  COMPUTE_CALLBACK_NAME::Comparator>::const_iterator
             ptr2 = computeCallbackDataObjectPointer_.find(cbName->first);
         ss << std::setw(cbWd) << SPTR(ptr2->second);

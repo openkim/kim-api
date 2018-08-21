@@ -87,7 +87,7 @@ int ComputeArguments::SetCallbackPointer(
     ComputeCallbackName const computeCallbackName,
     LanguageName const languageName,
     func * const fptr,
-    void const * const dataObject)
+    void * const dataObject)
 {
   return pimpl->SetCallbackPointer(computeCallbackName, languageName, fptr,
                                    dataObject);

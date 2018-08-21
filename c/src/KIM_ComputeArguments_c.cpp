@@ -203,7 +203,7 @@ int KIM_ComputeArguments_SetCallbackPointer(
     KIM_ComputeCallbackName const computeCallbackName,
     KIM_LanguageName const languageName,
     func * const fptr,
-    void const * const dataObject)
+    void * const dataObject)
 {
   CONVERT_POINTER;
   KIM::ComputeCallbackName computeCallbackNameCpp
