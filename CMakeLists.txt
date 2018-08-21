@@ -55,6 +55,12 @@ set_property(CACHE KIM_API_LOG_MAXIMUM_LEVEL PROPERTY STRINGS SILENT FATAL ERROR
 #
 option(KIM_API_BUILD_MODELS_AND_DRIVERS "TODO Build model" OFF)
 #
+option(KIM_API_ENABLE_SANITIZE "TODO ...." OFF)
+mark_as_advanced(KIM_API_ENABLE_SANITIZE)
+#
+option(KIM_API_ENABLE_COVERAGE "Enable code coverage" OFF)
+mark_as_advanced(KIM_API_ENABLE_COVERAGE)
+#
 # option(KIM_API_DOWNLOAD_OPENKIM "TODO Download all models, model drivers and simulators" OFF)
 #
 # Additional options (that depend on call to project()) defined below
@@ -72,11 +78,6 @@ include(DefineVersionVariables)
 #
 set(KIM_API_USER_CONFIGURATION_FILE ".${PROJECT_NAME}/config" CACHE STRING "TODO if starts with / absolute, otherwise homedir")
 mark_as_advanced(KIM_API_USER_CONFIGURATION_FILE)
-#
-if (${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
-  option(KIM_API_ENABLE_COVERAGE "Enable code coverage" OFF)
-  mark_as_advanced(KIM_API_ENABLE_COVERAGE)
-endif()
 
 include(DefineInternalVariables)
 

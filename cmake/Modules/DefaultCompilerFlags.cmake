@@ -33,6 +33,17 @@
 #
 
 
+# Set global linker flags
+#
+if(KIM_API_ENABLE_SANITIZE)
+  set(KIM_API_EXE_LINKER_FLAGS "${KIM_API_EXE_LINKER_FLAGS} -fsanitize=address")
+endif()
+set(KIM_API_EXE_LINKER_FLAGS "${KIM_API_EXE_LINKER_FLAGS}" CACHE STRING "TODO add description")
+#
+#
+set(CMAKE_EXE_LINKER_FLAGS "${KIM_API_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS}")
+#
+
 # Set global compiler options
 #
 include(EnableCXXCompilerFlagIfSupported)
@@ -40,16 +51,26 @@ enable_cxx_compiler_flag_if_supported("-std=c++${CMAKE_CXX_STANDARD}")
 enable_cxx_compiler_flag_if_supported("-Wall")
 enable_cxx_compiler_flag_if_supported("-Wextra")
 enable_cxx_compiler_flag_if_supported("-pedantic")
+if(KIM_API_ENABLE_COVERAGE)
+  enable_cxx_compiler_flag_if_supported("--coverage")
+endif()
+if(KIM_API_ENABLE_SANITIZE)
+  enable_cxx_compiler_flag_if_supported("-fsanitize=address")
+endif()
 set(KIM_API_CXX_FLAGS "${KIM_API_CXX_FLAGS}" CACHE STRING "TODO add description")
-set(CMAKE_CXX_FLAGS "${KIM_API_CXX_FLAGS} ${CMAKE_CXX_FLAGS}")
 #
 include(EnableCCompilerFlagIfSupported)
 enable_c_compiler_flag_if_supported("-std=c${CMAKE_C_STANDARD}")
 enable_c_compiler_flag_if_supported("-Wall")
 enable_c_compiler_flag_if_supported("-Wextra")
 enable_c_compiler_flag_if_supported("-pedantic")
+if(KIM_API_ENABLE_COVERAGE)
+  enable_c_compiler_flag_if_supported("--coverage")
+endif()
+if(KIM_API_ENABLE_SANITIZE)
+  enable_c_compiler_flag_if_supported("-fsanitize=address")
+endif()
 set(KIM_API_C_FLAGS "${KIM_API_C_FLAGS}" CACHE STRING "TODO add description")
-set(CMAKE_C_FLAGS "${KIM_API_C_FLAGS} ${CMAKE_C_FLAGS}")
 #
 include(EnableFortranCompilerFlagIfSupported)
 enable_fortran_compiler_flag_if_supported("-std=f2003")
@@ -58,12 +79,16 @@ enable_fortran_compiler_flag_if_supported("-Wextra")
 enable_fortran_compiler_flag_if_supported("-Wimplicit-interface")
 enable_fortran_compiler_flag_if_supported("-pedantic")
 enable_fortran_compiler_flag_if_supported("-ffree-line-length-none")
-set(KIM_API_Fortran_FLAGS "${KIM_API_Fortran_FLAGS}" CACHE STRING "TODO add description")
-set(CMAKE_Fortran_FLAGS "${KIM_API_Fortran_FLAGS} ${CMAKE_Fortran_FLAGS}")
-
-#
 if(KIM_API_ENABLE_COVERAGE)
-  set(KIM_API_C_FLAGS "${KIM_API_C_FLAGS} --coverage")
-  set(KIM_API_CXX_FLAGS "${KIM_API_CXX_FLAGS} --coverage")
-  set(KIM_API_Fortran_FLAGS "${KIM_API_Fortran_FLAGS} --coverage")
+  enable_fortran_compiler_flag_if_supported("--coverage")
 endif()
+if(KIM_API_ENABLE_SANITIZE)
+  enable_fortran_compiler_flag_if_supported("-fsanitize=address")
+endif()
+set(KIM_API_Fortran_FLAGS "${KIM_API_Fortran_FLAGS}" CACHE STRING "TODO add description")
+#
+
+# Update CMAKE variables
+set(CMAKE_CXX_FLAGS "${KIM_API_CXX_FLAGS} ${CMAKE_CXX_FLAGS}")
+set(CMAKE_C_FLAGS "${KIM_API_C_FLAGS} ${CMAKE_C_FLAGS}")
+set(CMAKE_Fortran_FLAGS "${KIM_API_Fortran_FLAGS} ${CMAKE_Fortran_FLAGS}")

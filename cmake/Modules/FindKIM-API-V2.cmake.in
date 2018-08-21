@@ -1,9 +1,10 @@
 # - Find KIM-API-V2
 # Find the KIM-API-V2 headers and libraries.
 #
-#  add_kim_api_export_library()        - add kim-api library target
+#  add_kim_api_imported_library()      - add kim-api library target
 #  add_kim_api_model_library()         - set up kim-api model target
 #  add_kim_api_model_driver_library()  - set up kim-api model driver target
+#  add_kim_api_compiler_flags()        - set extra compile/link flags
 #
 
 
@@ -53,6 +54,9 @@ else()
   #
   set(CMAKE_Fortran_COMPILER "@CMAKE_Fortran_COMPILER@" CACHE FILEPATH "Fortran compiler")
   set(KIM_API_Fortran_FLAGS "@KIM_API_Fortran_FLAGS@" CACHE STRING "TODO add description")
+  #
+  set(KIM_API_EXE_LINKER_FLAGS "@KIM_API_EXE_LINKER_FLAGS@" CACHE STRING "TODO add description")
+
 
   set(KIM_API_PROJECT_NAME @PROJECT_NAME@)
   set(KIM_API_VERSION @PROJECT_VERSION@)
@@ -122,7 +126,12 @@ macro(update_compiler_flags_with_kim_api_values)
   set(CMAKE_CXX_FLAGS "${KIM_API_CXX_FLAGS} ${CMAKE_CXX_FLAGS}" PARENT_SCOPE)
   set(CMAKE_C_FLAGS "${KIM_API_C_FLAGS} ${CMAKE_C_FLAGS}" PARENT_SCOPE)
   set(CMAKE_Fortran_FLAGS "${KIM_API_Fortran_FLAGS} ${CMAKE_Fortran_FLAGS}" PARENT_SCOPE)
+  set(CMAKE_EXE_LINKER_FLAGS "${KIM_API_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS}" PARENT_SCOPE)
 endmacro(update_compiler_flags_with_kim_api_values)
+
+function(add_kim_api_compiler_flags)
+  update_compiler_flags_with_kim_api_values()
+endfunction(add_kim_api_compiler_flags)
 
 function(add_kim_api_model_library)
   set(options "")
