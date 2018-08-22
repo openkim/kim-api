@@ -222,10 +222,10 @@ integer(c_int) :: comp_force,comp_energy,comp_enepot,comp_process_dEdr, &
                   comp_process_d2Edr2
 type(BUFFER_TYPE), pointer :: buf; type(c_ptr) :: pbuf
 
-real(c_double), pointer :: Rij(:)
-real(c_double), pointer :: Rij_pairs(:,:)
-real(c_double), pointer :: r_pairs(:)
-integer(c_int), pointer :: i_pairs(:), j_pairs(:)
+real(c_double), target :: Rij(DIM)
+real(c_double), target :: Rij_pairs(DIM,2)
+real(c_double), target :: r_pairs(2)
+integer(c_int), target :: i_pairs(2), j_pairs(2)
 
 !-- KIM variables
 real(c_double) :: model_cutoff
@@ -321,14 +321,6 @@ if (associated(enepot)) then
 else
   comp_enepot = 0
 end if
-
-allocate( Rij(DIM) )
-if (comp_process_d2Edr2.eq.1) then
-  allocate( r_pairs(2)       )
-  allocate( Rij_pairs(DIM,2) )
-  allocate( i_pairs(2)       )
-  allocate( j_pairs(2)       )
-endif
 
 ! Check to be sure that the species are correct
 !
@@ -462,16 +454,6 @@ do i = 1, N
   endif  ! if particleContributing
 
 enddo  ! do i
-
-! Free temporary storage
-!
-deallocate( Rij )
-if (comp_process_d2Edr2.eq.1) then
-  deallocate( r_pairs   )
-  deallocate( Rij_pairs )
-  deallocate( i_pairs   )
-  deallocate( j_pairs   )
-endif
 
 ! Everything is great
 !
