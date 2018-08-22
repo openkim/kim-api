@@ -71,7 +71,6 @@ mark_as_advanced(KIM_API_ENABLE_COVERAGE)
 #
 project(${PROJECT_PREFIX}-v2 VERSION 2.0.0 LANGUAGES CXX C Fortran)
 include(GNUInstallDirs)  # needs to come after call to project()
-include(DefaultRPATHSettings)
 include(DefineVersionVariables)
 
 

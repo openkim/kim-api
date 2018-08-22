@@ -1,3 +1,9 @@
+# pkg-config file for kim-api-v2
+# https://people.freedesktop.org/~dbn/pkg-config-guide.html
+# Usage: cc `pkg-config --cflags --libs libkim-api-v2` -o myapp myapp.c
+# after you added @CMAKE_INSTALL_FULL_LIBDIR@/pkgconfig to PKG_CONFIG_PATH,
+# e.g. export PKG_CONFIG_PATH=@CMAKE_INSTALL_FULL_LIBDIR@/pkgconfig
+
 CMAKE_C_COMPILER=@CMAKE_C_COMPILER@
 CMAKE_CXX_COMPILER=@CMAKE_CXX_COMPILER@
 CMAKE_Fortran_COMPILER=@CMAKE_Fortran_COMPILER@
@@ -17,4 +23,5 @@ URL: https://openkim.org/kim-api
 Version: @PROJECT_VERSION_STRING@
 Requires:
 Cflags: -I${includedir}
-Libs: -L${libdir} -l${PROJECT_NAME}
+Libs: -L${libdir} -Wl,-rpath,@CMAKE_INSTALL_FULL_LIBDIR@ -l${PROJECT_NAME}
+Libs.private: -ldl
