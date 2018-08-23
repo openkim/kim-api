@@ -15,6 +15,7 @@ libexecdir=@CMAKE_INSTALL_FULL_LIBEXECDIR@
 sysconfdir=@CMAKE_INSTALL_FULL_SYSCONFDIR@
 libdir=@CMAKE_INSTALL_FULL_LIBDIR@
 includedir=@CMAKE_INSTALL_FULL_INCLUDEDIR@/@PROJECT_NAME@
+moddir=@CMAKE_INSTALL_FULL_LIBDIR@/@PROJECT_NAME@/@KIM_API_Fortran_MODULE_DIR_IDENTIFIER@
 docdir=@CMAKE_INSTALL_FULL_DOCDIR@
 
 Name: @CMAKE_SHARED_LIBRARY_PREFIX@@PROJECT_NAME@
@@ -22,6 +23,6 @@ Description: The KIM API package is a system-level library that aims to give com
 URL: https://openkim.org/kim-api
 Version: @PROJECT_VERSION_STRING@
 Requires:
-Cflags: -I${includedir}
+Cflags: -I${includedir} -I${moddir}
 Libs: -L${libdir} -Wl,-rpath,@CMAKE_INSTALL_FULL_LIBDIR@ -l${PROJECT_NAME}
 Libs.private: -ldl

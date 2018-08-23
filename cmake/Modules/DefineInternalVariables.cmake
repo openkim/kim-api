@@ -37,6 +37,8 @@
 #
 set(KIM_API_CMAKE_DIR_IDENTIFIER "cmake" CACHE INTERNAL "Canonical id for the CMake dir")
 #
+set(KIM_API_Fortran_MODULE_DIR_IDENTIFIER "mod" CACHE INTERNAL "Canonical id for the Fortran module dir")
+#
 set(KIM_API_MODEL_DRIVER_IDENTIFIER "model-driver" CACHE INTERNAL "Canonical id for a model driver")
 set(KIM_API_MODEL_DRIVER_PLURAL_IDENTIFIER "${KIM_API_MODEL_DRIVER_IDENTIFIER}s" CACHE INTERNAL "plural")
 #
