@@ -39,7 +39,7 @@
 
 cmake_minimum_required(VERSION 3.4)
 
-list(APPEND CMAKE_MODULE_PATH $ENV{KIM_API_V2_CMAKE_MODULES_DIR})
+list(APPEND CMAKE_MODULE_PATH $ENV{KIM_API_V2_CMAKE_MODULES_DIR} "/usr/share/kim-api-v2/cmake")
 find_package(KIM-API-V2 2.0 REQUIRED)
 if(NOT TARGET kim-api)
   project("${KIM_API_PROJECT_NAME}" VERSION "${KIM_API_VERSION}"
