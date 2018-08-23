@@ -118,21 +118,9 @@ subroutine get_neigh(data_object, number_of_neighbor_lists, cutoffs, &
   call c_f_pointer(neighObject%neighbor_list_pointer, neighborList, &
     [numberOfParticles+1, numberOfParticles])
 
-  if (number_of_neighbor_lists /= 1) then
-    call my_warning("invalid number of neighbor_lists", __LINE__, __FILE__)
-    ierr = 1
-    return
-  endif
-
-  if (cutoffs(1) > neighObject%cutoff) then
+  if (cutoffs(neighbor_list_index) > neighObject%cutoff) then
     call my_warning("neighbor list cutoff too small for model cutoff", &
       __LINE__, __FILE__)
-    ierr = 1
-    return
-  endif
-
-  if (neighbor_list_index /= 1) then
-    call my_warning("wrong list index", __LINE__, __FILE__)
     ierr = 1
     return
   endif
@@ -354,8 +342,6 @@ type(neighObject_type), intent(inout) :: neighObject
 integer(c_int),         intent(out)   :: ierr
 
 !-- Local variables
-! 0- NEIGH_RVEC_H, 1- NEIGH_PURE_H, 2- NEIGH_RVEC_F, 3- NEIGH_PURE_F,
-! 4- MI_OPBC_H, 5- MI_OPBC_F
 real(c_double) disp, disp1, disp2, cutrange, dispvec(DIM)
 integer(c_int) i
 
@@ -834,9 +820,9 @@ program vc_forces_numer_deriv
   integer(c_int), target :: particleContributing(N)
   real(c_double) :: influence_distance
   integer(c_int) :: number_of_neighbor_lists
-  real(c_double) :: cutoffs(1)
-  integer(c_int) :: &
-    model_will_not_request_neighbors_of_noncontributing_particles(1)
+  real(c_double), allocatable :: cutoffs(:)
+  integer(c_int), allocatable :: &
+    model_will_not_request_neighbors_of_noncontributing_particles(:)
   real(c_double) :: cutoff
   real(c_double), target :: energy
   real(c_double), target :: coords(3,N)
@@ -991,15 +977,15 @@ program vc_forces_numer_deriv
   call kim_model_get_influence_distance(model_handle, influence_distance)
   call kim_model_get_number_of_neighbor_lists(model_handle, &
     number_of_neighbor_lists)
-  if (number_of_neighbor_lists /= 1) then
-    call my_error("too many neighbor lists", __LINE__, __FILE__)
-  endif
+  allocate(cutoffs(number_of_neighbor_lists), &
+           model_will_not_request_neighbors_of_noncontributing_particles( &
+                                                     number_of_neighbor_lists))
   call kim_model_get_neighbor_list_values(model_handle, cutoffs, &
     model_will_not_request_neighbors_of_noncontributing_particles, ierr)
   if (ierr /= 0) then
     call my_error("get_neighbor_list_values", __LINE__, __FILE__)
   end if
-  cutoff = cutoffs(1)
+  cutoff = maxval(cutoffs)
 
   ! Scale reference FCC configuration based on cutoff radius.
   FCCspacing = 0.75_cd*cutoff ! set the FCC spacing to a fraction
@@ -1132,6 +1118,7 @@ program vc_forces_numer_deriv
   deallocate(forces_num_err)
   deallocate(neighborList)
   deallocate(coordsave)
+  deallocate(cutoffs, model_will_not_request_neighbors_of_noncontributing_particles)
 
   call kim_model_compute_arguments_destroy(model_handle, &
     compute_arguments_handle, ierr)
