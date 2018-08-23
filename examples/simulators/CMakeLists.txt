@@ -42,6 +42,7 @@ set(TEST_MODELS
   ex_model_Ar_P_MLJ_Fortran
   ex_model_Ar_P_Morse
   ex_model_Ar_P_Morse_07C
+  ex_model_Ar_SLJ_MultiCutoff
   )
 
 add_subdirectory(ex_test_Ar_fcc_cluster)

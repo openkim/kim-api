@@ -44,25 +44,17 @@ find_package(KIM-API-V2 2.0 REQUIRED CONFIG)
 if(NOT TARGET kim-api)
   project("${KIM_API_PROJECT_NAME}" VERSION "${KIM_API_VERSION}"
     LANGUAGES CXX C Fortran)
-  add_kim_api_imported_library()
 endif()
 
 # End preamble
 
 
-set(TEST_NAME "ex_test_Ar_fcc_cluster")
+set(MODEL_NAME "ex_model_Ar_SLJ_MultiCutoff")
 
-add_executable(${TEST_NAME} ${TEST_NAME}.c)
-target_link_libraries(${TEST_NAME} kim-api m)
+add_kim_api_model_library(
+  NAME                    ${MODEL_NAME}
+  CREATE_ROUTINE_NAME     "model_create_routine"
+  CREATE_ROUTINE_LANGUAGE "fortran"
+  )
 
-foreach(TEST_MODEL ${TEST_MODELS})
-  # TODO make a variable for "Testing" directory name
-  set(TEST_DIR ${CMAKE_BINARY_DIR}/Testing/Run_${TEST_NAME}_${TEST_MODEL})
-  FILE(MAKE_DIRECTORY ${TEST_DIR})
-  add_test(NAME Run_${TEST_NAME}_${TEST_MODEL} COMMAND sh -c "echo ${TEST_MODEL} | ${CMAKE_CURRENT_BINARY_DIR}/${TEST_NAME} > stdout" WORKING_DIRECTORY ${TEST_DIR})
-  # TODO : the environment variables can be abstracted for generality
-  set_tests_properties(Run_${TEST_NAME}_${TEST_MODEL} PROPERTIES ENVIRONMENT "KIM_API_V2_MODELS_DIR=${CMAKE_BINARY_DIR};KIM_API_V2_MODEL_DRIVERS_DIR=${CMAKE_BINARY_DIR}")
-  if("${TEST_MODEL}" STREQUAL "ex_model_Ar_SLJ_MultiCutoff")
-    set_tests_properties(Run_${TEST_NAME}_${TEST_MODEL} PROPERTIES WILL_FAIL TRUE)
-  endif()
-endforeach()
+target_sources(${MODEL_NAME} PRIVATE ${MODEL_NAME}.F90)

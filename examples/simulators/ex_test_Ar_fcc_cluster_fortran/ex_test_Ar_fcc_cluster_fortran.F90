@@ -44,7 +44,7 @@ contains
 
     print *,"* Error : '", trim(message), "' ", line, ":", &
       trim(myfile)
-    stop
+    stop 1
   end subroutine my_error
 
   subroutine my_warning(message, line)
