@@ -33,6 +33,23 @@
 #
 
 
+set(CONFIG_FILE_IN config.cmake.in)
+set(CONFIG_FILE ${PROJECT_NAME}-config.cmake)
+set(CONFIG_VERSION_FILE_IN config-version.cmake.in)
+set(CONFIG_VERSION_FILE ${PROJECT_NAME}-config-version.cmake)
+
+configure_file("${CONFIG_FILE_IN}" "${CMAKE_CURRENT_BINARY_DIR}/${CONFIG_FILE}" @ONLY)
+configure_file("${CONFIG_VERSION_FILE_IN}"
+  "${CMAKE_CURRENT_BINARY_DIR}/${CONFIG_VERSION_FILE}" @ONLY)
+
+install(
+  FILES
+  "${CMAKE_CURRENT_BINARY_DIR}/${CONFIG_FILE}"
+  "${CMAKE_CURRENT_BINARY_DIR}/${CONFIG_VERSION_FILE}"
+  DESTINATION
+  ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME}/${KIM_API_CMAKE_DIR_IDENTIFIER}
+  )
+
 set(WRAPPER_SOURCES
   model-driver-wrapper.cpp.in
   parameterized-model-wrapper.cpp.in
@@ -51,5 +68,3 @@ install(
   FILES ${WRAPPER_SOURCES} ${INFORMATION_FILES}
   DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME}/${KIM_API_CMAKE_DIR_IDENTIFIER}
   )
-
-add_subdirectory(Modules)
