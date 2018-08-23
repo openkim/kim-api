@@ -418,7 +418,7 @@ do i = 1, N
         !
         if (comp_process_dEdr.eq.1) then
           call kim_model_compute_arguments_process_dedr_term( &
-            model_compute_arguments_handle, deidr, r, c_loc(rij(1)), i, j, ierr)
+            model_compute_arguments_handle, deidr, r, rij, i, j, ierr)
         endif
 
         ! contribution to process_d2Edr2
@@ -434,10 +434,7 @@ do i = 1, N
 
           call kim_model_compute_arguments_process_d2edr2_term( &
             model_compute_arguments_handle, d2eidr, &
-            c_loc(r_pairs(1)),     &
-            c_loc(Rij_pairs(1,1)), &
-            c_loc(i_pairs(1)),     &
-            c_loc(j_pairs(1)), ierr)
+            r_pairs, Rij_pairs, i_pairs, j_pairs, ierr)
         endif
 
         ! contribution to forces
