@@ -91,15 +91,15 @@ else()
   set(CMAKE_BUILD_TYPE "@CMAKE_BUILD_TYPE@" CACHE STRING "Build Type")
   #
   set(CMAKE_CXX_COMPILER "@CMAKE_CXX_COMPILER@" CACHE FILEPATH "C++ compiler")
-  set(KIM_API_CXX_FLAGS "@KIM_API_CXX_FLAGS@" CACHE STRING "TODO add description")
+  set(KIM_API_CXX_FLAGS "@KIM_API_CXX_FLAGS@" CACHE STRING "KIM API C++ compiler flags")
   #
   set(CMAKE_C_COMPILER "@CMAKE_C_COMPILER@" CACHE FILEPATH "C compiler")
-  set(KIM_API_C_FLAGS "@KIM_API_C_FLAGS@" CACHE STRING "TODO add description")
+  set(KIM_API_C_FLAGS "@KIM_API_C_FLAGS@" CACHE STRING "KIM API C compiler flags")
   #
   set(CMAKE_Fortran_COMPILER "@CMAKE_Fortran_COMPILER@" CACHE FILEPATH "Fortran compiler")
-  set(KIM_API_Fortran_FLAGS "@KIM_API_Fortran_FLAGS@" CACHE STRING "TODO add description")
+  set(KIM_API_Fortran_FLAGS "@KIM_API_Fortran_FLAGS@" CACHE STRING "KIM API Fortran compiler flags")
   #
-  set(KIM_API_EXE_LINKER_FLAGS "@KIM_API_EXE_LINKER_FLAGS@" CACHE STRING "TODO add description")
+  set(KIM_API_EXE_LINKER_FLAGS "@KIM_API_EXE_LINKER_FLAGS@" CACHE STRING "KIM API linker flags")
 
 
   set(KIM_API_PROJECT_NAME @PROJECT_NAME@)
@@ -114,7 +114,7 @@ else()
   set(KIM_API_SIMULATOR_MODEL_IDENTIFIER @KIM_API_SIMULATOR_MODEL_IDENTIFIER@ CACHE INTERNAL "Simulator model id")
   set(KIM_API_STAND_ALONE_MODEL_IDENTIFIER @KIM_API_STAND_ALONE_MODEL_IDENTIFIER@ CACHE INTERNAL "Stand-alone model id")
 
-  set(KIM_API_INSTALL_TYPE "SYSTEM" CACHE STRING "TODO add description here")
+  set(KIM_API_INSTALL_TYPE "SYSTEM" CACHE STRING "KIM API Collection to install item in")
   set_property(CACHE KIM_API_INSTALL_TYPE PROPERTY STRINGS SYSTEM USER ENVIRONMENT)
 
   if(KIM_API_INSTALL_TYPE STREQUAL "SYSTEM")
@@ -195,7 +195,7 @@ function(add_kim_api_model_library)
   find_program(XXD_EXECUTABLE "xxd")
   find_package_handle_standard_args(XXD REQUIRED_VARS XXD_EXECUTABLE)
   if(NOT XXD_FOUND)
-    message(FATAL_ERROR "TODO Ryan will put an error message here")
+    message(FATAL_ERROR "The xxd utility is required to build models and drivers.")
   endif()
   if(MODEL_METADATA_FILE)
     # TODO : consider if this can be abstracted, with parameterfiles below, to a function

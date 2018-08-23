@@ -43,7 +43,7 @@ include(DefaultCompilerStandards)
 
 # Define options
 #
-set(PROJECT_PREFIX "kim-api" CACHE STRING "TODO add description here")
+set(PROJECT_PREFIX "kim-api" CACHE STRING "Project prefix string")
 mark_as_advanced(KIM_API_PROJECT_PREFIX)
 #
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -51,12 +51,12 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 else()
   set(LOG_MAX "ERROR")
 endif()
-set(KIM_API_LOG_MAXIMUM_LEVEL "${LOG_MAX}" CACHE STRING "TODO add description here")
+set(KIM_API_LOG_MAXIMUM_LEVEL "${LOG_MAX}" CACHE STRING "Maximum log verbosity")
 set_property(CACHE KIM_API_LOG_MAXIMUM_LEVEL PROPERTY STRINGS SILENT FATAL ERROR WARNING INFORMATION DEBUG)
 #
-option(KIM_API_BUILD_MODELS_AND_DRIVERS "TODO Build model" OFF)
+option(KIM_API_BUILD_MODELS_AND_DRIVERS "Build all included models, drivers, and simulators" OFF)
 #
-option(KIM_API_ENABLE_SANITIZE "TODO ...." OFF)
+option(KIM_API_ENABLE_SANITIZE "Enable AddressSanitizer" OFF)
 mark_as_advanced(KIM_API_ENABLE_SANITIZE)
 #
 option(KIM_API_ENABLE_COVERAGE "Enable code coverage" OFF)
@@ -78,7 +78,7 @@ include(DefineVersionVariables)
 
 # Define options dependent on PROJECT_NAME
 #
-set(KIM_API_USER_CONFIGURATION_FILE ".${PROJECT_NAME}/config" CACHE STRING "TODO if starts with / absolute, otherwise homedir")
+set(KIM_API_USER_CONFIGURATION_FILE ".${PROJECT_NAME}/config" CACHE STRING "Default configuration file name.  If not absolute, then relative to user home directory")
 mark_as_advanced(KIM_API_USER_CONFIGURATION_FILE)
 
 include(DefineInternalVariables)

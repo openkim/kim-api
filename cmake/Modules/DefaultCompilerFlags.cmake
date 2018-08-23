@@ -38,7 +38,7 @@
 if(KIM_API_ENABLE_SANITIZE)
   set(KIM_API_EXE_LINKER_FLAGS "${KIM_API_EXE_LINKER_FLAGS} -fsanitize=address")
 endif()
-set(KIM_API_EXE_LINKER_FLAGS "${KIM_API_EXE_LINKER_FLAGS}" CACHE STRING "TODO add description")
+set(KIM_API_EXE_LINKER_FLAGS "${KIM_API_EXE_LINKER_FLAGS}" CACHE STRING "KIM API linker flags")
 #
 #
 set(CMAKE_EXE_LINKER_FLAGS "${KIM_API_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS}")
@@ -57,7 +57,7 @@ endif()
 if(KIM_API_ENABLE_SANITIZE)
   enable_cxx_compiler_flag_if_supported("-fsanitize=address")
 endif()
-set(KIM_API_CXX_FLAGS "${KIM_API_CXX_FLAGS}" CACHE STRING "TODO add description")
+set(KIM_API_CXX_FLAGS "${KIM_API_CXX_FLAGS}" CACHE STRING "KIM API C++ compiler flags")
 #
 include(EnableCCompilerFlagIfSupported)
 enable_c_compiler_flag_if_supported("-std=c${CMAKE_C_STANDARD}")
@@ -70,7 +70,7 @@ endif()
 if(KIM_API_ENABLE_SANITIZE)
   enable_c_compiler_flag_if_supported("-fsanitize=address")
 endif()
-set(KIM_API_C_FLAGS "${KIM_API_C_FLAGS}" CACHE STRING "TODO add description")
+set(KIM_API_C_FLAGS "${KIM_API_C_FLAGS}" CACHE STRING "KIM API C compiler flags")
 #
 include(EnableFortranCompilerFlagIfSupported)
 enable_fortran_compiler_flag_if_supported("-std=f2003")
@@ -85,7 +85,7 @@ endif()
 if(KIM_API_ENABLE_SANITIZE)
   enable_fortran_compiler_flag_if_supported("-fsanitize=address")
 endif()
-set(KIM_API_Fortran_FLAGS "${KIM_API_Fortran_FLAGS}" CACHE STRING "TODO add description")
+set(KIM_API_Fortran_FLAGS "${KIM_API_Fortran_FLAGS}" CACHE STRING "KIM API Fortran compiler flags")
 #
 
 # Update CMAKE variables
