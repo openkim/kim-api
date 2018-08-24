@@ -40,7 +40,7 @@
 #include "old_KIM_API_DIRS.h"
 using namespace OLD_KIM;
 
-// TODO add KIM_API_V2_CMAKE_MODULES_DIR environment var.
+// TODO add KIM_API_V2_CMAKE_PREFIX_DIR environment var.
 
 void usage(std::string name)
 {
