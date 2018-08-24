@@ -279,7 +279,7 @@ int KIM_Model_ComputeArgumentsDestroy(
   CONVERT_POINTER;
 
   KIM::ComputeArguments * pComputeArguments
-      = reinterpret_cast<KIM::ComputeArguments * const >
+      = reinterpret_cast<KIM::ComputeArguments *>
       ((*computeArguments)->p);
 
   int err = pModel->ComputeArgumentsDestroy(&pComputeArguments);
@@ -301,8 +301,7 @@ int KIM_Model_Compute(KIM_Model const * const model,
   CONVERT_POINTER;
 
   KIM::ComputeArguments const * const pComputeArguments
-      = reinterpret_cast<KIM::ComputeArguments const * const>
-      (computeArguments->p);
+      = reinterpret_cast<KIM::ComputeArguments const *>(computeArguments->p);
 
   return pModel->Compute(pComputeArguments);
 }
@@ -424,7 +423,7 @@ void KIM_Model_GetSimulatorBufferPointer(KIM_Model const * const model,
   pModel->GetSimulatorBufferPointer(ptr);
 }
 
-char const * const KIM_Model_String(KIM_Model const * const model)
+char const * KIM_Model_String(KIM_Model const * const model)
 {
   CONVERT_POINTER;
 

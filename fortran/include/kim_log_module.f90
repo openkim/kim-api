@@ -53,7 +53,7 @@ module kim_log_module
     type(c_ptr) :: p = c_null_ptr
   end type kim_log_handle_type
 
-  type(kim_log_handle_type), protected &
+  type(kim_log_handle_type), protected, save &
     :: kim_log_null_handle
 
   interface operator (.eq.)

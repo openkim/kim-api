@@ -55,7 +55,7 @@ module kim_model_compute_arguments_module
     type(c_ptr) :: p = c_null_ptr
   end type kim_model_compute_arguments_handle_type
 
-  type(kim_model_compute_arguments_handle_type), protected &
+  type(kim_model_compute_arguments_handle_type), protected, save &
     :: kim_model_compute_arguments_null_handle
 
   interface operator (.eq.)
@@ -205,7 +205,7 @@ module kim_model_compute_arguments_module
         model_compute_arguments_handle
       real(c_double), intent(in), value :: de
       real(c_double), intent(in), value :: r
-      type(c_ptr), intent(in) :: dx
+      real(c_double), intent(in) :: dx(:)
       integer(c_int), intent(in), value :: i
       integer(c_int), intent(in), value :: j
       integer(c_int), intent(out) :: ierr
@@ -219,10 +219,10 @@ module kim_model_compute_arguments_module
       type(kim_model_compute_arguments_handle_type), intent(in) :: &
         model_compute_arguments_handle
       real(c_double), intent(in), value :: de
-      type(c_ptr), intent(in), value :: r
-      type(c_ptr), intent(in), value :: dx
-      type(c_ptr), intent(in), value :: i
-      type(c_ptr), intent(in), value :: j
+      real(c_double), intent(in) :: r(:)
+      real(c_double), intent(in) :: dx(:,:)
+      integer(c_int), intent(in) :: i(:)
+      integer(c_int), intent(in) :: j(:)
       integer(c_int), intent(out) :: ierr
     end subroutine kim_model_compute_arguments_process_d2edr2_term
 

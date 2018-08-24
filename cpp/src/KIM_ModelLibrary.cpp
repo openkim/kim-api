@@ -37,6 +37,7 @@
 #include <dlfcn.h>
 
 #include "old_KIM_API_DIRS.h"
+#include "KIM_Configuration.hpp"
 
 #ifndef KIM_MODEL_LIBRARY_HPP_
 #include "KIM_ModelLibrary.hpp"
@@ -50,20 +51,13 @@
 #include "KIM_LanguageName.hpp"
 #endif
 
-#ifndef MODELLIBFILE
-#error
-#endif
-#ifndef MODELDRIVERLIBFILE
-#error
-#endif
-
 namespace KIM
 {
 // log helpers
 #define SNUM( x ) static_cast<std::ostringstream &>(    \
     std::ostringstream() << std::dec << x).str()
 #define SPTR( x ) static_cast<std::ostringstream &>(                    \
-    std::ostringstream() << static_cast<void const * const>(x) ).str()
+    std::ostringstream() << static_cast<void const *>(x) ).str()
 #define SFUNCP( x ) static_cast<std::ostringstream &>(           \
     std::ostringstream() << static_cast<func **>(x)).str()
 #define SBOOL( x ) std::string((x ? "true" : "false"))
@@ -121,8 +115,10 @@ int ModelLibrary::Open(bool const typeIsModel, std::string const & modelName)
     LOG_DEBUG("Exit 1=" + callString);
     return true;  // cannot find modelName
   }
-  libraryPath_ = item[OLD_KIM::IE_DIR] + "/" + item[OLD_KIM::IE_NAME] + "/"
-      + (typeIsModel ? MODELLIBFILE : MODELDRIVERLIBFILE) + ".so";
+  libraryPath_ = item[OLD_KIM::IE_DIR] + "/" + item[OLD_KIM::IE_NAME]
+      + "/" KIM_SHARED_MODULE_PREFIX  KIM_PROJECT_NAME "-"
+      + (typeIsModel ? KIM_MODEL_IDENTIFIER : KIM_MODEL_DRIVER_IDENTIFIER)
+      + KIM_SHARED_MODULE_SUFFIX;
 
   libraryHandle_ = dlopen(libraryPath_.c_str(), RTLD_NOW);
   if (libraryHandle_ == NULL)
@@ -175,7 +171,7 @@ int ModelLibrary::GetModelType(ITEM_TYPE * const modelType) const
   if (libraryHandle_ == NULL) return true;  // not open
 
   char const * const KIM_ItemType
-      = static_cast<char const * const>(dlsym(libraryHandle_, "kim_item_type"));
+      = static_cast<char const *>(dlsym(libraryHandle_, "kim_item_type"));
   if (KIM_ItemType == 0)
   {
     std::cout << dlerror() << std::endl;
@@ -184,13 +180,13 @@ int ModelLibrary::GetModelType(ITEM_TYPE * const modelType) const
     return true;
   }
 
-  if (std::string(KIM_ItemType) == "stand-alone-model")
+  if (std::string(KIM_ItemType) == KIM_STAND_ALONE_MODEL_IDENTIFIER)
     *modelType = STAND_ALONE_MODEL;
-  else if (std::string(KIM_ItemType) == "parameterized-model")
+  else if (std::string(KIM_ItemType) == KIM_PARAMETERIZED_MODEL_IDENTIFIER)
     *modelType = PARAMETERIZED_MODEL;
-  else if (std::string(KIM_ItemType) == "simulator-model")
+  else if (std::string(KIM_ItemType) == KIM_SIMULATOR_MODEL_IDENTIFIER)
     *modelType = SIMULATOR_MODEL;
-  else if (std::string(KIM_ItemType) == "model-driver")
+  else if (std::string(KIM_ItemType) == KIM_MODEL_DRIVER_IDENTIFIER)
     *modelType = MODEL_DRIVER;
   else
   {
@@ -261,7 +257,7 @@ int ModelLibrary::GetNumberOfParameterFiles(int * const numberOfParameterFiles)
   GetModelType(&itemType);
   if (itemType != PARAMETERIZED_MODEL) return true;
 
-  int const * const numParamFiles = static_cast<int const * const>(
+  int const * const numParamFiles = static_cast<int const *>(
       dlsym(libraryHandle_, "number_of_parameter_files"));
   if (numParamFiles == 0)
   {
@@ -305,10 +301,9 @@ int ModelLibrary::GetParameterFileString(
   }
 
   std::stringstream paramFileStringSymbol;
-  //@@@@@@ should we make the file numbering in Makefile start from zero? @@@@
   paramFileStringSymbol << "parameter_file_" << (index+1);
   unsigned char const * const paramFileString
-      = static_cast<unsigned char const * const>(
+      = static_cast<unsigned char const *>(
           dlsym(libraryHandle_, paramFileStringSymbol.str().c_str()));
   if (paramFileString == NULL)
   {
@@ -359,7 +354,7 @@ int ModelLibrary::GetModelDriverName(std::string * const modelDriverName) const
 
   std::string modelDriverNameSymbol(modelName_ + "_driver_name");
   char const * const modelDriverNameString
-      = static_cast<char const * const>(
+      = static_cast<char const *>(
           dlsym(libraryHandle_, modelDriverNameSymbol.c_str()));
   if (modelDriverNameString == NULL)
   {

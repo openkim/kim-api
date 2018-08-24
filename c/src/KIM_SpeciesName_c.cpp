@@ -44,17 +44,17 @@ extern "C"
 
 namespace
 {
-KIM::SpeciesName const makeSpeciesNameCpp(KIM_SpeciesName const speciesName)
+KIM::SpeciesName makeSpeciesNameCpp(KIM_SpeciesName const speciesName)
 {
   KIM::SpeciesName const * const speciesNameCpp
-      = reinterpret_cast<KIM::SpeciesName const * const>(&speciesName);
+      = reinterpret_cast<KIM::SpeciesName const *>(&speciesName);
   return *speciesNameCpp;
 }
 
-KIM_SpeciesName const makeSpeciesNameC(KIM::SpeciesName speciesName)
+KIM_SpeciesName makeSpeciesNameC(KIM::SpeciesName speciesName)
 {
   KIM_SpeciesName const * const speciesNameC
-      = reinterpret_cast<KIM_SpeciesName const * const>(&speciesName);
+      = reinterpret_cast<KIM_SpeciesName const *>(&speciesName);
   return *speciesNameC;
 }
 }  // namespace
@@ -78,7 +78,7 @@ int KIM_SpeciesName_NotEqual(KIM_SpeciesName const left,
   return (!KIM_SpeciesName_Equal(left, right));
 }
 
-char const * const KIM_SpeciesName_String(KIM_SpeciesName const speciesName)
+char const * KIM_SpeciesName_String(KIM_SpeciesName const speciesName)
 {
   return makeSpeciesNameCpp(speciesName).String().c_str();
 }

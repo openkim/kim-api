@@ -36,6 +36,6 @@
 #ifndef KIM_FUNC_H_
 #define KIM_FUNC_H_
 
-typedef void (func)();
+typedef void (func)(void);
 
 #endif  /* KIM_FUNC_H_ */

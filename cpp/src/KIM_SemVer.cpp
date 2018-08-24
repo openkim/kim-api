@@ -105,6 +105,7 @@ int ParseIdentifiers(SERIES_TYPE type, std::string const & series,
               return true;  // Has leading zero
             }
           }
+          break;
         case ALPHANUMERIC:
           if (identifiers != NULL)
           {
@@ -142,6 +143,7 @@ int ParseIdentifiers(SERIES_TYPE type, std::string const & series,
               return true;  // Has leading zero
             }
           }
+          break;
         case ALPHANUMERIC:
           if (identifiers != NULL)
           {

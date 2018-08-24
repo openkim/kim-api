@@ -49,7 +49,7 @@ KIM_ChargeUnit KIM_ChargeUnit_FromString(char const * const str);
 
 int KIM_ChargeUnit_Equal(KIM_ChargeUnit const left, KIM_ChargeUnit right);
 int KIM_ChargeUnit_NotEqual(KIM_ChargeUnit const left, KIM_ChargeUnit right);
-char const * const KIM_ChargeUnit_String(KIM_ChargeUnit const chargeUnit);
+char const * KIM_ChargeUnit_String(KIM_ChargeUnit const chargeUnit);
 
 extern KIM_ChargeUnit const KIM_CHARGE_UNIT_unused;
 extern KIM_ChargeUnit const KIM_CHARGE_UNIT_C;

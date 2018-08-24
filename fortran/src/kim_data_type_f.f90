@@ -118,21 +118,17 @@ subroutine kim_data_type_string(data_type, string)
   use, intrinsic :: iso_c_binding
   use kim_data_type_module, only : kim_data_type_type
   use kim_data_type_f_module, only : get_string
+  use kim_convert_string_module, only : kim_convert_string
   implicit none
   type(kim_data_type_type), intent(in), value :: data_type
   character(len=*, kind=c_char), intent(out) :: string
 
   type(c_ptr) :: p
-  character(len=len(string)+1, kind=c_char), pointer :: fp
-  integer(c_int) :: null_index
 
   p = get_string(data_type)
   if (c_associated(p)) then
-    call c_f_pointer(p, fp)
-    null_index = scan(fp, char(0))-1
-    string = fp(1:null_index)
+    call kim_convert_string(p, string)
   else
-    nullify(fp)
     string = ""
   end if
 end subroutine kim_data_type_string

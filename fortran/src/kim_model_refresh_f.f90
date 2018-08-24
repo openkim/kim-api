@@ -216,23 +216,19 @@ subroutine kim_model_refresh_string(model_refresh_handle, string)
   use kim_model_refresh_module, only : kim_model_refresh_handle_type
   use kim_model_refresh_f_module, only : kim_model_refresh_type, &
     model_refresh_string
+  use kim_convert_string_module, only : kim_convert_string
   implicit none
   type(kim_model_refresh_handle_type), intent(in) :: model_refresh_handle
   character(len=*, kind=c_char), intent(out) :: string
   type(kim_model_refresh_type), pointer :: model_refresh
 
   type(c_ptr) :: p
-  character(len=len(string)+1, kind=c_char), pointer :: fp
-  integer(c_int) :: null_index
 
   call c_f_pointer(model_refresh_handle%p, model_refresh)
   p = model_refresh_string(model_refresh)
   if (c_associated(p)) then
-    call c_f_pointer(p, fp)
-    null_index = scan(fp, char(0))-1
-    string = fp(1:null_index)
+    call kim_convert_string(p, string)
   else
-    nullify(fp)
     string = ""
   end if
 end subroutine kim_model_refresh_string

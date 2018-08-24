@@ -45,17 +45,17 @@ extern "C"
 
 namespace
 {
-KIM::ChargeUnit const makeChargeUnitCpp(KIM_ChargeUnit const chargeUnit)
+KIM::ChargeUnit makeChargeUnitCpp(KIM_ChargeUnit const chargeUnit)
 {
   KIM::ChargeUnit const * const chargeUnitCpp
-      = reinterpret_cast <KIM::ChargeUnit const * const>(&chargeUnit);
+      = reinterpret_cast <KIM::ChargeUnit const *>(&chargeUnit);
   return *chargeUnitCpp;
 }
 
-KIM_ChargeUnit const makeChargeUnitC(KIM::ChargeUnit const chargeUnit)
+KIM_ChargeUnit makeChargeUnitC(KIM::ChargeUnit const chargeUnit)
 {
   KIM_ChargeUnit const * const chargeUnitC
-      = reinterpret_cast <KIM_ChargeUnit const * const>(&chargeUnit);
+      = reinterpret_cast <KIM_ChargeUnit const *>(&chargeUnit);
   return *chargeUnitC;
 }
 }  // namespace
@@ -77,7 +77,7 @@ int KIM_ChargeUnit_NotEqual(KIM_ChargeUnit const left, KIM_ChargeUnit right)
   return (!KIM_ChargeUnit_Equal(left, right));
 }
 
-char const * const KIM_ChargeUnit_String(KIM_ChargeUnit const chargeUnit)
+char const * KIM_ChargeUnit_String(KIM_ChargeUnit const chargeUnit)
 {
   return makeChargeUnitCpp(chargeUnit).String().c_str();
 }

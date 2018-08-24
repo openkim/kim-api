@@ -169,6 +169,7 @@ subroutine kim_model_compute_arguments_destroy_string( &
   use kim_model_compute_arguments_destroy_f_module, only : &
     kim_model_compute_arguments_destroy_type, &
     model_compute_arguments_destroy_string
+  use kim_convert_string_module, only : kim_convert_string
   implicit none
   type(kim_model_compute_arguments_destroy_handle_type), intent(in) :: &
     model_compute_arguments_destroy_handle
@@ -177,18 +178,13 @@ subroutine kim_model_compute_arguments_destroy_string( &
     model_compute_arguments_destroy
 
   type(c_ptr) :: p
-  character(len=len(string)+1, kind=c_char), pointer :: fp
-  integer(c_int) :: null_index
 
   call c_f_pointer(model_compute_arguments_destroy_handle%p, &
     model_compute_arguments_destroy)
   p = model_compute_arguments_destroy_string(model_compute_arguments_destroy)
   if (c_associated(p)) then
-    call c_f_pointer(p, fp)
-    null_index = scan(fp, char(0))-1
-    string = fp(1:null_index)
+    call kim_convert_string(p, string)
   else
-    nullify(fp)
     string = ""
   end if
 end subroutine kim_model_compute_arguments_destroy_string

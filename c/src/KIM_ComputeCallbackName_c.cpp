@@ -49,7 +49,7 @@ KIM::ComputeCallbackName makeComputeCallbackNameCpp(
     KIM_ComputeCallbackName const computeCallbackName)
 {
   KIM::ComputeCallbackName const * const computeCallbackNameCpp
-      = reinterpret_cast<KIM::ComputeCallbackName const * const>
+      = reinterpret_cast<KIM::ComputeCallbackName const *>
       (&computeCallbackName);
   return *computeCallbackNameCpp;
 }
@@ -58,7 +58,7 @@ KIM_ComputeCallbackName makeComputeCallbackNameC(
     KIM::ComputeCallbackName const computeCallbackName)
 {
   KIM_ComputeCallbackName const * const computeCallbackNameC
-      = reinterpret_cast<KIM_ComputeCallbackName const * const>
+      = reinterpret_cast<KIM_ComputeCallbackName const *>
       (&computeCallbackName);
   return *computeCallbackNameC;
 }
@@ -84,7 +84,7 @@ int KIM_ComputeCallbackNameNot_Equal(KIM_ComputeCallbackName const left,
   return (!KIM_ComputeCallbackName_Equal(left, right));
 }
 
-char const * const KIM_ComputeCallbackName_String(
+char const * KIM_ComputeCallbackName_String(
     KIM_ComputeCallbackName computeCallbackName)
 {
   return makeComputeCallbackNameCpp(computeCallbackName).String().c_str();

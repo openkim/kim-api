@@ -1,0 +1,51 @@
+#!/bin/sh
+#
+
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the Common Development
+# and Distribution License Version 1.0 (the "License").
+#
+# You can obtain a copy of the license at
+# http://www.opensource.org/licenses/CDDL-1.0.  See the License for the
+# specific language governing permissions and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each file and
+# include the License file in a prominent location with the name LICENSE.CDDL.
+# If applicable, add the following below this CDDL HEADER, with the fields
+# enclosed by brackets "[]" replaced with your own identifying information:
+#
+# Portions Copyright (c) [yyyy] [name of copyright owner]. All rights reserved.
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2018, Regents of the University of Minnesota.
+# All rights reserved.
+#
+# Contributors:
+#    Ryan S. Elliott
+#
+
+#
+# Release: This file is part of the kim-api.git repository.
+#
+
+
+# Ensure that this script is sourced, not executed
+if test x"`basename "$0" 2> /dev/null`" \
+        = x"@PROJECT_NAME@-activate"; then
+  (>&2 printf "Error:\t@PROJECT_NAME@-activate must be sourced.\n"
+   printf "\tRun 'source @PROJECT_NAME@-activate' not "
+   printf "'@PROJECT_NAME@-activate'.\n")
+  exit 1
+fi
+
+export PATH="@CMAKE_INSTALL_FULL_BINDIR@:${PATH}"
+if test ! -z "${PKG_CONFIG_PATH+x}"; then export PKG_CONFIG_PATH=":${PKG_CONFIG_PATH}"; fi
+export PKG_CONFIG_PATH=@CMAKE_INSTALL_FULL_LIBDIR@/pkgconfig${PKG_CONFIG_PATH}
+export @KIM_API_ENVIRONMENT_CMAKE_PREFIX_DIR@=@CMAKE_INSTALL_PREFIX@
+
+source "@CMAKE_INSTALL_FULL_SYSCONFDIR@/bash_completion.d/@PROJECT_NAME@-completion.bash"

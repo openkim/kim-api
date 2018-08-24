@@ -81,8 +81,8 @@ module kim_model_compute_arguments_f_module
       real(c_double), intent(in), value :: de
       real(c_double), intent(in), value :: r
       real(c_double), intent(in) :: dx
-      real(c_double), intent(in), value :: i
-      real(c_double), intent(in), value :: j
+      integer(c_int), intent(in), value :: i
+      integer(c_int), intent(in), value :: j
     end function process_dedr_term
 
     integer(c_int) function process_d2edr2_term(model_compute_arguments, &
@@ -94,10 +94,10 @@ module kim_model_compute_arguments_f_module
       type(kim_model_compute_arguments_type), intent(in) :: &
         model_compute_arguments
       real(c_double), intent(in), value :: de
-      type(c_ptr), intent(in), value :: r
-      type(c_ptr), intent(in), value :: dx
-      type(c_ptr), intent(in), value :: i
-      type(c_ptr), intent(in), value :: j
+      real(c_double), intent(in) :: r
+      real(c_double), intent(in) :: dx
+      integer(c_int), intent(in) :: i
+      integer(c_int), intent(in) :: j
     end function process_d2edr2_term
 
     integer(c_int) function get_argument_pointer_integer( &
@@ -470,14 +470,14 @@ subroutine kim_model_compute_arguments_process_dedr_term( &
     model_compute_arguments_handle
   real(c_double), intent(in), value :: de
   real(c_double), intent(in), value :: r
-  real(c_double), intent(in) :: dx
-  real(c_double), intent(in), value :: i
-  real(c_double), intent(in), value :: j
+  real(c_double), intent(in) :: dx(:)
+  integer(c_int), intent(in), value :: i
+  integer(c_int), intent(in), value :: j
   integer(c_int), intent(out) :: ierr
   type(kim_model_compute_arguments_type), pointer :: model_compute_arguments
 
   call c_f_pointer(model_compute_arguments_handle%p, model_compute_arguments)
-  ierr = process_dedr_term(model_compute_arguments, de, r, dx, i, j)
+  ierr = process_dedr_term(model_compute_arguments, de, r, dx(1), i, j)
 end subroutine kim_model_compute_arguments_process_dedr_term
 
 subroutine kim_model_compute_arguments_process_d2edr2_term( &
@@ -491,15 +491,16 @@ subroutine kim_model_compute_arguments_process_d2edr2_term( &
   type(kim_model_compute_arguments_handle_type), intent(in) :: &
     model_compute_arguments_handle
   real(c_double), intent(in), value :: de
-  type(c_ptr), intent(in), value :: r
-  type(c_ptr), intent(in), value :: dx
-  type(c_ptr), intent(in), value :: i
-  type(c_ptr), intent(in), value :: j
+  real(c_double), intent(in) :: r(:)
+  real(c_double), intent(in) :: dx(:,:)
+  integer(c_int), intent(in) :: i(:)
+  integer(c_int), intent(in) :: j(:)
   integer(c_int), intent(out) :: ierr
   type(kim_model_compute_arguments_type), pointer :: model_compute_arguments
 
   call c_f_pointer(model_compute_arguments_handle%p, model_compute_arguments)
-  ierr = process_d2edr2_term(model_compute_arguments, de, r, dx, i, j)
+  ierr = process_d2edr2_term(model_compute_arguments, &
+    de, r(1), dx(1,1), i(1), j(1))
 end subroutine kim_model_compute_arguments_process_d2edr2_term
 
 subroutine kim_model_compute_arguments_get_model_buffer_pointer( &
@@ -549,6 +550,7 @@ subroutine kim_model_compute_arguments_string(model_compute_arguments_handle, &
     kim_model_compute_arguments_handle_type
   use kim_model_compute_arguments_f_module, only : &
     kim_model_compute_arguments_type, model_compute_string
+  use kim_convert_string_module, only : kim_convert_string
   implicit none
   type(kim_model_compute_arguments_handle_type), intent(in) :: &
     model_compute_arguments_handle
@@ -556,17 +558,12 @@ subroutine kim_model_compute_arguments_string(model_compute_arguments_handle, &
   type(kim_model_compute_arguments_type), pointer :: model_compute_arguments
 
   type(c_ptr) :: p
-  character(len=len(string)+1, kind=c_char), pointer :: fp
-  integer(c_int) :: null_index
 
   call c_f_pointer(model_compute_arguments_handle%p, model_compute_arguments)
   p = model_compute_string(model_compute_arguments)
   if (c_associated(p)) then
-    call c_f_pointer(p, fp)
-    null_index = scan(fp, char(0))-1
-    string = fp(1:null_index)
+    call kim_convert_string(p, string)
   else
-    nullify(fp)
     string = ""
   end if
 end subroutine kim_model_compute_arguments_string

@@ -63,7 +63,7 @@ struct KIM_Log
 
 namespace
 {
-KIM::LogVerbosity const makeLogVerbosityCpp(KIM_LogVerbosity const logVerbosity)
+KIM::LogVerbosity makeLogVerbosityCpp(KIM_LogVerbosity const logVerbosity)
 {
   return KIM::LogVerbosity(logVerbosity.logVerbosityID);
 }
@@ -97,7 +97,7 @@ void KIM_Log_Destroy(KIM_Log ** const log)
   *log = NULL;
 }
 
-char const * const KIM_Log_GetID(KIM_Log const * const log)
+char const * KIM_Log_GetID(KIM_Log const * const log)
 {
   CONVERT_POINTER;
 

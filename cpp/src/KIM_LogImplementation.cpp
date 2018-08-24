@@ -50,7 +50,7 @@
 
 // log helper
 #define SPTR( x ) static_cast<std::ostringstream &>(                    \
-    std::ostringstream() << static_cast<void const * const>(x) ).str()
+    std::ostringstream() << static_cast<void const *>(x) ).str()
 
 
 namespace KIM
@@ -262,7 +262,7 @@ std::string LogImplementation::GetTimeStamp() const
   struct tm * timeInfo;
   timeInfo = localtime(&rawTime);
   char date[1024];
-  strftime(date, 1023, "%F:%T%z", timeInfo);
+  strftime(date, 1023, "%Y-%m-%d:%H:%M:%S%Z", timeInfo);
 
   std::string dateString(date);
   if (dateString == latestTimeStamp_)

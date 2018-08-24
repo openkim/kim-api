@@ -45,19 +45,19 @@ extern "C"
 
 namespace
 {
-KIM::TemperatureUnit const makeTemperatureUnitCpp(
+KIM::TemperatureUnit makeTemperatureUnitCpp(
     KIM_TemperatureUnit const temperatureUnit)
 {
   KIM::TemperatureUnit const * const temperatureUnitCpp
-      = reinterpret_cast <KIM::TemperatureUnit const * const>(&temperatureUnit);
+      = reinterpret_cast <KIM::TemperatureUnit const *>(&temperatureUnit);
   return *temperatureUnitCpp;
 }
 
-KIM_TemperatureUnit const makeTemperatureUnitC(
+KIM_TemperatureUnit makeTemperatureUnitC(
     KIM::TemperatureUnit const temperatureUnit)
 {
   KIM_TemperatureUnit const * const temperatureUnitC
-      = reinterpret_cast <KIM_TemperatureUnit const * const>(&temperatureUnit);
+      = reinterpret_cast <KIM_TemperatureUnit const *>(&temperatureUnit);
   return *temperatureUnitC;
 }
 }  // namespace
@@ -81,7 +81,7 @@ int KIM_TemperatureUnit_NotEqual(KIM_TemperatureUnit const left,
   return (!KIM_TemperatureUnit_Equal(left, right));
 }
 
-char const * const KIM_TemperatureUnit_String(
+char const * KIM_TemperatureUnit_String(
     KIM_TemperatureUnit const temperatureUnit)
 {
   return makeTemperatureUnitCpp(temperatureUnit).String().c_str();

@@ -146,23 +146,19 @@ subroutine kim_model_compute_string(model_compute_handle, string)
   use kim_model_compute_module, only : kim_model_compute_handle_type
   use kim_model_compute_f_module, only : kim_model_compute_type, &
     model_compute_string
+  use kim_convert_string_module, only : kim_convert_string
   implicit none
   type(kim_model_compute_handle_type), intent(in) :: model_compute_handle
   character(len=*, kind=c_char), intent(out) :: string
   type(kim_model_compute_type), pointer :: model_compute
 
   type(c_ptr) :: p
-  character(len=len(string)+1, kind=c_char), pointer :: fp
-  integer(c_int) :: null_index
 
   call c_f_pointer(model_compute_handle%p, model_compute)
   p = model_compute_string(model_compute)
   if (c_associated(p)) then
-    call c_f_pointer(p, fp)
-    null_index = scan(fp, char(0))-1
-    string = fp(1:null_index)
+    call kim_convert_string(p, string)
   else
-    nullify(fp)
     string = ""
   end if
 end subroutine kim_model_compute_string

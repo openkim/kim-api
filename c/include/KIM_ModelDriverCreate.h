@@ -185,7 +185,7 @@ void KIM_ModelDriverCreate_LogEntry(
     KIM_LogVerbosity const logVerbosity, char const * const message,
     int const lineNumber, char const * const fileName);
 
-char const * const KIM_ModelDriverCreate_String(
+char const * KIM_ModelDriverCreate_String(
     KIM_ModelDriverCreate const * const modelDriverCreate);
 
 #endif  /* KIM_MODEL_DRIVE_CREATE_H_ */

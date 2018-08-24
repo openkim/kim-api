@@ -341,8 +341,7 @@ void KIM_ModelCreate_LogEntry(
                          lineNumber, fileName);
 }
 
-char const * const KIM_ModelCreate_String(
-    KIM_ModelCreate const * const modelCreate)
+char const * KIM_ModelCreate_String(KIM_ModelCreate const * const modelCreate)
 {
   CONVERT_POINTER;
 

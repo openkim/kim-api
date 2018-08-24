@@ -74,7 +74,7 @@ typedef struct
 void fcc_cluster_neighborlist(int half, int numberOfParticles, double* coords,
                               double cutoff, NeighList* nl);
 
-int get_cluster_neigh(void const * const dataObject,
+int get_cluster_neigh(void * const dataObject,
                       int const numberOfNeighborLists,
                       double const * const cutoffs,
                       int const neighborListIndex, int const particleNumber,
@@ -305,7 +305,7 @@ int main()
     std::cout
         << "\t" << "Neighbor list " << i << " has cutoff "
         << cutoff_cluster_model[i] << " with "
-        "model_will_not_request_neighbors_of_noncontributing_particles "
+        "modelWillNotRequestNeighborsOfNoncontributingParticles "
         << modelWillNotRequestNeighborsOfNoncontributingParticles[i]
         << std::endl;
   }
@@ -553,7 +553,7 @@ void fcc_cluster_neighborlist(int half, int numberOfParticles, double* coords,
   return;
 }
 
-int get_cluster_neigh(void const * const dataObject,
+int get_cluster_neigh(void * const dataObject,
                       int const numberOfNeighborLists,
                       double const * const cutoffs,
                       int const neighborListIndex, int const particleNumber,

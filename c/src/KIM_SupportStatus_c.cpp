@@ -44,19 +44,19 @@ extern "C"
 
 namespace
 {
-KIM::SupportStatus const makeSupportStatusCpp(
+KIM::SupportStatus makeSupportStatusCpp(
     KIM_SupportStatus const supportStatus)
 {
   KIM::SupportStatus const * const supportStatusCpp
-      = reinterpret_cast <KIM::SupportStatus const * const>(&supportStatus);
+      = reinterpret_cast <KIM::SupportStatus const *>(&supportStatus);
   return *supportStatusCpp;
 }
 
-KIM_SupportStatus const makeSupportStatusC(
+KIM_SupportStatus makeSupportStatusC(
     KIM::SupportStatus const supportStatus)
 {
   KIM_SupportStatus const * const supportStatusC
-      = reinterpret_cast <KIM_SupportStatus const * const>(&supportStatus);
+      = reinterpret_cast <KIM_SupportStatus const *>(&supportStatus);
   return *supportStatusC;
 }
 }  // namespace
@@ -80,8 +80,7 @@ int KIM_SupportStatus_NotEqual(KIM_SupportStatus const left,
   return (!KIM_SupportStatus_Equal(left, right));
 }
 
-char const * const KIM_SupportStatus_String(
-    KIM_SupportStatus const supportStatus)
+char const * KIM_SupportStatus_String(KIM_SupportStatus const supportStatus)
 {
   return makeSupportStatusCpp(supportStatus).String().c_str();
 }

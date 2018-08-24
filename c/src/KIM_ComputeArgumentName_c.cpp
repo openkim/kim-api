@@ -59,7 +59,7 @@ KIM::ComputeArgumentName makeComputeArgumentNameCpp(
     KIM_ComputeArgumentName const computeArgumentName)
 {
   KIM::ComputeArgumentName const * const computeArgumentNameCpp
-      = reinterpret_cast <KIM::ComputeArgumentName const * const>
+      = reinterpret_cast <KIM::ComputeArgumentName const *>
       (&computeArgumentName);
   return *computeArgumentNameCpp;
 }
@@ -68,7 +68,7 @@ KIM_ComputeArgumentName makeComputeArgumentNameC(
     KIM::ComputeArgumentName const computeArgumentName)
 {
   KIM_ComputeArgumentName const * const computeArgumentNameC
-      = reinterpret_cast <KIM_ComputeArgumentName const * const>
+      = reinterpret_cast <KIM_ComputeArgumentName const *>
       (&computeArgumentName);
   return *computeArgumentNameC;
 }
@@ -76,7 +76,7 @@ KIM_ComputeArgumentName makeComputeArgumentNameC(
 KIM_DataType makeDataTypeC(KIM::DataType const dataType)
 {
   KIM_DataType const * const dataTypeC
-      = reinterpret_cast<KIM_DataType const * const>(&dataType);
+      = reinterpret_cast<KIM_DataType const *>(&dataType);
   return *dataTypeC;
 }
 }  // namespace
@@ -101,7 +101,7 @@ int KIM_ComputeArgumentName_NotEqual(KIM_ComputeArgumentName const left,
   return (!KIM_ComputeArgumentName_Equal(left, right));
 }
 
-char const * const KIM_ComputeArgumentName_String(
+char const * KIM_ComputeArgumentName_String(
     KIM_ComputeArgumentName computeArgumentName)
 {
   return makeComputeArgumentNameCpp(computeArgumentName).String().c_str();

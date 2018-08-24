@@ -60,7 +60,7 @@ void KIM_ModelComputeArgumentsDestroy_LogEntry(
     KIM_LogVerbosity const logVerbosity, char const * const message,
     int const lineNumber, char const * const fileName);
 
-char const * const KIM_ModelComputeArgumentsDestroy_String(
+char const * KIM_ModelComputeArgumentsDestroy_String(
     KIM_ModelComputeArgumentsDestroy const * const
     modelComputeArgumentsDestroy);
 

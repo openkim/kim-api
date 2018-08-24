@@ -45,17 +45,17 @@ extern "C"
 
 namespace
 {
-KIM::LogVerbosity const makeLogVerbosityCpp(KIM_LogVerbosity const logVerbosity)
+KIM::LogVerbosity makeLogVerbosityCpp(KIM_LogVerbosity const logVerbosity)
 {
   KIM::LogVerbosity const * const logVerbosityCpp
-      = reinterpret_cast <KIM::LogVerbosity const * const>(&logVerbosity);
+      = reinterpret_cast <KIM::LogVerbosity const *>(&logVerbosity);
   return *logVerbosityCpp;
 }
 
-KIM_LogVerbosity const makeLogVerbosityC(KIM::LogVerbosity const logVerbosity)
+KIM_LogVerbosity makeLogVerbosityC(KIM::LogVerbosity const logVerbosity)
 {
   KIM_LogVerbosity const * const logVerbosityC
-      = reinterpret_cast <KIM_LogVerbosity const * const>(&logVerbosity);
+      = reinterpret_cast <KIM_LogVerbosity const *>(&logVerbosity);
   return *logVerbosityC;
 }
 }  // namespace
@@ -101,7 +101,7 @@ int KIM_LogVerbosity_NotEqual(KIM_LogVerbosity const left,
   return (! KIM_LogVerbosity_Equal(left, right));
 }
 
-char const * const KIM_LogVerbosity_String(KIM_LogVerbosity const logVerbosity)
+char const * KIM_LogVerbosity_String(KIM_LogVerbosity const logVerbosity)
 {
   return makeLogVerbosityCpp(logVerbosity).String().c_str();
 }

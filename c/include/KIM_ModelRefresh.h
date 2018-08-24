@@ -67,7 +67,7 @@ void KIM_ModelRefresh_LogEntry(
     KIM_LogVerbosity const logVerbosity, char const * const message,
     int const lineNumber, char const * const fileName);
 
-char const * const KIM_ModelRefresh_String(
+char const * KIM_ModelRefresh_String(
     KIM_ModelRefresh const * const modelRefresh);
 
 #endif  /* KIM_MODEL_REFRESH_H_ */

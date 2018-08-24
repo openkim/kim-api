@@ -166,7 +166,7 @@ void KIM_ModelComputeArgumentsCreate_LogEntry(
                                          message, lineNumber, fileName);
 }
 
-char const * const KIM_ModelComputeArgumentsCreate_String(
+char const * KIM_ModelComputeArgumentsCreate_String(
     KIM_ModelComputeArgumentsCreate const * const modelComputeArgumentsCreate)
 {
   CONVERT_POINTER;

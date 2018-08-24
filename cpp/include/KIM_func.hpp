@@ -37,7 +37,7 @@
 namespace KIM
 {
 
-typedef void (func)();
+typedef void (func)(void);
 
 }  // namespace KIM
 #endif  // KIM_FUNC_HPP_

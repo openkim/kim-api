@@ -40,17 +40,17 @@
 Previous Section: \ref features.
 
 At the highest level there are "Simulators" and "Models".  Conceptually, a %KIM
-Model is something that defines an energy-per-particle function, \f$E_i\f$, and
-an "influence distance", \f$r_{\text{infl}}\f$, that identifies the particle
-separation range over which \f$E_i\f$ depends on the position of its
-neighboring particles.  (Note, this is not necessarily equal to the neighbor
-list cutoff radius used by a model.)  A %KIM Model is defined for a specific
-material system (a specific set of particle species: e.g., Al, Ni, and Cu) and
-contains all parameter values necessary for evaluating \f$E_i\f$ for any
-configuration containing particles of the supported species.  A %KIM Model
-will, typically, also have the ability to compute other quantities related to
-the energy-per-particle, such as the force on a particle or the particle's
-virial.
+Model is something that defines an energy-per-particle
+\anchor energy_per_partilce function, \f$E_i\f$, and an "influence distance",
+\f$r_{\text{infl}}\f$, that identifies the particle separation range over which
+\f$E_i\f$ depends on the position of its neighboring particles.  (Note, this is
+not necessarily equal to the neighbor list cutoff radius used by a model.)  A
+%KIM Model is defined for a specific material system (a specific set of
+particle species: e.g., Al, Ni, and Cu) and contains all parameter values
+necessary for evaluating \f$E_i\f$ for any configuration containing particles
+of the supported species.  A %KIM Model will, typically, also have the ability
+to compute other quantities related to the energy-per-particle, such as the
+force on a particle or the particle's virial.
 
 Conceptually, a %KIM Simulator is something that performs a numerical
 simulation based on the energy, forces, etc. of a set of particles.  This could
@@ -151,8 +151,8 @@ to work with the function of distances, \f$\tilde{E}_i(r^{(j,k)})\f$.  When the
 distinction is unimportant the unaccented notation, \f$E_i\f$, will be
 used.
 
-Now a configuration's "Partial Energy" may be defined as the sum of its
-contributing particles' energies:
+Now a configuration's "Partial Energy" \anchor partial_energy may be defined
+as the sum of its contributing particles' energies:
 
 \f[
 E^\mathcal{C} = \sum_{i \in C_{cp}} E_i.
@@ -161,10 +161,10 @@ E^\mathcal{C} = \sum_{i \in C_{cp}} E_i.
 From this definition of the configuration's partial energy, a set of additional
 quantities may be derived that are often of interest in simulations.
 
-First, define formally, the configuration's "Partial Particle Energy" for
-particle \f$i\f$, \f$E^{\mathcal{C}}_i\f$, as simply the model's
-energy-per-particle value for contributing particles and zero for
-non-contributing particles,
+First, define formally, the configuration's "Partial Particle Energy"
+\anchor partial_particle_energy for particle \f$i\f$, \f$E^{\mathcal{C}}_i\f$,
+as simply the model's energy-per-particle value for contributing particles and
+zero for non-contributing particles,
 
 \f[
 E^{\mathcal{C}}_i \equiv
@@ -174,10 +174,10 @@ E_i, & i \in C_{cp},\\
 \end{cases}
 \f]
 
-Second, the configuration's "Partial Force" on particle \f$j\f$,
-\f$\mathbf{f}^{\mathcal{C}(j)}\f$, is defined as the negative of the derivative
-of the configuration's partial energy with respect to the particle's position
-vector:
+Second, the configuration's "Partial Force" \anchor partial_forces on particle
+\f$j\f$, \f$\mathbf{f}^{\mathcal{C}(j)}\f$, is defined as the negative of the
+derivative of the configuration's partial energy with respect to the particle's
+position vector:
 
 \f[
 \mathbf{f}^{\mathcal{C}(j)} \equiv - \frac{\partial E^{\mathcal{C}}}{\partial
@@ -186,8 +186,9 @@ vector:
 
 Note that, in general, *every* particle (both contributing and
 non-contributing) has a partial force.  As a special case, consider a
-configuration, \f$\mathcal{C}^i\f$, equivalent to \f$\mathcal{C}\f$ except that
-only particle \f$i\f$ is contributing.  In this case, the partial forces are
+configuration, \f$\mathcal{C}^i, i \in C_{cp}\f$, equivalent to
+\f$\mathcal{C}\f$ except that only particle \f$i\f$ is contributing.  In this
+case, the partial forces are
 
 \f[
 \mathbf{f}^{\mathcal{C}^i(j)} =
@@ -206,9 +207,10 @@ This can be thought of as the force on particle \f$j\f$ due to particle
 \mathbf{f}^{\mathcal{C}^i(j)}.
 \f]
 
-Third, the configuration's "Partial Particle Virial" tensor for contributing
-particle \f$i \in C_{cp}\f$, \f$\mathbf{V}^{\mathcal{C}(i)}\f$, is defined in
-terms of the derivative of its per-particle-energy function:
+Third, the configuration's "Partial Particle Virial"
+\anchor partial_particle_virial tensor for contributing particle \f$i \in
+C_{cp}\f$, \f$\mathbf{V}^{\mathcal{C}(i)}\f$, is defined in terms of the
+derivative of its per-particle-energy function:
 
 \f[
 \mathbf{V}^{\mathcal{C}(i)} \equiv \sum_{j \in
@@ -232,9 +234,9 @@ terms of the derivative of its per-particle-energy function:
 The partial particle virial is zero for non-contributing particles.  That is,
 \f$\mathbf{V}^{\mathcal{C}(i)} = \mathbf{0}\f$ for \f$i \in C_{ncp}\f$.
 
-Fourth and finally, the configuration's "Partial Virial" tensor,
-\f$\mathbf{V}^{\mathcal{C}}\f$, is the sum of its partial particle virial
-tensors:
+Fourth and finally, the configuration's "Partial Virial"
+\anchor partial_virial tensor, \f$\mathbf{V}^{\mathcal{C}}\f$, is the sum of
+its partial particle virial tensors:
 
 \f[
 \mathbf{V}^{\mathcal{C}} \equiv \sum_{i \in C_{p}}

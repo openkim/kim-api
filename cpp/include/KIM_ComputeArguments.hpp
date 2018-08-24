@@ -73,7 +73,7 @@ class ComputeArguments
   int SetCallbackPointer(ComputeCallbackName const computeCallbackName,
                          LanguageName const languageName,
                          func * const fptr,
-                         void const * const dataObject);
+                         void * const dataObject);
 
   void AreAllRequiredArgumentsAndCallbacksPresent(int * const result) const;
 

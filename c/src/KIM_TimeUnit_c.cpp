@@ -45,17 +45,17 @@ extern "C"
 
 namespace
 {
-KIM::TimeUnit const makeTimeUnitCpp(KIM_TimeUnit const timeUnit)
+KIM::TimeUnit makeTimeUnitCpp(KIM_TimeUnit const timeUnit)
 {
   KIM::TimeUnit const * const timeUnitCpp
-      = reinterpret_cast <KIM::TimeUnit const * const>(&timeUnit);
+      = reinterpret_cast <KIM::TimeUnit const *>(&timeUnit);
   return *timeUnitCpp;
 }
 
-KIM_TimeUnit const makeTimeUnitC(KIM::TimeUnit const timeUnit)
+KIM_TimeUnit makeTimeUnitC(KIM::TimeUnit const timeUnit)
 {
   KIM_TimeUnit const * const timeUnitC
-      = reinterpret_cast <KIM_TimeUnit const * const>(&timeUnit);
+      = reinterpret_cast <KIM_TimeUnit const *>(&timeUnit);
   return *timeUnitC;
 }
 }  // namespace
@@ -77,7 +77,7 @@ int KIM_TimeUnit_NotEqual(KIM_TimeUnit const left, KIM_TimeUnit right)
   return (!KIM_TimeUnit_Equal(left, right));
 }
 
-char const * const KIM_TimeUnit_String(KIM_TimeUnit const tiemUnit)
+char const * KIM_TimeUnit_String(KIM_TimeUnit const tiemUnit)
 {
   return makeTimeUnitCpp(tiemUnit).String().c_str();
 }

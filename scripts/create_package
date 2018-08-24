@@ -98,7 +98,7 @@ w
 EOF
 
 rm -f '.travis.yml'
-rm -rf scripts
+rm -rf script
 rm -f `find . -name ".gitignore"`
 
 for fl in `grep -l -r "kim-api\.git repository" *`; do
@@ -108,12 +108,7 @@ w
 EOF
 done
 
-ed build_system/Makefile.LoadDefaults <<EOF
-,s/^ *package_name *=.*/package_name = $packagename/
-w
-EOF
-
-cd ./docs
+cd ./documentation
 
 make pdf
 rm -rf "./latex"

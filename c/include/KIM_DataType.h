@@ -49,7 +49,7 @@ KIM_DataType KIM_DataType_FromString(char const * const str);
 
 int KIM_DataType_Equal(KIM_DataType const left, KIM_DataType const right);
 int KIM_DataType_NotEqual(KIM_DataType const left, KIM_DataType const right);
-char const * const KIM_DataType_String(KIM_DataType const dataType);
+char const * KIM_DataType_String(KIM_DataType const dataType);
 
 extern KIM_DataType const KIM_DATA_TYPE_Integer;
 extern KIM_DataType const KIM_DATA_TYPE_Double;

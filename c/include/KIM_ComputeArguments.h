@@ -97,7 +97,7 @@ int KIM_ComputeArguments_SetCallbackPointer(
     KIM_ComputeCallbackName const computeCallbackName,
     KIM_LanguageName const languageName,
     func * const fptr,
-    void const * const dataObject);
+    void * const dataObject);
 
 void KIM_ComputeArguments_AreAllRequiredArgumentsAndCallbacksPresent(
     KIM_ComputeArguments const * const computeArguments,
@@ -110,7 +110,7 @@ void KIM_ComputeArguments_GetSimulatorBufferPointer(
     KIM_ComputeArguments const * const computeArguments,
     void ** const ptr);
 
-char const * const KIM_ComputeArguments_String(
+char const * KIM_ComputeArguments_String(
     KIM_ComputeArguments const * const computeArguments);
 
 void KIM_ComputeArguments_SetLogID(

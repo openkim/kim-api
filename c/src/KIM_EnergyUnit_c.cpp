@@ -45,17 +45,17 @@ extern "C"
 
 namespace
 {
-KIM::EnergyUnit const makeEnergyUnitCpp(KIM_EnergyUnit const energyUnit)
+KIM::EnergyUnit makeEnergyUnitCpp(KIM_EnergyUnit const energyUnit)
 {
   KIM::EnergyUnit const * const energyUnitCpp
-      = reinterpret_cast <KIM::EnergyUnit const * const>(&energyUnit);
+      = reinterpret_cast <KIM::EnergyUnit const *>(&energyUnit);
   return *energyUnitCpp;
 }
 
-KIM_EnergyUnit const makeEnergyUnitC(KIM::EnergyUnit const energyUnit)
+KIM_EnergyUnit makeEnergyUnitC(KIM::EnergyUnit const energyUnit)
 {
   KIM_EnergyUnit const * const energyUnitC
-      = reinterpret_cast <KIM_EnergyUnit const * const>(&energyUnit);
+      = reinterpret_cast <KIM_EnergyUnit const *>(&energyUnit);
   return *energyUnitC;
 }
 }  // namespace
@@ -78,7 +78,7 @@ int KIM_EnergyUnit_NotEqual(KIM_EnergyUnit const left,
   return (!KIM_EnergyUnit_Equal(left, right));
 }
 
-char const * const KIM_EnergyUnit_String(KIM_EnergyUnit const energyUnit)
+char const * KIM_EnergyUnit_String(KIM_EnergyUnit const energyUnit)
 {
   return makeEnergyUnitCpp(energyUnit).String().c_str();
 }

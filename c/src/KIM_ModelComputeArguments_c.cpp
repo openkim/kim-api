@@ -201,7 +201,7 @@ void KIM_ModelComputeArguments_LogEntry(
                                    lineNumber, fileName);
 }
 
-char const * const KIM_ModelComputeArguments_String(
+char const * KIM_ModelComputeArguments_String(
     KIM_ModelComputeArguments const * const modelComputeArguments)
 {
   CONVERT_POINTER;

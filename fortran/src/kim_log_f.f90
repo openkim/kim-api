@@ -170,23 +170,19 @@ subroutine kim_log_get_id(log_handle, id_string)
   use kim_log_module, only : kim_log_handle_type
   use kim_log_f_module, only : kim_log_type
   use kim_log_f_module, only : get_id
+  use kim_convert_string_module, only : kim_convert_string
   implicit none
   type(kim_log_handle_type), intent(in) :: log_handle
   character(len=*, kind=c_char), intent(out) :: id_string
   type(kim_log_type), pointer :: log
 
   type(c_ptr) :: p
-  character(len=len(id_string)+1, kind=c_char), pointer :: fp
-  integer(c_int) :: null_index
 
   call c_f_pointer(log_handle%p, log)
   p = get_id(log)
   if (c_associated(p)) then
-    call c_f_pointer(p, fp)
-    null_index = scan(fp, char(0))-1
-    id_string = fp(1:null_index)
+    call kim_convert_string(p, id_string)
   else
-    nullify(fp)
     id_string = ""
   end if
 end subroutine kim_log_get_id

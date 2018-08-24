@@ -62,7 +62,7 @@ int KIM_LogVerbosity_Equal(KIM_LogVerbosity const left,
                            KIM_LogVerbosity const right);
 int KIM_LogVerbosity_NotEqual(KIM_LogVerbosity const left,
                               KIM_LogVerbosity const right);
-char const * const KIM_LogVerbosity_String(KIM_LogVerbosity const logVerbosity);
+char const * KIM_LogVerbosity_String(KIM_LogVerbosity const logVerbosity);
 
 extern KIM_LogVerbosity const KIM_LOG_VERBOSITY_silent;
 extern KIM_LogVerbosity const KIM_LOG_VERBOSITY_fatal;

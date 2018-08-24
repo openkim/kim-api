@@ -49,7 +49,7 @@ KIM_LengthUnit KIM_LengthUnit_FromString(char const * const str);
 
 int KIM_LengthUnit_Equal(KIM_LengthUnit left, KIM_LengthUnit right);
 int KIM_LengthUnit_NotEqual(KIM_LengthUnit left, KIM_LengthUnit right);
-char const* const KIM_LengthUnit_String(KIM_LengthUnit const lengthUnit);
+char const * KIM_LengthUnit_String(KIM_LengthUnit const lengthUnit);
 
 extern KIM_LengthUnit const KIM_LENGTH_UNIT_unused;
 extern KIM_LengthUnit const KIM_LENGTH_UNIT_A;

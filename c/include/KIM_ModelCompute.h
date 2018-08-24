@@ -58,7 +58,7 @@ void KIM_ModelCompute_LogEntry(
     KIM_LogVerbosity const logVerbosity, char const * const message,
     int const lineNumber, char const * const fileName);
 
-char const * const KIM_ModelCompute_String(
+char const * KIM_ModelCompute_String(
     KIM_ModelCompute const * const modelCompute);
 
 #endif  /* KIM_MODEL_COMPUTE_H_ */

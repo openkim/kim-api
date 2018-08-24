@@ -1,0 +1,324 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the Common Development
+# and Distribution License Version 1.0 (the "License").
+#
+# You can obtain a copy of the license at
+# http://www.opensource.org/licenses/CDDL-1.0.  See the License for the
+# specific language governing permissions and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each file and
+# include the License file in a prominent location with the name LICENSE.CDDL.
+# If applicable, add the following below this CDDL HEADER, with the fields
+# enclosed by brackets "[]" replaced with your own identifying information:
+#
+# Portions Copyright (c) [yyyy] [name of copyright owner]. All rights reserved.
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2013--2018, Regents of the University of Minnesota.
+# All rights reserved.
+#
+# Contributors:
+#    Richard Berger
+#    Christoph Junghans
+#    Ryan S. Elliott
+#
+
+#
+# Release: This file is part of the kim-api.git repository.
+#
+
+
+# - KIM-API-V2 configuration
+#
+#  add_kim_api_imported_library()      - add kim-api library target
+#  add_kim_api_model_library()         - set up kim-api model target
+#  add_kim_api_model_driver_library()  - set up kim-api model driver target
+#  add_kim_api_compiler_flags()        - set extra compile/link flags
+#
+
+
+include(FindPackageHandleStandardArgs)
+
+if(TARGET kim-api)
+  set(KIM_API_CMAKE_DIR ${CMAKE_SOURCE_DIR}/${KIM_API_CMAKE_DIR_IDENTIFIER})
+  set(KIM_API_COLLECTIONS_INFO_EXECUTABLE "") # invalid in build directory
+  set(KIM_API_MODEL_INSTALL_PREFIX ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME}/${KIM_API_MODEL_PLURAL_IDENTIFIER})
+  set(KIM_API_MODEL_DRIVER_INSTALL_PREFIX ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME}/${KIM_API_MODEL_DRIVER_PLURAL_IDENTIFIER})
+
+  # handle the QUIETLY and REQUIRED arguments and set KIM-API-V2_FOUND to TRUE
+  # if all listed variables are TRUE
+  find_package_handle_standard_args(KIM-API-V2
+    REQUIRED_VARS
+      KIM_API_CMAKE_DIR
+      KIM_API_MODEL_INSTALL_PREFIX
+      KIM_API_MODEL_DRIVER_INSTALL_PREFIX
+    VERSION_VAR ${PROJECT_VERSION}
+    )
+  mark_as_advanced(
+    KIM_API_CMAKE_DIR
+    KIM_API_COLLECTIONS_INFO_EXECUTABLE
+    KIM_API_MODEL_INSTALL_PREFIX
+    KIM_API_MODEL_DRIVER_INSTALL_PREFIX
+    )
+else()
+  # Language standards (also enforced with FLAGS below)
+  #
+  set(CMAKE_CXX_STANDARD @CMAKE_CXX_STANDARD@)
+  set(CMAKE_CXX_STANDARD_REQUIRED @CMAKE_CXX_STANDARD_REQUIRED@)
+  set(CMAKE_CXX_EXTENSIONS @CMAKE_CXX_EXTENSION@)
+  #
+  set(CMAKE_C_STANDARD @CMAKE_C_STANDARD@)
+  set(CMAKE_C_STANDARD_REQUIRED @CMAKE_C_STANDARD_REQUIRED@)
+  set(CMAKE_C_EXTENSIONS @CMAKE_C_EXTENSIONS@)
+  #
+  # NO similar setting exist yet in CMake for Fortran
+
+  # RPATH settings
+  #
+  set(CMAKE_SKIP_BUILD_RPATH @CMAKE_SKIP_BUILD_RPATH@)
+  set(CMAKE_BUILD_WITH_INSTALL_RPATH @CMAKE_BUILD_WITH_INSTALL_RPATH@)
+  set(CMAKE_INSTALL_RPATH "@CMAKE_INSTALL_RPATH@")
+  set(CMAKE_INSTALL_RPATH_USE_LINK_PATH @CMAKE_INSTALL_RPATH_USE_LINK_PATH@)
+
+
+  # Basic CMAKE Build settings
+  #
+  set(CMAKE_BUILD_TYPE "@CMAKE_BUILD_TYPE@" CACHE STRING "Build Type")
+  #
+  set(CMAKE_CXX_COMPILER "@CMAKE_CXX_COMPILER@" CACHE FILEPATH "C++ compiler")
+  set(KIM_API_CXX_FLAGS "@KIM_API_CXX_FLAGS@" CACHE STRING "KIM API C++ compiler flags")
+  #
+  set(CMAKE_C_COMPILER "@CMAKE_C_COMPILER@" CACHE FILEPATH "C compiler")
+  set(KIM_API_C_FLAGS "@KIM_API_C_FLAGS@" CACHE STRING "KIM API C compiler flags")
+  #
+  set(CMAKE_Fortran_COMPILER "@CMAKE_Fortran_COMPILER@" CACHE FILEPATH "Fortran compiler")
+  set(KIM_API_Fortran_FLAGS "@KIM_API_Fortran_FLAGS@" CACHE STRING "KIM API Fortran compiler flags")
+  #
+  set(KIM_API_EXE_LINKER_FLAGS "@KIM_API_EXE_LINKER_FLAGS@" CACHE STRING "KIM API linker flags")
+
+
+  set(KIM_API_PROJECT_NAME @PROJECT_NAME@)
+  set(KIM_API_VERSION @PROJECT_VERSION@)
+
+  set(KIM_API_CMAKE_DIR @CMAKE_INSTALL_FULL_LIBDIR@/@PROJECT_NAME@/@KIM_API_CMAKE_DIR_IDENTIFIER@)
+  set(KIM_API_COLLECTIONS_INFO_EXECUTABLE @CMAKE_INSTALL_FULL_LIBEXECDIR@/@PROJECT_NAME@/@PROJECT_NAME@-collections-info)
+
+  set(KIM_API_MODEL_DRIVER_IDENTIFIER @KIM_API_MODEL_DRIVER_IDENTIFIER@ CACHE INTERNAL "Model driver id")
+  set(KIM_API_MODEL_IDENTIFIER @KIM_API_MODEL_IDENTIFIER@ CACHE INTERNAL "Model id" )
+  set(KIM_API_PARAMETERIZED_MODEL_IDENTIFIER @KIM_API_PARAMETERIZED_MODEL_IDENTIFIER@ CACHE INTERNAL "Parameterized model id")
+  set(KIM_API_SIMULATOR_MODEL_IDENTIFIER @KIM_API_SIMULATOR_MODEL_IDENTIFIER@ CACHE INTERNAL "Simulator model id")
+  set(KIM_API_STAND_ALONE_MODEL_IDENTIFIER @KIM_API_STAND_ALONE_MODEL_IDENTIFIER@ CACHE INTERNAL "Stand-alone model id")
+
+  set(KIM_API_INSTALL_COLLECTION "SYSTEM" CACHE STRING "KIM API Collection to install item in")
+  set_property(CACHE KIM_API_INSTALL_COLLECTION PROPERTY STRINGS SYSTEM USER ENVIRONMENT)
+
+  if(KIM_API_INSTALL_COLLECTION STREQUAL "SYSTEM")
+    execute_process(COMMAND ${KIM_API_COLLECTIONS_INFO_EXECUTABLE} system models        OUTPUT_VARIABLE KIM_API_MODEL_INSTALL_PREFIX OUTPUT_STRIP_TRAILING_WHITESPACE RESULT_VARIABLE _error)
+    execute_process(COMMAND ${KIM_API_COLLECTIONS_INFO_EXECUTABLE} system model_drivers OUTPUT_VARIABLE KIM_API_MODEL_DRIVER_INSTALL_PREFIX OUTPUT_STRIP_TRAILING_WHITESPACE RESULT_VARIABLE _error)
+  elseif(KIM_API_INSTALL_COLLECTION STREQUAL "USER")
+    execute_process(COMMAND ${KIM_API_COLLECTIONS_INFO_EXECUTABLE} config_file models        OUTPUT_VARIABLE KIM_API_MODEL_INSTALL_PREFIX OUTPUT_STRIP_TRAILING_WHITESPACE RESULT_VARIABLE _error)
+    execute_process(COMMAND ${KIM_API_COLLECTIONS_INFO_EXECUTABLE} config_file model_drivers OUTPUT_VARIABLE KIM_API_MODEL_DRIVER_INSTALL_PREFIX OUTPUT_STRIP_TRAILING_WHITESPACE RESULT_VARIABLE _error)
+  elseif(KIM_API_INSTALL_COLLECTION STREQUAL "ENVIRONMENT")
+    execute_process(COMMAND ${KIM_API_COLLECTIONS_INFO_EXECUTABLE} env models        OUTPUT_VARIABLE KIM_API_MODEL_INSTALL_PREFIX OUTPUT_STRIP_TRAILING_WHITESPACE RESULT_VARIABLE _error)
+    string(REGEX REPLACE "^([^\n]+)\n.*" "\\1" KIM_API_MODEL_INSTALL_PREFIX "${KIM_API_MODEL_INSTALL_PREFIX}")
+    if("${KIM_API_MODEL_INSTALL_PREFIX}" STREQUAL "")
+      message(FATAL_ERROR "KIM API model environment variable is empty.")
+    endif()
+    execute_process(COMMAND ${KIM_API_COLLECTIONS_INFO_EXECUTABLE} env model_drivers OUTPUT_VARIABLE KIM_API_MODEL_DRIVER_INSTALL_PREFIX OUTPUT_STRIP_TRAILING_WHITESPACE RESULT_VARIABLE _error)
+    string(REGEX REPLACE "^([^\n]+)\n.*" "\\1" KIM_API_MODEL_DRIVER_INSTALL_PREFIX "${KIM_API_MODEL_DRIVER_INSTALL_PREFIX}")
+    if("${KIM_API_MODEL_DRIVER_INSTALL_PREFIX}" STREQUAL "")
+      message(FATAL_ERROR "KIM API model driver environment variable is empty.")
+    endif()
+  else()
+    message(FATAL_ERROR "Unknown value of KIM_API_INSTALL_COLLECTION : ${KIM_API_INSTALL_COLLECTION}.")
+  endif()
+
+  # handle the QUIETLY and REQUIRED arguments and set KIM-API-V2_FOUND to TRUE
+  # if all listed variables are TRUE
+  find_package_handle_standard_args(KIM-API-V2
+    REQUIRED_VARS
+      KIM_API_PROJECT_NAME
+      KIM_API_VERSION
+      KIM_API_INSTALL_COLLECTION
+      KIM_API_CMAKE_DIR
+      KIM_API_COLLECTIONS_INFO_EXECUTABLE
+      KIM_API_MODEL_INSTALL_PREFIX
+      KIM_API_MODEL_DRIVER_INSTALL_PREFIX
+    VERSION_VAR ${KIM_API_VERSION}
+    )
+  mark_as_advanced(
+    KIM_API_PROJECT_NAME
+    KIM_API_VERSION
+    KIM_API_CMAKE_DIR
+    KIM_API_COLLECTIONS_INFO_EXECUTABLE
+    KIM_API_MODEL_INSTALL_PREFIX
+    KIM_API_MODEL_DRIVER_INSTALL_PREFIX
+    )
+endif()
+
+
+macro(add_kim_api_imported_library)
+  add_library(kim-api SHARED IMPORTED)
+  set_target_properties(kim-api PROPERTIES
+    IMPORTED_LOCATION "@CMAKE_INSTALL_FULL_LIBDIR@/@CMAKE_SHARED_LIBRARY_PREFIX@@PROJECT_NAME@@CMAKE_SHARED_LIBRARY_SUFFIX@"
+    INTERFACE_INCLUDE_DIRECTORIES
+    "@CMAKE_INSTALL_FULL_INCLUDEDIR@/@PROJECT_NAME@;@CMAKE_INSTALL_FULL_LIBDIR@/@PROJECT_NAME@/@KIM_API_Fortran_MODULE_DIR_IDENTIFIER@"
+    )
+endmacro(add_kim_api_imported_library)
+
+macro(update_compiler_flags_with_kim_api_values)
+  set(CMAKE_CXX_FLAGS "${KIM_API_CXX_FLAGS} ${CMAKE_CXX_FLAGS}" PARENT_SCOPE)
+  set(CMAKE_C_FLAGS "${KIM_API_C_FLAGS} ${CMAKE_C_FLAGS}" PARENT_SCOPE)
+  set(CMAKE_Fortran_FLAGS "${KIM_API_Fortran_FLAGS} ${CMAKE_Fortran_FLAGS}" PARENT_SCOPE)
+  set(CMAKE_EXE_LINKER_FLAGS "${KIM_API_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS}" PARENT_SCOPE)
+endmacro(update_compiler_flags_with_kim_api_values)
+
+function(add_kim_api_compiler_flags)
+  update_compiler_flags_with_kim_api_values()
+endfunction(add_kim_api_compiler_flags)
+
+function(add_kim_api_model_library)
+  set(options "")
+  set(oneValueArgs NAME DRIVER_NAME CREATE_ROUTINE_NAME CREATE_ROUTINE_LANGUAGE METADATA_FILE)
+  set(multiValueArgs PARAMETER_FILES)
+  cmake_parse_arguments(MODEL "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+  if("${MODEL_NAME}" STREQUAL "")
+    message(FATAL_ERROR "No Model name provided")
+  endif()
+
+  if (NOT TARGET kim-api)
+    update_compiler_flags_with_kim_api_values()
+    add_kim_api_imported_library()
+  endif()
+
+  set(MODEL_SOURCES "")
+
+  find_program(XXD_EXECUTABLE "xxd")
+  find_package_handle_standard_args(XXD REQUIRED_VARS XXD_EXECUTABLE)
+  if(NOT XXD_FOUND)
+    message(FATAL_ERROR "The xxd utility is required to build models and drivers.")
+  endif()
+  if(MODEL_METADATA_FILE)
+    if("${MODEL_PARAMETER_FILES}" STREQUAL "")
+      message(FATAL_ERROR "No Simulator Model parameter file(s) provided")
+    endif()
+
+    set(METADATA_FILE_IN "${CMAKE_CURRENT_SOURCE_DIR}/${MODEL_METADATA_FILE}")
+    set(METADATA_FILE_XXD_IN "${CMAKE_CURRENT_BINARY_DIR}/metadata_file")
+    set(METADATA_FILE "${METADATA_FILE_XXD_IN}.c")
+    list(APPEND MODEL_SOURCES ${METADATA_FILE})
+    add_custom_command(OUTPUT ${METADATA_FILE}
+      COMMAND ${CMAKE_COMMAND} -E copy_if_different "${METADATA_FILE_IN}" "${METADATA_FILE_XXD_IN}"
+      COMMAND ${XXD_EXECUTABLE} -i "metadata_file" "${METADATA_FILE}"
+      DEPENDS ${METADATA_FILE_IN}
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+      )
+
+    set(PARAM_FILE_NAMES "")
+    set(IDX 1)
+    foreach(FNAME ${MODEL_PARAMETER_FILES})
+      set(PARAM_FILE_NAMES "${PARAM_FILE_NAMES}\nchar parameter_file_${IDX}_name[] = \"${FNAME}\";")
+      set(PARAM_FILE_IN "${CMAKE_CURRENT_SOURCE_DIR}/${FNAME}")
+      set(PARAM_FILE_XXD_IN "${CMAKE_CURRENT_BINARY_DIR}/parameter_file_${IDX}")
+      set(PARAM_FILE "${PARAM_FILE_XXD_IN}.c")
+      list(APPEND MODEL_SOURCES ${PARAM_FILE})
+      add_custom_command(OUTPUT ${PARAM_FILE}
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different "${PARAM_FILE_IN}" "${PARAM_FILE_XXD_IN}"
+        COMMAND ${XXD_EXECUTABLE} -i "parameter_file_${IDX}" "${PARAM_FILE}"
+        DEPENDS ${PARAM_FILE_IN}
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+        )
+      MATH(EXPR IDX "${IDX}+1")
+    endforeach()
+
+    list(LENGTH MODEL_PARAMETER_FILES NUMBER_OF_PARAMETER_FILES)
+    set(WRAPPER_FILE "${KIM_API_CMAKE_DIR}/simulator-model-wrapper.cpp.in")
+    set(INFORMATION_FILE "${KIM_API_CMAKE_DIR}/simulator-model-info.txt.in")
+  elseif(MODEL_PARAMETER_FILES)
+    if("${MODEL_DRIVER_NAME}" STREQUAL "")
+      message(FATAL_ERROR "No Parameterized Model driver name provided")
+    endif()
+
+    set(IDX 1)
+    foreach(FNAME ${MODEL_PARAMETER_FILES})
+      set(PARAM_FILE_IN "${CMAKE_CURRENT_SOURCE_DIR}/${FNAME}")
+      set(PARAM_FILE_XXD_IN "${CMAKE_CURRENT_BINARY_DIR}/parameter_file_${IDX}")
+      set(PARAM_FILE "${PARAM_FILE_XXD_IN}.c")
+      list(APPEND MODEL_SOURCES ${PARAM_FILE})
+      add_custom_command(OUTPUT ${PARAM_FILE}
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different "${PARAM_FILE_IN}" "${PARAM_FILE_XXD_IN}"
+        COMMAND ${XXD_EXECUTABLE} -i "parameter_file_${IDX}" "${PARAM_FILE}"
+        DEPENDS ${PARAM_FILE_IN}
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+        )
+      MATH(EXPR IDX "${IDX}+1")
+    endforeach()
+
+    list(LENGTH MODEL_PARAMETER_FILES NUMBER_OF_PARAMETER_FILES)
+    set(WRAPPER_FILE "${KIM_API_CMAKE_DIR}/parameterized-model-wrapper.cpp.in")
+    set(INFORMATION_FILE "${KIM_API_CMAKE_DIR}/parameterized-model-info.txt.in")
+  else()
+    if("${MODEL_CREATE_ROUTINE_NAME}" STREQUAL "")
+      message(FATAL_ERROR "No Stand-Alone Model create routine name provided")
+    endif()
+    if("${MODEL_CREATE_ROUTINE_LANGUAGE}" STREQUAL "")
+      message(FATAL_ERROR "No Stand-Alone Model create routine language provided")
+    endif()
+
+    set(WRAPPER_FILE "${KIM_API_CMAKE_DIR}/stand-alone-model-wrapper.cpp.in")
+    set(INFORMATION_FILE "${KIM_API_CMAKE_DIR}/stand-alone-model-info.txt.in")
+  endif()
+
+  configure_file(${INFORMATION_FILE} ${CMAKE_CURRENT_BINARY_DIR}/model-info.txt @ONLY)
+  configure_file(${WRAPPER_FILE} ${CMAKE_CURRENT_BINARY_DIR}/wrapper.cpp @ONLY)
+  list(APPEND MODEL_SOURCES ${CMAKE_CURRENT_BINARY_DIR}/wrapper.cpp)
+
+  add_library(${MODEL_NAME} MODULE ${MODEL_SOURCES})
+  set_target_properties(${MODEL_NAME} PROPERTIES OUTPUT_NAME "${PROJECT_NAME}-${KIM_API_MODEL_IDENTIFIER}"
+    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${MODEL_NAME})
+  target_link_libraries(${MODEL_NAME} kim-api)
+
+  install(TARGETS ${MODEL_NAME} LIBRARY DESTINATION "${KIM_API_MODEL_INSTALL_PREFIX}/${MODEL_NAME}")
+endfunction(add_kim_api_model_library)
+
+function(add_kim_api_model_driver_library)
+  set(options "")
+  set(oneValueArgs NAME CREATE_ROUTINE_NAME CREATE_ROUTINE_LANGUAGE)
+  set(multiValueArgs "")
+  cmake_parse_arguments(MODEL_DRIVER "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+  if("${MODEL_DRIVER_NAME}" STREQUAL "")
+    message(FATAL_ERROR "No Model Driver name provided")
+  endif()
+  if("${MODEL_DRIVER_CREATE_ROUTINE_NAME}" STREQUAL "")
+    message(FATAL_ERROR "No Model Driver create routine name provided")
+  endif()
+  if("${MODEL_DRIVER_CREATE_ROUTINE_LANGUAGE}" STREQUAL "")
+    message(FATAL_ERROR "No Model Driver create routine language provided")
+  endif()
+
+  if (NOT TARGET kim-api)
+    update_compiler_flags_with_kim_api_values()
+    add_kim_api_imported_library()
+  endif()
+
+  configure_file(${KIM_API_CMAKE_DIR}/model-driver-info.txt.in
+    ${CMAKE_CURRENT_BINARY_DIR}/model-info.txt @ONLY)
+  configure_file(${KIM_API_CMAKE_DIR}/model-driver-wrapper.cpp.in
+    ${CMAKE_CURRENT_BINARY_DIR}/wrapper.cpp @ONLY)
+
+  set(MODEL_DRIVER_SOURCES ${CMAKE_CURRENT_BINARY_DIR}/wrapper.cpp)
+
+  add_library(${MODEL_DRIVER_NAME} MODULE ${MODEL_DRIVER_SOURCES})
+  set_target_properties(${MODEL_DRIVER_NAME} PROPERTIES OUTPUT_NAME "${PROJECT_NAME}-${KIM_API_MODEL_DRIVER_IDENTIFIER}"
+    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${MODEL_DRIVER_NAME})
+  target_link_libraries(${MODEL_DRIVER_NAME} kim-api)
+
+  install(TARGETS ${MODEL_DRIVER_NAME} LIBRARY DESTINATION "${KIM_API_MODEL_DRIVER_INSTALL_PREFIX}/${MODEL_DRIVER_NAME}")
+endfunction(add_kim_api_model_driver_library)

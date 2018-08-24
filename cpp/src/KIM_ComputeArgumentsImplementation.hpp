@@ -121,7 +121,7 @@ class ComputeArgumentsImplementation
   int SetCallbackPointer(ComputeCallbackName const computeCallbackName,
                          LanguageName const languageName,
                          func * const fptr,
-                         void const * const dataObject);
+                         void * const dataObject);
   int IsCallbackPresent(ComputeCallbackName const computeCallbackName,
                         int * const present) const;
 
@@ -200,7 +200,7 @@ class ComputeArgumentsImplementation
            COMPUTE_CALLBACK_NAME::Comparator> computeCallbackLanguage_;
   std::map<ComputeCallbackName const, func *,
            COMPUTE_CALLBACK_NAME::Comparator> computeCallbackFunctionPointer_;
-  std::map<ComputeCallbackName const, void const *,
+  std::map<ComputeCallbackName const, void *,
            COMPUTE_CALLBACK_NAME::Comparator> computeCallbackDataObjectPointer_;
 
   mutable std::vector<std::vector<int> > getNeighborListStorage_;
