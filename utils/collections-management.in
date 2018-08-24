@@ -171,7 +171,10 @@ get_local_build_item_name () {
     cd "${build_dir}" || return 1
     cp -r "${build_path}" "./item-source"
     cd item-source && mkdir build && cd build
-    ${cmake_command} ../ > ./cmake-log.txt 2>&1
+    if ! (${cmake_command} ../ > ./cmake-log.txt 2>&1); then
+      cat ./cmake-log.txt
+      return 1
+    fi
 
     local item_type="`grep -- "model-type:" model-info.txt | sed -e 's/^model-type://'`"
     case "${item_type}" in
