@@ -209,7 +209,6 @@ function(add_kim_api_model_library)
       message(FATAL_ERROR "No Simulator Model parameter file(s) provided")
     endif()
 
-    # TODO : consider if this can be abstracted, with parameterfiles below, to a function
     set(METADATA_FILE_IN "${CMAKE_CURRENT_SOURCE_DIR}/${MODEL_METADATA_FILE}")
     set(METADATA_FILE_XXD_IN "${CMAKE_CURRENT_BINARY_DIR}/metadata_file")
     set(METADATA_FILE "${METADATA_FILE_XXD_IN}.c")

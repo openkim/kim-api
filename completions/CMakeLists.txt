@@ -41,5 +41,5 @@ configure_file(completion.bash.in ${BASH_COMPLETIONS} @ONLY)
 
 install(
   FILES ${CMAKE_CURRENT_BINARY_DIR}/${BASH_COMPLETIONS}
-  DESTINATION ${CMAKE_INSTALL_SYSCONFDIR}/bash_completion.d  # TODO make this a variable to be condigured in de/activate
+  DESTINATION ${CMAKE_INSTALL_SYSCONFDIR}/${KIM_API_BASH_COMPLETION_DIR_IDENTIFIER}
   )
