@@ -353,7 +353,7 @@ get_build_install_item () {
         cp -r "${local_build_path}" "./${item_name}"
       fi
       cd "./${item_name}" && mkdir build && cd build
-      if ! ${cmake_command} ../ -DKIM_API_INSTALL_TYPE="`printf ${install_collection} | tr "[:lower:]" "[:upper:]"`" > ./cmake-log.txt 2>&1; then
+      if ! ${cmake_command} ../ -DKIM_API_INSTALL_COLLECTION="`printf ${install_collection} | tr "[:lower:]" "[:upper:]"`" > ./cmake-log.txt 2>&1; then
         cat ./cmake-log.txt
         return 1
       fi
