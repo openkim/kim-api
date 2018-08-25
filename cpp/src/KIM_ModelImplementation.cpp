@@ -847,11 +847,13 @@ int ModelImplementation::GetParameterFileName(
 }
 
 int ModelImplementation::SetParameterPointer(int const extent, int * const ptr,
+                                             std::string const & name,
                                              std::string const & description)
 {
 #if DEBUG_VERBOSITY
   std::string const callString = "SetParameterPointer("
-      + SNUM(extent) + ", " + SPTR(ptr) + ", '" + description + "').";
+      + SNUM(extent) + ", " + SPTR(ptr) + ", '" + name + "', '" + description
+      + "').";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -868,8 +870,16 @@ int ModelImplementation::SetParameterPointer(int const extent, int * const ptr,
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
+
+  if (! IsCIdentifier(name))
+  {
+    LOG_ERROR("Name '" + name + "' is not a valid C identifier.");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
 #endif
 
+  parameterName_.push_back(name);
   parameterDescription_.push_back(description);
   parameterDataType_.push_back(DATA_TYPE::Integer);
   parameterExtent_.push_back(extent);
@@ -881,11 +891,13 @@ int ModelImplementation::SetParameterPointer(int const extent, int * const ptr,
 
 int ModelImplementation::SetParameterPointer(int const extent,
                                              double * const ptr,
+                                             std::string const & name,
                                              std::string const & description)
 {
 #if DEBUG_VERBOSITY
   std::string const callString = "SetParameterPointer("
-      + SNUM(extent) + ", " + SPTR(ptr) + ", '" + description + "').";
+      + SNUM(extent) + ", " + SPTR(ptr) + ", '" + name + "', '" + description
+      + "').";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -904,6 +916,7 @@ int ModelImplementation::SetParameterPointer(int const extent,
   }
 #endif
 
+  parameterName_.push_back(name);
   parameterDescription_.push_back(description);
   parameterDataType_.push_back(DATA_TYPE::Double);
   parameterExtent_.push_back(extent);
@@ -927,15 +940,16 @@ void ModelImplementation::GetNumberOfParameters(int * const numberOfParameters)
   LOG_DEBUG("Exit   " + callString);
 }
 
-int ModelImplementation::GetParameterDataTypeExtentAndDescription(
+int ModelImplementation::GetParameterDataTypeExtentNameAndDescription(
     int const parameterIndex, DataType * const dataType, int * const extent,
-    std::string const ** const description) const
+    std::string const ** const name, std::string const ** const description)
+    const
 {
 #if DEBUG_VERBOSITY
   std::string const callString
-      = "GetParameterDataTypeExtentAndDescription("
+      = "GetParameterDataTypeExtentNameAndDescription("
       + SNUM(parameterIndex) + ", " + SPTR(dataType) + ", "
-      + SPTR(extent) + ", " + SPTR(description) + ").";
+      + SPTR(extent) + ", " + SPTR(name) + ", " + SPTR(description) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -954,6 +968,8 @@ int ModelImplementation::GetParameterDataTypeExtentAndDescription(
     *dataType = parameterDataType_[parameterIndex];
   if (extent != NULL)
     *extent = parameterExtent_[parameterIndex];
+  if (name != NULL)
+    *name = &(parameterName_[parameterIndex]);
   if (description != NULL)
     *description = &(parameterDescription_[parameterIndex]);
 
@@ -1765,7 +1781,7 @@ std::string const & ModelImplementation::String() const
      << std::setw(10) << "Data Type"
      << std::setw(10) << "Extent"
      << std::setw(15) << "Pointer"
-     << "Description"
+     << "Name"
      << "\n";
   ss << "\t" << std::setw(8) << "--------"
      << std::setw(10) << "----------"
@@ -1779,7 +1795,7 @@ std::string const & ModelImplementation::String() const
        << std::setw(10) << parameterDataType_[i].String()
        << std::setw(10) << parameterExtent_[i]
        << std::setw(15) << SPTR(parameterPointer_[i])
-       << parameterDescription_[i]
+       << parameterName_[i]
        << "\n";
   }
   ss << "\n";
@@ -2994,6 +3010,25 @@ int ModelImplementation::Validate(TimeUnit const timeUnit) const
 
   LOG_ERROR("Invalid TimeUnit encountered.");
   // LOG_DEBUG("Exit 1=" + callString);
+  return true;
+}
+
+int ModelImplementation::IsCIdentifier(std::string const & id) const
+{
+  std::string const numbers("0123456789");
+  std::string const cIdentifierChars(
+      "_"
+      "abcdefghijklmnopqrstuvwxyz"
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      + numbers);
+
+  if (id.length() == 0)
+    return false;
+  if (std::string::npos != id.find_first_not_of(cIdentifierChars))
+    return false;
+  if (0 == id.find_first_of(numbers))
+    return false;
+
   return true;
 }
 }  // namespace KIM

@@ -150,10 +150,10 @@ int KIM_Model_GetSpeciesSupportAndCode(KIM_Model const * const model,
 
 void KIM_Model_GetNumberOfParameters(KIM_Model const * const model,
                                      int * const numberOfParameters);
-int KIM_Model_GetParameterDataTypeExtentAndDescription(
+int KIM_Model_GetParameterDataTypeExtentNameAndDescription(
     KIM_Model const * const model, int const parameterIndex,
     KIM_DataType * const dataType, int * const extent,
-    char const ** const description);
+    char const ** const name, char const ** const description);
 int KIM_Model_GetParameterInteger(KIM_Model const * const model,
                                   int const parameterIndex,
                                   int const arrayIndex,

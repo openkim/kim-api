@@ -332,10 +332,10 @@ void KIM_Model_GetNumberOfParameters(KIM_Model const * const model,
   pModel->GetNumberOfParameters(numberOfParameters);
 }
 
-int KIM_Model_GetParameterDataTypeExtentAndDescription(
+int KIM_Model_GetParameterDataTypeExtentNameAndDescription(
     KIM_Model const * const model, int const parameterIndex,
     KIM_DataType * const dataType, int * const extent,
-    char const ** const description)
+    char const ** const name, char const ** const description)
 {
   CONVERT_POINTER;
   KIM::DataType typ;
@@ -346,23 +346,31 @@ int KIM_Model_GetParameterDataTypeExtentAndDescription(
   else
     pTyp = &typ;
 
-  std::string const * pStr;
-  std::string const ** ppStr;
-  if (description == NULL)
-    ppStr = NULL;
+  std::string const * pStrName;
+  std::string const ** ppStrName;
+  if (name == NULL)
+    ppStrName = NULL;
   else
-    ppStr = &pStr;
+    ppStrName = &pStrName;
+
+  std::string const * pStrDesc;
+  std::string const ** ppStrDesc;
+  if (description == NULL)
+    ppStrDesc = NULL;
+  else
+    ppStrDesc = &pStrDesc;
 
   int error
-      = pModel->GetParameterDataTypeExtentAndDescription(
-          parameterIndex, pTyp, extent, ppStr);
+      = pModel->GetParameterDataTypeExtentNameAndDescription(
+          parameterIndex, pTyp, extent, ppStrName, ppStrDesc);
 
   if (error)
     return true;
   else
   {
     if (dataType != NULL) *dataType = makeDataTypeC(typ);
-    if (description != NULL) *description = pStr->c_str();
+    if (name != NULL) *name = pStrName->c_str();
+    if (description != NULL) *description = pStrDesc->c_str();
     return false;
   }
 }

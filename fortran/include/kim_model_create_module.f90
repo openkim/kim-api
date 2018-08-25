@@ -86,23 +86,25 @@ module kim_model_create_module
 
   interface kim_model_create_set_parameter_pointer
     subroutine kim_model_create_set_parameter_pointer_integer( &
-      model_create_handle, int1, description, ierr)
+      model_create_handle, int1, name, description, ierr)
       use, intrinsic :: iso_c_binding
       import kim_model_create_handle_type
       implicit none
       type(kim_model_create_handle_type), intent(in) :: model_create_handle
       integer(c_int), intent(in), target :: int1(:)
+      character(len=*, kind=c_char), intent(in) :: name
       character(len=*, kind=c_char), intent(in) :: description
       integer(c_int), intent(out) :: ierr
     end subroutine kim_model_create_set_parameter_pointer_integer
 
     subroutine kim_model_create_set_parameter_pointer_double( &
-      model_create_handle, double1, description, ierr)
+      model_create_handle, double1, name, description, ierr)
       use, intrinsic :: iso_c_binding
       import kim_model_create_handle_type
       implicit none
       type(kim_model_create_handle_type), intent(in) :: model_create_handle
       real(c_double), intent(in), target :: double1(:)
+      character(len=*, kind=c_char), intent(in) :: name
       character(len=*, kind=c_char), intent(in) :: description
       integer(c_int), intent(out) :: ierr
     end subroutine kim_model_create_set_parameter_pointer_double

@@ -49,7 +49,7 @@ module kim_model_f_module
     clear_then_refresh, &
     get_species_support_and_code, &
     get_number_of_parameters, &
-    get_parameter_data_type_extent_and_description, &
+    get_parameter_data_type_extent_name_and_description, &
     get_parameter_integer, &
     get_parameter_double, &
     set_parameter_integer, &
@@ -193,9 +193,10 @@ module kim_model_f_module
       integer(c_int), intent(out) :: number_of_parameters
     end subroutine get_number_of_parameters
 
-    integer(c_int) function get_parameter_data_type_extent_and_description( &
-      model, parameter_index, data_type, extent, description) &
-      bind(c, name="KIM_Model_GetParameterDataTypeExtentAndDescription")
+    integer(c_int) function &
+      get_parameter_data_type_extent_name_and_description( &
+      model, parameter_index, data_type, extent, name, description) &
+      bind(c, name="KIM_Model_GetParameterDataTypeExtentNameAndDescription")
       use, intrinsic :: iso_c_binding
       use kim_data_type_module, only : kim_data_type_type
       import kim_model_type
@@ -204,8 +205,9 @@ module kim_model_f_module
       integer(c_int), intent(in), value :: parameter_index
       type(kim_data_type_type), intent(out) :: data_type
       integer(c_int), intent(out) :: extent
+      type(c_ptr), intent(out) :: name
       type(c_ptr), intent(out) :: description
-    end function get_parameter_data_type_extent_and_description
+    end function get_parameter_data_type_extent_name_and_description
 
     integer(c_int) function get_parameter_integer(model, &
       parameter_index, array_index, parameter_value) &
@@ -606,34 +608,40 @@ subroutine kim_model_get_number_of_parameters(model_handle, &
   call get_number_of_parameters(model, number_of_parameters)
 end subroutine kim_model_get_number_of_parameters
 
-subroutine kim_model_get_parameter_data_type_extent_and_description( &
-  model_handle, parameter_index, data_type, extent, description, ierr)
+subroutine kim_model_get_parameter_data_type_extent_name_and_description( &
+  model_handle, parameter_index, data_type, extent, name, description, ierr)
   use, intrinsic :: iso_c_binding
   use kim_model_module, only : kim_model_handle_type
   use kim_data_type_module, only : kim_data_type_type
   use kim_model_f_module, only : kim_model_type, &
-    get_parameter_data_type_extent_and_description
+    get_parameter_data_type_extent_name_and_description
   use kim_convert_string_module, only : kim_convert_string
   implicit none
   type(kim_model_handle_type), intent(in) :: model_handle
   integer(c_int), intent(in), value :: parameter_index
   type(kim_data_type_type), intent(out) :: data_type
   integer(c_int), intent(out) :: extent
+  character(len=*, kind=c_char), intent(out) :: name
   character(len=*, kind=c_char), intent(out) :: description
   integer(c_int), intent(out) :: ierr
   type(kim_model_type), pointer :: model
 
-  type(c_ptr) :: p
+  type(c_ptr) :: pname, pdesc
 
   call c_f_pointer(model_handle%p, model)
-  ierr = get_parameter_data_type_extent_and_description(model, &
-    parameter_index-1, data_type, extent, p)
-  if (c_associated(p)) then
-    call kim_convert_string(p, description)
+  ierr = get_parameter_data_type_extent_name_and_description(model, &
+    parameter_index-1, data_type, extent, pname, pdesc)
+  if (c_associated(pname)) then
+    call kim_convert_string(pname, name)
+  else
+    name = ""
+  end if
+  if (c_associated(pdesc)) then
+    call kim_convert_string(pdesc, description)
   else
     description = ""
   end if
-end subroutine kim_model_get_parameter_data_type_extent_and_description
+end subroutine kim_model_get_parameter_data_type_extent_name_and_description
 
 subroutine kim_model_get_parameter_integer(model_handle, parameter_index, &
   array_index, parameter_value, ierr)
