@@ -874,7 +874,8 @@ call kim_model_driver_create_set_model_buffer_pointer( &
 
 ! set pointers to parameters in KIM object
 call kim_model_driver_create_set_parameter_pointer( &
-  model_driver_create_handle, buf%pcutoff, "cutoff", ierr)
+  model_driver_create_handle, buf%pcutoff, "cutoff", &
+  "Distance at which the energy becomes zero.", ierr)
 if (ierr /= 0) then
   kim_log_message = "set_parameter"
   LOG_ERROR()
@@ -883,7 +884,8 @@ if (ierr /= 0) then
 endif
 
 call kim_model_driver_create_set_parameter_pointer( &
-  model_driver_create_handle, buf%epsilon, "epsilon", ierr)
+  model_driver_create_handle, buf%epsilon, "epsilon", &
+  "Energy scale coefficient.", ierr)
 if (ierr /= 0) then
   kim_log_message = "set_parameter"
   LOG_ERROR()
@@ -892,7 +894,8 @@ if (ierr /= 0) then
 endif
 
 call kim_model_driver_create_set_parameter_pointer( &
-  model_driver_create_handle, buf%sigma, "sigma", ierr)
+  model_driver_create_handle, buf%sigma, "sigma", &
+  "Length scale coefficient.", ierr)
 if (ierr /= 0) then
   kim_log_message = "set_parameter"
   LOG_ERROR()

@@ -28,6 +28,7 @@
 //
 
 
+#include <sstream>
 #include <cmath>
 #include <cstdlib>
 #include <cstring>
@@ -636,6 +637,10 @@ int LennardJones612Implementation::RegisterKIMComputeArgumentsSettings(
 }
 
 //******************************************************************************
+// helper macro
+#define SNUM( x ) static_cast<std::ostringstream &>(    \
+    std::ostringstream() << std::dec << x).str()
+//******************************************************************************
 #include "KIM_ModelDriverCreateLogMacros.hpp"
 int LennardJones612Implementation::RegisterKIMParameters(
     KIM::ModelDriverCreate * const modelDriverCreate)
@@ -643,28 +648,48 @@ int LennardJones612Implementation::RegisterKIMParameters(
   int ier = false;
 
   // publish parameters (order is important)
-  ier = modelDriverCreate->SetParameterPointer(1, &shift_, "shift");
+  ier = modelDriverCreate->SetParameterPointer(
+      1, &shift_, "shift",
+      "If (shift == 1), all LJ potentials are shifted to zero energy "
+      "at their respective cutoff distance.  Otherwise, no shifting is "
+      "performed.");
   if (ier)
   {
     LOG_ERROR("set_parameter shift");
     return ier;
   }
+
   ier = modelDriverCreate->SetParameterPointer(
-      numberUniqueSpeciesPairs_, cutoffs_, "cutoffs");
+      numberUniqueSpeciesPairs_, cutoffs_, "cutoffs",
+      "Lower-triangular matrix (of size N=" + SNUM(numberModelSpecies_) + ") "
+      "in row-major storage.  Ordering is according to SpeciesCode values.  "
+      "For example, to find the parameter related to SpeciesCode 'i' and "
+      "SpeciesCode 'j' (i >= j), use (zero-based) "
+      "index = (j*N + i - (j*j + j)/2).");
   if (ier)
   {
     LOG_ERROR("set_parameter cutoffs");
     return ier;
   }
   ier = modelDriverCreate->SetParameterPointer(
-      numberUniqueSpeciesPairs_, epsilons_, "epsilons");
+      numberUniqueSpeciesPairs_, epsilons_, "epsilons",
+      "Lower-triangular matrix (of size N=" + SNUM(numberModelSpecies_) + ") "
+      "in row-major storage.  Ordering is according to SpeciesCode values.  "
+      "For example, to find the parameter related to SpeciesCode 'i' and "
+      "SpeciesCode 'j' (i >= j), use (zero-based) "
+      "index = (j*N + i - (j*j + j)/2).");
   if (ier)
   {
     LOG_ERROR("set_parameter epsilons");
     return ier;
   }
   ier = modelDriverCreate->SetParameterPointer(
-      numberUniqueSpeciesPairs_, sigmas_, "sigmas");
+      numberUniqueSpeciesPairs_, sigmas_, "sigmas",
+      "Lower-triangular matrix (of size N=" + SNUM(numberModelSpecies_) + ") "
+      "in row-major storage.  Ordering is according to SpeciesCode values.  "
+      "For example, to find the parameter related to SpeciesCode 'i' and "
+      "SpeciesCode 'j' (i >= j), use (zero-based) "
+      "index = (j*N + i - (j*j + j)/2).");
   if (ier)
   {
     LOG_ERROR("set_parameter sigmas");
