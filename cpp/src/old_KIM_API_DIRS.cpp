@@ -114,7 +114,7 @@ std::string getSystemLibraryFileName()
   return std::string(
       KIM_LIBDIR "/" KIM_SHARED_LIBRARY_PREFIX KIM_PROJECT_NAME
       "."
-      KIM_VERSION_STRING KIM_SHARED_LIBRARY_SUFFIX);
+      + SNUM(KIM_VERSION_MAJOR) + KIM_SHARED_LIBRARY_SUFFIX);
 }
 
 std::vector<std::string> getSystemDirs()
