@@ -229,8 +229,7 @@ subroutine kim_log_pop_verbosity(log_handle)
   call pop_verbosity(log)
 end subroutine kim_log_pop_verbosity
 
-subroutine kim_log_log_entry(log_handle, log_verbosity, message, &
-  line_number, file_name)
+subroutine kim_log_log_entry(log_handle, log_verbosity, message)
   use, intrinsic :: iso_c_binding
   use kim_log_module, only : kim_log_handle_type
   use kim_log_f_module, only : kim_log_type
@@ -240,11 +239,9 @@ subroutine kim_log_log_entry(log_handle, log_verbosity, message, &
   type(kim_log_handle_type), intent(in) :: log_handle
   type(kim_log_verbosity_type), intent(in), value :: log_verbosity
   character(len=*, kind=c_char), intent(in) :: message
-  integer(c_int), intent(in), value :: line_number
-  character(len=*, kind=c_char), intent(in) :: file_name
   type(kim_log_type), pointer :: log
 
   call c_f_pointer(log_handle%p, log)
   call log_entry(log, log_verbosity, trim(message)//c_null_char, &
-    line_number, trim(file_name)//c_null_char)
+    0, ""//c_null_char)
 end subroutine kim_log_log_entry

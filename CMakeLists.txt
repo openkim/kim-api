@@ -127,8 +127,8 @@ endif()
 #
 if(KIM_API_BUILD_MODELS_AND_DRIVERS)
   list(APPEND CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR}/cmake/Modules)
-  add_subdirectory(examples/models)
   add_subdirectory(examples/model-drivers)
+  add_subdirectory(examples/models)
   add_subdirectory(examples/simulators)
 endif()
 

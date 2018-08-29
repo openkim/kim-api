@@ -167,7 +167,6 @@ end subroutine calc_phi_dphi
 ! Compute energy and forces on particles from the positions.
 !
 !-------------------------------------------------------------------------------
-#include "kim_model_compute_log_macros.fd"
 subroutine Compute_Energy_Forces(model_compute_handle, &
   model_compute_arguments_handle, ierr) bind(c)
 implicit none
@@ -194,8 +193,6 @@ integer(c_int), pointer :: nei1part(:)
 integer(c_int), pointer :: particleSpeciesCodes(:)
 integer(c_int), pointer :: particleContributing(:)
 real(c_double), pointer :: virial(:)
-
-kim_log_file = __FILE__
 
 ! Unpack data from KIM object
 !
@@ -235,8 +232,8 @@ call kim_model_compute_arguments_get_argument_pointer( &
   kim_compute_argument_name_partial_virial, 6, virial, ierr2)
 ierr = ierr + ierr2
 if (ierr /= 0) then
-  kim_log_message = "get data"
-  LOG_ERROR()
+  call kim_model_compute_arguments_log_entry(model_compute_arguments_handle, &
+    kim_log_verbosity_error, "get data")
   ierr = 1
   return
 endif
@@ -270,8 +267,8 @@ end if
 ierr = 1 ! assume an error
 do i = 1,N
   if (particleSpeciesCodes(i).ne.speccode) then
-    kim_log_message = "Unexpected species code detected"
-    LOG_ERROR()
+    call kim_model_compute_log_entry(model_compute_handle, &
+      kim_log_verbosity_error, "Unexpected species code detected")
     ierr = 1
     return
   endif
@@ -298,8 +295,9 @@ do i = 1, N
       model_compute_arguments_handle, 1, i, numnei, nei1part, ierr)
     if (ierr /= 0) then
       ! some sort of problem, exit
-      kim_log_message = "GetNeighborList failed"
-      LOG_ERROR()
+      call kim_model_compute_arguments_log_entry(&
+        model_compute_arguments_handle, kim_log_verbosity_error, &
+        "GetNeighborList failed")
       ierr = 1
       return
     endif
@@ -375,7 +373,6 @@ end subroutine Compute_Energy_Forces
 ! Model destroy routine (REQUIRED)
 !
 !-------------------------------------------------------------------------------
-#include "kim_model_destroy_log_macros.fd"
 subroutine model_destroy_func(model_destroy_handle, ierr) bind(c)
   use, intrinsic :: iso_c_binding
   implicit none
@@ -386,12 +383,10 @@ subroutine model_destroy_func(model_destroy_handle, ierr) bind(c)
 
   type(buffer_type), pointer :: buf; type(c_ptr) :: pbuf
 
-  kim_log_file = __FILE__
-
   call kim_model_destroy_get_model_buffer_pointer(model_destroy_handle, pbuf)
   call c_f_pointer(pbuf, buf)
-  kim_log_message = "deallocating model buffer"
-  LOG_INFORMATION()
+  call kim_model_destroy_log_entry(model_destroy_handle, &
+    kim_log_verbosity_error, "deallocating model buffer")
   deallocate(buf)
   ierr = 0  ! everything is good
 end subroutine model_destroy_func
@@ -401,7 +396,6 @@ end subroutine model_destroy_func
 ! Model refresh routine (REQUIRED)
 !
 !-------------------------------------------------------------------------------
-#include "kim_model_refresh_log_macros.fd"
 subroutine model_refresh_func(model_refresh_handle, ierr) bind(c)
   use, intrinsic :: iso_c_binding
   implicit none
@@ -412,13 +406,11 @@ subroutine model_refresh_func(model_refresh_handle, ierr) bind(c)
 
   type(buffer_type), pointer :: buf; type(c_ptr) :: pbuf
 
-  kim_log_file = __FILE__
-
   call kim_model_refresh_get_model_buffer_pointer(model_refresh_handle, pbuf)
   call c_f_pointer(pbuf, buf)
 
-  kim_log_message = "Resettings influence distance and cutoffs"
-  LOG_INFORMATION()
+  call kim_model_refresh_log_entry(model_refresh_handle, &
+    kim_log_verbosity_information, "Resettings influence distance and cutoffs")
   call kim_model_refresh_set_influence_distance_pointer( &
     model_refresh_handle, buf%cutoff(1))
   call kim_model_refresh_set_neighbor_list_pointers( &
@@ -433,7 +425,6 @@ end subroutine model_refresh_func
 ! Model compute arguments create routine (REQUIRED)
 !
 !-------------------------------------------------------------------------------
-#include "kim_model_compute_arguments_create_log_macros.fd"
 subroutine model_compute_arguments_create(model_compute_handle, &
   model_compute_arguments_create_handle, ierr) bind(c)
   use, intrinsic :: iso_c_binding
@@ -480,8 +471,9 @@ subroutine model_compute_arguments_create(model_compute_handle, &
 
   if (ierr /= 0) then
     ierr = 1
-    kim_log_message = "Unable to successfully create compute_arguments object"
-    LOG_ERROR()
+    call kim_model_compute_arguments_create_log_entry( &
+      model_compute_arguments_create_handle, kim_log_verbosity_error, &
+      "Unable to successfully create compute_arguments object")
   endif
 
   ierr = 0
@@ -493,7 +485,6 @@ end subroutine model_compute_arguments_create
 ! Model compute arguments destroy routine (REQUIRED)
 !
 !-------------------------------------------------------------------------------
-#include "kim_model_compute_arguments_destroy_log_macros.fd"
 subroutine model_compute_arguments_destroy(model_compute_handle, &
   model_compute_arguments_destroy_handle, ierr) bind(c)
   use, intrinsic :: iso_c_binding
@@ -523,7 +514,6 @@ end module ex_model_Ar_P_MLJ_F03
 ! Model create routine (REQUIRED)
 !
 !-------------------------------------------------------------------------------
-#include "kim_model_create_log_macros.fd"
 subroutine model_create_routine(model_create_handle, requested_length_unit, &
   requested_energy_unit, requested_charge_unit, requested_temperature_unit, &
   requested_time_unit, ierr) bind(c)
@@ -544,8 +534,6 @@ integer(c_int), intent(out) :: ierr
 !-- KIM variables
 integer(c_int) :: ierr2
 type(buffer_type), pointer :: buf
-
-kim_log_file = __FILE__
 
 ierr = 0
 ierr2 = 0
@@ -621,8 +609,8 @@ call kim_model_create_set_neighbor_list_pointers(model_create_handle, &
 if (ierr /= 0) then
   ierr = 1
   deallocate( buf )
-  kim_log_message = "Unable to successfully initialize model"
-  LOG_ERROR()
+  call kim_model_create_log_entry(model_create_handle, &
+    kim_log_verbosity_error, "Unable to successfully initialize model")
 endif
 
 ierr = 0

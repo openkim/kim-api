@@ -124,8 +124,7 @@ module kim_log_module
       type(kim_log_handle_type), intent(in) :: log_handle
     end subroutine kim_log_pop_verbosity
 
-    subroutine kim_log_log_entry(log_handle, log_verbosity, message, &
-      line_number, file_name)
+    subroutine kim_log_log_entry(log_handle, log_verbosity, message)
       use, intrinsic :: iso_c_binding
       use kim_log_verbosity_module, only : kim_log_verbosity_type
       import kim_log_handle_type
@@ -133,8 +132,6 @@ module kim_log_module
       type(kim_log_handle_type), intent(in) :: log_handle
       type(kim_log_verbosity_type), intent(in), value :: log_verbosity
       character(len=*, kind=c_char), intent(in) :: message
-      integer(c_int), intent(in), value :: line_number
-      character(len=*, kind=c_char), intent(in) :: file_name
     end subroutine kim_log_log_entry
   end interface
 end module kim_log_module

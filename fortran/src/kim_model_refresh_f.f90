@@ -193,7 +193,7 @@ subroutine kim_model_refresh_get_model_buffer_pointer( &
 end subroutine kim_model_refresh_get_model_buffer_pointer
 
 subroutine kim_model_refresh_log_entry(model_refresh_handle, &
-  log_verbosity, message, line_number, file_name)
+  log_verbosity, message)
   use, intrinsic :: iso_c_binding
   use kim_model_refresh_module, only : kim_model_refresh_handle_type
   use kim_log_verbosity_module, only : kim_log_verbosity_type
@@ -202,13 +202,11 @@ subroutine kim_model_refresh_log_entry(model_refresh_handle, &
   type(kim_model_refresh_handle_type), intent(in) :: model_refresh_handle
   type(kim_log_verbosity_type), intent(in), value :: log_verbosity
   character(len=*, kind=c_char), intent(in) :: message
-  integer(c_int), intent(in), value :: line_number
-  character(len=*, kind=c_char), intent(in) :: file_name
   type(kim_model_refresh_type), pointer :: model_refresh
 
   call c_f_pointer(model_refresh_handle%p, model_refresh)
   call log_entry(model_refresh, log_verbosity, trim(message)//c_null_char, &
-    line_number, trim(file_name)//c_null_char)
+    0, ""//c_null_char)
 end subroutine kim_model_refresh_log_entry
 
 subroutine kim_model_refresh_string(model_refresh_handle, string)

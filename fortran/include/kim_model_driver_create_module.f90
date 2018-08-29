@@ -320,8 +320,7 @@ module kim_model_driver_create_module
     end subroutine kim_model_driver_create_convert_unit
 
     subroutine kim_model_driver_create_log_entry( &
-      model_driver_create_handle, log_verbosity, message, line_number, &
-      file_name)
+      model_driver_create_handle, log_verbosity, message)
       use, intrinsic :: iso_c_binding
       use kim_log_verbosity_module, only : kim_log_verbosity_type
       import kim_model_driver_create_handle_type
@@ -330,8 +329,6 @@ module kim_model_driver_create_module
         :: model_driver_create_handle
       type(kim_log_verbosity_type), intent(in), value :: log_verbosity
       character(len=*, kind=c_char), intent(in) :: message
-      integer(c_int), intent(in), value :: line_number
-      character(len=*, kind=c_char), intent(in) :: file_name
     end subroutine kim_model_driver_create_log_entry
 
     subroutine kim_model_driver_create_string( &

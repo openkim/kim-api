@@ -52,5 +52,5 @@ endif()
 
 set(TEST_NAME "utility_forces_numer_deriv")
 
-add_executable(${TEST_NAME} ${TEST_NAME}.F90)
+add_executable(${TEST_NAME} ${TEST_NAME}.f90)
 target_link_libraries(${TEST_NAME} kim-api)

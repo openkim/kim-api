@@ -57,4 +57,4 @@ add_kim_api_model_driver_library(
   CREATE_ROUTINE_LANGUAGE "fortran"
   )
 
-target_sources(${MODEL_DRIVER_NAME} PRIVATE ${MODEL_DRIVER_NAME}.F90)
+target_sources(${MODEL_DRIVER_NAME} PRIVATE ${MODEL_DRIVER_NAME}.f90)

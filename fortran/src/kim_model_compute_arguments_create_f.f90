@@ -223,8 +223,7 @@ subroutine kim_model_compute_arguments_create_set_model_buffer_pointer( &
 end subroutine kim_model_compute_arguments_create_set_model_buffer_pointer
 
 subroutine kim_model_compute_arguments_create_log_entry( &
-  model_commpute_arguments_create_handle, log_verbosity, message, line_number, &
-  file_name)
+  model_commpute_arguments_create_handle, log_verbosity, message)
   use, intrinsic :: iso_c_binding
   use kim_model_compute_arguments_create_module, only : &
     kim_model_compute_arguments_create_handle_type
@@ -236,15 +235,13 @@ subroutine kim_model_compute_arguments_create_log_entry( &
     model_commpute_arguments_create_handle
   type(kim_log_verbosity_type), intent(in), value :: log_verbosity
   character(len=*, kind=c_char), intent(in) :: message
-  integer(c_int), intent(in), value :: line_number
-  character(len=*, kind=c_char), intent(in) :: file_name
   type(kim_model_compute_arguments_create_type), pointer :: &
     model_commpute_arguments_create
 
   call c_f_pointer(model_commpute_arguments_create_handle%p, &
     model_commpute_arguments_create)
   call log_entry(model_commpute_arguments_create, log_verbosity, &
-    trim(message)//c_null_char, line_number, trim(file_name)//c_null_char)
+    trim(message)//c_null_char, 0, ""//c_null_char)
 end subroutine kim_model_compute_arguments_create_log_entry
 
 subroutine kim_model_compute_arguments_create_string( &

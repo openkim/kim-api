@@ -262,8 +262,7 @@ module kim_model_compute_arguments_module
     end subroutine kim_model_compute_arguments_get_model_buffer_pointer
 
     subroutine kim_model_compute_arguments_log_entry( &
-      model_compute_arguments_handle, log_verbosity, message, line_number, &
-      file_name)
+      model_compute_arguments_handle, log_verbosity, message)
       use, intrinsic :: iso_c_binding
       use kim_log_verbosity_module, only : kim_log_verbosity_type
       import kim_model_compute_arguments_handle_type
@@ -272,8 +271,6 @@ module kim_model_compute_arguments_module
         model_compute_arguments_handle
       type(kim_log_verbosity_type), intent(in), value :: log_verbosity
       character(len=*, kind=c_char), intent(in) :: message
-      integer(c_int), intent(in), value :: line_number
-      character(len=*, kind=c_char), intent(in) :: file_name
     end subroutine kim_model_compute_arguments_log_entry
 
     subroutine kim_model_compute_arguments_string( &
