@@ -23,30 +23,17 @@
 # All rights reserved.
 #
 # Contributors:
-#    Richard Berger
-#    Christoph Junghans
 #    Ryan S. Elliott
 #
 
-#
-# Release: This file is part of the kim-api.git repository.
-#
 
+This directory contains a model consisting of the superposition of two shifted
+Morse pair potentials with different cutoffs.
 
-cmake_minimum_required(VERSION 3.4)
+   phi_i(r) = epsilon_i * ( - exp[ -2*C_i*(r - Rzero_i) ]
+                            + 2*exp[ -C_i*(r - Rzero_i) ] )
+            + shift_i,
 
-set(TEST_MODELS
-  LennardJones612_UniversalShifted__MO_959249795837_003
-  LennardJones_Ar
-  ex_model_Ar_P_LJ
-  ex_model_Ar_P_MLJ_Fortran
-  ex_model_Ar_P_Morse
-  ex_model_Ar_P_Morse_07C
-  ex_model_Ar_P_Morse_MultiCutoff
-  ex_model_Ar_SLJ_MultiCutoff
-  )
-
-add_subdirectory(ex_test_Ar_fcc_cluster)
-add_subdirectory(ex_test_Ar_fcc_cluster_cpp)
-add_subdirectory(ex_test_Ar_fcc_cluster_fortran)
-add_subdirectory(utility_forces_numer_deriv)
+for i=1,2 and where shift_i is computed so that phi_i(rcut_i) = 0.0.  The model
+uses two neighbor lists with different cutoffs and does not request neighbors
+of non-contributing particles.

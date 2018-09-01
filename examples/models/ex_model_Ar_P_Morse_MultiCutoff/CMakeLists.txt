@@ -33,20 +33,28 @@
 #
 
 
+#
+# Requied preamble
+#
+
 cmake_minimum_required(VERSION 3.4)
 
-set(TEST_MODELS
-  LennardJones612_UniversalShifted__MO_959249795837_003
-  LennardJones_Ar
-  ex_model_Ar_P_LJ
-  ex_model_Ar_P_MLJ_Fortran
-  ex_model_Ar_P_Morse
-  ex_model_Ar_P_Morse_07C
-  ex_model_Ar_P_Morse_MultiCutoff
-  ex_model_Ar_SLJ_MultiCutoff
+list(APPEND CMAKE_PREFIX_PATH $ENV{KIM_API_V2_CMAKE_PREFIX_DIR})
+find_package(KIM-API-V2 2.0 REQUIRED CONFIG)
+if(NOT TARGET kim-api)
+  project("${KIM_API_PROJECT_NAME}" VERSION "${KIM_API_VERSION}"
+    LANGUAGES CXX C Fortran)
+endif()
+
+# End preamble
+
+
+set(MODEL_NAME "ex_model_Ar_P_Morse_MultiCutoff")
+
+add_kim_api_model_library(
+  NAME                    ${MODEL_NAME}
+  CREATE_ROUTINE_NAME     "model_create"
+  CREATE_ROUTINE_LANGUAGE "c"
   )
 
-add_subdirectory(ex_test_Ar_fcc_cluster)
-add_subdirectory(ex_test_Ar_fcc_cluster_cpp)
-add_subdirectory(ex_test_Ar_fcc_cluster_fortran)
-add_subdirectory(utility_forces_numer_deriv)
+target_sources(${MODEL_NAME} PRIVATE ${MODEL_NAME}.c)

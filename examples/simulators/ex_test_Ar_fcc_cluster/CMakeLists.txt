@@ -62,7 +62,7 @@ foreach(TEST_MODEL ${TEST_MODELS})
   add_test(NAME Run_${TEST_NAME}_${TEST_MODEL} COMMAND sh -c "echo ${TEST_MODEL} | ${CMAKE_CURRENT_BINARY_DIR}/${TEST_NAME} > stdout" WORKING_DIRECTORY ${TEST_DIR})
   # TODO : the environment variables can be abstracted for generality
   set_tests_properties(Run_${TEST_NAME}_${TEST_MODEL} PROPERTIES ENVIRONMENT "KIM_API_V2_MODELS_DIR=${CMAKE_BINARY_DIR};KIM_API_V2_MODEL_DRIVERS_DIR=${CMAKE_BINARY_DIR}")
-  if("${TEST_MODEL}" STREQUAL "ex_model_Ar_SLJ_MultiCutoff")
+  if("${TEST_MODEL}" MATCHES "ex_model_Ar_.*_MultiCutoff")
     set_tests_properties(Run_${TEST_NAME}_${TEST_MODEL} PROPERTIES WILL_FAIL TRUE)
   endif()
 endforeach()

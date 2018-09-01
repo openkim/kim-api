@@ -60,11 +60,12 @@
 #define RZERO   3.786  /* Angstroms */
 
 /* Model buffer definition */
+#define NUMBER_OF_CUTOFFS 2
 struct buffer
 {
   double influenceDistance;
-  double cutoff;
-  int modelWillNotRequestNeighborsOfNoncontributingParticles;
+  double cutoff[NUMBER_OF_CUTOFFS];
+  int modelWillNotRequestNeighborsOfNoncontributingParticles[NUMBER_OF_CUTOFFS];
 };
 typedef struct buffer buffer;
 
@@ -180,152 +181,55 @@ static void calc_phi_d2phi(double* epsilon,
 
   return; }
 
-/* compute function */
+/* function to loop over particles */
 #include "KIM_ModelComputeLogMacros.h"
-static int compute(
+int loops(
     KIM_ModelCompute const * const modelCompute,
-    KIM_ModelComputeArguments const * const modelComputeArguments)
+    KIM_ModelComputeArguments const * const modelComputeArguments,
+    int neighborListIndex,
+    int* nParts,
+    int* particleContributing,
+    double* energy,
+    double* particleEnergy,
+    double* force,
+    double* coords,
+    double cutsq,
+    double epsilon,
+    double C,
+    double Rzero,
+    double shift,
+    double* cutoff,
+    int comp_energy,
+    int comp_force,
+    int comp_particleEnergy,
+    int comp_process_dEdr,
+    int comp_process_d2Edr2
+    )
 {
-  /* local variables */
-  double R;
-  double R_pairs[2];
-  double *pR_pairs = &(R_pairs[0]);
+  int ier;
+  int i;
+  int numOfPartNeigh;
+  int const * neighListOfCurrentPart;
+  int jj;
+  int j;
   double Rsqij;
+  int k;
+  double Rij[DIM];
   double phi;
   double dphi;
   double d2phi;
   double dEidr;
   double d2Eidr;
-  double Rij[DIM];
   double *pRij = &(Rij[0]);
   double Rij_pairs[2][3];
   double const * pRij_pairs = &(Rij_pairs[0][0]);
-  int ier;
-  int i;
   int i_pairs[2];
   int *pi_pairs = &(i_pairs[0]);
-  int j;
   int j_pairs[2];
   int *pj_pairs = &(j_pairs[0]);
-  int jj;
-  int k;
-  int const * neighListOfCurrentPart;
-  int comp_energy;
-  int comp_force;
-  int comp_particleEnergy;
-  int comp_process_dEdr;
-  int comp_process_d2Edr2;
-
-  int* nParts;
-  int* particleSpeciesCodes;
-  int* particleContributing;
-  buffer* bufferPointer;
-  double* cutoff;
-  double cutsq;
-  double epsilon;
-  double C;
-  double Rzero;
-  double shift;
-  double* coords;
-  double* energy;
-  double* force;
-  double* particleEnergy;
-  int numOfPartNeigh;
-  double dummy;
-
-  /* check to see if we have been asked to compute the forces, */
-  /* particleEnergy, and d1Edr */
-  LOG_INFORMATION("Checking if call backs are present.");
-  KIM_ModelComputeArguments_IsCallbackPresent(
-      modelComputeArguments,
-      KIM_COMPUTE_CALLBACK_NAME_ProcessDEDrTerm,
-      &comp_process_dEdr);
-  KIM_ModelComputeArguments_IsCallbackPresent(
-      modelComputeArguments,
-      KIM_COMPUTE_CALLBACK_NAME_ProcessD2EDr2Term,
-      &comp_process_d2Edr2);
-
-  LOG_INFORMATION("Getting data pointers");
-  ier =
-      KIM_ModelComputeArguments_GetArgumentPointerInteger(
-          modelComputeArguments,
-          KIM_COMPUTE_ARGUMENT_NAME_numberOfParticles,
-          &nParts)
-      ||
-      KIM_ModelComputeArguments_GetArgumentPointerInteger(
-          modelComputeArguments,
-          KIM_COMPUTE_ARGUMENT_NAME_particleSpeciesCodes,
-          &particleSpeciesCodes)
-      ||
-      KIM_ModelComputeArguments_GetArgumentPointerInteger(
-          modelComputeArguments,
-          KIM_COMPUTE_ARGUMENT_NAME_particleContributing,
-          &particleContributing)
-      ||
-      KIM_ModelComputeArguments_GetArgumentPointerDouble(
-          modelComputeArguments,
-          KIM_COMPUTE_ARGUMENT_NAME_coordinates,
-          &coords)
-      ||
-      KIM_ModelComputeArguments_GetArgumentPointerDouble(
-          modelComputeArguments,
-          KIM_COMPUTE_ARGUMENT_NAME_partialEnergy,
-          &energy)
-      ||
-      KIM_ModelComputeArguments_GetArgumentPointerDouble(
-          modelComputeArguments,
-          KIM_COMPUTE_ARGUMENT_NAME_partialForces,
-          &force)
-      ||
-      KIM_ModelComputeArguments_GetArgumentPointerDouble(
-          modelComputeArguments,
-          KIM_COMPUTE_ARGUMENT_NAME_partialParticleEnergy,
-          &particleEnergy);
-  if (ier) {
-    LOG_ERROR("get data pointers failed");
-    return ier; }
-
-  comp_energy = (energy != NULL);
-  comp_force = (force != NULL);
-  comp_particleEnergy = (particleEnergy != NULL);
-
-  /* set value of parameters */
-  KIM_ModelCompute_GetModelBufferPointer(modelCompute, (void**) &bufferPointer);
-  cutoff = &(bufferPointer->cutoff);
-  cutsq = (*cutoff)*(*cutoff);
-  epsilon = EPSILON;
-  C = PARAM_C;
-  Rzero = RZERO;
-  /* set value of parameter shift */
-  dummy = 0.0;
-  /* call calc_phi with r=cutoff and shift=0.0 */
-  calc_phi(&epsilon, &C, &Rzero, &dummy, cutoff, *cutoff, &shift);
-  /* set shift to -shift */
-  shift = -(shift);
-
-  /* Check to be sure that the species are correct */
-  /**/
-  ier = TRUE; /* assume an error */
-  for (i = 0; i < *nParts; ++i) {
-    if ( SPECCODE != particleSpeciesCodes[i]) {
-      LOG_ERROR("Unexpected species code detected");
-      return ier; } }
-  ier = FALSE;  /* everything is ok */
-
-  /* initialize potential energies, forces, and virial term */
-  LOG_INFORMATION("Initializing data");
-  if (comp_particleEnergy) {
-    for (i = 0; i < *nParts; ++i) {
-      particleEnergy[i] = 0.0; } }
-  if (comp_energy) {
-    *energy = 0.0; }
-
-  if (comp_force) {
-    for (i = 0; i < *nParts; ++i) {
-      for (k = 0; k < DIM; ++k) {
-        force[i*DIM + k] = 0.0; } } }
-
-  /* Compute energy and forces */
+  double R;
+  double R_pairs[2];
+  double *pR_pairs = &(R_pairs[0]);
 
   /* loop over particles and compute enregy and forces */
   LOG_INFORMATION("Starting main compute loop");
@@ -333,7 +237,7 @@ static int compute(
     if (particleContributing[i]) {
       ier = KIM_ModelComputeArguments_GetNeighborList(
           modelComputeArguments,
-          0, i, &numOfPartNeigh, &neighListOfCurrentPart);
+          neighborListIndex, i, &numOfPartNeigh, &neighListOfCurrentPart);
       if (ier) {
         /* some sort of problem, exit */
         LOG_ERROR("GetNeighborList failed");
@@ -436,10 +340,174 @@ static int compute(
   }  /* loop on i */
   LOG_INFORMATION("Finished compute loop");
 
+  return FALSE;
+}
+
+/* compute function */
+#include "KIM_ModelComputeLogMacros.h"
+static int compute(
+    KIM_ModelCompute const * const modelCompute,
+    KIM_ModelComputeArguments const * const modelComputeArguments)
+{
+  /* local variables */
+  int ier;
+  int i;
+  int k;
+  int comp_energy;
+  int comp_force;
+  int comp_particleEnergy;
+  int comp_process_dEdr;
+  int comp_process_d2Edr2;
+
+  int* particleSpeciesCodes;
+  int* particleContributing;
+  buffer* bufferPointer;
+  double* cutoff;
+  double cutsq;
+  double epsilon;
+  double C;
+  double Rzero;
+  double shift;
+  double* coords;
+  double* energy;
+  double* force;
+  double* particleEnergy;
+  int* nParts;
+  double dummy;
+
+  /* check to see if we have been asked to compute the forces, */
+  /* particleEnergy, and d1Edr */
+  LOG_INFORMATION("Checking if call backs are present.");
+  KIM_ModelComputeArguments_IsCallbackPresent(
+      modelComputeArguments,
+      KIM_COMPUTE_CALLBACK_NAME_ProcessDEDrTerm,
+      &comp_process_dEdr);
+  KIM_ModelComputeArguments_IsCallbackPresent(
+      modelComputeArguments,
+      KIM_COMPUTE_CALLBACK_NAME_ProcessD2EDr2Term,
+      &comp_process_d2Edr2);
+
+  LOG_INFORMATION("Getting data pointers");
+  ier =
+      KIM_ModelComputeArguments_GetArgumentPointerInteger(
+          modelComputeArguments,
+          KIM_COMPUTE_ARGUMENT_NAME_numberOfParticles,
+          &nParts)
+      ||
+      KIM_ModelComputeArguments_GetArgumentPointerInteger(
+          modelComputeArguments,
+          KIM_COMPUTE_ARGUMENT_NAME_particleSpeciesCodes,
+          &particleSpeciesCodes)
+      ||
+      KIM_ModelComputeArguments_GetArgumentPointerInteger(
+          modelComputeArguments,
+          KIM_COMPUTE_ARGUMENT_NAME_particleContributing,
+          &particleContributing)
+      ||
+      KIM_ModelComputeArguments_GetArgumentPointerDouble(
+          modelComputeArguments,
+          KIM_COMPUTE_ARGUMENT_NAME_coordinates,
+          &coords)
+      ||
+      KIM_ModelComputeArguments_GetArgumentPointerDouble(
+          modelComputeArguments,
+          KIM_COMPUTE_ARGUMENT_NAME_partialEnergy,
+          &energy)
+      ||
+      KIM_ModelComputeArguments_GetArgumentPointerDouble(
+          modelComputeArguments,
+          KIM_COMPUTE_ARGUMENT_NAME_partialForces,
+          &force)
+      ||
+      KIM_ModelComputeArguments_GetArgumentPointerDouble(
+          modelComputeArguments,
+          KIM_COMPUTE_ARGUMENT_NAME_partialParticleEnergy,
+          &particleEnergy);
+  if (ier) {
+    LOG_ERROR("get data pointers failed");
+    return ier; }
+
+  comp_energy = (energy != NULL);
+  comp_force = (force != NULL);
+  comp_particleEnergy = (particleEnergy != NULL);
+
+  /* Check to be sure that the species are correct */
+  /**/
+  ier = TRUE; /* assume an error */
+  for (i = 0; i < *nParts; ++i) {
+    if ( SPECCODE != particleSpeciesCodes[i]) {
+      LOG_ERROR("Unexpected species code detected");
+      return ier; } }
+  ier = FALSE;  /* everything is ok */
+
+  /* initialize potential energies, forces, and virial term */
+  LOG_INFORMATION("Initializing data");
+  if (comp_particleEnergy) {
+    for (i = 0; i < *nParts; ++i) {
+      particleEnergy[i] = 0.0; } }
+  if (comp_energy) {
+    *energy = 0.0; }
+
+  if (comp_force) {
+    for (i = 0; i < *nParts; ++i) {
+      for (k = 0; k < DIM; ++k) {
+        force[i*DIM + k] = 0.0; } } }
+
+  /* Compute energy and forces */
+
+  /* set value of parameters */
+  KIM_ModelCompute_GetModelBufferPointer(modelCompute, (void**) &bufferPointer);
+  cutoff = &(bufferPointer->cutoff[0]);
+  cutsq = (*cutoff)*(*cutoff);
+  epsilon = EPSILON;
+  C = PARAM_C;
+  Rzero = RZERO;
+  /* set value of parameter shift */
+  dummy = 0.0;
+  /* call calc_phi with r=cutoff and shift=0.0 */
+  calc_phi(&epsilon, &C, &Rzero, &dummy, cutoff, *cutoff, &shift);
+  /* set shift to -shift */
+  shift = -(shift);
+
+  /* do computation for short list */
+  ier = loops(modelCompute, modelComputeArguments,
+              0 /* neighborListIndex */,
+              nParts, particleContributing, energy, particleEnergy,
+              force, coords,
+              cutsq, epsilon, C, Rzero, shift, cutoff,
+              comp_energy, comp_force, comp_particleEnergy,
+              comp_process_dEdr, comp_process_d2Edr2
+              );
+  if (ier) return TRUE;
+
+  cutoff = &(bufferPointer->cutoff[1]);
+  cutsq = (*cutoff)*(*cutoff);
+  epsilon = EPSILON/4.0;
+  C = PARAM_C/2.0;
+  Rzero = RZERO*1.5;
+  /* set value of parameter shift */
+  dummy = 0.0;
+  /* call calc_phi with r=cutoff and shift=0.0 */
+  calc_phi(&epsilon, &C, &Rzero, &dummy, cutoff, *cutoff, &shift);
+  /* set shift to -shift */
+  shift = -(shift);
+
+  /* do computation for short list */
+  ier = loops(modelCompute, modelComputeArguments,
+              1 /* neighborListIndex */,
+              nParts, particleContributing, energy, particleEnergy,
+              force, coords,
+              cutsq, epsilon, C, Rzero, shift, cutoff,
+              comp_energy, comp_force, comp_particleEnergy,
+              comp_process_dEdr, comp_process_d2Edr2
+              );
+  if (ier) return TRUE;
+
   /* everything is great */
   ier = FALSE;
 
   return ier; }
+
 
 /* Create function */
 #include "KIM_ModelCreateLogMacros.h"
@@ -518,8 +586,10 @@ int model_create(KIM_ModelCreate * const modelCreate,
 
   /* set buffer values */
   bufferPointer->influenceDistance = CUTOFF;
-  bufferPointer->cutoff = CUTOFF;
-  bufferPointer->modelWillNotRequestNeighborsOfNoncontributingParticles = 1;
+  bufferPointer->cutoff[0] = CUTOFF/2.0;
+  bufferPointer->cutoff[1] = CUTOFF;
+  bufferPointer->modelWillNotRequestNeighborsOfNoncontributingParticles[0] = 1;
+  bufferPointer->modelWillNotRequestNeighborsOfNoncontributingParticles[1] = 1;
 
   /* register influence distance */
   KIM_ModelCreate_SetInfluenceDistancePointer(
@@ -529,10 +599,10 @@ int model_create(KIM_ModelCreate * const modelCreate,
   /* register cutoff */
   KIM_ModelCreate_SetNeighborListPointers(
       modelCreate,
-      1,
-      &(bufferPointer->cutoff),
+      NUMBER_OF_CUTOFFS,
+      &(bufferPointer->cutoff[0]),
       &(bufferPointer
-        ->modelWillNotRequestNeighborsOfNoncontributingParticles));
+        ->modelWillNotRequestNeighborsOfNoncontributingParticles[0]));
 
   if (error)
   {
@@ -561,9 +631,10 @@ static int model_refresh(KIM_ModelRefresh * const modelRefresh)
       modelRefresh, &(bufferPointer->influenceDistance));
   KIM_ModelRefresh_SetNeighborListPointers(
       modelRefresh,
-      1,
-      &(bufferPointer->cutoff),
-      &(bufferPointer->modelWillNotRequestNeighborsOfNoncontributingParticles));
+      NUMBER_OF_CUTOFFS,
+      &(bufferPointer->cutoff[0]),
+      &(bufferPointer
+        ->modelWillNotRequestNeighborsOfNoncontributingParticles[0]));
 
   return FALSE;
 }
