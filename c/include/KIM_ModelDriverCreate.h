@@ -144,10 +144,12 @@ int KIM_ModelDriverCreate_SetSpeciesCode(
 
 int KIM_ModelDriverCreate_SetParameterPointerInteger(
     KIM_ModelDriverCreate * const modelDriverCreate,
-    int const extent, int * const ptr, char const * const description);
+    int const extent, int * const ptr, char const * const name,
+    char const * const description);
 int KIM_ModelDriverCreate_SetParameterPointerDouble(
     KIM_ModelDriverCreate * const modelDriverCreate,
-    int const extent, double * const ptr, char const * const description);
+    int const extent, double * const ptr, char const * const name,
+    char const * const description);
 
 void KIM_ModelDriverCreate_SetModelBufferPointer(
     KIM_ModelDriverCreate * const modelDriverCreate,

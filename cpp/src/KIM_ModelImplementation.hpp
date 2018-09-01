@@ -154,13 +154,16 @@ class ModelImplementation
                            std::string const ** const parameterFileName) const;
 
   int SetParameterPointer(int const extent, int * const ptr,
+                          std::string const & name,
                           std::string const & description);
   int SetParameterPointer(int const extent, double * const ptr,
+                          std::string const & name,
                           std::string const & description);
   void GetNumberOfParameters(int * const numberOfParameters) const;
-  int GetParameterDataTypeExtentAndDescription(
+  int GetParameterDataTypeExtentNameAndDescription(
       int const parameterIndex, DataType * const dataType, int * const extent,
-      std::string const ** const description) const;
+      std::string const ** const name, std::string const ** const description)
+      const;
   int GetParameter(int const parameterIndex, int const arrayIndex,
                    int * const parameterValue) const;
   int GetParameter(int const parameterIndex, int const arrayIndex,
@@ -245,6 +248,8 @@ class ModelImplementation
   int Validate(TemperatureUnit const temperatureUnit) const;
   int Validate(TimeUnit const timeUnit) const;
 
+  int IsCIdentifier(std::string const & id) const;
+
   ModelLibrary::ITEM_TYPE modelType_;
   std::string modelName_;
   std::string modelDriverName_;
@@ -307,6 +312,7 @@ class ModelImplementation
   std::map<SpeciesName const, int, SPECIES_NAME::Comparator> supportedSpecies_;
 
 
+  std::vector<std::string> parameterName_;
   std::vector<std::string> parameterDescription_;
   std::vector<DataType> parameterDataType_;
   std::vector<int> parameterExtent_;

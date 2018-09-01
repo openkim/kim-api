@@ -122,20 +122,22 @@ int ModelCreate::SetSpeciesCode(SpeciesName const speciesName,
 }
 
 int ModelCreate::SetParameterPointer(int const extent, int * const ptr,
+                                     std::string const & name,
                                      std::string const & description)
 {
   CONVERT_POINTER;
 
-  return pImpl->SetParameterPointer(extent, ptr, description);
+  return pImpl->SetParameterPointer(extent, ptr, name, description);
 }
 
 int ModelCreate::SetParameterPointer(int const extent,
                                      double * const ptr,
+                                     std::string const & name,
                                      std::string const & description)
 {
   CONVERT_POINTER;
 
-  return pImpl->SetParameterPointer(extent, ptr, description);
+  return pImpl->SetParameterPointer(extent, ptr, name, description);
 }
 
 void ModelCreate::SetModelBufferPointer(void * const ptr)

@@ -54,7 +54,7 @@ module kim_model_module
     kim_model_clear_then_refresh, &
     kim_model_get_species_support_and_code, &
     kim_model_get_number_of_parameters, &
-    kim_model_get_parameter_data_type_extent_and_description, &
+    kim_model_get_parameter_data_type_extent_name_and_description, &
     kim_model_get_parameter, &
     kim_model_set_parameter, &
     kim_model_set_simulator_buffer_pointer, &
@@ -288,8 +288,8 @@ module kim_model_module
       integer(c_int), intent(out) :: number_of_parameters
     end subroutine kim_model_get_number_of_parameters
 
-    subroutine kim_model_get_parameter_data_type_extent_and_description( &
-      model_handle, index, data_type, extent, description, ierr)
+    subroutine kim_model_get_parameter_data_type_extent_name_and_description( &
+      model_handle, index, data_type, extent, name, description, ierr)
       use, intrinsic :: iso_c_binding
       use :: kim_data_type_module, only : kim_data_type_type
       import kim_model_handle_type
@@ -298,9 +298,10 @@ module kim_model_module
       integer(c_int), intent(in), value :: index
       type(kim_data_type_type), intent(out) :: data_type
       integer(c_int), intent(out) :: extent
+      character(len=*, kind=c_char), intent(out) :: name
       character(len=*, kind=c_char), intent(out) :: description
       integer(c_int), intent(out) :: ierr
-    end subroutine kim_model_get_parameter_data_type_extent_and_description
+    end subroutine kim_model_get_parameter_data_type_extent_name_and_description
 
     subroutine kim_model_set_simulator_buffer_pointer(model_handle, ptr)
       use, intrinsic :: iso_c_binding

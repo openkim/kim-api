@@ -81,8 +81,10 @@ class ModelCreate
   int SetSpeciesCode(SpeciesName const speciesName, int const code);
 
   int SetParameterPointer(int const extent, int * const ptr,
+                          std::string const & name,
                           std::string const & description);
   int SetParameterPointer(int const extent, double * const ptr,
+                          std::string const & name,
                           std::string const & description);
 
   void SetModelBufferPointer(void * const ptr);

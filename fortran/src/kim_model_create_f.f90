@@ -168,7 +168,7 @@ module kim_model_create_f_module
     end function set_species_code
 
     integer(c_int) function set_parameter_pointer_integer( &
-      model_create, extent, ptr, description) &
+      model_create, extent, ptr, name, description) &
       bind(c, name="KIM_ModelCreate_SetParameterPointerInteger")
       use, intrinsic :: iso_c_binding
       import kim_model_create_type
@@ -176,11 +176,12 @@ module kim_model_create_f_module
       type(kim_model_create_type), intent(inout) :: model_create
       integer(c_int), intent(in), value :: extent
       type(c_ptr), intent(in), value :: ptr
+      character(c_char), intent(in) :: name(*)
       character(c_char), intent(in) :: description(*)
     end function set_parameter_pointer_integer
 
     integer(c_int) function set_parameter_pointer_double(model_create, &
-      extent, ptr, description) &
+      extent, ptr, name, description) &
       bind(c, name="KIM_ModelCreate_SetParameterPointerDouble")
       use, intrinsic :: iso_c_binding
       import kim_model_create_type
@@ -188,6 +189,7 @@ module kim_model_create_f_module
       type(kim_model_create_type), intent(inout) :: model_create
       integer(c_int), intent(in), value :: extent
       type(c_ptr), intent(in), value :: ptr
+      character(c_char), intent(in) :: name(*)
       character(c_char), intent(in) :: description(*)
     end function set_parameter_pointer_double
 
@@ -471,24 +473,25 @@ subroutine kim_model_create_set_species_code(model_create_handle, &
 end subroutine kim_model_create_set_species_code
 
 subroutine kim_model_create_set_parameter_pointer_integer( &
-  model_create_handle, int1, description, ierr)
+  model_create_handle, int1, name, description, ierr)
   use, intrinsic :: iso_c_binding
   use kim_model_create_module, only : kim_model_create_handle_type
   use kim_model_create_f_module, only : kim_model_create_type
   implicit none
   type(kim_model_create_handle_type), intent(in) :: model_create_handle
   integer(c_int), intent(in), target :: int1(:)
+  character(len=*, kind=c_char), intent(in) :: name
   character(len=*, kind=c_char), intent(in) :: description
   integer(c_int), intent(out) :: ierr
   type(kim_model_create_type), pointer :: model_create
 
   call c_f_pointer(model_create_handle%p, model_create)
-  call set_parameter(model_create, size(int1, 1, c_int), int1, &
+  call set_parameter(model_create, size(int1, 1, c_int), int1, name, &
     description, ierr)
   return
 
 contains
-  subroutine set_parameter(model_create, extent, int1, description, ierr)
+  subroutine set_parameter(model_create, extent, int1, name, description, ierr)
     use, intrinsic :: iso_c_binding
     use kim_model_create_f_module, only : kim_model_create_type, &
       set_parameter_pointer_integer
@@ -496,33 +499,37 @@ contains
     type(kim_model_create_type), intent(inout) :: model_create
     integer(c_int), intent(in), value :: extent
     integer(c_int), intent(in), target :: int1(extent)
+    character(len=*, kind=c_char), intent(in) :: name
     character(len=*, kind=c_char), intent(in) :: description
     integer(c_int), intent(out) :: ierr
 
     ierr = set_parameter_pointer_integer(model_create, extent, &
-      c_loc(int1), trim(description)//c_null_char)
+      c_loc(int1), trim(name)//c_null_char, &
+      trim(description)//c_null_char)
   end subroutine set_parameter
 end subroutine kim_model_create_set_parameter_pointer_integer
 
 subroutine kim_model_create_set_parameter_pointer_double( &
-  model_create_handle, double1, description, ierr)
+  model_create_handle, double1, name, description, ierr)
   use, intrinsic :: iso_c_binding
   use kim_model_create_module, only : kim_model_create_handle_type
   use kim_model_create_f_module, only : kim_model_create_type
   implicit none
   type(kim_model_create_handle_type), intent(in) :: model_create_handle
   real(c_double), intent(in), target :: double1(:)
+  character(len=*, kind=c_char), intent(in) :: name
   character(len=*, kind=c_char), intent(in) :: description
   integer(c_int), intent(out) :: ierr
   type(kim_model_create_type), pointer :: model_create
 
   call c_f_pointer(model_create_handle%p, model_create)
   call set_parameter(model_create, size(double1, 1, c_int), double1, &
-    description, ierr)
+    name, description, ierr)
   return
 
 contains
-  subroutine set_parameter(model_create, extent, double1, description, ierr)
+  subroutine set_parameter(model_create, extent, double1, name, description, &
+    ierr)
     use, intrinsic :: iso_c_binding
     use kim_model_create_f_module, only : kim_model_create_type, &
       set_parameter_pointer_integer
@@ -530,11 +537,13 @@ contains
     type(kim_model_create_type), intent(inout) :: model_create
     integer(c_int), intent(in), value :: extent
     real(c_double), intent(in), target :: double1(extent)
+    character(len=*, kind=c_char), intent(in) :: name
     character(len=*, kind=c_char), intent(in) :: description
     integer(c_int), intent(out) :: ierr
 
     ierr = set_parameter_pointer_integer(model_create, extent, &
-      c_loc(double1), trim(description)//c_null_char)
+      c_loc(double1), trim(name)//c_null_char, &
+      trim(description)//c_null_char)
   end subroutine set_parameter
 end subroutine kim_model_create_set_parameter_pointer_double
 

@@ -139,19 +139,21 @@ int ModelDriverCreate::SetSpeciesCode(SpeciesName const speciesName,
 }
 
 int ModelDriverCreate::SetParameterPointer(
-    int const extent, int * const ptr, std::string const & description)
+    int const extent, int * const ptr, std::string const & name,
+    std::string const & description)
 {
   CONVERT_POINTER;
 
-  return pImpl->SetParameterPointer(extent, ptr, description);
+  return pImpl->SetParameterPointer(extent, ptr, name, description);
 }
 
 int ModelDriverCreate::SetParameterPointer(
-    int const extent, double * const ptr, std::string const & description)
+    int const extent, double * const ptr, std::string const & name,
+    std::string const & description)
 {
   CONVERT_POINTER;
 
-  return pImpl->SetParameterPointer(extent, ptr, description);
+  return pImpl->SetParameterPointer(extent, ptr, name, description);
 }
 
 void ModelDriverCreate::SetModelBufferPointer(void * const ptr)

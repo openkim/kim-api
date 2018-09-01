@@ -96,8 +96,9 @@ class Model
                                int * const code) const;
 
   void GetNumberOfParameters(int * const numberOfParameters) const;
-  int GetParameterDataTypeExtentAndDescription(
+  int GetParameterDataTypeExtentNameAndDescription(
       int const index, DataType * const dataType, int * extent,
+      std::string const ** const name,
       std::string const ** const description) const;
   int GetParameter(int const parameterIndex, int const arrayIndex,
                    int * const parameterValue) const;
