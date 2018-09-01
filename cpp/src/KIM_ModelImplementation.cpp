@@ -36,6 +36,7 @@
 #include <cstdio>
 #include <cstring>
 #include <cmath>
+#include <algorithm>
 
 #ifndef KIM_LOG_HPP_
 #include "KIM_Log.hpp"
@@ -877,6 +878,15 @@ int ModelImplementation::SetParameterPointer(int const extent, int * const ptr,
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
+
+  if (std::find(parameterName_.begin(), parameterName_.end(), name)
+      != parameterName_.end())
+  {
+    LOG_ERROR("Name '" + name + "' is already associated with another "
+              "parameter.  Parameter names must be unique.");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
 #endif
 
   parameterName_.push_back(name);
@@ -911,6 +921,22 @@ int ModelImplementation::SetParameterPointer(int const extent,
   if (ptr == NULL)
   {
     LOG_ERROR("Null pointer provided for parameter.");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
+
+  if (! IsCIdentifier(name))
+  {
+    LOG_ERROR("Name '" + name + "' is not a valid C identifier.");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
+
+  if (std::find(parameterName_.begin(), parameterName_.end(), name)
+      != parameterName_.end())
+  {
+    LOG_ERROR("Name '" + name + "' is already associated with another "
+              "parameter.  Parameter names must be unique.");
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
