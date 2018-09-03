@@ -61,6 +61,11 @@ extern "C"
 extern "C"
 {
 #include "KIM_ModelCreate.h"
+
+struct KIM_ModelCreate
+{
+  void * p;
+};
 }  // extern "C"
 #endif
 
@@ -68,6 +73,23 @@ extern "C"
 extern "C"
 {
 #include "KIM_ModelDriverCreate.h"
+
+struct KIM_ModelDriverCreate
+{
+  void * p;
+};
+}  // extern "C"
+#endif
+
+#ifndef KIM_MODEL_COMPUTE_ARGUMENTS_CREATE_H_
+extern "C"
+{
+#include "KIM_ModelComputeArgumentsCreate.h"
+
+struct KIM_ModelComputeArgumentsCreate
+{
+  void * p;
+};
 }  // extern "C"
 #endif
 
@@ -75,6 +97,11 @@ extern "C"
 extern "C"
 {
 #include "KIM_ModelRefresh.h"
+
+struct KIM_ModelRefresh
+{
+  void * p;
+};
 }  // extern "C"
 #endif
 
@@ -82,6 +109,11 @@ extern "C"
 extern "C"
 {
 #include "KIM_ModelCompute.h"
+
+struct KIM_ModelCompute
+{
+  void * p;
+};
 }  // extern "C"
 #endif
 
@@ -89,6 +121,23 @@ extern "C"
 extern "C"
 {
 #include "KIM_ModelComputeArguments.h"
+
+struct KIM_ModelComputeArguments
+{
+  void * p;
+};
+}  // extern "C"
+#endif
+
+#ifndef KIM_MODEL_COMPUTE_ARGUMENTS_DESTROY_H_
+extern "C"
+{
+#include "KIM_ModelComputeArgumentsDestroy.h"
+
+struct KIM_ModelComputeArgumentsDestroy
+{
+  void * p;
+};
 }  // extern "C"
 #endif
 
@@ -96,8 +145,22 @@ extern "C"
 extern "C"
 {
 #include "KIM_ModelDestroy.h"
+
+struct KIM_ModelDestroy
+{
+  void * p;
+};
 }  // extern "C"
 #endif
+
+#ifndef KIM_FUNCTION_TYPES_H_
+extern "C"
+{
+#include "KIM_FunctionTypes.h"
+}
+#endif
+
+
 
 namespace
 {
@@ -1147,16 +1210,6 @@ int ModelImplementation::SetParameter(int const parameterIndex,
   return false;
 }
 
-struct KIM_ModelCompute
-{
-  void * p;
-};
-
-struct KIM_ModelComputeArguments
-{
-  void * p;
-};
-
 int ModelImplementation::Compute(
     ComputeArguments const * const computeArguments) const
 {
@@ -1206,10 +1259,8 @@ int ModelImplementation::Compute(
 
   ModelComputeFunction * CppCompute
       = reinterpret_cast<ModelComputeFunction *>(computeFunction_);
-  typedef int ModelComputeC(KIM_ModelCompute const * const,
-                            KIM_ModelComputeArguments const * const);
-  ModelComputeC * CCompute
-      = reinterpret_cast<ModelComputeC *>(computeFunction_);
+  KIM_ModelComputeFunction * CCompute
+      = reinterpret_cast<KIM_ModelComputeFunction *>(computeFunction_);
   typedef void ModelComputeF(KIM_ModelCompute * const,
                              KIM_ModelComputeArguments const * const,
                              int * const);
@@ -1274,11 +1325,6 @@ int ModelImplementation::Compute(
   }
 }
 
-struct KIM_ModelRefresh
-{
-  void * p;
-};
-
 int ModelImplementation::ClearThenRefresh()
 {
 #if DEBUG_VERBOSITY
@@ -1294,9 +1340,8 @@ int ModelImplementation::ClearThenRefresh()
 
   ModelRefreshFunction * CppRefresh
       = reinterpret_cast<ModelRefreshFunction *>(refreshFunction_);
-  typedef int ModelRefreshC(KIM_ModelRefresh * const);
-  ModelRefreshC * CRefresh
-      = reinterpret_cast<ModelRefreshC *>(refreshFunction_);
+  KIM_ModelRefreshFunction * CRefresh
+      = reinterpret_cast<KIM_ModelRefreshFunction *>(refreshFunction_);
   typedef void ModelRefreshF(KIM_ModelRefresh * const, int * const);
   ModelRefreshF * FRefresh
       = reinterpret_cast<ModelRefreshF *>(refreshFunction_);
@@ -2134,11 +2179,6 @@ int ModelImplementation::ModelCreate(
   return false;
 }
 
-struct KIM_ModelDestroy
-{
-  void * p;
-};
-
 int ModelImplementation::ModelDestroy()
 {
 #if DEBUG_VERBOSITY
@@ -2146,12 +2186,10 @@ int ModelImplementation::ModelDestroy()
 #endif
   LOG_DEBUG("Enter  " + callString);
 
-  typedef int ModelDestroyCpp(KIM::ModelDestroy * const);
-  ModelDestroyCpp * CppDestroy
+  ModelDestroyFunction * CppDestroy
       = reinterpret_cast<ModelDestroyFunction *>(destroyFunction_);
-  typedef int ModelDestroyC(KIM_ModelDestroy * const);
-  ModelDestroyC * CDestroy
-      = reinterpret_cast<ModelDestroyC *>(destroyFunction_);
+  KIM_ModelDestroyFunction * CDestroy
+      = reinterpret_cast<KIM_ModelDestroyFunction *>(destroyFunction_);
   typedef void ModelDestroyF(KIM_ModelDestroy * const, int * const);
   ModelDestroyF * FDestroy
       = reinterpret_cast<ModelDestroyF *>(destroyFunction_);
@@ -2198,11 +2236,6 @@ int ModelImplementation::ModelDestroy()
   }
 }
 
-struct KIM_ModelComputeArgumentsCreate
-{
-  void * p;
-};
-
 int ModelImplementation::ModelComputeArgumentsCreate(ComputeArguments * const
                                                      computeArguments) const
 {
@@ -2214,11 +2247,8 @@ int ModelImplementation::ModelComputeArgumentsCreate(ComputeArguments * const
   ModelComputeArgumentsCreateFunction * CppComputeArgumentsCreate
       = reinterpret_cast<ModelComputeArgumentsCreateFunction *>(
           computeArgumentsCreateFunction_);
-  typedef int ModelComputeArgumentsCreateC(
-      KIM_ModelCompute const * const,
-      KIM_ModelComputeArgumentsCreate * const);
-  ModelComputeArgumentsCreateC * CComputeArgumentsCreate
-      = reinterpret_cast<ModelComputeArgumentsCreateC *>(
+  KIM_ModelComputeArgumentsCreateFunction * CComputeArgumentsCreate
+      = reinterpret_cast<KIM_ModelComputeArgumentsCreateFunction *>(
           computeArgumentsCreateFunction_);
   typedef void ModelComputeArgumentsCreateF(
       KIM_ModelCompute const * const,
@@ -2278,11 +2308,6 @@ int ModelImplementation::ModelComputeArgumentsCreate(ComputeArguments * const
   }
 }
 
-struct KIM_ModelComputeArgumentsDestroy
-{
-  void * p;
-};
-
 int ModelImplementation::ModelComputeArgumentsDestroy(ComputeArguments * const
                                                       computeArguments) const
 {
@@ -2294,11 +2319,8 @@ int ModelImplementation::ModelComputeArgumentsDestroy(ComputeArguments * const
   ModelComputeArgumentsDestroyFunction * CppComputeArgumentsDestroy
       = reinterpret_cast<ModelComputeArgumentsDestroyFunction *>(
           computeArgumentsDestroyFunction_);
-  typedef int ModelComputeArgumentsDestroyC(
-      KIM_ModelCompute const * const,
-      KIM_ModelComputeArgumentsDestroy * const);
-  ModelComputeArgumentsDestroyC * CComputeArgumentsDestroy
-      = reinterpret_cast<ModelComputeArgumentsDestroyC *>(
+  KIM_ModelComputeArgumentsDestroyFunction * CComputeArgumentsDestroy
+      = reinterpret_cast<KIM_ModelComputeArgumentsDestroyFunction *>(
           computeArgumentsDestroyFunction_);
   typedef void ModelComputeArgumentsDestroyF(
       KIM_ModelCompute const * const,
@@ -2360,11 +2382,6 @@ int ModelImplementation::ModelComputeArgumentsDestroy(ComputeArguments * const
 }
 
 
-struct KIM_ModelCreate
-{
-  void * p;
-};
-
 int ModelImplementation::InitializeStandAloneModel(
     LengthUnit const requestedLengthUnit,
     EnergyUnit const requestedEnergyUnit,
@@ -2410,15 +2427,8 @@ int ModelImplementation::InitializeStandAloneModel(
 
   ModelCreateFunction * CppCreate
       = reinterpret_cast<ModelCreateFunction *>(functionPointer);
-  typedef int ModelCreateC(
-      KIM_ModelCreate * const modelCreate,
-      KIM_LengthUnit const requestedLengthUnit,
-      KIM_EnergyUnit const requestedEnergyUnit,
-      KIM_ChargeUnit const requestedChargeUnit,
-      KIM_TemperatureUnit const requestedTemperatureUnit,
-      KIM_TimeUnit const requestedTimeUnit);
-  ModelCreateC * CCreate
-      = reinterpret_cast<ModelCreateC *>(functionPointer);
+  KIM_ModelCreateFunction * CCreate
+      = reinterpret_cast<KIM_ModelCreateFunction *>(functionPointer);
   typedef void ModelCreateF(
       KIM_ModelCreate * const modelCreate,
       KIM_LengthUnit const requestedLengthUnit,
@@ -2486,11 +2496,6 @@ int ModelImplementation::InitializeStandAloneModel(
     return false;
   }
 }
-
-struct KIM_ModelDriverCreate
-{
-  void * p;
-};
 
 int ModelImplementation::InitializeParameterizedModel(
     LengthUnit const requestedLengthUnit,
@@ -2580,15 +2585,8 @@ int ModelImplementation::InitializeParameterizedModel(
 
   ModelDriverCreateFunction * CppCreate
       = reinterpret_cast<ModelDriverCreateFunction *>(functionPointer);
-  typedef int ModelDriverCreateC(
-      KIM_ModelDriverCreate * const modelDriverCreate,
-      KIM_LengthUnit const requestedLengthUnit,
-      KIM_EnergyUnit const requestedEnergyUnit,
-      KIM_ChargeUnit const requestedChargeUnit,
-      KIM_TemperatureUnit const requestedTemperatureUnit,
-      KIM_TimeUnit const requestedTimeUnit);
-  ModelDriverCreateC * CCreate
-      = reinterpret_cast<ModelDriverCreateC *>(functionPointer);
+  KIM_ModelDriverCreateFunction * CCreate
+      = reinterpret_cast<KIM_ModelDriverCreateFunction *>(functionPointer);
   typedef void ModelDriverCreateF(
       KIM_ModelDriverCreate * const modelDriverCreate,
       KIM_LengthUnit const requestedLengthUnit,

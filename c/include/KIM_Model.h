@@ -36,10 +36,6 @@
 #ifndef KIM_MODEL_H_
 #define KIM_MODEL_H_
 
-#ifndef KIM_FUNC_H_
-#include "KIM_func.h"
-#endif
-
 /* Forward declarations */
 #ifndef KIM_LOG_VERBOSITY_DEFINED_
 #define KIM_LOG_VERBOSITY_DEFINED_

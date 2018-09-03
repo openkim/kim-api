@@ -224,52 +224,64 @@ void KIM_ModelDriverCreate_SetNeighborListPointers(
 
 int KIM_ModelDriverCreate_SetRefreshPointer(
     KIM_ModelDriverCreate * const modelDriverCreate,
-    KIM_LanguageName const languageName, func * const fptr)
+    KIM_LanguageName const languageName,
+    KIM_ModelRefreshFunction * const fptr)
 {
   CONVERT_POINTER;
 
   KIM::LanguageName langN = makeLanguageNameCpp(languageName);
-  return pModelDriverCreate->SetRefreshPointer(langN, fptr);
+  return pModelDriverCreate->SetRefreshPointer(
+      langN, reinterpret_cast<KIM::ModelRefreshFunction *>(fptr));
 }
 
 int KIM_ModelDriverCreate_SetDestroyPointer(
     KIM_ModelDriverCreate * const modelDriverCreate,
-    KIM_LanguageName const languageName, func * const fptr)
+    KIM_LanguageName const languageName,
+    KIM_ModelDestroyFunction * const fptr)
 {
   CONVERT_POINTER;
 
   KIM::LanguageName langN = makeLanguageNameCpp(languageName);
-  return pModelDriverCreate->SetDestroyPointer(langN, fptr);
+  return pModelDriverCreate->SetDestroyPointer(
+      langN, reinterpret_cast<KIM::ModelDestroyFunction *>(fptr));
 }
 
 int KIM_ModelDriverCreate_SetComputeArgumentsCreatePointer(
     KIM_ModelDriverCreate * const modelDriverCreate,
-    KIM_LanguageName const languageName, func * const fptr)
+    KIM_LanguageName const languageName,
+    KIM_ModelComputeArgumentsCreateFunction * const fptr)
 {
   CONVERT_POINTER;
 
   KIM::LanguageName langN = makeLanguageNameCpp(languageName);
-  return pModelDriverCreate->SetComputeArgumentsCreatePointer(langN, fptr);
+  return pModelDriverCreate->SetComputeArgumentsCreatePointer(
+      langN,
+      reinterpret_cast<KIM::ModelComputeArgumentsCreateFunction *>(fptr));
 }
 
 int KIM_ModelDriverCreate_SetComputeArgumentsDestroyPointer(
     KIM_ModelDriverCreate * const modelDriverCreate,
-    KIM_LanguageName const languageName, func * const fptr)
+    KIM_LanguageName const languageName,
+    KIM_ModelComputeArgumentsDestroyFunction * const fptr)
 {
   CONVERT_POINTER;
 
   KIM::LanguageName langN = makeLanguageNameCpp(languageName);
-  return pModelDriverCreate->SetComputeArgumentsDestroyPointer(langN, fptr);
+  return pModelDriverCreate->SetComputeArgumentsDestroyPointer(
+      langN,
+      reinterpret_cast<KIM::ModelComputeArgumentsDestroyFunction *>(fptr));
 }
 
 int KIM_ModelDriverCreate_SetComputePointer(
     KIM_ModelDriverCreate * const modelDriverCreate,
-    KIM_LanguageName const languageName, func * const fptr)
+    KIM_LanguageName const languageName,
+    KIM_ModelComputeFunction * const fptr)
 {
   CONVERT_POINTER;
 
   KIM::LanguageName langN = makeLanguageNameCpp(languageName);
-  return pModelDriverCreate->SetComputePointer(langN, fptr);
+  return pModelDriverCreate->SetComputePointer(
+      langN, reinterpret_cast<KIM::ModelComputeFunction *>(fptr));
 }
 
 int KIM_ModelDriverCreate_SetSpeciesCode(

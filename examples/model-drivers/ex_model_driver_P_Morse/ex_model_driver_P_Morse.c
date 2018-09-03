@@ -446,18 +446,18 @@ int model_driver_create(
   /* store pointer to functions in KIM object */
   KIM_ModelDriverCreate_SetDestroyPointer(modelDriverCreate,
                                           KIM_LANGUAGE_NAME_c,
-                                          (func *) destroy);
+                                          destroy);
   KIM_ModelDriverCreate_SetComputeArgumentsCreatePointer(modelDriverCreate,
                                           KIM_LANGUAGE_NAME_c,
-                                          (func *) compute_arguments_create);
+                                          compute_arguments_create);
   KIM_ModelDriverCreate_SetComputeArgumentsDestroyPointer(modelDriverCreate,
                                           KIM_LANGUAGE_NAME_c,
-                                          (func *) compute_arguments_destroy);
+                                          compute_arguments_destroy);
   KIM_ModelDriverCreate_SetComputePointer(modelDriverCreate,
                                           KIM_LANGUAGE_NAME_c,
-                                          (func *) compute);
+                                          compute);
   KIM_ModelDriverCreate_SetRefreshPointer(
-      modelDriverCreate, KIM_LANGUAGE_NAME_c, (func *) refresh);
+      modelDriverCreate, KIM_LANGUAGE_NAME_c, refresh);
 
   /* get number of parameter files */
   KIM_ModelDriverCreate_GetNumberOfParameterFiles(

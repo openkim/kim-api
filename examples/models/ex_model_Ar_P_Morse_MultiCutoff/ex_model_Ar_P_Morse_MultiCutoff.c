@@ -554,27 +554,27 @@ int model_create(KIM_ModelCreate * const modelCreate,
       KIM_ModelCreate_SetComputePointer(
           modelCreate,
           KIM_LANGUAGE_NAME_c,
-          (func *) &compute);
+          compute);
   error = error ||
       KIM_ModelCreate_SetComputeArgumentsCreatePointer(
           modelCreate,
           KIM_LANGUAGE_NAME_c,
-          (func *) &compute_arguments_create);
+          compute_arguments_create);
   error = error ||
       KIM_ModelCreate_SetComputeArgumentsDestroyPointer(
           modelCreate,
           KIM_LANGUAGE_NAME_c,
-          (func *) &compute_arguments_destroy);
+          compute_arguments_destroy);
   error = error ||
       KIM_ModelCreate_SetDestroyPointer(
           modelCreate,
           KIM_LANGUAGE_NAME_c,
-          (func *) &model_destroy);
+          model_destroy);
   error = error ||
       KIM_ModelCreate_SetRefreshPointer(
           modelCreate,
           KIM_LANGUAGE_NAME_c,
-          (func *) &model_refresh);
+          model_refresh);
 
   /* allocate buffer */
   bufferPointer = (buffer *) malloc(sizeof(buffer));

@@ -41,6 +41,13 @@
 #include "KIM_ComputeArgumentsImplementation.hpp"
 #endif
 
+#ifndef KIM_FUNCTION_TYPES_H_
+extern "C"
+{
+#include "KIM_FunctionTypes.h"
+}
+#endif
+
 
 namespace KIM
 {
@@ -798,15 +805,8 @@ int ComputeArgumentsImplementation::GetNeighborList(
           COMPUTE_CALLBACK_NAME::GetNeighborList))->second;
   GetNeighborListFunction * CppGetNeighborList
       = reinterpret_cast<GetNeighborListFunction *>(functionPointer);
-  typedef int GetNeighborListC(void * const dataObject,
-                               int const numberOfNeighborLists,
-                               double const * const cutoffs,
-                               int const neighborListIndex,
-                               int const particleNumber,
-                               int * const numberOfNeighbors,
-                               int const ** const neighborsOfParticle);
-  GetNeighborListC * CGetNeighborList
-      = reinterpret_cast<GetNeighborListC *>(functionPointer);
+  KIM_GetNeighborListFunction * CGetNeighborList
+      = reinterpret_cast<KIM_GetNeighborListFunction *>(functionPointer);
   typedef void GetNeighborListF(void * const dataObject,
                                 int const numberOfNeighborLists,
                                 double const * const cutoffs,
@@ -911,11 +911,8 @@ int ComputeArgumentsImplementation::ProcessDEDrTerm(
           COMPUTE_CALLBACK_NAME::ProcessDEDrTerm))->second;
   ProcessDEDrTermFunction * CppProcess_dEdr
       = reinterpret_cast<ProcessDEDrTermFunction *>(functionPointer);
-  typedef int ProcessDEDrTermC(void * const dataObject, double const de,
-                               double const r, double const * const dx,
-                               int const i, int const j);
-  ProcessDEDrTermC * CProcess_dEdr
-      = reinterpret_cast<ProcessDEDrTermC *>(functionPointer);
+  KIM_ProcessDEDrTermFunction * CProcess_dEdr
+      = reinterpret_cast<KIM_ProcessDEDrTermFunction *>(functionPointer);
   typedef void ProcessDEDrTermF(void * const dataObject, double const de,
                                 double const r, double const * const dx,
                                 int const i, int const j, int * const ierr);
@@ -992,12 +989,8 @@ int ComputeArgumentsImplementation::ProcessD2EDr2Term(
           COMPUTE_CALLBACK_NAME::ProcessD2EDr2Term))->second;
   ProcessD2EDr2TermFunction * CppProcess_d2Edr2
       = reinterpret_cast<ProcessD2EDr2TermFunction *>(functionPointer);
-  typedef int ProcessD2EDr2TermC(void * const dataObject, double const de,
-                                 double const * const r,
-                                 double const * const dx,
-                                 int const * const i, int const * const j);
-  ProcessD2EDr2TermC * CProcess_d2Edr2
-      = reinterpret_cast<ProcessD2EDr2TermC *>(functionPointer);
+  KIM_ProcessD2EDr2TermFunction * CProcess_d2Edr2
+      = reinterpret_cast<KIM_ProcessD2EDr2TermFunction *>(functionPointer);
   typedef void ProcessD2EDr2TermF(void * const dataObject,
                                   double const de, double const * const r,
                                   double const * const dx,
