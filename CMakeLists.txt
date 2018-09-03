@@ -54,8 +54,6 @@ endif()
 set(KIM_API_LOG_MAXIMUM_LEVEL "${LOG_MAX}" CACHE STRING "Maximum log verbosity")
 set_property(CACHE KIM_API_LOG_MAXIMUM_LEVEL PROPERTY STRINGS SILENT FATAL ERROR WARNING INFORMATION DEBUG)
 #
-option(KIM_API_BUILD_MODELS_AND_DRIVERS "Build all included models, drivers, and simulators" OFF)
-#
 option(KIM_API_ENABLE_SANITIZE "Enable AddressSanitizer" OFF)
 mark_as_advanced(KIM_API_ENABLE_SANITIZE)
 #
@@ -123,14 +121,12 @@ if(${CMAKE_MINOR_VERSION} GREATER 8)
 endif()
 
 
-# Add Models & Drivers, if appropriate
+# Add Models & Drivers
 #
-if(KIM_API_BUILD_MODELS_AND_DRIVERS)
-  list(APPEND CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR}/cmake/Modules)
-  add_subdirectory(examples/models)
-  add_subdirectory(examples/model-drivers)
-  add_subdirectory(examples/simulators)
-endif()
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR}/cmake/Modules)
+add_subdirectory(examples/models)
+add_subdirectory(examples/model-drivers)
+add_subdirectory(examples/simulators)
 
 
 # # Add downloads, if appropriate
