@@ -62,7 +62,7 @@ extern std::vector<ComputeCallbackName> const requiredByAPI_ComputeCallbacks;
 #define SPTR( x ) static_cast<std::ostringstream &>(                    \
     std::ostringstream() << static_cast<void const *>(x) ).str()
 #define SFUNC( x ) static_cast<std::ostringstream &>(           \
-    std::ostringstream() << static_cast<func *>(x)).str()
+    std::ostringstream() << static_cast<Function *>(x)).str()
 
 
 #include "KIM_ComputeArgumentsImplementationLogMacros.hpp"
@@ -251,7 +251,7 @@ int ComputeArgumentsImplementation::SetCallbackSupportStatus(
   // initialize pointer if not already done
   if (supportStatus != SUPPORT_STATUS::notSupported)
   {
-    std::map<ComputeCallbackName const, func *,
+    std::map<ComputeCallbackName const, Function *,
              COMPUTE_CALLBACK_NAME::Comparator>::const_iterator
         result = computeCallbackFunctionPointer_.find(computeCallbackName);
 
@@ -582,7 +582,7 @@ int ComputeArgumentsImplementation::GetArgumentPointer(
 int ComputeArgumentsImplementation::SetCallbackPointer(
     ComputeCallbackName const computeCallbackName,
     LanguageName const languageName,
-    func * const fptr,
+    Function * const fptr,
     void * const dataObject)
 {
 #if DEBUG_VERBOSITY
@@ -667,7 +667,7 @@ int ComputeArgumentsImplementation::IsCallbackPresent(
   }
 #endif
 
-  std::map<ComputeCallbackName const, func *,
+  std::map<ComputeCallbackName const, Function *,
            COMPUTE_CALLBACK_NAME::Comparator>::const_iterator
       result = computeCallbackFunctionPointer_.find(computeCallbackName);
 
@@ -793,18 +793,11 @@ int ComputeArgumentsImplementation::GetNeighborList(
       = (computeCallbackDataObjectPointer_.find(
           COMPUTE_CALLBACK_NAME::GetNeighborList))->second;
 
-  func * functionPointer
+  Function * functionPointer
       = (computeCallbackFunctionPointer_.find(
           COMPUTE_CALLBACK_NAME::GetNeighborList))->second;
-  typedef int GetNeighborListCpp(void * const dataObject,
-                                 int const numberOfNeighborLists,
-                                 double const * const cutoffs,
-                                 int const neighborListIndex,
-                                 int const particleNumber,
-                                 int * const numberOfNeighbors,
-                                 int const ** const neighborsOfParticle);
-  GetNeighborListCpp * CppGetNeighborList
-      = reinterpret_cast<GetNeighborListCpp *>(functionPointer);
+  GetNeighborListFunction * CppGetNeighborList
+      = reinterpret_cast<GetNeighborListFunction *>(functionPointer);
   typedef int GetNeighborListC(void * const dataObject,
                                int const numberOfNeighborLists,
                                double const * const cutoffs,
@@ -913,14 +906,11 @@ int ComputeArgumentsImplementation::ProcessDEDrTerm(
       = (computeCallbackDataObjectPointer_.find(
           COMPUTE_CALLBACK_NAME::ProcessDEDrTerm))->second;
 
-  func * functionPointer
+  Function * functionPointer
       = (computeCallbackFunctionPointer_.find(
           COMPUTE_CALLBACK_NAME::ProcessDEDrTerm))->second;
-  typedef int ProcessDEDrTermCpp(void * const dataObject, double const de,
-                                 double const r, double const * const dx,
-                                 int const i, int const j);
-  ProcessDEDrTermCpp * CppProcess_dEdr
-      = reinterpret_cast<ProcessDEDrTermCpp *>(functionPointer);
+  ProcessDEDrTermFunction * CppProcess_dEdr
+      = reinterpret_cast<ProcessDEDrTermFunction *>(functionPointer);
   typedef int ProcessDEDrTermC(void * const dataObject, double const de,
                                double const r, double const * const dx,
                                int const i, int const j);
@@ -997,15 +987,11 @@ int ComputeArgumentsImplementation::ProcessD2EDr2Term(
                              .find(COMPUTE_CALLBACK_NAME::ProcessD2EDr2Term)
                              )->second;
 
-  func * functionPointer
+  Function * functionPointer
       = (computeCallbackFunctionPointer_.find(
           COMPUTE_CALLBACK_NAME::ProcessD2EDr2Term))->second;
-  typedef int ProcessD2EDr2TermCpp(void * const dataObject,
-                                   double const de, double const * const r,
-                                   double const * const dx,
-                                   int const * const i, int const * const j);
-  ProcessD2EDr2TermCpp * CppProcess_d2Edr2
-      = reinterpret_cast<ProcessD2EDr2TermCpp *>(functionPointer);
+  ProcessD2EDr2TermFunction * CppProcess_d2Edr2
+      = reinterpret_cast<ProcessD2EDr2TermFunction *>(functionPointer);
   typedef int ProcessD2EDr2TermC(void * const dataObject, double const de,
                                  double const * const r,
                                  double const * const dx,
@@ -1276,7 +1262,7 @@ std::string const & ComputeArgumentsImplementation::String() const
                  COMPUTE_CALLBACK_NAME::Comparator>::const_iterator
             ptr2 = computeCallbackDataObjectPointer_.find(cbName->first);
         ss << std::setw(cbWd) << SPTR(ptr2->second);
-        std::map<ComputeCallbackName const, func *,
+        std::map<ComputeCallbackName const, Function *,
                  COMPUTE_CALLBACK_NAME::Comparator>::const_iterator
             ptr3 = computeCallbackFunctionPointer_.find(cbName->first);
         ss << std::setw(cbWf) << SFUNC(ptr3->second);

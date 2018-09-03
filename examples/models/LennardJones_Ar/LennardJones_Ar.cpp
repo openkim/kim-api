@@ -73,22 +73,15 @@ class LennardJones_Ar
     modelCreate->SetSpeciesCode(KIM::SPECIES_NAME::Ar, 0);
 
     *error = *error || modelCreate->SetDestroyPointer(
-        KIM::LANGUAGE_NAME::cpp,
-        reinterpret_cast<KIM::func *>(&(LennardJones_Ar::Destroy)));
+        KIM::LANGUAGE_NAME::cpp, LennardJones_Ar::Destroy);
     *error = *error || modelCreate->SetRefreshPointer(
-        KIM::LANGUAGE_NAME::cpp,
-        reinterpret_cast<KIM::func *>(&(LennardJones_Ar::Refresh)));
+        KIM::LANGUAGE_NAME::cpp, LennardJones_Ar::Refresh);
     *error = *error || modelCreate->SetComputePointer(
-        KIM::LANGUAGE_NAME::cpp,
-        reinterpret_cast<KIM::func *>(&(LennardJones_Ar::Compute)));
+        KIM::LANGUAGE_NAME::cpp, LennardJones_Ar::Compute);
     *error = *error || modelCreate->SetComputeArgumentsCreatePointer(
-        KIM::LANGUAGE_NAME::cpp,
-        reinterpret_cast<KIM::func *>
-        (&(LennardJones_Ar::ComputeArgumentsCreate)));
+        KIM::LANGUAGE_NAME::cpp, LennardJones_Ar::ComputeArgumentsCreate);
     *error = *error || modelCreate->SetComputeArgumentsDestroyPointer(
-        KIM::LANGUAGE_NAME::cpp,
-        reinterpret_cast<KIM::func *>
-        (&(LennardJones_Ar::ComputeArgumentsDestroy)));
+        KIM::LANGUAGE_NAME::cpp, LennardJones_Ar::ComputeArgumentsDestroy);
     if (*error) return;
 
     // everything is good

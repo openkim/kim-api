@@ -37,10 +37,6 @@
 #include <string>
 #include <sstream>
 
-#ifndef KIM_FUNC_HPP_
-#include "KIM_func.hpp"
-#endif
-
 
 namespace KIM
 {

@@ -710,17 +710,15 @@ int LennardJones612Implementation::RegisterKIMFunctions(
 
   // register the destroy() and reinit() functions
   error = modelDriverCreate->SetDestroyPointer(
-      KIM::LANGUAGE_NAME::cpp, (KIM::func*) &(LennardJones612::Destroy))
+      KIM::LANGUAGE_NAME::cpp, LennardJones612::Destroy)
       || modelDriverCreate->SetRefreshPointer(
-          KIM::LANGUAGE_NAME::cpp, (KIM::func*) &(LennardJones612::Refresh))
+          KIM::LANGUAGE_NAME::cpp, LennardJones612::Refresh)
       || modelDriverCreate->SetComputePointer(
-          KIM::LANGUAGE_NAME::cpp, (KIM::func*) &(LennardJones612::Compute))
+          KIM::LANGUAGE_NAME::cpp, LennardJones612::Compute)
       || modelDriverCreate->SetComputeArgumentsCreatePointer(
-          KIM::LANGUAGE_NAME::cpp,
-          (KIM::func*) &(LennardJones612::ComputeArgumentsCreate))
+          KIM::LANGUAGE_NAME::cpp, LennardJones612::ComputeArgumentsCreate)
       || modelDriverCreate->SetComputeArgumentsDestroyPointer(
-          KIM::LANGUAGE_NAME::cpp,
-          (KIM::func*) &(LennardJones612::ComputeArgumentsDestroy));
+          KIM::LANGUAGE_NAME::cpp, LennardJones612::ComputeArgumentsDestroy);
 
   return error;
 }

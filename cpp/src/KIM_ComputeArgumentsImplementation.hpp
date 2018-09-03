@@ -39,8 +39,8 @@
 #include <map>
 #include <vector>
 
-#ifndef KIM_FUNC_HPP_
-#include "KIM_func.hpp"
+#ifndef KIM_FUNCTION_TYPES_HPP_
+#include "KIM_FunctionTypes.hpp"
 #endif
 
 #ifndef KIM_LOG_VERBOSITY_HPP_
@@ -120,7 +120,7 @@ class ComputeArgumentsImplementation
 
   int SetCallbackPointer(ComputeCallbackName const computeCallbackName,
                          LanguageName const languageName,
-                         func * const fptr,
+                         Function * const fptr,
                          void * const dataObject);
   int IsCallbackPresent(ComputeCallbackName const computeCallbackName,
                         int * const present) const;
@@ -198,7 +198,7 @@ class ComputeArgumentsImplementation
            COMPUTE_CALLBACK_NAME::Comparator> computeCallbackSupportStatus_;
   std::map<ComputeCallbackName const, LanguageName,
            COMPUTE_CALLBACK_NAME::Comparator> computeCallbackLanguage_;
-  std::map<ComputeCallbackName const, func *,
+  std::map<ComputeCallbackName const, Function *,
            COMPUTE_CALLBACK_NAME::Comparator> computeCallbackFunctionPointer_;
   std::map<ComputeCallbackName const, void *,
            COMPUTE_CALLBACK_NAME::Comparator> computeCallbackDataObjectPointer_;

@@ -50,7 +50,7 @@ set(CPP_HEADERS
   KIM_DataType.inc
   KIM_EnergyUnit.hpp
   KIM_EnergyUnit.inc
-  KIM_func.hpp
+  KIM_FunctionTypes.hpp
   KIM_LanguageName.hpp
   KIM_LanguageName.inc
   KIM_LengthUnit.hpp

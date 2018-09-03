@@ -36,8 +36,8 @@
 
 #include <string>
 
-#ifndef KIM_FUNC_HPP_
-#include "KIM_func.hpp"
+#ifndef KIM_FUNCTION_TYPES_HPP_
+#include "KIM_FunctionTypes.hpp"
 #endif
 
 #ifndef KIM_LOG_HPP_
@@ -63,8 +63,7 @@ class ModelLibrary
   int Close();
   int GetModelType(ITEM_TYPE * const modelType) const;
   int GetModelCreateFunctionPointer(LanguageName * const languageName,
-                                    func ** const functionPointer)
-      const;
+                                    Function ** const functionPointer) const;
   int GetNumberOfParameterFiles(int * const numberOfParameterFiles) const;
   int GetParameterFileString(
       int const index,

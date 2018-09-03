@@ -91,7 +91,7 @@ void ModelDriverCreate::SetNeighborListPointers(
 }
 
 int ModelDriverCreate::SetRefreshPointer(
-    LanguageName const languageName, func * const fptr)
+    LanguageName const languageName, ModelRefreshFunction * const fptr)
 {
   CONVERT_POINTER;
 
@@ -99,7 +99,7 @@ int ModelDriverCreate::SetRefreshPointer(
 }
 
 int ModelDriverCreate::SetDestroyPointer(
-    LanguageName const languageName, func * const fptr)
+    LanguageName const languageName, ModelDestroyFunction * const fptr)
 {
   CONVERT_POINTER;
 
@@ -107,7 +107,8 @@ int ModelDriverCreate::SetDestroyPointer(
 }
 
 int ModelDriverCreate::SetComputeArgumentsCreatePointer(
-    LanguageName const languageName, func * const fptr)
+    LanguageName const languageName,
+    ModelComputeArgumentsCreateFunction * const fptr)
 {
   CONVERT_POINTER;
 
@@ -115,7 +116,8 @@ int ModelDriverCreate::SetComputeArgumentsCreatePointer(
 }
 
 int ModelDriverCreate::SetComputeArgumentsDestroyPointer(
-    LanguageName const languageName, func * const fptr)
+    LanguageName const languageName,
+    ModelComputeArgumentsDestroyFunction* const fptr)
 {
   CONVERT_POINTER;
 
@@ -123,7 +125,7 @@ int ModelDriverCreate::SetComputeArgumentsDestroyPointer(
 }
 
 int ModelDriverCreate::SetComputePointer(
-    LanguageName const languageName, func * const fptr)
+    LanguageName const languageName, ModelComputeFunction * const fptr)
 {
   CONVERT_POINTER;
 

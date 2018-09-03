@@ -288,7 +288,7 @@ int main()
   error = computeArguments->SetCallbackPointer(
       KIM::COMPUTE_CALLBACK_NAME::GetNeighborList,
       KIM::LANGUAGE_NAME::cpp,
-      (KIM::func *) &get_cluster_neigh,
+      (KIM::Function *) &get_cluster_neigh,
       &nl_cluster_model);
   if (error) MY_ERROR("set_call_back");
 

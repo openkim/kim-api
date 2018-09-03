@@ -139,7 +139,7 @@ KIM_TimeUnit makeTimeUnitC(KIM::TimeUnit const timeUnit)
 #define SPTR( x ) static_cast<std::ostringstream &>(                    \
     std::ostringstream() << static_cast<void const *>(x) ).str()
 #define SFUNC( x ) static_cast<std::ostringstream &>(           \
-    std::ostringstream() << static_cast<func *>(x)).str()
+    std::ostringstream() << reinterpret_cast<KIM::Function *>(x)).str()
 
 
 #include "KIM_ModelImplementationLogMacros.hpp"
@@ -451,7 +451,7 @@ void ModelImplementation::GetNeighborListPointers(
 }
 
 int ModelImplementation::SetRefreshPointer(LanguageName const languageName,
-                                           func * const fptr)
+                                           ModelRefreshFunction * const fptr)
 {
 #if DEBUG_VERBOSITY
   std::string const callString = "SetRefreshPointer("
@@ -470,14 +470,14 @@ int ModelImplementation::SetRefreshPointer(LanguageName const languageName,
 #endif
 
   refreshLanguage_ = languageName;
-  refreshFunction_ = fptr;
+  refreshFunction_ = reinterpret_cast<Function *>(fptr);
 
   LOG_DEBUG("Exit 0=" + callString);
   return false;
 }
 
 int ModelImplementation::SetDestroyPointer(LanguageName const languageName,
-                                           func * const fptr)
+                                           ModelDestroyFunction * const fptr)
 {
 #if DEBUG_VERBOSITY
   std::string const callString = "SetDestroyPointer("
@@ -496,7 +496,7 @@ int ModelImplementation::SetDestroyPointer(LanguageName const languageName,
 #endif
 
   destroyLanguage_ = languageName;
-  destroyFunction_ = fptr;
+  destroyFunction_ = reinterpret_cast<Function *>(fptr);
 
   LOG_DEBUG("Exit 0=" + callString);
   return false;
@@ -504,7 +504,7 @@ int ModelImplementation::SetDestroyPointer(LanguageName const languageName,
 
 int ModelImplementation::SetComputeArgumentsCreatePointer(
     LanguageName const languageName,
-    func * const fptr)
+    ModelComputeArgumentsCreateFunction * const fptr)
 {
 #if DEBUG_VERBOSITY
   std::string const callString = "SetComputeArgumentsCreatePointer("
@@ -523,7 +523,7 @@ int ModelImplementation::SetComputeArgumentsCreatePointer(
 #endif
 
   computeArgumentsCreateLanguage_ = languageName;
-  computeArgumentsCreateFunction_ = fptr;
+  computeArgumentsCreateFunction_ = reinterpret_cast<Function *>(fptr);
 
   LOG_DEBUG("Exit 0=" + callString);
   return false;
@@ -531,7 +531,7 @@ int ModelImplementation::SetComputeArgumentsCreatePointer(
 
 int ModelImplementation::SetComputeArgumentsDestroyPointer(
     LanguageName const languageName,
-    func * const fptr)
+    ModelComputeArgumentsDestroyFunction * const fptr)
 {
 #if DEBUG_VERBOSITY
   std::string const callString = "SetComputeArgumentsDestroyPointer("
@@ -550,14 +550,14 @@ int ModelImplementation::SetComputeArgumentsDestroyPointer(
 #endif
 
   computeArgumentsDestroyLanguage_ = languageName;
-  computeArgumentsDestroyFunction_ = fptr;
+  computeArgumentsDestroyFunction_ = reinterpret_cast<Function *>(fptr);
 
   LOG_DEBUG("Exit 0=" + callString);
   return false;
 }
 
 int ModelImplementation::SetComputePointer(LanguageName const languageName,
-                                           func * const fptr)
+                                           ModelComputeFunction * const fptr)
 {
 #if DEBUG_VERBOSITY
   std::string const callString = "SetComputePointer("
@@ -576,7 +576,7 @@ int ModelImplementation::SetComputePointer(LanguageName const languageName,
 #endif
 
   computeLanguage_ = languageName;
-  computeFunction_ = fptr;
+  computeFunction_ = reinterpret_cast<Function *>(fptr);
 
   LOG_DEBUG("Exit 0=" + callString);
   return false;
@@ -1204,10 +1204,8 @@ int ModelImplementation::Compute(
   }
 
 
-  typedef int ModelComputeCpp(KIM::ModelCompute const * const,
-                              KIM::ModelComputeArguments const * const);
-  ModelComputeCpp * CppCompute
-      = reinterpret_cast<ModelComputeCpp *>(computeFunction_);
+  ModelComputeFunction * CppCompute
+      = reinterpret_cast<ModelComputeFunction *>(computeFunction_);
   typedef int ModelComputeC(KIM_ModelCompute const * const,
                             KIM_ModelComputeArguments const * const);
   ModelComputeC * CCompute
@@ -1294,9 +1292,8 @@ int ModelImplementation::ClearThenRefresh()
   cutoffs_ = NULL;
   modelWillNotRequestNeighborsOfNoncontributingParticles_ = NULL;
 
-  typedef int ModelRefreshCpp(KIM::ModelRefresh * const);
-  ModelRefreshCpp * CppRefresh
-      = reinterpret_cast<ModelRefreshCpp *>(refreshFunction_);
+  ModelRefreshFunction * CppRefresh
+      = reinterpret_cast<ModelRefreshFunction *>(refreshFunction_);
   typedef int ModelRefreshC(KIM_ModelRefresh * const);
   ModelRefreshC * CRefresh
       = reinterpret_cast<ModelRefreshC *>(refreshFunction_);
@@ -2151,7 +2148,7 @@ int ModelImplementation::ModelDestroy()
 
   typedef int ModelDestroyCpp(KIM::ModelDestroy * const);
   ModelDestroyCpp * CppDestroy
-      = reinterpret_cast<ModelDestroyCpp *>(destroyFunction_);
+      = reinterpret_cast<ModelDestroyFunction *>(destroyFunction_);
   typedef int ModelDestroyC(KIM_ModelDestroy * const);
   ModelDestroyC * CDestroy
       = reinterpret_cast<ModelDestroyC *>(destroyFunction_);
@@ -2214,11 +2211,8 @@ int ModelImplementation::ModelComputeArgumentsCreate(ComputeArguments * const
 #endif
   LOG_DEBUG("Enter  " + callString);
 
-  typedef int ModelComputeArgumentsCreateCpp(
-      KIM::ModelCompute const * const,
-      KIM::ModelComputeArgumentsCreate * const);
-  ModelComputeArgumentsCreateCpp * CppComputeArgumentsCreate
-      = reinterpret_cast<ModelComputeArgumentsCreateCpp *>(
+  ModelComputeArgumentsCreateFunction * CppComputeArgumentsCreate
+      = reinterpret_cast<ModelComputeArgumentsCreateFunction *>(
           computeArgumentsCreateFunction_);
   typedef int ModelComputeArgumentsCreateC(
       KIM_ModelCompute const * const,
@@ -2297,11 +2291,8 @@ int ModelImplementation::ModelComputeArgumentsDestroy(ComputeArguments * const
 #endif
   LOG_DEBUG("Enter  " + callString);
 
-  typedef int ModelComputeArgumentsDestroyCpp(
-      KIM::ModelCompute const * const,
-      KIM::ModelComputeArgumentsDestroy * const);
-  ModelComputeArgumentsDestroyCpp * CppComputeArgumentsDestroy
-      = reinterpret_cast<ModelComputeArgumentsDestroyCpp *>(
+  ModelComputeArgumentsDestroyFunction * CppComputeArgumentsDestroy
+      = reinterpret_cast<ModelComputeArgumentsDestroyFunction *>(
           computeArgumentsDestroyFunction_);
   typedef int ModelComputeArgumentsDestroyC(
       KIM_ModelCompute const * const,
@@ -2407,7 +2398,7 @@ int ModelImplementation::InitializeStandAloneModel(
 #endif
 
   LanguageName languageName;
-  func * functionPointer = NULL;
+  Function * functionPointer = NULL;
   error = modelLibrary_->GetModelCreateFunctionPointer(
       &languageName, &functionPointer);
   if (error)
@@ -2417,15 +2408,8 @@ int ModelImplementation::InitializeStandAloneModel(
     return true;
   }
 
-  typedef int ModelCreateCpp(
-      KIM::ModelCreate * const modelCreate,
-      LengthUnit const requestedLengthUnit,
-      EnergyUnit const requestedEnergyUnit,
-      ChargeUnit const requestedChargeUnit,
-      TemperatureUnit const requestedTemperatureUnit,
-      TimeUnit const requestedTimeUnit);
-  ModelCreateCpp * CppCreate
-      = reinterpret_cast<ModelCreateCpp *>(functionPointer);
+  ModelCreateFunction * CppCreate
+      = reinterpret_cast<ModelCreateFunction *>(functionPointer);
   typedef int ModelCreateC(
       KIM_ModelCreate * const modelCreate,
       KIM_LengthUnit const requestedLengthUnit,
@@ -2584,7 +2568,7 @@ int ModelImplementation::InitializeParameterizedModel(
   }
 
   LanguageName languageName;
-  func * functionPointer = NULL;
+  Function * functionPointer = NULL;
   error = modelLibrary_->GetModelCreateFunctionPointer(
       &languageName, &functionPointer);
   if (error)
@@ -2594,15 +2578,8 @@ int ModelImplementation::InitializeParameterizedModel(
     return true;
   }
 
-  typedef int ModelDriverCreateCpp(
-      KIM::ModelDriverCreate * const modelDriverCreate,
-      LengthUnit const requestedLengthUnit,
-      EnergyUnit const requestedEnergyUnit,
-      ChargeUnit const requestedChargeUnit,
-      TemperatureUnit const requestedTemperatureUnit,
-      TimeUnit const requestedTimeUnit);
-  ModelDriverCreateCpp * CppCreate
-      = reinterpret_cast<ModelDriverCreateCpp *>(functionPointer);
+  ModelDriverCreateFunction * CppCreate
+      = reinterpret_cast<ModelDriverCreateFunction *>(functionPointer);
   typedef int ModelDriverCreateC(
       KIM_ModelDriverCreate * const modelDriverCreate,
       KIM_LengthUnit const requestedLengthUnit,

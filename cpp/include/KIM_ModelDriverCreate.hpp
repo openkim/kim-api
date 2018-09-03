@@ -37,8 +37,8 @@
 #include <string>
 #include <sstream>
 
-#ifndef KIM_FUNC_HPP_
-#include "KIM_func.hpp"
+#ifndef KIM_FUNCTION_TYPES_HPP_
+#include "KIM_FunctionTypes.hpp"
 #endif
 
 
@@ -74,13 +74,18 @@ class ModelDriverCreate
       double const * const cutoffs,
       int const * const modelWillNotRequestNeighborsOfNoncontributingParticles);
 
-  int SetRefreshPointer(LanguageName const languageName, func * const fptr);
-  int SetDestroyPointer(LanguageName const languageName, func * const fptr);
-  int SetComputeArgumentsCreatePointer(LanguageName const languageName,
-                                       func * const fptr);
-  int SetComputeArgumentsDestroyPointer(LanguageName const languageName,
-                                        func * const fptr);
-  int SetComputePointer(LanguageName const languageName, func * const fptr);
+  int SetRefreshPointer(LanguageName const languageName,
+                        ModelRefreshFunction * const fptr);
+  int SetDestroyPointer(LanguageName const languageName,
+                        ModelDestroyFunction * const fptr);
+  int SetComputeArgumentsCreatePointer(
+      LanguageName const languageName,
+      ModelComputeArgumentsCreateFunction * const fptr);
+  int SetComputeArgumentsDestroyPointer(
+      LanguageName const languageName,
+      ModelComputeArgumentsDestroyFunction * const fptr);
+  int SetComputePointer(LanguageName const languageName,
+                        ModelComputeFunction * const fptr);
 
   int SetSpeciesCode(SpeciesName const speciesName, int const code);
 
