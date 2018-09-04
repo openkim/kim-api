@@ -117,23 +117,23 @@ void KIM_ModelCreate_SetNeighborListPointers(
 int KIM_ModelCreate_SetRefreshPointer(
     KIM_ModelCreate * const modelCreate,
     KIM_LanguageName const languageName,
-    KIM_ModelRefreshFunction * const fptr);
+    KIM_Function * const fptr);
 int KIM_ModelCreate_SetDestroyPointer(
     KIM_ModelCreate * const modelCreate,
     KIM_LanguageName const languageName,
-    KIM_ModelDestroyFunction * const fptr);
+    KIM_Function * const fptr);
 int KIM_ModelCreate_SetComputeArgumentsCreatePointer(
     KIM_ModelCreate * const modelCreate,
     KIM_LanguageName const languageName,
-    KIM_ModelComputeArgumentsCreateFunction * const fptr);
+    KIM_Function * const fptr);
 int KIM_ModelCreate_SetComputeArgumentsDestroyPointer(
     KIM_ModelCreate * const modelCreate,
     KIM_LanguageName const languageName,
-    KIM_ModelComputeArgumentsDestroyFunction * const fptr);
+    KIM_Function * const fptr);
 int KIM_ModelCreate_SetComputePointer(
     KIM_ModelCreate * const modelCreate,
     KIM_LanguageName const languageName,
-    KIM_ModelComputeFunction * const fptr);
+    KIM_Function * const fptr);
 
 int KIM_ModelCreate_SetSpeciesCode(
     KIM_ModelCreate * const modelCreate,

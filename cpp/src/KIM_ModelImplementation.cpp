@@ -514,7 +514,7 @@ void ModelImplementation::GetNeighborListPointers(
 }
 
 int ModelImplementation::SetRefreshPointer(LanguageName const languageName,
-                                           ModelRefreshFunction * const fptr)
+                                           Function * const fptr)
 {
 #if DEBUG_VERBOSITY
   std::string const callString = "SetRefreshPointer("
@@ -533,14 +533,14 @@ int ModelImplementation::SetRefreshPointer(LanguageName const languageName,
 #endif
 
   refreshLanguage_ = languageName;
-  refreshFunction_ = reinterpret_cast<Function *>(fptr);
+  refreshFunction_ = fptr;
 
   LOG_DEBUG("Exit 0=" + callString);
   return false;
 }
 
 int ModelImplementation::SetDestroyPointer(LanguageName const languageName,
-                                           ModelDestroyFunction * const fptr)
+                                           Function * const fptr)
 {
 #if DEBUG_VERBOSITY
   std::string const callString = "SetDestroyPointer("
@@ -559,15 +559,14 @@ int ModelImplementation::SetDestroyPointer(LanguageName const languageName,
 #endif
 
   destroyLanguage_ = languageName;
-  destroyFunction_ = reinterpret_cast<Function *>(fptr);
+  destroyFunction_ = fptr;
 
   LOG_DEBUG("Exit 0=" + callString);
   return false;
 }
 
 int ModelImplementation::SetComputeArgumentsCreatePointer(
-    LanguageName const languageName,
-    ModelComputeArgumentsCreateFunction * const fptr)
+    LanguageName const languageName, Function * const fptr)
 {
 #if DEBUG_VERBOSITY
   std::string const callString = "SetComputeArgumentsCreatePointer("
@@ -586,15 +585,14 @@ int ModelImplementation::SetComputeArgumentsCreatePointer(
 #endif
 
   computeArgumentsCreateLanguage_ = languageName;
-  computeArgumentsCreateFunction_ = reinterpret_cast<Function *>(fptr);
+  computeArgumentsCreateFunction_ = fptr;
 
   LOG_DEBUG("Exit 0=" + callString);
   return false;
 }
 
 int ModelImplementation::SetComputeArgumentsDestroyPointer(
-    LanguageName const languageName,
-    ModelComputeArgumentsDestroyFunction * const fptr)
+    LanguageName const languageName, Function * const fptr)
 {
 #if DEBUG_VERBOSITY
   std::string const callString = "SetComputeArgumentsDestroyPointer("
@@ -613,14 +611,14 @@ int ModelImplementation::SetComputeArgumentsDestroyPointer(
 #endif
 
   computeArgumentsDestroyLanguage_ = languageName;
-  computeArgumentsDestroyFunction_ = reinterpret_cast<Function *>(fptr);
+  computeArgumentsDestroyFunction_ = fptr;
 
   LOG_DEBUG("Exit 0=" + callString);
   return false;
 }
 
 int ModelImplementation::SetComputePointer(LanguageName const languageName,
-                                           ModelComputeFunction * const fptr)
+                                           Function * const fptr)
 {
 #if DEBUG_VERBOSITY
   std::string const callString = "SetComputePointer("
@@ -639,7 +637,7 @@ int ModelImplementation::SetComputePointer(LanguageName const languageName,
 #endif
 
   computeLanguage_ = languageName;
-  computeFunction_ = reinterpret_cast<Function *>(fptr);
+  computeFunction_ = fptr;
 
   LOG_DEBUG("Exit 0=" + callString);
   return false;

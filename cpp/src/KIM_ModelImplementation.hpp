@@ -117,18 +117,13 @@ class ModelImplementation
       modelWillNotRequestNeighborsOfNoncontributingParticles) const;
 
 
-  int SetRefreshPointer(LanguageName const languageName,
-                        ModelRefreshFunction * const fptr);
-  int SetDestroyPointer(LanguageName const languageName,
-                        ModelDestroyFunction * const fptr);
-  int SetComputeArgumentsCreatePointer(
-      LanguageName const languageName,
-      ModelComputeArgumentsCreateFunction * const fptr);
-  int SetComputeArgumentsDestroyPointer(
-      LanguageName const languageName,
-      ModelComputeArgumentsDestroyFunction * const fptr);
-  int SetComputePointer(LanguageName const languageName,
-                        ModelComputeFunction * const fptr);
+  int SetRefreshPointer(LanguageName const languageName, Function * const fptr);
+  int SetDestroyPointer(LanguageName const languageName, Function * const fptr);
+  int SetComputeArgumentsCreatePointer(LanguageName const languageName,
+                                       Function * const fptr);
+  int SetComputeArgumentsDestroyPointer(LanguageName const languageName,
+                                        Function * const fptr);
+  int SetComputePointer(LanguageName const languageName, Function * const fptr);
 
 
   int SetSpeciesCode(SpeciesName const speciesName, int const code);

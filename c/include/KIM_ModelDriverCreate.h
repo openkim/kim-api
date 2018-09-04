@@ -125,23 +125,23 @@ void KIM_ModelDriverCreate_SetNeighborListPointers(
 int KIM_ModelDriverCreate_SetRefreshPointer(
     KIM_ModelDriverCreate * const modelDriverCreate,
     KIM_LanguageName const languageName,
-    KIM_ModelRefreshFunction * const fptr);
+    KIM_Function * const fptr);
 int KIM_ModelDriverCreate_SetDestroyPointer(
     KIM_ModelDriverCreate * const modelDriverCreate,
     KIM_LanguageName const languageName,
-    KIM_ModelDestroyFunction * const fptr);
+    KIM_Function * const fptr);
 int KIM_ModelDriverCreate_SetComputeArgumentsCreatePointer(
     KIM_ModelDriverCreate * const modelDriverCreate,
     KIM_LanguageName const languageName,
-    KIM_ModelComputeArgumentsCreateFunction * const fptr);
+    KIM_Function * const fptr);
 int KIM_ModelDriverCreate_SetComputeArgumentsDestroyPointer(
     KIM_ModelDriverCreate * const modelDriverCreate,
     KIM_LanguageName const languageName,
-    KIM_ModelComputeArgumentsDestroyFunction * const fptr);
+    KIM_Function * const fptr);
 int KIM_ModelDriverCreate_SetComputePointer(
     KIM_ModelDriverCreate * const modelDriverCreate,
     KIM_LanguageName const languageName,
-    KIM_ModelComputeFunction * const fptr);
+    KIM_Function * const fptr);
 
 int KIM_ModelDriverCreate_SetSpeciesCode(
     KIM_ModelDriverCreate * const modelDriverCreate,

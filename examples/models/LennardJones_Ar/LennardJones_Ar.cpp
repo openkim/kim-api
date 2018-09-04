@@ -72,16 +72,29 @@ class LennardJones_Ar
 
     modelCreate->SetSpeciesCode(KIM::SPECIES_NAME::Ar, 0);
 
+    // use function pointer declarations to verify prototypes
+    KIM::ModelDestroyFunction * destroy = LennardJones_Ar::Destroy;
     *error = *error || modelCreate->SetDestroyPointer(
-        KIM::LANGUAGE_NAME::cpp, LennardJones_Ar::Destroy);
+        KIM::LANGUAGE_NAME::cpp,
+        reinterpret_cast<KIM::Function *>(destroy));
+    KIM::ModelRefreshFunction * refresh = LennardJones_Ar::Refresh;
     *error = *error || modelCreate->SetRefreshPointer(
-        KIM::LANGUAGE_NAME::cpp, LennardJones_Ar::Refresh);
+        KIM::LANGUAGE_NAME::cpp,
+        reinterpret_cast<KIM::Function *>(refresh));
+    KIM::ModelComputeFunction * compute = LennardJones_Ar::Compute;
     *error = *error || modelCreate->SetComputePointer(
-        KIM::LANGUAGE_NAME::cpp, LennardJones_Ar::Compute);
+        KIM::LANGUAGE_NAME::cpp,
+        reinterpret_cast<KIM::Function *>(compute));
+    KIM::ModelComputeArgumentsCreateFunction * CACreate
+        = LennardJones_Ar::ComputeArgumentsCreate;
     *error = *error || modelCreate->SetComputeArgumentsCreatePointer(
-        KIM::LANGUAGE_NAME::cpp, LennardJones_Ar::ComputeArgumentsCreate);
+        KIM::LANGUAGE_NAME::cpp,
+        reinterpret_cast<KIM::Function *>(CACreate));
+    KIM::ModelComputeArgumentsDestroyFunction * CADestroy
+        = LennardJones_Ar::ComputeArgumentsDestroy;
     *error = *error || modelCreate->SetComputeArgumentsDestroyPointer(
-        KIM::LANGUAGE_NAME::cpp, LennardJones_Ar::ComputeArgumentsDestroy);
+        KIM::LANGUAGE_NAME::cpp,
+        reinterpret_cast<KIM::Function *>(CADestroy));
     if (*error) return;
 
     // everything is good

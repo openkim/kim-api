@@ -67,10 +67,10 @@ int model_driver_create(
 
 /* Define prototypes for destroy */
 /* defined as static to avoid namespace clashes with other codes */
-static int destroy(KIM_ModelDestroy * const modelDestroy);
+static int destroy_routine(KIM_ModelDestroy * const modelDestroy);
 
 /* Define prototype for compute routine */
-static int compute(
+static int compute_routine(
     KIM_ModelCompute const * const modelCompute,
     KIM_ModelComputeArguments const * const modelComputeArguments);
 static int compute_arguments_create(
@@ -81,7 +81,7 @@ static int compute_arguments_destroy(
     KIM_ModelComputeArgumentsDestroy * const modelComputeArgumentsDestroy);
 
 /* Define prototype for refresh routine */
-static int refresh(KIM_ModelRefresh * const modelRefresh);
+static int refresh_routine(KIM_ModelRefresh * const modelRefresh);
 
 /* Define prototypes for pair potential calculations */
 static void calc_phi(double const * epsilon,
@@ -170,7 +170,7 @@ static void calc_phi_dphi(double const* epsilon,
 
 /* compute function */
 #include "KIM_ModelComputeLogMacros.h"
-static int compute(
+static int compute_routine(
     KIM_ModelCompute const * const modelCompute,
     KIM_ModelComputeArguments const * const modelComputeArguments)
 {
@@ -415,6 +415,15 @@ int model_driver_create(
   double dummy;
   struct model_buffer* buffer;
 
+  /* Use function pointer definitions to verify prototypes */
+  KIM_ModelDestroyFunction * destroy = destroy_routine;
+  KIM_ModelComputeArgumentsCreateFunction * CACreate = compute_arguments_create;
+  KIM_ModelComputeArgumentsDestroyFunction * CADestroy
+      = compute_arguments_destroy;
+  KIM_ModelComputeFunction * compute = compute_routine;
+  KIM_ModelRefreshFunction * refresh = refresh_routine;
+
+
   (void)requestedLengthUnit;  /* avoid unused parameter warnings */
   (void)requestedEnergyUnit;
   (void)requestedChargeUnit;
@@ -444,20 +453,26 @@ int model_driver_create(
   }
 
   /* store pointer to functions in KIM object */
-  KIM_ModelDriverCreate_SetDestroyPointer(modelDriverCreate,
-                                          KIM_LANGUAGE_NAME_c,
-                                          destroy);
-  KIM_ModelDriverCreate_SetComputeArgumentsCreatePointer(modelDriverCreate,
-                                          KIM_LANGUAGE_NAME_c,
-                                          compute_arguments_create);
-  KIM_ModelDriverCreate_SetComputeArgumentsDestroyPointer(modelDriverCreate,
-                                          KIM_LANGUAGE_NAME_c,
-                                          compute_arguments_destroy);
-  KIM_ModelDriverCreate_SetComputePointer(modelDriverCreate,
-                                          KIM_LANGUAGE_NAME_c,
-                                          compute);
+  KIM_ModelDriverCreate_SetDestroyPointer(
+      modelDriverCreate,
+      KIM_LANGUAGE_NAME_c,
+      (KIM_Function *) destroy);
+  KIM_ModelDriverCreate_SetComputeArgumentsCreatePointer(
+      modelDriverCreate,
+      KIM_LANGUAGE_NAME_c,
+      (KIM_Function *) CACreate);
+  KIM_ModelDriverCreate_SetComputeArgumentsDestroyPointer(
+      modelDriverCreate,
+      KIM_LANGUAGE_NAME_c,
+      (KIM_Function *) CADestroy);
+  KIM_ModelDriverCreate_SetComputePointer(
+      modelDriverCreate,
+      KIM_LANGUAGE_NAME_c,
+      (KIM_Function *) compute);
   KIM_ModelDriverCreate_SetRefreshPointer(
-      modelDriverCreate, KIM_LANGUAGE_NAME_c, refresh);
+      modelDriverCreate,
+      KIM_LANGUAGE_NAME_c,
+      (KIM_Function *) refresh);
 
   /* get number of parameter files */
   KIM_ModelDriverCreate_GetNumberOfParameterFiles(
@@ -567,7 +582,7 @@ int model_driver_create(
 }
 
 /* refresh function */
-static int refresh(KIM_ModelRefresh * const modelRefresh)
+static int refresh_routine(KIM_ModelRefresh * const modelRefresh)
 {
   /* Local variables */
   struct model_buffer* buffer;
@@ -587,7 +602,7 @@ static int refresh(KIM_ModelRefresh * const modelRefresh)
 }
 
 /* destroy function */
-static int destroy(KIM_ModelDestroy * const modelDestroy)
+static int destroy_routine(KIM_ModelDestroy * const modelDestroy)
 {
   /* Local variables */
   struct model_buffer* buffer;
