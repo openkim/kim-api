@@ -34,9 +34,7 @@
 
 ============================= The KIM API package =============================
 
-This file contains instructions for installing the KIM API package.  If you are
-new to KIM and the KIM API (application programming interface) start by reading
-the README file in this directory.
+This file contains instructions for installing the KIM API package.
 
 
 TABLE OF CONTENTS
@@ -81,9 +79,10 @@ To install and run the KIM API package you need the following:
 2. CMake (3.4 or later).
 
 3. GNU compilers (gcc, g++, gfortran) version 4.8.x or higher or the
-   corresponding Intel compilers, version 11.1 or higher.
+   corresponding Intel compilers, version 11.1 or higher.  Other compilers may
+   also work.
 
-4. Standard utilities: xxd
+4. the 'xxd' utility (distributed as part of the vim package).
 
 5. wget and tar (used by the kim-api-vX-collections-management utility).
 
@@ -94,12 +93,13 @@ To install and run the KIM API package you need the following:
 
 B. QUICK START: For those who don't like to read and are a bit audacious.
 
+Try the following:
 
-Jump directly to sections D.
+$ mkdir build && cd build
+$ cmake .. -DCMAKE_INSTALL_TYPE=Release
+$ make
 
-If you have any problems with the commands found there, please read the rest of
-this file.  If, however, you have successfully installed the KIM API and you
-would like to learn more, read the documentation found in the docs directory.
+For more information, see section D.
 
 -------------------------------------------------------------------------------
 
@@ -108,17 +108,20 @@ C. PACKAGE LAYOUT AND OPERATION OVERVIEW
 
 The KIM API package is a system-level library that aims to give computer
 programmers the ability to write atomistic or molecular simulation programs
-that can seamlessly interface with implementations of interatomic models,
-regardless of the programming language in which the codes are written.  In
-addition to the main KIM API library, a small number of associated helper
-utilities are provided.
+(Simulators) that can seamlessly interface with implementations of interatomic
+potential (Models), regardless of the programming language in which the codes
+are written.  Models can be "stand-alone", corresponding to code and parameters
+all in one.  Or, Models can be "paramaterized", corresponding to just a set of
+parameters that must be connected to a Model Driver which contains the code
+that can be used with any set of parameters.  In addition to the main KIM API
+library, a small number of associated helper utilities are provided.
 
 C.1. KIM API Library
 
-This library provides the necessary routines for a Model and a Simulator to
-interact.  Models are built and linked against the KIM API library, then
+The KIM API library provides the necessary routines for a Model and a Simulator
+to interact.  Models are built and linked against the KIM API library, then
 installed in one of the model collections (see below) so that they are
-available for use with a simulator.  Simulators are built and linked against
+available for use with a Simulator.  Simulators are built and linked against
 the KIM API library so that they can access and use any of the available Models
 in the various collections.
 
@@ -129,11 +132,11 @@ the "system-collection", the "user-collection", the
 "environment-variable-collection", and the "CWD-collection" as described below.
 
 When the KIM API needs to use a particular Model or Model Driver, it looks for
-the Model by name, first in the CWD-collection, then in the
+the item by name, first in the CWD-collection, then in the
 environment-variable-collection, then in the user-collection, and finally in
 the system-collection.  It uses the first match that it finds.  Note, it is
-possible for a Model and its Driver to be located in different collections.
-The search for each is a separate and independent procedure.
+possible for a (parameterized) Model and its Driver to be located in different
+collections.  The search for each is a separate and independent procedure.
 
 C.2.1 THE SYSTEM-COLLECTION
 
@@ -142,25 +145,25 @@ available to all Simulators that use the KIM API library.  This collection is
 located in the same subdirectory as the KIM API library.
 
 Models and Model Drivers may be built and installed to the system-collection at
-anytime after the KIM API has been built.
+anytime after the KIM API has been built and installed.
 
 C.2.2 THE USER-COLLECTION
 
 The user-collection is a collection of Models and Model Drivers that are
-available only to the system user who owns the process for the Simulator that
-uses the KIM API library.  This collection is located in subdirectories that
-are specified by a configuration file.  The user-collection may be populated
-with Models and Model Drivers after the KIM API has been built.
+available only to the user who owns the process for the Simulator that uses the
+KIM API library.  This collection is located in subdirectories that are
+specified by a configuration file.  The user-collection may be populated with
+Models and Model Drivers after the KIM API has been built and installed.
 
 The configuration file is named "${HOME}/.kim-api-vX/config" by default.  Here
 "${HOME}" is the user's home directory and "X" is the major version of the KIM
-API library.  (See item D below for build-time settings controlling this file
-name.)  If this file does not exist, the KIM API library will create it with a
-default configuration specifying that the user-collection files are stored in
-"${HOME}/.kim-api-vX/model-drivers/" and "${HOME}/.kim-api-vX/models/".  If the
-"KIM_API_VX_CONFIGURATION_FILE" environment variable is set, its value
-(interpreted as an absolute file name) will supersede the default location and
-name of the configuration file.
+API library.  (See item D below for build-time settings controlling this
+default file name.)  If this file does not exist, the KIM API library will
+create it with a default configuration specifying that the user-collection
+files are stored in "${HOME}/.kim-api-vX/model-drivers/" and
+"${HOME}/.kim-api-vX/models/".  If the "KIM_API_VX_CONFIGURATION_FILE"
+environment variable is set, its value (interpreted as an absolute file name)
+will supersede the default location and name of the configuration file.
 
 C.2.3 THE ENVIRONMENT-VARIABLE-COLLECTION
 
@@ -178,16 +181,15 @@ $ export KIM_API_VX_MODELS=/my-kim-stuff/models-i-am-developing:/my-kim-stuff/mi
 to have the KIM API look for Models in /my-kim-stuff/models-i-am-developing
 first and then look in /my-kim-stuff/misc-models.  Similarly for Model
 Drivers.)  The environment-variable-collection may be populated with Models and
-Model Drivers after the KIM API has been built.
-
+Model Drivers after the KIM API has been built and installed.
 
 C.2.4 THE CWD-COLLECTION
 
 The CWD-collection is a collection of Models and Model Drivers that are
 available to a Simulator at run-time.  The collection is located in the
 Simulator process's current working directory (CWD).  The CWD-collection may be
-populated with Models and Model Drivers after an installed-build of the KIM API
-has been completed.
+populated with Models and Model Drivers after the KIM API has been built and
+installed.
 
 C.3 HELPER UTILITIES
 
@@ -195,13 +197,13 @@ The KIM API package also includes a utility for managing the models and drivers
 contained in the various collections and for managing the configuration file.
 This utility is called "kim-api-vX-collections-management".
 
-In addition, when the KIM API package is installed to a "local" (see D below)
-directory, the package also installs the "kim-api-vX-activate" and
-"kim-api-vX-deactivate" scripts.  The activate script adds the collections
-management utility to the executable PATH, add the KIM API library to the
-PKG_CONFIG_PATH so that the pkg-config utility can find the KIM API library,
-and loads bash tab-completion support for the collections management utility.
-The deactivate script removes what the activate script added.
+In addition, when the KIM API package is installed to a "Local (non-global)"
+(see D below) directory, the package also installs the "kim-api-vX-activate"
+and "kim-api-vX-deactivate" scripts.  The activate script adds the utilities to
+the executable PATH, adds the KIM API library to the PKG_CONFIG_PATH so that
+the pkg-config utility can find it, and loads bash tab-completion support for
+the collections management utility.  The deactivate script removes what the
+activate script added.
 
 
 -------------------------------------------------------------------------------
@@ -210,19 +212,20 @@ D. KIM API INSTALLATION
 
 D.1 Typical Build Scenario
 
-Her, the typical KIM API build and install process is detailed and the
-system-collection is populated with a single Model and its associated Model
-Driver, both from openkim.org.  Additionally, one of the example Simulators is
-copied to the user's home directory and used to test the KIM API.  The KIM API
-package uses the CMake build system.  See the CMake documentation
-(https://cmake.org/cmake/help/v3.4/) for help with CMake settings.  For KIM API
-specific CMake settings, see D.2 below.
+Here, the typical KIM API build and install process is detailed and the
+system-collection is populated with the example models and drivers as well as a
+single Model and its associated Model Driver, both from openkim.org.
+Additionally, one of the example Simulators is copied to the user's home
+directory and used to test the KIM API.  The KIM API package uses the CMake
+build system.  See the CMake documentation (https://cmake.org/cmake/help/v3.4/)
+for help with CMake settings.  For some common CMake settings and KIM API
+specific settings, see D.2 below.
 
 The commands given below are for the bash shell.
 
-By default packages are installed to the prefix directory "/usr/local".  Here
-we assume that "/usr/local/bin" is included as part of the system's standard
-PATH setting.
+By default packages are installed to the Global prefix directory "/usr/local".
+Here we assume that "/usr/local/bin" is included as part of the system's
+standard PATH setting.
 
 $ cd "${HOME}"
 $ wget https://s3.openkim.org/kim-api/kim-api-vX.Y.Z.txz  # replace X.Y.Z with the current version number
@@ -232,11 +235,18 @@ $ mkdir build
 $ cd build
 $ camke .. -DCMAKE_BUILD_TYPE=Release
 $ make
+
+If you want, before installing the package, you can run the tests.
+
+$ make test
+
+Now, install the pacakge.
+
 $ sudo make install
 $ sudo ldconfig  # All linux systems should do this; on Redhat-like systems you may need to first add /usr/local/lib to /etc/ld.so.conf
 $ cp -r ../examples/simulators/utility_forces_numer_deriv "${HOME}/"
 $ cd "${HOME}"
-$ rm -r kim-api-vX.Y.Z  kim-api-vX.Y.Z.txz # replace X.Y.Z with the current version number
+$ rm -r kim-api-vX.Y.Z kim-api-vX.Y.Z.txz # replace X.Y.Z with the current version number
 $ cd utility_forces_numer_deriv
 $ mkdir build
 $ cd build
@@ -267,9 +277,9 @@ By default CMake will search for appropriate compilers available on your
 system.  Generally, it selects reasonable choices.  However, if you wish to
 force CMake to use specific compilers, you can do so with environment variables
 set on the command line.  For example, suppose you have the latest GNU Compiler
-Suite version X installed with the compilers named 'gcc-X', 'g++-X', and
-'gfortran-X', for the C, C++, and Fortran compilers, respectively.  Then, to
-force CMake to use these compilers, replace this command from above
+Collection (GCC) version X installed with the compilers named 'gcc-X', 'g++-X',
+and 'gfortran-X', for the C, C++, and Fortran compilers, respectively.  Then,
+to force CMake to use these compilers, replace the command (from above)
 
 $ camke .. -DCMAKE_BUILD_TYPE=Release
 
@@ -283,17 +293,18 @@ CMake defines the option CMAKE_BUILD_TYPE which can be set to "Debug",
 "Release", "RelWithDebInfo", and "MinSizeRel".  (See the CMake documentation
 for more details.)  By default CMAKE_BUILD_TYPE is empty.  In short, while
 developing code or debugging, the value of "Debug" should be used.  When
-building for production runs "Release" should be used.
+building for production runs one of the other values should be used.
 
 D.2.3 INSTALLATION PREFIX
 
-By default CMake installs the KIM API package under the prefix "/usr/local".
-This is referred to as a "Global" (or system-wide) installation.  It is
-available to all users of the system.  However, such installations require root
-user permissions (as indicated by the use of the "sudo" command above).  If you
-do not have root user permission and/or do not want to install the KIM API to
-the global location, you can change where CMake installs the KIM API by
-replacing this command from above
+By default CMake installs the KIM API package under the Global prefix
+"/usr/local".  This is referred to as a "Global" (or system-wide) installation.
+It is available to all users of the system.  (Other "Global" prefix values are
+"/" and "/usr".)  However, such installations require root user permissions (as
+implied by the use of the "sudo" command above).  If you do not have root user
+permission and/or do not want to install the KIM API to the global location,
+you can change where CMake installs the KIM API by replacing the command (from
+above)
 
 $ camke .. -DCMAKE_BUILD_TYPE=Release
 
@@ -308,7 +319,6 @@ the "kim-api-vX-activate" utility to setup the PATH and bash completions.  For
 example:
 
 $ source ${HOME}/local/bin/kim-api-vX-activate
-
 
 D.2.4 KIM API SPECIFIC BUILD OPTIONS
 
@@ -328,15 +338,15 @@ Additionally, the KIM API defines the following four advanced options.
 
 * KIM_API_ENABLE_COVERAGE (=OFF) When ON this enables gcov code coverage.
 
-* KIM_API_USER_CONFIGURATION_FILE (=".${PROJECT_NAME}/config") This determines
-  the default name of the KIM API user configuration file.  If the value
+* KIM_API_USER_CONFIGURATION_FILE (=".kim-api-vX/config") This determines the
+  default name of the KIM API user configuration file.  If the value
   corresponds to a relative path (does not start with "/"), then it is
   interpreted as relative to the user's home directory "${HOME}".
 
 * PROJECT_PREFIX (="kim-api") This value controls the naming of many aspects of
   the package build.  Generally this should not be changed.  It can be used to
-  build and install on the same machine two different copies of the same major
-  version of the package.  This could be desirable for debugging.
+  build and install, on the same machine, two different copies of the same
+  major version of the package.  This could be desirable for debugging.
 
 
 -------------------------------------------------------------------------------
@@ -353,9 +363,10 @@ CWD-collection.
 
 E.1 ADDING MODELS AND/OR MODEL DRIVERS TO THE SYSTEM-COLLECTION
 
-Once you have an installed-build, it is easy to add additional Models and/or
-Model Drivers to the system-collection.  We'll assume an
-installed-(standard)-build.
+Once you have the KIM API installed, it is easy to add additional Models and/or
+Model Drivers to the system-collection.
+
+$ cd "${HOME}
 
 $ kim-api-vX-collections-management install system --sudo Pair_Morse_Shifted_Jelinek_Ar__MO_831902330215_001
 
@@ -363,7 +374,6 @@ The kim-api-vX-collections-management utility automatically installs the
 necessary Model Driver.  You can see the items in the various collections by
 executing the following command.
 
-$ cd "${HOME}"
 $ kim-api-vX-collections-management list
 
 Now we can test the newly installed Model.
@@ -375,6 +385,8 @@ E.2 ADDING MODELS AND/OR MODEL DRIVERS TO THE USER-COLLECTION
 
 Adding Models and/or Model Drivers to the user-collection is similar.
 
+$ cd "${HOME}"
+
 $ kim-api-vX-collections-management install user Pair_Lennard_Jones_Shifted_Bernardes_HighCutoff_Ar__MO_242741380554_001
 $ kim-api-vX-collections-management list
 $ cd "${HOME}/build/utility_forces_numer_deriv"  # we'll assume this is already built
@@ -385,6 +397,8 @@ E.3 ADDING MODELS AND/OR MODEL DRIVERS TO THE ENVIRONMENT-VARIABLE-COLLECTION
 Adding Models and/or Model Drivers to the environment-variable-collection is
 similar.
 
+$ cd "${HOME}"
+
 $ mkdir -p "${HOME}/my-env-collection/model-drivers"
 $ export KIM_API_VX_MODEL_DRIVERS="${HOME}/my-env-collection/model-drivers"
 $ mkdir -p "${HOME}/my-env-collection/models"
@@ -394,31 +408,15 @@ $ kim-api-vX-collections-management list
 $ cd "${HOME}/build/utility_forces_numer_deriv"  # we'll assume this is already built
 $ printf "Pair_Morse_Shifted_GirifalcoWeizer_HighCutoff_Cu__MO_151002396060_001" | ./utility_forces_numer_deriv
 
-We can check to see that these are recognized by the KIM API.
-
-$ cd "${HOME}"
-$ kim-api-vX-collections-management list
-
-Now we can test the newly available Model.
-
-$ cd "${HOME}/build/utility_forces_numer_deriv"  # we'll assume this is already built
-$ printf "Pair_Morse_Shifted_GirifalcoWeizer_HighCutoff_Cu__MO_151002396060_001" | ./utility_forces_numer_deriv
-
 E.4 ADDING MODELS AND/OR MODEL DRIVERS TO THE CWD-COLLECTION
 
 Adding Models and/or Model Drivers to the CWD-collection is, again, similar.
 
-$ cd "${HOME}/build/utility_forces_numer_deriv"  # we'll assume this is already built
+$ cd "${HOME}"
+
 $ kim-api-vX-collections-management install CWD Pair_Exp6_Hogervorst_Mixing_Kong_Chakrabarty_ArNe__MO_946046425752_001
 $ kim-api-vX-collections-management list
-$ printf "Pair_Exp6_Hogervorst_Mixing_Kong_Chakrabarty_ArNe__MO_946046425752_001" | ./utility_forces_numer_deriv
-
-We can check to see that this model is recognized by the KIM API.
-
-$ kim-api-vX-collections-management list
-
-Now we can test the newly available Model.
-
+$ cd "${HOME}/build/utility_forces_numer_deriv"  # we'll assume this is already built
 $ printf "Pair_Exp6_Hogervorst_Mixing_Kong_Chakrabarty_ArNe__MO_946046425752_001" | ./utility_forces_numer_deriv
 
 *******************************************************************************
