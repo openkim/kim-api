@@ -205,7 +205,8 @@ KIM_TimeUnit makeTimeUnitC(KIM::TimeUnit const timeUnit)
     std::ostringstream() << reinterpret_cast<KIM::Function *>(x)).str()
 
 
-#include "KIM_ModelImplementationLogMacros.hpp"
+#include "KIM_LogMacros.hpp"
+#define KIM_LOGGER_OBJECT_NAME this
 namespace KIM
 {
 // Forward declarations

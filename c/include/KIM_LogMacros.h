@@ -35,70 +35,60 @@
 
 #undef FATAL_VERBOSITY
 #define FATAL_VERBOSITY (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_FATAL_)
-#ifdef LOG_FATAL
 #undef LOG_FATAL
-#endif
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_FATAL_)
 #define LOG_FATAL(message)                                              \
-  KIM_ModelComputeArguments_LogEntry(modelComputeArguments,             \
-                                     KIM_LOG_VERBOSITY_fatal, message,  \
-                                     __LINE__, __FILE__)
+  KIM_LOGGER_FUNCTION_NAME(KIM_LOGGER_OBJECT_NAME,                      \
+                           KIM_LOG_VERBOSITY_fatal, message,            \
+                           __LINE__, __FILE__)
 #else
 #define LOG_FATAL(message)
 #endif
 
 #undef ERROR_VERBOSITY
 #define ERROR_VERBOSITY (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_ERROR_)
-#ifdef LOG_ERROR
 #undef LOG_ERROR
-#endif
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_ERROR_)
 #define LOG_ERROR(message)                                              \
-  KIM_ModelComputeArguments_LogEntry(modelComputeArguments,             \
-                                     KIM_LOG_VERBOSITY_error, message,  \
-                                     __LINE__, __FILE__)
+  KIM_LOGGER_FUNCTION_NAME(KIM_LOGGER_OBJECT_NAME,                      \
+                           KIM_LOG_VERBOSITY_error, message,            \
+                           __LINE__, __FILE__)
 #else
 #define LOG_ERROR(message)
 #endif
 
 #undef WARNING_VERBOSITY
 #define WARNING_VERBOSITY (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_WARNING_)
-#ifdef LOG_WARNING
 #undef LOG_WARNING
-#endif
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_WARNING_)
 #define LOG_WARNING(message)                                            \
-  KIM_ModelComputeArguments_LogEntry(modelComputeArguments,             \
-                                     KIM_LOG_VERBOSITY_warning, message, \
-                                     __LINE__, __FILE__)
+  KIM_LOGGER_FUNCTION_NAME(KIM_LOGGER_OBJECT_NAME,                      \
+                           KIM_LOG_VERBOSITY_warning, message,          \
+                           __LINE__, __FILE__)
 #else
 #define LOG_WARNING(message)
 #endif
 
 #undef INFORMATION_VERBOSITY
 #define INFORMATION_VERBOSITY (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_INFORMATION_)
-#ifdef LOG_INFORMATION
 #undef LOG_INFORMATION
-#endif
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_INFORMATION_)
 #define LOG_INFORMATION(message)                                        \
-  KIM_ModelComputeArguments_LogEntry(modelComputeArguments,             \
-                                     KIM_LOG_VERBOSITY_information, message, \
-                                     __LINE__, __FILE__)
+  KIM_LOGGER_FUNCTION_NAME(KIM_LOGGER_OBJECT_NAME,                      \
+                           KIM_LOG_VERBOSITY_information, message,      \
+                           __LINE__, __FILE__)
 #else
 #define LOG_INFORMATION(message)
 #endif
 
 #undef DEBUG_VERBOSITY
 #define DEBUG_VERBOSITY (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_DEBUG_)
-#ifdef LOG_DEBUG
 #undef LOG_DEBUG
-#endif
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_DEBUG_)
 #define LOG_DEBUG(message)                                              \
-  KIM_ModelComputeArguments_LogEntry(modelComputeArguments,             \
-                                     KIM_LOG_VERBOSITY_debug, message,  \
-                                     __LINE__, __FILE__)
+  KIM_LOGGER_FUNCTION_NAME(KIM_LOGGER_OBJECT_NAME,                      \
+                           KIM_LOG_VERBOSITY_debug, message,            \
+                           __LINE__, __FILE__)
 #else
 #define LOG_DEBUG(message)
 #endif

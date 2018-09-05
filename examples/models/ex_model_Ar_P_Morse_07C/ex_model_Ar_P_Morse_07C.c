@@ -44,6 +44,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
+#include "KIM_LogMacros.h"
 #include "KIM_ModelHeaders.h"
 
 #define TRUE 1
@@ -181,7 +182,11 @@ static void calc_phi_d2phi(double* epsilon,
   return; }
 
 /* compute function */
-#include "KIM_ModelComputeLogMacros.h"
+#undef  KIM_LOGGER_FUNCTION_NAME
+#define KIM_LOGGER_FUNCTION_NAME KIM_ModelCompute_LogEntry
+#undef  KIM_LOGGER_OBJECT_NAME
+#define KIM_LOGGER_OBJECT_NAME modelCompute
+/**/
 static int model_compute(
     KIM_ModelCompute const * const modelCompute,
     KIM_ModelComputeArguments const * const modelComputeArguments)
@@ -442,7 +447,11 @@ static int model_compute(
   return ier; }
 
 /* Create function */
-#include "KIM_ModelCreateLogMacros.h"
+#undef  KIM_LOGGER_FUNCTION_NAME
+#define KIM_LOGGER_FUNCTION_NAME KIM_ModelCreate_LogEntry
+#undef  KIM_LOGGER_OBJECT_NAME
+#define KIM_LOGGER_OBJECT_NAME modelCreate
+/**/
 int model_create(KIM_ModelCreate * const modelCreate,
                  KIM_LengthUnit const requestedLengthUnit,
                  KIM_EnergyUnit const requestedEnergyUnit,
@@ -553,7 +562,11 @@ int model_create(KIM_ModelCreate * const modelCreate,
 }
 
 /* refresh function */
-#include "KIM_ModelRefreshLogMacros.h"
+#undef  KIM_LOGGER_FUNCTION_NAME
+#define KIM_LOGGER_FUNCTION_NAME KIM_ModelRefresh_LogEntry
+#undef  KIM_LOGGER_OBJECT_NAME
+#define KIM_LOGGER_OBJECT_NAME modelRefresh
+/**/
 static int model_refresh(KIM_ModelRefresh * const modelRefresh)
 {
   /* Local variables */
@@ -577,7 +590,11 @@ static int model_refresh(KIM_ModelRefresh * const modelRefresh)
 }
 
 /* Initialization function */
-#include "KIM_ModelDestroyLogMacros.h"
+#undef  KIM_LOGGER_FUNCTION_NAME
+#define KIM_LOGGER_FUNCTION_NAME KIM_ModelDestroy_LogEntry
+#undef  KIM_LOGGER_OBJECT_NAME
+#define KIM_LOGGER_OBJECT_NAME modelDestroy
+/**/
 int model_destroy(KIM_ModelDestroy * const modelDestroy) {
   buffer * bufferPointer;
 
@@ -590,7 +607,11 @@ int model_destroy(KIM_ModelDestroy * const modelDestroy) {
   return FALSE; }
 
 /* compute arguments create routine */
-#include "KIM_ModelComputeArgumentsCreateLogMacros.h"
+#undef  KIM_LOGGER_FUNCTION_NAME
+#define KIM_LOGGER_FUNCTION_NAME KIM_ModelCompute_LogEntry
+#undef  KIM_LOGGER_OBJECT_NAME
+#define KIM_LOGGER_OBJECT_NAME modelCompute
+/**/
 static int compute_arguments_create(
     KIM_ModelCompute const * const modelCompute,
     KIM_ModelComputeArgumentsCreate * const modelComputeArgumentsCreate)
@@ -638,7 +659,11 @@ static int compute_arguments_create(
 }
 
 /* compue arguments destroy routine */
-#include "KIM_ModelComputeArgumentsDestroyLogMacros.h"
+#undef  KIM_LOGGER_FUNCTION_NAME
+#define KIM_LOGGER_FUNCTION_NAME KIM_ModelCompute_LogEntry
+#undef  KIM_LOGGER_OBJECT_NAME
+#define KIM_LOGGER_OBJECT_NAME modelCompute
+/**/
 static int compute_arguments_destroy(
     KIM_ModelCompute const * const modelCompute,
     KIM_ModelComputeArgumentsDestroy * const modelComputeArgumentsDestroy)

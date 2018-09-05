@@ -48,26 +48,19 @@ set(C_HEADERS
     KIM_LanguageName.h
     KIM_LengthUnit.h
     KIM_Log.h
+    KIM_LogMacros.h
     KIM_LogVerbosity.h
     KIM_ModelComputeArgumentsCreate.h
-    KIM_ModelComputeArgumentsCreateLogMacros.h
     KIM_ModelComputeArgumentsDestroy.h
-    KIM_ModelComputeArgumentsDestroyLogMacros.h
     KIM_ModelComputeArguments.h
-    KIM_ModelComputeArgumentsLogMacros.h
     KIM_ModelCompute.h
-    KIM_ModelComputeLogMacros.h
     KIM_ModelCreate.h
-    KIM_ModelCreateLogMacros.h
     KIM_ModelDestroy.h
-    KIM_ModelDestroyLogMacros.h
     KIM_ModelDriverCreate.h
-    KIM_ModelDriverCreateLogMacros.h
     KIM_ModelDriverHeaders.h
     KIM_ModelHeaders.h
     KIM_Model.h
     KIM_ModelRefresh.h
-    KIM_ModelRefreshLogMacros.h
     KIM_Numbering.h
     KIM_SemVer.h
     KIM_SimulatorHeaders.h

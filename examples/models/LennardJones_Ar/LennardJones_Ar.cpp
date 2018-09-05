@@ -27,6 +27,7 @@
 //
 
 #include <math.h>
+#include "KIM_LogMacros.hpp"
 #include "KIM_ModelHeaders.hpp"
 
 #define DIMENSION 3
@@ -143,7 +144,9 @@ class LennardJones_Ar
   };
 
   //****************************************************************************
-#include "KIM_ModelComputeLogMacros.hpp"
+#undef  KIM_LOGGER_OBJECT_NAME
+#define KIM_LOGGER_OBJECT_NAME modelCompute
+  //
   static int Compute(
       KIM::ModelCompute const * const modelCompute,
       KIM::ModelComputeArguments const * const modelComputeArguments)
@@ -317,7 +320,9 @@ class LennardJones_Ar
   int const modelWillNotRequestNeighborsOfNoncontributingParticles_;
 
   //****************************************************************************
-#include "KIM_ModelCreateLogMacros.hpp"
+#undef  KIM_LOGGER_OBJECT_NAME
+#define KIM_LOGGER_OBJECT_NAME modelCreate
+  //
   int ConvertUnits(
       KIM::ModelCreate * const modelCreate,
       KIM::LengthUnit const requestedLengthUnit,

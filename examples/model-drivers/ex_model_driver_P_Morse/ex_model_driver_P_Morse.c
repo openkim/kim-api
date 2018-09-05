@@ -44,6 +44,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
+#include "KIM_LogMacros.h"
 #include "KIM_ModelDriverHeaders.h"
 
 #define TRUE 1
@@ -169,7 +170,10 @@ static void calc_phi_dphi(double const* epsilon,
 }
 
 /* compute function */
-#include "KIM_ModelComputeLogMacros.h"
+#undef  LOG_FUNCITON
+#define KIM_LOGGER_FUNCTION_NAME KIM_ModelCompute_LogEntry
+#undef  KIM_LOGGER_OBJECT_NAME
+#define KIM_LOGGER_OBJECT_NAME modelCompute
 static int compute_routine(
     KIM_ModelCompute const * const modelCompute,
     KIM_ModelComputeArguments const * const modelComputeArguments)
@@ -390,7 +394,10 @@ static int compute_routine(
 }
 
 /* Create function */
-#include "KIM_ModelDriverCreateLogMacros.h"
+#undef  KIM_LOGGER_FUNCTION_NAME
+#define KIM_LOGGER_FUNCTION_NAME KIM_ModelDriverCreate_LogEntry
+#undef  KIM_LOGGER_OBJECT_NAME
+#define KIM_LOGGER_OBJECT_NAME modelDriverCreate
 int model_driver_create(
     KIM_ModelDriverCreate * const modelDriverCreate,
     KIM_LengthUnit const requestedLengthUnit,
@@ -619,7 +626,10 @@ static int destroy_routine(KIM_ModelDestroy * const modelDestroy)
 }
 
 /* compute arguments create routine */
-#include "KIM_ModelComputeArgumentsCreateLogMacros.h"
+#undef  KIM_LOGGER_FUNCTION_NAME
+#define KIM_LOGGER_FUNCTION_NAME KIM_ModelCompute_LogEntry
+#undef  KIM_LOGGER_OBJECT_NAME
+#define KIM_LOGGER_OBJECT_NAME modelCompute
 static int compute_arguments_create(
     KIM_ModelCompute const * const modelCompute,
     KIM_ModelComputeArgumentsCreate * const modelComputeArgumentsCreate)
@@ -655,7 +665,6 @@ static int compute_arguments_create(
 }
 
 /* compue arguments destroy routine */
-#include "KIM_ModelComputeArgumentsDestroyLogMacros.h"
 static int compute_arguments_destroy(
     KIM_ModelCompute const * const modelCompute,
     KIM_ModelComputeArgumentsDestroy * const modelComputeArgumentsDestroy)

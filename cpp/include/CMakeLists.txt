@@ -56,26 +56,19 @@ set(CPP_HEADERS
   KIM_LengthUnit.hpp
   KIM_LengthUnit.inc
   KIM_Log.hpp
+  KIM_LogMacros.hpp
   KIM_LogVerbosity.hpp
   KIM_ModelComputeArgumentsCreate.hpp
-  KIM_ModelComputeArgumentsCreateLogMacros.hpp
   KIM_ModelComputeArgumentsDestroy.hpp
-  KIM_ModelComputeArgumentsDestroyLogMacros.hpp
   KIM_ModelComputeArguments.hpp
-  KIM_ModelComputeArgumentsLogMacros.hpp
   KIM_ModelCompute.hpp
-  KIM_ModelComputeLogMacros.hpp
   KIM_ModelCreate.hpp
-  KIM_ModelCreateLogMacros.hpp
   KIM_ModelDestroy.hpp
-  KIM_ModelDestroyLogMacros.hpp
   KIM_ModelDriverCreate.hpp
-  KIM_ModelDriverCreateLogMacros.hpp
   KIM_ModelDriverHeaders.hpp
   KIM_ModelHeaders.hpp
   KIM_Model.hpp
   KIM_ModelRefresh.hpp
-  KIM_ModelRefreshLogMacros.hpp
   KIM_Numbering.hpp
   KIM_Numbering.inc
   KIM_SemVer.hpp
