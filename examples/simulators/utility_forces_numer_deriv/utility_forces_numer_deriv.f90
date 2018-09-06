@@ -35,25 +35,19 @@ module error
   public
 
 contains
-  subroutine my_error(message, line, file)
+  subroutine my_error(message)
     implicit none
     character(len=*, kind=c_char), intent(in) :: message
-    integer, intent(in) :: line
-    character(len=*, kind=c_char), intent(in) :: file
 
-    print *,"* Error : '", trim(message), "' ", line, ":", &
-      trim(file)
+    print *,"* Error : ", trim(message)
     stop
   end subroutine my_error
 
-  subroutine my_warning(message, line, file)
+  subroutine my_warning(message)
     implicit none
     character(len=*, kind=c_char), intent(in) :: message
-    integer, intent(in) :: line
-    character(len=*, kind=c_char), intent(in) :: file
 
-    print *,"* Warning : '", trim(message), "' ", line, ":", &
-      trim(file)
+    print *,"* Warning : ", trim(message)
   end subroutine my_warning
 end module error
 
@@ -119,16 +113,14 @@ subroutine get_neigh(data_object, number_of_neighbor_lists, cutoffs, &
     [numberOfParticles+1, numberOfParticles])
 
   if (cutoffs(neighbor_list_index) > neighObject%cutoff) then
-    call my_warning("neighbor list cutoff too small for model cutoff", &
-      __LINE__, __FILE__)
+    call my_warning("neighbor list cutoff too small for model cutoff")
     ierr = 1
     return
   endif
 
   if ( (request.gt.numberOfParticles) .or. (request.lt.1)) then
     print *, request
-    call my_warning("Invalid part ID in get_neigh", &
-      __LINE__, __FILE__)
+    call my_warning("Invalid part ID in get_neigh")
     ierr = 1
     return
   endif
@@ -189,15 +181,13 @@ subroutine check_model_compatibility(compute_arguments_handle, &
     call kim_compute_argument_name_get_compute_argument_name(i, argument_name, &
       ierr)
     if (ierr /= 0) then
-      call my_warning("can't get argument name", &
-        __LINE__, __FILE__)
+      call my_warning("can't get argument name")
       return
     end if
     call kim_compute_arguments_get_argument_support_status( &
       compute_arguments_handle, argument_name, support_status, ierr)
     if (ierr /= 0) then
-      call my_warning("can't get argument support_status", &
-        __LINE__, __FILE__)
+      call my_warning("can't get argument support_status")
       return
     end if
 
@@ -206,8 +196,7 @@ subroutine check_model_compatibility(compute_arguments_handle, &
       if (.not. ( &
         (argument_name == kim_compute_argument_name_partial_energy) .or. &
         (argument_name == kim_compute_argument_name_partial_forces))) then
-        call my_warning("unsupported required argument", &
-          __LINE__, __FILE__)
+        call my_warning("unsupported required argument")
         ierr = 0
         return
       end if
@@ -216,15 +205,13 @@ subroutine check_model_compatibility(compute_arguments_handle, &
     ! need both energy and forces not "notSupported"
     if ((argument_name == kim_compute_argument_name_partial_energy) .and. &
       (support_status == kim_support_status_not_supported)) then
-      call my_warning("model does not support energy", &
-        __LINE__, __FILE__)
+      call my_warning("model does not support energy")
       ierr = 0
       return
     end if
     if (argument_name == kim_compute_argument_name_partial_forces) then
       if (support_status == kim_support_status_not_supported) then
-        call my_warning("model does not support forces", &
-          __LINE__, __FILE__)
+        call my_warning("model does not support forces")
         ierr = 0
         return
       else if (support_status == kim_support_status_required) then
@@ -232,8 +219,7 @@ subroutine check_model_compatibility(compute_arguments_handle, &
       else if (support_status == kim_support_status_optional) then
         forces_optional = .true.
       else
-        call my_warning("unknown support_status for forces", &
-          __LINE__, __FILE__)
+        call my_warning("unknown support_status for forces")
         ierr = 0
         return
       end if
@@ -247,22 +233,19 @@ subroutine check_model_compatibility(compute_arguments_handle, &
     call kim_compute_callback_name_get_compute_callback_name(i, callback_name, &
       ierr)
     if (ierr /= 0) then
-      call my_warning("can't get call back name", &
-        __LINE__, __FILE__)
+      call my_warning("can't get call back name")
       return
     end if
     call kim_compute_arguments_get_callback_support_status( &
       compute_arguments_handle, callback_name, support_status, ierr)
     if (ierr /= 0) then
-      call my_warning("can't get call back support_status", &
-        __LINE__, __FILE__)
+      call my_warning("can't get call back support_status")
       return
     end if
 
     ! cannot handle any "required" call backs
     if (support_status == kim_support_status_required) then
-      call my_warning("unsupported required call back", &
-        __LINE__, __FILE__)
+      call my_warning("unsupported required call back")
       ierr = 0
       return
     end if
@@ -607,8 +590,7 @@ deriv_err_last = huge(1.0_cd)
 do i=1,number_eps_levels
    deriv = dfridr(eps,deriv_err)
    if (ierr /= 0) then
-     call my_error("compute_numer_deriv", &
-       __LINE__, __FILE__)
+     call my_error("compute_numer_deriv")
    endif
    if (deriv_err>deriv_err_last) then
       deriv  = deriv_last
@@ -673,8 +655,7 @@ contains
                             neighObject,ierr)
    call kim_model_compute(model_handle, compute_arguments_handle, ierr)
    if (ierr /= 0) then
-     call my_error("kim_api_model_compute", &
-       __LINE__, __FILE__)
+     call my_error("kim_api_model_compute")
    endif
    fp = energy
    coords(dir,partnum) = coordorig - hh
@@ -683,8 +664,7 @@ contains
                             neighObject,ierr)
    call kim_model_compute(model_handle, compute_arguments_handle, ierr)
    if (ierr /= 0) then
-     call my_error("kim_api_model_compute", &
-       __LINE__, __FILE__)
+     call my_error("kim_api_model_compute")
    endif
    fm = energy
    coords(dir,partnum) = coordorig
@@ -704,8 +684,7 @@ contains
                                neighObject,ierr)
       call kim_model_compute(model_handle, compute_arguments_handle, ierr)
       if (ierr /= 0) then
-        call my_error("kim_api_model_compute", &
-          __LINE__, __FILE__)
+        call my_error("kim_api_model_compute")
       endif
       fp = energy
       coords(dir,partnum) = coordorig - hh
@@ -714,8 +693,7 @@ contains
                                   neighObject,ierr)
       call kim_model_compute(model_handle, compute_arguments_handle, ierr)
       if (ierr /= 0) then
-        call my_error("kim_api_model_compute", &
-          __LINE__, __FILE__)
+        call my_error("kim_api_model_compute")
       endif
       fm = energy
       coords(dir,partnum) = coordorig
@@ -878,29 +856,28 @@ program vc_forces_numer_deriv
     requested_units_accepted, &
     model_handle, ierr)
   if (ierr /= 0) then
-    call my_error("kim_api_create", __LINE__, __FILE__)
+    call my_error("kim_api_create")
   endif
 
   ! check that we are compatible
   if (requested_units_accepted == 0) then
-    call my_error("Must adapt to model units", __LINE__, __FILE__)
+    call my_error("Must adapt to model units")
   end if
 
   ! create compute_arguments object
   call kim_model_compute_arguments_create(model_handle, &
     compute_arguments_handle, ierr)
   if (ierr /= 0) then
-    call my_error("kim_model_compute_arguments_create", __LINE__, __FILE__)
+    call my_error("kim_model_compute_arguments_create")
   endif
 
   call check_model_compatibility(compute_arguments_handle, forces_optional, &
     model_is_compatible, ierr)
   if (ierr /= 0) then
-    call my_error("error checking compatibility", __LINE__, __FILE__)
+    call my_error("error checking compatibility")
   end if
   if (.not. model_is_compatible) then
-    call my_error("incompatibility reported by check_model_compatibility", &
-      __LINE__, __FILE__)
+    call my_error("incompatibility reported by check_model_compatibility")
   end if
 
   ! Get list of particle species supported by the model
@@ -908,7 +885,7 @@ program vc_forces_numer_deriv
   call Get_Model_Supported_Species(model_handle, max_species, model_species, &
     num_species, ierr)
   if (ierr /= 0) then
-     call my_error("Get_Model_Supported_Species", __LINE__, __FILE__)
+     call my_error("Get_Model_Supported_Species")
   endif
   ! Setup random cluster
   !
@@ -955,7 +932,7 @@ program vc_forces_numer_deriv
     kim_compute_argument_name_partial_forces, forces_kim, ierr2)
   ierr = ierr + ierr2
   if (ierr /= 0) then
-     call my_error("set_argument_pointer", __LINE__, __FILE__)
+     call my_error("set_argument_pointer")
   endif
 
   ! Allocate storage for neighbor lists and
@@ -971,7 +948,7 @@ program vc_forces_numer_deriv
     kim_compute_callback_name_get_neighbor_list, kim_language_name_fortran, &
     c_funloc(get_neigh), c_loc(neighobject), ierr)
   if (ierr /= 0) then
-    call my_error("set_callback_pointer", __LINE__, __FILE__)
+    call my_error("set_callback_pointer")
   end if
 
   call kim_model_get_influence_distance(model_handle, influence_distance)
@@ -983,7 +960,7 @@ program vc_forces_numer_deriv
   call kim_model_get_neighbor_list_values(model_handle, cutoffs, &
     model_will_not_request_neighbors_of_noncontributing_particles, ierr)
   if (ierr /= 0) then
-    call my_error("get_neighbor_list_values", __LINE__, __FILE__)
+    call my_error("get_neighbor_list_values")
   end if
   cutoff = maxval(cutoffs)
 
@@ -1000,7 +977,7 @@ program vc_forces_numer_deriv
       cluster_species(i), species_is_supported, particleSpeciesCodes(i), ierr)
   enddo
   if (ierr /= 0) then
-    call my_error("kim_api_get_species_code", __LINE__, __FILE__)
+    call my_error("kim_api_get_species_code")
   endif
   do i=1,N
     particleContributing(i) = 1  ! every particle contributes
@@ -1017,14 +994,14 @@ program vc_forces_numer_deriv
                            do_update_list,coordsave, &
                            neighObject,ierr)
   if (ierr /= 0) then
-    call my_error("update_neighborlist", __LINE__, __FILE__)
+    call my_error("update_neighborlist")
   endif
 
   ! Call model compute to get forces (gradient)
   !
   call kim_model_compute(model_handle, compute_arguments_handle, ierr)
   if (ierr /= 0) then
-     call my_error("kim_api_model_compute", __LINE__, __FILE__)
+     call my_error("kim_api_model_compute")
   endif
 
   ! Copy forces in case model will overwrite forces_kim below
@@ -1044,7 +1021,7 @@ program vc_forces_numer_deriv
     call kim_compute_arguments_set_argument_pointer(compute_arguments_handle, &
       kim_compute_argument_name_partial_forces, null_pointer, ierr)
     if (ierr /= 0) then
-      call my_error("set_argument_pointer", __LINE__, __FILE__)
+      call my_error("set_argument_pointer")
     endif
   endif
 
@@ -1058,7 +1035,7 @@ program vc_forces_numer_deriv
                                  cutpad, energy, do_update_list, &
                                  coordsave,neighObject,deriv,deriv_err,ierr)
         if (ierr /= 0) then
-          call my_error("compute_numer_deriv", __LINE__, __FILE__)
+          call my_error("compute_numer_deriv")
         endif
         forces_num(J,I) = -deriv
         forces_num_err(J,I) = deriv_err
@@ -1123,7 +1100,7 @@ program vc_forces_numer_deriv
   call kim_model_compute_arguments_destroy(model_handle, &
     compute_arguments_handle, ierr)
   if (ierr /= 0) then
-    call my_error("kim_model_compute_arguments_destroy", __LINE__, __FILE__)
+    call my_error("kim_model_compute_arguments_destroy")
   endif
   call kim_model_destroy(model_handle)
 

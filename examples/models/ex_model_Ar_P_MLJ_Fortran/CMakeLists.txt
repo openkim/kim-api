@@ -57,4 +57,4 @@ add_kim_api_model_library(
   CREATE_ROUTINE_LANGUAGE "fortran"
   )
 
-target_sources(${MODEL_NAME} PRIVATE ${MODEL_NAME}.F90)
+target_sources(${MODEL_NAME} PRIVATE ${MODEL_NAME}.f90)

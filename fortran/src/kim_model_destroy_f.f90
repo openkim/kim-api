@@ -123,7 +123,7 @@ subroutine kim_model_destroy_get_model_buffer_pointer(model_destroy_handle, ptr)
 end subroutine kim_model_destroy_get_model_buffer_pointer
 
 subroutine kim_model_destroy_log_entry(model_destroy_handle, log_verbosity, &
-  message, line_number, file_name)
+  message)
   use, intrinsic :: iso_c_binding
   use kim_model_destroy_module, only : kim_model_destroy_handle_type
   use kim_log_verbosity_module, only : kim_log_verbosity_type
@@ -132,13 +132,11 @@ subroutine kim_model_destroy_log_entry(model_destroy_handle, log_verbosity, &
   type(kim_model_destroy_handle_type), intent(in) :: model_destroy_handle
   type(kim_log_verbosity_type), intent(in), value :: log_verbosity
   character(len=*, kind=c_char), intent(in) :: message
-  integer(c_int), intent(in), value :: line_number
-  character(len=*, kind=c_char), intent(in) :: file_name
   type(kim_model_destroy_type), pointer :: model_destroy
 
   call c_f_pointer(model_destroy_handle%p, model_destroy)
   call log_entry(model_destroy, log_verbosity, trim(message)//c_null_char, &
-    line_number, trim(file_name)//c_null_char)
+    0, ""//c_null_char)
 end subroutine kim_model_destroy_log_entry
 
 subroutine kim_model_destroy_string(model_destroy_handle, string)
