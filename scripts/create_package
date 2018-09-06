@@ -37,7 +37,24 @@ fi
 
 # DO IT
 
+# goto the top level repo directory
 cd "`git rev-parse --show-toplevel`"
+
+
+master_branch="master"
+devel_branch="devel-v2"
+
+# check that we're on the right branch
+if test x"${devel_branch}" != x"`git rev-parse --abbrev-ref HEAD`"; then
+  printf "Must be on the 'devel-v2' branch to crate a package. Exiting.\n"
+  exit
+fi
+
+# check that we're on a clean branch
+if test ! x"" == x"`git diff-index --name-only HEAD`"; then
+  printf "Local changes exist.  Must be on a clean commit. Exiting.\n"
+  exit
+fi
 
 packagename=$1
 major=$2
@@ -51,13 +68,6 @@ else
   prerelease=""
 fi
 fullpackagename=${packagename}-${versionstring}
-
-# check for more errors
-
-if test -e "${fullpackagename}"; then
-  printf "File '${fullpackagename}' exits! exiting...\n"
-  exit
-fi
 
 # grab cmake project version string
 cmake_project_version="`grep -E "^project\(" CMakeLists.txt | sed -e 's/.*VERSION *\([0-9.]*\).*/\1/'`"
@@ -81,40 +91,45 @@ if test $patch -ne ${cmake_patch}; then
   exit
 fi
 
-git clone . $fullpackagename
 
-cd $fullpackagename
+git checkout -b "b-${versionstring}" HEAD
 
-versionfile=${packagename}.release.info
-printf "This package ($fullpackagename) created from commit\n"                           >  $versionfile
-printf "\n"                                                                              >> $versionfile
-git rev-parse HEAD                                                                       >> $versionfile
-printf "\n"                                                                              >> $versionfile
-printf "of the kim-api git repository\n"                                                 >> $versionfile
-printf "By `git config user.name` (`git config user.email`) on `date`.\n"                >> $versionfile
-
-rm -rf '.git'
-
-ed cmake/Modules/DefineVersionVariables.cmake <<EOF
+ed cmake/Modules/DefineVersionVariables.cmake > /dev/null 2>&1 <<EOF
 ,s/^set(PROJECT_VERSION_PRERELEASE *"\([^"]*\)"/set(PROJECT_VERSION_PRERELEASE "${prerelease}"/
 w
 EOF
 
-rm -f '.gitlab-ci.yml'
-rm -f '.travis.yml'
-rm -rf 'docker'
-rm -rf 'scripts'
-rm -f `find . -name ".gitignore"`
-
 for fl in `grep -l -r "kim-api\.git repository" *`; do
-   ed $fl <<EOF
+   ed $fl > /dev/null 2>&1 <<EOF
 ,s/kim-api\.git repository/$fullpackagename package/g
 w
 EOF
 done
 
-cd ..
+printf "\n"
+git add -u
+git commit -m"Temporary commit holding ${versionstring} tree"
+# the below command creates a merge commit with master as the *first-parent* containing the release files
+merge_commit="`git commit-tree -p "${master_branch}" -p "HEAD~" -m "Release commit for ${versionstring}" "HEAD^{tree}"`"
+printf "\n"
+git reset --hard "${merge_commit}"
 
-tar cJvf "$fullpackagename.txz" "$fullpackagename"
+git tag -a -m"Release version for ${versionstring}" "${versionstring}"
+git archive --format=tar --prefix="${fullpackagename}/" "${versionstring}" \
+  | xz > "${fullpackagename}.txz"
 
-rm -rf "$fullpackagename"
+printf "\n"
+git checkout "${devel_branch}"
+
+printf "\n"
+printf "\n"
+printf "Created release commit, tag, and archive for ${versionstring}.\n"
+printf "To complete the release process perform the following.\n"
+printf "\n"
+printf "  git checkout '${master_branch}'\n"
+printf "  git merge 'b-${versionstring}'\n"
+printf "  git branch -d 'b-${versionstring}'\n"
+printf "  git push origin --tags '${master_branch}'\n"
+printf "  git push github --tags '${master_branch}'\n"
+printf "  git checkout '${devel_branch}'\n"
+printf "\n"
