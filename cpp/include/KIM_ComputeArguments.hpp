@@ -36,8 +36,8 @@
 
 #include <string>
 
-#ifndef KIM_FUNC_HPP_
-#include "KIM_func.hpp"
+#ifndef KIM_FUNCTION_TYPES_HPP_
+#include "KIM_FunctionTypes.hpp"
 #endif
 
 namespace KIM
@@ -72,7 +72,7 @@ class ComputeArguments
 
   int SetCallbackPointer(ComputeCallbackName const computeCallbackName,
                          LanguageName const languageName,
-                         func * const fptr,
+                         Function * const fptr,
                          void * const dataObject);
 
   void AreAllRequiredArgumentsAndCallbacksPresent(int * const result) const;

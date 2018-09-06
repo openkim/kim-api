@@ -39,8 +39,8 @@
 #include <map>
 #include <vector>
 
-#ifndef KIM_FUNC_HPP_
-#include "KIM_func.hpp"
+#ifndef KIM_FUNCTION_TYPES_HPP_
+#include "KIM_FunctionTypes.hpp"
 #endif
 
 #ifndef KIM_LOG_VERBOSITY_HPP_
@@ -117,13 +117,13 @@ class ModelImplementation
       modelWillNotRequestNeighborsOfNoncontributingParticles) const;
 
 
-  int SetRefreshPointer(LanguageName const languageName, func * const fptr);
-  int SetDestroyPointer(LanguageName const languageName, func * const fptr);
+  int SetRefreshPointer(LanguageName const languageName, Function * const fptr);
+  int SetDestroyPointer(LanguageName const languageName, Function * const fptr);
   int SetComputeArgumentsCreatePointer(LanguageName const languageName,
-                                       func * const fptr);
+                                       Function * const fptr);
   int SetComputeArgumentsDestroyPointer(LanguageName const languageName,
-                                        func * const fptr);
-  int SetComputePointer(LanguageName const languageName, func * const fptr);
+                                        Function * const fptr);
+  int SetComputePointer(LanguageName const languageName, Function * const fptr);
 
 
   int SetSpeciesCode(SpeciesName const speciesName, int const code);
@@ -298,15 +298,15 @@ class ModelImplementation
 
 
   LanguageName refreshLanguage_;
-  func * refreshFunction_;
+  Function * refreshFunction_;
   LanguageName destroyLanguage_;
-  func * destroyFunction_;
+  Function * destroyFunction_;
   LanguageName computeArgumentsCreateLanguage_;
-  func * computeArgumentsCreateFunction_;
+  Function * computeArgumentsCreateFunction_;
   LanguageName computeArgumentsDestroyLanguage_;
-  func * computeArgumentsDestroyFunction_;
+  Function * computeArgumentsDestroyFunction_;
   LanguageName computeLanguage_;
-  func * computeFunction_;
+  Function * computeFunction_;
 
 
   std::map<SpeciesName const, int, SPECIES_NAME::Comparator> supportedSpecies_;

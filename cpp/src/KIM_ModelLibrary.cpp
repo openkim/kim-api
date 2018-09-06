@@ -59,7 +59,7 @@ namespace KIM
 #define SPTR( x ) static_cast<std::ostringstream &>(                    \
     std::ostringstream() << static_cast<void const *>(x) ).str()
 #define SFUNCP( x ) static_cast<std::ostringstream &>(           \
-    std::ostringstream() << static_cast<func **>(x)).str()
+    std::ostringstream() << static_cast<Function **>(x)).str()
 #define SBOOL( x ) std::string((x ? "true" : "false"))
 
 #include "KIM_ModelLibraryLogMacros.hpp"
@@ -201,7 +201,8 @@ int ModelLibrary::GetModelType(ITEM_TYPE * const modelType) const
 }
 
 int ModelLibrary::GetModelCreateFunctionPointer(
-    LanguageName * const languageName, func ** const functionPointer) const
+    LanguageName * const languageName,
+    Function ** const functionPointer) const
 {
 #if DEBUG_VERBOSITY
   std::string const callString = "GetModelCreateFunctionPointer("
@@ -227,9 +228,9 @@ int ModelLibrary::GetModelCreateFunctionPointer(
   }
 
   std::string createFunctionSymbol(modelName_ + "_create_pointer");
-  func ** pointerToFunctionPointer
-      = reinterpret_cast<func **>(dlsym(libraryHandle_,
-                                        createFunctionSymbol.c_str()));
+  Function ** pointerToFunctionPointer
+      = reinterpret_cast<Function **>(dlsym(libraryHandle_,
+                                            createFunctionSymbol.c_str()));
 
   if (pointerToFunctionPointer == NULL)
   {

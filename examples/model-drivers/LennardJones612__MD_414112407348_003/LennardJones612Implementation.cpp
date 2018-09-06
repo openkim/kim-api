@@ -708,19 +708,27 @@ int LennardJones612Implementation::RegisterKIMFunctions(
 {
   int error;
 
+  // Use function pointer definitions to verify correct prototypes
+  KIM::ModelDestroyFunction * destroy = LennardJones612::Destroy;
+  KIM::ModelRefreshFunction * refresh = LennardJones612::Refresh;
+  KIM::ModelComputeFunction * compute = LennardJones612::Compute;
+  KIM::ModelComputeArgumentsCreateFunction * CACreate
+      = LennardJones612::ComputeArgumentsCreate;
+  KIM::ModelComputeArgumentsDestroyFunction * CADestroy
+      = LennardJones612::ComputeArgumentsDestroy;
+
   // register the destroy() and reinit() functions
   error = modelDriverCreate->SetDestroyPointer(
-      KIM::LANGUAGE_NAME::cpp, (KIM::func*) &(LennardJones612::Destroy))
+      KIM::LANGUAGE_NAME::cpp, reinterpret_cast<KIM::Function *>(destroy))
       || modelDriverCreate->SetRefreshPointer(
-          KIM::LANGUAGE_NAME::cpp, (KIM::func*) &(LennardJones612::Refresh))
+          KIM::LANGUAGE_NAME::cpp, reinterpret_cast<KIM::Function *>(refresh))
       || modelDriverCreate->SetComputePointer(
-          KIM::LANGUAGE_NAME::cpp, (KIM::func*) &(LennardJones612::Compute))
+          KIM::LANGUAGE_NAME::cpp, reinterpret_cast<KIM::Function *>(compute))
       || modelDriverCreate->SetComputeArgumentsCreatePointer(
-          KIM::LANGUAGE_NAME::cpp,
-          (KIM::func*) &(LennardJones612::ComputeArgumentsCreate))
+          KIM::LANGUAGE_NAME::cpp, reinterpret_cast<KIM::Function *>(CACreate))
       || modelDriverCreate->SetComputeArgumentsDestroyPointer(
           KIM::LANGUAGE_NAME::cpp,
-          (KIM::func*) &(LennardJones612::ComputeArgumentsDestroy));
+          reinterpret_cast<KIM::Function *>(CADestroy));
 
   return error;
 }

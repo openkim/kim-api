@@ -74,7 +74,7 @@ void ModelCreate::SetNeighborListPointers(
 }
 
 int ModelCreate::SetRefreshPointer(LanguageName const languageName,
-                                   func * const fptr)
+                                   Function * const fptr)
 {
   CONVERT_POINTER;
 
@@ -82,7 +82,7 @@ int ModelCreate::SetRefreshPointer(LanguageName const languageName,
 }
 
 int ModelCreate::SetDestroyPointer(LanguageName const languageName,
-                                   func * const fptr)
+                                   Function * const fptr)
 {
   CONVERT_POINTER;
 
@@ -90,7 +90,7 @@ int ModelCreate::SetDestroyPointer(LanguageName const languageName,
 }
 
 int ModelCreate::SetComputeArgumentsCreatePointer(
-    LanguageName const languageName, func * const fptr)
+    LanguageName const languageName, Function * const fptr)
 {
   CONVERT_POINTER;
 
@@ -98,7 +98,7 @@ int ModelCreate::SetComputeArgumentsCreatePointer(
 }
 
 int ModelCreate::SetComputeArgumentsDestroyPointer(
-    LanguageName const languageName, func * const fptr)
+    LanguageName const languageName, Function * const fptr)
 {
   CONVERT_POINTER;
 
@@ -106,7 +106,7 @@ int ModelCreate::SetComputeArgumentsDestroyPointer(
 }
 
 int ModelCreate::SetComputePointer(LanguageName const languageName,
-                                   func * const fptr)
+                                   Function * const fptr)
 {
   CONVERT_POINTER;
 

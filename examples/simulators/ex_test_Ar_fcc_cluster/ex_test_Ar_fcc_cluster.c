@@ -262,7 +262,7 @@ int main()
       computeArguments,
       KIM_COMPUTE_CALLBACK_NAME_GetNeighborList,
       KIM_LANGUAGE_NAME_c,
-      (func *) &get_cluster_neigh,
+      (KIM_Function *) &get_cluster_neigh,
       &nl_cluster_model);
 
   KIM_Model_GetInfluenceDistance(model, &influence_distance_cluster_model);

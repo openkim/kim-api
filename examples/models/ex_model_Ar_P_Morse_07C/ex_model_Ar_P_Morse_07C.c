@@ -77,7 +77,7 @@ int model_create(KIM_ModelCreate * const modelCreate,
                  KIM_TimeUnit const requestedTimeUnit);
 
 /* Define prototype for other routines */
-static int compute(
+static int model_compute(
     KIM_ModelCompute const * const modelCompute,
     KIM_ModelComputeArguments const * const modelComputeArguments);
 static int compute_arguments_create(
@@ -182,7 +182,7 @@ static void calc_phi_d2phi(double* epsilon,
 
 /* compute function */
 #include "KIM_ModelComputeLogMacros.h"
-static int compute(
+static int model_compute(
     KIM_ModelCompute const * const modelCompute,
     KIM_ModelComputeArguments const * const modelComputeArguments)
 {
@@ -453,6 +453,14 @@ int model_create(KIM_ModelCreate * const modelCreate,
   buffer * bufferPointer;
   int error;
 
+  /* use function pointer definitints to verify prototypes */
+  KIM_ModelComputeFunction * compute = model_compute;
+  KIM_ModelComputeArgumentsCreateFunction * CACreate = compute_arguments_create;
+  KIM_ModelComputeArgumentsDestroyFunction * CADestroy
+      = compute_arguments_destroy;
+  KIM_ModelDestroyFunction * destroy = model_destroy;
+  KIM_ModelRefreshFunction * refresh = model_refresh;
+
   (void)requestedLengthUnit;  /* avoid unused parameter warnings */
   (void)requestedEnergyUnit;
   (void)requestedChargeUnit;
@@ -486,27 +494,27 @@ int model_create(KIM_ModelCreate * const modelCreate,
       KIM_ModelCreate_SetComputePointer(
           modelCreate,
           KIM_LANGUAGE_NAME_c,
-          (func *) &compute);
+          (KIM_Function *) compute);
   error = error ||
       KIM_ModelCreate_SetComputeArgumentsCreatePointer(
           modelCreate,
           KIM_LANGUAGE_NAME_c,
-          (func *) &compute_arguments_create);
+          (KIM_Function *) CACreate);
   error = error ||
       KIM_ModelCreate_SetComputeArgumentsDestroyPointer(
           modelCreate,
           KIM_LANGUAGE_NAME_c,
-          (func *) &compute_arguments_destroy);
+          (KIM_Function *) CADestroy);
   error = error ||
       KIM_ModelCreate_SetDestroyPointer(
           modelCreate,
           KIM_LANGUAGE_NAME_c,
-          (func *) &model_destroy);
+          (KIM_Function *) destroy);
   error = error ||
       KIM_ModelCreate_SetRefreshPointer(
           modelCreate,
           KIM_LANGUAGE_NAME_c,
-          (func *) &model_refresh);
+          (KIM_Function *) refresh);
 
   /* allocate buffer */
   bufferPointer = (buffer *) malloc(sizeof(buffer));

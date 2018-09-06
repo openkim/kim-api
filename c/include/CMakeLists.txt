@@ -44,7 +44,7 @@ set(C_HEADERS
     KIM_ComputeCallbackName.h
     KIM_DataType.h
     KIM_EnergyUnit.h
-    KIM_func.h
+    KIM_FunctionTypes.h
     KIM_LanguageName.h
     KIM_LengthUnit.h
     KIM_Log.h

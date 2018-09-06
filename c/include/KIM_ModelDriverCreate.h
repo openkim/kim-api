@@ -36,8 +36,8 @@
 #ifndef KIM_MODEL_DRIVER_CREATE_H_
 #define KIM_MODEL_DRIVER_CREATE_H_
 
-#ifndef KIM_FUNC_H_
-#include "KIM_func.h"
+#ifndef KIM_FUNCTION_TYPES_H_
+#include "KIM_FunctionTypes.h"
 #endif
 
 /* Forward declarations */
@@ -124,19 +124,24 @@ void KIM_ModelDriverCreate_SetNeighborListPointers(
 
 int KIM_ModelDriverCreate_SetRefreshPointer(
     KIM_ModelDriverCreate * const modelDriverCreate,
-    KIM_LanguageName const languageName, func * const fptr);
+    KIM_LanguageName const languageName,
+    KIM_Function * const fptr);
 int KIM_ModelDriverCreate_SetDestroyPointer(
     KIM_ModelDriverCreate * const modelDriverCreate,
-    KIM_LanguageName const languageName, func * const fptr);
+    KIM_LanguageName const languageName,
+    KIM_Function * const fptr);
 int KIM_ModelDriverCreate_SetComputeArgumentsCreatePointer(
     KIM_ModelDriverCreate * const modelDriverCreate,
-    KIM_LanguageName const languageName, func * const fptr);
+    KIM_LanguageName const languageName,
+    KIM_Function * const fptr);
 int KIM_ModelDriverCreate_SetComputeArgumentsDestroyPointer(
     KIM_ModelDriverCreate * const modelDriverCreate,
-    KIM_LanguageName const languageName, func * const fptr);
+    KIM_LanguageName const languageName,
+    KIM_Function * const fptr);
 int KIM_ModelDriverCreate_SetComputePointer(
     KIM_ModelDriverCreate * const modelDriverCreate,
-    KIM_LanguageName const languageName, func * const fptr);
+    KIM_LanguageName const languageName,
+    KIM_Function * const fptr);
 
 int KIM_ModelDriverCreate_SetSpeciesCode(
     KIM_ModelDriverCreate * const modelDriverCreate,

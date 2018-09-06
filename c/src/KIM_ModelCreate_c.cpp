@@ -186,52 +186,64 @@ void KIM_ModelCreate_SetNeighborListPointers(
 
 int KIM_ModelCreate_SetRefreshPointer(
     KIM_ModelCreate * const modelCreate,
-    KIM_LanguageName const languageName, func * const fptr)
+    KIM_LanguageName const languageName,
+    KIM_Function * const fptr)
 {
   CONVERT_POINTER;
 
   KIM::LanguageName langN = makeLanguageNameCpp(languageName);
-  return pModelCreate->SetRefreshPointer(langN, fptr);
+  return pModelCreate->SetRefreshPointer(
+      langN, reinterpret_cast<KIM::Function *>(fptr));
 }
 
 int KIM_ModelCreate_SetDestroyPointer(
     KIM_ModelCreate * const modelCreate,
-    KIM_LanguageName const languageName, func * const fptr)
+    KIM_LanguageName const languageName,
+    KIM_Function * const fptr)
 {
   CONVERT_POINTER;
 
   KIM::LanguageName langN = makeLanguageNameCpp(languageName);
-  return pModelCreate->SetDestroyPointer(langN, fptr);
+  return pModelCreate->SetDestroyPointer(
+      langN, reinterpret_cast<KIM::Function *>(fptr));
 }
 
 int KIM_ModelCreate_SetComputeArgumentsCreatePointer(
     KIM_ModelCreate * const modelCreate,
-    KIM_LanguageName const languageName, func * const fptr)
+    KIM_LanguageName const languageName,
+    KIM_Function * const fptr)
 {
   CONVERT_POINTER;
 
   KIM::LanguageName langN = makeLanguageNameCpp(languageName);
-  return pModelCreate->SetComputeArgumentsCreatePointer(langN, fptr);
+  return pModelCreate->SetComputeArgumentsCreatePointer(
+      langN,
+      reinterpret_cast<KIM::Function *>(fptr));
 }
 
 int KIM_ModelCreate_SetComputeArgumentsDestroyPointer(
     KIM_ModelCreate * const modelCreate,
-    KIM_LanguageName const languageName, func * const fptr)
+    KIM_LanguageName const languageName,
+    KIM_Function * const fptr)
 {
   CONVERT_POINTER;
 
   KIM::LanguageName langN = makeLanguageNameCpp(languageName);
-  return pModelCreate->SetComputeArgumentsDestroyPointer(langN, fptr);
+  return pModelCreate->SetComputeArgumentsDestroyPointer(
+      langN,
+      reinterpret_cast<KIM::Function *>(fptr));
 }
 
 int KIM_ModelCreate_SetComputePointer(
     KIM_ModelCreate * const modelCreate,
-    KIM_LanguageName const languageName, func * const fptr)
+    KIM_LanguageName const languageName,
+    KIM_Function * const fptr)
 {
   CONVERT_POINTER;
 
   KIM::LanguageName langN = makeLanguageNameCpp(languageName);
-  return pModelCreate->SetComputePointer(langN, fptr);
+  return pModelCreate->SetComputePointer(
+      langN, reinterpret_cast<KIM::Function *>(fptr));
 }
 
 int KIM_ModelCreate_SetSpeciesCode(
