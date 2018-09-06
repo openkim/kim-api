@@ -46,11 +46,9 @@ patch=$4
 versionstring=v${major}.${minor}.${patch}
 if test $# -ge 5; then
   prerelease=$5
-  prerelease_w_space=" ${prerelease}"
   versionstring=${versionstring}-${prerelease}
 else
   prerelease=""
-  prerelease_w_space=""
 fi
 fullpackagename=${packagename}-${versionstring}
 
@@ -61,18 +59,24 @@ if test -e "${fullpackagename}"; then
   exit
 fi
 
-if test $major -ne `grep VERSION_MAJOR Makefile.Version | sed -e 's/VERSION_MAJOR[[:space:]]*=[[:space:]]*//'`; then
-  printf "Major version mismatch with Makefile.Version\n";
+# grab cmake project version string
+cmake_project_version="`grep -E "^project\(" CMakeLists.txt | sed -e 's/.*VERSION *\([0-9.]*\).*/\1/'`"
+cmake_major="`printf "${cmake_project_version}" | sed -e 's/\([0-9]*\)\..*/\1/'`"
+cmake_minor="`printf "${cmake_project_version}" | sed -e 's/[^.]*\.\([0-9]*\)\..*/\1/'`"
+cmake_patch="`printf "${cmake_project_version}" | sed -e 's/.*\.\([0-9]*\).*/\1/'`"
+
+if test $major -ne ${cmake_major}; then
+  printf "Major version mismatch with CMakeLists.txt\n";
   printf "exiting...\n";
   exit
 fi
-if test $minor -ne `grep VERSION_MINOR Makefile.Version | sed -e 's/VERSION_MINOR[[:space:]]*=[[:space:]]*//'`; then
-  printf "Minor version mismatch with Makefile.Version\n";
+if test $minor -ne ${cmake_minor}; then
+  printf "Minor version mismatch with CMakeLists.tst\n";
   printf "exiting...\n";
   exit
 fi
-if test $patch -ne `grep VERSION_PATCH Makefile.Version | sed -e 's/VERSION_PATCH[[:space:]]*=[[:space:]]*//'`; then
-  printf "Patch version mismatch with Makefile.Version\n";
+if test $patch -ne ${cmake_patch}; then
+  printf "Patch version mismatch with CMakeLists.txt\n";
   printf "exiting...\n";
   exit
 fi
@@ -91,14 +95,15 @@ printf "By `git config user.name` (`git config user.email`) on `date`.\n"       
 
 rm -rf '.git'
 
-ed Makefile.Version <<EOF
-,s/^VERSION_PRERELEASE.*/VERSION_PRERELEASE =${prerelease_w_space}/
-,s/^VERSION_BUILD_METADATA.*/VERSION_BUILD_METADATA = \$(KIM_COMPILERSUITE).\$(KIM_SYSTEMLINKER).\$(KIM_SYSTEMARCH).\$(KIM_LINK)/
+ed cmake/Modules/DefineVersionVariables.cmake <<EOF
+,s/^set(PROJECT_VERSION_PRERELEASE *"\([^"]*\)"/set(PROJECT_VERSION_PRERELEASE "${prerelease}"/
 w
 EOF
 
+rm -f '.gitlab-ci.yml'
 rm -f '.travis.yml'
-rm -rf script
+rm -rf 'docker'
+rm -rf 'scripts'
 rm -f `find . -name ".gitignore"`
 
 for fl in `grep -l -r "kim-api\.git repository" *`; do
@@ -108,13 +113,8 @@ w
 EOF
 done
 
-cd ./documentation
+cd ..
 
-make pdf
-rm -rf "./latex"
-
-cd ../..
-
-tar cJvf $fullpackagename.txz $fullpackagename
+tar cJvf "$fullpackagename.txz" "$fullpackagename"
 
 rm -rf "$fullpackagename"
