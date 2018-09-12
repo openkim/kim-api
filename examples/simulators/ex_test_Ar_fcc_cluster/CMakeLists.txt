@@ -45,6 +45,7 @@ if(NOT TARGET kim-api)
   project("${KIM_API_PROJECT_NAME}" VERSION "${KIM_API_VERSION}"
     LANGUAGES CXX C Fortran)
   add_kim_api_imported_library()
+  add_kim_api_compiler_flags()
 endif()
 
 # End preamble
