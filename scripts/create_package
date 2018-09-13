@@ -41,7 +41,7 @@ fi
 cd "`git rev-parse --show-toplevel`"
 
 
-master_branch="master"
+master_branch="master-v2"
 devel_branch="devel-v2"
 
 # check that we're on the right branch
