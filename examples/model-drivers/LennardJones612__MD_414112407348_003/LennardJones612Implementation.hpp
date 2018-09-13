@@ -33,6 +33,7 @@
 
 #include <vector>
 #include <cmath>
+#include "KIM_LogMacros.hpp"
 #include "KIM_LogVerbosity.hpp"
 #include "LennardJones612.hpp"
 
@@ -275,7 +276,8 @@ class LennardJones612Implementation
                 constFourEpsSig6_2D[iSpecies][jSpecies]) exshift;
 
 //******************************************************************************
-#include "KIM_ModelComputeLogMacros.hpp"
+#define KIM_LOGGER_OBJECT_NAME modelCompute
+//
 template< bool isComputeProcess_dEdr, bool isComputeProcess_d2Edr2,
           bool isComputeEnergy, bool isComputeForces,
           bool isComputeParticleEnergy, bool isComputeVirial,

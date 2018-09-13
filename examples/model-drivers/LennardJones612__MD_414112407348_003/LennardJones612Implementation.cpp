@@ -50,7 +50,9 @@
 //==============================================================================
 
 //******************************************************************************
-#include "KIM_ModelDriverCreateLogMacros.hpp"
+#undef  KIM_LOGGER_OBJECT_NAME
+#define KIM_LOGGER_OBJECT_NAME modelDriverCreate
+//
 LennardJones612Implementation::LennardJones612Implementation(
     KIM::ModelDriverCreate * const modelDriverCreate,
     KIM::LengthUnit const requestedLengthUnit,
@@ -135,7 +137,9 @@ LennardJones612Implementation::~LennardJones612Implementation()
 }
 
 //******************************************************************************
-#include "KIM_ModelRefreshLogMacros.hpp"
+#undef  KIM_LOGGER_OBJECT_NAME
+#define KIM_LOGGER_OBJECT_NAME modelRefresh
+//
 int LennardJones612Implementation::Refresh(
     KIM::ModelRefresh * const modelRefresh)
 {
@@ -273,7 +277,9 @@ void LennardJones612Implementation::AllocateParameterMemory()
 }
 
 //******************************************************************************
-#include "KIM_ModelDriverCreateLogMacros.hpp"
+#undef  KIM_LOGGER_OBJECT_NAME
+#define KIM_LOGGER_OBJECT_NAME modelDriverCreate
+//
 int LennardJones612Implementation::OpenParameterFiles(
     KIM::ModelDriverCreate * const modelDriverCreate,
     int const numberParameterFiles,
@@ -322,7 +328,9 @@ int LennardJones612Implementation::OpenParameterFiles(
 }
 
 //******************************************************************************
-#include "KIM_ModelDriverCreateLogMacros.hpp"
+#undef  KIM_LOGGER_OBJECT_NAME
+#define KIM_LOGGER_OBJECT_NAME modelDriverCreate
+//
 int LennardJones612Implementation::ProcessParameterFiles(
     KIM::ModelDriverCreate * const modelDriverCreate,
     int const numberParameterFiles,
@@ -509,7 +517,9 @@ void LennardJones612Implementation::CloseParameterFiles(
 }
 
 //******************************************************************************
-#include "KIM_ModelDriverCreateLogMacros.hpp"
+#undef  KIM_LOGGER_OBJECT_NAME
+#define KIM_LOGGER_OBJECT_NAME modelDriverCreate
+//
 int LennardJones612Implementation::ConvertUnits(
     KIM::ModelDriverCreate * const modelDriverCreate,
     KIM::LengthUnit const requestedLengthUnit,
@@ -599,7 +609,9 @@ int LennardJones612Implementation::RegisterKIMModelSettings(
 }
 
 //******************************************************************************
-#include "KIM_ModelComputeArgumentsCreateLogMacros.hpp"
+#undef  KIM_LOGGER_OBJECT_NAME
+#define KIM_LOGGER_OBJECT_NAME modelComputeArgumentsCreate
+//
 int LennardJones612Implementation::RegisterKIMComputeArgumentsSettings(
     KIM::ModelComputeArgumentsCreate * const modelComputeArgumentsCreate) const
 {
@@ -641,7 +653,9 @@ int LennardJones612Implementation::RegisterKIMComputeArgumentsSettings(
 #define SNUM( x ) static_cast<std::ostringstream &>(    \
     std::ostringstream() << std::dec << x).str()
 //******************************************************************************
-#include "KIM_ModelDriverCreateLogMacros.hpp"
+#undef  KIM_LOGGER_OBJECT_NAME
+#define KIM_LOGGER_OBJECT_NAME modelDriverCreate
+//
 int LennardJones612Implementation::RegisterKIMParameters(
     KIM::ModelDriverCreate * const modelDriverCreate)
 {
@@ -821,7 +835,9 @@ int LennardJones612Implementation::SetRefreshMutableValues(
 }
 
 //******************************************************************************
-#include "KIM_ModelComputeArgumentsLogMacros.hpp"
+#undef  KIM_LOGGER_OBJECT_NAME
+#define KIM_LOGGER_OBJECT_NAME modelComputeArguments
+//
 int LennardJones612Implementation::SetComputeMutableValues(
     KIM::ModelComputeArguments const * const modelComputeArguments,
     bool& isComputeProcess_dEdr,
@@ -906,7 +922,8 @@ int LennardJones612Implementation::SetComputeMutableValues(
 }
 
 //******************************************************************************
-#include "KIM_ModelComputeLogMacros.hpp"
+#undef  KIM_LOGGER_OBJECT_NAME
+#define KIM_LOGGER_OBJECT_NAME modelCompute
 int LennardJones612Implementation::CheckParticleSpeciesCodes(
     KIM::ModelCompute const * const modelCompute,
     int const* const particleSpeciesCodes)
