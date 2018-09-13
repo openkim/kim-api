@@ -35,6 +35,7 @@
 #include <iomanip>
 #include <string>
 #include <sstream>
+#include <cstring>
 #include <time.h>
 
 #ifndef KIM_LOG_IMPLEMENTATION_HPP_
@@ -232,6 +233,16 @@ std::string LogImplementation::EntryString(std::string const & logVerbosity,
                                            int const lineNumberString,
                                            std::string const & fileName)
 {
+  char const * flName = strrchr(fileName.c_str(), '/');
+  if (flName != NULL)
+  {
+    flName++;  // drop leading '/'
+  }
+  else
+  {
+    flName = fileName.c_str();
+  }
+
   std::stringstream ssPrefix;
   ssPrefix << date << " * " << sequence
            << " * "
@@ -239,7 +250,7 @@ std::string LogImplementation::EntryString(std::string const & logVerbosity,
            << " * "
            << idString
            << " * "
-           << fileName << ":" << lineNumberString
+           << flName << ":" << lineNumberString
            << " * ";
   std::string const prefix(ssPrefix.str());
 
