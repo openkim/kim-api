@@ -307,10 +307,16 @@ common definitions:
 \mathbf{r}^{(j,k)} \otimes \mathbf{r}^{(j,k)}.
 \f}
 
+Notice, in the first definition the configuration's partial energy
+\f$E^{\mathcal{C}}\f$ is used, whereas in the second definition the partial
+particle energy \f$E^{\mathcal{C}}_i\f$ of particle \f$i\f$ is used.  Further,
+it is obvious by inspection that with these definitions the sum of partial
+particle virial tensors equals the partial virial tensor.
+
 Thus, the %KIM API does not impose a specific definition for a Model's partial
-particle virial.  It simply requires that the Model's definition satisfies the
-summation formula \f$\mathbf{V}^{\mathcal{C}} = \sum_{i \in C_{p}}
-\mathbf{V}^{\mathcal{C}(i)}\f$.
+particle virial tensor.  It simply requires that the Model's definition
+satisfies the summation formula \f$\mathbf{V}^{\mathcal{C}} = \sum_{i \in
+C_{p}} \mathbf{V}^{\mathcal{C}(i)}\f$.
 
 ## Domain Decomposition
 
@@ -363,6 +369,13 @@ E &= E^\mathcal{C} + E^\mathcal{D},\\
 \mathbf{V}^{(i)} &= \mathbf{V}^{\mathcal{C}(i)} +
 \mathbf{V}^{\mathcal{D}(i)}.
 \f}
+
+Here it becomes clear why the %KIM API prepends the term "Partial" to all of
+its standard quantity names.  In general, the quantities computed by a Model
+are only one "partial" contribution to a total.  For example, here we can say
+that the force on particle \f$i\f$, \f$\mathbf{f}^{(i)}\f$, is the sum of
+\f$\mathcal{C}\f$'s partial force \f$\mathbf{f}^{\mathcal{C}(i)}\f$ and
+\f$\mathcal{D}\f$'s partial force \f$f^{\mathcal{D}(i)}\f$.
 
 For the particle energies, we can just take the value from the (only) domain
 where the particle is contributing
