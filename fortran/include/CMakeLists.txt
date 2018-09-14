@@ -35,8 +35,6 @@
 
 target_include_directories(kim-api PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
-configure_file(kim_version.fd.in ${CMAKE_BINARY_DIR}/kim_version.fd)
-
 set(F_MOD_DIR $<TARGET_PROPERTY:kim-api,Fortran_MODULE_DIRECTORY>)
 set(FORTRAN_INCLUDES
   ${F_MOD_DIR}/kim_charge_unit_module.mod
@@ -68,7 +66,6 @@ set(FORTRAN_INCLUDES
   ${F_MOD_DIR}/kim_temperature_unit_module.mod
   ${F_MOD_DIR}/kim_time_unit_module.mod
   ${F_MOD_DIR}/kim_unit_system_module.mod
-  ${CMAKE_BINARY_DIR}/kim_version.fd
   )
 
 install(FILES ${FORTRAN_INCLUDES} DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME}/${KIM_API_Fortran_MODULE_DIR_IDENTIFIER})
