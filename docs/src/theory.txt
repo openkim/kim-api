@@ -151,7 +151,7 @@ to work with the function of distances, \f$\tilde{E}_i(r^{(j,k)})\f$.  When the
 distinction is unimportant the unaccented notation, \f$E_i\f$, will be
 used.
 
-Now a configuration's "Partial Energy" \anchor partial_energy may be defined
+Now a configuration's "Partial Energy" \anchor partial_energy  may be defined
 as the sum of its contributing particles' energies:
 
 \f[
@@ -174,7 +174,7 @@ E_i, & i \in C_{cp},\\
 \end{cases}
 \f]
 
-Second, the configuration's "Partial Force" \anchor partial_forces on particle
+Second, the configuration's "Partial Force" \anchor partial_forces  on particle
 \f$j\f$, \f$\mathbf{f}^{\mathcal{C}(j)}\f$, is defined as the negative of the
 derivative of the configuration's partial energy with respect to the particle's
 position vector:
@@ -187,7 +187,7 @@ position vector:
 Note that, in general, *every* particle (both contributing and
 non-contributing) has a partial force.
 
-Third, the configuration's \anchor partial_virial "Partial Virial" tensor,
+Third, the configuration's \anchor partial_virial  "Partial Virial" tensor,
 \f$\mathbf{V}^{\mathcal{C}}\f$, is defined in terms of the partial forces:
 
 \f[
@@ -208,11 +208,11 @@ coordinate origin.  Indeed,
 \otimes \mathbf{r}^{(i)}
 &=
 \frac{1}{2} \left[
-\sum_{i \in C_{p}} \sum_{j \in C_{p}}
+\sum_{i \in C_{p}}
 \frac{\partial E^{\mathcal{C}}}{\partial \mathbf{r}^{(i)}}
 \otimes \mathbf{r}^{(i)}
 +
-\sum_{j \in C_{p}} \sum_{i \in C_{p}}
+\sum_{j \in C_{p}}
 \frac{\partial E^{\mathcal{C}}}{\partial \mathbf{r}^{(j)}}
 \otimes \mathbf{r}^{(j)}
 \right] \\
@@ -335,7 +335,8 @@ particle energy is \f$E_i=E^{\mathcal{T}}_i\f$, the total force is
 \f$\mathbf{f}^{(i)}=\mathbf{f}^{\mathcal{T}(i)}\f$, the total virial tensor is
 \f$\mathbf{V} = \mathbf{V}^{\mathcal{T}}\f$, and the particle virial tensor
 \f$\mathbf{V}^{(i)} = \mathbf{V}^{\mathcal{T}(i)}\f$.  Next, it is shown how to
-compute \f$E\f$, \f$E_i\f$, \f$\mathbf{f}^{(i)}\f$, and \f$\mathbf{V}^{(i)}\f$
+compute \f$E\f$, \f$E_i\f$, \f$\mathbf{f}^{(i)}\f$, \f$\mathbf{V}\f$,
+and \f$\mathbf{V}^{(i)}\f$
 using a two-domain decomposition.
 
 Partition \f$T_p\f$ into two disjoint subsets, \f$A_p\f$ and \f$B_p\f$. That
