@@ -39,9 +39,9 @@
 
 Previous Section: \ref features.
 
-At the highest level there are "Simulators" and "Models".  Conceptually, a %KIM
-Model is something that defines an energy-per-particle
-\anchor energy_per_partilce function, \f$E_i\f$, and an "influence distance",
+\anchor energy_per_partilce At the highest level there are "Simulators" and
+"Models".  Conceptually, a %KIM Model is something that defines an
+energy-per-particle function, \f$E_i\f$, and an "influence distance",
 \f$r_{\text{infl}}\f$, that identifies the particle separation range over which
 \f$E_i\f$ depends on the position of its neighboring particles.  (Note, this is
 not necessarily equal to the neighbor list cutoff radius used by a model.)  A
@@ -151,8 +151,8 @@ to work with the function of distances, \f$\tilde{E}_i(r^{(j,k)})\f$.  When the
 distinction is unimportant the unaccented notation, \f$E_i\f$, will be
 used.
 
-Now a configuration's "Partial Energy" \anchor partial_energy  may be defined
-as the sum of its contributing particles' energies:
+\anchor partial_energy Now a configuration's "Partial Energy" may be defined as
+the sum of its contributing particles' energies:
 
 \f[
 E^\mathcal{C} = \sum_{i \in C_{cp}} E_i.
@@ -161,9 +161,9 @@ E^\mathcal{C} = \sum_{i \in C_{cp}} E_i.
 From this definition of the configuration's partial energy, a set of additional
 quantities may be derived that are often of interest in simulations.
 
-First, define formally, the configuration's "Partial Particle Energy"
-\anchor partial_particle_energy for particle \f$i\f$, \f$E^{\mathcal{C}}_i\f$,
-as simply the model's energy-per-particle value for contributing particles and
+\anchor partial_particle_energy First, define formally, the configuration's
+"Partial Particle Energy" for particle \f$i\f$, \f$E^{\mathcal{C}}_i\f$, as
+simply the model's energy-per-particle value for contributing particles and
 zero for non-contributing particles,
 
 \f[
@@ -174,7 +174,7 @@ E_i, & i \in C_{cp},\\
 \end{cases}
 \f]
 
-Second, the configuration's "Partial Force" \anchor partial_forces  on particle
+\anchor partial_forces Second, the configuration's "Partial Force" on particle
 \f$j\f$, \f$\mathbf{f}^{\mathcal{C}(j)}\f$, is defined as the negative of the
 derivative of the configuration's partial energy with respect to the particle's
 position vector:
@@ -187,7 +187,7 @@ position vector:
 Note that, in general, *every* particle (both contributing and
 non-contributing) has a partial force.
 
-Third, the configuration's \anchor partial_virial  "Partial Virial" tensor,
+\anchor partial_virial Third, the configuration's "Partial Virial" tensor,
 \f$\mathbf{V}^{\mathcal{C}}\f$, is defined in terms of the partial forces:
 
 \f[
@@ -279,8 +279,8 @@ So, an equivalent definition for the virial tensor is
 \mathbf{r}^{(i,j)} \otimes \mathbf{r}^{(i,j)}.
 \f]
 
-It is common to partition the partial virial into particle contributions, the
-\anchor partial_particle_virial "Partial Particle Virial" tensors
+\anchor partial_particle_virial It is common to partition the partial virial
+into particle contributions, the "Partial Particle Virial" tensors
 \f$\mathbf{V}^{\mathcal{C}(i)}\f$ such that
 
 \f[

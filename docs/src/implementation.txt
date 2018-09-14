@@ -164,7 +164,7 @@ ProcessD2EDr2Term     | required, optional, **notSupported**     |
   models that request multiple neighbor lists with a wide range of cutoff
   distances.
 
-  <b>Neighbor List Hint \anchor neighbor_list_hint</b> The above describes the
+  \anchor neighbor_list_hint <b>Neighbor List Hint</b> The above describes the
   default behavior and all models must work correctly when provided with
   neighbor lists of this type.  However, based on the neighbor list hint
   provided by the model a simulator may provide the model with a modified
