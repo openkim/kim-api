@@ -185,72 +185,132 @@ position vector:
 \f]
 
 Note that, in general, *every* particle (both contributing and
-non-contributing) has a partial force.  As a special case, consider a
-configuration, \f$\mathcal{C}^i, i \in C_{cp}\f$, equivalent to
-\f$\mathcal{C}\f$ except that only particle \f$i\f$ is contributing.  In this
-case, the partial forces are
+non-contributing) has a partial force.
+
+Third, the configuration's \anchor partial_virial "Partial Virial" tensor,
+\f$\mathbf{V}^{\mathcal{C}}\f$, is defined in terms of the partial forces:
 
 \f[
-\mathbf{f}^{\mathcal{C}^i(j)} =
-\begin{cases}
--\frac{\partial \bar{E}_i}{\partial \mathbf{r}^{(j)}} & j \in
-\mathcal{N}^{(i)}_{r_{\text{infl}}}, \\
-0, & \text{otherwise}.
-\end{cases}
-\f]
-
-This can be thought of as the force on particle \f$j\f$ due to particle
-\f$i\f$.  With this notation, it is possible to obtain the identity
-
-\f[
-\mathbf{f}^{\mathcal{C}(j)} = \sum_{i \in C_{cp}}
-\mathbf{f}^{\mathcal{C}^i(j)}.
-\f]
-
-Third, the configuration's "Partial Particle Virial"
-\anchor partial_particle_virial tensor for contributing particle \f$i \in
-C_{cp}\f$, \f$\mathbf{V}^{\mathcal{C}(i)}\f$, is defined in terms of the
-derivative of its per-particle-energy function:
-
-\f[
-\mathbf{V}^{\mathcal{C}(i)} \equiv \sum_{j \in
-\mathcal{N}^{(i)}_{r_{\text{infl}}}}
-\frac{\partial \bar{E}_i}{\partial \mathbf{r}^{(j)}}
-\otimes
-\mathbf{r}^{(j)}
+\mathbf{V}^{\mathcal{C}} \equiv - \sum_{i \in C_{p}}
+\mathbf{f}^{\mathcal{C}(i)} \otimes \mathbf{r}^{(i)}
 =
-\sum_{j \in \mathcal{N}^{(i)}_{r_{\text{infl}}}}
--\mathbf{f}^{\mathcal{C}^i(j)}
-\otimes
-\mathbf{r}^{(j)}
-=
--\sum_{j \in \mathcal{N}^{(i)}_{r_{\text{infl}}}}
-\mathbf{f}^{\mathcal{C}^i(j)}
-\otimes
-\mathbf{r}^{(j)}
-.
+\sum_{i \in C_{p}} \frac{\partial E^{\mathcal{C}}}{\partial \mathbf{r}^{(i)}}
+\otimes \mathbf{r}^{(i)}.
 \f]
 
-The partial particle virial is zero for non-contributing particles.  That is,
-\f$\mathbf{V}^{\mathcal{C}(i)} = \mathbf{0}\f$ for \f$i \in C_{ncp}\f$.
+Although the partial virial tensor is given in terms of the absolute particle
+positions, \f$\mathbf{r}^{(i)}\f$, it can be shown to be independent of the
+coordinate origin.  Indeed,
 
-Fourth and finally, the configuration's "Partial Virial"
-\anchor partial_virial tensor, \f$\mathbf{V}^{\mathcal{C}}\f$, is the sum of
-its partial particle virial tensors:
+\f{align*}{
+\mathbf{V}^{\mathcal{C}} =
+\sum_{i \in C_{p}} \frac{\partial E^{\mathcal{C}}}{\partial \mathbf{r}^{(i)}}
+\otimes \mathbf{r}^{(i)}
+&=
+\frac{1}{2} \left[
+\sum_{i \in C_{p}} \sum_{j \in C_{p}}
+\frac{\partial E^{\mathcal{C}}}{\partial \mathbf{r}^{(i)}}
+\otimes \mathbf{r}^{(i)}
++
+\sum_{j \in C_{p}} \sum_{i \in C_{p}}
+\frac{\partial E^{\mathcal{C}}}{\partial \mathbf{r}^{(j)}}
+\otimes \mathbf{r}^{(j)}
+\right] \\
+&=
+\frac{1}{2} \left[
+\sum_{i \in C_{p}} \sum_{j \in C_{p}}
+\frac{\partial E^{\mathcal{C}}}{\partial r^{(i,j)}}
+\frac{\partial r^{(i,j)}}{\partial \mathbf{r}^{(i)}}
+\otimes \mathbf{r}^{(i)}
++
+\sum_{j \in C_{p}} \sum_{i \in C_{p}}
+\frac{\partial E^{\mathcal{C}}}{\partial {r}^{(i,j)}}
+\frac{\partial r^{(i,j)}}{\partial \mathbf{r}^{(j)}}
+\otimes \mathbf{r}^{(j)}
+\right] \\
+&=
+\frac{1}{2} \left[
+\sum_{i \in C_{p}} \sum_{j \in C_{p}}
+\frac{\partial E^{\mathcal{C}}}{\partial r^{(i,j)}}
+\frac{\mathbf{r}^{(i,j)}}{r^{(i,j)}}
+\otimes \mathbf{r}^{(i)}
++
+\sum_{j \in C_{p}} \sum_{i \in C_{p}}
+\frac{\partial E^{\mathcal{C}}}{\partial {r}^{(i,j)}}
+\frac{\mathbf{r}^{(j,i)}}{r^{(i,j)}}
+\otimes \mathbf{r}^{(j)}
+\right] \\
+&=
+\frac{1}{2} \left[
+\sum_{i \in C_{p}} \sum_{j \in C_{p}}
+\frac{\partial E^{\mathcal{C}}}{\partial r^{(i,j)}}
+\frac{\mathbf{r}^{(i,j)}}{r^{(i,j)}}
+\otimes \mathbf{r}^{(i)}
++
+\sum_{j \in C_{p}} \sum_{i \in C_{p}}
+\frac{\partial E^{\mathcal{C}}}{\partial {r}^{(i,j)}}
+\left(-\frac{\mathbf{r}^{(i,j)}}{r^{(i,j)}}\right)
+\otimes \mathbf{r}^{(j)}
+\right] \\
+&=
+\frac{1}{2} \left[
+\sum_{i \in C_{p}} \sum_{j \in C_{p}}
+\frac{\partial E^{\mathcal{C}}}{\partial r^{(i,j)}}
+\frac{\mathbf{r}^{(i,j)}}{r^{(i,j)}}
+\otimes \left(\mathbf{r}^{(i)} - \mathbf{r}^{(j)}\right)
+\right] \\
+&=
+\frac{1}{2} \left[
+\sum_{i \in C_{p}} \sum_{j \in C_{p}}
+\frac{\partial E^{\mathcal{C}}}{\partial r^{(i,j)}}
+\frac{\mathbf{r}^{(i,j)}}{r^{(i,j)}}
+\otimes \mathbf{r}^{(i,j)}
+\right].
+\f}
+
+So, an equivalent definition for the virial tensor is
 
 \f[
-\mathbf{V}^{\mathcal{C}} \equiv \sum_{i \in C_{p}}
+\mathbf{V}^{\mathcal{C}} \equiv
+\sum_{i, j \in C_{p}}
+\left(
+\frac{1}{2 r^{(i,j)}} \frac{\partial E^{\mathcal{C}}}{\partial r^{(i,j)}}
+\right)
+\mathbf{r}^{(i,j)} \otimes \mathbf{r}^{(i,j)}.
+\f]
+
+It is common to partition the partial virial into particle contributions, the
+\anchor partial_particle_virial "Partial Particle Virial" tensors
+\f$\mathbf{V}^{\mathcal{C}(i)}\f$ such that
+
+\f[
+\mathbf{V}^{\mathcal{C}} = \sum_{i \in C_{p}}
 \mathbf{V}^{\mathcal{C}(i)}.
 \f]
 
-Note that an equivalent expression for the partial virial tensor is given by
+However, this decomposition is not unique, and different definitions of the
+particle virial tensor are found in the literature.  For example, here are two
+common definitions:
 
-\f[
-\mathbf{V}^{\mathcal{C}} = - \sum_{i \in C_{p}}
-\mathbf{f}^{\mathcal{C}(i)}
-\otimes
-\mathbf{r}^{(i)}.
-\f]
+\f{gather*}{
+\mathbf{V}^{\mathcal{C}(i)} \equiv \sum_{j \in C_{p}}
+\left(
+\frac{1}{2 r^{(i,j)}} \frac{\partial E^{\mathcal{C}}}{\partial r^{(i,j)}}
+\right)
+\mathbf{r}^{(i,j)} \otimes \mathbf{r}^{(i,j)};
+&&
+\mathbf{V}^{\mathcal{C}(i)} \equiv \sum_{j, k \in C_{p}}
+\left(
+\frac{1}{2 r^{(j,k)}}
+\frac{\partial E^{\mathcal{C}}_i}{\partial r^{(j,k)}}
+\right)
+\mathbf{r}^{(j,k)} \otimes \mathbf{r}^{(j,k)}.
+\f}
+
+Thus, the %KIM API does not impose a specific definition for a Model's partial
+particle virial.  It simply requires that the Model's definition satisfies the
+summation formula \f$\mathbf{V}^{\mathcal{C}} = \sum_{i \in C_{p}}
+\mathbf{V}^{\mathcal{C}(i)}\f$.
 
 ## Domain Decomposition
 
@@ -265,14 +325,18 @@ centered square lattice.
 \image html  square-lattice-configuration-1.jpg
 \image latex square-lattice-configuration-1.pdf
 
-The total energy of the system and the total force on each particle can be
+The total energy of the system, particle energy, the total force on each
+particle, the total virial tensor, and the particle virial tensors can be
 computed using a single configuration.  In this case, the configuration is
 \f$\mathcal{T}\f$, the set of particles is \f$T_p\f$, the set of contributing
 particles is \f$T_{cp} = T_p\f$, and the set of non-contributing particles is
-\f$T_{ncp}=\emptyset\f$.  Then, the total energy is \f$E=E^\mathcal{T}\f$, and
-the total force on particle \f$i \in T_p\f$ is
-\f$\mathbf{f}^{(i)}=\mathbf{f}^{\mathcal{T}(i)}\f$.  Next, it is shown how to
-compute \f$E\f$ and \f$\mathbf{f}^{(i)}\f$ using a two-domain decomposition.
+\f$T_{ncp}=\emptyset\f$.  Then, the total energy is \f$E=E^\mathcal{T}\f$, the
+particle energy is \f$E_i=E^{\mathcal{T}}_i\f$, the total force is
+\f$\mathbf{f}^{(i)}=\mathbf{f}^{\mathcal{T}(i)}\f$, the total virial tensor is
+\f$\mathbf{V} = \mathbf{V}^{\mathcal{T}}\f$, and the particle virial tensor
+\f$\mathbf{V}^{(i)} = \mathbf{V}^{\mathcal{T}(i)}\f$.  Next, it is shown how to
+compute \f$E\f$, \f$E_i\f$, \f$\mathbf{f}^{(i)}\f$, and \f$\mathbf{V}^{(i)}\f$
+using a two-domain decomposition.
 
 Partition \f$T_p\f$ into two disjoint subsets, \f$A_p\f$ and \f$B_p\f$. That
 is, \f$A_p \cap B_p = \emptyset\f$ and \f$A_p \cup B_p = T_p\f$.
@@ -284,21 +348,31 @@ is, \f$A_p \cap B_p = \emptyset\f$ and \f$A_p \cup B_p = T_p\f$.
 Next, define configuration \f$\mathcal{C}\f$ to have particles \f$C_p=T_p\f$
 with \f$C_{cp}=A_p\f$ and \f$C_{ncp}=B_p\f$, and configuration
 \f$\mathcal{D}\f$ to have particles \f$D_p=T_p\f$ with \f$D_{cp}=B_p\f$ and
-\f$D_{ncp}=A_p\f$.  Then,
+\f$D_{ncp}=A_p\f$.  (In practice, one can get away with including only those
+non-contributing particles that fall within the "influence distance" of at
+least one contributing particle.)  Then, we can add up (or "assemble") the
+values using the contributions from each domain
+
+\f{align*}{
+E &= E^\mathcal{C} + E^\mathcal{D},\\
+\mathbf{f}^{(i)} &= \mathbf{f}^{\mathcal{C}(i)} +
+\mathbf{f}^{\mathcal{D}(i)},\\
+\mathbf{V} &= \mathbf{V}^{\mathcal{C}} +
+\mathbf{V}^{\mathcal{D}}, \\
+\mathbf{V}^{(i)} &= \mathbf{V}^{\mathcal{C}(i)} +
+\mathbf{V}^{\mathcal{D}(i)}.
+\f}
+
+For the particle energies, we can just take the value from the (only) domain
+where the particle is contributing
 
 \f[
-E = E^\mathcal{C} + E^\mathcal{D},
+E_i =
+\begin{cases}
+E^{\mathcal{C}}_i & \text{if $i \in C_{cp}$},\\
+E^{\mathcal{D}}_i & \text{if $i \in D_{cp}$}.
+\end{cases}
 \f]
-and
-\f[
-\mathbf{f}^{(i)} = \mathbf{f}^{\mathcal{C}(i)} +
-\mathbf{f}^{\mathcal{D}(i)}.
-\f]
-
-In practice, one can get away with including only those non-contributing
-particles that fall within the "influence distance" of at least one
-contributing particle.
-
 
 Next Section: \ref implementation.
 

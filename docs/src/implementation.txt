@@ -164,22 +164,17 @@ ProcessD2EDr2Term     | required, optional, **notSupported**     |
   models that request multiple neighbor lists with a wide range of cutoff
   distances.
 
-  <b>Neighbor List Hints \anchor neighbor_list_hints</b> The above describes
-  the default behavior and all models must work correctly when provided with
-  neighbor lists of this type.  However, based on the neighbor list hints
+  <b>Neighbor List Hint \anchor neighbor_list_hint</b> The above describes the
+  default behavior and all models must work correctly when provided with
+  neighbor lists of this type.  However, based on the neighbor list hint
   provided by the model a simulator may provide the model with a modified
   neighbor list that is more efficient.  If the model sets its
-  "paddingNeighborHint" to 1 (true), it is guaranteeing that it will not need
-  access to the neighbors of non-contributing (padding) particles.  So, the
-  simulator does not need to generate a neighbor list for such particles.  If
-  the model sets its "halfListHint" to 1 (true), it is guaranteeing that it
-  will only use neighbors \f$j\f$ of particle \f$i\f$ if \f$i < j\f$.  So, the
-  simulator can construct a "half list" of neighbors where each pair of
-  neighbors is listed only once in such a way that the list of neighbors for
-  particle \f$i\f$ contains only particles \f$j\f$ numbered greater than
-  \f$i\f$.  The model has no way of knowing if the simulator is taking advantage
-  of its hints, so it must work correctly for all types of neighbor lists
-  consistent with its provided hints.
+  "modelWillNotRequestNeighborsOfNoncontributingParticles" value to 1 (true),
+  it is guaranteeing that it will not request the neighbors of non-contributing
+  particles.  So, the simulator does not need to generate a neighbor list for
+  such particles.  The model has no way of knowing if the simulator is taking
+  advantage of its hint, so it must work correctly for all types of neighbor
+  lists consistent with its provided hint.
 
 - ProcessDEDrTerm is a callback function that allows for access to the
   derivatives of the configuration's partial energy, \f$E^{\mathcal{C}}\f$,
