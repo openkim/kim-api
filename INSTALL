@@ -322,7 +322,7 @@ $ source ${HOME}/local/bin/kim-api-vX-activate
 
 D.2.4 KIM API SPECIFIC BUILD OPTIONS
 
-The KIM API defines one additional regular build option and four advanced
+The KIM API defines two additional regular build option and four advanced
 options.
 
 * KIM_API_LOG_MAXIMUM_LEVEL (="DEBUG" if CMAKE_BUILD_TYPE is "Debug", otherwise
@@ -330,6 +330,10 @@ options.
   "FATAL", "ERROR", "WARNING", "INFORMATION", "DEBUG".  This value controls, at
   compile-time, which type of log messages can be printed to the "kim.log"
   file.
+
+* KIM_API_BUILD_EXAMPLES (=ON) When ON CMake will build the example models and
+  simulators.  NOTE: this option may be removed/changed in future releases when
+  the examples are incorporated into the documentation.
 
 Additionally, the KIM API defines the following four advanced options.
 
