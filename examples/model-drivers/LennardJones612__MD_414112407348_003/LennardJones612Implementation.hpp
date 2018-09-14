@@ -235,8 +235,8 @@ class LennardJones612Implementation
   void ProcessParticleVirialTerm(const double& dEidr,
                                  const double& rij,
                                  const double* const r_ij,
-                                 const int& i, const int& iContrib,
-                                 const int& j, const int& jContrib,
+                                 const int& i,
+                                 const int& j,
                                  VectorOfSizeSix* const particleVirial) const;
 
   // compute functions
@@ -367,7 +367,6 @@ int LennardJones612Implementation::Compute(
       int const numNei = numnei;
       int const * const n1Atom = n1atom;
       int const i = ii;
-      int const iContrib = 1;
       int const iSpecies = particleSpeciesCodes[i];
 
       // Setup loop over neighbors of current particle
@@ -510,8 +509,7 @@ int LennardJones612Implementation::Compute(
 
               if (isComputeParticleVirial == true)
               {
-                ProcessParticleVirialTerm(dEidr, rij, r_ij_const,
-                                          i, iContrib, j, jContrib,
+                ProcessParticleVirialTerm(dEidr, rij, r_ij_const, i, j,
                                           particleVirial);
               }
             }
@@ -540,7 +538,7 @@ int LennardJones612Implementation::Compute(
               }
             }
           }  // if particleContributing
-        }  // if i < j
+        }  // if i < j or j non contributing
       }  // if particles i and j interact
     }  // end of first neighbor loop
   }  // end of loop over contributing particles
