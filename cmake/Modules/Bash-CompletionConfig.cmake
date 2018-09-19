@@ -35,8 +35,8 @@
 # Sets the install path for bash completions
 find_package(bash-completion)
 if(BASH_COMPLETION_FOUND)
-  message(STATUS "Using bash completion dir ${CMAKE_INSTALL_PREFIX}/${BASH_COMPLETION_COMPLETIONSDIR}")
+  message(STATUS "Using bash completion dir ${CMAKE_INSTALL_PREFIX}${BASH_COMPLETION_COMPLETIONSDIR}")
 else()
-  set (BASH_COMPLETION_COMPLETIONSDIR "/etc/bash_completion.d")
-  message (STATUS "Using fallback bash completion dir ${BASH_COMPLETION_COMPLETIONSDIR}")
+  set(BASH_COMPLETION_COMPLETIONSDIR "/etc/bash_completion.d")
+  message(STATUS "Using fallback bash completion dir ${CMAKE_INSTALL_PREFIX}${BASH_COMPLETION_COMPLETIONSDIR}")
 endif()
