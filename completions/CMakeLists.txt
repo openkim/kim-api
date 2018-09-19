@@ -40,7 +40,7 @@ string(MAKE_C_IDENTIFIER "${PROJECT_NAME}" KIM_API_C_ID_PROJECT_NAME)
 
 configure_file(completion.bash.in ${BASH_COMPLETIONS} @ONLY)
 
-include(bash-completion-config)
+include(Bash-CompletionConfig)
 
 install(
   FILES ${CMAKE_CURRENT_BINARY_DIR}/${BASH_COMPLETIONS}
