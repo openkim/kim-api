@@ -34,7 +34,9 @@
 module kim_species_name_module
   use, intrinsic :: iso_c_binding
   implicit none
-  private
+  private &
+    kim_species_name_equal, &
+    kim_species_name_not_equal
 
   public &
     kim_species_name_type, &
@@ -183,8 +185,9 @@ module kim_species_name_module
     kim_species_name_user19, &
     kim_species_name_user20, &
 
-    kim_species_name_get_number_of_species_names, &
-    kim_species_name_get_species_name
+    kim_get_number_of_species_names, &
+    kim_get_species_name
+
 
   type, bind(c) :: kim_species_name_type
     integer(c_int) species_name_id
@@ -609,56 +612,110 @@ module kim_species_name_module
     :: kim_species_name_user20
 
   interface operator (.eq.)
-    logical function kim_species_name_equal(left, right)
-      use, intrinsic :: iso_c_binding
-      import kim_species_name_type
-      implicit none
-      type(kim_species_name_type), intent(in) :: left
-      type(kim_species_name_type), intent(in) :: right
-    end function kim_species_name_equal
+    module procedure kim_species_name_equal
   end interface operator (.eq.)
 
   interface operator (.ne.)
-    logical function kim_species_name_not_equal(left, right)
-      use, intrinsic :: iso_c_binding
-      import kim_species_name_type
-      implicit none
-      type(kim_species_name_type), intent(in) :: left
-      type(kim_species_name_type), intent(in) :: right
-    end function kim_species_name_not_equal
+    module procedure kim_species_name_not_equal
   end interface operator (.ne.)
 
-  interface
-    subroutine kim_species_name_from_string(string, species_name)
-      use, intrinsic :: iso_c_binding
-      import kim_species_name_type
-      implicit none
-      character(len=*, kind=c_char), intent(in) :: string
-      type(kim_species_name_type), intent(out) :: species_name
-    end subroutine kim_species_name_from_string
+contains
+  subroutine kim_species_name_from_string(string, species_name)
+    use, intrinsic :: iso_c_binding
+    implicit none
+    interface
+      type(kim_species_name_type) function from_string(string) &
+        bind(c, name="KIM_SpeciesName_FromString")
+        use, intrinsic :: iso_c_binding
+        import kim_species_name_type
+        implicit none
+        character(c_char), intent(in) :: string(*)
+      end function from_string
+    end interface
+    character(len=*, kind=c_char), intent(in) :: string
+    type(kim_species_name_type), intent(out) :: species_name
 
-    subroutine kim_species_name_string(species_name, string)
-      use, intrinsic :: iso_c_binding
-      import kim_species_name_type
-      implicit none
-      type(kim_species_name_type), intent(in), value :: species_name
-      character(len=*, kind=c_char), intent(out) :: string
-    end subroutine kim_species_name_string
+    species_name = from_string(trim(string)//c_null_char)
+  end subroutine kim_species_name_from_string
 
-    subroutine kim_species_name_get_number_of_species_names(&
-      number_of_species_names)
-      use, intrinsic :: iso_c_binding
-      implicit none
-      integer(c_int), intent(out) :: number_of_species_names
-    end subroutine kim_species_name_get_number_of_species_names
+  logical function kim_species_name_equal(left, right)
+    use, intrinsic :: iso_c_binding
+    implicit none
+    type(kim_species_name_type), intent(in) :: left
+    type(kim_species_name_type), intent(in) :: right
 
-    subroutine kim_species_name_get_species_name(index, species_name, ierr)
-      use, intrinsic :: iso_c_binding
-      import kim_species_name_type
-      implicit none
-      integer(c_int), intent(in), value :: index
-      type(kim_species_name_type), intent(out) :: species_name
-      integer(c_int), intent(out) :: ierr
-    end subroutine kim_species_name_get_species_name
-  end interface
+    kim_species_name_equal &
+      = (left%species_name_id .eq. right%species_name_id)
+  end function kim_species_name_equal
+
+  logical function kim_species_name_not_equal(left, right)
+    use, intrinsic :: iso_c_binding
+    implicit none
+    type(kim_species_name_type), intent(in) :: left
+    type(kim_species_name_type), intent(in) :: right
+
+    kim_species_name_not_equal = .not. (left .eq. right)
+  end function kim_species_name_not_equal
+
+  subroutine kim_species_name_string(species_name, string)
+    use, intrinsic :: iso_c_binding
+    use kim_convert_string_module, only : kim_convert_string
+    implicit none
+    interface
+      type(c_ptr) function get_string(species_name) &
+        bind(c, name="KIM_SpeciesName_String")
+        use, intrinsic :: iso_c_binding
+        import kim_species_name_type
+        implicit none
+        type(kim_species_name_type), intent(in), value :: species_name
+      end function get_string
+    end interface
+    type(kim_species_name_type), intent(in), value :: species_name
+    character(len=*, kind=c_char), intent(out) :: string
+
+    type(c_ptr) :: p
+
+    p = get_string(species_name)
+    if (c_associated(p)) then
+      call kim_convert_string(p, string)
+    else
+      string = ""
+    end if
+  end subroutine kim_species_name_string
+
+  subroutine kim_get_number_of_species_names(number_of_species_names)
+    use, intrinsic :: iso_c_binding
+    implicit none
+    interface
+      subroutine get_number_of_species_names(number_of_species_names) &
+        bind(c, name="KIM_SPECIES_NAME_GetNumberOfSpeciesNames")
+        use, intrinsic :: iso_c_binding
+        implicit none
+        integer(c_int), intent(out) :: number_of_species_names
+      end subroutine get_number_of_species_names
+    end interface
+    integer(c_int), intent(out) :: number_of_species_names
+
+    call get_number_of_species_names(number_of_species_names)
+  end subroutine kim_get_number_of_species_names
+
+  subroutine kim_get_species_name(index, species_name, ierr)
+    use, intrinsic :: iso_c_binding
+    implicit none
+    interface
+      integer(c_int) function get_species_name(index, species_name) &
+        bind(c, name="KIM_SPECIES_NAME_GetSpeciesName")
+        use, intrinsic :: iso_c_binding
+        import kim_species_name_type
+        implicit none
+        integer(c_int), intent(in), value :: index
+        type(kim_species_name_type), intent(out) :: species_name
+      end function get_species_name
+    end interface
+    integer(c_int), intent(in), value :: index
+    type(kim_species_name_type), intent(out) :: species_name
+    integer(c_int), intent(out) :: ierr
+
+    ierr = get_species_name(index-1, species_name)
+  end subroutine kim_get_species_name
 end module kim_species_name_module

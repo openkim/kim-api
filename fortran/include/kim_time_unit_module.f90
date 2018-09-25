@@ -34,7 +34,9 @@
 module kim_time_unit_module
   use, intrinsic :: iso_c_binding
   implicit none
-  private
+  private &
+    kim_time_unit_equal, &
+    kim_time_unit_not_equal
 
   public &
     kim_time_unit_type, &
@@ -49,8 +51,8 @@ module kim_time_unit_module
     kim_time_unit_ns, &
     kim_time_unit_s, &
 
-    kim_time_unit_get_number_of_time_units, &
-    kim_time_unit_get_time_unit
+    kim_get_number_of_time_units, &
+    kim_get_time_unit
 
 
   type, bind(c) :: kim_time_unit_type
@@ -69,55 +71,110 @@ module kim_time_unit_module
     :: kim_time_unit_s
 
   interface operator (.eq.)
-    logical function kim_time_unit_equal(left, right)
-      use, intrinsic :: iso_c_binding
-      import kim_time_unit_type
-      implicit none
-      type(kim_time_unit_type), intent(in) :: left
-      type(kim_time_unit_type), intent(in) :: right
-    end function kim_time_unit_equal
+    module procedure kim_time_unit_equal
   end interface operator (.eq.)
 
   interface operator (.ne.)
-    logical function kim_time_unit_not_equal(left, right)
+    module procedure kim_time_unit_not_equal
+    end interface operator (.ne.)
+
+  contains
+    subroutine kim_time_unit_from_string(string, time_unit)
       use, intrinsic :: iso_c_binding
-      import kim_time_unit_type
+      implicit none
+      interface
+        type(kim_time_unit_type) function from_string(string) &
+          bind(c, name="KIM_TimeUnit_FromString")
+          use, intrinsic :: iso_c_binding
+          import kim_time_unit_type
+          implicit none
+          character(c_char), intent(in) :: string(*)
+        end function from_string
+      end interface
+      character(len=*, kind=c_char), intent(in) :: string
+      type(kim_time_unit_type), intent(out) :: time_unit
+
+      time_unit = from_string(trim(string)//c_null_char)
+    end subroutine kim_time_unit_from_string
+
+    logical function kim_time_unit_equal(left, right)
+      use, intrinsic :: iso_c_binding
       implicit none
       type(kim_time_unit_type), intent(in) :: left
       type(kim_time_unit_type), intent(in) :: right
-    end function kim_time_unit_not_equal
-  end interface operator (.ne.)
 
-  interface
-    subroutine kim_time_unit_from_string(string, time_unit)
+      kim_time_unit_equal &
+        = (left%time_unit_id .eq. right%time_unit_id)
+    end function kim_time_unit_equal
+
+    logical function kim_time_unit_not_equal(left, right)
       use, intrinsic :: iso_c_binding
-      import kim_time_unit_type
       implicit none
-      character(len=*, kind=c_char), intent(in) :: string
-      type(kim_time_unit_type), intent(out) :: time_unit
-    end subroutine kim_time_unit_from_string
+      type(kim_time_unit_type), intent(in) :: left
+      type(kim_time_unit_type), intent(in) :: right
+
+      kim_time_unit_not_equal = .not. (left .eq. right)
+    end function kim_time_unit_not_equal
 
     subroutine kim_time_unit_string(time_unit, string)
       use, intrinsic :: iso_c_binding
-      import kim_time_unit_type
+      use kim_convert_string_module, only : kim_convert_string
       implicit none
+      interface
+        type(c_ptr) function get_string(time_unit) &
+          bind(c, name="KIM_TimeUnit_String")
+          use, intrinsic :: iso_c_binding
+          import kim_time_unit_type
+          implicit none
+          type(kim_time_unit_type), intent(in), value :: time_unit
+        end function get_string
+      end interface
       type(kim_time_unit_type), intent(in), value :: time_unit
       character(len=*, kind=c_char), intent(out) :: string
+
+      type(c_ptr) :: p
+
+      p = get_string(time_unit)
+      if (c_associated(p)) then
+        call kim_convert_string(p, string)
+      else
+        string = ""
+      end if
     end subroutine kim_time_unit_string
 
-    subroutine kim_time_unit_get_number_of_time_units(number_of_time_units)
+    subroutine kim_get_number_of_time_units(number_of_time_units)
       use, intrinsic :: iso_c_binding
       implicit none
+      interface
+        subroutine get_number_of_time_units(number_of_time_units) &
+          bind(c, name="KIM_TIME_UNIT_GetNumberOfTimeUnits")
+          use, intrinsic :: iso_c_binding
+          implicit none
+          integer(c_int), intent(out) :: number_of_time_units
+        end subroutine get_number_of_time_units
+      end interface
       integer(c_int), intent(out) :: number_of_time_units
-    end subroutine kim_time_unit_get_number_of_time_units
 
-    subroutine kim_time_unit_get_time_unit(index, time_unit, ierr)
+      call get_number_of_time_units(number_of_time_units)
+    end subroutine kim_get_number_of_time_units
+
+    subroutine kim_get_time_unit(index, time_unit, ierr)
       use, intrinsic :: iso_c_binding
-      import kim_time_unit_type
       implicit none
+      interface
+        integer(c_int) function get_time_unit(index, time_unit) &
+          bind(c, name="KIM_TIME_UNIT_GetTimeUnit")
+          use, intrinsic :: iso_c_binding
+          import kim_time_unit_type
+          implicit none
+          integer(c_int), intent(in), value :: index
+          type(kim_time_unit_type), intent(out) :: time_unit
+        end function get_time_unit
+      end interface
       integer(c_int), intent(in), value :: index
       type(kim_time_unit_type), intent(out) :: time_unit
       integer(c_int), intent(out) :: ierr
-    end subroutine kim_time_unit_get_time_unit
-  end interface
-end module kim_time_unit_module
+
+      ierr = get_time_unit(index-1, time_unit)
+    end subroutine kim_get_time_unit
+  end module kim_time_unit_module

@@ -45,7 +45,6 @@
 module ex_model_Ar_P_MLJ_F03
 
 use, intrinsic :: iso_c_binding
-use kim_model_headers_module
 implicit none
 
 save
@@ -169,6 +168,7 @@ end subroutine calc_phi_dphi
 !-------------------------------------------------------------------------------
 subroutine Compute_Energy_Forces(model_compute_handle, &
   model_compute_arguments_handle, ierr) bind(c)
+use kim_model_compute_headers_module
 implicit none
 
 !-- Transferred variables
@@ -197,37 +197,37 @@ real(c_double), pointer :: virial(:)
 ! Unpack data from KIM object
 !
 ierr = 0
-call kim_model_compute_arguments_get_argument_pointer( &
+call kim_get_argument_pointer( &
   model_compute_arguments_handle, &
   kim_compute_argument_name_number_of_particles, N, ierr2)
 ierr = ierr + ierr2
-call kim_model_compute_arguments_get_argument_pointer( &
+call kim_get_argument_pointer( &
   model_compute_arguments_handle, &
   kim_compute_argument_name_particle_species_codes, n, particleSpeciesCodes, &
   ierr2)
 ierr = ierr + ierr2
-call kim_model_compute_arguments_get_argument_pointer( &
+call kim_get_argument_pointer( &
   model_compute_arguments_handle, &
   kim_compute_argument_name_particle_contributing, n, particleContributing, &
   ierr2)
 ierr = ierr + ierr2
-call kim_model_compute_arguments_get_argument_pointer( &
+call kim_get_argument_pointer( &
   model_compute_arguments_handle, &
   kim_compute_argument_name_coordinates, dim, n, coor, ierr2)
 ierr = ierr + ierr2
-call kim_model_compute_arguments_get_argument_pointer( &
+call kim_get_argument_pointer( &
   model_compute_arguments_handle, &
   kim_compute_argument_name_partial_energy, energy, ierr2)
 ierr = ierr + ierr2
-call kim_model_compute_arguments_get_argument_pointer( &
+call kim_get_argument_pointer( &
   model_compute_arguments_handle, &
   kim_compute_argument_name_partial_forces, dim, n, force, ierr2)
 ierr = ierr + ierr2
-call kim_model_compute_arguments_get_argument_pointer( &
+call kim_get_argument_pointer( &
   model_compute_arguments_handle, &
   kim_compute_argument_name_partial_particle_energy, n, enepot, ierr2)
 ierr = ierr + ierr2
-call kim_model_compute_arguments_get_argument_pointer( &
+call kim_get_argument_pointer( &
   model_compute_arguments_handle, &
   kim_compute_argument_name_partial_virial, 6, virial, ierr2)
 ierr = ierr + ierr2
@@ -291,7 +291,7 @@ if (comp_virial.eq.1) virial = 0.0_cd
 do i = 1, N
   if (particleContributing(i) == 1) then
     ! Set up neighbor list for next particle
-    call kim_model_compute_arguments_get_neighbor_list( &
+    call kim_get_neighbor_list( &
       model_compute_arguments_handle, 1, i, numnei, nei1part, ierr)
     if (ierr /= 0) then
       ! some sort of problem, exit
@@ -375,6 +375,7 @@ end subroutine Compute_Energy_Forces
 !-------------------------------------------------------------------------------
 subroutine model_destroy_func(model_destroy_handle, ierr) bind(c)
   use, intrinsic :: iso_c_binding
+  use kim_model_destroy_headers_module
   implicit none
 
   !-- Transferred variables
@@ -398,6 +399,7 @@ end subroutine model_destroy_func
 !-------------------------------------------------------------------------------
 subroutine model_refresh_func(model_refresh_handle, ierr) bind(c)
   use, intrinsic :: iso_c_binding
+  use kim_model_refresh_headers_module
   implicit none
 
   !-- Transferred variables
@@ -411,9 +413,9 @@ subroutine model_refresh_func(model_refresh_handle, ierr) bind(c)
 
   call kim_model_refresh_log_entry(model_refresh_handle, &
     kim_log_verbosity_information, "Resettings influence distance and cutoffs")
-  call kim_model_refresh_set_influence_distance_pointer( &
+  call kim_set_influence_distance_pointer( &
     model_refresh_handle, buf%cutoff(1))
-  call kim_model_refresh_set_neighbor_list_pointers( &
+  call kim_set_neighbor_list_pointers( &
     model_refresh_handle, 1, buf%cutoff, &
     buf%model_will_not_request_neighbors_of_noncontributing_particles)
 
@@ -428,6 +430,7 @@ end subroutine model_refresh_func
 subroutine model_compute_arguments_create(model_compute_handle, &
   model_compute_arguments_create_handle, ierr) bind(c)
   use, intrinsic :: iso_c_binding
+  use kim_model_compute_arguments_create_headers_module
   implicit none
 
   !-- Transferred variables
@@ -445,22 +448,22 @@ subroutine model_compute_arguments_create(model_compute_handle, &
   ierr2 = 0
 
   ! register arguments
-  call kim_model_compute_arguments_create_set_argument_support_status( &
+  call kim_set_argument_support_status( &
     model_compute_arguments_create_handle, &
     kim_compute_argument_name_partial_energy, &
     kim_support_status_optional, ierr2)
   ierr = ierr + ierr2
-  call kim_model_compute_arguments_create_set_argument_support_status( &
+  call kim_set_argument_support_status( &
     model_compute_arguments_create_handle, &
     kim_compute_argument_name_partial_forces, &
     kim_support_status_optional, ierr2)
   ierr = ierr + ierr2
-  call kim_model_compute_arguments_create_set_argument_support_status( &
+  call kim_set_argument_support_status( &
     model_compute_arguments_create_handle, &
     kim_compute_argument_name_partial_particle_energy, &
     kim_support_status_optional, ierr2)
   ierr = ierr + ierr2
-  call kim_model_compute_arguments_create_set_argument_support_status( &
+  call kim_set_argument_support_status( &
     model_compute_arguments_create_handle, &
     kim_compute_argument_name_partial_virial, &
     kim_support_status_optional, ierr2)
@@ -488,6 +491,7 @@ end subroutine model_compute_arguments_create
 subroutine model_compute_arguments_destroy(model_compute_handle, &
   model_compute_arguments_destroy_handle, ierr) bind(c)
   use, intrinsic :: iso_c_binding
+  use kim_model_compute_arguments_destroy_headers_module
   implicit none
 
   !-- Transferred variables
@@ -519,7 +523,7 @@ subroutine model_create_routine(model_create_handle, requested_length_unit, &
   requested_time_unit, ierr) bind(c)
 use, intrinsic :: iso_c_binding
 use ex_model_Ar_P_MLJ_F03
-use kim_model_headers_module
+use kim_model_create_headers_module
 implicit none
 
 !-- Transferred variables
@@ -546,7 +550,7 @@ if (requested_temperature_unit .eq. kim_temperature_unit_unused) continue
 if (requested_time_unit .eq. kim_time_unit_unused) continue
 
 ! set units
-call kim_model_create_set_units(model_create_handle, &
+call kim_set_units(model_create_handle, &
   kim_length_unit_a, &
   kim_energy_unit_ev, &
   kim_charge_unit_unused, &
@@ -556,31 +560,31 @@ call kim_model_create_set_units(model_create_handle, &
 ierr = ierr + ierr2
 
 ! register species
-call kim_model_create_set_species_code(model_create_handle, &
+call kim_set_species_code(model_create_handle, &
   kim_species_name_ar, speccode, ierr2)
 ierr = ierr + ierr2
 
 ! register numbering
-call kim_model_create_set_model_numbering(model_create_handle, &
+call kim_set_model_numbering(model_create_handle, &
   kim_numbering_one_based, ierr2);
 ierr = ierr + ierr2
 
 ! register function pointers
-call kim_model_create_set_compute_pointer(model_create_handle, &
+call kim_set_compute_pointer(model_create_handle, &
   kim_language_name_fortran, c_funloc(Compute_Energy_Forces), ierr2)
 ierr = ierr + ierr2
-call kim_model_create_set_compute_arguments_create_pointer( &
+call kim_set_compute_arguments_create_pointer( &
   model_create_handle, kim_language_name_fortran, &
   c_funloc(model_compute_arguments_create), ierr2)
 ierr = ierr + ierr2
-call kim_model_create_set_compute_arguments_destroy_pointer( &
+call kim_set_compute_arguments_destroy_pointer( &
   model_create_handle, kim_language_name_fortran, &
   c_funloc(model_compute_arguments_destroy), ierr2)
 ierr = ierr + ierr2
-call kim_model_create_set_destroy_pointer(model_create_handle, &
+call kim_set_destroy_pointer(model_create_handle, &
   kim_language_name_fortran, c_funloc(model_destroy_func), ierr2)
 ierr = ierr + ierr2
-call kim_model_create_set_refresh_pointer( &
+call kim_set_refresh_pointer( &
   model_create_handle, kim_language_name_fortran, &
   c_funloc(model_refresh_func), ierr2)
 ierr = ierr + ierr2
@@ -589,7 +593,7 @@ ierr = ierr + ierr2
 allocate( buf )
 
 ! store model buffer in KIM object
-call kim_model_create_set_model_buffer_pointer(model_create_handle, &
+call kim_set_model_buffer_pointer(model_create_handle, &
   c_loc(buf))
 
 ! set buffer values
@@ -598,11 +602,11 @@ buf%cutoff = model_cutoff
 buf%model_will_not_request_neighbors_of_noncontributing_particles = 1
 
 ! register influence distance
-call kim_model_create_set_influence_distance_pointer( &
+call kim_set_influence_distance_pointer( &
   model_create_handle, buf%influence_distance)
 
 ! register cutoff
-call kim_model_create_set_neighbor_list_pointers(model_create_handle, &
+call kim_set_neighbor_list_pointers(model_create_handle, &
   1, buf%cutoff, &
   buf%model_will_not_request_neighbors_of_noncontributing_particles)
 

@@ -44,7 +44,6 @@
 module ex_model_driver_p_lj
 
 use, intrinsic :: iso_c_binding
-use kim_model_driver_headers_module
 implicit none
 
 save
@@ -205,6 +204,7 @@ end subroutine calc_phi_dphi_d2phi
 !-------------------------------------------------------------------------------
 subroutine Compute_Energy_Forces(model_compute_handle, &
   model_compute_arguments_handle, ierr) bind(c)
+use kim_model_compute_headers_module
 implicit none
 
 !-- Transferred variables
@@ -247,11 +247,11 @@ model_cutoff = buf%influence_distance(1)
 ! energy and d1Edr
 !
 ierr = 0
-call kim_model_compute_arguments_is_callback_present( &
+call kim_is_callback_present( &
   model_compute_arguments_handle, &
   kim_compute_callback_name_process_dedr_term, comp_process_dedr, ierr2)
 ierr = ierr + ierr2
-call kim_model_compute_arguments_is_callback_present( &
+call kim_is_callback_present( &
   model_compute_arguments_handle, &
   kim_compute_callback_name_process_d2edr2_term, comp_process_d2edr2, ierr2)
 ierr = ierr + ierr2
@@ -265,34 +265,34 @@ endif
 ! Unpack data from KIM object
 !
 ierr = 0
-call kim_model_compute_arguments_get_argument_pointer( &
+call kim_get_argument_pointer( &
   model_compute_arguments_handle, &
   kim_compute_argument_name_number_of_particles, n, ierr2)
 ierr = ierr + ierr2
 
-call kim_model_compute_arguments_get_argument_pointer( &
+call kim_get_argument_pointer( &
   model_compute_arguments_handle, &
   kim_compute_argument_name_particle_species_codes, &
   n, particlespeciesCodes, ierr2)
 ierr = ierr + ierr2
-call kim_model_compute_arguments_get_argument_pointer( &
+call kim_get_argument_pointer( &
   model_compute_arguments_handle, &
   kim_compute_argument_name_particle_contributing, n, particlecontributing, &
   ierr2)
 ierr = ierr + ierr2
-call kim_model_compute_arguments_get_argument_pointer( &
+call kim_get_argument_pointer( &
   model_compute_arguments_handle, &
   kim_compute_argument_name_coordinates, dim, n, coor, ierr2)
 ierr = ierr + ierr2
-call kim_model_compute_arguments_get_argument_pointer( &
+call kim_get_argument_pointer( &
   model_compute_arguments_handle, &
   kim_compute_argument_name_partial_energy, energy, ierr2)
 ierr = ierr + ierr2
-call kim_model_compute_arguments_get_argument_pointer( &
+call kim_get_argument_pointer( &
   model_compute_arguments_handle, &
   kim_compute_argument_name_partial_forces, dim, n, force, ierr2)
 ierr = ierr + ierr2
-call kim_model_compute_arguments_get_argument_pointer( &
+call kim_get_argument_pointer( &
   model_compute_arguments_handle, &
   kim_compute_argument_name_partial_particle_energy, n, enepot, ierr2)
 ierr = ierr + ierr2
@@ -350,7 +350,7 @@ do i = 1, N
   if (particleContributing(i) == 1) then
     ! Set up neighbor list for next particle
     !
-    call kim_model_compute_arguments_get_neighbor_list( &
+    call kim_get_neighbor_list( &
       model_compute_arguments_handle, 1, i, numnei, nei1part, ierr)
     if (ierr /= 0) then
       ! some sort of problem, exit
@@ -415,7 +415,7 @@ do i = 1, N
         ! contribution to process_dEdr
         !
         if (comp_process_dEdr.eq.1) then
-          call kim_model_compute_arguments_process_dedr_term( &
+          call kim_process_dedr_term( &
             model_compute_arguments_handle, deidr, r, rij, i, j, ierr)
         endif
 
@@ -430,7 +430,7 @@ do i = 1, N
           j_pairs(1) = j
           j_pairs(2) = j
 
-          call kim_model_compute_arguments_process_d2edr2_term( &
+          call kim_process_d2edr2_term( &
             model_compute_arguments_handle, d2eidr, &
             r_pairs, Rij_pairs, i_pairs, j_pairs, ierr)
         endif
@@ -463,6 +463,7 @@ end subroutine Compute_Energy_Forces
 !
 !-------------------------------------------------------------------------------
 subroutine refresh(model_refresh_handle, ierr) bind(c)
+use kim_model_refresh_headers_module
 implicit none
 
 !-- Transferred variables
@@ -477,9 +478,9 @@ type(BUFFER_TYPE), pointer :: buf; type(c_ptr) :: pbuf
 call kim_model_refresh_get_model_buffer_pointer(model_refresh_handle, pbuf)
 call c_f_pointer(pbuf, buf)
 
-call kim_model_refresh_set_influence_distance_pointer(model_refresh_handle, &
+call kim_set_influence_distance_pointer(model_refresh_handle, &
   buf%influence_distance(1))
-call kim_model_refresh_set_neighbor_list_pointers(model_refresh_handle, &
+call kim_set_neighbor_list_pointers(model_refresh_handle, &
   1, buf%influence_distance, &
   buf%model_will_not_request_neighbors_of_noncontributing_particles)
 
@@ -506,6 +507,7 @@ end subroutine refresh
 !
 !-------------------------------------------------------------------------------
 subroutine destroy(model_destroy_handle, ierr) bind(c)
+use kim_model_destroy_headers_module
 implicit none
 
 !-- Transferred variables
@@ -533,6 +535,7 @@ end subroutine destroy
 !-------------------------------------------------------------------------------
 subroutine compute_arguments_create(model_compute_handle, &
   model_compute_arguments_create_handle, ierr) bind(c)
+use kim_model_compute_arguments_create_headers_module
 implicit none
 
 !-- Transferred variables
@@ -550,16 +553,16 @@ ierr = 0
 ierr2 = 0
 
 ! register arguments
-call kim_model_compute_arguments_create_set_argument_support_status( &
+call kim_set_argument_support_status( &
   model_compute_arguments_create_handle, &
   kim_compute_argument_name_partial_energy, &
   kim_support_status_optional, ierr)
-call kim_model_compute_arguments_create_set_argument_support_status( &
+call kim_set_argument_support_status( &
   model_compute_arguments_create_handle, &
   kim_compute_argument_name_partial_forces, &
   kim_support_status_optional, ierr2)
 ierr = ierr + ierr2
-call kim_model_compute_arguments_create_set_argument_support_status( &
+call kim_set_argument_support_status( &
   model_compute_arguments_create_handle, &
   kim_compute_argument_name_partial_particle_energy, &
   kim_support_status_optional, ierr2)
@@ -573,11 +576,11 @@ if (ierr /= 0) then
 end if
 
 ! register callbacks
-call kim_model_compute_arguments_create_set_callback_support_status( &
+call kim_set_callback_support_status( &
   model_compute_arguments_create_handle, &
   kim_compute_callback_name_process_dedr_term, &
   kim_support_status_optional, ierr)
-call kim_model_compute_arguments_create_set_callback_support_status( &
+call kim_set_callback_support_status( &
   model_compute_arguments_create_handle, &
   kim_compute_callback_name_process_d2edr2_term, &
   kim_support_status_optional, ierr2)
@@ -603,6 +606,7 @@ end subroutine compute_arguments_create
 !-------------------------------------------------------------------------------
 subroutine compute_arguments_destroy(model_compute_handle, &
   model_compute_arguments_destroy_handle, ierr) bind(c)
+use kim_model_compute_arguments_destroy_headers_module
 implicit none
 
 !-- Transferred variables
@@ -635,7 +639,7 @@ subroutine model_driver_create_routine(model_driver_create_handle, &
   requested_temperature_unit, requested_time_unit, ierr) bind(c)
 use, intrinsic :: iso_c_binding
 use ex_model_driver_p_lj
-use kim_model_driver_headers_module
+use kim_model_driver_create_headers_module
 implicit none
 integer(c_int), parameter :: cd = c_double ! used for literal constants
 
@@ -664,7 +668,7 @@ real(c_double) in_sigma
 real(c_double) energy_at_cutoff
 
 ! register units
-call kim_model_driver_create_set_units( &
+call kim_set_units( &
   model_driver_create_handle, &
   requested_length_unit, &
   requested_energy_unit, &
@@ -679,7 +683,7 @@ if (ierr /= 0) then
 end if
 
 ! register numbering
-call kim_model_driver_create_set_model_numbering( &
+call kim_set_model_numbering( &
   model_driver_create_handle, kim_numbering_one_based, ierr)
 if (ierr /= 0) then
   call kim_model_driver_create_log_entry(model_driver_create_handle, &
@@ -690,22 +694,22 @@ end if
 
 
 ! store callback pointers in KIM object
-call kim_model_driver_create_set_compute_pointer( &
+call kim_set_compute_pointer( &
   model_driver_create_handle, kim_language_name_fortran, &
   c_funloc(Compute_Energy_Forces), ierr)
-call kim_model_driver_create_set_compute_arguments_create_pointer( &
+call kim_set_compute_arguments_create_pointer( &
   model_driver_create_handle, kim_language_name_fortran, &
   c_funloc(compute_arguments_create), ierr2)
 ierr = ierr + ierr2
-call kim_model_driver_create_set_compute_arguments_destroy_pointer( &
+call kim_set_compute_arguments_destroy_pointer( &
   model_driver_create_handle, kim_language_name_fortran, &
   c_funloc(compute_arguments_destroy), ierr2)
 ierr = ierr + ierr2
-call kim_model_driver_create_set_refresh_pointer( &
+call kim_set_refresh_pointer( &
   model_driver_create_handle, kim_language_name_fortran, &
   c_funloc(refresh), ierr2)
 ierr = ierr + ierr2
-call kim_model_driver_create_set_destroy_pointer( &
+call kim_set_destroy_pointer( &
   model_driver_create_handle, kim_language_name_fortran, &
   c_funloc(destroy), ierr2)
 ierr = ierr + ierr2
@@ -718,7 +722,7 @@ end if
 
 
 ! process parameter files
-call kim_model_driver_create_get_number_of_parameter_files( &
+call kim_get_number_of_parameter_files( &
   model_driver_create_handle, number_of_parameter_files)
 if (number_of_parameter_files .ne. 1) then
   call kim_model_driver_create_log_entry(model_driver_create_handle, &
@@ -729,7 +733,7 @@ end if
 
 ! Read in model parameters from parameter file
 !
-call kim_model_driver_create_get_parameter_file_name( &
+call kim_get_parameter_file_name( &
   model_driver_create_handle, 1, parameter_file_name, ierr)
 if (ierr /= 0) then
   call kim_model_driver_create_log_entry(model_driver_create_handle, &
@@ -764,7 +768,7 @@ if (ierr /= 0) then
   goto 42
 end if
 
-call kim_model_driver_create_set_species_code( &
+call kim_set_species_code( &
   model_driver_create_handle, species_name, speccode, ierr)
 if (ierr /= 0) then
   call kim_model_driver_create_log_entry(model_driver_create_handle, &
@@ -774,7 +778,7 @@ if (ierr /= 0) then
 end if
 
 ! convert to appropriate units
-call kim_model_driver_create_convert_unit( &
+call kim_convert_unit( &
   model_driver_create_handle, &
   kim_length_unit_a, &
   kim_energy_unit_ev, &
@@ -795,7 +799,7 @@ if (ierr /= 0) then
 endif
 in_cutoff = in_cutoff * factor
 
-call kim_model_driver_create_convert_unit( &
+call kim_convert_unit( &
   model_driver_create_handle, &
   kim_length_unit_a, &
   kim_energy_unit_ev, &
@@ -816,7 +820,7 @@ if (ierr /= 0) then
 endif
 in_epsilon = in_epsilon * factor
 
-call kim_model_driver_create_convert_unit( &
+call kim_convert_unit( &
   model_driver_create_handle, &
   kim_length_unit_a, &
   kim_energy_unit_ev, &
@@ -855,20 +859,20 @@ call calc_phi(in_epsilon, &
 buf%shift(1)   = -energy_at_cutoff
 
 ! store model cutoff in KIM object
-call kim_model_driver_create_set_influence_distance_pointer( &
+call kim_set_influence_distance_pointer( &
   model_driver_create_handle, buf%influence_distance(1))
-call kim_model_driver_create_set_neighbor_list_pointers( &
+call kim_set_neighbor_list_pointers( &
   model_driver_create_handle, 1, buf%influence_distance, &
   buf%model_will_not_request_neighbors_of_noncontributing_particles)
 
 ! end setup buffer
 
 ! store in model buffer
-call kim_model_driver_create_set_model_buffer_pointer( &
+call kim_set_model_buffer_pointer( &
   model_driver_create_handle, c_loc(buf))
 
 ! set pointers to parameters in KIM object
-call kim_model_driver_create_set_parameter_pointer( &
+call kim_set_parameter_pointer( &
   model_driver_create_handle, buf%pcutoff, "cutoff", &
   "Distance at which the energy becomes zero.", ierr)
 if (ierr /= 0) then
@@ -878,7 +882,7 @@ if (ierr /= 0) then
   goto 42
 endif
 
-call kim_model_driver_create_set_parameter_pointer( &
+call kim_set_parameter_pointer( &
   model_driver_create_handle, buf%epsilon, "epsilon", &
   "Energy scale coefficient.", ierr)
 if (ierr /= 0) then
@@ -888,7 +892,7 @@ if (ierr /= 0) then
   goto 42
 endif
 
-call kim_model_driver_create_set_parameter_pointer( &
+call kim_set_parameter_pointer( &
   model_driver_create_handle, buf%sigma, "sigma", &
   "Length scale coefficient.", ierr)
 if (ierr /= 0) then

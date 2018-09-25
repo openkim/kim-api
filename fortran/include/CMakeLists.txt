@@ -47,16 +47,21 @@ set(FORTRAN_INCLUDES
   ${F_MOD_DIR}/kim_length_unit_module.mod
   ${F_MOD_DIR}/kim_log_module.mod
   ${F_MOD_DIR}/kim_log_verbosity_module.mod
+  ${F_MOD_DIR}/kim_model_compute_arguments_create_headers_module.mod
   ${F_MOD_DIR}/kim_model_compute_arguments_create_module.mod
+  ${F_MOD_DIR}/kim_model_compute_arguments_destroy_headers_module.mod
   ${F_MOD_DIR}/kim_model_compute_arguments_destroy_module.mod
   ${F_MOD_DIR}/kim_model_compute_arguments_module.mod
+  ${F_MOD_DIR}/kim_model_compute_headers_module.mod
   ${F_MOD_DIR}/kim_model_compute_module.mod
+  ${F_MOD_DIR}/kim_model_create_headers_module.mod
   ${F_MOD_DIR}/kim_model_create_module.mod
+  ${F_MOD_DIR}/kim_model_destroy_headers_module.mod
   ${F_MOD_DIR}/kim_model_destroy_module.mod
+  ${F_MOD_DIR}/kim_model_driver_create_headers_module.mod
   ${F_MOD_DIR}/kim_model_driver_create_module.mod
-  ${F_MOD_DIR}/kim_model_driver_headers_module.mod
-  ${F_MOD_DIR}/kim_model_headers_module.mod
   ${F_MOD_DIR}/kim_model_module.mod
+  ${F_MOD_DIR}/kim_model_refresh_headers_module.mod
   ${F_MOD_DIR}/kim_model_refresh_module.mod
   ${F_MOD_DIR}/kim_numbering_module.mod
   ${F_MOD_DIR}/kim_sem_ver_module.mod
@@ -81,16 +86,21 @@ set(F_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/kim_length_unit_module.f90
   ${CMAKE_CURRENT_SOURCE_DIR}/kim_log_module.f90
   ${CMAKE_CURRENT_SOURCE_DIR}/kim_log_verbosity_module.f90
+  ${CMAKE_CURRENT_SOURCE_DIR}/kim_model_compute_arguments_create_headers_module.f90
   ${CMAKE_CURRENT_SOURCE_DIR}/kim_model_compute_arguments_create_module.f90
+  ${CMAKE_CURRENT_SOURCE_DIR}/kim_model_compute_arguments_destroy_headers_module.f90
   ${CMAKE_CURRENT_SOURCE_DIR}/kim_model_compute_arguments_destroy_module.f90
   ${CMAKE_CURRENT_SOURCE_DIR}/kim_model_compute_arguments_module.f90
+  ${CMAKE_CURRENT_SOURCE_DIR}/kim_model_compute_headers_module.f90
   ${CMAKE_CURRENT_SOURCE_DIR}/kim_model_compute_module.f90
+  ${CMAKE_CURRENT_SOURCE_DIR}/kim_model_create_headers_module.f90
   ${CMAKE_CURRENT_SOURCE_DIR}/kim_model_create_module.f90
+  ${CMAKE_CURRENT_SOURCE_DIR}/kim_model_destroy_headers_module.f90
   ${CMAKE_CURRENT_SOURCE_DIR}/kim_model_destroy_module.f90
+  ${CMAKE_CURRENT_SOURCE_DIR}/kim_model_driver_create_headers_module.f90
   ${CMAKE_CURRENT_SOURCE_DIR}/kim_model_driver_create_module.f90
-  ${CMAKE_CURRENT_SOURCE_DIR}/kim_model_driver_headers_module.f90
-  ${CMAKE_CURRENT_SOURCE_DIR}/kim_model_headers_module.f90
   ${CMAKE_CURRENT_SOURCE_DIR}/kim_model_module.f90
+  ${CMAKE_CURRENT_SOURCE_DIR}/kim_model_refresh_headers_module.f90
   ${CMAKE_CURRENT_SOURCE_DIR}/kim_model_refresh_module.f90
   ${CMAKE_CURRENT_SOURCE_DIR}/kim_numbering_module.f90
   ${CMAKE_CURRENT_SOURCE_DIR}/kim_sem_ver_module.f90

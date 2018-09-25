@@ -34,7 +34,9 @@
 module kim_compute_argument_name_module
   use, intrinsic :: iso_c_binding
   implicit none
-  private
+  private &
+    kim_compute_argument_name_equal, &
+    kim_compute_argument_name_not_equal
 
   public &
     kim_compute_argument_name_type, &
@@ -53,9 +55,9 @@ module kim_compute_argument_name_module
     kim_compute_argument_name_partial_virial, &
     kim_compute_argument_name_partial_particle_virial, &
 
-    kim_compute_argument_name_get_number_of_compute_argument_names, &
-    kim_compute_argument_name_get_compute_argument_name, &
-    kim_compute_argument_name_get_compute_argument_data_type
+    kim_get_number_of_compute_argument_names, &
+    kim_get_compute_argument_name, &
+    kim_get_compute_argument_data_type
 
 
   type, bind(c) :: kim_compute_argument_name_type
@@ -91,72 +93,145 @@ module kim_compute_argument_name_module
     :: kim_compute_argument_name_partial_particle_virial
 
   interface operator (.eq.)
-    logical function kim_compute_argument_name_equal(left, right)
-      use, intrinsic :: iso_c_binding
-      import kim_compute_argument_name_type
-      implicit none
-      type(kim_compute_argument_name_type), intent(in) :: left
-      type(kim_compute_argument_name_type), intent(in) :: right
-    end function kim_compute_argument_name_equal
+    module procedure kim_compute_argument_name_equal
   end interface operator (.eq.)
 
   interface operator (.ne.)
-    logical function kim_compute_argument_name_not_equal(left, right)
-      use, intrinsic :: iso_c_binding
-      import kim_compute_argument_name_type
-      implicit none
-      type(kim_compute_argument_name_type), intent(in) :: left
-      type(kim_compute_argument_name_type), intent(in) :: right
-    end function kim_compute_argument_name_not_equal
+    module procedure kim_compute_argument_name_not_equal
   end interface operator (.ne.)
 
-  interface
-    subroutine kim_compute_argument_name_from_string(string, &
-      compute_argument_name)
-      use, intrinsic :: iso_c_binding
-      import kim_compute_argument_name_type
-      implicit none
-      character(len=*, kind=c_char), intent(in) :: string
-      type(kim_compute_argument_name_type), intent(out) :: compute_argument_name
-    end subroutine kim_compute_argument_name_from_string
+contains
+  subroutine kim_compute_argument_name_from_string(string, &
+    compute_argument_name)
+    use, intrinsic :: iso_c_binding
+    implicit none
+    interface
+      type(kim_compute_argument_name_type) function from_string(string) &
+        bind(c, name="KIM_ComputeArgumentName_FromString")
+        use, intrinsic :: iso_c_binding
+        import kim_compute_argument_name_type
+        implicit none
+        character(c_char), intent(in) :: string(*)
+      end function from_string
+    end interface
+    character(len=*, kind=c_char), intent(in) :: string
+    type(kim_compute_argument_name_type), intent(out) :: compute_argument_name
 
-    subroutine kim_compute_argument_name_string(compute_argument_name, string)
-      use, intrinsic :: iso_c_binding
-      import kim_compute_argument_name_type
-      implicit none
-      type(kim_compute_argument_name_type), intent(in), value :: &
-        compute_argument_name
-      character(len=*, kind=c_char), intent(out) :: string
-    end subroutine kim_compute_argument_name_string
+    compute_argument_name = from_string(trim(string)//c_null_char)
+  end subroutine kim_compute_argument_name_from_string
 
-    subroutine kim_compute_argument_name_get_number_of_compute_argument_names( &
-      number_of_compute_argument_names)
-      use, intrinsic :: iso_c_binding
-      implicit none
-      integer(c_int), intent(out) :: number_of_compute_argument_names
-    end subroutine &
-      kim_compute_argument_name_get_number_of_compute_argument_names
+  logical function kim_compute_argument_name_equal(left, right)
+    use, intrinsic :: iso_c_binding
+    implicit none
+    type(kim_compute_argument_name_type), intent(in) :: left
+    type(kim_compute_argument_name_type), intent(in) :: right
 
-    subroutine kim_compute_argument_name_get_compute_argument_name(index, &
-      compute_argument_name, ierr)
-      use, intrinsic :: iso_c_binding
-      import kim_compute_argument_name_type
-      implicit none
-      integer(c_int), intent(in), value :: index
-      type(kim_compute_argument_name_type), intent(out) :: compute_argument_name
-      integer(c_int), intent(out) :: ierr
-    end subroutine kim_compute_argument_name_get_compute_argument_name
+    kim_compute_argument_name_equal &
+      = (left%compute_argument_name_id .eq. right%compute_argument_name_id)
+  end function kim_compute_argument_name_equal
 
-    subroutine kim_compute_argument_name_get_compute_argument_data_type( &
-      compute_argument_name, data_type, ierr)
-      use, intrinsic :: iso_c_binding
-      use kim_data_type_module, only : kim_data_type_type
-      import kim_compute_argument_name_type
-      implicit none
-      type(kim_compute_argument_name_type), intent(in), value :: &
-        compute_argument_name
-      type(kim_data_type_type), intent(out) :: data_type
-      integer(c_int), intent(out) :: ierr
-    end subroutine kim_compute_argument_name_get_compute_argument_data_type
-  end interface
+  logical function kim_compute_argument_name_not_equal(left, right)
+    use, intrinsic :: iso_c_binding
+    implicit none
+    type(kim_compute_argument_name_type), intent(in) :: left
+    type(kim_compute_argument_name_type), intent(in) :: right
+
+    kim_compute_argument_name_not_equal = .not. (left .eq. right)
+  end function kim_compute_argument_name_not_equal
+
+  subroutine kim_compute_argument_name_string(compute_argument_name, string)
+    use, intrinsic :: iso_c_binding
+    use kim_convert_string_module, only : kim_convert_string
+    implicit none
+    interface
+      type(c_ptr) function get_string(compute_argument_name) &
+        bind(c, name="KIM_ComputeArgumentName_String")
+        use, intrinsic :: iso_c_binding
+        import kim_compute_argument_name_type
+        implicit none
+        type(kim_compute_argument_name_type), intent(in), value :: &
+          compute_argument_name
+      end function get_string
+    end interface
+    type(kim_compute_argument_name_type), intent(in), value :: &
+      compute_argument_name
+    character(len=*, kind=c_char), intent(out) :: string
+
+    type(c_ptr) :: p
+
+    p = get_string(compute_argument_name)
+    if (c_associated(p)) then
+      call kim_convert_string(p, string)
+    else
+      string = ""
+    end if
+  end subroutine kim_compute_argument_name_string
+
+  subroutine kim_get_number_of_compute_argument_names( &
+    number_of_compute_argument_names)
+    use, intrinsic :: iso_c_binding
+    implicit none
+    interface
+      subroutine get_number_of_compute_argument_names( &
+        number_of_compute_argument_names) &
+        bind(c, &
+        name="KIM_COMPUTE_ARGUMENT_NAME_GetNumberOfComputeArgumentNames")
+        use, intrinsic :: iso_c_binding
+        integer(c_int), intent(out) :: number_of_compute_argument_names
+      end subroutine get_number_of_compute_argument_names
+    end interface
+    integer(c_int), intent(out) :: number_of_compute_argument_names
+
+    call get_number_of_compute_argument_names(number_of_compute_argument_names)
+  end subroutine kim_get_number_of_compute_argument_names
+
+  subroutine kim_get_compute_argument_name(index, &
+    compute_argument_name, ierr)
+    use, intrinsic :: iso_c_binding
+    implicit none
+    interface
+      integer(c_int) function get_compute_argument_name(index, &
+        compute_argument_name) &
+        bind(c, name="KIM_COMPUTE_ARGUMENT_NAME_GetComputeArgumentName")
+        use, intrinsic :: iso_c_binding
+        import kim_compute_argument_name_type
+        implicit none
+        integer(c_int), intent(in), value :: index
+        type(kim_compute_argument_name_type), intent(out) :: &
+          compute_argument_name
+      end function get_compute_argument_name
+    end interface
+    integer(c_int), intent(in), value :: index
+    type(kim_compute_argument_name_type), intent(out) :: compute_argument_name
+    integer(c_int), intent(out) :: ierr
+
+    ierr = get_compute_argument_name(index-1, compute_argument_name)
+  end subroutine kim_get_compute_argument_name
+
+  subroutine kim_get_compute_argument_data_type( &
+    compute_argument_name, &
+    data_type, ierr)
+    use, intrinsic :: iso_c_binding
+    use kim_data_type_module, only : kim_data_type_type
+    implicit none
+    interface
+      integer(c_int) function get_compute_argument_data_type( &
+        compute_argument_name, data_type) &
+        bind(c, name="KIM_COMPUTE_ARGUMENT_NAME_GetComputeArgumentDataType")
+        use, intrinsic :: iso_c_binding
+        use kim_data_type_module, only : kim_data_type_type
+        import kim_compute_argument_name_type
+        implicit none
+        type(kim_compute_argument_name_type), intent(in), value :: &
+          compute_argument_name
+        type(kim_data_type_type), intent(out) :: data_type
+      end function get_compute_argument_data_type
+    end interface
+    type(kim_compute_argument_name_type), intent(in), value :: &
+      compute_argument_name
+    type(kim_data_type_type), intent(out) :: data_type
+    integer(c_int), intent(out) :: ierr
+
+    ierr = get_compute_argument_data_type(compute_argument_name, data_type)
+  end subroutine kim_get_compute_argument_data_type
 end module kim_compute_argument_name_module

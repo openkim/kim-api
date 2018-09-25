@@ -34,7 +34,9 @@
 module kim_length_unit_module
   use, intrinsic :: iso_c_binding
   implicit none
-  private
+  private &
+    kim_length_unit_equal, &
+    kim_length_unit_not_equal
 
   public &
     kim_length_unit_type, &
@@ -50,8 +52,8 @@ module kim_length_unit_module
     kim_length_unit_m, &
     kim_length_unit_nm, &
 
-    kim_length_unit_get_number_of_length_units, &
-    kim_length_unit_get_length_unit
+    kim_get_number_of_length_units, &
+    kim_get_length_unit
 
 
   type, bind(c) :: kim_length_unit_type
@@ -78,56 +80,109 @@ module kim_length_unit_module
     :: kim_length_unit_nm
 
   interface operator (.eq.)
-    logical function kim_length_unit_equal(left, right)
-      use, intrinsic :: iso_c_binding
-      import kim_length_unit_type
-      implicit none
-      type(kim_length_unit_type), intent(in) :: left
-      type(kim_length_unit_type), intent(in) :: right
-    end function kim_length_unit_equal
+    module procedure kim_length_unit_equal
   end interface operator (.eq.)
 
   interface operator (.ne.)
-  logical function kim_length_unit_not_equal(left, right)
+    module procedure kim_length_unit_not_equal
+  end interface operator (.ne.)
+
+contains
+  subroutine kim_length_unit_from_string(string, length_unit)
     use, intrinsic :: iso_c_binding
-    import kim_length_unit_type
+    implicit none
+    interface
+      type(kim_length_unit_type) function from_string(string) &
+        bind(c, name="KIM_LengthUnit_FromString")
+        use, intrinsic :: iso_c_binding
+        import kim_length_unit_type
+        implicit none
+        character(c_char), intent(in) :: string(*)
+      end function from_string
+    end interface
+    character(len=*, kind=c_char), intent(in) :: string
+    type(kim_length_unit_type), intent(out) :: length_unit
+
+    length_unit = from_string(trim(string)//c_null_char)
+  end subroutine kim_length_unit_from_string
+
+  logical function kim_length_unit_equal(left, right)
+    use, intrinsic :: iso_c_binding
     implicit none
     type(kim_length_unit_type), intent(in) :: left
     type(kim_length_unit_type), intent(in) :: right
+
+    kim_length_unit_equal &
+      = (left%length_unit_id .eq. right%length_unit_id)
+  end function kim_length_unit_equal
+
+  logical function kim_length_unit_not_equal(left, right)
+    use, intrinsic :: iso_c_binding
+    implicit none
+    type(kim_length_unit_type), intent(in) :: left
+    type(kim_length_unit_type), intent(in) :: right
+
+    kim_length_unit_not_equal = .not. (left .eq. right)
   end function kim_length_unit_not_equal
-  end interface operator (.ne.)
 
-  interface
-    subroutine kim_length_unit_from_string(string, length_unit)
-      use, intrinsic :: iso_c_binding
-      import kim_length_unit_type
-      implicit none
-      character(len=*, kind=c_char), intent(in) :: string
-      type(kim_length_unit_type), intent(out) :: length_unit
-    end subroutine kim_length_unit_from_string
+  subroutine kim_length_unit_string(length_unit, string)
+    use, intrinsic :: iso_c_binding
+    use kim_convert_string_module, only : kim_convert_string
+    implicit none
+    interface
+      type(c_ptr) function get_string(length_unit) &
+        bind(c, name="KIM_LengthUnit_String")
+        use, intrinsic :: iso_c_binding
+        import kim_length_unit_type
+        implicit none
+        type(kim_length_unit_type), intent(in), value :: length_unit
+      end function get_string
+    end interface
+    type(kim_length_unit_type), intent(in), value :: length_unit
+    character(len=*, kind=c_char), intent(out) :: string
 
-    subroutine kim_length_unit_string(length_unit, string)
-      use, intrinsic :: iso_c_binding
-      import kim_length_unit_type
-      implicit none
-      type(kim_length_unit_type), intent(in), value :: length_unit
-      character(len=*, kind=c_char), intent(out) :: string
-    end subroutine kim_length_unit_string
+    type(c_ptr) :: p
 
-    subroutine kim_length_unit_get_number_of_length_units( &
-      number_of_length_units)
-      use, intrinsic :: iso_c_binding
-      implicit none
-      integer(c_int), intent(out) :: number_of_length_units
-    end subroutine kim_length_unit_get_number_of_length_units
+    p = get_string(length_unit)
+    if (c_associated(p)) then
+      call kim_convert_string(p, string)
+    else
+      string = ""
+    end if
+  end subroutine kim_length_unit_string
 
-    subroutine kim_length_unit_get_length_unit(index, length_unit, ierr)
-      use, intrinsic :: iso_c_binding
-      import kim_length_unit_type
-      implicit none
-      integer(c_int), intent(in), value :: index
-      type(kim_length_unit_type), intent(out) :: length_unit
-      integer(c_int), intent(out) :: ierr
-    end subroutine kim_length_unit_get_length_unit
-  end interface
+  subroutine kim_get_number_of_length_units(number_of_length_units)
+    use, intrinsic :: iso_c_binding
+    implicit none
+    interface
+      subroutine get_number_of_length_units(number_of_length_units) &
+        bind(c, name="KIM_LENGTH_UNIT_GetNumberOfLengthUnits")
+        use, intrinsic :: iso_c_binding
+        integer(c_int), intent(out) :: number_of_length_units
+      end subroutine get_number_of_length_units
+    end interface
+    integer(c_int), intent(out) :: number_of_length_units
+
+    call get_number_of_length_units(number_of_length_units)
+  end subroutine kim_get_number_of_length_units
+
+  subroutine kim_get_length_unit(index, length_unit, ierr)
+    use, intrinsic :: iso_c_binding
+    implicit none
+    interface
+      integer(c_int) function get_length_unit(index, length_unit) &
+        bind(c, name="KIM_LENGTH_UNIT_GetLengthUnit")
+        use, intrinsic :: iso_c_binding
+        import kim_length_unit_type
+        implicit none
+        integer(c_int), intent(in), value :: index
+        type(kim_length_unit_type), intent(out) :: length_unit
+      end function get_length_unit
+    end interface
+    integer(c_int), intent(in), value :: index
+    type(kim_length_unit_type), intent(out) :: length_unit
+    integer(c_int), intent(out) :: ierr
+
+    ierr = get_length_unit(index-1, length_unit)
+  end subroutine kim_get_length_unit
 end module kim_length_unit_module
