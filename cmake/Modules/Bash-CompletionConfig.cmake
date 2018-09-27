@@ -33,10 +33,14 @@
 # - bash-completionConfig
 #
 # Sets the install path for bash completions
-find_package(bash-completion)
-if(BASH_COMPLETION_FOUND)
-  message(STATUS "Using bash completion dir ${CMAKE_INSTALL_PREFIX}${BASH_COMPLETION_COMPLETIONSDIR}")
-else()
-  set(BASH_COMPLETION_COMPLETIONSDIR "/etc/bash_completion.d")
-  message(STATUS "Using fallback bash completion dir ${CMAKE_INSTALL_PREFIX}${BASH_COMPLETION_COMPLETIONSDIR}")
+
+find_package(bash-completion QUIET)
+if(NOT
+    ((BASH_COMPLETION_FOUND)
+      AND
+      ("${CMAKE_INSTALL_PREFIX}" IN_LIST KIM_API_STANDARD_INSTALL_PREFIXES)
+      )
+    )
+  set(BASH_COMPLETION_COMPLETIONSDIR "${CMAKE_INSTALL_FULL_SYSCONFDIR}/bash_completion.d")
 endif()
+message(STATUS "Using bash-completion dir ${BASH_COMPLETION_COMPLETIONSDIR}")

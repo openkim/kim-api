@@ -35,6 +35,8 @@
 
 # Define other internal variables
 #
+set(KIM_API_STANDARD_INSTALL_PREFIXES "/" "/usr" "/usr/local" CACHE INTERNAL "Cononical list of standard install prefixes")
+#
 set(KIM_API_CMAKE_DIR_IDENTIFIER "cmake" CACHE INTERNAL "Canonical id for the CMake dir")
 #
 set(KIM_API_PKG_CONFIG_DIR_IDENTIFIER "pkgconfig" CACHE INTERNAL "Canonical id for pkg-config dir")
