@@ -233,14 +233,14 @@ $ tar Jxvf kim-api-vX.Y.Z.txz
 $ cd kim-api-vX.Y.Z
 $ mkdir build
 $ cd build
-$ camke .. -DCMAKE_BUILD_TYPE=Release
+$ cmake .. -DCMAKE_BUILD_TYPE=Release
 $ make
 
 If you want, before installing the package, you can run the tests.
 
 $ make test
 
-Now, install the pacakge.
+Now, install the package.
 
 $ sudo make install
 $ sudo ldconfig  # All linux systems should do this; on Redhat-like systems you may need to first add /usr/local/lib to /etc/ld.so.conf
@@ -281,11 +281,11 @@ Collection (GCC) version X installed with the compilers named 'gcc-X', 'g++-X',
 and 'gfortran-X', for the C, C++, and Fortran compilers, respectively.  Then,
 to force CMake to use these compilers, replace the command (from above)
 
-$ camke .. -DCMAKE_BUILD_TYPE=Release
+$ cmake .. -DCMAKE_BUILD_TYPE=Release
 
 with
 
-$ CC=gcc-X CXX=g++-X FC=gfortran-X camke .. -DCMAKE_BUILD_TYPE=Release
+$ CC=gcc-X CXX=g++-X FC=gfortran-X cmake .. -DCMAKE_BUILD_TYPE=Release
 
 D.2.2 CMAKE_BUILD_TYPE
 
@@ -306,23 +306,23 @@ permission and/or do not want to install the KIM API to the global location,
 you can change where CMake installs the KIM API by replacing the command (from
 above)
 
-$ camke .. -DCMAKE_BUILD_TYPE=Release
+$ cmake .. -DCMAKE_BUILD_TYPE=Release
 
 with
 
-$ camke .. -DCMAKE_INSTALL_PREFIX="/install/prefix/path" -DCMAKE_BUILD_TYPE=Release
+$ cmake .. -DCMAKE_INSTALL_PREFIX="/install/prefix/path" -DCMAKE_BUILD_TYPE=Release
 
 where "/install/prefix/path" should be replaced with your desired prefix.  For
-example, to install the KIM API in "local" subdirectory of your home directory,
-use "${HOME}/local".  When installed in such a directory, the user may employ
-the "kim-api-vX-activate" utility to setup the PATH and bash completions.  For
-example:
+example, to install the KIM API in the "local" subdirectory of your home
+directory, use "${HOME}/local".  When installed in such a directory, the user
+may employ the "kim-api-vX-activate" utility to setup the PATH and bash
+completions.  For example:
 
 $ source ${HOME}/local/bin/kim-api-vX-activate
 
 D.2.4 KIM API SPECIFIC BUILD OPTIONS
 
-The KIM API defines two additional regular build option and four advanced
+The KIM API defines two additional regular build options and four advanced
 options.
 
 * KIM_API_LOG_MAXIMUM_LEVEL (="DEBUG" if CMAKE_BUILD_TYPE is "Debug", otherwise
