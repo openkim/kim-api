@@ -77,12 +77,6 @@ static int compute_routine(
 static int compute_arguments_create(
     KIM_ModelCompute const * const modelCompute,
     KIM_ModelComputeArgumentsCreate * const modelComputeArgumentsCreate);
-static int compute_arguments_destroy(
-    KIM_ModelCompute const * const modelCompute,
-    KIM_ModelComputeArgumentsDestroy * const modelComputeArgumentsDestroy);
-
-/* Define prototype for refresh routine */
-static int refresh_routine(KIM_ModelRefresh * const modelRefresh);
 
 /* Define prototypes for pair potential calculations */
 static void calc_phi(double const * epsilon,
@@ -425,10 +419,7 @@ int model_driver_create(
   /* Use function pointer definitions to verify prototypes */
   KIM_ModelDestroyFunction * destroy = destroy_routine;
   KIM_ModelComputeArgumentsCreateFunction * CACreate = compute_arguments_create;
-  KIM_ModelComputeArgumentsDestroyFunction * CADestroy
-      = compute_arguments_destroy;
   KIM_ModelComputeFunction * compute = compute_routine;
-  KIM_ModelRefreshFunction * refresh = refresh_routine;
 
 
   (void)requestedLengthUnit;  /* avoid unused parameter warnings */
@@ -468,18 +459,10 @@ int model_driver_create(
       modelDriverCreate,
       KIM_LANGUAGE_NAME_c,
       (KIM_Function *) CACreate);
-  KIM_ModelDriverCreate_SetComputeArgumentsDestroyPointer(
-      modelDriverCreate,
-      KIM_LANGUAGE_NAME_c,
-      (KIM_Function *) CADestroy);
   KIM_ModelDriverCreate_SetComputePointer(
       modelDriverCreate,
       KIM_LANGUAGE_NAME_c,
       (KIM_Function *) compute);
-  KIM_ModelDriverCreate_SetRefreshPointer(
-      modelDriverCreate,
-      KIM_LANGUAGE_NAME_c,
-      (KIM_Function *) refresh);
 
   /* get number of parameter files */
   KIM_ModelDriverCreate_GetNumberOfParameterFiles(
@@ -588,26 +571,6 @@ int model_driver_create(
   return FALSE;
 }
 
-/* refresh function */
-static int refresh_routine(KIM_ModelRefresh * const modelRefresh)
-{
-  /* Local variables */
-  struct model_buffer* buffer;
-
-  /* get model buffer from KIM object */
-  KIM_ModelRefresh_GetModelBufferPointer(modelRefresh, (void **) &buffer);
-
-  KIM_ModelRefresh_SetInfluenceDistancePointer(
-      modelRefresh, &(buffer->influenceDistance));
-  KIM_ModelRefresh_SetNeighborListPointers(
-      modelRefresh,
-      1,
-      &(buffer->cutoff),
-      &(buffer->modelWillNotRequestNeighborsOfNoncontributingParticles));
-
-  return FALSE;
-}
-
 /* destroy function */
 static int destroy_routine(KIM_ModelDestroy * const modelDestroy)
 {
@@ -662,18 +625,4 @@ static int compute_arguments_create(
   {
     return FALSE;
   }
-}
-
-/* compue arguments destroy routine */
-static int compute_arguments_destroy(
-    KIM_ModelCompute const * const modelCompute,
-    KIM_ModelComputeArgumentsDestroy * const modelComputeArgumentsDestroy)
-{
-
-  (void)modelCompute;  /* avoid unused parameter warning */
-  (void)modelComputeArgumentsDestroy;
-
-  /* nothing to be done */
-
-  return FALSE;
 }

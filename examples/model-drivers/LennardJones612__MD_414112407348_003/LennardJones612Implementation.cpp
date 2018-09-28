@@ -221,23 +221,6 @@ int LennardJones612Implementation::ComputeArgumentsCreate(
   return ier;
 }
 
-//******************************************************************************
-int LennardJones612Implementation::ComputeArgumentsDestroy(
-    KIM::ModelComputeArgumentsDestroy * const modelComputeArgumentsDestroy)
-    const
-{
-  int ier;
-
-  // nothing else to do for this case
-
-  (void)modelComputeArgumentsDestroy;  // avoid unused parameter warning
-
-  // everything is good
-  ier = false;
-  return ier;
-}
-
-
 //==============================================================================
 //
 // Implementation of LennardJones612Implementation private member functions
@@ -728,8 +711,6 @@ int LennardJones612Implementation::RegisterKIMFunctions(
   KIM::ModelComputeFunction * compute = LennardJones612::Compute;
   KIM::ModelComputeArgumentsCreateFunction * CACreate
       = LennardJones612::ComputeArgumentsCreate;
-  KIM::ModelComputeArgumentsDestroyFunction * CADestroy
-      = LennardJones612::ComputeArgumentsDestroy;
 
   // register the destroy() and reinit() functions
   error = modelDriverCreate->SetDestroyPointer(
@@ -739,11 +720,7 @@ int LennardJones612Implementation::RegisterKIMFunctions(
       || modelDriverCreate->SetComputePointer(
           KIM::LANGUAGE_NAME::cpp, reinterpret_cast<KIM::Function *>(compute))
       || modelDriverCreate->SetComputeArgumentsCreatePointer(
-          KIM::LANGUAGE_NAME::cpp, reinterpret_cast<KIM::Function *>(CACreate))
-      || modelDriverCreate->SetComputeArgumentsDestroyPointer(
-          KIM::LANGUAGE_NAME::cpp,
-          reinterpret_cast<KIM::Function *>(CADestroy));
-
+          KIM::LANGUAGE_NAME::cpp, reinterpret_cast<KIM::Function *>(CACreate));
   return error;
 }
 

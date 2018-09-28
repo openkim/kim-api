@@ -78,10 +78,6 @@ class LennardJones_Ar
     *error = *error || modelCreate->SetDestroyPointer(
         KIM::LANGUAGE_NAME::cpp,
         reinterpret_cast<KIM::Function *>(destroy));
-    KIM::ModelRefreshFunction * refresh = LennardJones_Ar::Refresh;
-    *error = *error || modelCreate->SetRefreshPointer(
-        KIM::LANGUAGE_NAME::cpp,
-        reinterpret_cast<KIM::Function *>(refresh));
     KIM::ModelComputeFunction * compute = LennardJones_Ar::Compute;
     *error = *error || modelCreate->SetComputePointer(
         KIM::LANGUAGE_NAME::cpp,
@@ -91,11 +87,6 @@ class LennardJones_Ar
     *error = *error || modelCreate->SetComputeArgumentsCreatePointer(
         KIM::LANGUAGE_NAME::cpp,
         reinterpret_cast<KIM::Function *>(CACreate));
-    KIM::ModelComputeArgumentsDestroyFunction * CADestroy
-        = LennardJones_Ar::ComputeArgumentsDestroy;
-    *error = *error || modelCreate->SetComputeArgumentsDestroyPointer(
-        KIM::LANGUAGE_NAME::cpp,
-        reinterpret_cast<KIM::Function *>(CADestroy));
     if (*error) return;
 
     // everything is good
@@ -124,24 +115,6 @@ class LennardJones_Ar
     // everything is good
     return false;
   }
-
-  //****************************************************************************
-  static int Refresh(KIM::ModelRefresh * const modelRefresh)
-  {
-    LennardJones_Ar * model;
-    modelRefresh->GetModelBufferPointer(reinterpret_cast<void **>(&model));
-
-    // nothing to do
-
-    modelRefresh->SetInfluenceDistancePointer(&(model->influenceDistance_));
-    modelRefresh->SetNeighborListPointers(
-        1,
-        &(model->cutoff_),
-        &(model->modelWillNotRequestNeighborsOfNoncontributingParticles_));
-
-    // everything is good
-    return false;
-  };
 
   //****************************************************************************
 #undef  KIM_LOGGER_OBJECT_NAME
@@ -295,19 +268,6 @@ class LennardJones_Ar
 
     return error;
   }
-  //****************************************************************************
-  static int ComputeArgumentsDestroy(
-      KIM::ModelCompute const * const modelCompute,
-      KIM::ModelComputeArgumentsDestroy * const modelComputeArgumentsDestroy)
-  {
-    // noting to do
-
-    (void)modelCompute;  // avoid unused parameter warnings
-    (void)modelComputeArgumentsDestroy;
-
-    // everything is good
-    return false;
-  };
 
  private:
   //****************************************************************************

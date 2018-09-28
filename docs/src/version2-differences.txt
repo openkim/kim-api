@@ -59,7 +59,7 @@ a guiding principle.
   roughly, to the kim-api-v1 NEIGH_PURE_F NBC.  Additionally:
 
   - All neighbor lists in kim-api-v2 are full, unordered, and random-access.
-    (However, see \ref neighbor_list_hints "Neighbor List Hints".)
+    (However, see \ref neighbor_list_hint "Neighbor List Hint".)
 
   - Particle Contributing (a.k.a., padding or ghost-atom) status (contributing
     or non-contributing) is explicitly specified in the *particleContributing*
@@ -260,7 +260,7 @@ N/A                                    | KIM::ModelDriverCreate::GetParameterFil
 KIM_API_get_num_params()               | KIM::Model::GetNumberOfParameters()  |
 KIM_API_get_parameter()                | KIM::Model::GetParameter()           |
 N/A                                    | KIM::Model::SetParameter()           |
-N/A                                    | KIM::Model::GetParameterDataTypeExtentAndDescription() |
+N/A                                    | KIM::Model::GetParameterDataTypeExtentNameAndDescription() |
 N/A                                    | KIM::ModelCreate::SetParameterPointer(), KIM::ModelDriverCreate::SetParameterPointer() |
 KIM_API_get_num_free_params()          | N/A                                  |
 KIM_API_get_free_parameter()           | N/A                                  |

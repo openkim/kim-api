@@ -50,10 +50,8 @@ implicit none
 save
 private
 public Compute_Energy_Forces, &
-       model_refresh_func, &
        model_destroy_func, &
        model_compute_arguments_create, &
-       model_compute_arguments_destroy, &
        model_cutoff, &
        speccode, &
        buffer_type
@@ -394,36 +392,6 @@ end subroutine model_destroy_func
 
 !-------------------------------------------------------------------------------
 !
-! Model refresh routine (REQUIRED)
-!
-!-------------------------------------------------------------------------------
-subroutine model_refresh_func(model_refresh_handle, ierr) bind(c)
-  use, intrinsic :: iso_c_binding
-  use kim_model_refresh_headers_module
-  implicit none
-
-  !-- Transferred variables
-  type(kim_model_refresh_handle_type), intent(inout) :: model_refresh_handle
-  integer(c_int), intent(out) :: ierr
-
-  type(buffer_type), pointer :: buf; type(c_ptr) :: pbuf
-
-  call kim_model_refresh_get_model_buffer_pointer(model_refresh_handle, pbuf)
-  call c_f_pointer(pbuf, buf)
-
-  call kim_model_refresh_log_entry(model_refresh_handle, &
-    kim_log_verbosity_information, "Resettings influence distance and cutoffs")
-  call kim_set_influence_distance_pointer( &
-    model_refresh_handle, buf%cutoff(1))
-  call kim_set_neighbor_list_pointers( &
-    model_refresh_handle, 1, buf%cutoff, &
-    buf%model_will_not_request_neighbors_of_noncontributing_particles)
-
-  ierr = 0  ! everything is good
-end subroutine model_refresh_func
-
-!-------------------------------------------------------------------------------
-!
 ! Model compute arguments create routine (REQUIRED)
 !
 !-------------------------------------------------------------------------------
@@ -482,34 +450,6 @@ subroutine model_compute_arguments_create(model_compute_handle, &
   ierr = 0
   return
 end subroutine model_compute_arguments_create
-
-!-------------------------------------------------------------------------------
-!
-! Model compute arguments destroy routine (REQUIRED)
-!
-!-------------------------------------------------------------------------------
-subroutine model_compute_arguments_destroy(model_compute_handle, &
-  model_compute_arguments_destroy_handle, ierr) bind(c)
-  use, intrinsic :: iso_c_binding
-  use kim_model_compute_arguments_destroy_headers_module
-  implicit none
-
-  !-- Transferred variables
-  type(kim_model_compute_handle_type), intent(in) :: model_compute_handle
-  type(kim_model_compute_arguments_destroy_handle_type), intent(inout) :: &
-    model_compute_arguments_destroy_handle
-  integer(c_int), intent(out) :: ierr
-
-  ! avoid unsed dummy argument warnings
-  if (model_compute_handle .eq. kim_model_compute_null_handle) continue
-  if (model_compute_arguments_destroy_handle &
-    .eq. kim_model_compute_arguments_destroy_null_handle) continue
-
-  ! nothing to do
-
-  ierr = 0
-  return
-end subroutine model_compute_arguments_destroy
 
 end module ex_model_Ar_P_MLJ_F03
 
@@ -577,16 +517,8 @@ call kim_set_compute_arguments_create_pointer( &
   model_create_handle, kim_language_name_fortran, &
   c_funloc(model_compute_arguments_create), ierr2)
 ierr = ierr + ierr2
-call kim_set_compute_arguments_destroy_pointer( &
-  model_create_handle, kim_language_name_fortran, &
-  c_funloc(model_compute_arguments_destroy), ierr2)
-ierr = ierr + ierr2
 call kim_set_destroy_pointer(model_create_handle, &
   kim_language_name_fortran, c_funloc(model_destroy_func), ierr2)
-ierr = ierr + ierr2
-call kim_set_refresh_pointer( &
-  model_create_handle, kim_language_name_fortran, &
-  c_funloc(model_refresh_func), ierr2)
 ierr = ierr + ierr2
 
 ! allocate buffer

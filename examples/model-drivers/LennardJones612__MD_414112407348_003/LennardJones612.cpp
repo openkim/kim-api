@@ -169,16 +169,3 @@ int LennardJones612::ComputeArgumentsCreate(
   return modelObject->implementation_
       ->ComputeArgumentsCreate(modelComputeArgumentsCreate);
 }
-
-//******************************************************************************
-// static member function
-int LennardJones612::ComputeArgumentsDestroy(
-    KIM::ModelCompute const * const modelCompute,
-    KIM::ModelComputeArgumentsDestroy * const modelComputeArgumentsDestroy)
-{
-  LennardJones612 * modelObject;
-  modelCompute->GetModelBufferPointer(reinterpret_cast<void**>(&modelObject));
-
-  return modelObject->implementation_
-      ->ComputeArgumentsDestroy(modelComputeArgumentsDestroy);
-}
