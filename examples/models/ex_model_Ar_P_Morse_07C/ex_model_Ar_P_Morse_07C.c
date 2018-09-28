@@ -84,10 +84,6 @@ static int model_compute(
 static int compute_arguments_create(
     KIM_ModelCompute const * const modelCompute,
     KIM_ModelComputeArgumentsCreate * const modelComputeArgumentsCreate);
-static int compute_arguments_destroy(
-    KIM_ModelCompute const * const modelCompute,
-    KIM_ModelComputeArgumentsDestroy * const modelComputeArgumentsDestroy);
-static int model_refresh(KIM_ModelRefresh * const modelRefresh);
 static int model_destroy(KIM_ModelDestroy * const modelDestroy);
 
 /* Define prototypes for pair potential calculations */
@@ -465,10 +461,7 @@ int model_create(KIM_ModelCreate * const modelCreate,
   /* use function pointer definitints to verify prototypes */
   KIM_ModelComputeFunction * compute = model_compute;
   KIM_ModelComputeArgumentsCreateFunction * CACreate = compute_arguments_create;
-  KIM_ModelComputeArgumentsDestroyFunction * CADestroy
-      = compute_arguments_destroy;
   KIM_ModelDestroyFunction * destroy = model_destroy;
-  KIM_ModelRefreshFunction * refresh = model_refresh;
 
   (void)requestedLengthUnit;  /* avoid unused parameter warnings */
   (void)requestedEnergyUnit;
@@ -510,20 +503,10 @@ int model_create(KIM_ModelCreate * const modelCreate,
           KIM_LANGUAGE_NAME_c,
           (KIM_Function *) CACreate);
   error = error ||
-      KIM_ModelCreate_SetComputeArgumentsDestroyPointer(
-          modelCreate,
-          KIM_LANGUAGE_NAME_c,
-          (KIM_Function *) CADestroy);
-  error = error ||
       KIM_ModelCreate_SetDestroyPointer(
           modelCreate,
           KIM_LANGUAGE_NAME_c,
           (KIM_Function *) destroy);
-  error = error ||
-      KIM_ModelCreate_SetRefreshPointer(
-          modelCreate,
-          KIM_LANGUAGE_NAME_c,
-          (KIM_Function *) refresh);
 
   /* allocate buffer */
   bufferPointer = (buffer *) malloc(sizeof(buffer));
@@ -561,35 +544,7 @@ int model_create(KIM_ModelCreate * const modelCreate,
     return FALSE;
 }
 
-/* refresh function */
-#undef  KIM_LOGGER_FUNCTION_NAME
-#define KIM_LOGGER_FUNCTION_NAME KIM_ModelRefresh_LogEntry
-#undef  KIM_LOGGER_OBJECT_NAME
-#define KIM_LOGGER_OBJECT_NAME modelRefresh
-/**/
-static int model_refresh(KIM_ModelRefresh * const modelRefresh)
-{
-  /* Local variables */
-  buffer * bufferPointer;
-
-  /* get model buffer from KIM object */
-  LOG_INFORMATION("Getting model buffer");
-  KIM_ModelRefresh_GetModelBufferPointer(modelRefresh,
-                                         (void **) &bufferPointer);
-
-  LOG_INFORMATION("Resetting influence distance and cutoffs");
-  KIM_ModelRefresh_SetInfluenceDistancePointer(
-      modelRefresh, &(bufferPointer->influenceDistance));
-  KIM_ModelRefresh_SetNeighborListPointers(
-      modelRefresh,
-      1,
-      &(bufferPointer->cutoff),
-      &(bufferPointer->modelWillNotRequestNeighborsOfNoncontributingParticles));
-
-  return FALSE;
-}
-
-/* Initialization function */
+/* Destroy function */
 #undef  KIM_LOGGER_FUNCTION_NAME
 #define KIM_LOGGER_FUNCTION_NAME KIM_ModelDestroy_LogEntry
 #undef  KIM_LOGGER_OBJECT_NAME
@@ -656,23 +611,4 @@ static int compute_arguments_create(
   }
   else
     return FALSE;
-}
-
-/* compue arguments destroy routine */
-#undef  KIM_LOGGER_FUNCTION_NAME
-#define KIM_LOGGER_FUNCTION_NAME KIM_ModelCompute_LogEntry
-#undef  KIM_LOGGER_OBJECT_NAME
-#define KIM_LOGGER_OBJECT_NAME modelCompute
-/**/
-static int compute_arguments_destroy(
-    KIM_ModelCompute const * const modelCompute,
-    KIM_ModelComputeArgumentsDestroy * const modelComputeArgumentsDestroy)
-{
-
-  (void)modelCompute;  /* avoid unused parameter warnings */
-  (void)modelComputeArgumentsDestroy;
-
-  /* nothing to be done */
-
-  return FALSE;
 }

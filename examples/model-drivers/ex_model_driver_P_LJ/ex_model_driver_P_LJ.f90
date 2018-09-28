@@ -52,7 +52,6 @@ private
 public BUFFER_TYPE,               &
        Compute_Energy_Forces,     &
        compute_arguments_create,  &
-       compute_arguments_destroy, &
        refresh,                   &
        destroy,                   &
        calc_phi,                  &
@@ -596,33 +595,6 @@ return
 
 end subroutine compute_arguments_create
 
-!-------------------------------------------------------------------------------
-!
-! Model driver compute arguments destroy routine
-!
-!-------------------------------------------------------------------------------
-subroutine compute_arguments_destroy(model_compute_handle, &
-  model_compute_arguments_destroy_handle, ierr) bind(c)
-implicit none
-
-!-- Transferred variables
-type(kim_model_compute_handle_type), intent(in) :: model_compute_handle
-type(kim_model_compute_arguments_destroy_handle_type), intent(inout) :: &
-  model_compute_arguments_destroy_handle
-integer(c_int), intent(out) :: ierr
-
-! avoid unsed dummy argument warnings
-if (model_compute_handle .eq. kim_model_compute_null_handle) continue
-if (model_compute_arguments_destroy_handle &
-  .eq. kim_model_compute_arguments_destroy_null_handle) continue
-
-! nothing to be done
-
-ierr = 0
-
-return
-end subroutine compute_arguments_destroy
-
 end module ex_model_driver_p_lj
 
 !-------------------------------------------------------------------------------
@@ -696,10 +668,6 @@ call kim_model_driver_create_set_compute_pointer( &
 call kim_model_driver_create_set_compute_arguments_create_pointer( &
   model_driver_create_handle, kim_language_name_fortran, &
   c_funloc(compute_arguments_create), ierr2)
-ierr = ierr + ierr2
-call kim_model_driver_create_set_compute_arguments_destroy_pointer( &
-  model_driver_create_handle, kim_language_name_fortran, &
-  c_funloc(compute_arguments_destroy), ierr2)
 ierr = ierr + ierr2
 call kim_model_driver_create_set_refresh_pointer( &
   model_driver_create_handle, kim_language_name_fortran, &

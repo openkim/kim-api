@@ -1332,6 +1332,14 @@ int ModelImplementation::ClearThenRefresh()
 #endif
   LOG_DEBUG("Enter  " + callString);
 
+  if (parameterPointer_.size() == 0)
+  {
+    LOG_ERROR("ClearThenRefresh() called but no parameter pointers have been "
+              "set.");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
+
   influenceDistance_ = NULL;
   numberOfNeighborLists_ = 0;
   cutoffs_ = NULL;
@@ -2118,22 +2126,6 @@ int ModelImplementation::ModelCreate(
     return true;
   }
 
-  if (refreshFunction_ == NULL)
-  {
-    LOG_ERROR("Model supplied Create() routine did not set "
-              "RefreshPointer.");
-    LOG_DEBUG("Exit 1=" + callString);
-    return true;
-  }
-
-  if (destroyFunction_ == NULL)
-  {
-    LOG_ERROR("Model supplied Create() routine did not set "
-              "DestroyPointer.");
-    LOG_DEBUG("Exit 1=" + callString);
-    return true;
-  }
-
   if (computeArgumentsCreateFunction_ == NULL)
   {
     LOG_ERROR("Model supplied Create() routine did not set "
@@ -2142,18 +2134,49 @@ int ModelImplementation::ModelCreate(
     return true;
   }
 
-  if (computeArgumentsDestroyFunction_ == NULL)
-  {
-    LOG_ERROR("Model supplied Create() routine did not set "
-              "ComputeArgumentsDestroyPointer.");
-    LOG_DEBUG("Exit 1=" + callString);
-    return true;
-  }
-
   if (computeFunction_ == NULL)
   {
     LOG_ERROR("Model supplied Create() routine did not set "
               "ComputePointer.");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
+
+  if (parameterPointer_.size() > 0)
+  {
+    if (refreshFunction_ == NULL)  // Must be provided if parameter pointers set
+    {
+      LOG_ERROR("Model supplied Create() routine set parameter pointer(s) but "
+                "did not set RefreshPointer.");
+      LOG_DEBUG("Exit 1=" + callString);
+      return true;
+    }
+  }
+  else
+  {
+    if (refreshFunction_ != NULL)  // May not be provided if no parameters set
+    {
+      LOG_ERROR("Model supplied Create() routine set RefreshPointer but "
+                "did not set parameter pointer(s).");
+      LOG_DEBUG("Exit 1=" + callString);
+      return true;
+    }
+  }
+
+  // computeArgumentsDestroyFunction is optional
+  //
+  // if (computeArgumentsDestroyFunction_ == NULL)
+  // {
+  //   LOG_ERROR("Model supplied Create() routine did not set "
+  //             "ComputeArgumentsDestroyPointer.");
+  //   LOG_DEBUG("Exit 1=" + callString);
+  //   return true;
+  // }
+
+  if (destroyFunction_ == NULL)
+  {
+    LOG_ERROR("Model supplied Create() routine did not set "
+              "DestroyPointer.");
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
@@ -2314,6 +2337,12 @@ int ModelImplementation::ModelComputeArgumentsDestroy(ComputeArguments * const
   std::string const callString = "ModelComputeArgumentsDestroy().";
 #endif
   LOG_DEBUG("Enter  " + callString);
+
+  if (computeArgumentsDestroyFunction_ == NULL)
+  {
+    LOG_DEBUG("Exit 0=" + callString);
+    return false;
+  }
 
   ModelComputeArgumentsDestroyFunction * CppComputeArgumentsDestroy
       = reinterpret_cast<ModelComputeArgumentsDestroyFunction *>(
