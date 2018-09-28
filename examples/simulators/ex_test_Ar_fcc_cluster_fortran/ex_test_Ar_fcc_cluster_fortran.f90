@@ -400,7 +400,7 @@ program ex_test_ar_fcc_cluster_fortran
 
   ! Create empty KIM object
   !
-  call kim_create(kim_numbering_one_based, &
+  call kim_model_create(kim_numbering_one_based, &
     kim_length_unit_a, &
     kim_energy_unit_ev, &
     kim_charge_unit_e, &
@@ -543,6 +543,6 @@ program ex_test_ar_fcc_cluster_fortran
   if (ierr /= 0) then
     call my_error("compute_arguments_destroy")
   endif
-  call kim_destroy(model_handle)
+  call kim_model_destroy(model_handle)
 
 end program ex_test_ar_fcc_cluster_fortran

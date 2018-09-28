@@ -42,8 +42,8 @@ module kim_model_module
     kim_model_null_handle, &
     operator (.eq.), &
     operator (.ne.), &
-    kim_create, &
-    kim_destroy, &
+    kim_model_create, &
+    kim_model_destroy, &
     kim_get_influence_distance, &
     kim_get_number_of_neighbor_lists, &
     kim_get_neighbor_list_values, &
@@ -118,7 +118,7 @@ contains
     kim_model_handle_not_equal = .not. (left .eq. right)
   end function kim_model_handle_not_equal
 
-  subroutine kim_create(numbering, requested_length_unit, &
+  subroutine kim_model_create(numbering, requested_length_unit, &
     requested_energy_unit, requested_charge_unit, &
     requested_temperature_unit, requested_time_unit, model_name, &
     requested_units_accepted, model_handle, ierr)
@@ -169,9 +169,9 @@ contains
       requested_charge_unit, requested_temperature_unit, requested_time_unit, &
       trim(model_name)//c_null_char, requested_units_accepted, pmodel)
     model_handle%p = pmodel
-  end subroutine kim_create
+  end subroutine kim_model_create
 
-  subroutine kim_destroy(model_handle)
+  subroutine kim_model_destroy(model_handle)
     use, intrinsic :: iso_c_binding
     implicit none
     interface
@@ -187,7 +187,7 @@ contains
     pmodel = model_handle%p
     call destroy(pmodel)
     model_handle%p = c_null_ptr
-  end subroutine kim_destroy
+  end subroutine kim_model_destroy
 
   subroutine kim_get_influence_distance(model_handle, influence_distance)
     use, intrinsic :: iso_c_binding

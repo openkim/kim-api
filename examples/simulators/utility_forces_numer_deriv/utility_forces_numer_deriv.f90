@@ -846,7 +846,7 @@ program vc_forces_numer_deriv
 
   ! Create empty KIM object
   !
-  call kim_create(kim_numbering_one_based, &
+  call kim_model_create(kim_numbering_one_based, &
     kim_length_unit_a, &
     kim_energy_unit_ev, &
     kim_charge_unit_e, &
@@ -1102,7 +1102,7 @@ program vc_forces_numer_deriv
   if (ierr /= 0) then
     call my_error("kim_model_compute_arguments_destroy")
   endif
-  call kim_destroy(model_handle)
+  call kim_model_destroy(model_handle)
 
   ! Print output footer
   !
