@@ -23,9 +23,6 @@
 # All rights reserved.
 #
 # Contributors:
-#    Richard Berger
-#    Christoph Junghans
-#    Ryan S. Elliott
 #    Jim Madge
 #
 
@@ -33,16 +30,17 @@
 # Release: This file is part of the kim-api.git repository.
 #
 
+# - bash-completionConfig
+#
+# Sets the install path for bash completions
 
-set(BASH_COMPLETIONS ${PROJECT_NAME}-completion.bash)
-
-string(MAKE_C_IDENTIFIER "${PROJECT_NAME}" KIM_API_C_ID_PROJECT_NAME)
-
-configure_file(completion.bash.in ${BASH_COMPLETIONS} @ONLY)
-
-include(Bash-CompletionConfig)
-
-install(
-  FILES ${CMAKE_CURRENT_BINARY_DIR}/${BASH_COMPLETIONS}
-  DESTINATION ${BASH_COMPLETION_COMPLETIONSDIR}
-  )
+find_package(bash-completion QUIET)
+if(NOT
+    ((BASH_COMPLETION_FOUND)
+      AND
+      ("${CMAKE_INSTALL_PREFIX}" IN_LIST KIM_API_STANDARD_INSTALL_PREFIXES)
+      )
+    )
+  set(BASH_COMPLETION_COMPLETIONSDIR "${CMAKE_INSTALL_FULL_SYSCONFDIR}/bash_completion.d")
+endif()
+message(STATUS "Using bash-completion dir ${BASH_COMPLETION_COMPLETIONSDIR}")
