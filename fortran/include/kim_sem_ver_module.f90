@@ -37,6 +37,7 @@ module kim_sem_ver_module
   private
 
   public &
+    ! Routines
     kim_get_sem_ver, &
     kim_is_less_than, &
     kim_parse_sem_ver

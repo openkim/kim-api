@@ -34,25 +34,13 @@
 module kim_log_verbosity_module
   use, intrinsic :: iso_c_binding
   implicit none
-  private &
-    kim_log_verbosity_less_than, &
-    kim_log_verbosity_greater_than, &
-    kim_log_verbosity_less_than_equal, &
-    kim_log_verbosity_greater_than_equal, &
-    kim_log_verbosity_equal, &
-    kim_log_verbosity_not_equal
+  private
 
   public &
+    ! Derived types
     kim_log_verbosity_type, &
-    kim_log_verbosity_from_string, &
-    operator (.lt.), &
-    operator (.gt.), &
-    operator (.le.), &
-    operator (.ge.), &
-    operator (.eq.), &
-    operator (.ne.), &
-    kim_log_verbosity_string, &
 
+    ! Constants
     KIM_LOG_VERBOSITY_SILENT, &
     KIM_LOG_VERBOSITY_FATAL, &
     KIM_LOG_VERBOSITY_ERROR, &
@@ -60,6 +48,15 @@ module kim_log_verbosity_module
     KIM_LOG_VERBOSITY_INFORMATION, &
     KIM_LOG_VERBOSITY_DEBUG, &
 
+    ! Routines
+    operator (.lt.), &
+    operator (.gt.), &
+    operator (.le.), &
+    operator (.ge.), &
+    operator (.eq.), &
+    operator (.ne.), &
+    kim_from_string, &
+    kim_to_string, &
     kim_get_number_of_log_verbosities, &
     kim_get_log_verbosity
 
@@ -111,25 +108,15 @@ module kim_log_verbosity_module
     module procedure kim_log_verbosity_not_equal
   end interface operator (.ne.)
 
+  interface kim_from_string
+    module procedure kim_log_verbosity_from_string
+  end interface kim_from_string
+
+  interface kim_to_string
+    module procedure kim_log_verbosity_to_string
+  end interface kim_to_string
+
 contains
-  subroutine kim_log_verbosity_from_string(string, log_verbosity)
-    use, intrinsic :: iso_c_binding
-    implicit none
-    interface
-      type(kim_log_verbosity_type) function from_string(string) &
-        bind(c, name="KIM_LogVerbosity_FromString")
-        use, intrinsic :: iso_c_binding
-        import kim_log_verbosity_type
-        implicit none
-        character(c_char), intent(in) :: string(*)
-      end function from_string
-    end interface
-    character(len=*, kind=c_char), intent(in) :: string
-    type(kim_log_verbosity_type), intent(out) :: log_verbosity
-
-    log_verbosity = from_string(trim(string)//c_null_char)
-  end subroutine kim_log_verbosity_from_string
-
   logical function kim_log_verbosity_less_than(left, right)
     use, intrinsic :: iso_c_binding
     implicit none
@@ -189,7 +176,25 @@ contains
     kim_log_verbosity_not_equal = .not. (left .eq. right)
   end function kim_log_verbosity_not_equal
 
-  subroutine kim_log_verbosity_string(log_verbosity, string)
+  subroutine kim_log_verbosity_from_string(string, log_verbosity)
+    use, intrinsic :: iso_c_binding
+    implicit none
+    interface
+      type(kim_log_verbosity_type) function from_string(string) &
+        bind(c, name="KIM_LogVerbosity_FromString")
+        use, intrinsic :: iso_c_binding
+        import kim_log_verbosity_type
+        implicit none
+        character(c_char), intent(in) :: string(*)
+      end function from_string
+    end interface
+    character(len=*, kind=c_char), intent(in) :: string
+    type(kim_log_verbosity_type), intent(out) :: log_verbosity
+
+    log_verbosity = from_string(trim(string)//c_null_char)
+  end subroutine kim_log_verbosity_from_string
+
+  subroutine kim_log_verbosity_to_string(log_verbosity, string)
     use, intrinsic :: iso_c_binding
     use kim_convert_string_module, only : kim_convert_string
     implicit none
@@ -213,7 +218,7 @@ contains
     else
       string = ""
     end if
-  end subroutine kim_log_verbosity_string
+  end subroutine kim_log_verbosity_to_string
 
   subroutine kim_get_number_of_log_verbosities( &
     number_of_log_verbosities)

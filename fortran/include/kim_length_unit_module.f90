@@ -34,17 +34,13 @@
 module kim_length_unit_module
   use, intrinsic :: iso_c_binding
   implicit none
-  private &
-    kim_length_unit_equal, &
-    kim_length_unit_not_equal
+  private
 
   public &
+    ! Derive types
     kim_length_unit_type, &
-    kim_length_unit_from_string, &
-    operator (.eq.), &
-    operator (.ne.), &
-    kim_length_unit_string, &
 
+    ! Constants
     KIM_LENGTH_UNIT_UNUSED, &
     KIM_LENGTH_UNIT_A, &
     KIM_LENGTH_UNIT_BOHR, &
@@ -52,6 +48,11 @@ module kim_length_unit_module
     KIM_LENGTH_UNIT_M, &
     KIM_LENGTH_UNIT_NM, &
 
+    ! Routines
+    operator (.eq.), &
+    operator (.ne.), &
+    kim_from_string, &
+    kim_to_string, &
     kim_get_number_of_length_units, &
     kim_get_length_unit
 
@@ -87,25 +88,15 @@ module kim_length_unit_module
     module procedure kim_length_unit_not_equal
   end interface operator (.ne.)
 
+  interface kim_from_string
+    module procedure kim_length_unit_from_string
+  end interface kim_from_string
+
+  interface kim_to_string
+    module procedure kim_length_unit_to_string
+  end interface kim_to_string
+
 contains
-  subroutine kim_length_unit_from_string(string, length_unit)
-    use, intrinsic :: iso_c_binding
-    implicit none
-    interface
-      type(kim_length_unit_type) function from_string(string) &
-        bind(c, name="KIM_LengthUnit_FromString")
-        use, intrinsic :: iso_c_binding
-        import kim_length_unit_type
-        implicit none
-        character(c_char), intent(in) :: string(*)
-      end function from_string
-    end interface
-    character(len=*, kind=c_char), intent(in) :: string
-    type(kim_length_unit_type), intent(out) :: length_unit
-
-    length_unit = from_string(trim(string)//c_null_char)
-  end subroutine kim_length_unit_from_string
-
   logical function kim_length_unit_equal(left, right)
     use, intrinsic :: iso_c_binding
     implicit none
@@ -125,7 +116,25 @@ contains
     kim_length_unit_not_equal = .not. (left .eq. right)
   end function kim_length_unit_not_equal
 
-  subroutine kim_length_unit_string(length_unit, string)
+  subroutine kim_length_unit_from_string(string, length_unit)
+    use, intrinsic :: iso_c_binding
+    implicit none
+    interface
+      type(kim_length_unit_type) function from_string(string) &
+        bind(c, name="KIM_LengthUnit_FromString")
+        use, intrinsic :: iso_c_binding
+        import kim_length_unit_type
+        implicit none
+        character(c_char), intent(in) :: string(*)
+      end function from_string
+    end interface
+    character(len=*, kind=c_char), intent(in) :: string
+    type(kim_length_unit_type), intent(out) :: length_unit
+
+    length_unit = from_string(trim(string)//c_null_char)
+  end subroutine kim_length_unit_from_string
+
+  subroutine kim_length_unit_to_string(length_unit, string)
     use, intrinsic :: iso_c_binding
     use kim_convert_string_module, only : kim_convert_string
     implicit none
@@ -149,7 +158,7 @@ contains
     else
       string = ""
     end if
-  end subroutine kim_length_unit_string
+  end subroutine kim_length_unit_to_string
 
   subroutine kim_get_number_of_length_units(number_of_length_units)
     use, intrinsic :: iso_c_binding

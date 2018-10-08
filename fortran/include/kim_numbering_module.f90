@@ -34,20 +34,21 @@
 module kim_numbering_module
   use, intrinsic :: iso_c_binding
   implicit none
-  private &
-    kim_numbering_equal, &
-    kim_numbering_not_equal
+  private
 
   public &
+    ! Derived types
     kim_numbering_type, &
-    kim_numbering_from_string, &
-    operator (.eq.), &
-    operator (.ne.), &
-    kim_numbering_string, &
 
+    ! Constants
     KIM_NUMBERING_ZERO_BASED, &
     KIM_NUMBERING_ONE_BASED, &
 
+    ! Routines
+    operator (.eq.), &
+    operator (.ne.), &
+    kim_from_string, &
+    kim_to_string, &
     kim_number_of_numberings, &
     kim_get_numbering
 
@@ -71,25 +72,15 @@ module kim_numbering_module
     module procedure kim_numbering_not_equal
   end interface operator (.ne.)
 
+  interface kim_from_string
+    module procedure kim_numbering_from_string
+  end interface kim_from_string
+
+  interface kim_to_string
+    module procedure kim_numbering_to_string
+  end interface kim_to_string
+
 contains
-  subroutine kim_numbering_from_string(string, numbering)
-    use, intrinsic :: iso_c_binding
-    implicit none
-    interface
-      type(kim_numbering_type) function from_string(string) &
-        bind(c, name="KIM_Numbering_FromString")
-        use, intrinsic :: iso_c_binding
-        import kim_numbering_type
-        implicit none
-        character(c_char), intent(in) :: string(*)
-      end function from_string
-    end interface
-    character(len=*, kind=c_char), intent(in) :: string
-    type(kim_numbering_type), intent(out) :: numbering
-
-    numbering = from_string(trim(string)//c_null_char)
-  end subroutine kim_numbering_from_string
-
   logical function kim_numbering_equal(left, right)
     use, intrinsic :: iso_c_binding
     implicit none
@@ -109,7 +100,25 @@ contains
     kim_numbering_not_equal = .not. (left .eq. right)
   end function kim_numbering_not_equal
 
-  subroutine kim_numbering_string(numbering, string)
+  subroutine kim_numbering_from_string(string, numbering)
+    use, intrinsic :: iso_c_binding
+    implicit none
+    interface
+      type(kim_numbering_type) function from_string(string) &
+        bind(c, name="KIM_Numbering_FromString")
+        use, intrinsic :: iso_c_binding
+        import kim_numbering_type
+        implicit none
+        character(c_char), intent(in) :: string(*)
+      end function from_string
+    end interface
+    character(len=*, kind=c_char), intent(in) :: string
+    type(kim_numbering_type), intent(out) :: numbering
+
+    numbering = from_string(trim(string)//c_null_char)
+  end subroutine kim_numbering_from_string
+
+  subroutine kim_numbering_to_string(numbering, string)
     use, intrinsic :: iso_c_binding
     use kim_convert_string_module, only : kim_convert_string
     implicit none
@@ -133,7 +142,7 @@ contains
     else
       string = ""
     end if
-  end subroutine kim_numbering_string
+  end subroutine kim_numbering_to_string
 
   subroutine kim_number_of_numberings(number_of_numberings)
     use, intrinsic :: iso_c_binding

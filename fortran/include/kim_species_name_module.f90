@@ -34,17 +34,14 @@
 module kim_species_name_module
   use, intrinsic :: iso_c_binding
   implicit none
-  private &
-    kim_species_name_equal, &
-    kim_species_name_not_equal
+  private
 
   public &
+    ! Derived types
     kim_species_name_type, &
-    kim_species_name_from_string, &
-    operator (.eq.), &
-    operator (.ne.), &
-    kim_species_name_string, &
 
+
+    ! Constants
     KIM_SPECIES_NAME_ELECTRON, &
     KIM_SPECIES_NAME_H, &
     KIM_SPECIES_NAME_HE, &
@@ -185,6 +182,11 @@ module kim_species_name_module
     KIM_SPECIES_NAME_USER19, &
     KIM_SPECIES_NAME_USER20, &
 
+    ! Routines
+    operator (.eq.), &
+    operator (.ne.), &
+    kim_from_string, &
+    kim_to_string, &
     kim_get_number_of_species_names, &
     kim_get_species_name
 
@@ -619,25 +621,15 @@ module kim_species_name_module
     module procedure kim_species_name_not_equal
   end interface operator (.ne.)
 
+  interface kim_from_string
+    module procedure kim_species_name_from_string
+  end interface kim_from_string
+
+  interface kim_to_string
+    module procedure kim_species_name_to_string
+  end interface kim_to_string
+
 contains
-  subroutine kim_species_name_from_string(string, species_name)
-    use, intrinsic :: iso_c_binding
-    implicit none
-    interface
-      type(kim_species_name_type) function from_string(string) &
-        bind(c, name="KIM_SpeciesName_FromString")
-        use, intrinsic :: iso_c_binding
-        import kim_species_name_type
-        implicit none
-        character(c_char), intent(in) :: string(*)
-      end function from_string
-    end interface
-    character(len=*, kind=c_char), intent(in) :: string
-    type(kim_species_name_type), intent(out) :: species_name
-
-    species_name = from_string(trim(string)//c_null_char)
-  end subroutine kim_species_name_from_string
-
   logical function kim_species_name_equal(left, right)
     use, intrinsic :: iso_c_binding
     implicit none
@@ -657,7 +649,25 @@ contains
     kim_species_name_not_equal = .not. (left .eq. right)
   end function kim_species_name_not_equal
 
-  subroutine kim_species_name_string(species_name, string)
+  subroutine kim_species_name_from_string(string, species_name)
+    use, intrinsic :: iso_c_binding
+    implicit none
+    interface
+      type(kim_species_name_type) function from_string(string) &
+        bind(c, name="KIM_SpeciesName_FromString")
+        use, intrinsic :: iso_c_binding
+        import kim_species_name_type
+        implicit none
+        character(c_char), intent(in) :: string(*)
+      end function from_string
+    end interface
+    character(len=*, kind=c_char), intent(in) :: string
+    type(kim_species_name_type), intent(out) :: species_name
+
+    species_name = from_string(trim(string)//c_null_char)
+  end subroutine kim_species_name_from_string
+
+  subroutine kim_species_name_to_string(species_name, string)
     use, intrinsic :: iso_c_binding
     use kim_convert_string_module, only : kim_convert_string
     implicit none
@@ -681,7 +691,7 @@ contains
     else
       string = ""
     end if
-  end subroutine kim_species_name_string
+  end subroutine kim_species_name_to_string
 
   subroutine kim_get_number_of_species_names(number_of_species_names)
     use, intrinsic :: iso_c_binding

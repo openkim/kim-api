@@ -34,20 +34,21 @@
 module kim_temperature_unit_module
   use, intrinsic :: iso_c_binding
   implicit none
-  private &
-    kim_temperature_unit_equal, &
-    kim_temperature_unit_not_equal
+  private
 
   public &
+    ! Derived type
     kim_temperature_unit_type, &
-    kim_temperature_unit_from_string, &
-    operator (.eq.), &
-    operator (.ne.), &
-    kim_temperature_unit_string, &
 
+    ! Constants
     KIM_TEMPERATURE_UNIT_UNUSED, &
     KIM_TEMPERATURE_UNIT_K, &
 
+    ! Routines
+    operator (.eq.), &
+    operator (.ne.), &
+    kim_from_string, &
+    kim_to_string, &
     kim_get_number_of_temperature_units, &
     kim_get_temperature_unit
 
@@ -71,25 +72,15 @@ module kim_temperature_unit_module
     module procedure kim_temperature_unit_not_equal
   end interface operator (.ne.)
 
+  interface kim_from_string
+    module procedure kim_temperature_unit_from_string
+  end interface kim_from_string
+
+  interface kim_to_string
+    module procedure kim_temperature_unit_to_string
+  end interface kim_to_string
+
 contains
-  subroutine kim_temperature_unit_from_string(string, temperature_unit)
-    use, intrinsic :: iso_c_binding
-    implicit none
-    interface
-      type(kim_temperature_unit_type) function from_string(string) &
-        bind(c, name="KIM_TemperatureUnit_FromString")
-        use, intrinsic :: iso_c_binding
-        import kim_temperature_unit_type
-        implicit none
-        character(c_char), intent(in) :: string(*)
-      end function from_string
-    end interface
-    character(len=*, kind=c_char), intent(in) :: string
-    type(kim_temperature_unit_type), intent(out) :: temperature_unit
-
-    temperature_unit = from_string(trim(string)//c_null_char)
-  end subroutine kim_temperature_unit_from_string
-
   logical function kim_temperature_unit_equal(left, right)
     use, intrinsic :: iso_c_binding
     implicit none
@@ -109,7 +100,25 @@ contains
     kim_temperature_unit_not_equal = .not. (left .eq. right)
   end function kim_temperature_unit_not_equal
 
-  subroutine kim_temperature_unit_string(temperature_unit, string)
+  subroutine kim_temperature_unit_from_string(string, temperature_unit)
+    use, intrinsic :: iso_c_binding
+    implicit none
+    interface
+      type(kim_temperature_unit_type) function from_string(string) &
+        bind(c, name="KIM_TemperatureUnit_FromString")
+        use, intrinsic :: iso_c_binding
+        import kim_temperature_unit_type
+        implicit none
+        character(c_char), intent(in) :: string(*)
+      end function from_string
+    end interface
+    character(len=*, kind=c_char), intent(in) :: string
+    type(kim_temperature_unit_type), intent(out) :: temperature_unit
+
+    temperature_unit = from_string(trim(string)//c_null_char)
+  end subroutine kim_temperature_unit_from_string
+
+  subroutine kim_temperature_unit_to_string(temperature_unit, string)
     use, intrinsic :: iso_c_binding
     use kim_convert_string_module, only : kim_convert_string
     implicit none
@@ -133,7 +142,7 @@ contains
     else
       string = ""
     end if
-  end subroutine kim_temperature_unit_string
+  end subroutine kim_temperature_unit_to_string
 
   subroutine kim_get_number_of_temperature_units( &
     number_of_temperature_units)

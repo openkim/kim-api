@@ -34,13 +34,16 @@
 module kim_log_module
   use, intrinsic :: iso_c_binding
   implicit none
-  private &
-    kim_log_handle_equal, &
-    kim_log_handle_not_equal
+  private
 
   public &
+    ! Derived types
     kim_log_handle_type, &
+
+    ! Constants
     KIM_LOG_NULL_HANDLE, &
+
+    ! Routines
     operator (.eq.), &
     operator (.ne.), &
     kim_log_create, &

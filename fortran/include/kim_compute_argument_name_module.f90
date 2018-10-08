@@ -34,17 +34,13 @@
 module kim_compute_argument_name_module
   use, intrinsic :: iso_c_binding
   implicit none
-  private &
-    kim_compute_argument_name_equal, &
-    kim_compute_argument_name_not_equal
+  private
 
   public &
+    ! Derived types
     kim_compute_argument_name_type, &
-    kim_compute_argument_name_from_string, &
-    operator (.eq.), &
-    operator (.ne.), &
-    kim_compute_argument_name_string, &
 
+    ! Constants
     KIM_COMPUTE_ARGUMENT_NAME_NUMBER_OF_PARTICLES, &
     KIM_COMPUTE_ARGUMENT_NAME_PARTICLE_SPECIES_CODES, &
     KIM_COMPUTE_ARGUMENT_NAME_PARTICLE_CONTRIBUTING, &
@@ -55,6 +51,11 @@ module kim_compute_argument_name_module
     KIM_COMPUTE_ARGUMENT_NAME_PARTIAL_VIRIAL, &
     KIM_COMPUTE_ARGUMENT_NAME_PARTIAL_PARTICLE_VIRIAL, &
 
+    ! Routines
+    operator (.eq.), &
+    operator (.ne.), &
+    kim_from_string, &
+    kim_to_string, &
     kim_get_number_of_compute_argument_names, &
     kim_get_compute_argument_name, &
     kim_get_compute_argument_data_type
@@ -100,7 +101,24 @@ module kim_compute_argument_name_module
     module procedure kim_compute_argument_name_not_equal
   end interface operator (.ne.)
 
+  interface kim_from_string
+    module procedure kim_compute_argument_name_from_string
+  end interface kim_from_string
+
+  interface kim_to_string
+    module procedure kim_compute_argument_name_to_string
+  end interface kim_to_string
+
 contains
+  logical function kim_compute_argument_name_not_equal(left, right)
+    use, intrinsic :: iso_c_binding
+    implicit none
+    type(kim_compute_argument_name_type), intent(in) :: left
+    type(kim_compute_argument_name_type), intent(in) :: right
+
+    kim_compute_argument_name_not_equal = .not. (left .eq. right)
+  end function kim_compute_argument_name_not_equal
+
   subroutine kim_compute_argument_name_from_string(string, &
     compute_argument_name)
     use, intrinsic :: iso_c_binding
@@ -130,16 +148,7 @@ contains
       = (left%compute_argument_name_id .eq. right%compute_argument_name_id)
   end function kim_compute_argument_name_equal
 
-  logical function kim_compute_argument_name_not_equal(left, right)
-    use, intrinsic :: iso_c_binding
-    implicit none
-    type(kim_compute_argument_name_type), intent(in) :: left
-    type(kim_compute_argument_name_type), intent(in) :: right
-
-    kim_compute_argument_name_not_equal = .not. (left .eq. right)
-  end function kim_compute_argument_name_not_equal
-
-  subroutine kim_compute_argument_name_string(compute_argument_name, string)
+  subroutine kim_compute_argument_name_to_string(compute_argument_name, string)
     use, intrinsic :: iso_c_binding
     use kim_convert_string_module, only : kim_convert_string
     implicit none
@@ -165,7 +174,7 @@ contains
     else
       string = ""
     end if
-  end subroutine kim_compute_argument_name_string
+  end subroutine kim_compute_argument_name_to_string
 
   subroutine kim_get_number_of_compute_argument_names( &
     number_of_compute_argument_names)

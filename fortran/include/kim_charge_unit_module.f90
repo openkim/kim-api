@@ -34,22 +34,23 @@
 module kim_charge_unit_module
   use, intrinsic :: iso_c_binding
   implicit none
-  private &
-    kim_charge_unit_equal, &
-    kim_charge_unit_not_equal
+  private
 
   public &
+    ! Derived types
     kim_charge_unit_type, &
-    kim_charge_unit_from_string, &
-    operator (.eq.), &
-    operator (.ne.), &
-    kim_charge_unit_string, &
 
+    ! Constants
     KIM_CHARGE_UNIT_UNUSED, &
     KIM_CHARGE_UNIT_C, &
     KIM_CHARGE_UNIT_E, &
     KIM_CHARGE_UNIT_STATC, &
 
+    ! Routines
+    operator (.eq.), &
+    operator (.ne.), &
+    kim_from_string, &
+    kim_to_string, &
     kim_get_number_of_charge_units, &
     kim_get_charge_unit
 
@@ -79,25 +80,15 @@ module kim_charge_unit_module
     module procedure kim_charge_unit_not_equal
   end interface operator (.ne.)
 
+  interface kim_from_string
+    module procedure kim_charge_unit_from_string
+  end interface kim_from_string
+
+  interface kim_to_string
+    module procedure kim_charge_unit_to_string
+  end interface kim_to_string
+
 contains
-  subroutine kim_charge_unit_from_string(string, charge_unit)
-    use, intrinsic :: iso_c_binding
-    implicit none
-    interface
-      type(kim_charge_unit_type) function from_string(string) &
-        bind(c, name="KIM_ChargeUnit_FromString")
-        use, intrinsic :: iso_c_binding
-        import kim_charge_unit_type
-        implicit none
-        character(c_char), intent(in) :: string(*)
-      end function from_string
-    end interface
-    character(len=*, kind=c_char), intent(in) :: string
-    type(kim_charge_unit_type), intent(out) :: charge_unit
-
-    charge_unit = from_string(trim(string)//c_null_char)
-  end subroutine kim_charge_unit_from_string
-
   logical function kim_charge_unit_equal(left, right)
     use, intrinsic :: iso_c_binding
     implicit none
@@ -117,7 +108,25 @@ contains
     kim_charge_unit_not_equal = .not. (left .eq. right)
   end function kim_charge_unit_not_equal
 
-  subroutine kim_charge_unit_string(charge_unit, string)
+  subroutine kim_charge_unit_from_string(string, charge_unit)
+    use, intrinsic :: iso_c_binding
+    implicit none
+    interface
+      type(kim_charge_unit_type) function from_string(string) &
+        bind(c, name="KIM_ChargeUnit_FromString")
+        use, intrinsic :: iso_c_binding
+        import kim_charge_unit_type
+        implicit none
+        character(c_char), intent(in) :: string(*)
+      end function from_string
+    end interface
+    character(len=*, kind=c_char), intent(in) :: string
+    type(kim_charge_unit_type), intent(out) :: charge_unit
+
+    charge_unit = from_string(trim(string)//c_null_char)
+  end subroutine kim_charge_unit_from_string
+
+  subroutine kim_charge_unit_to_string(charge_unit, string)
     use, intrinsic :: iso_c_binding
     use kim_convert_string_module, only : kim_convert_string
     implicit none
@@ -141,7 +150,7 @@ contains
     else
       string = ""
     end if
-  end subroutine kim_charge_unit_string
+  end subroutine kim_charge_unit_to_string
 
   subroutine kim_get_number_of_charge_units(number_of_charge_units)
     use, intrinsic :: iso_c_binding
