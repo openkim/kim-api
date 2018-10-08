@@ -40,7 +40,7 @@ module kim_model_destroy_module
 
   public &
     kim_model_destroy_handle_type, &
-    kim_model_destroy_null_handle, &
+    KIM_MODEL_DESTROY_NULL_HANDLE, &
     operator (.eq.), &
     operator (.ne.), &
     kim_model_destroy_get_model_buffer_pointer, &
@@ -58,7 +58,7 @@ module kim_model_destroy_module
   end type kim_model_destroy_type
 
   type(kim_model_destroy_handle_type), protected, save &
-    :: kim_model_destroy_null_handle
+    :: KIM_MODEL_DESTROY_NULL_HANDLE
 
   interface operator (.eq.)
     module procedure kim_model_destroy_handle_equal

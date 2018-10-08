@@ -40,7 +40,7 @@ module kim_model_create_module
 
   public &
     kim_model_create_handle_type, &
-    kim_model_create_null_handle, &
+    KIM_MODEL_CREATE_NULL_HANDLE, &
     operator (.eq.), &
     operator (.ne.), &
     kim_set_model_numbering, &
@@ -70,7 +70,7 @@ module kim_model_create_module
   end type kim_model_create_type
 
   type(kim_model_create_handle_type), protected, save &
-    :: kim_model_create_null_handle
+    :: KIM_MODEL_CREATE_NULL_HANDLE
 
   interface operator (.eq.)
     module procedure kim_model_create_handle_equal

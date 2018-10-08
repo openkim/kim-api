@@ -40,7 +40,7 @@ module kim_model_compute_arguments_module
 
   public &
     kim_model_compute_arguments_handle_type, &
-    kim_model_compute_arguments_null_handle, &
+    KIM_MODEL_COMPUTE_ARGUMENTS_NULL_HANDLE, &
     operator (.eq.), &
     operator (.ne.), &
     kim_get_neighbor_list, &
@@ -64,7 +64,7 @@ module kim_model_compute_arguments_module
   end type kim_model_compute_arguments_type
 
   type(kim_model_compute_arguments_handle_type), protected, save &
-    :: kim_model_compute_arguments_null_handle
+    :: KIM_MODEL_COMPUTE_ARGUMENTS_NULL_HANDLE
 
   interface operator (.eq.)
     module procedure kim_model_compute_arguments_handle_equal

@@ -45,9 +45,9 @@ module kim_compute_callback_name_module
     operator (.ne.), &
     kim_compute_callback_name_string, &
 
-    kim_compute_callback_name_get_neighbor_list, &
-    kim_compute_callback_name_process_dedr_term, &
-    kim_compute_callback_name_process_d2edr2_term, &
+    KIM_COMPUTE_CALLBACK_NAME_GET_NEIGHBOR_LIST, &
+    KIM_COMPUTE_CALLBACK_NAME_PROCESS_DEDR_TERM, &
+    KIM_COMPUTE_CALLBACK_NAME_PROCESS_D2EDR2_TERM, &
 
     kim_get_number_of_compute_callback_names, &
     kim_get_compute_callback_name
@@ -59,13 +59,13 @@ module kim_compute_callback_name_module
 
   type(kim_compute_callback_name_type), protected, &
     bind(c, name="KIM_COMPUTE_CALLBACK_NAME_GetNeighborList") &
-    :: kim_compute_callback_name_get_neighbor_list
+    :: KIM_COMPUTE_CALLBACK_NAME_GET_NEIGHBOR_LIST
   type(kim_compute_callback_name_type), protected, &
     bind(c, name="KIM_COMPUTE_CALLBACK_NAME_ProcessDEDrTerm") &
-    :: kim_compute_callback_name_process_dedr_term
+    :: KIM_COMPUTE_CALLBACK_NAME_PROCESS_DEDR_TERM
   type(kim_compute_callback_name_type), protected, &
     bind(c, name="KIM_COMPUTE_CALLBACK_NAME_ProcessD2EDr2Term") &
-    :: kim_compute_callback_name_process_d2edr2_term
+    :: KIM_COMPUTE_CALLBACK_NAME_PROCESS_D2EDR2_TERM
 
   interface operator (.eq.)
     module procedure kim_compute_callback_name_equal

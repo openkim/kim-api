@@ -45,11 +45,11 @@ module kim_time_unit_module
     operator (.ne.), &
     kim_time_unit_string, &
 
-    kim_time_unit_unused, &
-    kim_time_unit_fs, &
-    kim_time_unit_ps, &
-    kim_time_unit_ns, &
-    kim_time_unit_s, &
+    KIM_TIME_UNIT_UNUSED, &
+    KIM_TIME_UNIT_FS, &
+    KIM_TIME_UNIT_PS, &
+    KIM_TIME_UNIT_NS, &
+    KIM_TIME_UNIT_S, &
 
     kim_get_number_of_time_units, &
     kim_get_time_unit

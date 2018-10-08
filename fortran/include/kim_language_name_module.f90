@@ -43,9 +43,9 @@ module kim_language_name_module
     operator (.ne.), &
     kim_language_name_string, &
 
-    kim_language_name_cpp, &
-    kim_language_name_c, &
-    kim_language_name_fortran, &
+    KIM_LANGUAGE_NAME_CPP, &
+    KIM_LANGUAGE_NAME_C, &
+    KIM_LANGUAGE_NAME_FORTRAN, &
 
     kim_get_number_of_language_names, &
     kim_get_language_name
@@ -57,13 +57,13 @@ module kim_language_name_module
 
   type(kim_language_name_type), protected, &
     bind(c, name="KIM_LANGUAGE_NAME_cpp") &
-    :: kim_language_name_cpp
+    :: KIM_LANGUAGE_NAME_CPP
   type(kim_language_name_type), protected, &
     bind(c, name="KIM_LANGUAGE_NAME_c") &
-    :: kim_language_name_c
+    :: KIM_LANGUAGE_NAME_C
   type(kim_language_name_type), protected, &
     bind(c, name="KIM_LANGUAGE_NAME_fortran") &
-    :: kim_language_name_fortran
+    :: KIM_LANGUAGE_NAME_FORTRAN
 
   interface operator (.eq.)
     module procedure kim_language_name_equal

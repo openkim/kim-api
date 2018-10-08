@@ -40,7 +40,7 @@ module kim_model_compute_module
 
   public &
     kim_model_compute_handle_type, &
-    kim_model_compute_null_handle, &
+    KIM_MODEL_COMPUTE_NULL_HANDLE, &
     operator (.eq.), &
     operator (.ne.), &
     kim_model_compute_get_model_buffer_pointer, &
@@ -58,7 +58,7 @@ module kim_model_compute_module
   end type kim_model_compute_type
 
   type(kim_model_compute_handle_type), protected, save &
-    :: kim_model_compute_null_handle
+    :: KIM_MODEL_COMPUTE_NULL_HANDLE
 
   interface operator (.eq.)
     module procedure kim_model_compute_handle_equal

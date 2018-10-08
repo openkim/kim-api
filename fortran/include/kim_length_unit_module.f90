@@ -45,12 +45,12 @@ module kim_length_unit_module
     operator (.ne.), &
     kim_length_unit_string, &
 
-    kim_length_unit_unused, &
-    kim_length_unit_a, &
-    kim_length_unit_bohr, &
-    kim_length_unit_cm, &
-    kim_length_unit_m, &
-    kim_length_unit_nm, &
+    KIM_LENGTH_UNIT_UNUSED, &
+    KIM_LENGTH_UNIT_A, &
+    KIM_LENGTH_UNIT_BOHR, &
+    KIM_LENGTH_UNIT_CM, &
+    KIM_LENGTH_UNIT_M, &
+    KIM_LENGTH_UNIT_NM, &
 
     kim_get_number_of_length_units, &
     kim_get_length_unit
@@ -62,22 +62,22 @@ module kim_length_unit_module
 
   type(kim_length_unit_type), protected, &
     bind(c, name="KIM_LENGTH_UNIT_unused") &
-    :: kim_length_unit_unused
+    :: KIM_LENGTH_UNIT_UNUSED
   type(kim_length_unit_type), protected, &
     bind(c, name="KIM_LENGTH_UNIT_A") &
-    :: kim_length_unit_a
+    :: KIM_LENGTH_UNIT_A
   type(kim_length_unit_type), protected, &
     bind(c, name="KIM_LENGTH_UNIT_Bhor") &
-    :: kim_length_unit_bohr
+    :: KIM_LENGTH_UNIT_BOHR
   type(kim_length_unit_type), protected, &
     bind(c, name="KIM_LENGTH_UNIT_cm") &
-    :: kim_length_unit_cm
+    :: KIM_LENGTH_UNIT_CM
   type(kim_length_unit_type), protected, &
     bind(c, name="KIM_LENGTH_UNIT_m") &
-    :: kim_length_unit_m
+    :: KIM_LENGTH_UNIT_M
   type(kim_length_unit_type), protected, &
     bind(c, name="KIM_LENGTH_UNIT_nm") &
-    :: kim_length_unit_nm
+    :: KIM_LENGTH_UNIT_NM
 
   interface operator (.eq.)
     module procedure kim_length_unit_equal

@@ -40,7 +40,7 @@ module kim_compute_arguments_module
 
   public &
     kim_compute_arguments_handle_type, &
-    kim_compute_arguments_null_handle, &
+    KIM_COMPUTE_ARGUMENTS_NULL_HANDLE, &
     operator (.eq.), &
     operator (.ne.), &
     kim_get_argument_support_status, &
@@ -66,7 +66,7 @@ module kim_compute_arguments_module
 
 
   type(kim_compute_arguments_handle_type), protected, save &
-    :: kim_compute_arguments_null_handle
+    :: KIM_COMPUTE_ARGUMENTS_NULL_HANDLE
 
   interface operator (.eq.)
     module procedure kim_compute_arguments_handle_equal

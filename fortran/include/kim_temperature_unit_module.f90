@@ -45,8 +45,8 @@ module kim_temperature_unit_module
     operator (.ne.), &
     kim_temperature_unit_string, &
 
-    kim_temperature_unit_unused, &
-    kim_temperature_unit_k, &
+    KIM_TEMPERATURE_UNIT_UNUSED, &
+    KIM_TEMPERATURE_UNIT_K, &
 
     kim_get_number_of_temperature_units, &
     kim_get_temperature_unit
@@ -58,10 +58,10 @@ module kim_temperature_unit_module
 
   type(kim_temperature_unit_type), protected, &
     bind(c, name="KIM_TEMPERATURE_UNIT_unused") &
-    :: kim_temperature_unit_unused
+    :: KIM_TEMPERATURE_UNIT_UNUSED
   type(kim_temperature_unit_type), protected, &
     bind(c, name="KIM_TEMPERATURE_UNIT_K") &
-    :: kim_temperature_unit_k
+    :: KIM_TEMPERATURE_UNIT_K
 
   interface operator (.eq.)
     module procedure kim_temperature_unit_equal

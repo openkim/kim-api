@@ -45,10 +45,10 @@ module kim_support_status_module
     operator (.ne.), &
     kim_support_status_string, &
 
-    kim_support_status_required_by_api, &
-    kim_support_status_not_supported, &
-    kim_support_status_required, &
-    kim_support_status_optional, &
+    KIM_SUPPORT_STATUS_REQUIRED_BY_API, &
+    KIM_SUPPORT_STATUS_NOT_SUPPORTED, &
+    KIM_SUPPORT_STATUS_REQUIRED, &
+    KIM_SUPPORT_STATUS_OPTIONAL, &
 
     kim_get_number_of_support_statuses, &
     kim_get_support_status
@@ -60,16 +60,16 @@ module kim_support_status_module
 
   type(kim_support_status_type), protected, &
     bind(c, name="KIM_SUPPORT_STATUS_requiredByAPI") &
-    :: kim_support_status_required_by_api
+    :: KIM_SUPPORT_STATUS_REQUIRED_BY_API
   type(kim_support_status_type), protected, &
     bind(c, name="KIM_SUPPORT_STATUS_notSupported") &
-    :: kim_support_status_not_supported
+    :: KIM_SUPPORT_STATUS_NOT_SUPPORTED
   type(kim_support_status_type), protected, &
     bind(c, name="KIM_SUPPORT_STATUS_required") &
-    :: kim_support_status_required
+    :: KIM_SUPPORT_STATUS_REQUIRED
   type(kim_support_status_type), protected, &
     bind(c, name="KIM_SUPPORT_STATUS_optional") &
-    :: kim_support_status_optional
+    :: KIM_SUPPORT_STATUS_OPTIONAL
 
   interface operator (.eq.)
     module procedure kim_support_status_equal

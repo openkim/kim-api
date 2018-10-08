@@ -45,10 +45,10 @@ module kim_charge_unit_module
     operator (.ne.), &
     kim_charge_unit_string, &
 
-    kim_charge_unit_unused, &
-    kim_charge_unit_c, &
-    kim_charge_unit_e, &
-    kim_charge_unit_statc, &
+    KIM_CHARGE_UNIT_UNUSED, &
+    KIM_CHARGE_UNIT_C, &
+    KIM_CHARGE_UNIT_E, &
+    KIM_CHARGE_UNIT_STATC, &
 
     kim_get_number_of_charge_units, &
     kim_get_charge_unit
@@ -60,16 +60,16 @@ module kim_charge_unit_module
 
   type(kim_charge_unit_type), protected, &
     bind(c, name="KIM_CHARGE_UNIT_unused") &
-    :: kim_charge_unit_unused
+    :: KIM_CHARGE_UNIT_UNUSED
   type(kim_charge_unit_type), protected, &
     bind(c, name="KIM_CHARGE_UNIT_c") &
-    :: kim_charge_unit_c
+    :: KIM_CHARGE_UNIT_C
   type(kim_charge_unit_type), protected, &
     bind(c, name="KIM_CHARGE_UNIT_e") &
-    :: kim_charge_unit_e
+    :: KIM_CHARGE_UNIT_E
   type(kim_charge_unit_type), protected, &
     bind(c, name="KIM_CHARGE_UNIT_statC") &
-    :: kim_charge_unit_statc
+    :: KIM_CHARGE_UNIT_STATC
 
   interface operator (.eq.)
     module procedure kim_charge_unit_equal

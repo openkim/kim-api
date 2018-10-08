@@ -53,12 +53,12 @@ module kim_log_verbosity_module
     operator (.ne.), &
     kim_log_verbosity_string, &
 
-    kim_log_verbosity_silent, &
-    kim_log_verbosity_fatal, &
-    kim_log_verbosity_error, &
-    kim_log_verbosity_warning, &
-    kim_log_verbosity_information, &
-    kim_log_verbosity_debug, &
+    KIM_LOG_VERBOSITY_SILENT, &
+    KIM_LOG_VERBOSITY_FATAL, &
+    KIM_LOG_VERBOSITY_ERROR, &
+    KIM_LOG_VERBOSITY_WARNING, &
+    KIM_LOG_VERBOSITY_INFORMATION, &
+    KIM_LOG_VERBOSITY_DEBUG, &
 
     kim_get_number_of_log_verbosities, &
     kim_get_log_verbosity
@@ -70,22 +70,22 @@ module kim_log_verbosity_module
 
   type(kim_log_verbosity_type), protected, &
     bind(c, name="KIM_LOG_VERBOSITY_silent") &
-    :: kim_log_verbosity_silent
+    :: KIM_LOG_VERBOSITY_SILENT
   type(kim_log_verbosity_type), protected, &
     bind(c, name="KIM_LOG_VERBOSITY_fatal") &
-    :: kim_log_verbosity_fatal
+    :: KIM_LOG_VERBOSITY_FATAL
   type(kim_log_verbosity_type), protected, &
     bind(c, name="KIM_LOG_VERBOSITY_error") &
-    :: kim_log_verbosity_error
+    :: KIM_LOG_VERBOSITY_ERROR
   type(kim_log_verbosity_type), protected, &
     bind(c, name="KIM_LOG_VERBOSITY_warning") &
-    :: kim_log_verbosity_warning
+    :: KIM_LOG_VERBOSITY_WARNING
   type(kim_log_verbosity_type), protected, &
     bind(c, name="KIM_LOG_VERBOSITY_information") &
-    :: kim_log_verbosity_information
+    :: KIM_LOG_VERBOSITY_INFORMATION
   type(kim_log_verbosity_type), protected, &
     bind(c, name="KIM_LOG_VERBOSITY_debug") &
-    :: kim_log_verbosity_debug
+    :: KIM_LOG_VERBOSITY_DEBUG
 
   interface operator (.lt.)
     module procedure kim_log_verbosity_less_than

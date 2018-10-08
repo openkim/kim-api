@@ -38,7 +38,7 @@ module kim_model_refresh_module
 
   public &
     kim_model_refresh_handle_type, &
-    kim_model_refresh_null_handle, &
+    KIM_MODEL_REFRESH_NULL_HANDLE, &
     operator (.eq.), &
     operator (.ne.), &
     kim_set_influence_distance_pointer, &
@@ -58,7 +58,7 @@ module kim_model_refresh_module
   end type kim_model_refresh_type
 
   type(kim_model_refresh_handle_type), protected, save &
-    :: kim_model_refresh_null_handle
+    :: KIM_MODEL_REFRESH_NULL_HANDLE
 
   interface operator (.eq.)
     module procedure kim_model_refresh_handle_equal

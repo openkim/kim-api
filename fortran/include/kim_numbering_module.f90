@@ -45,8 +45,8 @@ module kim_numbering_module
     operator (.ne.), &
     kim_numbering_string, &
 
-    kim_numbering_zero_based, &
-    kim_numbering_one_based, &
+    KIM_NUMBERING_ZERO_BASED, &
+    KIM_NUMBERING_ONE_BASED, &
 
     kim_number_of_numberings, &
     kim_get_numbering
@@ -58,10 +58,10 @@ module kim_numbering_module
 
   type(kim_numbering_type), protected, &
     bind(c, name="KIM_NUMBERING_zeroBased") &
-    :: kim_numbering_zero_based
+    :: KIM_NUMBERING_ZERO_BASED
   type(kim_numbering_type), protected, &
     bind(c, name="KIM_NUMBERING_oneBased") &
-    :: kim_numbering_one_based
+    :: KIM_NUMBERING_ONE_BASED
 
   interface operator (.eq.)
     module procedure kim_numbering_equal

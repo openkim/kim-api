@@ -45,8 +45,8 @@ module kim_data_type_module
     operator (.ne.), &
     kim_data_type_string, &
 
-    kim_data_type_integer, &
-    kim_data_type_double, &
+    KIM_DATA_TYPE_INTEGER, &
+    KIM_DATA_TYPE_DOUBLE, &
 
     kim_get_number_of_data_types, &
     kim_get_data_type
@@ -58,10 +58,10 @@ module kim_data_type_module
 
   type(kim_data_type_type), protected, &
     bind(c, name="KIM_DATA_TYPE_Integer") &
-    :: kim_data_type_integer
+    :: KIM_DATA_TYPE_INTEGER
   type(kim_data_type_type), protected, &
     bind(c, name="KIM_DATA_TYPE_Double") &
-    :: kim_data_type_double
+    :: KIM_DATA_TYPE_DOUBLE
 
   interface operator (.eq.)
     module procedure kim_data_type_equal

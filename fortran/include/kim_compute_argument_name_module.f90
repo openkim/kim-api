@@ -45,15 +45,15 @@ module kim_compute_argument_name_module
     operator (.ne.), &
     kim_compute_argument_name_string, &
 
-    kim_compute_argument_name_number_of_particles, &
-    kim_compute_argument_name_particle_species_codes, &
-    kim_compute_argument_name_particle_contributing, &
-    kim_compute_argument_name_coordinates, &
-    kim_compute_argument_name_partial_energy, &
-    kim_compute_argument_name_partial_forces, &
-    kim_compute_argument_name_partial_particle_energy, &
-    kim_compute_argument_name_partial_virial, &
-    kim_compute_argument_name_partial_particle_virial, &
+    KIM_COMPUTE_ARGUMENT_NAME_NUMBER_OF_PARTICLES, &
+    KIM_COMPUTE_ARGUMENT_NAME_PARTICLE_SPECIES_CODES, &
+    KIM_COMPUTE_ARGUMENT_NAME_PARTICLE_CONTRIBUTING, &
+    KIM_COMPUTE_ARGUMENT_NAME_COORDINATES, &
+    KIM_COMPUTE_ARGUMENT_NAME_PARTIAL_ENERGY, &
+    KIM_COMPUTE_ARGUMENT_NAME_PARTIAL_FORCES, &
+    KIM_COMPUTE_ARGUMENT_NAME_PARTIAL_PARTICLE_ENERGY, &
+    KIM_COMPUTE_ARGUMENT_NAME_PARTIAL_VIRIAL, &
+    KIM_COMPUTE_ARGUMENT_NAME_PARTIAL_PARTICLE_VIRIAL, &
 
     kim_get_number_of_compute_argument_names, &
     kim_get_compute_argument_name, &
@@ -66,31 +66,31 @@ module kim_compute_argument_name_module
 
   type(kim_compute_argument_name_type), protected, &
     bind(c, name="KIM_COMPUTE_ARGUMENT_NAME_numberOfParticles") &
-    :: kim_compute_argument_name_number_of_particles
+    :: KIM_COMPUTE_ARGUMENT_NAME_NUMBER_OF_PARTICLES
   type(kim_compute_argument_name_type), protected, &
     bind(c, name="KIM_COMPUTE_ARGUMENT_NAME_particleSpeciesCodes") &
-    :: kim_compute_argument_name_particle_species_codes
+    :: KIM_COMPUTE_ARGUMENT_NAME_PARTICLE_SPECIES_CODES
   type(kim_compute_argument_name_type), protected, &
     bind(c, name="KIM_COMPUTE_ARGUMENT_NAME_particleContributing") &
-    :: kim_compute_argument_name_particle_contributing
+    :: KIM_COMPUTE_ARGUMENT_NAME_PARTICLE_CONTRIBUTING
   type(kim_compute_argument_name_type), protected, &
     bind(c, name="KIM_COMPUTE_ARGUMENT_NAME_coordinates") &
-    :: kim_compute_argument_name_coordinates
+    :: KIM_COMPUTE_ARGUMENT_NAME_COORDINATES
   type(kim_compute_argument_name_type), protected, &
     bind(c, name="KIM_COMPUTE_ARGUMENT_NAME_partialEnergy") &
-    :: kim_compute_argument_name_partial_energy
+    :: KIM_COMPUTE_ARGUMENT_NAME_PARTIAL_ENERGY
   type(kim_compute_argument_name_type), protected, &
     bind(c, name="KIM_COMPUTE_ARGUMENT_NAME_partialForces") &
-    :: kim_compute_argument_name_partial_forces
+    :: KIM_COMPUTE_ARGUMENT_NAME_PARTIAL_FORCES
   type(kim_compute_argument_name_type), protected, &
     bind(c, name="KIM_COMPUTE_ARGUMENT_NAME_partialParticleEnergy") &
-    :: kim_compute_argument_name_partial_particle_energy
+    :: KIM_COMPUTE_ARGUMENT_NAME_PARTIAL_PARTICLE_ENERGY
   type(kim_compute_argument_name_type), protected, &
     bind(c, name="KIM_COMPUTE_ARGUMENT_NAME_partialVirial") &
-    :: kim_compute_argument_name_partial_virial
+    :: KIM_COMPUTE_ARGUMENT_NAME_PARTIAL_VIRIAL
   type(kim_compute_argument_name_type), protected, &
     bind(c, name="KIM_COMPUTE_ARGUMENT_NAME_partialParticleVirial") &
-    :: kim_compute_argument_name_partial_particle_virial
+    :: KIM_COMPUTE_ARGUMENT_NAME_PARTIAL_PARTICLE_VIRIAL
 
   interface operator (.eq.)
     module procedure kim_compute_argument_name_equal

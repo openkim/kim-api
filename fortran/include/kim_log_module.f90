@@ -40,7 +40,7 @@ module kim_log_module
 
   public &
     kim_log_handle_type, &
-    kim_log_null_handle, &
+    KIM_LOG_NULL_HANDLE, &
     operator (.eq.), &
     operator (.ne.), &
     kim_log_create, &
@@ -62,7 +62,7 @@ module kim_log_module
   end type kim_log_type
 
   type(kim_log_handle_type), protected, save &
-    :: kim_log_null_handle
+    :: KIM_LOG_NULL_HANDLE
 
   interface operator (.eq.)
     module procedure kim_log_handle_equal
