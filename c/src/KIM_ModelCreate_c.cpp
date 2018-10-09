@@ -305,7 +305,6 @@ int KIM_ModelCreate_SetUnits(
 }
 
 int KIM_ModelCreate_ConvertUnit(
-    KIM_ModelCreate const * const modelCreate,
     KIM_LengthUnit const fromLengthUnit,
     KIM_EnergyUnit const fromEnergyUnit,
     KIM_ChargeUnit const fromChargeUnit,
@@ -323,9 +322,7 @@ int KIM_ModelCreate_ConvertUnit(
     double const timeExponent,
     double * const conversionFactor)
 {
-  CONVERT_POINTER;
-
-  return pModelCreate->ConvertUnit(
+  return KIM::ModelCreate::ConvertUnit(
       makeLengthUnitCpp(fromLengthUnit),
       makeEnergyUnitCpp(fromEnergyUnit),
       makeChargeUnitCpp(fromChargeUnit),

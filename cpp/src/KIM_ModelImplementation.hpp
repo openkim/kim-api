@@ -185,7 +185,7 @@ class ModelImplementation
   void SetSimulatorBufferPointer(void * const ptr);
   void GetSimulatorBufferPointer(void ** const ptr) const;
 
-  int ConvertUnit(
+  static int ConvertUnit(
       LengthUnit const fromLengthUnit,
       EnergyUnit const fromEnergyUnit,
       ChargeUnit const fromChargeUnit,
@@ -201,7 +201,7 @@ class ModelImplementation
       double const chargeExponent,
       double const temperatureExponent,
       double const timeExponent,
-      double * const conversionFactor) const;
+      double * const conversionFactor);
 
 
   void SetLogID(std::string const & logID);
@@ -237,16 +237,16 @@ class ModelImplementation
       const;
 
 
-  int Validate(ChargeUnit const chargeUnit) const;
-  int Validate(DataType const dataType) const;
-  int Validate(EnergyUnit const energyUnit) const;
-  int Validate(LanguageName const languageName) const;
-  int Validate(LengthUnit const lengthUnit) const;
-  int Validate(Numbering const numbering) const;
-  int Validate(SpeciesName const speciesName) const;
-  int Validate(SupportStatus const supportStatus) const;
-  int Validate(TemperatureUnit const temperatureUnit) const;
-  int Validate(TimeUnit const timeUnit) const;
+  static int Validate(ChargeUnit const chargeUnit);
+  static int Validate(DataType const dataType);
+  static int Validate(EnergyUnit const energyUnit);
+  static int Validate(LanguageName const languageName);
+  static int Validate(LengthUnit const lengthUnit);
+  static int Validate(Numbering const numbering);
+  static int Validate(SpeciesName const speciesName);
+  static int Validate(SupportStatus const supportStatus);
+  static int Validate(TemperatureUnit const temperatureUnit);
+  static int Validate(TimeUnit const timeUnit);
 
   int IsCIdentifier(std::string const & id) const;
 

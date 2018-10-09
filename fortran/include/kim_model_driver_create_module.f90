@@ -705,7 +705,7 @@ contains
   end subroutine kim_model_driver_create_set_units
 
   subroutine kim_model_driver_create_convert_unit( &
-    model_driver_create_handle, from_length_unit, from_energy_unit, &
+    from_length_unit, from_energy_unit, &
     from_charge_unit, from_temperature_unit, from_time_unit, &
     to_length_unit, to_energy_unit, to_charge_unit, to_temperature_unit, &
     to_time_unit, length_exponent, energy_exponent, charge_exponent, &
@@ -716,11 +716,10 @@ contains
     use kim_unit_system_module, only : kim_charge_unit_type
     use kim_unit_system_module, only : kim_temperature_unit_type
     use kim_unit_system_module, only : kim_time_unit_type
-    use kim_interoperable_types_module, only : kim_model_driver_create_type
     implicit none
     interface
       integer(c_int) function convert_unit( &
-        model_driver_create, from_length_unit, from_energy_unit, &
+        from_length_unit, from_energy_unit, &
         from_charge_unit, from_temperature_unit, from_time_unit, &
         to_length_unit, to_energy_unit, to_charge_unit, to_temperature_unit, &
         to_time_unit, length_exponent, energy_exponent, charge_exponent, &
@@ -732,10 +731,7 @@ contains
         use kim_unit_system_module, only : kim_charge_unit_type
         use kim_unit_system_module, only : kim_temperature_unit_type
         use kim_unit_system_module, only : kim_time_unit_type
-        use kim_interoperable_types_module, only : kim_model_driver_create_type
         implicit none
-        type(kim_model_driver_create_type), intent(in) &
-          :: model_driver_create
         type(kim_length_unit_type), intent(in), value :: from_length_unit
         type(kim_energy_unit_type), intent(in), value :: from_energy_unit
         type(kim_charge_unit_type), intent(in), value :: from_charge_unit
@@ -756,8 +752,6 @@ contains
         real(c_double), intent(out) :: conversion_factor
       end function convert_unit
     end interface
-    type(kim_model_driver_create_handle_type), intent(in) &
-      :: model_driver_create_handle
     type(kim_length_unit_type), intent(in), value :: from_length_unit
     type(kim_energy_unit_type), intent(in), value :: from_energy_unit
     type(kim_charge_unit_type), intent(in), value :: from_charge_unit
@@ -775,10 +769,8 @@ contains
     real(c_double), intent(in), value :: time_exponent
     real(c_double), intent(out) :: conversion_factor
     integer(c_int), intent(out) :: ierr
-    type(kim_model_driver_create_type), pointer :: model_driver_create
 
-    call c_f_pointer(model_driver_create_handle%p, model_driver_create)
-    ierr = convert_unit(model_driver_create, from_length_unit, &
+    ierr = convert_unit(from_length_unit, &
       from_energy_unit, from_charge_unit, from_temperature_unit, &
       from_time_unit, to_length_unit, to_energy_unit, to_charge_unit, &
       to_temperature_unit, to_time_unit, length_exponent, energy_exponent, &

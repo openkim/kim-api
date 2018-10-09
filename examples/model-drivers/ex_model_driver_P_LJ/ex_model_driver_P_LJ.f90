@@ -743,7 +743,6 @@ end if
 
 ! convert to appropriate units
 call kim_convert_unit( &
-  model_driver_create_handle, &
   kim_length_unit_a, &
   kim_energy_unit_ev, &
   kim_charge_unit_e, &
@@ -764,7 +763,6 @@ endif
 in_cutoff = in_cutoff * factor
 
 call kim_convert_unit( &
-  model_driver_create_handle, &
   kim_length_unit_a, &
   kim_energy_unit_ev, &
   kim_charge_unit_e, &
@@ -785,7 +783,6 @@ endif
 in_epsilon = in_epsilon * factor
 
 call kim_convert_unit( &
-  model_driver_create_handle, &
   kim_length_unit_a, &
   kim_energy_unit_ev, &
   kim_charge_unit_e, &

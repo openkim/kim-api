@@ -160,7 +160,6 @@ int KIM_ModelCreate_SetUnits(
     KIM_TimeUnit const timeUnit);
 
 int KIM_ModelCreate_ConvertUnit(
-    KIM_ModelCreate const * const modelCreate,
     KIM_LengthUnit const fromLengthUnit,
     KIM_EnergyUnit const fromEnergyUnit,
     KIM_ChargeUnit const fromChargeUnit,

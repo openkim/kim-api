@@ -522,7 +522,7 @@ int LennardJones612Implementation::ConvertUnits(
 
   // changing units of cutoffs and sigmas
   double convertLength = 1.0;
-  ier = modelDriverCreate->ConvertUnit(
+  ier = KIM::ModelDriverCreate::ConvertUnit(
       fromLength, fromEnergy, fromCharge, fromTemperature, fromTime,
       requestedLengthUnit, requestedEnergyUnit, requestedChargeUnit,
       requestedTemperatureUnit, requestedTimeUnit,
@@ -543,7 +543,7 @@ int LennardJones612Implementation::ConvertUnits(
   }
   // changing units of epsilons
   double convertEnergy = 1.0;
-  ier = modelDriverCreate->ConvertUnit(
+  ier = KIM::ModelDriverCreate::ConvertUnit(
       fromLength, fromEnergy, fromCharge, fromTemperature, fromTime,
       requestedLengthUnit, requestedEnergyUnit, requestedChargeUnit,
       requestedTemperatureUnit, requestedTimeUnit,

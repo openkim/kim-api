@@ -345,7 +345,6 @@ int KIM_ModelDriverCreate_SetUnits(
 }
 
 int KIM_ModelDriverCreate_ConvertUnit(
-    KIM_ModelDriverCreate const * const modelDriverCreate,
     KIM_LengthUnit const fromLengthUnit,
     KIM_EnergyUnit const fromEnergyUnit,
     KIM_ChargeUnit const fromChargeUnit,
@@ -363,9 +362,7 @@ int KIM_ModelDriverCreate_ConvertUnit(
     double const timeExponent,
     double * const conversionFactor)
 {
-  CONVERT_POINTER;
-
-  return pModelDriverCreate->ConvertUnit(
+  return KIM::ModelDriverCreate::ConvertUnit(
       makeLengthUnitCpp(fromLengthUnit),
       makeEnergyUnitCpp(fromEnergyUnit),
       makeChargeUnitCpp(fromChargeUnit),

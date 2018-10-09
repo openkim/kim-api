@@ -169,7 +169,6 @@ int KIM_ModelDriverCreate_SetUnits(
     KIM_TimeUnit const timeUnit);
 
 int KIM_ModelDriverCreate_ConvertUnit(
-    KIM_ModelDriverCreate const * const modelDriverCreate,
     KIM_LengthUnit const fromLengthUnit,
     KIM_EnergyUnit const fromEnergyUnit,
     KIM_ChargeUnit const fromChargeUnit,
