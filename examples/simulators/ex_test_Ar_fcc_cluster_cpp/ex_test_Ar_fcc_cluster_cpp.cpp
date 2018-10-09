@@ -258,8 +258,8 @@ int main()
     std::string const * strName;
     std::string const * strDesc;
     int extent;
-    kim_cluster_model->GetParameterDataTypeExtentNameAndDescription(
-        i, &dataType, &extent, &strName, &strDesc);
+    kim_cluster_model->GetParameterMetadata(i, &dataType, &extent, &strName,
+                                            &strDesc);
     std::cout << "Parameter No. " << i << " has" << std::endl
               << " data type   : \"" << dataType.String() << "\"" << std::endl
               << " extent      : " << extent  << std::endl

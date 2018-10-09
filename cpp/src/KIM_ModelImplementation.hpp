@@ -160,10 +160,9 @@ class ModelImplementation
                           std::string const & name,
                           std::string const & description);
   void GetNumberOfParameters(int * const numberOfParameters) const;
-  int GetParameterDataTypeExtentNameAndDescription(
-      int const parameterIndex, DataType * const dataType, int * const extent,
-      std::string const ** const name, std::string const ** const description)
-      const;
+  int GetParameterMetadata(int const parameterIndex, DataType * const dataType,
+                           int * const extent, std::string const ** const name,
+                           std::string const ** const description) const;
   int GetParameter(int const parameterIndex, int const arrayIndex,
                    int * const parameterValue) const;
   int GetParameter(int const parameterIndex, int const arrayIndex,

@@ -332,7 +332,7 @@ void KIM_Model_GetNumberOfParameters(KIM_Model const * const model,
   pModel->GetNumberOfParameters(numberOfParameters);
 }
 
-int KIM_Model_GetParameterDataTypeExtentNameAndDescription(
+int KIM_Model_GetParameterMetadata(
     KIM_Model const * const model, int const parameterIndex,
     KIM_DataType * const dataType, int * const extent,
     char const ** const name, char const ** const description)
@@ -361,8 +361,8 @@ int KIM_Model_GetParameterDataTypeExtentNameAndDescription(
     ppStrDesc = &pStrDesc;
 
   int error
-      = pModel->GetParameterDataTypeExtentNameAndDescription(
-          parameterIndex, pTyp, extent, ppStrName, ppStrDesc);
+      = pModel->GetParameterMetadata(parameterIndex, pTyp, extent, ppStrName,
+                                     ppStrDesc);
 
   if (error)
     return true;

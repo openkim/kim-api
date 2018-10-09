@@ -1028,14 +1028,14 @@ void ModelImplementation::GetNumberOfParameters(int * const numberOfParameters)
   LOG_DEBUG("Exit   " + callString);
 }
 
-int ModelImplementation::GetParameterDataTypeExtentNameAndDescription(
+int ModelImplementation::GetParameterMetadata(
     int const parameterIndex, DataType * const dataType, int * const extent,
     std::string const ** const name, std::string const ** const description)
     const
 {
 #if DEBUG_VERBOSITY
   std::string const callString
-      = "GetParameterDataTypeExtentNameAndDescription("
+      = "GetParameterMetadata("
       + SNUM(parameterIndex) + ", " + SPTR(dataType) + ", "
       + SPTR(extent) + ", " + SPTR(name) + ", " + SPTR(description) + ").";
 #endif
