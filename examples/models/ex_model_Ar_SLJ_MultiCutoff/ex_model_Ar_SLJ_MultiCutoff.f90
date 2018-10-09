@@ -51,6 +51,7 @@
 module ex_model_Ar_SLJ_MultiCutoff
 
 use, intrinsic :: iso_c_binding
+use kim_model_headers_module
 implicit none
 
 save
@@ -143,7 +144,6 @@ end subroutine calc_phi
 !-------------------------------------------------------------------------------
 subroutine calc_spring_energyamp(model_compute_arguments_handle, atom, coor, &
                                  eps, ierr)
-use kim_model_compute_headers_module
 implicit none
 
 !-- Transferred variables
@@ -184,7 +184,6 @@ end subroutine calc_spring_energyamp
 !-------------------------------------------------------------------------------
 subroutine calc_spring_force(model_compute_arguments_handle, atom, coor, eps, &
                              phi, force, ierr)
-use kim_model_compute_headers_module
 implicit none
 
 !-- Transferred variables
@@ -232,7 +231,6 @@ end subroutine calc_spring_force
 !-------------------------------------------------------------------------------
 subroutine Compute_Energy_Forces(model_compute_handle, &
   model_compute_arguments_handle, ierr) bind(c)
-use kim_model_compute_headers_module
 implicit none
 
 !-- Transferred variables
@@ -486,7 +484,6 @@ end subroutine Compute_Energy_Forces
 !-------------------------------------------------------------------------------
 subroutine model_destroy_func(model_destroy_handle, ierr) bind(c)
   use, intrinsic :: iso_c_binding
-  use kim_model_destroy_headers_module
   implicit none
 
   !-- Transferred variables
@@ -511,7 +508,6 @@ end subroutine model_destroy_func
 subroutine model_compute_arguments_create(model_compute_handle, &
   model_compute_arguments_create_handle, ierr) bind(c)
   use, intrinsic :: iso_c_binding
-  use kim_model_compute_arguments_create_headers_module
   implicit none
 
   !-- Transferred variables
@@ -576,7 +572,7 @@ subroutine model_create_routine(model_create_handle, requested_length_unit, &
   requested_time_unit, ierr) bind(c)
 use, intrinsic :: iso_c_binding
 use ex_model_Ar_SLJ_MultiCutoff
-use kim_model_create_headers_module
+use kim_model_headers_module
 implicit none
 
 !-- Transferred variables
