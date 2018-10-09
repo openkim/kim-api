@@ -192,10 +192,10 @@ subroutine check_model_compatibility(compute_arguments_handle, &
     end if
 
     ! can only handle energy and forces as required args
-    if (support_status == kim_support_status_required) then
+    if (support_status == KIM_SUPPORT_STATUS_REQUIRED) then
       if (.not. ( &
-        (argument_name == kim_compute_argument_name_partial_energy) .or. &
-        (argument_name == kim_compute_argument_name_partial_forces))) then
+        (argument_name == KIM_COMPUTE_ARGUMENT_NAME_PARTIAL_ENERGY) .or. &
+        (argument_name == KIM_COMPUTE_ARGUMENT_NAME_PARTIAL_FORCES))) then
         call my_warning("unsupported required argument")
         ierr = 0
         return
@@ -203,20 +203,20 @@ subroutine check_model_compatibility(compute_arguments_handle, &
     end if
 
     ! need both energy and forces not "notSupported"
-    if ((argument_name == kim_compute_argument_name_partial_energy) .and. &
-      (support_status == kim_support_status_not_supported)) then
+    if ((argument_name == KIM_COMPUTE_ARGUMENT_NAME_PARTIAL_ENERGY) .and. &
+      (support_status == KIM_SUPPORT_STATUS_NOT_SUPPORTED)) then
       call my_warning("model does not support energy")
       ierr = 0
       return
     end if
-    if (argument_name == kim_compute_argument_name_partial_forces) then
-      if (support_status == kim_support_status_not_supported) then
+    if (argument_name == KIM_COMPUTE_ARGUMENT_NAME_PARTIAL_FORCES) then
+      if (support_status == KIM_SUPPORT_STATUS_NOT_SUPPORTED) then
         call my_warning("model does not support forces")
         ierr = 0
         return
-      else if (support_status == kim_support_status_required) then
+      else if (support_status == KIM_SUPPORT_STATUS_REQUIRED) then
         forces_optional = .false.
-      else if (support_status == kim_support_status_optional) then
+      else if (support_status == KIM_SUPPORT_STATUS_OPTIONAL) then
         forces_optional = .true.
       else
         call my_warning("unknown support_status for forces")
@@ -244,7 +244,7 @@ subroutine check_model_compatibility(compute_arguments_handle, &
     end if
 
     ! cannot handle any "required" call backs
-    if (support_status == kim_support_status_required) then
+    if (support_status == KIM_SUPPORT_STATUS_REQUIRED) then
       call my_warning("unsupported required call back")
       ierr = 0
       return
@@ -846,12 +846,12 @@ program vc_forces_numer_deriv
 
   ! Create empty KIM object
   !
-  call kim_model_create(kim_numbering_one_based, &
-    kim_length_unit_a, &
-    kim_energy_unit_ev, &
-    kim_charge_unit_e, &
-    kim_temperature_unit_k, &
-    kim_time_unit_ps, &
+  call kim_model_create(KIM_NUMBERING_ONE_BASED, &
+    KIM_LENGTH_UNIT_A, &
+    KIM_ENERGY_UNIT_EV, &
+    KIM_CHARGE_UNIT_E, &
+    KIM_TEMPERATURE_UNIT_K, &
+    KIM_TIME_UNIT_PS, &
     trim(modelname), &
     requested_units_accepted, &
     model_handle, ierr)
@@ -912,24 +912,24 @@ program vc_forces_numer_deriv
   ! register memory with the KIM system
   ierr = 0
   call kim_set_argument_pointer(compute_arguments_handle, &
-    kim_compute_argument_name_number_of_particles, numberOfParticles, ierr2)
+    KIM_COMPUTE_ARGUMENT_NAME_NUMBER_OF_PARTICLES, numberOfParticles, ierr2)
   ierr = ierr + ierr2
   call kim_set_argument_pointer(compute_arguments_handle, &
-    kim_compute_argument_name_particle_species_codes, particleSpeciesCodes, &
+    KIM_COMPUTE_ARGUMENT_NAME_PARTICLE_SPECIES_CODES, particleSpeciesCodes, &
     ierr2)
   ierr = ierr + ierr2
   call kim_set_argument_pointer(compute_arguments_handle, &
-    kim_compute_argument_name_particle_contributing, particleContributing, &
+    KIM_COMPUTE_ARGUMENT_NAME_PARTICLE_CONTRIBUTING, particleContributing, &
     ierr2)
   ierr = ierr + ierr2
   call kim_set_argument_pointer(compute_arguments_handle, &
-    kim_compute_argument_name_coordinates, coords, ierr2)
+    KIM_COMPUTE_ARGUMENT_NAME_COORDINATES, coords, ierr2)
   ierr = ierr + ierr2
   call kim_set_argument_pointer(compute_arguments_handle, &
-    kim_compute_argument_name_partial_energy, energy, ierr2)
+    KIM_COMPUTE_ARGUMENT_NAME_PARTIAL_ENERGY, energy, ierr2)
   ierr = ierr + ierr2
   call kim_set_argument_pointer(compute_arguments_handle, &
-    kim_compute_argument_name_partial_forces, forces_kim, ierr2)
+    KIM_COMPUTE_ARGUMENT_NAME_PARTIAL_FORCES, forces_kim, ierr2)
   ierr = ierr + ierr2
   if (ierr /= 0) then
      call my_error("set_argument_pointer")
@@ -945,7 +945,7 @@ program vc_forces_numer_deriv
   ! Set pointer in KIM object to neighbor list routine and object
   !
   call kim_set_callback_pointer(compute_arguments_handle, &
-    kim_compute_callback_name_get_neighbor_list, kim_language_name_fortran, &
+    KIM_COMPUTE_CALLBACK_NAME_GET_NEIGHBOR_LIST, KIM_LANGUAGE_NAME_FORTRAN, &
     c_funloc(get_neigh), c_loc(neighobject), ierr)
   if (ierr /= 0) then
     call my_error("set_callback_pointer")
@@ -1019,7 +1019,7 @@ program vc_forces_numer_deriv
   !
   if (forces_optional) then
     call kim_set_argument_pointer(compute_arguments_handle, &
-      kim_compute_argument_name_partial_forces, null_pointer, ierr)
+      KIM_COMPUTE_ARGUMENT_NAME_PARTIAL_FORCES, null_pointer, ierr)
     if (ierr /= 0) then
       call my_error("set_argument_pointer")
     endif

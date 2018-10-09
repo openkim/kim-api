@@ -400,12 +400,12 @@ program ex_test_ar_fcc_cluster_fortran
 
   ! Create empty KIM object
   !
-  call kim_model_create(kim_numbering_one_based, &
-    kim_length_unit_a, &
-    kim_energy_unit_ev, &
-    kim_charge_unit_e, &
-    kim_temperature_unit_k, &
-    kim_time_unit_ps, &
+  call kim_model_create(KIM_NUMBERING_ONE_BASED, &
+    KIM_LENGTH_UNIT_A, &
+    KIM_ENERGY_UNIT_EV, &
+    KIM_CHARGE_UNIT_E, &
+    KIM_TEMPERATURE_UNIT_K, &
+    KIM_TIME_UNIT_PS, &
     trim(modelname), &
     requested_units_accepted, &
     model_handle, ierr)
@@ -421,7 +421,7 @@ program ex_test_ar_fcc_cluster_fortran
   ! check that model supports Ar
   !
   call kim_get_species_support_and_code(model_handle, &
-    kim_species_name_ar, species_is_supported, species_code, ierr)
+    KIM_SPECIES_NAME_AR, species_is_supported, species_code, ierr)
   if ((ierr /= 0) .or. (species_is_supported /= 1)) then
     call my_error("Model does not support Ar")
   endif
@@ -439,24 +439,24 @@ program ex_test_ar_fcc_cluster_fortran
   ! register memory with the KIM system
   ierr = 0
   call kim_set_argument_pointer(compute_arguments_handle, &
-    kim_compute_argument_name_number_of_particles, n, ierr2)
+    KIM_COMPUTE_ARGUMENT_NAME_NUMBER_OF_PARTICLES, n, ierr2)
   ierr = ierr + ierr2
   call kim_set_argument_pointer(compute_arguments_handle, &
-    kim_compute_argument_name_particle_species_codes, particle_species_codes, &
+    KIM_COMPUTE_ARGUMENT_NAME_PARTICLE_SPECIES_CODES, particle_species_codes, &
     ierr2)
   ierr = ierr + ierr2
   call kim_set_argument_pointer(compute_arguments_handle, &
-    kim_compute_argument_name_particle_contributing, particle_contributing, &
+    KIM_COMPUTE_ARGUMENT_NAME_PARTICLE_CONTRIBUTING, particle_contributing, &
     ierr2)
   ierr = ierr + ierr2
   call kim_set_argument_pointer(compute_arguments_handle, &
-    kim_compute_argument_name_coordinates, coords, ierr2)
+    KIM_COMPUTE_ARGUMENT_NAME_COORDINATES, coords, ierr2)
   ierr = ierr + ierr2
   call kim_set_argument_pointer(compute_arguments_handle, &
-    kim_compute_argument_name_partial_energy, energy, ierr2)
+    KIM_COMPUTE_ARGUMENT_NAME_PARTIAL_ENERGY, energy, ierr2)
   ierr = ierr + ierr2
   call kim_set_argument_pointer(compute_arguments_handle, &
-    kim_compute_argument_name_partial_forces, forces, ierr2)
+    KIM_COMPUTE_ARGUMENT_NAME_PARTIAL_FORCES, forces, ierr2)
   ierr = ierr + ierr2
   if (ierr /= 0) then
      call my_error("set_argument_pointer")
@@ -471,7 +471,7 @@ program ex_test_ar_fcc_cluster_fortran
   ! Set pointer in KIM object to neighbor list routine and object
   !
   call kim_set_callback_pointer(compute_arguments_handle, &
-    kim_compute_callback_name_get_neighbor_list, kim_language_name_fortran, &
+    KIM_COMPUTE_CALLBACK_NAME_GET_NEIGHBOR_LIST, KIM_LANGUAGE_NAME_FORTRAN, &
     c_funloc(get_neigh), c_loc(neighobject), ierr)
   if (ierr /= 0) then
     call my_error("set_callback_pointer")
