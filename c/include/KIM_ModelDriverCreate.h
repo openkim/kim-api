@@ -169,7 +169,6 @@ int KIM_ModelDriverCreate_SetUnits(
     KIM_TimeUnit const timeUnit);
 
 int KIM_ModelDriverCreate_ConvertUnit(
-    KIM_ModelDriverCreate const * const modelDriverCreate,
     KIM_LengthUnit const fromLengthUnit,
     KIM_EnergyUnit const fromEnergyUnit,
     KIM_ChargeUnit const fromChargeUnit,
@@ -192,7 +191,7 @@ void KIM_ModelDriverCreate_LogEntry(
     KIM_LogVerbosity const logVerbosity, char const * const message,
     int const lineNumber, char const * const fileName);
 
-char const * KIM_ModelDriverCreate_String(
+char const * KIM_ModelDriverCreate_ToString(
     KIM_ModelDriverCreate const * const modelDriverCreate);
 
 #endif  /* KIM_MODEL_DRIVE_CREATE_H_ */

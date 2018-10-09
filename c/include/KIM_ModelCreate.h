@@ -160,7 +160,6 @@ int KIM_ModelCreate_SetUnits(
     KIM_TimeUnit const timeUnit);
 
 int KIM_ModelCreate_ConvertUnit(
-    KIM_ModelCreate const * const modelCreate,
     KIM_LengthUnit const fromLengthUnit,
     KIM_EnergyUnit const fromEnergyUnit,
     KIM_ChargeUnit const fromChargeUnit,
@@ -183,6 +182,7 @@ void KIM_ModelCreate_LogEntry(
     KIM_LogVerbosity const logVerbosity, char const * const message,
     int const lineNumber, char const * const fileName);
 
-char const * KIM_ModelCreate_String(KIM_ModelCreate const * const modelCreate);
+char const * KIM_ModelCreate_ToString(
+    KIM_ModelCreate const * const modelCreate);
 
 #endif  /* KIM_MODEL_CREATE_H_ */

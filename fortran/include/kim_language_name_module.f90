@@ -37,18 +37,21 @@ module kim_language_name_module
   private
 
   public &
+    ! Derived types
     kim_language_name_type, &
-    kim_language_name_from_string, &
+
+    ! Constants
+    KIM_LANGUAGE_NAME_CPP, &
+    KIM_LANGUAGE_NAME_C, &
+    KIM_LANGUAGE_NAME_FORTRAN, &
+
+    ! Routines
     operator (.eq.), &
     operator (.ne.), &
-    kim_language_name_string, &
-
-    kim_language_name_cpp, &
-    kim_language_name_c, &
-    kim_language_name_fortran, &
-
-    kim_language_name_get_number_of_language_names, &
-    kim_language_name_get_language_name
+    kim_from_string, &
+    kim_to_string, &
+    kim_get_number_of_language_names, &
+    kim_get_language_name
 
 
   type, bind(c) :: kim_language_name_type
@@ -57,65 +60,126 @@ module kim_language_name_module
 
   type(kim_language_name_type), protected, &
     bind(c, name="KIM_LANGUAGE_NAME_cpp") &
-    :: kim_language_name_cpp
+    :: KIM_LANGUAGE_NAME_CPP
   type(kim_language_name_type), protected, &
     bind(c, name="KIM_LANGUAGE_NAME_c") &
-    :: kim_language_name_c
+    :: KIM_LANGUAGE_NAME_C
   type(kim_language_name_type), protected, &
     bind(c, name="KIM_LANGUAGE_NAME_fortran") &
-    :: kim_language_name_fortran
+    :: KIM_LANGUAGE_NAME_FORTRAN
 
   interface operator (.eq.)
-    logical function kim_language_name_equal(left, right)
-      use, intrinsic :: iso_c_binding
-      import kim_language_name_type
-      implicit none
-      type(kim_language_name_type), intent(in) :: left
-      type(kim_language_name_type), intent(in) :: right
-    end function kim_language_name_equal
+    module procedure kim_language_name_equal
   end interface operator (.eq.)
 
   interface operator (.ne.)
-    logical function kim_language_name_not_equal(left, right)
-      use, intrinsic :: iso_c_binding
-      import kim_language_name_type
-      implicit none
-      type(kim_language_name_type), intent(in) :: left
-      type(kim_language_name_type), intent(in) :: right
-    end function kim_language_name_not_equal
+    module procedure kim_language_name_not_equal
   end interface operator (.ne.)
 
-  interface
-    subroutine kim_language_name_from_string(string, language_name)
-      use, intrinsic :: iso_c_binding
-      import kim_language_name_type
-      implicit none
-      character(len=*, kind=c_char), intent(in) :: string
-      type(kim_language_name_type), intent(out) :: language_name
-    end subroutine kim_language_name_from_string
+  interface kim_from_string
+    module procedure kim_language_name_from_string
+  end interface kim_from_string
 
-    subroutine kim_language_name_string(language_name, string)
-      use, intrinsic :: iso_c_binding
-      import kim_language_name_type
-      implicit none
-      type(kim_language_name_type), intent(in), value :: language_name
-      character(len=*, kind=c_char), intent(out) :: string
-    end subroutine kim_language_name_string
+  interface kim_to_string
+    module procedure kim_language_name_to_string
+  end interface kim_to_string
 
-    subroutine kim_language_name_get_number_of_language_names( &
-      number_of_language_names)
-      use, intrinsic :: iso_c_binding
-      implicit none
-      integer(c_int), intent(out) :: number_of_language_names
-    end subroutine kim_language_name_get_number_of_language_names
+contains
+  logical function kim_language_name_equal(left, right)
+    use, intrinsic :: iso_c_binding
+    implicit none
+    type(kim_language_name_type), intent(in) :: left
+    type(kim_language_name_type), intent(in) :: right
 
-    subroutine kim_language_name_get_language_name(index, language_name, ierr)
-      use, intrinsic :: iso_c_binding
-      import kim_language_name_type
-      implicit none
-      integer(c_int), intent(in), value :: index
-      type(kim_language_name_type), intent(out) :: language_name
-      integer(c_int), intent(out) :: ierr
-    end subroutine kim_language_name_get_language_name
-  end interface
+    kim_language_name_equal &
+      = (left%language_name_id .eq. right%language_name_id)
+  end function kim_language_name_equal
+
+  logical function kim_language_name_not_equal(left, right)
+    use, intrinsic :: iso_c_binding
+    implicit none
+    type(kim_language_name_type), intent(in) :: left
+    type(kim_language_name_type), intent(in) :: right
+
+    kim_language_name_not_equal = .not. (left .eq. right)
+  end function kim_language_name_not_equal
+
+  subroutine kim_language_name_from_string(string, language_name)
+    use, intrinsic :: iso_c_binding
+    implicit none
+    interface
+      type(kim_language_name_type) function from_string(string) &
+        bind(c, name="KIM_LanguageName_FromString")
+        use, intrinsic :: iso_c_binding
+        import kim_language_name_type
+        implicit none
+        character(c_char), intent(in) :: string(*)
+      end function from_string
+    end interface
+    character(len=*, kind=c_char), intent(in) :: string
+    type(kim_language_name_type), intent(out) :: language_name
+
+    language_name = from_string(trim(string)//c_null_char)
+  end subroutine kim_language_name_from_string
+
+  subroutine kim_language_name_to_string(language_name, string)
+    use, intrinsic :: iso_c_binding
+    use kim_convert_string_module, only : kim_convert_string
+    implicit none
+    interface
+      type(c_ptr) function get_string(language_name) &
+        bind(c, name="KIM_LanguageName_ToString")
+        use, intrinsic :: iso_c_binding
+        import kim_language_name_type
+        implicit none
+        type(kim_language_name_type), intent(in), value :: language_name
+      end function get_string
+    end interface
+    type(kim_language_name_type), intent(in), value :: language_name
+    character(len=*, kind=c_char), intent(out) :: string
+
+    type(c_ptr) :: p
+
+    p = get_string(language_name)
+    if (c_associated(p)) then
+      call kim_convert_string(p, string)
+    else
+      string = ""
+    end if
+  end subroutine kim_language_name_to_string
+
+  subroutine kim_get_number_of_language_names( &
+    number_of_language_names)
+    use, intrinsic :: iso_c_binding
+    implicit none
+    interface
+      subroutine get_number_of_language_names(number_of_language_names) &
+        bind(c, name="KIM_LANGUAGE_NAME_GetNumberOfLanguageNames")
+        use, intrinsic :: iso_c_binding
+        integer(c_int), intent(out) :: number_of_language_names
+      end subroutine get_number_of_language_names
+    end interface
+    integer(c_int), intent(out) :: number_of_language_names
+
+    call get_number_of_language_names(number_of_language_names)
+  end subroutine kim_get_number_of_language_names
+
+  subroutine kim_get_language_name(index, language_name, ierr)
+    use, intrinsic :: iso_c_binding
+    implicit none
+    interface
+      integer(c_int) function get_language_name(index, language_name) &
+        bind(c, name="KIM_LANGUAGE_NAME_GetLanguageName")
+        use, intrinsic :: iso_c_binding
+        import kim_language_name_type
+        integer(c_int), intent(in), value :: index
+        type(kim_language_name_type), intent(out) :: language_name
+      end function get_language_name
+    end interface
+    integer(c_int), intent(in), value :: index
+    type(kim_language_name_type), intent(out) :: language_name
+    integer(c_int), intent(out) :: ierr
+
+    ierr = get_language_name(index-1, language_name)
+  end subroutine kim_get_language_name
 end module kim_language_name_module

@@ -84,7 +84,7 @@ int KIM_ComputeCallbackNameNot_Equal(KIM_ComputeCallbackName const left,
   return (!KIM_ComputeCallbackName_Equal(left, right));
 }
 
-char const * KIM_ComputeCallbackName_String(
+char const * KIM_ComputeCallbackName_ToString(
     KIM_ComputeCallbackName computeCallbackName)
 {
   return makeComputeCallbackNameCpp(computeCallbackName).String().c_str();

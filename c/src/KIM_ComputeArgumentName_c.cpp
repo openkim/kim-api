@@ -101,7 +101,7 @@ int KIM_ComputeArgumentName_NotEqual(KIM_ComputeArgumentName const left,
   return (!KIM_ComputeArgumentName_Equal(left, right));
 }
 
-char const * KIM_ComputeArgumentName_String(
+char const * KIM_ComputeArgumentName_ToString(
     KIM_ComputeArgumentName computeArgumentName)
 {
   return makeComputeArgumentNameCpp(computeArgumentName).String().c_str();

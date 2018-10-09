@@ -81,7 +81,7 @@ int KIM_TemperatureUnit_NotEqual(KIM_TemperatureUnit const left,
   return (!KIM_TemperatureUnit_Equal(left, right));
 }
 
-char const * KIM_TemperatureUnit_String(
+char const * KIM_TemperatureUnit_ToString(
     KIM_TemperatureUnit const temperatureUnit)
 {
   return makeTemperatureUnitCpp(temperatureUnit).String().c_str();

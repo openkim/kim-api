@@ -37,17 +37,20 @@ module kim_data_type_module
   private
 
   public &
+    ! Derived types
     kim_data_type_type, &
-    kim_data_type_from_string, &
+
+    ! Constants
+    KIM_DATA_TYPE_INTEGER, &
+    KIM_DATA_TYPE_DOUBLE, &
+
+    ! Routines
     operator (.eq.), &
     operator (.ne.), &
-    kim_data_type_string, &
-
-    kim_data_type_integer, &
-    kim_data_type_double, &
-
-    kim_data_type_get_number_of_data_types, &
-    kim_data_type_get_data_type
+    kim_from_string, &
+    kim_to_string, &
+    kim_get_number_of_data_types, &
+    kim_get_data_type
 
 
   type, bind(c) :: kim_data_type_type
@@ -56,61 +59,124 @@ module kim_data_type_module
 
   type(kim_data_type_type), protected, &
     bind(c, name="KIM_DATA_TYPE_Integer") &
-    :: kim_data_type_integer
+    :: KIM_DATA_TYPE_INTEGER
   type(kim_data_type_type), protected, &
     bind(c, name="KIM_DATA_TYPE_Double") &
-    :: kim_data_type_double
+    :: KIM_DATA_TYPE_DOUBLE
 
   interface operator (.eq.)
-    logical function kim_data_type_equal(left, right)
-      use, intrinsic :: iso_c_binding
-      import kim_data_type_type
-      implicit none
-      type(kim_data_type_type), intent(in) :: left
-      type(kim_data_type_type), intent(in) :: right
-    end function kim_data_type_equal
+    module procedure kim_data_type_equal
   end interface operator (.eq.)
 
   interface operator (.ne.)
-    logical function kim_data_type_not_equal(left, right)
-      use, intrinsic :: iso_c_binding
-      import kim_data_type_type
-      implicit none
-      type(kim_data_type_type), intent(in) :: left
-      type(kim_data_type_type), intent(in) :: right
-    end function kim_data_type_not_equal
+    module procedure kim_data_type_not_equal
   end interface operator (.ne.)
 
-  interface
-    subroutine kim_data_type_from_string(string, data_type)
-      use, intrinsic :: iso_c_binding
-      import kim_data_type_type
-      implicit none
-      character(len=*, kind=c_char), intent(in) :: string
-      type(kim_data_type_type), intent(out) :: data_type
-    end subroutine kim_data_type_from_string
+  interface kim_from_string
+    module procedure kim_data_type_from_string
+  end interface kim_from_string
 
-    subroutine kim_data_type_string(data_type, string)
-      use, intrinsic :: iso_c_binding
-      import kim_data_type_type
-      implicit none
-      type(kim_data_type_type), intent(in), value :: data_type
-      character(len=*, kind=c_char), intent(out) :: string
-    end subroutine kim_data_type_string
+  interface kim_to_string
+    module procedure kim_data_type_to_string
+  end interface kim_to_string
 
-    subroutine kim_data_type_get_number_of_data_types(number_of_data_types)
-      use, intrinsic :: iso_c_binding
-      implicit none
-      integer(c_int), intent(out) :: number_of_data_types
-    end subroutine kim_data_type_get_number_of_data_types
+contains
+  logical function kim_data_type_equal(left, right)
+    use, intrinsic :: iso_c_binding
+    implicit none
+    type(kim_data_type_type), intent(in) :: left
+    type(kim_data_type_type), intent(in) :: right
 
-    subroutine kim_data_type_get_data_type(index, data_type, ierr)
-      use, intrinsic :: iso_c_binding
-      import kim_data_type_type
-      implicit none
-      integer(c_int), intent(in), value :: index
-      type(kim_data_type_type), intent(out) :: data_type
-      integer(c_int), intent(out) :: ierr
-    end subroutine kim_data_type_get_data_type
-  end interface
+    kim_data_type_equal &
+      = (left%data_type_id .eq. right%data_type_id)
+  end function kim_data_type_equal
+
+  logical function kim_data_type_not_equal(left, right)
+    use, intrinsic :: iso_c_binding
+    implicit none
+    type(kim_data_type_type), intent(in) :: left
+    type(kim_data_type_type), intent(in) :: right
+
+    kim_data_type_not_equal = .not. (left .eq. right)
+  end function kim_data_type_not_equal
+
+  subroutine kim_data_type_from_string(string, data_type)
+    use, intrinsic :: iso_c_binding
+    implicit none
+    interface
+      type(kim_data_type_type) function from_string(string) &
+        bind(c, name="KIM_DataType_FromString")
+        use, intrinsic :: iso_c_binding
+        import kim_data_type_type
+        implicit none
+        character(c_char), intent(in) :: string(*)
+      end function from_string
+    end interface
+    character(len=*, kind=c_char), intent(in) :: string
+    type(kim_data_type_type), intent(out) :: data_type
+
+    data_type = from_string(trim(string)//c_null_char)
+  end subroutine kim_data_type_from_string
+
+  subroutine kim_data_type_to_string(data_type, string)
+    use, intrinsic :: iso_c_binding
+    use kim_convert_string_module, only : kim_convert_string
+    implicit none
+    interface
+      type(c_ptr) function get_string(data_type) &
+        bind(c, name="KIM_DataType_ToString")
+        use, intrinsic :: iso_c_binding
+        import kim_data_type_type
+        implicit none
+        type(kim_data_type_type), intent(in), value :: data_type
+      end function get_string
+    end interface
+    type(kim_data_type_type), intent(in), value :: data_type
+    character(len=*, kind=c_char), intent(out) :: string
+
+    type(c_ptr) :: p
+
+    p = get_string(data_type)
+    if (c_associated(p)) then
+      call kim_convert_string(p, string)
+    else
+      string = ""
+    end if
+  end subroutine kim_data_type_to_string
+
+  subroutine kim_get_number_of_data_types(number_of_data_types)
+    use, intrinsic :: iso_c_binding
+    implicit none
+    interface
+      subroutine get_number_of_data_types(number_of_data_types) &
+        bind(c, name="KIM_DATA_TYPE_GetNumberOfDataTypes")
+        use, intrinsic :: iso_c_binding
+        implicit none
+        integer(c_int), intent(out) :: number_of_data_types
+      end subroutine get_number_of_data_types
+    end interface
+    integer(c_int), intent(out) :: number_of_data_types
+
+    call get_number_of_data_types(number_of_data_types)
+  end subroutine kim_get_number_of_data_types
+
+  subroutine kim_get_data_type(index, data_type, ierr)
+    use, intrinsic :: iso_c_binding
+    implicit none
+    interface
+      integer(c_int) function get_data_type(index, data_type) &
+        bind(c, name="KIM_DATA_TYPE_GetDataType")
+        use, intrinsic :: iso_c_binding
+        import kim_data_type_type
+        implicit none
+        integer(c_int), intent(in), value :: index
+        type(kim_data_type_type), intent(out) :: data_type
+      end function get_data_type
+    end interface
+    integer(c_int), intent(in), value :: index
+    type(kim_data_type_type), intent(out) :: data_type
+    integer(c_int), intent(out) :: ierr
+
+    ierr = get_data_type(index-1, data_type)
+  end subroutine kim_get_data_type
 end module kim_data_type_module

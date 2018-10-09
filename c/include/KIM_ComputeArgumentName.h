@@ -58,7 +58,7 @@ int KIM_ComputeArgumentName_Equal(KIM_ComputeArgumentName const left,
                                   KIM_ComputeArgumentName const right);
 int KIM_ComputeArgumentName_NotEqual(KIM_ComputeArgumentName const left,
                                      KIM_ComputeArgumentName const right);
-char const * KIM_ComputeArgumentName_String(
+char const * KIM_ComputeArgumentName_ToString(
     KIM_ComputeArgumentName const computeArgumentName);
 
 extern

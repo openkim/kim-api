@@ -78,7 +78,7 @@ int KIM_EnergyUnit_NotEqual(KIM_EnergyUnit const left,
   return (!KIM_EnergyUnit_Equal(left, right));
 }
 
-char const * KIM_EnergyUnit_String(KIM_EnergyUnit const energyUnit)
+char const * KIM_EnergyUnit_ToString(KIM_EnergyUnit const energyUnit)
 {
   return makeEnergyUnitCpp(energyUnit).String().c_str();
 }

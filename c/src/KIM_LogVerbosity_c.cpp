@@ -101,7 +101,7 @@ int KIM_LogVerbosity_NotEqual(KIM_LogVerbosity const left,
   return (! KIM_LogVerbosity_Equal(left, right));
 }
 
-char const * KIM_LogVerbosity_String(KIM_LogVerbosity const logVerbosity)
+char const * KIM_LogVerbosity_ToString(KIM_LogVerbosity const logVerbosity)
 {
   return makeLogVerbosityCpp(logVerbosity).String().c_str();
 }

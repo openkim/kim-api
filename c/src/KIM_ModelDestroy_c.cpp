@@ -90,7 +90,7 @@ void KIM_ModelDestroy_LogEntry(
                           lineNumber, fileName);
 }
 
-char const * KIM_ModelDestroy_String(
+char const * KIM_ModelDestroy_ToString(
     KIM_ModelDestroy const * const modelDestroy)
 {
   CONVERT_POINTER;

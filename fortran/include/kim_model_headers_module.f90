@@ -34,23 +34,22 @@
 module kim_model_headers_module
   use, intrinsic :: iso_c_binding
 
-  use kim_model_create_module
   use kim_log_verbosity_module
   use kim_language_name_module
+  use kim_data_type_module
   use kim_numbering_module
   use kim_species_name_module
   use kim_support_status_module
   use kim_unit_system_module
-  use kim_model_compute_arguments_create_module
   use kim_compute_argument_name_module
-  use kim_data_type_module
   use kim_compute_callback_name_module
-  use kim_model_compute_arguments_module
-  use kim_model_compute_arguments_destroy_module
+
+  use kim_model_create_module
+  use kim_model_compute_arguments_create_module
   use kim_model_compute_module
+  use kim_model_compute_arguments_module
   use kim_model_refresh_module
+  use kim_model_compute_arguments_destroy_module
   use kim_model_destroy_module
 
-  implicit none
-  public
 end module kim_model_headers_module

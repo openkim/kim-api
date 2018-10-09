@@ -146,7 +146,7 @@ int KIM_Model_GetSpeciesSupportAndCode(KIM_Model const * const model,
 
 void KIM_Model_GetNumberOfParameters(KIM_Model const * const model,
                                      int * const numberOfParameters);
-int KIM_Model_GetParameterDataTypeExtentNameAndDescription(
+int KIM_Model_GetParameterMetadata(
     KIM_Model const * const model, int const parameterIndex,
     KIM_DataType * const dataType, int * const extent,
     char const ** const name, char const ** const description);
@@ -172,7 +172,7 @@ void KIM_Model_SetSimulatorBufferPointer(KIM_Model * const model,
 void KIM_Model_GetSimulatorBufferPointer(KIM_Model const * const model,
                                          void ** const ptr);
 
-char const * KIM_Model_String(KIM_Model const * const model);
+char const * KIM_Model_ToString(KIM_Model const * const model);
 
 void KIM_Model_SetLogID(KIM_Model * const model, char const * const logID);
 void KIM_Model_PushLogVerbosity(KIM_Model * const model,

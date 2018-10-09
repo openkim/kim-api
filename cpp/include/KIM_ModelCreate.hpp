@@ -95,7 +95,7 @@ class ModelCreate
                TemperatureUnit const temperatureUnit,
                TimeUnit const timeUnit);
 
-  int ConvertUnit(
+  static int ConvertUnit(
       LengthUnit const fromLengthUnit,
       EnergyUnit const fromEnergyUnit,
       ChargeUnit const fromChargeUnit,
@@ -111,7 +111,7 @@ class ModelCreate
       double const chargeExponent,
       double const temperatureExponent,
       double const timeExponent,
-      double * const conversionFactor) const;
+      double * const conversionFactor);
 
   void LogEntry(LogVerbosity const logVerbosity, std::string const & message,
                 int const lineNumber, std::string const & fileName) const;

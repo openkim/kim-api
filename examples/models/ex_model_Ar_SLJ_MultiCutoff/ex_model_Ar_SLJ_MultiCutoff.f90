@@ -162,7 +162,7 @@ integer(c_int) numneishort
 integer(c_int), pointer :: neishort(:)
 
 ! Get short-range neighbors of `atom`
-call kim_model_compute_arguments_get_neighbor_list( &
+call kim_get_neighbor_list( &
   model_compute_arguments_handle, 1, atom, numneishort, neishort, ierr)
 if (ierr /= 0) return
 
@@ -204,7 +204,7 @@ integer(c_int) numneishort
 integer(c_int), pointer :: neishort(:)
 
 ! Get short-range neighbors of `atom`
-call kim_model_compute_arguments_get_neighbor_list( &
+call kim_get_neighbor_list( &
   model_compute_arguments_handle, 1, atom, numneishort, neishort, ierr)
 if (ierr /= 0) return
 
@@ -262,43 +262,43 @@ integer(c_int), pointer :: particleContributing(:)
 ! Unpack data from KIM object
 !
 ierr = 0
-call kim_model_compute_arguments_get_argument_pointer( &
+call kim_get_argument_pointer( &
   model_compute_arguments_handle, &
-  kim_compute_argument_name_number_of_particles, N, ierr2)
+  KIM_COMPUTE_ARGUMENT_NAME_NUMBER_OF_PARTICLES, N, ierr2)
 ierr = ierr + ierr2
-call kim_model_compute_arguments_get_argument_pointer( &
+call kim_get_argument_pointer( &
   model_compute_arguments_handle, &
-  kim_compute_argument_name_particle_species_codes, n, particleSpeciesCodes, &
+  KIM_COMPUTE_ARGUMENT_NAME_PARTICLE_SPECIES_CODES, n, particleSpeciesCodes, &
   ierr2)
 ierr = ierr + ierr2
-call kim_model_compute_arguments_get_argument_pointer( &
+call kim_get_argument_pointer( &
   model_compute_arguments_handle, &
-  kim_compute_argument_name_particle_contributing, n, particleContributing, &
+  KIM_COMPUTE_ARGUMENT_NAME_PARTICLE_CONTRIBUTING, n, particleContributing, &
   ierr2)
 ierr = ierr + ierr2
-call kim_model_compute_arguments_get_argument_pointer( &
+call kim_get_argument_pointer( &
   model_compute_arguments_handle, &
-  kim_compute_argument_name_coordinates, dim, n, coor, ierr2)
+  KIM_COMPUTE_ARGUMENT_NAME_COORDINATES, dim, n, coor, ierr2)
 ierr = ierr + ierr2
-call kim_model_compute_arguments_get_argument_pointer( &
+call kim_get_argument_pointer( &
   model_compute_arguments_handle, &
-  kim_compute_argument_name_partial_energy, energy, ierr2)
+  KIM_COMPUTE_ARGUMENT_NAME_PARTIAL_ENERGY, energy, ierr2)
 ierr = ierr + ierr2
-call kim_model_compute_arguments_get_argument_pointer( &
+call kim_get_argument_pointer( &
   model_compute_arguments_handle, &
-  kim_compute_argument_name_partial_forces, dim, n, force, ierr2)
+  KIM_COMPUTE_ARGUMENT_NAME_PARTIAL_FORCES, dim, n, force, ierr2)
 ierr = ierr + ierr2
-call kim_model_compute_arguments_get_argument_pointer( &
+call kim_get_argument_pointer( &
   model_compute_arguments_handle, &
-  kim_compute_argument_name_partial_particle_energy, n, enepot, ierr2)
+  KIM_COMPUTE_ARGUMENT_NAME_PARTIAL_PARTICLE_ENERGY, n, enepot, ierr2)
 ierr = ierr + ierr2
 !call kim_model_compute_arguments_get_argument_pointer( &
 !  model_compute_arguments_handle, &
-!  kim_compute_argument_name_partial_virial, 6, virial, ierr2)
+!  KIM_COMPUTE_ARGUMENT_NAME_PARTIAL_VIRIAL, 6, virial, ierr2)
 !ierr = ierr + ierr2
 if (ierr /= 0) then
-  call kim_model_compute_arguments_log_entry(model_compute_arguments_handle, &
-    kim_log_verbosity_error, "get data")
+  call kim_log_entry(model_compute_arguments_handle, &
+    KIM_LOG_VERBOSITY_ERROR, "get data")
   return
 endif
 
@@ -332,8 +332,8 @@ calc_deriv = comp_force.eq.1 !.or.comp_virial.eq.1
 ierr = 1 ! assume an error
 do i = 1,N
   if (particleSpeciesCodes(i).ne.speccode) then
-    call kim_model_compute_log_entry(model_compute_handle, &
-      kim_log_verbosity_error, "Unexpected species code detected")
+    call kim_log_entry(model_compute_handle, &
+      KIM_LOG_VERBOSITY_ERROR, "Unexpected species code detected")
     return
   endif
 enddo
@@ -356,12 +356,12 @@ if (calc_deriv)       dEidr  = 0.0_cd
 do i = 1, N
   if (particleContributing(i) == 1) then
     ! Set up neighbor list for next particle
-    call kim_model_compute_arguments_get_neighbor_list( &
+    call kim_get_neighbor_list( &
       model_compute_arguments_handle, 2, i, numnei, nei1part, ierr)
     if (ierr /= 0) then
       ! some sort of problem, exit
-      call kim_model_compute_arguments_log_entry( &
-        model_compute_arguments_handle, kim_log_verbosity_error, &
+      call kim_log_entry( &
+        model_compute_arguments_handle, KIM_LOG_VERBOSITY_ERROR, &
         "GetNeighborList failed")
       ierr = 1
       return
@@ -371,8 +371,8 @@ do i = 1, N
    call calc_spring_energyamp(model_compute_arguments_handle, i, coor, epsi, ierr)
     if (ierr /= 0) then
       ! some sort of problem, exit
-      call kim_model_compute_log_entry( &
-        model_compute_handle, kim_log_verbosity_error, &
+      call kim_log_entry( &
+        model_compute_handle, KIM_LOG_VERBOSITY_ERROR, &
         "GetNeighborList failed")
       ierr = 1
       return
@@ -388,8 +388,8 @@ do i = 1, N
       call calc_spring_energyamp(model_compute_arguments_handle, j, coor, epsj, ierr)
       if (ierr /= 0) then
         ! some sort of problem, exit
-        call kim_model_compute_log_entry( &
-          model_compute_handle, kim_log_verbosity_error, &
+        call kim_log_entry( &
+          model_compute_handle, KIM_LOG_VERBOSITY_ERROR, &
           "GetNeighborList failed")
         ierr = 1
         return
@@ -439,8 +439,8 @@ do i = 1, N
                                  phi, force, ierr)
           if (ierr /= 0) then
             ! some sort of problem, exit
-            call kim_model_compute_log_entry( &
-              model_compute_handle, kim_log_verbosity_error, &
+            call kim_log_entry( &
+              model_compute_handle, KIM_LOG_VERBOSITY_ERROR, &
               "GetNeighborList failed")
             ierr = 1
             return
@@ -450,8 +450,8 @@ do i = 1, N
                                  phi, force, ierr)
           if (ierr /= 0) then
             ! some sort of problem, exit
-            call kim_model_compute_log_entry( &
-              model_compute_handle, kim_log_verbosity_error, &
+            call kim_log_entry( &
+              model_compute_handle, KIM_LOG_VERBOSITY_ERROR, &
               "GetNeighborList failed")
             ierr = 1
             return
@@ -492,10 +492,10 @@ subroutine model_destroy_func(model_destroy_handle, ierr) bind(c)
 
   type(buffer_type), pointer :: buf; type(c_ptr) :: pbuf
 
-  call kim_model_destroy_get_model_buffer_pointer(model_destroy_handle, pbuf)
+  call kim_get_model_buffer_pointer(model_destroy_handle, pbuf)
   call c_f_pointer(pbuf, buf)
-  call kim_model_destroy_log_entry(model_destroy_handle, &
-    kim_log_verbosity_information, "deallocating model buffer")
+  call kim_log_entry(model_destroy_handle, &
+    KIM_LOG_VERBOSITY_INFORMATION, "deallocating model buffer")
   deallocate(buf)
   ierr = 0  ! everything is good
 end subroutine model_destroy_func
@@ -519,31 +519,31 @@ subroutine model_compute_arguments_create(model_compute_handle, &
   integer(c_int) :: ierr2
 
   ! avoid unsed dummy argument warnings
-  if (model_compute_handle .eq. kim_model_compute_null_handle) continue
+  if (model_compute_handle .eq. KIM_MODEL_COMPUTE_NULL_HANDLE) continue
 
   ierr = 0
   ierr2 = 0
 
   ! register arguments
-  call kim_model_compute_arguments_create_set_argument_support_status( &
+  call kim_set_argument_support_status( &
     model_compute_arguments_create_handle, &
-    kim_compute_argument_name_partial_energy, &
-    kim_support_status_optional, ierr2)
+    KIM_COMPUTE_ARGUMENT_NAME_PARTIAL_ENERGY, &
+    KIM_SUPPORT_STATUS_OPTIONAL, ierr2)
   ierr = ierr + ierr2
-  call kim_model_compute_arguments_create_set_argument_support_status( &
+  call kim_set_argument_support_status( &
     model_compute_arguments_create_handle, &
-    kim_compute_argument_name_partial_forces, &
-    kim_support_status_optional, ierr2)
+    KIM_COMPUTE_ARGUMENT_NAME_PARTIAL_FORCES, &
+    KIM_SUPPORT_STATUS_OPTIONAL, ierr2)
   ierr = ierr + ierr2
-  call kim_model_compute_arguments_create_set_argument_support_status( &
+  call kim_set_argument_support_status( &
     model_compute_arguments_create_handle, &
-    kim_compute_argument_name_partial_particle_energy, &
-    kim_support_status_optional, ierr2)
+    KIM_COMPUTE_ARGUMENT_NAME_PARTIAL_PARTICLE_ENERGY, &
+    KIM_SUPPORT_STATUS_OPTIONAL, ierr2)
   ierr = ierr + ierr2
-!  call kim_model_compute_arguments_create_set_argument_support_status( &
+!  call kim_set_argument_support_status( &
 !    model_compute_arguments_create_handle, &
-!    kim_compute_argument_name_partial_virial, &
-!    kim_support_status_optional, ierr2)
+!    KIM_COMPUTE_ARGUMENT_NAME_PARTIAL_VIRIAL, &
+!    KIM_SUPPORT_STATUS_OPTIONAL, ierr2)
 !  ierr = ierr + ierr2
 
   ! register call backs
@@ -551,9 +551,9 @@ subroutine model_compute_arguments_create(model_compute_handle, &
 
   if (ierr /= 0) then
     ierr = 1
-    call kim_model_compute_arguments_create_log_entry( &
+    call kim_log_entry( &
       model_compute_arguments_create_handle, &
-      kim_log_verbosity_error, &
+      KIM_LOG_VERBOSITY_ERROR, &
       "Unable to successfully create compute_arguments object")
   endif
 
@@ -592,49 +592,49 @@ ierr = 0
 ierr2 = 0
 
 ! avoid unsed dummy argument warnings
-if (requested_length_unit .eq. kim_length_unit_unused) continue
-if (requested_energy_unit .eq. kim_energy_unit_unused) continue
-if (requested_charge_unit .eq. kim_charge_unit_unused) continue
-if (requested_temperature_unit .eq. kim_temperature_unit_unused) continue
-if (requested_time_unit .eq. kim_time_unit_unused) continue
+if (requested_length_unit .eq. KIM_LENGTH_UNIT_UNUSED) continue
+if (requested_energy_unit .eq. KIM_ENERGY_UNIT_UNUSED) continue
+if (requested_charge_unit .eq. KIM_CHARGE_UNIT_UNUSED) continue
+if (requested_temperature_unit .eq. KIM_TEMPERATURE_UNIT_UNUSED) continue
+if (requested_time_unit .eq. KIM_TIME_UNIT_UNUSED) continue
 
 ! set units
-call kim_model_create_set_units(model_create_handle, &
-  kim_length_unit_a, &
-  kim_energy_unit_ev, &
-  kim_charge_unit_unused, &
-  kim_temperature_unit_unused, &
-  kim_time_unit_unused, &
+call kim_set_units(model_create_handle, &
+  KIM_LENGTH_UNIT_A, &
+  KIM_ENERGY_UNIT_EV, &
+  KIM_CHARGE_UNIT_UNUSED, &
+  KIM_TEMPERATURE_UNIT_UNUSED, &
+  KIM_TIME_UNIT_UNUSED, &
   ierr2)
 ierr = ierr + ierr2
 
 ! register species
-call kim_model_create_set_species_code(model_create_handle, &
-  kim_species_name_ar, speccode, ierr2)
+call kim_set_species_code(model_create_handle, &
+  KIM_SPECIES_NAME_AR, speccode, ierr2)
 ierr = ierr + ierr2
 
 ! register numbering
-call kim_model_create_set_model_numbering(model_create_handle, &
-  kim_numbering_one_based, ierr2);
+call kim_set_model_numbering(model_create_handle, &
+  KIM_NUMBERING_ONE_BASED, ierr2);
 ierr = ierr + ierr2
 
 ! register function pointers
-call kim_model_create_set_compute_pointer(model_create_handle, &
-  kim_language_name_fortran, c_funloc(Compute_Energy_Forces), ierr2)
+call kim_set_compute_pointer(model_create_handle, &
+  KIM_LANGUAGE_NAME_FORTRAN, c_funloc(Compute_Energy_Forces), ierr2)
 ierr = ierr + ierr2
-call kim_model_create_set_compute_arguments_create_pointer( &
-  model_create_handle, kim_language_name_fortran, &
+call kim_set_compute_arguments_create_pointer( &
+  model_create_handle, KIM_LANGUAGE_NAME_FORTRAN, &
   c_funloc(model_compute_arguments_create), ierr2)
 ierr = ierr + ierr2
-call kim_model_create_set_destroy_pointer(model_create_handle, &
-  kim_language_name_fortran, c_funloc(model_destroy_func), ierr2)
+call kim_set_destroy_pointer(model_create_handle, &
+  KIM_LANGUAGE_NAME_FORTRAN, c_funloc(model_destroy_func), ierr2)
 ierr = ierr + ierr2
 
 ! allocate buffer
 allocate( buf )
 
 ! store model buffer in KIM object
-call kim_model_create_set_model_buffer_pointer(model_create_handle, &
+call kim_set_model_buffer_pointer(model_create_handle, &
   c_loc(buf))
 
 ! set buffer values
@@ -645,19 +645,19 @@ buf%model_will_not_request_neighbors_of_noncontributing_particles(1) = 0
 buf%model_will_not_request_neighbors_of_noncontributing_particles(2) = 1
 
 ! register influence distance
-call kim_model_create_set_influence_distance_pointer( &
+call kim_set_influence_distance_pointer( &
   model_create_handle, buf%influence_distance)
 
 ! register cutoff
-call kim_model_create_set_neighbor_list_pointers(model_create_handle, &
+call kim_set_neighbor_list_pointers(model_create_handle, &
   2, buf%cutoff, &
   buf%model_will_not_request_neighbors_of_noncontributing_particles)
 
 if (ierr /= 0) then
   ierr = 1
   deallocate( buf )
-  call kim_model_create_log_entry(model_create_handle, &
-    kim_log_verbosity_error, "Unable to successfully initialize model")
+  call kim_log_entry(model_create_handle, &
+    KIM_LOG_VERBOSITY_ERROR, "Unable to successfully initialize model")
 endif
 
 return

@@ -302,7 +302,7 @@ class LennardJones_Ar
 
     // changing units of cutoffs and sigmas
     double convertLength = 1.0;
-    ier = modelCreate->ConvertUnit(
+    ier = KIM::ModelCreate::ConvertUnit(
         fromLength, fromEnergy, fromCharge, fromTemperature, fromTime,
         requestedLengthUnit, requestedEnergyUnit, requestedChargeUnit,
         requestedTemperatureUnit, requestedTimeUnit,
@@ -320,7 +320,7 @@ class LennardJones_Ar
 
     // changing units of epsilons
     double convertEnergy = 1.0;
-    ier = modelCreate->ConvertUnit(
+    ier = KIM::ModelCreate::ConvertUnit(
         fromLength, fromEnergy, fromCharge, fromTemperature, fromTime,
         requestedLengthUnit, requestedEnergyUnit, requestedChargeUnit,
         requestedTemperatureUnit, requestedTimeUnit,

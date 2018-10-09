@@ -1028,14 +1028,14 @@ void ModelImplementation::GetNumberOfParameters(int * const numberOfParameters)
   LOG_DEBUG("Exit   " + callString);
 }
 
-int ModelImplementation::GetParameterDataTypeExtentNameAndDescription(
+int ModelImplementation::GetParameterMetadata(
     int const parameterIndex, DataType * const dataType, int * const extent,
     std::string const ** const name, std::string const ** const description)
     const
 {
 #if DEBUG_VERBOSITY
   std::string const callString
-      = "GetParameterDataTypeExtentNameAndDescription("
+      = "GetParameterMetadata("
       + SNUM(parameterIndex) + ", " + SPTR(dataType) + ", "
       + SPTR(extent) + ", " + SPTR(name) + ", " + SPTR(description) + ").";
 #endif
@@ -1572,28 +1572,30 @@ int ModelImplementation::ConvertUnit(
     double const chargeExponent,
     double const temperatureExponent,
     double const timeExponent,
-    double * const conversionFactor) const
+    double * const conversionFactor)
 {
-#if DEBUG_VERBOSITY
-  std::string const callString = "ConvertUnit("
-      + fromLengthUnit.String() + ", "
-      + fromEnergyUnit.String() + ", "
-      + fromChargeUnit.String() + ", "
-      + fromTemperatureUnit.String() + ", "
-      + fromTimeUnit.String() + ", "
-      + toLengthUnit.String() + ", "
-      + toEnergyUnit.String() + ", "
-      + toChargeUnit.String() + ", "
-      + toTemperatureUnit.String() + ", "
-      + toTimeUnit.String() + ", "
-      + SNUM(lengthExponent) + ", "
-      + SNUM(energyExponent) + ", "
-      + SNUM(chargeExponent) + ", "
-      + SNUM(temperatureExponent) + ", "
-      + SNUM(timeExponent) + ", "
-      + SPTR(conversionFactor) + ").";
-#endif
-  LOG_DEBUG("Enter  " + callString);
+  // No debug logging for ConvertUnit: no log object available
+  //
+  // #if DEBUG_VERBOSITY
+  //   std::string const callString = "ConvertUnit("
+  //       + fromLengthUnit.String() + ", "
+  //       + fromEnergyUnit.String() + ", "
+  //       + fromChargeUnit.String() + ", "
+  //       + fromTemperatureUnit.String() + ", "
+  //       + fromTimeUnit.String() + ", "
+  //       + toLengthUnit.String() + ", "
+  //       + toEnergyUnit.String() + ", "
+  //       + toChargeUnit.String() + ", "
+  //       + toTemperatureUnit.String() + ", "
+  //       + toTimeUnit.String() + ", "
+  //       + SNUM(lengthExponent) + ", "
+  //       + SNUM(energyExponent) + ", "
+  //       + SNUM(chargeExponent) + ", "
+  //       + SNUM(temperatureExponent) + ", "
+  //       + SNUM(timeExponent) + ", "
+  //       + SPTR(conversionFactor) + ").";
+  // #endif
+  //   LOG_DEBUG("Enter  " + callString);
 
   static LengthMap const lengthConvertToSI = GetLengthMap();
   static EnergyMap const energyConvertToSI = GetEnergyMap();
@@ -1615,8 +1617,8 @@ int ModelImplementation::ConvertUnit(
       Validate(toTimeUnit);
   if (error)
   {
-    LOG_ERROR("Invalid arguments.");
-    LOG_DEBUG("Exit 1=" + callString);
+    // LOG_ERROR("Invalid arguments.");
+    // LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
 #endif
@@ -1625,8 +1627,9 @@ int ModelImplementation::ConvertUnit(
                        (toLengthUnit == KIM::LENGTH_UNIT::unused));
   if ((lengthExponent != 0.0) && lengthUnused)
   {
-    LOG_ERROR("Unable to convert unit.");
-    LOG_DEBUG("Exit 1=" + callString);
+    // LOG_ERROR("Unable to convert unit.");
+    // LOG_DEBUG("Exit 1=" + callString);
+    return true;
   }
   double const lengthConversion
       = (lengthUnused) ? 1 : (
@@ -1637,8 +1640,9 @@ int ModelImplementation::ConvertUnit(
                        (toEnergyUnit == KIM::ENERGY_UNIT::unused));
   if ((energyExponent != 0.0) && energyUnused)
   {
-    LOG_ERROR("Unable to convert unit.");
-    LOG_DEBUG("Exit 1=" + callString);
+    // LOG_ERROR("Unable to convert unit.");
+    // LOG_DEBUG("Exit 1=" + callString);
+    return true;
   }
   double const energyConversion
       = (energyUnused) ? 1 : (
@@ -1649,8 +1653,9 @@ int ModelImplementation::ConvertUnit(
                        (toChargeUnit == KIM::CHARGE_UNIT::unused));
   if ((chargeExponent != 0.0) && chargeUnused)
   {
-    LOG_ERROR("Unable to convert unit.");
-    LOG_DEBUG("Exit 1=" + callString);
+    // LOG_ERROR("Unable to convert unit.");
+    // LOG_DEBUG("Exit 1=" + callString);
+    return true;
   }
   double const chargeConversion
       = (chargeUnused) ? 1 : (
@@ -1662,8 +1667,9 @@ int ModelImplementation::ConvertUnit(
        (toTemperatureUnit == KIM::TEMPERATURE_UNIT::unused));
   if ((temperatureExponent != 0.0) && temperatureUnused)
   {
-    LOG_ERROR("Unable to convert unit.");
-    LOG_DEBUG("Exit 1=" + callString);
+    // LOG_ERROR("Unable to convert unit.");
+    // LOG_DEBUG("Exit 1=" + callString);
+    return true;
   }
   double const temperatureConversion
       = (temperatureUnused) ? 1 : (
@@ -1674,8 +1680,9 @@ int ModelImplementation::ConvertUnit(
                      (toTimeUnit == KIM::TIME_UNIT::unused));
   if ((timeExponent != 0.0) && timeUnused)
   {
-    LOG_ERROR("Unable to convert unit.");
-    LOG_DEBUG("Exit 1=" + callString);
+    // LOG_ERROR("Unable to convert unit.");
+    // LOG_DEBUG("Exit 1=" + callString);
+    return true;
   }
   double const timeConversion
       = (timeUnused) ? 1 : (
@@ -1689,7 +1696,7 @@ int ModelImplementation::ConvertUnit(
       * pow(temperatureConversion, temperatureExponent)
       * pow(timeConversion, timeExponent);
 
-  LOG_DEBUG("Exit 0=" + callString);
+  // LOG_DEBUG("Exit 0=" + callString);
   return false;
 }
 
@@ -2743,9 +2750,9 @@ int ModelImplementation::WriteParameterFiles()
   return false;
 }
 
-int ModelImplementation::Validate(ChargeUnit const chargeUnit) const
+int ModelImplementation::Validate(ChargeUnit const chargeUnit)
 {
-  // No debug logging for Validate: too expensive
+  // No logging for Validate: no log object available
   //
   // #if DEBUG_VERBOSITY
   //   std::string const callString = "Validate(" + chargeUnit.String()
@@ -2768,14 +2775,14 @@ int ModelImplementation::Validate(ChargeUnit const chargeUnit) const
     }
   }
 
-  LOG_ERROR("Invalid ChargeUnit encountered.");
+  // LOG_ERROR("Invalid ChargeUnit encountered.");
   // LOG_DEBUG("Exit 1=" + callString);
   return true;
 }
 
-int ModelImplementation::Validate(DataType const dataType) const
+int ModelImplementation::Validate(DataType const dataType)
 {
-  // No debug logging for Validate: too expensive
+  // No logging for Validate: no log object available
   //
   // #if DEBUG_VERBOSITY
   //   std::string const callString = "Validate(" + dataType.String()
@@ -2798,14 +2805,14 @@ int ModelImplementation::Validate(DataType const dataType) const
     }
   }
 
-  LOG_ERROR("Invalid DataType encountered.");
+  // LOG_ERROR("Invalid DataType encountered.");
   // LOG_DEBUG("Exit 1=" + callString);
   return true;
 }
 
-int ModelImplementation::Validate(EnergyUnit const energyUnit) const
+int ModelImplementation::Validate(EnergyUnit const energyUnit)
 {
-  // No debug logging for Validate: too expensive
+  // No logging for Validate: no log object available
   //
   // #if DEBUG_VERBOSITY
   //   std::string const callString = "Validate(" + energyUnit.String() + ").";
@@ -2827,14 +2834,14 @@ int ModelImplementation::Validate(EnergyUnit const energyUnit) const
     }
   }
 
-  LOG_ERROR("Invalid EnergyUnit encountered.");
+  // LOG_ERROR("Invalid EnergyUnit encountered.");
   // LOG_DEBUG("Exit 1=" + callString);
   return true;
 }
 
-int ModelImplementation::Validate(LanguageName const languageName) const
+int ModelImplementation::Validate(LanguageName const languageName)
 {
-  // No debug logging for Validate: too expensive
+  // No logging for Validate: no log object available
   //
   // #if DEBUG_VERBOSITY
   //   std::string const callString = "Validate(" + languageName.String()
@@ -2857,14 +2864,14 @@ int ModelImplementation::Validate(LanguageName const languageName) const
     }
   }
 
-  LOG_ERROR("Invalid LanguageName encountered.");
+  // LOG_ERROR("Invalid LanguageName encountered.");
   // LOG_DEBUG("Exit 1=" + callString);
   return true;
 }
 
-int ModelImplementation::Validate(LengthUnit const lengthUnit) const
+int ModelImplementation::Validate(LengthUnit const lengthUnit)
 {
-  // No debug logging for Validate: too expensive
+  // No logging for Validate: no log object available
   //
   // #if DEBUG_VERBOSITY
   //   std::string const callString = "Validate(" + lengthUnit.String()
@@ -2887,14 +2894,14 @@ int ModelImplementation::Validate(LengthUnit const lengthUnit) const
     }
   }
 
-  LOG_ERROR("Invalid LengthUnit encountered.");
+  // LOG_ERROR("Invalid LengthUnit encountered.");
   // LOG_DEBUG("Exit 1=" + callString);
   return true;
 }
 
-int ModelImplementation::Validate(Numbering const numbering) const
+int ModelImplementation::Validate(Numbering const numbering)
 {
-  // No debug logging for Validate: too expensive
+  // No logging for Validate: no log object available
   //
   // #if DEBUG_VERBOSITY
   //   std::string const callString = "Validate(" + numbering.String()
@@ -2917,14 +2924,14 @@ int ModelImplementation::Validate(Numbering const numbering) const
     }
   }
 
-  LOG_ERROR("Invalid Numbering encountered.");
+  // LOG_ERROR("Invalid Numbering encountered.");
   // LOG_DEBUG("Exit 1=" + callString);
   return true;
 }
 
-int ModelImplementation::Validate(SpeciesName const speciesName) const
+int ModelImplementation::Validate(SpeciesName const speciesName)
 {
-  // No debug logging for Validate: too expensive
+  // No logging for Validate: no log function available
   //
   // #if DEBUG_VERBOSITY
   //   std::string const callString = "Validate(" + speciesName.String()
@@ -2947,14 +2954,14 @@ int ModelImplementation::Validate(SpeciesName const speciesName) const
     }
   }
 
-  LOG_ERROR("Invalid SpeciesName encountered.");
+  // LOG_ERROR("Invalid SpeciesName encountered.");
   // LOG_DEBUG("Exit 1=" + callString);
   return true;
 }
 
-int ModelImplementation::Validate(SupportStatus const supportStatus) const
+int ModelImplementation::Validate(SupportStatus const supportStatus)
 {
-  // No debug logging for Validate: too expensive
+  // No logging for Validate: no log object available
   //
   // #if DEBUG_VERBOSITY
   //   std::string const callString = "Validate(" + supportStatus.String()
@@ -2977,14 +2984,14 @@ int ModelImplementation::Validate(SupportStatus const supportStatus) const
     }
   }
 
-  LOG_ERROR("Invalid SupportStatus encountered.");
+  // LOG_ERROR("Invalid SupportStatus encountered.");
   // LOG_DEBUG("Exit 1=" + callString);
   return true;
 }
 
-int ModelImplementation::Validate(TemperatureUnit const temperatureUnit) const
+int ModelImplementation::Validate(TemperatureUnit const temperatureUnit)
 {
-  // No debug logging for Validate: too expensive
+  // No logging for Validate: no log object available
   //
   // #if DEBUG_VERBOSITY
   //   std::string const callString = "Validate(" + temperatureUnit.String()
@@ -3007,14 +3014,14 @@ int ModelImplementation::Validate(TemperatureUnit const temperatureUnit) const
     }
   }
 
-  LOG_ERROR("Invalid TemperatureUnit encountered.");
+  // LOG_ERROR("Invalid TemperatureUnit encountered.");
   // LOG_DEBUG("Exit 1=" + callString);
   return true;
 }
 
-int ModelImplementation::Validate(TimeUnit const timeUnit) const
+int ModelImplementation::Validate(TimeUnit const timeUnit)
 {
-  // No debug logging for Validate: too expensive
+  // No logging for Validate: no log object available
   //
   // #if DEBUG_VERBOSITY
   //   std::string const callString = "Validate(" + timeUnit.String()
@@ -3037,7 +3044,7 @@ int ModelImplementation::Validate(TimeUnit const timeUnit) const
     }
   }
 
-  LOG_ERROR("Invalid TimeUnit encountered.");
+  // LOG_ERROR("Invalid TimeUnit encountered.");
   // LOG_DEBUG("Exit 1=" + callString);
   return true;
 }

@@ -193,11 +193,9 @@ int ModelDriverCreate::ConvertUnit(
     double const chargeExponent,
     double const temperatureExponent,
     double const timeExponent,
-    double * const conversionFactor) const
+    double * const conversionFactor)
 {
-  CONVERT_POINTER;
-
-  return pImpl->ConvertUnit(
+  return ModelImplementation::ConvertUnit(
       fromLengthUnit,
       fromEnergyUnit,
       fromChargeUnit,

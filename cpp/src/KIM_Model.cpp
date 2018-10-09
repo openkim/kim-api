@@ -143,13 +143,13 @@ void Model::GetNumberOfParameters(int * const numberOfParameters) const
   pimpl->GetNumberOfParameters(numberOfParameters);
 }
 
-int Model::GetParameterDataTypeExtentNameAndDescription(
-    int const parameterIndex, DataType * const dataType, int * const extent,
-    std::string const ** const name,
-    std::string const ** const description) const
+int Model::GetParameterMetadata(int const parameterIndex,
+                                DataType * const dataType, int * const extent,
+                                std::string const ** const name,
+                                std::string const ** const description) const
 {
-  return pimpl->GetParameterDataTypeExtentNameAndDescription(
-      parameterIndex, dataType, extent, name, description);
+  return pimpl->GetParameterMetadata(parameterIndex, dataType, extent, name,
+                                     description);
 }
 
 int Model::GetParameter(
