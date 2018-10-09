@@ -299,7 +299,7 @@ ierr = ierr + ierr2
 !  kim_compute_argument_name_partial_virial, 6, virial, ierr2)
 !ierr = ierr + ierr2
 if (ierr /= 0) then
-  call kim_model_compute_arguments_log_entry(model_compute_arguments_handle, &
+  call kim_log_entry(model_compute_arguments_handle, &
     kim_log_verbosity_error, "get data")
   return
 endif
@@ -334,7 +334,7 @@ calc_deriv = comp_force.eq.1 !.or.comp_virial.eq.1
 ierr = 1 ! assume an error
 do i = 1,N
   if (particleSpeciesCodes(i).ne.speccode) then
-    call kim_model_compute_log_entry(model_compute_handle, &
+    call kim_log_entry(model_compute_handle, &
       kim_log_verbosity_error, "Unexpected species code detected")
     return
   endif
@@ -362,7 +362,7 @@ do i = 1, N
       model_compute_arguments_handle, 2, i, numnei, nei1part, ierr)
     if (ierr /= 0) then
       ! some sort of problem, exit
-      call kim_model_compute_arguments_log_entry( &
+      call kim_log_entry( &
         model_compute_arguments_handle, kim_log_verbosity_error, &
         "GetNeighborList failed")
       ierr = 1
@@ -373,7 +373,7 @@ do i = 1, N
    call calc_spring_energyamp(model_compute_arguments_handle, i, coor, epsi, ierr)
     if (ierr /= 0) then
       ! some sort of problem, exit
-      call kim_model_compute_log_entry( &
+      call kim_log_entry( &
         model_compute_handle, kim_log_verbosity_error, &
         "GetNeighborList failed")
       ierr = 1
@@ -390,7 +390,7 @@ do i = 1, N
       call calc_spring_energyamp(model_compute_arguments_handle, j, coor, epsj, ierr)
       if (ierr /= 0) then
         ! some sort of problem, exit
-        call kim_model_compute_log_entry( &
+        call kim_log_entry( &
           model_compute_handle, kim_log_verbosity_error, &
           "GetNeighborList failed")
         ierr = 1
@@ -441,7 +441,7 @@ do i = 1, N
                                  phi, force, ierr)
           if (ierr /= 0) then
             ! some sort of problem, exit
-            call kim_model_compute_log_entry( &
+            call kim_log_entry( &
               model_compute_handle, kim_log_verbosity_error, &
               "GetNeighborList failed")
             ierr = 1
@@ -452,7 +452,7 @@ do i = 1, N
                                  phi, force, ierr)
           if (ierr /= 0) then
             ! some sort of problem, exit
-            call kim_model_compute_log_entry( &
+            call kim_log_entry( &
               model_compute_handle, kim_log_verbosity_error, &
               "GetNeighborList failed")
             ierr = 1
@@ -495,9 +495,9 @@ subroutine model_destroy_func(model_destroy_handle, ierr) bind(c)
 
   type(buffer_type), pointer :: buf; type(c_ptr) :: pbuf
 
-  call kim_model_destroy_get_model_buffer_pointer(model_destroy_handle, pbuf)
+  call kim_get_model_buffer_pointer(model_destroy_handle, pbuf)
   call c_f_pointer(pbuf, buf)
-  call kim_model_destroy_log_entry(model_destroy_handle, &
+  call kim_log_entry(model_destroy_handle, &
     kim_log_verbosity_information, "deallocating model buffer")
   deallocate(buf)
   ierr = 0  ! everything is good
@@ -555,7 +555,7 @@ subroutine model_compute_arguments_create(model_compute_handle, &
 
   if (ierr /= 0) then
     ierr = 1
-    call kim_model_compute_arguments_create_log_entry( &
+    call kim_log_entry( &
       model_compute_arguments_create_handle, &
       kim_log_verbosity_error, &
       "Unable to successfully create compute_arguments object")
@@ -660,7 +660,7 @@ call kim_set_neighbor_list_pointers(model_create_handle, &
 if (ierr /= 0) then
   ierr = 1
   deallocate( buf )
-  call kim_model_create_log_entry(model_create_handle, &
+  call kim_log_entry(model_create_handle, &
     kim_log_verbosity_error, "Unable to successfully initialize model")
 endif
 

@@ -35,6 +35,7 @@
 
 set(F_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/kim_convert_string_module.f90
+  ${CMAKE_CURRENT_SOURCE_DIR}/kim_interoperable_types_module.f90
   )
 
 target_sources(kim-api PRIVATE ${F_SOURCES})

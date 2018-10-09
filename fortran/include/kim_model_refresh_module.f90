@@ -37,15 +37,20 @@ module kim_model_refresh_module
   private
 
   public &
+    ! Derived types
     kim_model_refresh_handle_type, &
+
+    ! Constants
     KIM_MODEL_REFRESH_NULL_HANDLE, &
+
+    ! Routines
     operator (.eq.), &
     operator (.ne.), &
     kim_set_influence_distance_pointer, &
     kim_set_neighbor_list_pointers, &
-    kim_model_refresh_get_model_buffer_pointer, &
-    kim_model_refresh_log_entry, &
-    kim_model_refresh_string
+    kim_get_model_buffer_pointer, &
+    kim_log_entry, &
+    kim_to_string
 
 
   type, bind(c) :: kim_model_refresh_handle_type
@@ -67,6 +72,26 @@ module kim_model_refresh_module
   interface operator (.ne.)
     module procedure kim_model_refresh_handle_not_equal
   end interface operator (.ne.)
+
+  interface kim_set_influence_distance_pointer
+    module procedure kim_model_refresh_set_influence_distance_pointer
+  end interface kim_set_influence_distance_pointer
+
+  interface kim_set_neighbor_list_pointers
+    module procedure kim_model_refresh_set_neighbor_list_pointers
+  end interface kim_set_neighbor_list_pointers
+
+  interface kim_get_model_buffer_pointer
+    module procedure kim_model_refresh_get_model_buffer_pointer
+  end interface kim_get_model_buffer_pointer
+
+  interface kim_log_entry
+    module procedure kim_model_refresh_log_entry
+  end interface kim_log_entry
+
+  interface kim_to_string
+    module procedure kim_model_refresh_to_string
+  end interface kim_to_string
 
 contains
   logical function kim_model_refresh_handle_equal(left, right)
@@ -91,7 +116,7 @@ contains
     kim_model_refresh_handle_not_equal = .not. (left .eq. right)
   end function kim_model_refresh_handle_not_equal
 
-  subroutine kim_set_influence_distance_pointer( &
+  subroutine kim_model_refresh_set_influence_distance_pointer( &
     model_refresh_handle, influence_distance)
     use, intrinsic :: iso_c_binding
     implicit none
@@ -114,9 +139,9 @@ contains
     call c_f_pointer(model_refresh_handle%p, model_refresh)
     call set_influence_distance_pointer(model_refresh, &
       c_loc(influence_distance))
-  end subroutine kim_set_influence_distance_pointer
+  end subroutine kim_model_refresh_set_influence_distance_pointer
 
-  subroutine kim_set_neighbor_list_pointers( &
+  subroutine kim_model_refresh_set_neighbor_list_pointers( &
     model_refresh_handle, number_of_neighbor_lists, cutoffs, &
     modelWillNotRequestNeighborsOfNoncontributingParticles)
     use, intrinsic :: iso_c_binding
@@ -149,7 +174,7 @@ contains
     call set_neighbor_list_pointers(model_refresh, number_of_neighbor_lists, &
       c_loc(cutoffs), &
       c_loc(modelWillNotRequestNeighborsOfNoncontributingParticles))
-  end subroutine kim_set_neighbor_list_pointers
+  end subroutine kim_model_refresh_set_neighbor_list_pointers
 
   subroutine kim_model_refresh_get_model_buffer_pointer( &
     model_refresh_handle, ptr)
@@ -204,7 +229,7 @@ contains
       0, ""//c_null_char)
   end subroutine kim_model_refresh_log_entry
 
-  subroutine kim_model_refresh_string(model_refresh_handle, string)
+  subroutine kim_model_refresh_to_string(model_refresh_handle, string)
     use, intrinsic :: iso_c_binding
     use kim_convert_string_module, only : kim_convert_string
     implicit none
@@ -231,5 +256,5 @@ contains
     else
       string = ""
     end if
-  end subroutine kim_model_refresh_string
+  end subroutine kim_model_refresh_to_string
 end module kim_model_refresh_module

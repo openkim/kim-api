@@ -237,7 +237,7 @@ integer(c_int), pointer :: particleSpeciesCodes(:)
 integer(c_int), pointer :: particleContributing(:)
 
 ! get model buffer from KIM object
-call kim_model_compute_get_model_buffer_pointer(model_compute_handle, pbuf)
+call kim_get_model_buffer_pointer(model_compute_handle, pbuf)
 call c_f_pointer(pbuf, buf)
 
 model_cutoff = buf%influence_distance(1)
@@ -255,7 +255,7 @@ call kim_is_callback_present( &
   kim_compute_callback_name_process_d2edr2_term, comp_process_d2edr2, ierr2)
 ierr = ierr + ierr2
 if (ierr /= 0) then
-  call kim_model_compute_arguments_log_entry(model_compute_arguments_handle, &
+  call kim_log_entry(model_compute_arguments_handle, &
     kim_log_verbosity_error, "get_compute")
    ierr=1
    return
@@ -296,7 +296,7 @@ call kim_get_argument_pointer( &
   kim_compute_argument_name_partial_particle_energy, n, enepot, ierr2)
 ierr = ierr + ierr2
 if (ierr /= 0) then
-  call kim_model_compute_arguments_log_entry(model_compute_arguments_handle, &
+  call kim_log_entry(model_compute_arguments_handle, &
   kim_log_verbosity_error, "get_argument_pointer")
   ierr=1
   return
@@ -324,7 +324,7 @@ end if
 ierr = 1 ! assume an error
 do i = 1,N
    if (particleSpeciesCodes(i).ne.speccode) then
-     call kim_model_compute_arguments_log_entry(model_compute_arguments_handle,&
+     call kim_log_entry(model_compute_arguments_handle,&
        kim_log_verbosity_error, "Unexpected species code detected")
      ierr=1
      return
@@ -353,7 +353,7 @@ do i = 1, N
       model_compute_arguments_handle, 1, i, numnei, nei1part, ierr)
     if (ierr /= 0) then
       ! some sort of problem, exit
-      call kim_model_compute_arguments_log_entry( &
+      call kim_log_entry( &
         model_compute_arguments_handle, kim_log_verbosity_error, &
         "kim_api_get_neigh")
       ierr = 1
@@ -474,7 +474,7 @@ real(c_double) energy_at_cutoff
 type(BUFFER_TYPE), pointer :: buf; type(c_ptr) :: pbuf
 
 ! get model buffer from KIM object
-call kim_model_refresh_get_model_buffer_pointer(model_refresh_handle, pbuf)
+call kim_get_model_buffer_pointer(model_refresh_handle, pbuf)
 call c_f_pointer(pbuf, buf)
 
 call kim_set_influence_distance_pointer(model_refresh_handle, &
@@ -517,7 +517,7 @@ integer(c_int), intent(out) :: ierr
 type(BUFFER_TYPE), pointer :: buf; type(c_ptr) :: pbuf
 
 ! get model buffer from KIM object
-call kim_model_destroy_get_model_buffer_pointer(model_destroy_handle, pbuf)
+call kim_get_model_buffer_pointer(model_destroy_handle, pbuf)
 call c_f_pointer(pbuf, buf)
 
 deallocate( buf )
@@ -567,7 +567,7 @@ call kim_set_argument_support_status( &
   kim_support_status_optional, ierr2)
 ierr = ierr + ierr2
 if (ierr /= 0) then
-  call kim_model_compute_arguments_create_log_entry(&
+  call kim_log_entry(&
     model_compute_arguments_create_handle, kim_log_verbosity_error, &
     "Unable to register arguments support_statuss")
   ierr = 1
@@ -585,7 +585,7 @@ call kim_set_callback_support_status( &
   kim_support_status_optional, ierr2)
 ierr = ierr + ierr2
 if (ierr /= 0) then
-  call kim_model_compute_arguments_create_log_entry(&
+  call kim_log_entry(&
     model_compute_arguments_create_handle, kim_log_verbosity_error, &
     "Unable to register callbacks support_statuss")
   ierr = 1
@@ -647,7 +647,7 @@ call kim_set_units( &
   kim_temperature_unit_unused, &
   kim_time_unit_unused, ierr)
 if (ierr /= 0) then
-  call kim_model_driver_create_log_entry(model_driver_create_handle, &
+  call kim_log_entry(model_driver_create_handle, &
     kim_log_verbosity_error, "Unable to set units")
   ierr = 1
   goto 42
@@ -657,7 +657,7 @@ end if
 call kim_set_model_numbering( &
   model_driver_create_handle, kim_numbering_one_based, ierr)
 if (ierr /= 0) then
-  call kim_model_driver_create_log_entry(model_driver_create_handle, &
+  call kim_log_entry(model_driver_create_handle, &
     kim_log_verbosity_error, "Unable to set numbering")
   ierr = 1
   goto 42
@@ -681,7 +681,7 @@ call kim_set_destroy_pointer( &
   c_funloc(destroy), ierr2)
 ierr = ierr + ierr2
 if (ierr /= 0) then
-  call kim_model_driver_create_log_entry(model_driver_create_handle, &
+  call kim_log_entry(model_driver_create_handle, &
     kim_log_verbosity_error, "Unable to store callback pointers")
   ierr = 1
   goto 42
@@ -692,7 +692,7 @@ end if
 call kim_get_number_of_parameter_files( &
   model_driver_create_handle, number_of_parameter_files)
 if (number_of_parameter_files .ne. 1) then
-  call kim_model_driver_create_log_entry(model_driver_create_handle, &
+  call kim_log_entry(model_driver_create_handle, &
     kim_log_verbosity_error, "Wrong number of parameter files")
   ierr = 1
   goto 42
@@ -703,7 +703,7 @@ end if
 call kim_get_parameter_file_name( &
   model_driver_create_handle, 1, parameter_file_name, ierr)
 if (ierr /= 0) then
-  call kim_model_driver_create_log_entry(model_driver_create_handle, &
+  call kim_log_entry(model_driver_create_handle, &
     kim_log_verbosity_error, "Unable to get parameter file name")
   ierr = 1
   goto 42
@@ -718,7 +718,7 @@ close(10)
 goto 200
 100 continue
 ! reading parameters failed
-call kim_model_driver_create_log_entry(model_driver_create_handle, &
+call kim_log_entry(model_driver_create_handle, &
   kim_log_verbosity_error, "Unable to read LJ parameters")
 ierr = 1
 goto 42
@@ -729,7 +729,7 @@ goto 42
 ! register species
 call kim_from_string(in_species, species_name)
 if (ierr /= 0) then
-  call kim_model_driver_create_log_entry(model_driver_create_handle, &
+  call kim_log_entry(model_driver_create_handle, &
     kim_log_verbosity_error, "Unable to set species_name")
   ierr = 1
   goto 42
@@ -738,7 +738,7 @@ end if
 call kim_set_species_code( &
   model_driver_create_handle, species_name, speccode, ierr)
 if (ierr /= 0) then
-  call kim_model_driver_create_log_entry(model_driver_create_handle, &
+  call kim_log_entry(model_driver_create_handle, &
     kim_log_verbosity_error, "Unable to set species code")
   ierr = 1
   goto 42
@@ -759,7 +759,7 @@ call kim_convert_unit( &
   requested_time_unit, &
   1.0_cd, 0.0_cd, 0.0_cd, 0.0_cd, 0.0_cd, factor, ierr)
 if (ierr /= 0) then
-  call kim_model_driver_create_log_entry(model_driver_create_handle, &
+  call kim_log_entry(model_driver_create_handle, &
     kim_log_verbosity_error, "kim_api_convert_to_act_unit")
   ierr = 1
   goto 42
@@ -780,7 +780,7 @@ call kim_convert_unit( &
   requested_time_unit, &
   0.0_cd, 1.0_cd, 0.0_cd, 0.0_cd, 0.0_cd, factor, ierr)
 if (ierr /= 0) then
-  call kim_model_driver_create_log_entry(model_driver_create_handle, &
+  call kim_log_entry(model_driver_create_handle, &
     kim_log_verbosity_error, "kim_api_convert_to_act_unit")
   ierr = 1
   goto 42
@@ -801,7 +801,7 @@ call kim_convert_unit( &
   requested_time_unit, &
   1.0_cd, 0.0_cd, 0.0_cd, 0.0_cd, 0.0_cd, factor, ierr)
 if (ierr /= 0) then
-  call kim_model_driver_create_log_entry(model_driver_create_handle, &
+  call kim_log_entry(model_driver_create_handle, &
     kim_log_verbosity_error, "kim_api_convert_to_act_unit")
   ierr = 1
   goto 42
@@ -843,7 +843,7 @@ call kim_set_parameter_pointer( &
   model_driver_create_handle, buf%pcutoff, "cutoff", &
   "Distance at which the energy becomes zero.", ierr)
 if (ierr /= 0) then
-  call kim_model_driver_create_log_entry(model_driver_create_handle, &
+  call kim_log_entry(model_driver_create_handle, &
     kim_log_verbosity_error, "set_parameter")
   ierr = 1
   goto 42
@@ -853,7 +853,7 @@ call kim_set_parameter_pointer( &
   model_driver_create_handle, buf%epsilon, "epsilon", &
   "Energy scale coefficient.", ierr)
 if (ierr /= 0) then
-  call kim_model_driver_create_log_entry(model_driver_create_handle, &
+  call kim_log_entry(model_driver_create_handle, &
     kim_log_verbosity_error, "set_parameter")
   ierr = 1
   goto 42
@@ -863,7 +863,7 @@ call kim_set_parameter_pointer( &
   model_driver_create_handle, buf%sigma, "sigma", &
   "Length scale coefficient.", ierr)
 if (ierr /= 0) then
-  call kim_model_driver_create_log_entry(model_driver_create_handle, &
+  call kim_log_entry(model_driver_create_handle, &
     kim_log_verbosity_error, "set_parameter")
   ierr = 1
   goto 42

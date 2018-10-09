@@ -33,13 +33,17 @@
 
 module kim_model_module
   use, intrinsic :: iso_c_binding
-  use :: kim_language_name_module
   implicit none
   private
 
   public &
+    ! Derived types
     kim_model_handle_type, &
+
+    ! Constants
     KIM_MODEL_NULL_HANDLE, &
+
+    ! Routines
     operator (.eq.), &
     operator (.ne.), &
     kim_model_create, &
@@ -57,22 +61,17 @@ module kim_model_module
     kim_get_parameter_data_type_extent_name_and_description, &
     kim_get_parameter, &
     kim_set_parameter, &
-    kim_model_set_simulator_buffer_pointer, &
-    kim_model_get_simulator_buffer_pointer, &
-    kim_model_string, &
-    kim_model_set_log_id, &
-    kim_model_push_log_verbosity, &
-    kim_model_pop_log_verbosity
+    kim_set_simulator_buffer_pointer, &
+    kim_get_simulator_buffer_pointer, &
+    kim_to_string, &
+    kim_set_log_id, &
+    kim_push_log_verbosity, &
+    kim_pop_log_verbosity
 
 
   type, bind(c) :: kim_model_handle_type
     type(c_ptr) :: p = c_null_ptr
   end type kim_model_handle_type
-
-  type, bind(c) :: kim_model_type
-    private
-    type(c_ptr) :: p
-  end type kim_model_type
 
   type(kim_model_handle_type), protected, save &
     :: KIM_MODEL_NULL_HANDLE
@@ -85,15 +84,83 @@ module kim_model_module
     module procedure kim_model_handle_not_equal
   end interface operator (.ne.)
 
+  interface kim_get_influence_distance
+    module procedure kim_model_get_influence_distance
+  end interface kim_get_influence_distance
+
+  interface kim_get_number_of_neighbor_lists
+    module procedure kim_model_get_number_of_neighbor_lists
+  end interface kim_get_number_of_neighbor_lists
+
+  interface kim_get_neighbor_list_values
+    module procedure kim_model_get_neighbor_list_values
+  end interface kim_get_neighbor_list_values
+
+  interface kim_get_units
+    module procedure kim_model_get_units
+  end interface kim_get_units
+
+  interface kim_compute_arguments_create
+    module procedure kim_model_compute_arguments_create
+  end interface kim_compute_arguments_create
+
+  interface kim_compute_arguments_destroy
+    module procedure kim_model_compute_arguments_destroy
+  end interface kim_compute_arguments_destroy
+
+  interface kim_compute
+    module procedure kim_model_compute
+  end interface kim_compute
+
+  interface kim_clear_then_refresh
+    module procedure kim_model_clear_then_refresh
+  end interface kim_clear_then_refresh
+
+  interface kim_get_species_support_and_code
+    module procedure kim_model_get_species_support_and_code
+  end interface kim_get_species_support_and_code
+
+  interface kim_get_number_of_parameters
+    module procedure kim_model_get_number_of_parameters
+  end interface kim_get_number_of_parameters
+
+  interface kim_get_parameter_data_type_extent_name_and_description
+    module procedure kim_model_get_parameter_data_type_extent_name_and_description
+  end interface kim_get_parameter_data_type_extent_name_and_description
+
   interface kim_get_parameter
-    module procedure kim_get_parameter_integer
-    module procedure kim_get_parameter_double
+    module procedure kim_model_get_parameter_integer
+    module procedure kim_model_get_parameter_double
   end interface kim_get_parameter
 
   interface kim_set_parameter
-    module procedure kim_set_parameter_integer
-    module procedure kim_set_parameter_double
+    module procedure kim_model_set_parameter_integer
+    module procedure kim_model_set_parameter_double
   end interface kim_set_parameter
+
+  interface kim_set_simulator_buffer_pointer
+    module procedure kim_model_set_simulator_buffer_pointer
+  end interface kim_set_simulator_buffer_pointer
+
+  interface kim_get_simulator_buffer_pointer
+    module procedure kim_model_get_simulator_buffer_pointer
+  end interface kim_get_simulator_buffer_pointer
+
+  interface kim_to_string
+    module procedure kim_model_to_string
+  end interface kim_to_string
+
+  interface kim_set_log_id
+    module procedure kim_model_set_log_id
+  end interface kim_set_log_id
+
+  interface kim_push_log_verbosity
+    module procedure kim_model_push_log_verbosity
+  end interface kim_push_log_verbosity
+
+  interface kim_pop_log_verbosity
+    module procedure kim_model_pop_log_verbosity
+  end interface kim_pop_log_verbosity
 
 contains
   logical function kim_model_handle_equal(left, right)
@@ -189,14 +256,15 @@ contains
     model_handle%p = c_null_ptr
   end subroutine kim_model_destroy
 
-  subroutine kim_get_influence_distance(model_handle, influence_distance)
+  subroutine kim_model_get_influence_distance(model_handle, influence_distance)
     use, intrinsic :: iso_c_binding
+    use kim_interoperable_types_module, only : kim_model_type
     implicit none
     interface
       subroutine get_influence_distance(model, influence_distance) &
         bind(c, name="KIM_Model_GetInfluenceDistance")
         use, intrinsic :: iso_c_binding
-        import kim_model_type
+        use kim_interoperable_types_module, only : kim_model_type
         implicit none
         type(kim_model_type), intent(in) :: model
         real(c_double), intent(out) :: influence_distance
@@ -208,11 +276,12 @@ contains
 
     call c_f_pointer(model_handle%p, model)
     call get_influence_distance(model, influence_distance)
-  end subroutine kim_get_influence_distance
+  end subroutine kim_model_get_influence_distance
 
-  subroutine kim_get_number_of_neighbor_lists(model_handle, &
+  subroutine kim_model_get_number_of_neighbor_lists(model_handle, &
     number_of_neighbor_lists)
     use, intrinsic :: iso_c_binding
+    use kim_interoperable_types_module, only : kim_model_type
     implicit none
     interface
       subroutine get_neighbor_list_pointers(model, number_of_neighbor_lists, &
@@ -220,7 +289,7 @@ contains
         model_will_not_request_neighbors_of_noncontributing__ptr) &
         bind(c, name="KIM_Model_GetNeighborListPointers")
         use, intrinsic :: iso_c_binding
-        import kim_model_type
+        use kim_interoperable_types_module, only : kim_model_type
         implicit none
         type(kim_model_type), intent(in) :: model
         integer(c_int), intent(out) :: number_of_neighbor_lists
@@ -238,11 +307,12 @@ contains
     call c_f_pointer(model_handle%p, model)
     call get_neighbor_list_pointers(model, number_of_neighbor_lists, &
       cutoffs_ptr, hint_ptr)
-  end subroutine kim_get_number_of_neighbor_lists
+  end subroutine kim_model_get_number_of_neighbor_lists
 
-  subroutine kim_get_neighbor_list_values(model_handle, cutoffs, &
+  subroutine kim_model_get_neighbor_list_values(model_handle, cutoffs, &
     model_will_not_request_neighbors_of_noncontributing_particles, ierr)
     use, intrinsic :: iso_c_binding
+    use kim_interoperable_types_module, only : kim_model_type
     implicit none
     interface
       subroutine get_neighbor_list_pointers(model, number_of_neighbor_lists, &
@@ -250,7 +320,7 @@ contains
         model_will_not_request_neighbors_of_noncontributing__ptr) &
         bind(c, name="KIM_Model_GetNeighborListPointers")
         use, intrinsic :: iso_c_binding
-        import kim_model_type
+        use kim_interoperable_types_module, only : kim_model_type
         implicit none
         type(kim_model_type), intent(in) :: model
         integer(c_int), intent(out) :: number_of_neighbor_lists
@@ -310,14 +380,15 @@ contains
         model_will_not_request_neighbors_of_noncontributing__fpointer( &
         1:number_of_neighbor_lists)
     end if
-  end subroutine kim_get_neighbor_list_values
+  end subroutine kim_model_get_neighbor_list_values
 
-  subroutine kim_get_units(model_handle, length_unit, energy_unit, &
+  subroutine kim_model_get_units(model_handle, length_unit, energy_unit, &
     charge_unit, temperature_unit, time_unit)
     use, intrinsic :: iso_c_binding
     use kim_unit_system_module, only : kim_length_unit_type, &
       kim_energy_unit_type, kim_charge_unit_type, kim_temperature_unit_type, &
       kim_time_unit_type
+    use kim_interoperable_types_module, only : kim_model_type
     implicit none
     interface
       subroutine get_units(model, length_unit, energy_unit, charge_unit, &
@@ -326,7 +397,7 @@ contains
         use kim_unit_system_module, only : kim_length_unit_type, &
           kim_energy_unit_type, kim_charge_unit_type, &
           kim_temperature_unit_type, kim_time_unit_type
-        import kim_model_type
+        use kim_interoperable_types_module, only : kim_model_type
         type(kim_model_type), intent(in) :: model
         type(kim_length_unit_type), intent(out) :: length_unit
         type(kim_energy_unit_type), intent(out) :: energy_unit
@@ -346,19 +417,20 @@ contains
     call c_f_pointer(model_handle%p, model)
     call get_units(model, length_unit, energy_unit, charge_unit, &
       temperature_unit, time_unit)
-  end subroutine kim_get_units
+  end subroutine kim_model_get_units
 
-  subroutine kim_compute_arguments_create(model_handle, &
+  subroutine kim_model_compute_arguments_create(model_handle, &
     compute_arguments_handle, ierr)
     use, intrinsic :: iso_c_binding
     use kim_compute_arguments_module, only : &
       kim_compute_arguments_handle_type
+    use kim_interoperable_types_module, only : kim_model_type
     implicit none
     interface
       integer(c_int) function compute_arguments_create(model, &
         compute_arguments) bind(c, name="KIM_Model_ComputeArgumentsCreate")
         use, intrinsic :: iso_c_binding
-        import kim_model_type
+        use kim_interoperable_types_module, only : kim_model_type
         implicit none
         type(kim_model_type), intent(in) :: model
         type(c_ptr), intent(out) :: compute_arguments
@@ -377,19 +449,20 @@ contains
     if (ierr == 0) then
       compute_arguments_handle%p = pcompute_arguments
     end if
-  end subroutine kim_compute_arguments_create
+  end subroutine kim_model_compute_arguments_create
 
-  subroutine kim_compute_arguments_destroy(model_handle, &
+  subroutine kim_model_compute_arguments_destroy(model_handle, &
     compute_arguments_handle, ierr)
     use, intrinsic :: iso_c_binding
     use kim_compute_arguments_module, only : &
       kim_compute_arguments_handle_type
+    use kim_interoperable_types_module, only : kim_model_type
     implicit none
     interface
       integer(c_int) function compute_arguments_destroy(model, &
         compute_arguments) bind(c, name="KIM_Model_ComputeArgumentsDestroy")
         use, intrinsic :: iso_c_binding
-        import kim_model_type
+        use kim_interoperable_types_module, only : kim_model_type
         implicit none
         type(kim_model_type), intent(in) :: model
         type(c_ptr), intent(inout) :: compute_arguments
@@ -408,19 +481,20 @@ contains
     if (ierr /= 0) then
       compute_arguments_handle%p = c_null_ptr
     end if
-  end subroutine kim_compute_arguments_destroy
+  end subroutine kim_model_compute_arguments_destroy
 
-  subroutine kim_compute(model_handle, compute_arguments_handle, ierr)
+  subroutine kim_model_compute(model_handle, compute_arguments_handle, ierr)
     use, intrinsic :: iso_c_binding
-    use kim_compute_arguments_module, only : &
-      kim_compute_arguments_handle_type, kim_compute_arguments_type
+    use kim_compute_arguments_module, only : kim_compute_arguments_handle_type
+    use kim_interoperable_types_module, only : kim_compute_arguments_type, &
+      kim_model_type
     implicit none
     interface
       integer(c_int) function compute(model, compute_arguments) &
         bind(c, name="KIM_Model_Compute")
         use, intrinsic :: iso_c_binding
-        use kim_compute_arguments_module, only : kim_compute_arguments_type
-        import kim_model_type
+        use kim_interoperable_types_module, only : kim_compute_arguments_type
+        use kim_interoperable_types_module, only : kim_model_type
         implicit none
         type(kim_model_type), intent(in) :: model
         type(kim_compute_arguments_type), intent(in) :: compute_arguments
@@ -436,16 +510,17 @@ contains
     call c_f_pointer(model_handle%p, model)
     call c_f_pointer(compute_arguments_handle%p, compute_arguments)
     ierr = compute(model, compute_arguments)
-  end subroutine kim_compute
+  end subroutine kim_model_compute
 
-  subroutine kim_clear_then_refresh(model_handle, ierr)
+  subroutine kim_model_clear_then_refresh(model_handle, ierr)
     use, intrinsic :: iso_c_binding
+    use kim_interoperable_types_module, only : kim_model_type
     implicit none
     interface
       integer(c_int) function clear_then_refresh(model) &
         bind(c, name="KIM_Model_ClearThenRefresh")
         use, intrinsic :: iso_c_binding
-        import kim_model_type
+        use kim_interoperable_types_module, only : kim_model_type
         implicit none
         type(kim_model_type), intent(inout) :: model
       end function clear_then_refresh
@@ -456,12 +531,13 @@ contains
 
     call c_f_pointer(model_handle%p, model)
     ierr = clear_then_refresh(model)
-  end subroutine kim_clear_then_refresh
+  end subroutine kim_model_clear_then_refresh
 
-  subroutine kim_get_species_support_and_code(model_handle, species_name, &
-    species_is_supported, code, ierr)
+  subroutine kim_model_get_species_support_and_code(model_handle, &
+    species_name, species_is_supported, code, ierr)
     use, intrinsic :: iso_c_binding
     use kim_species_name_module, only : kim_species_name_type
+    use kim_interoperable_types_module, only : kim_model_type
     implicit none
     interface
       integer(c_int) function get_species_support_and_code(model, &
@@ -469,7 +545,7 @@ contains
         bind(c, name="KIM_Model_GetSpeciesSupportAndCode")
         use, intrinsic :: iso_c_binding
         use kim_species_name_module, only : kim_species_name_type
-        import kim_model_type
+        use kim_interoperable_types_module, only : kim_model_type
         implicit none
         type(kim_model_type), intent(in) :: model
         type(kim_species_name_type), intent(in), value :: species_name
@@ -487,17 +563,18 @@ contains
     call c_f_pointer(model_handle%p, model)
     ierr = get_species_support_and_code(model, species_name, &
       species_is_supported, code)
-  end subroutine kim_get_species_support_and_code
+  end subroutine kim_model_get_species_support_and_code
 
-  subroutine kim_get_number_of_parameters(model_handle, &
+  subroutine kim_model_get_number_of_parameters(model_handle, &
     number_of_parameters)
     use, intrinsic :: iso_c_binding
+    use kim_interoperable_types_module, only : kim_model_type
     implicit none
     interface
       subroutine get_number_of_parameters(model, number_of_parameters) &
         bind(c, name="KIM_Model_GetNumberOfParameters")
         use, intrinsic :: iso_c_binding
-        import kim_model_type
+        use kim_interoperable_types_module, only : kim_model_type
         implicit none
         type(kim_model_type), intent(in) :: model
         integer(c_int), intent(out) :: number_of_parameters
@@ -509,13 +586,14 @@ contains
 
     call c_f_pointer(model_handle%p, model)
     call get_number_of_parameters(model, number_of_parameters)
-  end subroutine kim_get_number_of_parameters
+  end subroutine kim_model_get_number_of_parameters
 
-  subroutine kim_get_parameter_data_type_extent_name_and_description( &
+  subroutine kim_model_get_parameter_data_type_extent_name_and_description( &
     model_handle, parameter_index, data_type, extent, name, description, ierr)
     use, intrinsic :: iso_c_binding
     use kim_data_type_module, only : kim_data_type_type
     use kim_convert_string_module, only : kim_convert_string
+    use kim_interoperable_types_module, only : kim_model_type
     implicit none
     interface
       integer(c_int) function &
@@ -524,7 +602,7 @@ contains
         bind(c, name="KIM_Model_GetParameterDataTypeExtentNameAndDescription")
         use, intrinsic :: iso_c_binding
         use kim_data_type_module, only : kim_data_type_type
-        import kim_model_type
+        use kim_interoperable_types_module, only : kim_model_type
         implicit none
         type(kim_model_type), intent(in) :: model
         integer(c_int), intent(in), value :: parameter_index
@@ -533,281 +611,291 @@ contains
         type(c_ptr), intent(out) :: name
         type(c_ptr), intent(out) :: description
       end function get_parameter_data_type_extent_name_and_description
-    end interface
-    type(kim_model_handle_type), intent(in) :: model_handle
-    integer(c_int), intent(in), value :: parameter_index
-    type(kim_data_type_type), intent(out) :: data_type
-    integer(c_int), intent(out) :: extent
-    character(len=*, kind=c_char), intent(out) :: name
-    character(len=*, kind=c_char), intent(out) :: description
-    integer(c_int), intent(out) :: ierr
-    type(kim_model_type), pointer :: model
+        end interface
+      type(kim_model_handle_type), intent(in) :: model_handle
+      integer(c_int), intent(in), value :: parameter_index
+      type(kim_data_type_type), intent(out) :: data_type
+      integer(c_int), intent(out) :: extent
+      character(len=*, kind=c_char), intent(out) :: name
+      character(len=*, kind=c_char), intent(out) :: description
+      integer(c_int), intent(out) :: ierr
+      type(kim_model_type), pointer :: model
 
-    type(c_ptr) :: pname, pdesc
+      type(c_ptr) :: pname, pdesc
 
-    call c_f_pointer(model_handle%p, model)
-    ierr = get_parameter_data_type_extent_name_and_description(model, &
-      parameter_index-1, data_type, extent, pname, pdesc)
-    if (c_associated(pname)) then
-      call kim_convert_string(pname, name)
-    else
-      name = ""
-    end if
-    if (c_associated(pdesc)) then
-      call kim_convert_string(pdesc, description)
-    else
-      description = ""
-    end if
-  end subroutine kim_get_parameter_data_type_extent_name_and_description
+      call c_f_pointer(model_handle%p, model)
+      ierr = get_parameter_data_type_extent_name_and_description(model, &
+        parameter_index-1, data_type, extent, pname, pdesc)
+      if (c_associated(pname)) then
+        call kim_convert_string(pname, name)
+      else
+        name = ""
+      end if
+      if (c_associated(pdesc)) then
+        call kim_convert_string(pdesc, description)
+      else
+        description = ""
+      end if
+    end subroutine kim_model_get_parameter_data_type_extent_name_and_description
 
-  subroutine kim_get_parameter_integer(model_handle, parameter_index, &
-    array_index, parameter_value, ierr)
-    use, intrinsic :: iso_c_binding
-    implicit none
-    interface
-      integer(c_int) function get_parameter_integer(model, &
-        parameter_index, array_index, parameter_value) &
-        bind(c, name="KIM_Model_GetParameterInteger")
-        use, intrinsic :: iso_c_binding
-        import kim_model_type
-        implicit none
-        type(kim_model_type), intent(in) :: model
-        integer(c_int), intent(in), value :: parameter_index
-        integer(c_int), intent(in), value :: array_index
-        integer(c_int), intent(out) :: parameter_value
-      end function get_parameter_integer
-    end interface
-    type(kim_model_handle_type), intent(in) :: model_handle
-    integer(c_int), intent(in), value :: parameter_index
-    integer(c_int), intent(in), value :: array_index
-    integer(c_int), intent(out) :: parameter_value
-    integer(c_int), intent(out) :: ierr
-    type(kim_model_type), pointer :: model
+    subroutine kim_model_get_parameter_integer(model_handle, parameter_index, &
+      array_index, parameter_value, ierr)
+      use, intrinsic :: iso_c_binding
+      use kim_interoperable_types_module, only : kim_model_type
+      implicit none
+      interface
+        integer(c_int) function get_parameter_integer(model, &
+          parameter_index, array_index, parameter_value) &
+          bind(c, name="KIM_Model_GetParameterInteger")
+          use, intrinsic :: iso_c_binding
+          use kim_interoperable_types_module, only : kim_model_type
+          implicit none
+          type(kim_model_type), intent(in) :: model
+          integer(c_int), intent(in), value :: parameter_index
+          integer(c_int), intent(in), value :: array_index
+          integer(c_int), intent(out) :: parameter_value
+        end function get_parameter_integer
+      end interface
+      type(kim_model_handle_type), intent(in) :: model_handle
+      integer(c_int), intent(in), value :: parameter_index
+      integer(c_int), intent(in), value :: array_index
+      integer(c_int), intent(out) :: parameter_value
+      integer(c_int), intent(out) :: ierr
+      type(kim_model_type), pointer :: model
 
-    call c_f_pointer(model_handle%p, model)
-    ierr = get_parameter_integer(model, parameter_index-1, array_index-1, &
-      parameter_value)
-  end subroutine kim_get_parameter_integer
+      call c_f_pointer(model_handle%p, model)
+      ierr = get_parameter_integer(model, parameter_index-1, array_index-1, &
+        parameter_value)
+    end subroutine kim_model_get_parameter_integer
 
-  subroutine kim_get_parameter_double(model_handle, parameter_index, &
-    array_index, parameter_value, ierr)
-    use, intrinsic :: iso_c_binding
-    implicit none
-    interface
-      integer(c_int) function get_parameter_double(model, &
-        parameter_index, array_index, parameter_value) &
-        bind(c, name="KIM_Model_GetParameterDouble")
-        use, intrinsic :: iso_c_binding
-        import kim_model_type
-        implicit none
-        type(kim_model_type), intent(in) :: model
-        integer(c_int), intent(in), value :: parameter_index
-        integer(c_int), intent(in), value :: array_index
-        real(c_double), intent(out) :: parameter_value
-      end function get_parameter_double
-    end interface
-    type(kim_model_handle_type), intent(in) :: model_handle
-    integer(c_int), intent(in), value :: parameter_index
-    integer(c_int), intent(in), value :: array_index
-    real(c_double), intent(out) :: parameter_value
-    integer(c_int), intent(out) :: ierr
-    type(kim_model_type), pointer :: model
+    subroutine kim_model_get_parameter_double(model_handle, parameter_index, &
+      array_index, parameter_value, ierr)
+      use, intrinsic :: iso_c_binding
+      use kim_interoperable_types_module, only : kim_model_type
+      implicit none
+      interface
+        integer(c_int) function get_parameter_double(model, &
+          parameter_index, array_index, parameter_value) &
+          bind(c, name="KIM_Model_GetParameterDouble")
+          use, intrinsic :: iso_c_binding
+          use kim_interoperable_types_module, only : kim_model_type
+          implicit none
+          type(kim_model_type), intent(in) :: model
+          integer(c_int), intent(in), value :: parameter_index
+          integer(c_int), intent(in), value :: array_index
+          real(c_double), intent(out) :: parameter_value
+        end function get_parameter_double
+      end interface
+      type(kim_model_handle_type), intent(in) :: model_handle
+      integer(c_int), intent(in), value :: parameter_index
+      integer(c_int), intent(in), value :: array_index
+      real(c_double), intent(out) :: parameter_value
+      integer(c_int), intent(out) :: ierr
+      type(kim_model_type), pointer :: model
 
-    call c_f_pointer(model_handle%p, model)
-    ierr = get_parameter_double(model, parameter_index-1, array_index-1, &
-      parameter_value)
-  end subroutine kim_get_parameter_double
+      call c_f_pointer(model_handle%p, model)
+      ierr = get_parameter_double(model, parameter_index-1, array_index-1, &
+        parameter_value)
+    end subroutine kim_model_get_parameter_double
 
-  subroutine kim_set_parameter_integer(model_handle, parameter_index, &
-    array_index, parameter_value, ierr)
-    use, intrinsic :: iso_c_binding
-    implicit none
-    interface
-      integer(c_int) function set_parameter_integer(model, &
-        parameter_index, array_index, parameter_value) &
-        bind(c, name="KIM_Model_SetParameterInteger")
-        use, intrinsic :: iso_c_binding
-        import kim_model_type
-        implicit none
-        type(kim_model_type), intent(inout) :: model
-        integer(c_int), intent(in), value :: parameter_index
-        integer(c_int), intent(in), value :: array_index
-        integer(c_int), intent(in), value :: parameter_value
-      end function set_parameter_integer
-    end interface
-    type(kim_model_handle_type), intent(in) :: model_handle
-    integer(c_int), intent(in), value :: parameter_index
-    integer(c_int), intent(in), value :: array_index
-    integer(c_int), intent(in), value :: parameter_value
-    integer(c_int), intent(out) :: ierr
-    type(kim_model_type), pointer :: model
+    subroutine kim_model_set_parameter_integer(model_handle, parameter_index, &
+      array_index, parameter_value, ierr)
+      use, intrinsic :: iso_c_binding
+      use kim_interoperable_types_module, only : kim_model_type
+      implicit none
+      interface
+        integer(c_int) function set_parameter_integer(model, &
+          parameter_index, array_index, parameter_value) &
+          bind(c, name="KIM_Model_SetParameterInteger")
+          use, intrinsic :: iso_c_binding
+          use kim_interoperable_types_module, only : kim_model_type
+          implicit none
+          type(kim_model_type), intent(inout) :: model
+          integer(c_int), intent(in), value :: parameter_index
+          integer(c_int), intent(in), value :: array_index
+          integer(c_int), intent(in), value :: parameter_value
+        end function set_parameter_integer
+      end interface
+      type(kim_model_handle_type), intent(in) :: model_handle
+      integer(c_int), intent(in), value :: parameter_index
+      integer(c_int), intent(in), value :: array_index
+      integer(c_int), intent(in), value :: parameter_value
+      integer(c_int), intent(out) :: ierr
+      type(kim_model_type), pointer :: model
 
-    call c_f_pointer(model_handle%p, model)
-    ierr = set_parameter_integer(model, parameter_index-1, array_index-1, &
-      parameter_value)
-  end subroutine kim_set_parameter_integer
+      call c_f_pointer(model_handle%p, model)
+      ierr = set_parameter_integer(model, parameter_index-1, array_index-1, &
+        parameter_value)
+    end subroutine kim_model_set_parameter_integer
 
-  subroutine kim_set_parameter_double(model_handle, parameter_index, &
-    array_index, parameter_value, ierr)
-    use, intrinsic :: iso_c_binding
-    implicit none
-    interface
-      integer(c_int) function set_parameter_double(model, &
-        parameter_index, array_index, parameter_value) &
-        bind(c, name="KIM_Model_SetParameterDouble")
-        use, intrinsic :: iso_c_binding
-        import kim_model_type
-        implicit none
-        type(kim_model_type), intent(inout) :: model
-        integer(c_int), intent(in), value :: parameter_index
-        integer(c_int), intent(in), value :: array_index
-        real(c_double), intent(in), value :: parameter_value
-      end function set_parameter_double
-    end interface
-    type(kim_model_handle_type), intent(in) :: model_handle
-    integer(c_int), intent(in), value :: parameter_index
-    integer(c_int), intent(in), value :: array_index
-    real(c_double), intent(in), value :: parameter_value
-    integer(c_int), intent(out) :: ierr
-    type(kim_model_type), pointer :: model
+    subroutine kim_model_set_parameter_double(model_handle, parameter_index, &
+      array_index, parameter_value, ierr)
+      use, intrinsic :: iso_c_binding
+      use kim_interoperable_types_module, only : kim_model_type
+      implicit none
+      interface
+        integer(c_int) function set_parameter_double(model, &
+          parameter_index, array_index, parameter_value) &
+          bind(c, name="KIM_Model_SetParameterDouble")
+          use, intrinsic :: iso_c_binding
+          use kim_interoperable_types_module, only : kim_model_type
+          implicit none
+          type(kim_model_type), intent(inout) :: model
+          integer(c_int), intent(in), value :: parameter_index
+          integer(c_int), intent(in), value :: array_index
+          real(c_double), intent(in), value :: parameter_value
+        end function set_parameter_double
+      end interface
+      type(kim_model_handle_type), intent(in) :: model_handle
+      integer(c_int), intent(in), value :: parameter_index
+      integer(c_int), intent(in), value :: array_index
+      real(c_double), intent(in), value :: parameter_value
+      integer(c_int), intent(out) :: ierr
+      type(kim_model_type), pointer :: model
 
-    call c_f_pointer(model_handle%p, model)
-    ierr = set_parameter_double(model, parameter_index-1, array_index-1, &
-      parameter_value)
-  end subroutine kim_set_parameter_double
+      call c_f_pointer(model_handle%p, model)
+      ierr = set_parameter_double(model, parameter_index-1, array_index-1, &
+        parameter_value)
+    end subroutine kim_model_set_parameter_double
 
-  subroutine kim_model_set_simulator_buffer_pointer(model_handle, ptr)
-    use, intrinsic :: iso_c_binding
-    implicit none
-    interface
-      subroutine set_simulator_buffer_pointer(model, ptr) &
-        bind(c, name="KIM_Model_SetSimulatorBufferPointer")
-        use, intrinsic :: iso_c_binding
-        import kim_model_type
-        implicit none
-        type(kim_model_type), intent(inout) :: model
-        type(c_ptr), intent(in), value :: ptr
-      end subroutine set_simulator_buffer_pointer
-    end interface
-    type(kim_model_handle_type), intent(in) :: model_handle
-    type(c_ptr), intent(in), value :: ptr
-    type(kim_model_type), pointer :: model
+    subroutine kim_model_set_simulator_buffer_pointer(model_handle, ptr)
+      use, intrinsic :: iso_c_binding
+      use kim_interoperable_types_module, only : kim_model_type
+      implicit none
+      interface
+        subroutine set_simulator_buffer_pointer(model, ptr) &
+          bind(c, name="KIM_Model_SetSimulatorBufferPointer")
+          use, intrinsic :: iso_c_binding
+          use kim_interoperable_types_module, only : kim_model_type
+          implicit none
+          type(kim_model_type), intent(inout) :: model
+          type(c_ptr), intent(in), value :: ptr
+        end subroutine set_simulator_buffer_pointer
+      end interface
+      type(kim_model_handle_type), intent(in) :: model_handle
+      type(c_ptr), intent(in), value :: ptr
+      type(kim_model_type), pointer :: model
 
-    call c_f_pointer(model_handle%p, model)
-    call set_simulator_buffer_pointer(model, ptr)
-  end subroutine kim_model_set_simulator_buffer_pointer
+      call c_f_pointer(model_handle%p, model)
+      call set_simulator_buffer_pointer(model, ptr)
+    end subroutine kim_model_set_simulator_buffer_pointer
 
-  subroutine kim_model_get_simulator_buffer_pointer(model_handle, ptr)
-    use, intrinsic :: iso_c_binding
-    implicit none
-    interface
-      subroutine get_simulator_buffer_pointer(model, ptr) &
-        bind(c, name="KIM_Model_GetSimulatorBufferPointer")
-        use, intrinsic :: iso_c_binding
-        import kim_model_type
-        implicit none
-        type(kim_model_type), intent(in) :: model
-        type(c_ptr), intent(out) :: ptr
-      end subroutine get_simulator_buffer_pointer
-    end interface
-    type(kim_model_handle_type), intent(in) :: model_handle
-    type(c_ptr), intent(out) :: ptr
-    type(kim_model_type), pointer :: model
+    subroutine kim_model_get_simulator_buffer_pointer(model_handle, ptr)
+      use, intrinsic :: iso_c_binding
+      use kim_interoperable_types_module, only : kim_model_type
+      implicit none
+      interface
+        subroutine get_simulator_buffer_pointer(model, ptr) &
+          bind(c, name="KIM_Model_GetSimulatorBufferPointer")
+          use, intrinsic :: iso_c_binding
+          use kim_interoperable_types_module, only : kim_model_type
+          implicit none
+          type(kim_model_type), intent(in) :: model
+          type(c_ptr), intent(out) :: ptr
+        end subroutine get_simulator_buffer_pointer
+      end interface
+      type(kim_model_handle_type), intent(in) :: model_handle
+      type(c_ptr), intent(out) :: ptr
+      type(kim_model_type), pointer :: model
 
-    call c_f_pointer(model_handle%p, model)
-    call get_simulator_buffer_pointer(model, ptr)
-  end subroutine kim_model_get_simulator_buffer_pointer
+      call c_f_pointer(model_handle%p, model)
+      call get_simulator_buffer_pointer(model, ptr)
+    end subroutine kim_model_get_simulator_buffer_pointer
 
-  subroutine kim_model_string(model_handle, string)
-    use, intrinsic :: iso_c_binding
-    use kim_convert_string_module, only : kim_convert_string
-    implicit none
-    interface
-      type(c_ptr) function model_string(model) &
-        bind(c, name="KIM_Model_String")
-        use, intrinsic :: iso_c_binding
-        import kim_model_type
-        implicit none
-        type(kim_model_type), intent(in) :: model
-      end function model_string
-    end interface
-    type(kim_model_handle_type), intent(in) :: model_handle
-    character(len=*, kind=c_char), intent(out) :: string
-    type(kim_model_type), pointer :: model
+    subroutine kim_model_to_string(model_handle, string)
+      use, intrinsic :: iso_c_binding
+      use kim_convert_string_module, only : kim_convert_string
+      use kim_interoperable_types_module, only : kim_model_type
+      implicit none
+      interface
+        type(c_ptr) function model_string(model) &
+          bind(c, name="KIM_Model_String")
+          use, intrinsic :: iso_c_binding
+          use kim_interoperable_types_module, only : kim_model_type
+          implicit none
+          type(kim_model_type), intent(in) :: model
+        end function model_string
+      end interface
+      type(kim_model_handle_type), intent(in) :: model_handle
+      character(len=*, kind=c_char), intent(out) :: string
+      type(kim_model_type), pointer :: model
 
-    type(c_ptr) :: p
+      type(c_ptr) :: p
 
-    call c_f_pointer(model_handle%p, model)
-    p = model_string(model)
-    if (c_associated(p)) then
-      call kim_convert_string(p, string)
-    else
-      string = ""
-    end if
-  end subroutine kim_model_string
+      call c_f_pointer(model_handle%p, model)
+      p = model_string(model)
+      if (c_associated(p)) then
+        call kim_convert_string(p, string)
+      else
+        string = ""
+      end if
+    end subroutine kim_model_to_string
 
-  subroutine kim_model_set_log_id(model_handle, log_id)
-    use, intrinsic :: iso_c_binding
-    implicit none
-    interface
-      subroutine set_log_id(model, log_id) &
-        bind(c, name="KIM_Model_SetLogID")
-        use, intrinsic :: iso_c_binding
-        import kim_model_type
-        implicit none
-        type(kim_model_type), intent(inout) :: model
-        character(c_char), intent(in) :: log_id(*)
-      end subroutine set_log_id
-    end interface
-    type(kim_model_handle_type), intent(in) :: model_handle
-    character(len=*, kind=c_char), intent(in) :: log_id
-    type(kim_model_type), pointer :: model
+    subroutine kim_model_set_log_id(model_handle, log_id)
+      use, intrinsic :: iso_c_binding
+      use kim_interoperable_types_module, only : kim_model_type
+      implicit none
+      interface
+        subroutine set_log_id(model, log_id) &
+          bind(c, name="KIM_Model_SetLogID")
+          use, intrinsic :: iso_c_binding
+          use kim_interoperable_types_module, only : kim_model_type
+          implicit none
+          type(kim_model_type), intent(inout) :: model
+          character(c_char), intent(in) :: log_id(*)
+        end subroutine set_log_id
+      end interface
+      type(kim_model_handle_type), intent(in) :: model_handle
+      character(len=*, kind=c_char), intent(in) :: log_id
+      type(kim_model_type), pointer :: model
 
-    call c_f_pointer(model_handle%p, model)
-    call set_log_id(model, trim(log_id)//c_null_char)
-  end subroutine kim_model_set_log_id
+      call c_f_pointer(model_handle%p, model)
+      call set_log_id(model, trim(log_id)//c_null_char)
+    end subroutine kim_model_set_log_id
 
-  subroutine kim_model_push_log_verbosity(model_handle, log_verbosity)
-    use, intrinsic :: iso_c_binding
-    use kim_log_verbosity_module, only : kim_log_verbosity_type
-    implicit none
-    interface
-      subroutine push_log_verbosity(model, log_verbosity) &
-        bind(c, name="KIM_Model_PushLogVerbosity")
-        use, intrinsic :: iso_c_binding
-        use kim_log_verbosity_module, only : kim_log_verbosity_type
-        import kim_model_type
-        implicit none
-        type(kim_model_type), intent(inout) :: model
-        type(kim_log_verbosity_type), intent(in), value :: log_verbosity
-      end subroutine push_log_verbosity
-    end interface
-    type(kim_model_handle_type), intent(in) :: model_handle
-    type(kim_log_verbosity_type), intent(in) :: log_verbosity
-    type(kim_model_type), pointer :: model
+    subroutine kim_model_push_log_verbosity(model_handle, log_verbosity)
+      use, intrinsic :: iso_c_binding
+      use kim_log_verbosity_module, only : kim_log_verbosity_type
+      use kim_interoperable_types_module, only : kim_model_type
+      implicit none
+      interface
+        subroutine push_log_verbosity(model, log_verbosity) &
+          bind(c, name="KIM_Model_PushLogVerbosity")
+          use, intrinsic :: iso_c_binding
+          use kim_log_verbosity_module, only : kim_log_verbosity_type
+          use kim_interoperable_types_module, only : kim_model_type
+          implicit none
+          type(kim_model_type), intent(inout) :: model
+          type(kim_log_verbosity_type), intent(in), value :: log_verbosity
+        end subroutine push_log_verbosity
+      end interface
+      type(kim_model_handle_type), intent(in) :: model_handle
+      type(kim_log_verbosity_type), intent(in) :: log_verbosity
+      type(kim_model_type), pointer :: model
 
-    call c_f_pointer(model_handle%p, model)
-    call push_log_verbosity(model, log_verbosity)
-  end subroutine kim_model_push_log_verbosity
+      call c_f_pointer(model_handle%p, model)
+      call push_log_verbosity(model, log_verbosity)
+    end subroutine kim_model_push_log_verbosity
 
-  subroutine kim_model_pop_log_verbosity(model_handle)
-    use, intrinsic :: iso_c_binding
-    use kim_log_verbosity_module, only : kim_log_verbosity_type
-    implicit none
-    interface
-      subroutine pop_log_verbosity(model) &
-        bind(c, name="KIM_Model_PopLogVerbosity")
-        use, intrinsic :: iso_c_binding
-        use kim_log_verbosity_module, only : kim_log_verbosity_type
-        import kim_model_type
-        implicit none
-        type(kim_model_type), intent(inout) :: model
-      end subroutine pop_log_verbosity
-    end interface
-    type(kim_model_handle_type), intent(in) :: model_handle
-    type(kim_model_type), pointer :: model
+    subroutine kim_model_pop_log_verbosity(model_handle)
+      use, intrinsic :: iso_c_binding
+      use kim_log_verbosity_module, only : kim_log_verbosity_type
+      use kim_interoperable_types_module, only : kim_model_type
+      implicit none
+      interface
+        subroutine pop_log_verbosity(model) &
+          bind(c, name="KIM_Model_PopLogVerbosity")
+          use, intrinsic :: iso_c_binding
+          use kim_log_verbosity_module, only : kim_log_verbosity_type
+          use kim_interoperable_types_module, only : kim_model_type
+          implicit none
+          type(kim_model_type), intent(inout) :: model
+        end subroutine pop_log_verbosity
+      end interface
+      type(kim_model_handle_type), intent(in) :: model_handle
+      type(kim_model_type), pointer :: model
 
-    call c_f_pointer(model_handle%p, model)
-    call pop_log_verbosity(model)
-  end subroutine kim_model_pop_log_verbosity
-end module kim_model_module
+      call c_f_pointer(model_handle%p, model)
+      call pop_log_verbosity(model)
+    end subroutine kim_model_pop_log_verbosity
+  end module kim_model_module

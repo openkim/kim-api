@@ -48,11 +48,11 @@ module kim_log_module
     operator (.ne.), &
     kim_log_create, &
     kim_log_destroy, &
-    kim_log_get_id, &
-    kim_log_set_id, &
-    kim_log_push_verbosity, &
-    kim_log_pop_verbosity, &
-    kim_log_log_entry
+    kim_get_id, &
+    kim_set_id, &
+    kim_push_verbosity, &
+    kim_pop_verbosity, &
+    kim_log_entry
 
 
   type, bind(c) :: kim_log_handle_type
@@ -74,6 +74,26 @@ module kim_log_module
   interface operator (.ne.)
     module procedure kim_log_handle_not_equal
   end interface operator (.ne.)
+
+  interface kim_get_id
+    module procedure kim_log_get_id
+  end interface kim_get_id
+
+  interface kim_set_id
+    module procedure kim_log_set_id
+  end interface kim_set_id
+
+  interface kim_push_verbosity
+    module procedure kim_log_push_verbosity
+  end interface kim_push_verbosity
+
+  interface kim_pop_verbosity
+    module procedure kim_log_pop_verbosity
+  end interface kim_pop_verbosity
+
+  interface kim_log_entry
+    module procedure kim_log_log_entry
+  end interface kim_log_entry
 
 contains
   logical function kim_log_handle_equal(left, right)

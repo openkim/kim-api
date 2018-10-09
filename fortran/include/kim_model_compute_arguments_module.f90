@@ -34,13 +34,16 @@
 module kim_model_compute_arguments_module
   use, intrinsic :: iso_c_binding
   implicit none
-  private &
-    kim_model_compute_arguments_handle_equal, &
-    kim_model_compute_arguments_handle_not_equal
+  private
 
   public &
+    ! Derived types
     kim_model_compute_arguments_handle_type, &
+
+    ! Constants
     KIM_MODEL_COMPUTE_ARGUMENTS_NULL_HANDLE, &
+
+    ! Routines
     operator (.eq.), &
     operator (.ne.), &
     kim_get_neighbor_list, &
@@ -48,20 +51,15 @@ module kim_model_compute_arguments_module
     kim_process_d2edr2_term, &
     kim_get_argument_pointer, &
     kim_is_callback_present, &
-    kim_model_compute_arguments_set_model_buffer_pointer, &
-    kim_model_compute_arguments_get_model_buffer_pointer, &
-    kim_model_compute_arguments_log_entry, &
-    kim_model_compute_arguments_string
+    kim_set_model_buffer_pointer, &
+    kim_get_model_buffer_pointer, &
+    kim_log_entry, &
+    kim_to_string
 
 
   type, bind(c) :: kim_model_compute_arguments_handle_type
     type(c_ptr) :: p = c_null_ptr
   end type kim_model_compute_arguments_handle_type
-
-  type, bind(c) :: kim_model_compute_arguments_type
-    private
-    type(c_ptr) :: p
-  end type kim_model_compute_arguments_type
 
   type(kim_model_compute_arguments_handle_type), protected, save &
     :: KIM_MODEL_COMPUTE_ARGUMENTS_NULL_HANDLE
@@ -74,14 +72,46 @@ module kim_model_compute_arguments_module
     module procedure kim_model_compute_arguments_handle_not_equal
   end interface operator (.ne.)
 
+  interface kim_get_neighbor_list
+    module procedure kim_model_compute_arguments_get_neighbor_list
+  end interface kim_get_neighbor_list
+
+  interface kim_process_dedr_term
+    module procedure kim_model_compute_arguments_process_dedr_term
+  end interface kim_process_dedr_term
+
+  interface kim_process_d2edr2_term
+    module procedure kim_model_compute_arguments_process_d2edr2_term
+  end interface kim_process_d2edr2_term
+
   interface kim_get_argument_pointer
-    module procedure kim_get_argument_pointer_int0
-    module procedure kim_get_argument_pointer_int1
-    module procedure kim_get_argument_pointer_int2
-    module procedure kim_get_argument_pointer_double0
-    module procedure kim_get_argument_pointer_double1
-    module procedure kim_get_argument_pointer_double2
+    module procedure kim_model_compute_arguments_get_argument_pointer_int0
+    module procedure kim_model_compute_arguments_get_argument_pointer_int1
+    module procedure kim_model_compute_arguments_get_argument_pointer_int2
+    module procedure kim_model_compute_arguments_get_argument_pointer_double0
+    module procedure kim_model_compute_arguments_get_argument_pointer_double1
+    module procedure kim_model_compute_arguments_get_argument_pointer_double2
   end interface kim_get_argument_pointer
+
+  interface kim_is_callback_present
+    module procedure kim_model_compute_arguments_is_callback_present
+  end interface kim_is_callback_present
+
+  interface kim_set_model_buffer_pointer
+    module procedure kim_model_compute_arguments_set_model_buffer_pointer
+  end interface kim_set_model_buffer_pointer
+
+  interface kim_get_model_buffer_pointer
+    module procedure kim_model_compute_arguments_get_model_buffer_pointer
+  end interface kim_get_model_buffer_pointer
+
+  interface kim_log_entry
+    module procedure kim_model_compute_arguments_log_entry
+  end interface kim_log_entry
+
+  interface kim_to_string
+    module procedure kim_model_compute_arguments_to_string
+  end interface kim_to_string
 
 contains
   logical function kim_model_compute_arguments_handle_equal(left, right)
@@ -106,10 +136,11 @@ contains
     kim_model_compute_arguments_handle_not_equal = .not. (left .eq. right)
   end function kim_model_compute_arguments_handle_not_equal
 
-  subroutine kim_get_argument_pointer_int0( &
+  subroutine kim_model_compute_arguments_get_argument_pointer_int0( &
     model_compute_arguments_handle, compute_argument_name, int0, ierr)
     use, intrinsic :: iso_c_binding
     use kim_compute_argument_name_module, only : kim_compute_argument_name_type
+    use kim_interoperable_types_module, only : kim_model_compute_arguments_type
     implicit none
     interface
       integer(c_int) function get_argument_pointer_integer( &
@@ -118,7 +149,8 @@ contains
         use, intrinsic :: iso_c_binding
         use kim_compute_argument_name_module, only : &
           kim_compute_argument_name_type
-        import kim_model_compute_arguments_type
+        use kim_interoperable_types_module, only : &
+          kim_model_compute_arguments_type
         implicit none
         type(kim_model_compute_arguments_type), intent(in) :: &
           model_compute_arguments
@@ -145,12 +177,13 @@ contains
     else
       nullify(int0)
     end if
-  end subroutine kim_get_argument_pointer_int0
+  end subroutine kim_model_compute_arguments_get_argument_pointer_int0
 
-  subroutine kim_get_argument_pointer_int1( &
+  subroutine kim_model_compute_arguments_get_argument_pointer_int1( &
     model_compute_arguments_handle, compute_argument_name, extent1, int1, ierr)
     use, intrinsic :: iso_c_binding
     use kim_compute_argument_name_module, only : kim_compute_argument_name_type
+    use kim_interoperable_types_module, only : kim_model_compute_arguments_type
     implicit none
     interface
       integer(c_int) function get_argument_pointer_integer( &
@@ -159,7 +192,8 @@ contains
         use, intrinsic :: iso_c_binding
         use kim_compute_argument_name_module, only : &
           kim_compute_argument_name_type
-        import kim_model_compute_arguments_type
+        use kim_interoperable_types_module, only : &
+          kim_model_compute_arguments_type
         implicit none
         type(kim_model_compute_arguments_type), intent(in) :: &
           model_compute_arguments
@@ -188,13 +222,14 @@ contains
       nullify(int1)
     end if
 
-  end subroutine kim_get_argument_pointer_int1
+  end subroutine kim_model_compute_arguments_get_argument_pointer_int1
 
-  subroutine kim_get_argument_pointer_int2( &
+  subroutine kim_model_compute_arguments_get_argument_pointer_int2( &
     model_compute_arguments_handle, compute_argument_name, extent1, extent2, &
     int2, ierr)
     use, intrinsic :: iso_c_binding
     use kim_compute_argument_name_module, only : kim_compute_argument_name_type
+    use kim_interoperable_types_module, only : kim_model_compute_arguments_type
     implicit none
     interface
       integer(c_int) function get_argument_pointer_integer( &
@@ -203,7 +238,8 @@ contains
         use, intrinsic :: iso_c_binding
         use kim_compute_argument_name_module, only : &
           kim_compute_argument_name_type
-        import kim_model_compute_arguments_type
+        use kim_interoperable_types_module, only : &
+          kim_model_compute_arguments_type
         implicit none
         type(kim_model_compute_arguments_type), intent(in) :: &
           model_compute_arguments
@@ -232,12 +268,13 @@ contains
     else
       nullify(int2)
     end if
-  end subroutine kim_get_argument_pointer_int2
+  end subroutine kim_model_compute_arguments_get_argument_pointer_int2
 
-  subroutine kim_get_argument_pointer_double0( &
+  subroutine kim_model_compute_arguments_get_argument_pointer_double0( &
     model_compute_arguments_handle, compute_argument_name, double0, ierr)
     use, intrinsic :: iso_c_binding
     use kim_compute_argument_name_module, only : kim_compute_argument_name_type
+    use kim_interoperable_types_module, only : kim_model_compute_arguments_type
     implicit none
     interface
       integer(c_int) function get_argument_pointer_double( &
@@ -246,7 +283,8 @@ contains
         use, intrinsic :: iso_c_binding
         use kim_compute_argument_name_module, only : &
           kim_compute_argument_name_type
-        import kim_model_compute_arguments_type
+        use kim_interoperable_types_module, only : &
+          kim_model_compute_arguments_type
         implicit none
         type(kim_model_compute_arguments_type), intent(in) :: &
           model_compute_arguments
@@ -273,13 +311,14 @@ contains
     else
       nullify(double0)
     end if
-  end subroutine kim_get_argument_pointer_double0
+  end subroutine kim_model_compute_arguments_get_argument_pointer_double0
 
-  subroutine kim_get_argument_pointer_double1( &
+  subroutine kim_model_compute_arguments_get_argument_pointer_double1( &
     model_compute_arguments_handle, compute_argument_name, extent1, double1, &
     ierr)
     use, intrinsic :: iso_c_binding
     use kim_compute_argument_name_module, only : kim_compute_argument_name_type
+    use kim_interoperable_types_module, only : kim_model_compute_arguments_type
     implicit none
     interface
       integer(c_int) function get_argument_pointer_double( &
@@ -288,7 +327,8 @@ contains
         use, intrinsic :: iso_c_binding
         use kim_compute_argument_name_module, only : &
           kim_compute_argument_name_type
-        import kim_model_compute_arguments_type
+        use kim_interoperable_types_module, only : &
+          kim_model_compute_arguments_type
         implicit none
         type(kim_model_compute_arguments_type), intent(in) :: &
           model_compute_arguments
@@ -316,13 +356,14 @@ contains
     else
       nullify(double1)
     end if
-  end subroutine kim_get_argument_pointer_double1
+  end subroutine kim_model_compute_arguments_get_argument_pointer_double1
 
-  subroutine kim_get_argument_pointer_double2( &
+  subroutine kim_model_compute_arguments_get_argument_pointer_double2( &
     model_compute_arguments_handle, compute_argument_name, extent1, extent2, &
     double2, ierr)
     use, intrinsic :: iso_c_binding
     use kim_compute_argument_name_module, only : kim_compute_argument_name_type
+    use kim_interoperable_types_module, only : kim_model_compute_arguments_type
     implicit none
     interface
       integer(c_int) function get_argument_pointer_double( &
@@ -331,7 +372,8 @@ contains
         use, intrinsic :: iso_c_binding
         use kim_compute_argument_name_module, only : &
           kim_compute_argument_name_type
-        import kim_model_compute_arguments_type
+        use kim_interoperable_types_module, only : &
+          kim_model_compute_arguments_type
         implicit none
         type(kim_model_compute_arguments_type), intent(in) :: &
           model_compute_arguments
@@ -360,12 +402,13 @@ contains
     else
       nullify(double2)
     end if
-  end subroutine kim_get_argument_pointer_double2
+  end subroutine kim_model_compute_arguments_get_argument_pointer_double2
 
-  subroutine kim_is_callback_present( &
+  subroutine kim_model_compute_arguments_is_callback_present( &
     model_compute_arguments_handle, compute_callback_name, present, ierr)
     use, intrinsic :: iso_c_binding
     use kim_compute_callback_name_module, only : kim_compute_callback_name_type
+    use kim_interoperable_types_module, only : kim_model_compute_arguments_type
     implicit none
     interface
       integer(c_int) function is_callback_present(model_compute_arguments, &
@@ -374,7 +417,8 @@ contains
         use, intrinsic :: iso_c_binding
         use kim_compute_callback_name_module, only : &
           kim_compute_callback_name_type
-        import kim_model_compute_arguments_type
+        use kim_interoperable_types_module, only : &
+          kim_model_compute_arguments_type
         implicit none
         type(kim_model_compute_arguments_type), intent(in) :: &
           model_compute_arguments
@@ -394,12 +438,13 @@ contains
     call c_f_pointer(model_compute_arguments_handle%p, model_compute_arguments)
     ierr = is_callback_present(model_compute_arguments, compute_callback_name, &
       present)
-  end subroutine kim_is_callback_present
+  end subroutine kim_model_compute_arguments_is_callback_present
 
-  subroutine kim_get_neighbor_list( &
+  subroutine kim_model_compute_arguments_get_neighbor_list( &
     model_compute_arguments_handle, neighbor_list_index, particle_number, &
     number_of_neighbors, neighbors_of_particle, ierr)
     use, intrinsic :: iso_c_binding
+    use kim_interoperable_types_module, only : kim_model_compute_arguments_type
     implicit none
     interface
       integer(c_int) function get_neighbor_list(model_compute_arguments, &
@@ -407,7 +452,8 @@ contains
         neighbors_of_particle) &
         bind(c, name="KIM_ModelComputeArguments_GetNeighborList")
         use, intrinsic :: iso_c_binding
-        import kim_model_compute_arguments_type
+        use kim_interoperable_types_module, only : &
+          kim_model_compute_arguments_type
         implicit none
         type(kim_model_compute_arguments_type), intent(in) :: &
           model_compute_arguments
@@ -436,18 +482,20 @@ contains
     else
       nullify(neighbors_of_particle)
     end if
-  end subroutine kim_get_neighbor_list
+  end subroutine kim_model_compute_arguments_get_neighbor_list
 
-  subroutine kim_process_dedr_term( &
+  subroutine kim_model_compute_arguments_process_dedr_term( &
     model_compute_arguments_handle, de, r, dx, i, j, ierr)
     use, intrinsic :: iso_c_binding
+    use kim_interoperable_types_module, only : kim_model_compute_arguments_type
     implicit none
     interface
       integer(c_int) function process_dedr_term(model_compute_arguments, de, &
         r, dx, i, j) &
         bind(c, name="KIM_ModelComputeArguments_ProcessDEDrTerm")
         use, intrinsic :: iso_c_binding
-        import kim_model_compute_arguments_type
+        use kim_interoperable_types_module, only : &
+          kim_model_compute_arguments_type
         implicit none
         type(kim_model_compute_arguments_type), intent(in) :: &
           model_compute_arguments
@@ -470,18 +518,20 @@ contains
 
     call c_f_pointer(model_compute_arguments_handle%p, model_compute_arguments)
     ierr = process_dedr_term(model_compute_arguments, de, r, dx(1), i, j)
-  end subroutine kim_process_dedr_term
+  end subroutine kim_model_compute_arguments_process_dedr_term
 
-  subroutine kim_process_d2edr2_term( &
+  subroutine kim_model_compute_arguments_process_d2edr2_term( &
     model_compute_arguments_handle, de, r, dx, i, j, ierr)
     use, intrinsic :: iso_c_binding
+    use kim_interoperable_types_module, only : kim_model_compute_arguments_type
     implicit none
     interface
       integer(c_int) function process_d2edr2_term(model_compute_arguments, &
         de, r, dx, i, j) &
         bind(c, name="KIM_ModelComputeArguments_ProcessD2EDr2Term")
         use, intrinsic :: iso_c_binding
-        import kim_model_compute_arguments_type
+        use kim_interoperable_types_module, only : &
+          kim_model_compute_arguments_type
         implicit none
         type(kim_model_compute_arguments_type), intent(in) :: &
           model_compute_arguments
@@ -505,17 +555,19 @@ contains
     call c_f_pointer(model_compute_arguments_handle%p, model_compute_arguments)
     ierr = process_d2edr2_term(model_compute_arguments, &
       de, r(1), dx(1,1), i(1), j(1))
-  end subroutine kim_process_d2edr2_term
+  end subroutine kim_model_compute_arguments_process_d2edr2_term
 
   subroutine kim_model_compute_arguments_set_model_buffer_pointer( &
     model_compute_arguments_handle, ptr)
     use, intrinsic :: iso_c_binding
+    use kim_interoperable_types_module, only : kim_model_compute_arguments_type
     implicit none
     interface
       subroutine set_model_buffer_pointer(model_compute_arguments, ptr) &
         bind(c, name="KIM_ModelComputeArguments_SetModelBufferPointer")
         use, intrinsic :: iso_c_binding
-        import kim_model_compute_arguments_type
+        use kim_interoperable_types_module, only : &
+          kim_model_compute_arguments_type
         implicit none
         type(kim_model_compute_arguments_type), intent(inout) :: &
           model_compute_arguments
@@ -534,12 +586,14 @@ contains
   subroutine kim_model_compute_arguments_get_model_buffer_pointer( &
     model_compute_arguments_handle, ptr)
     use, intrinsic :: iso_c_binding
+    use kim_interoperable_types_module, only : kim_model_compute_arguments_type
     implicit none
     interface
       subroutine get_model_buffer_pointer(model_compute_arguments, ptr) &
         bind(c, name="KIM_ModelComputeArguments_GetModelBufferPointer")
         use, intrinsic :: iso_c_binding
-        import kim_model_compute_arguments_type
+        use kim_interoperable_types_module, only : &
+          kim_model_compute_arguments_type
         implicit none
         type(kim_model_compute_arguments_type), intent(in) :: &
           model_compute_arguments
@@ -559,6 +613,7 @@ contains
     model_compute_arguments_handle, log_verbosity, message)
     use, intrinsic :: iso_c_binding
     use kim_log_verbosity_module, only : kim_log_verbosity_type
+    use kim_interoperable_types_module, only : kim_model_compute_arguments_type
     implicit none
     interface
       subroutine log_entry(model_compute_arguments, log_verbosity, message, &
@@ -566,7 +621,8 @@ contains
         name="KIM_ModelComputeArguments_LogEntry")
         use, intrinsic :: iso_c_binding
         use kim_log_verbosity_module, only : kim_log_verbosity_type
-        import kim_model_compute_arguments_type
+        use kim_interoperable_types_module, only : &
+          kim_model_compute_arguments_type
         implicit none
         type(kim_model_compute_arguments_type), intent(in) :: &
           model_compute_arguments
@@ -587,16 +643,18 @@ contains
       trim(message)//c_null_char, 0, ""//c_null_char)
   end subroutine kim_model_compute_arguments_log_entry
 
-  subroutine kim_model_compute_arguments_string( &
+  subroutine kim_model_compute_arguments_to_string( &
     model_compute_arguments_handle, string)
     use, intrinsic :: iso_c_binding
     use kim_convert_string_module, only : kim_convert_string
+    use kim_interoperable_types_module, only : kim_model_compute_arguments_type
     implicit none
     interface
       type(c_ptr) function model_compute_string(model_compute_arguments) &
         bind(c, name="KIM_ModelComputeArguments_String")
         use, intrinsic :: iso_c_binding
-        import kim_model_compute_arguments_type
+        use kim_interoperable_types_module, only : &
+          kim_model_compute_arguments_type
         implicit none
         type(kim_model_compute_arguments_type), intent(in) :: &
           model_compute_arguments
@@ -616,5 +674,5 @@ contains
     else
       string = ""
     end if
-  end subroutine kim_model_compute_arguments_string
+  end subroutine kim_model_compute_arguments_to_string
 end module kim_model_compute_arguments_module
