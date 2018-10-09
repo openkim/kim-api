@@ -124,7 +124,7 @@ contains
     implicit none
     interface
       type(c_ptr) function get_string(data_type) &
-        bind(c, name="KIM_DataType_String")
+        bind(c, name="KIM_DataType_ToString")
         use, intrinsic :: iso_c_binding
         import kim_data_type_type
         implicit none

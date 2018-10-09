@@ -241,7 +241,7 @@ void KIM_ComputeArguments_GetSimulatorBufferPointer(
   pComputeArguments->GetSimulatorBufferPointer(ptr);
 }
 
-char const * KIM_ComputeArguments_String(
+char const * KIM_ComputeArguments_ToString(
     KIM_ComputeArguments const * const computeArguments)
 {
   CONVERT_POINTER;

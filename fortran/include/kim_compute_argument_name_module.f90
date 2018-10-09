@@ -154,7 +154,7 @@ contains
     implicit none
     interface
       type(c_ptr) function get_string(compute_argument_name) &
-        bind(c, name="KIM_ComputeArgumentName_String")
+        bind(c, name="KIM_ComputeArgumentName_ToString")
         use, intrinsic :: iso_c_binding
         import kim_compute_argument_name_type
         implicit none

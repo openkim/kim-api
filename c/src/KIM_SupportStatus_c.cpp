@@ -80,7 +80,7 @@ int KIM_SupportStatus_NotEqual(KIM_SupportStatus const left,
   return (!KIM_SupportStatus_Equal(left, right));
 }
 
-char const * KIM_SupportStatus_String(KIM_SupportStatus const supportStatus)
+char const * KIM_SupportStatus_ToString(KIM_SupportStatus const supportStatus)
 {
   return makeSupportStatusCpp(supportStatus).String().c_str();
 }

@@ -182,7 +182,7 @@ contains
     interface
       type(c_ptr) function model_compute_arguments_destroy_string( &
         model_compute_arguments_destroy) &
-        bind(c, name="KIM_ModelComputeArgumentsDestroy_String")
+        bind(c, name="KIM_ModelComputeArgumentsDestroy_ToString")
         use, intrinsic :: iso_c_binding
         use kim_interoperable_types_module, only : &
           kim_model_compute_arguments_destroy_type

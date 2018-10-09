@@ -77,7 +77,7 @@ int KIM_LengthUnit_NotEqual(KIM_LengthUnit left, KIM_LengthUnit right)
   return (!KIM_LengthUnit_Equal(left, right));
 }
 
-char const * KIM_LengthUnit_String(KIM_LengthUnit const lengthUnit)
+char const * KIM_LengthUnit_ToString(KIM_LengthUnit const lengthUnit)
 {
   return makeLengthUnitCpp(lengthUnit).String().c_str();
 }

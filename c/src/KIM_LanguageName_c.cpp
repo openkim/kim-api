@@ -79,7 +79,7 @@ int KIM_LanguageName_NotEqual(KIM_LanguageName const left,
   return (!KIM_LanguageName_Equal(left, right));
 }
 
-char const * KIM_LanguageName_String(KIM_LanguageName languageName)
+char const * KIM_LanguageName_ToString(KIM_LanguageName languageName)
 {
   return makeLanguageNameCpp(languageName).String().c_str();
 }

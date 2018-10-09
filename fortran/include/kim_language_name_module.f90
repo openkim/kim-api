@@ -128,7 +128,7 @@ contains
     implicit none
     interface
       type(c_ptr) function get_string(language_name) &
-        bind(c, name="KIM_LanguageName_String")
+        bind(c, name="KIM_LanguageName_ToString")
         use, intrinsic :: iso_c_binding
         import kim_language_name_type
         implicit none

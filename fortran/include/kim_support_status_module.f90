@@ -132,7 +132,7 @@ contains
     implicit none
     interface
       type(c_ptr) function get_string(support_status) &
-        bind(c, name="KIM_SupportStatus_String")
+        bind(c, name="KIM_SupportStatus_ToString")
         use, intrinsic :: iso_c_binding
         import kim_support_status_type
         implicit none

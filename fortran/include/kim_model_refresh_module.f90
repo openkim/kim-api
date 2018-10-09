@@ -235,7 +235,7 @@ contains
     implicit none
     interface
       type(c_ptr) function model_refresh_string(model_refresh) &
-        bind(c, name="KIM_ModelRefresh_String")
+        bind(c, name="KIM_ModelRefresh_ToString")
         use, intrinsic :: iso_c_binding
         import kim_model_refresh_type
         implicit none

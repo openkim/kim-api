@@ -132,7 +132,7 @@ contains
     implicit none
     interface
       type(c_ptr) function get_string(charge_unit) &
-        bind(c, name="KIM_ChargeUnit_String")
+        bind(c, name="KIM_ChargeUnit_ToString")
         use, intrinsic :: iso_c_binding
         import kim_charge_unit_type
         implicit none

@@ -161,7 +161,7 @@ contains
     implicit none
     interface
       type(c_ptr) function model_destroy_string(model_destroy) &
-        bind(c, name="KIM_ModelDestroy_String")
+        bind(c, name="KIM_ModelDestroy_ToString")
         use, intrinsic :: iso_c_binding
         use kim_interoperable_types_module, only : kim_model_destroy_type
         implicit none

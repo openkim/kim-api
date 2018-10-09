@@ -89,7 +89,7 @@ void KIM_ModelCompute_LogEntry(
                           lineNumber, fileName);
 }
 
-char const * KIM_ModelCompute_String(
+char const * KIM_ModelCompute_ToString(
     KIM_ModelCompute const * const modelCompute)
 {
   CONVERT_POINTER;

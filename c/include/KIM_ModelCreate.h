@@ -182,6 +182,7 @@ void KIM_ModelCreate_LogEntry(
     KIM_LogVerbosity const logVerbosity, char const * const message,
     int const lineNumber, char const * const fileName);
 
-char const * KIM_ModelCreate_String(KIM_ModelCreate const * const modelCreate);
+char const * KIM_ModelCreate_ToString(
+    KIM_ModelCreate const * const modelCreate);
 
 #endif  /* KIM_MODEL_CREATE_H_ */

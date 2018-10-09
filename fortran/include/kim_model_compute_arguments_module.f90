@@ -651,7 +651,7 @@ contains
     implicit none
     interface
       type(c_ptr) function model_compute_string(model_compute_arguments) &
-        bind(c, name="KIM_ModelComputeArguments_String")
+        bind(c, name="KIM_ModelComputeArguments_ToString")
         use, intrinsic :: iso_c_binding
         use kim_interoperable_types_module, only : &
           kim_model_compute_arguments_type

@@ -808,7 +808,7 @@ contains
     implicit none
     interface
       type(c_ptr) function model_string(model) &
-        bind(c, name="KIM_Model_String")
+        bind(c, name="KIM_Model_ToString")
         use, intrinsic :: iso_c_binding
         use kim_interoperable_types_module, only : kim_model_type
         implicit none

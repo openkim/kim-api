@@ -279,7 +279,7 @@ contains
     interface
       type(c_ptr) function model_commpute_arguments_create_string( &
         model_commpute_arguments_create) &
-        bind(c, name="KIM_ModelComputeArgumentsCreate_String")
+        bind(c, name="KIM_ModelComputeArgumentsCreate_ToString")
         use, intrinsic :: iso_c_binding
         use kim_interoperable_types_module, only : &
           kim_model_compute_arguments_create_type

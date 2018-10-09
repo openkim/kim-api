@@ -130,7 +130,7 @@ contains
     implicit none
     interface
       type(c_ptr) function get_string(compute_callback_name) &
-        bind(c, name="KIM_ComputeCallbackName_String")
+        bind(c, name="KIM_ComputeCallbackName_ToString")
         use, intrinsic :: iso_c_binding
         import kim_compute_callback_name_type
         implicit none

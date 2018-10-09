@@ -131,7 +131,7 @@ module kim_time_unit_module
       implicit none
       interface
         type(c_ptr) function get_string(time_unit) &
-          bind(c, name="KIM_TimeUnit_String")
+          bind(c, name="KIM_TimeUnit_ToString")
           use, intrinsic :: iso_c_binding
           import kim_time_unit_type
           implicit none

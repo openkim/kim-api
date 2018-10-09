@@ -673,7 +673,7 @@ contains
     implicit none
     interface
       type(c_ptr) function get_string(species_name) &
-        bind(c, name="KIM_SpeciesName_String")
+        bind(c, name="KIM_SpeciesName_ToString")
         use, intrinsic :: iso_c_binding
         import kim_species_name_type
         implicit none

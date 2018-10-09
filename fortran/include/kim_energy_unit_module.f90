@@ -144,7 +144,7 @@ contains
     implicit none
     interface
       type(c_ptr) function get_string(energy_unit) &
-        bind(c, name="KIM_EnergyUnit_String")
+        bind(c, name="KIM_EnergyUnit_ToString")
         use, intrinsic :: iso_c_binding
         import kim_energy_unit_type
         implicit none

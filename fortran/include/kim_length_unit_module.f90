@@ -140,7 +140,7 @@ contains
     implicit none
     interface
       type(c_ptr) function get_string(length_unit) &
-        bind(c, name="KIM_LengthUnit_String")
+        bind(c, name="KIM_LengthUnit_ToString")
         use, intrinsic :: iso_c_binding
         import kim_length_unit_type
         implicit none

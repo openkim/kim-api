@@ -392,7 +392,7 @@ void KIM_ModelDriverCreate_LogEntry(
                                lineNumber, fileName);
 }
 
-char const * KIM_ModelDriverCreate_String(
+char const * KIM_ModelDriverCreate_ToString(
     KIM_ModelDriverCreate const * const modelDriverCreate)
 {
   CONVERT_POINTER;

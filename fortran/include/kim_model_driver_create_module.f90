@@ -818,7 +818,7 @@ contains
     interface
       type(c_ptr) function model_driver_create_string( &
         model_driver_create) &
-        bind(c, name="KIM_ModelDriverCreate_String")
+        bind(c, name="KIM_ModelDriverCreate_ToString")
         use, intrinsic :: iso_c_binding
         use kim_interoperable_types_module, only : kim_model_driver_create_type
         implicit none

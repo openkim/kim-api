@@ -702,7 +702,7 @@ contains
     implicit none
     interface
       type(c_ptr) function model_create_string(model_create) &
-        bind(c, name="KIM_ModelCreate_String")
+        bind(c, name="KIM_ModelCreate_ToString")
         use, intrinsic :: iso_c_binding
         use kim_interoperable_types_module, only : kim_model_create_type
         implicit none

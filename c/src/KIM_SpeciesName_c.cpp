@@ -78,7 +78,7 @@ int KIM_SpeciesName_NotEqual(KIM_SpeciesName const left,
   return (!KIM_SpeciesName_Equal(left, right));
 }
 
-char const * KIM_SpeciesName_String(KIM_SpeciesName const speciesName)
+char const * KIM_SpeciesName_ToString(KIM_SpeciesName const speciesName)
 {
   return makeSpeciesNameCpp(speciesName).String().c_str();
 }

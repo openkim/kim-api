@@ -431,7 +431,7 @@ void KIM_Model_GetSimulatorBufferPointer(KIM_Model const * const model,
   pModel->GetSimulatorBufferPointer(ptr);
 }
 
-char const * KIM_Model_String(KIM_Model const * const model)
+char const * KIM_Model_ToString(KIM_Model const * const model)
 {
   CONVERT_POINTER;
 

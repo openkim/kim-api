@@ -200,7 +200,7 @@ contains
     implicit none
     interface
       type(c_ptr) function get_string(log_verbosity) &
-        bind(c, name="KIM_LogVerbosity_String")
+        bind(c, name="KIM_LogVerbosity_ToString")
         use, intrinsic :: iso_c_binding
         import kim_log_verbosity_type
         implicit none
