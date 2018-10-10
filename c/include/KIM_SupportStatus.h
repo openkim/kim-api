@@ -61,7 +61,6 @@ extern KIM_SupportStatus const KIM_SUPPORT_STATUS_optional;
 void KIM_SUPPORT_STATUS_GetNumberOfSupportStatuses(
     int * const numberOfSupportStatuses);
 int KIM_SUPPORT_STATUS_GetSupportStatus(
-    int const index,
-    KIM_SupportStatus * const supportStatus);
+    int const index, KIM_SupportStatus * const supportStatus);
 
-#endif  /* KIM_SUPPORT_STATUS_H_ */
+#endif /* KIM_SUPPORT_STATUS_H_ */

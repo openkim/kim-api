@@ -60,4 +60,4 @@ void KIM_CHARGE_UNIT_GetNumberOfChargeUnits(int * const numberOfChargeUnits);
 int KIM_CHARGE_UNIT_GetChargeUnit(int const index,
                                   KIM_ChargeUnit * const chargeUnit);
 
-#endif  /* KIM_CHARGE_UNIT_H_ */
+#endif /* KIM_CHARGE_UNIT_H_ */

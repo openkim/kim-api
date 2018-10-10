@@ -35,8 +35,7 @@
 #ifndef KIM_LANGUAGE_NAME_HPP_
 #include "KIM_LanguageName.hpp"
 #endif
-extern "C"
-{
+extern "C" {
 #ifndef KIM_LANGUAGE_NAME_H_
 #include "KIM_LanguageName.h"
 #endif
@@ -48,20 +47,19 @@ namespace
 KIM::LanguageName makeLanguageNameCpp(KIM_LanguageName languageName)
 {
   KIM::LanguageName const * const languageNameCpp
-      = reinterpret_cast <KIM::LanguageName const *>(&languageName);
+      = reinterpret_cast<KIM::LanguageName const *>(&languageName);
   return *languageNameCpp;
 }
 
 KIM_LanguageName makeLanguageNameC(KIM::LanguageName languageName)
 {
   KIM_LanguageName const * const languageNameC
-      = reinterpret_cast <KIM_LanguageName const *>(&languageName);
+      = reinterpret_cast<KIM_LanguageName const *>(&languageName);
   return *languageNameC;
 }
 }  // namespace
 
-extern "C"
-{
+extern "C" {
 KIM_LanguageName KIM_LanguageName_FromString(char const * const str)
 {
   return makeLanguageNameC(KIM::LanguageName(std::string(str)));

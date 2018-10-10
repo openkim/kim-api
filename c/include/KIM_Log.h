@@ -62,7 +62,8 @@ void KIM_Log_PopVerboisty(KIM_Log * const log);
 void KIM_Log_LogEntry(KIM_Log const * const log,
                       KIM_LogVerbosity const logVerbosity,
                       char const * const message,
-                      int const lineNumber, char const * const fileName);
+                      int const lineNumber,
+                      char const * const fileName);
 
 
-#endif  /* KIM_LOG_H_ */
+#endif /* KIM_LOG_H_ */

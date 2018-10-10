@@ -37,6 +37,6 @@
 #define KIM_TEMPERATURE_UNIT_INC_
 
 #define ID_unused 0
-#define ID_K      1
+#define ID_K 1
 
-#endif  /* KIM_TEMPERATURE_UNIT_INC_ */
+#endif /* KIM_TEMPERATURE_UNIT_INC_ */

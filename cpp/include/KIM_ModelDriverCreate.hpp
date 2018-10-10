@@ -34,8 +34,8 @@
 #ifndef KIM_MODEL_DRIVER_CREATE_HPP_
 #define KIM_MODEL_DRIVER_CREATE_HPP_
 
-#include <string>
 #include <sstream>
+#include <string>
 
 #ifndef KIM_FUNCTION_TYPES_HPP_
 #include "KIM_FunctionTypes.hpp"
@@ -84,10 +84,12 @@ class ModelDriverCreate
 
   int SetSpeciesCode(SpeciesName const speciesName, int const code);
 
-  int SetParameterPointer(int const extent, int * const ptr,
+  int SetParameterPointer(int const extent,
+                          int * const ptr,
                           std::string const & name,
                           std::string const & description);
-  int SetParameterPointer(int const extent, double * const ptr,
+  int SetParameterPointer(int const extent,
+                          double * const ptr,
                           std::string const & name,
                           std::string const & description);
 
@@ -99,29 +101,31 @@ class ModelDriverCreate
                TemperatureUnit const temperatureUnit,
                TimeUnit const timeUnit);
 
-  static int ConvertUnit(
-      LengthUnit const fromLengthUnit,
-      EnergyUnit const fromEnergyUnit,
-      ChargeUnit const fromChargeUnit,
-      TemperatureUnit const fromTemperatureUnit,
-      TimeUnit const fromTimeUnit,
-      LengthUnit const toLengthUnit,
-      EnergyUnit const toEnergyUnit,
-      ChargeUnit const toChargeUnit,
-      TemperatureUnit const toTemperatureUnit,
-      TimeUnit const toTimeUnit,
-      double const lengthExponent,
-      double const energyExponent,
-      double const chargeExponent,
-      double const temperatureExponent,
-      double const timeExponent,
-      double * const conversionFactor);
+  static int ConvertUnit(LengthUnit const fromLengthUnit,
+                         EnergyUnit const fromEnergyUnit,
+                         ChargeUnit const fromChargeUnit,
+                         TemperatureUnit const fromTemperatureUnit,
+                         TimeUnit const fromTimeUnit,
+                         LengthUnit const toLengthUnit,
+                         EnergyUnit const toEnergyUnit,
+                         ChargeUnit const toChargeUnit,
+                         TemperatureUnit const toTemperatureUnit,
+                         TimeUnit const toTimeUnit,
+                         double const lengthExponent,
+                         double const energyExponent,
+                         double const chargeExponent,
+                         double const temperatureExponent,
+                         double const timeExponent,
+                         double * const conversionFactor);
 
-  void LogEntry(LogVerbosity const logVerbosity, std::string const & message,
-                int const lineNumber, std::string const & fileName) const;
+  void LogEntry(LogVerbosity const logVerbosity,
+                std::string const & message,
+                int const lineNumber,
+                std::string const & fileName) const;
   void LogEntry(LogVerbosity const logVerbosity,
                 std::stringstream const & message,
-                int const lineNumber, std::string const & fileName) const;
+                int const lineNumber,
+                std::string const & fileName) const;
 
   std::string const & String() const;
 

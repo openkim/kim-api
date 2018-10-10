@@ -35,8 +35,7 @@
 #ifndef KIM_NUMBERING_HPP_
 #include "KIM_Numbering.hpp"
 #endif
-extern "C"
-{
+extern "C" {
 #ifndef KIM_NUMBERING_H_
 #include "KIM_Numbering.h"
 #endif
@@ -47,20 +46,19 @@ namespace
 KIM::Numbering makeNumberingCpp(KIM_Numbering const numbering)
 {
   KIM::Numbering const * const numberingCpp
-      = reinterpret_cast <KIM::Numbering const *>(&numbering);
+      = reinterpret_cast<KIM::Numbering const *>(&numbering);
   return *numberingCpp;
 }
 
 KIM_Numbering makeNumberingC(KIM::Numbering const numbering)
 {
   KIM_Numbering const * const numberingC
-      = reinterpret_cast <KIM_Numbering const *>(&numbering);
+      = reinterpret_cast<KIM_Numbering const *>(&numbering);
   return *numberingC;
 }
 }  // namespace
 
-extern "C"
-{
+extern "C" {
 KIM_Numbering KIM_Numbering_FromString(char const * const str)
 {
   return makeNumberingC(KIM::Numbering(std::string(str)));

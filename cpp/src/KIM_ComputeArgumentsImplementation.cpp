@@ -30,8 +30,8 @@
 // Release: This file is part of the kim-api.git repository.
 //
 
-#include <sstream>
 #include <iomanip>
+#include <sstream>
 
 #ifndef KIM_LOG_HPP_
 #include "KIM_Log.hpp"
@@ -42,8 +42,7 @@
 #endif
 
 #ifndef KIM_FUNCTION_TYPES_H_
-extern "C"
-{
+extern "C" {
 #include "KIM_FunctionTypes.h"
 }
 #endif
@@ -64,12 +63,16 @@ extern std::vector<ComputeCallbackName> const requiredByAPI_ComputeCallbacks;
 
 
 // log helpers
-#define SNUM( x ) static_cast<std::ostringstream &>(    \
-    std::ostringstream() << std::dec << x).str()
-#define SPTR( x ) static_cast<std::ostringstream &>(                    \
-    std::ostringstream() << static_cast<void const *>(x) ).str()
-#define SFUNC( x ) static_cast<std::ostringstream &>(           \
-    std::ostringstream() << static_cast<Function *>(x)).str()
+#define SNUM(x) \
+  static_cast<std::ostringstream &>(std::ostringstream() << std::dec << x).str()
+#define SPTR(x)                                                      \
+  static_cast<std::ostringstream &>(std::ostringstream()             \
+                                    << static_cast<void const *>(x)) \
+      .str()
+#define SFUNC(x)                                                   \
+  static_cast<std::ostringstream &>(std::ostringstream()           \
+                                    << static_cast<Function *>(x)) \
+      .str()
 
 
 #include "KIM_ComputeArgumentsImplementationLogMacros.hpp"
@@ -85,36 +88,31 @@ int ComputeArgumentsImplementation::Create(
 {
   Log * pLog;
   int error = Log::Create(&pLog);
-  if (error)
-  {
-    return true;
-  }
+  if (error) { return true; }
   pLog->SetID(modelLogID + "_" + pLog->GetID());
 
   *computeArgumentsImplementation = new ComputeArgumentsImplementation(
-      modelName,
-      modelNumbering,
-      simulatorNumbering,
-      numberingOffset,
-      pLog);
+      modelName, modelNumbering, simulatorNumbering, numberingOffset, pLog);
 #if DEBUG_VERBOSITY
-  std::string callString = "Create(" + modelName + ", "
-      + modelLogID + ", " + modelNumbering.String() + ", "
-      + simulatorNumbering.String() + ", " + SNUM(numberingOffset) + ", "
-      + SPTR(computeArgumentsImplementation) + ").";
-  (*computeArgumentsImplementation)->LogEntry(
-      LOG_VERBOSITY::debug,
-      "Created Log and ComputeArgumentsImplementation objects and enter "
-      + callString,
-      __LINE__, __FILE__);
+  std::string callString = "Create(" + modelName + ", " + modelLogID + ", "
+                           + modelNumbering.String() + ", "
+                           + simulatorNumbering.String() + ", "
+                           + SNUM(numberingOffset) + ", "
+                           + SPTR(computeArgumentsImplementation) + ").";
+  (*computeArgumentsImplementation)
+      ->LogEntry(
+          LOG_VERBOSITY::debug,
+          "Created Log and ComputeArgumentsImplementation objects and enter "
+              + callString,
+          __LINE__,
+          __FILE__);
 #endif
 
 
 #if DEBUG_VERBOSITY
-  (*computeArgumentsImplementation)->LogEntry(
-      LOG_VERBOSITY::debug,
-      "Exit 0=" + callString,
-      __LINE__, __FILE__);
+  (*computeArgumentsImplementation)
+      ->LogEntry(
+          LOG_VERBOSITY::debug, "Exit 0=" + callString, __LINE__, __FILE__);
 #endif
   return false;
 }
@@ -123,20 +121,20 @@ void ComputeArgumentsImplementation::Destroy(
     ComputeArgumentsImplementation ** const computeArgumentsImplementation)
 {
 #if DEBUG_VERBOSITY
-  std::string const callString = "Destroy("
-      + SPTR(computeArgumentsImplementation) + ").";
-  (*computeArgumentsImplementation)->LogEntry(
-      LOG_VERBOSITY::debug,
-      "Enter  " + callString,
-      __LINE__, __FILE__);
+  std::string const callString
+      = "Destroy(" + SPTR(computeArgumentsImplementation) + ").";
+  (*computeArgumentsImplementation)
+      ->LogEntry(
+          LOG_VERBOSITY::debug, "Enter  " + callString, __LINE__, __FILE__);
 #endif
 
 #if DEBUG_VERBOSITY
-  (*computeArgumentsImplementation)->LogEntry(
-      LOG_VERBOSITY::debug,
-      "Destroying ComputeArgumentsImplementation object and exit "
-      + callString,
-      __LINE__, __FILE__);
+  (*computeArgumentsImplementation)
+      ->LogEntry(LOG_VERBOSITY::debug,
+                 "Destroying ComputeArgumentsImplementation object and exit "
+                     + callString,
+                 __LINE__,
+                 __FILE__);
 #endif
   delete *computeArgumentsImplementation;  // also deletes Log object
   *computeArgumentsImplementation = NULL;
@@ -148,7 +146,8 @@ int ComputeArgumentsImplementation::SetArgumentSupportStatus(
 {
 #if DEBUG_VERBOSITY
   std::string const callString = "SetArgumentSupportStatus("
-      + computeArgumentName.String() + ", " + supportStatus.String() + ").";
+                                 + computeArgumentName.String() + ", "
+                                 + supportStatus.String() + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -177,9 +176,10 @@ int ComputeArgumentsImplementation::SetArgumentSupportStatus(
   // initialize pointer if not already done
   if (supportStatus != SUPPORT_STATUS::notSupported)
   {
-    std::map<ComputeArgumentName const, void *,
-             COMPUTE_ARGUMENT_NAME::Comparator>::const_iterator
-        result = computeArgumentPointer_.find(computeArgumentName);
+    std::map<ComputeArgumentName const,
+             void *,
+             COMPUTE_ARGUMENT_NAME::Comparator>::const_iterator result
+        = computeArgumentPointer_.find(computeArgumentName);
 
     if (result == computeArgumentPointer_.end())
     {
@@ -194,12 +194,12 @@ int ComputeArgumentsImplementation::SetArgumentSupportStatus(
 
 int ComputeArgumentsImplementation::GetArgumentSupportStatus(
     ComputeArgumentName const computeArgumentName,
-    SupportStatus * const supportStatus)
-    const
+    SupportStatus * const supportStatus) const
 {
 #if DEBUG_VERBOSITY
   std::string const callString = "GetArgumentSupportStatus("
-      + computeArgumentName.String() + ", " + SPTR(supportStatus) + ").";
+                                 + computeArgumentName.String() + ", "
+                                 + SPTR(supportStatus) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -213,9 +213,10 @@ int ComputeArgumentsImplementation::GetArgumentSupportStatus(
   }
 #endif
 
-  std::map<ComputeArgumentName const, SupportStatus,
-           COMPUTE_ARGUMENT_NAME::Comparator>::const_iterator
-      result = computeArgumentSupportStatus_.find(computeArgumentName);
+  std::map<ComputeArgumentName const,
+           SupportStatus,
+           COMPUTE_ARGUMENT_NAME::Comparator>::const_iterator result
+      = computeArgumentSupportStatus_.find(computeArgumentName);
   *supportStatus = result->second;
 
   LOG_DEBUG("Exit 0=" + callString);
@@ -228,7 +229,8 @@ int ComputeArgumentsImplementation::SetCallbackSupportStatus(
 {
 #if DEBUG_VERBOSITY
   std::string const callString = "SetCallbackSupportStatus("
-      + computeCallbackName.String() + ", " + supportStatus.String() + ").";
+                                 + computeCallbackName.String() + ", "
+                                 + supportStatus.String() + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -247,7 +249,7 @@ int ComputeArgumentsImplementation::SetCallbackSupportStatus(
   {
     LOG_ERROR("ComputeCallback '" + computeCallbackName.String()
               + "' SupportStatus is 'requiredByAPI' and cannot "
-              "be changed.");
+                "be changed.");
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
@@ -258,9 +260,10 @@ int ComputeArgumentsImplementation::SetCallbackSupportStatus(
   // initialize pointer if not already done
   if (supportStatus != SUPPORT_STATUS::notSupported)
   {
-    std::map<ComputeCallbackName const, Function *,
-             COMPUTE_CALLBACK_NAME::Comparator>::const_iterator
-        result = computeCallbackFunctionPointer_.find(computeCallbackName);
+    std::map<ComputeCallbackName const,
+             Function *,
+             COMPUTE_CALLBACK_NAME::Comparator>::const_iterator result
+        = computeCallbackFunctionPointer_.find(computeCallbackName);
 
     if (result == computeCallbackFunctionPointer_.end())
     {
@@ -281,7 +284,8 @@ int ComputeArgumentsImplementation::GetCallbackSupportStatus(
 {
 #if DEBUG_VERBOSITY
   std::string const callString = "GetCallbackSupportStatus("
-      + computeCallbackName.String() + ", " + SPTR(supportStatus) + ").";
+                                 + computeCallbackName.String() + ", "
+                                 + SPTR(supportStatus) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -295,9 +299,10 @@ int ComputeArgumentsImplementation::GetCallbackSupportStatus(
   }
 #endif
 
-  std::map<ComputeCallbackName const, SupportStatus,
-           COMPUTE_CALLBACK_NAME::Comparator>::const_iterator
-      result = computeCallbackSupportStatus_.find(computeCallbackName);
+  std::map<ComputeCallbackName const,
+           SupportStatus,
+           COMPUTE_CALLBACK_NAME::Comparator>::const_iterator result
+      = computeCallbackSupportStatus_.find(computeCallbackName);
   *supportStatus = result->second;
 
   LOG_DEBUG("Exit 0=" + callString);
@@ -305,12 +310,12 @@ int ComputeArgumentsImplementation::GetCallbackSupportStatus(
 }
 
 int ComputeArgumentsImplementation::SetArgumentPointer(
-    ComputeArgumentName const computeArgumentName,
-    int const * const ptr)
+    ComputeArgumentName const computeArgumentName, int const * const ptr)
 {
 #if DEBUG_VERBOSITY
   std::string const callString = "SetArgumentPointer("
-      + computeArgumentName.String() + ", " + SPTR(ptr) + ").";
+                                 + computeArgumentName.String() + ", "
+                                 + SPTR(ptr) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -323,17 +328,18 @@ int ComputeArgumentsImplementation::SetArgumentPointer(
     return true;
   }
 
-  std::map<ComputeArgumentName const, SupportStatus,
-           COMPUTE_ARGUMENT_NAME::Comparator>::const_iterator
-      result = computeArgumentSupportStatus_.find(computeArgumentName);
+  std::map<ComputeArgumentName const,
+           SupportStatus,
+           COMPUTE_ARGUMENT_NAME::Comparator>::const_iterator result
+      = computeArgumentSupportStatus_.find(computeArgumentName);
   if (result->second == SUPPORT_STATUS::notSupported)
   {
     if (ptr == NULL)
     {
-      LOG_WARNING("Setting 'notSupported' ComputeArgument '" +
-                  computeArgumentName.String() +
-                  "' pointer to NULL.  This action, although innocuous, "
-                  "is considered an error and should be avoided.");
+      LOG_WARNING("Setting 'notSupported' ComputeArgument '"
+                  + computeArgumentName.String()
+                  + "' pointer to NULL.  This action, although innocuous, "
+                    "is considered an error and should be avoided.");
       LOG_DEBUG("Exit 0=" + callString);
       return false;  // allow innocuous behavior
     }
@@ -355,19 +361,18 @@ int ComputeArgumentsImplementation::SetArgumentPointer(
 }
 
 int ComputeArgumentsImplementation::SetArgumentPointer(
-    ComputeArgumentName const computeArgumentName,
-    int * const ptr)
+    ComputeArgumentName const computeArgumentName, int * const ptr)
 {
   return SetArgumentPointer(computeArgumentName, const_cast<int const *>(ptr));
 }
 
 int ComputeArgumentsImplementation::SetArgumentPointer(
-    ComputeArgumentName const computeArgumentName,
-    double const * const ptr)
+    ComputeArgumentName const computeArgumentName, double const * const ptr)
 {
 #if DEBUG_VERBOSITY
   std::string const callString = "SetArgumentPointer("
-      + computeArgumentName.String() + ", " + SPTR(ptr) + ").";
+                                 + computeArgumentName.String() + ", "
+                                 + SPTR(ptr) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -380,17 +385,18 @@ int ComputeArgumentsImplementation::SetArgumentPointer(
     return true;
   }
 
-  std::map<ComputeArgumentName const, SupportStatus,
-           COMPUTE_ARGUMENT_NAME::Comparator>::const_iterator
-      result = computeArgumentSupportStatus_.find(computeArgumentName);
+  std::map<ComputeArgumentName const,
+           SupportStatus,
+           COMPUTE_ARGUMENT_NAME::Comparator>::const_iterator result
+      = computeArgumentSupportStatus_.find(computeArgumentName);
   if (result->second == SUPPORT_STATUS::notSupported)
   {
     if (ptr == NULL)
     {
-      LOG_WARNING("Setting 'notSupported' ComputeArgument '" +
-                  computeArgumentName.String() +
-                  "' pointer to NULL.  This action, although innocuous, "
-                  "is considered an error and should be avoided.");
+      LOG_WARNING("Setting 'notSupported' ComputeArgument '"
+                  + computeArgumentName.String()
+                  + "' pointer to NULL.  This action, although innocuous, "
+                    "is considered an error and should be avoided.");
       LOG_DEBUG("Exit 0=" + callString);
       return false;  // allow innocuous behavior
     }
@@ -412,20 +418,19 @@ int ComputeArgumentsImplementation::SetArgumentPointer(
 }
 
 int ComputeArgumentsImplementation::SetArgumentPointer(
-    ComputeArgumentName const computeArgumentName,
-    double * const ptr)
+    ComputeArgumentName const computeArgumentName, double * const ptr)
 {
   return SetArgumentPointer(computeArgumentName,
                             const_cast<double const *>(ptr));
 }
 
 int ComputeArgumentsImplementation::GetArgumentPointer(
-    ComputeArgumentName const computeArgumentName,
-    int const ** const ptr) const
+    ComputeArgumentName const computeArgumentName, int const ** const ptr) const
 {
 #if DEBUG_VERBOSITY
   std::string const callString = "GetArgumentPointer("
-      + computeArgumentName.String() + ", " + SPTR(ptr) + ").";
+                                 + computeArgumentName.String() + ", "
+                                 + SPTR(ptr) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -438,22 +443,23 @@ int ComputeArgumentsImplementation::GetArgumentPointer(
     return true;
   }
 
-  std::map<ComputeArgumentName const, SupportStatus,
-           COMPUTE_ARGUMENT_NAME::Comparator>::const_iterator
-      statusResult = computeArgumentSupportStatus_.find(computeArgumentName);
+  std::map<ComputeArgumentName const,
+           SupportStatus,
+           COMPUTE_ARGUMENT_NAME::Comparator>::const_iterator statusResult
+      = computeArgumentSupportStatus_.find(computeArgumentName);
   if (statusResult->second == SUPPORT_STATUS::notSupported)
   {
     LOG_ERROR("Pointer value does not exist for ComputeArgument '"
-              + (statusResult->first).String()
-              + "' which is 'notSupported'.");
+              + (statusResult->first).String() + "' which is 'notSupported'.");
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
 #endif
 
-  std::map<ComputeArgumentName const, void *,
-           COMPUTE_ARGUMENT_NAME::Comparator>::const_iterator
-      result = computeArgumentPointer_.find(computeArgumentName);
+  std::map<ComputeArgumentName const,
+           void *,
+           COMPUTE_ARGUMENT_NAME::Comparator>::const_iterator result
+      = computeArgumentPointer_.find(computeArgumentName);
   *ptr = reinterpret_cast<int const *>(result->second);
 
   LOG_DEBUG("Exit 0=" + callString);
@@ -461,12 +467,12 @@ int ComputeArgumentsImplementation::GetArgumentPointer(
 }
 
 int ComputeArgumentsImplementation::GetArgumentPointer(
-    ComputeArgumentName const computeArgumentName,
-    int ** const ptr) const
+    ComputeArgumentName const computeArgumentName, int ** const ptr) const
 {
 #if DEBUG_VERBOSITY
   std::string const callString = "GetArgumentPointer("
-      + computeArgumentName.String() + ", " + SPTR(ptr) + ").";
+                                 + computeArgumentName.String() + ", "
+                                 + SPTR(ptr) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -479,22 +485,23 @@ int ComputeArgumentsImplementation::GetArgumentPointer(
     return true;
   }
 
-  std::map<ComputeArgumentName const, SupportStatus,
-           COMPUTE_ARGUMENT_NAME::Comparator>::const_iterator
-      statusResult = computeArgumentSupportStatus_.find(computeArgumentName);
+  std::map<ComputeArgumentName const,
+           SupportStatus,
+           COMPUTE_ARGUMENT_NAME::Comparator>::const_iterator statusResult
+      = computeArgumentSupportStatus_.find(computeArgumentName);
   if (statusResult->second == SUPPORT_STATUS::notSupported)
   {
     LOG_ERROR("Pointer value does not exist for ComputeArgument '"
-              + (statusResult->first).String()
-              + "' which is 'notSupported'.");
+              + (statusResult->first).String() + "' which is 'notSupported'.");
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
 #endif
 
-  std::map<ComputeArgumentName const, void *,
-           COMPUTE_ARGUMENT_NAME::Comparator>::const_iterator
-      result = computeArgumentPointer_.find(computeArgumentName);
+  std::map<ComputeArgumentName const,
+           void *,
+           COMPUTE_ARGUMENT_NAME::Comparator>::const_iterator result
+      = computeArgumentPointer_.find(computeArgumentName);
 
   *ptr = reinterpret_cast<int *>(result->second);
 
@@ -508,7 +515,8 @@ int ComputeArgumentsImplementation::GetArgumentPointer(
 {
 #if DEBUG_VERBOSITY
   std::string const callString = "GetArgumentPointer("
-      + computeArgumentName.String() + ", " + SPTR(ptr) + ").";
+                                 + computeArgumentName.String() + ", "
+                                 + SPTR(ptr) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -521,22 +529,23 @@ int ComputeArgumentsImplementation::GetArgumentPointer(
     return true;
   }
 
-  std::map<ComputeArgumentName const, SupportStatus,
-           COMPUTE_ARGUMENT_NAME::Comparator>::const_iterator
-      statusResult = computeArgumentSupportStatus_.find(computeArgumentName);
+  std::map<ComputeArgumentName const,
+           SupportStatus,
+           COMPUTE_ARGUMENT_NAME::Comparator>::const_iterator statusResult
+      = computeArgumentSupportStatus_.find(computeArgumentName);
   if (statusResult->second == SUPPORT_STATUS::notSupported)
   {
     LOG_ERROR("Pointer value does not exist for ComputeArgument '"
-              + (statusResult->first).String()
-              + "' which is 'notSupported'.");
+              + (statusResult->first).String() + "' which is 'notSupported'.");
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
 #endif
 
-  std::map<ComputeArgumentName const, void *,
-           COMPUTE_ARGUMENT_NAME::Comparator>::const_iterator
-      result = computeArgumentPointer_.find(computeArgumentName);
+  std::map<ComputeArgumentName const,
+           void *,
+           COMPUTE_ARGUMENT_NAME::Comparator>::const_iterator result
+      = computeArgumentPointer_.find(computeArgumentName);
 
   *ptr = reinterpret_cast<double const *>(result->second);
 
@@ -545,12 +554,12 @@ int ComputeArgumentsImplementation::GetArgumentPointer(
 }
 
 int ComputeArgumentsImplementation::GetArgumentPointer(
-    ComputeArgumentName const computeArgumentName,
-    double ** const ptr) const
+    ComputeArgumentName const computeArgumentName, double ** const ptr) const
 {
 #if DEBUG_VERBOSITY
   std::string const callString = "GetArgumentPointer("
-      + computeArgumentName.String() + ", " + SPTR(ptr) + ").";
+                                 + computeArgumentName.String() + ", "
+                                 + SPTR(ptr) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -563,22 +572,23 @@ int ComputeArgumentsImplementation::GetArgumentPointer(
     return true;
   }
 
-  std::map<ComputeArgumentName const, SupportStatus,
-           COMPUTE_ARGUMENT_NAME::Comparator>::const_iterator
-      statusResult = computeArgumentSupportStatus_.find(computeArgumentName);
+  std::map<ComputeArgumentName const,
+           SupportStatus,
+           COMPUTE_ARGUMENT_NAME::Comparator>::const_iterator statusResult
+      = computeArgumentSupportStatus_.find(computeArgumentName);
   if (statusResult->second == SUPPORT_STATUS::notSupported)
   {
     LOG_ERROR("Pointer value does not exist for ComputeArgument '"
-              + (statusResult->first).String()
-              + "' which is 'notSupported'.");
+              + (statusResult->first).String() + "' which is 'notSupported'.");
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
 #endif
 
-  std::map<ComputeArgumentName const, void *,
-           COMPUTE_ARGUMENT_NAME::Comparator>::const_iterator
-      result = computeArgumentPointer_.find(computeArgumentName);
+  std::map<ComputeArgumentName const,
+           void *,
+           COMPUTE_ARGUMENT_NAME::Comparator>::const_iterator result
+      = computeArgumentPointer_.find(computeArgumentName);
 
   *ptr = reinterpret_cast<double *>(result->second);
 
@@ -594,15 +604,14 @@ int ComputeArgumentsImplementation::SetCallbackPointer(
 {
 #if DEBUG_VERBOSITY
   std::string const callString = "SetCallbackPointer("
-      + computeCallbackName.String() + ", " + languageName.String()
-      + ", " + SFUNC(fptr) + ", " + SPTR(dataObject) + ").";
+                                 + computeCallbackName.String() + ", "
+                                 + languageName.String() + ", " + SFUNC(fptr)
+                                 + ", " + SPTR(dataObject) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
 #if ERROR_VERBOSITY
-  int error =
-      Validate(computeCallbackName) ||
-      Validate(languageName);
+  int error = Validate(computeCallbackName) || Validate(languageName);
   if (error)
   {
     LOG_ERROR("Invalid arguments.");
@@ -610,18 +619,19 @@ int ComputeArgumentsImplementation::SetCallbackPointer(
     return true;
   }
 
-  std::map<ComputeCallbackName const, SupportStatus,
-           COMPUTE_CALLBACK_NAME::Comparator>::const_iterator
-      result = computeCallbackSupportStatus_.find(computeCallbackName);
+  std::map<ComputeCallbackName const,
+           SupportStatus,
+           COMPUTE_CALLBACK_NAME::Comparator>::const_iterator result
+      = computeCallbackSupportStatus_.find(computeCallbackName);
 
   if (result->second == SUPPORT_STATUS::notSupported)
   {
     if (fptr == NULL)
     {
-      LOG_WARNING("Setting 'notSupported' ComputeCallback '" +
-                  computeCallbackName.String() +
-                  "' pointer to NULL.  This action, although innocuous, "
-                  "is considered an error and should be avoided.");
+      LOG_WARNING("Setting 'notSupported' ComputeCallback '"
+                  + computeCallbackName.String()
+                  + "' pointer to NULL.  This action, although innocuous, "
+                    "is considered an error and should be avoided.");
       LOG_DEBUG("Exit 0=" + callString);
       return false;  // allow innocuous behavior
     }
@@ -648,7 +658,8 @@ int ComputeArgumentsImplementation::IsCallbackPresent(
 {
 #if DEBUG_VERBOSITY
   std::string const callString = "IsCallbackPresent("
-      + computeCallbackName.String() + ", " + SPTR(present) + ").";
+                                 + computeCallbackName.String() + ", "
+                                 + SPTR(present) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -661,27 +672,25 @@ int ComputeArgumentsImplementation::IsCallbackPresent(
     return true;
   }
 
-  std::map<ComputeCallbackName const, SupportStatus,
-           COMPUTE_CALLBACK_NAME::Comparator>::const_iterator
-      statusResult = computeCallbackSupportStatus_.find(computeCallbackName);
+  std::map<ComputeCallbackName const,
+           SupportStatus,
+           COMPUTE_CALLBACK_NAME::Comparator>::const_iterator statusResult
+      = computeCallbackSupportStatus_.find(computeCallbackName);
   if (statusResult->second == SUPPORT_STATUS::notSupported)
   {
     LOG_ERROR("Pointer value does not exist for ComputeCallback '"
-              + (statusResult->first).String()
-              + "' which is 'notSupported'.");
+              + (statusResult->first).String() + "' which is 'notSupported'.");
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
 #endif
 
-  std::map<ComputeCallbackName const, Function *,
-           COMPUTE_CALLBACK_NAME::Comparator>::const_iterator
-      result = computeCallbackFunctionPointer_.find(computeCallbackName);
+  std::map<ComputeCallbackName const,
+           Function *,
+           COMPUTE_CALLBACK_NAME::Comparator>::const_iterator result
+      = computeCallbackFunctionPointer_.find(computeCallbackName);
 
-  if (result->second == NULL)
-  {
-    *present = false;
-  }
+  if (result->second == NULL) { *present = false; }
   else
   {
     *present = true;
@@ -695,19 +704,21 @@ void ComputeArgumentsImplementation::AreAllRequiredArgumentsAndCallbacksPresent(
     int * const result) const
 {
 #if DEBUG_VERBOSITY
-  std::string const callString =
-      "AreAllRequiredArgumentsAndCallbacksPresent(" + SPTR(result) + ").";
+  std::string const callString
+      = "AreAllRequiredArgumentsAndCallbacksPresent(" + SPTR(result) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
   // Check that all required compute arguments are present
-  for (std::map<ComputeArgumentName const, SupportStatus,
-           COMPUTE_ARGUMENT_NAME::Comparator>::const_iterator
-           itr = computeArgumentSupportStatus_.begin();
-       itr != computeArgumentSupportStatus_.end(); ++itr)
+  for (std::map<ComputeArgumentName const,
+                SupportStatus,
+                COMPUTE_ARGUMENT_NAME::Comparator>::const_iterator itr
+       = computeArgumentSupportStatus_.begin();
+       itr != computeArgumentSupportStatus_.end();
+       ++itr)
   {
-    if ((itr->second == SUPPORT_STATUS::requiredByAPI) ||
-        (itr->second == SUPPORT_STATUS::required))
+    if ((itr->second == SUPPORT_STATUS::requiredByAPI)
+        || (itr->second == SUPPORT_STATUS::required))
     {
       if (computeArgumentPointer_.find(itr->first)->second == NULL)
       {
@@ -722,13 +733,15 @@ void ComputeArgumentsImplementation::AreAllRequiredArgumentsAndCallbacksPresent(
   }
 
   // Check that all required callbacks are present
-  for (std::map<ComputeCallbackName const, SupportStatus,
-           COMPUTE_CALLBACK_NAME::Comparator>::const_iterator
-           itr = computeCallbackSupportStatus_.begin();
-       itr != computeCallbackSupportStatus_.end(); ++itr)
+  for (std::map<ComputeCallbackName const,
+                SupportStatus,
+                COMPUTE_CALLBACK_NAME::Comparator>::const_iterator itr
+       = computeCallbackSupportStatus_.begin();
+       itr != computeCallbackSupportStatus_.end();
+       ++itr)
   {
-    if ((itr->second == SUPPORT_STATUS::requiredByAPI) ||
-        (itr->second == SUPPORT_STATUS::required))
+    if ((itr->second == SUPPORT_STATUS::requiredByAPI)
+        || (itr->second == SUPPORT_STATUS::required))
     {
       if (computeCallbackFunctionPointer_.find(itr->first)->second == NULL)
       {
@@ -751,8 +764,7 @@ int ComputeArgumentsImplementation::GetNeighborList(
     int const neighborListIndex,
     int const particleNumber,
     int * const numberOfNeighbors,
-    int const ** const neighborsOfParticle)
-    const
+    int const ** const neighborsOfParticle) const
 {
   // No debug logging for callbacks: too expensive
   //
@@ -766,43 +778,41 @@ int ComputeArgumentsImplementation::GetNeighborList(
 #if ERROR_VERBOSITY
   if ((neighborListIndex < 0) || (neighborListIndex >= numberOfNeighborLists_))
   {
-    LOG_ERROR("Invalid neighborListIndex, " + SNUM(neighborListIndex)
-              + ".");
+    LOG_ERROR("Invalid neighborListIndex, " + SNUM(neighborListIndex) + ".");
     // LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
 
-  int zeroBasedParticleNumber = particleNumber +
-      ((NUMBERING::zeroBased == modelNumbering_) ? 0 : -1);
-  std::map<ComputeArgumentName const, void *,
-           COMPUTE_ARGUMENT_NAME::Comparator>::const_iterator
-      pointerResult = computeArgumentPointer_.find(
-          COMPUTE_ARGUMENT_NAME::numberOfParticles);
+  int zeroBasedParticleNumber
+      = particleNumber + ((NUMBERING::zeroBased == modelNumbering_) ? 0 : -1);
+  std::map<ComputeArgumentName const,
+           void *,
+           COMPUTE_ARGUMENT_NAME::Comparator>::const_iterator pointerResult
+      = computeArgumentPointer_.find(COMPUTE_ARGUMENT_NAME::numberOfParticles);
   int const * numberOfParticles
       = reinterpret_cast<int const *>(pointerResult->second);
-  if ((zeroBasedParticleNumber < 0) ||
-      (zeroBasedParticleNumber >= *(numberOfParticles)))
+  if ((zeroBasedParticleNumber < 0)
+      || (zeroBasedParticleNumber >= *(numberOfParticles)))
   {
-    LOG_ERROR("Invalid particleNumber, " + SNUM(zeroBasedParticleNumber)
-              + ".");
+    LOG_ERROR("Invalid particleNumber, " + SNUM(zeroBasedParticleNumber) + ".");
     // LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
 #endif
 
-  std::map<ComputeCallbackName const, LanguageName,
-           COMPUTE_CALLBACK_NAME::Comparator>::const_iterator
-      languageResult = computeCallbackLanguage_.find(
-          COMPUTE_CALLBACK_NAME::GetNeighborList);
+  std::map<ComputeCallbackName const,
+           LanguageName,
+           COMPUTE_CALLBACK_NAME::Comparator>::const_iterator languageResult
+      = computeCallbackLanguage_.find(COMPUTE_CALLBACK_NAME::GetNeighborList);
 
   LanguageName const languageName = languageResult->second;
-  void const * dataObject
-      = (computeCallbackDataObjectPointer_.find(
-          COMPUTE_CALLBACK_NAME::GetNeighborList))->second;
+  void const * dataObject = (computeCallbackDataObjectPointer_.find(
+                                 COMPUTE_CALLBACK_NAME::GetNeighborList))
+                                ->second;
 
-  Function * functionPointer
-      = (computeCallbackFunctionPointer_.find(
-          COMPUTE_CALLBACK_NAME::GetNeighborList))->second;
+  Function * functionPointer = (computeCallbackFunctionPointer_.find(
+                                    COMPUTE_CALLBACK_NAME::GetNeighborList))
+                                   ->second;
   GetNeighborListFunction * CppGetNeighborList
       = reinterpret_cast<GetNeighborListFunction *>(functionPointer);
   KIM_GetNeighborListFunction * CGetNeighborList
@@ -819,31 +829,41 @@ int ComputeArgumentsImplementation::GetNeighborList(
       = reinterpret_cast<GetNeighborListF *>(functionPointer);
 
 
-  int simulatorParticleNumber = particleNumber +
-      ((simulatorNumbering_ == modelNumbering_) ? 0 : -numberingOffset_);
+  int simulatorParticleNumber
+      = particleNumber
+        + ((simulatorNumbering_ == modelNumbering_) ? 0 : -numberingOffset_);
   int const * simulatorNeighborsOfParticle;
   int error;
   if (languageName == LANGUAGE_NAME::cpp)
   {
     error = CppGetNeighborList(const_cast<void *>(dataObject),
-                               numberOfNeighborLists_, cutoffs_,
-                               neighborListIndex, simulatorParticleNumber,
+                               numberOfNeighborLists_,
+                               cutoffs_,
+                               neighborListIndex,
+                               simulatorParticleNumber,
                                numberOfNeighbors,
                                &simulatorNeighborsOfParticle);
   }
   else if (languageName == LANGUAGE_NAME::c)
   {
     error = CGetNeighborList(const_cast<void *>(dataObject),
-                             numberOfNeighborLists_, cutoffs_,
-                             neighborListIndex, simulatorParticleNumber,
-                             numberOfNeighbors, &simulatorNeighborsOfParticle);
+                             numberOfNeighborLists_,
+                             cutoffs_,
+                             neighborListIndex,
+                             simulatorParticleNumber,
+                             numberOfNeighbors,
+                             &simulatorNeighborsOfParticle);
   }
   else if (languageName == LANGUAGE_NAME::fortran)
   {
     FGetNeighborList(const_cast<void *>(dataObject),
-                     numberOfNeighborLists_, cutoffs_,
-                     neighborListIndex+1, simulatorParticleNumber,
-                     numberOfNeighbors, &simulatorNeighborsOfParticle, &error);
+                     numberOfNeighborLists_,
+                     cutoffs_,
+                     neighborListIndex + 1,
+                     simulatorParticleNumber,
+                     numberOfNeighbors,
+                     &simulatorNeighborsOfParticle,
+                     &error);
   }
   else
   {
@@ -866,7 +886,7 @@ int ComputeArgumentsImplementation::GetNeighborList(
 
     std::vector<int> & list = getNeighborListStorage_[neighborListIndex];
     list.resize(*numberOfNeighbors);
-    for (int i=0; i<*numberOfNeighbors; ++i)
+    for (int i = 0; i < *numberOfNeighbors; ++i)
       list[i] = simulatorNeighborsOfParticle[i] + numberingOffset_;
 
     *neighborsOfParticle = list.data();
@@ -882,10 +902,11 @@ int ComputeArgumentsImplementation::GetNeighborList(
   return false;
 }
 
-int ComputeArgumentsImplementation::ProcessDEDrTerm(
-    double const de, double const r,
-    double const * const dx,
-    int const i, int const j) const
+int ComputeArgumentsImplementation::ProcessDEDrTerm(double const de,
+                                                    double const r,
+                                                    double const * const dx,
+                                                    int const i,
+                                                    int const j) const
 {
   // No debug logging for callbacks: too expensive
   //
@@ -896,26 +917,30 @@ int ComputeArgumentsImplementation::ProcessDEDrTerm(
   // #endif
   //   LOG_DEBUG("Enter  " + callString);
 
-  std::map<ComputeCallbackName const, LanguageName,
-           COMPUTE_CALLBACK_NAME::Comparator>::const_iterator
-      languageResult = computeCallbackLanguage_.find(
-          COMPUTE_CALLBACK_NAME::ProcessDEDrTerm);
+  std::map<ComputeCallbackName const,
+           LanguageName,
+           COMPUTE_CALLBACK_NAME::Comparator>::const_iterator languageResult
+      = computeCallbackLanguage_.find(COMPUTE_CALLBACK_NAME::ProcessDEDrTerm);
 
   LanguageName languageName = languageResult->second;
-  void const * dataObject
-      = (computeCallbackDataObjectPointer_.find(
-          COMPUTE_CALLBACK_NAME::ProcessDEDrTerm))->second;
+  void const * dataObject = (computeCallbackDataObjectPointer_.find(
+                                 COMPUTE_CALLBACK_NAME::ProcessDEDrTerm))
+                                ->second;
 
-  Function * functionPointer
-      = (computeCallbackFunctionPointer_.find(
-          COMPUTE_CALLBACK_NAME::ProcessDEDrTerm))->second;
+  Function * functionPointer = (computeCallbackFunctionPointer_.find(
+                                    COMPUTE_CALLBACK_NAME::ProcessDEDrTerm))
+                                   ->second;
   ProcessDEDrTermFunction * CppProcess_dEdr
       = reinterpret_cast<ProcessDEDrTermFunction *>(functionPointer);
   KIM_ProcessDEDrTermFunction * CProcess_dEdr
       = reinterpret_cast<KIM_ProcessDEDrTermFunction *>(functionPointer);
-  typedef void ProcessDEDrTermF(void * const dataObject, double const de,
-                                double const r, double const * const dx,
-                                int const i, int const j, int * const ierr);
+  typedef void ProcessDEDrTermF(void * const dataObject,
+                                double const de,
+                                double const r,
+                                double const * const dx,
+                                int const i,
+                                int const j,
+                                int * const ierr);
   ProcessDEDrTermF * FProcess_dEdr
       = reinterpret_cast<ProcessDEDrTermF *>(functionPointer);
 
@@ -927,18 +952,23 @@ int ComputeArgumentsImplementation::ProcessDEDrTerm(
   int error;
   if (languageName == LANGUAGE_NAME::cpp)
   {
-    error = CppProcess_dEdr(const_cast<void *>(dataObject),
-                            de, r, dx, simulatorI, simulatorJ);
+    error = CppProcess_dEdr(
+        const_cast<void *>(dataObject), de, r, dx, simulatorI, simulatorJ);
   }
   else if (languageName == LANGUAGE_NAME::c)
   {
-    error = CProcess_dEdr(const_cast<void *>(dataObject),
-                          de, r, dx, simulatorI, simulatorJ);
+    error = CProcess_dEdr(
+        const_cast<void *>(dataObject), de, r, dx, simulatorI, simulatorJ);
   }
   else if (languageName == LANGUAGE_NAME::fortran)
   {
     FProcess_dEdr(const_cast<void *>(dataObject),
-                  de, r, dx, simulatorI, simulatorJ, &error);
+                  de,
+                  r,
+                  dx,
+                  simulatorI,
+                  simulatorJ,
+                  &error);
   }
   else
   {
@@ -960,11 +990,11 @@ int ComputeArgumentsImplementation::ProcessDEDrTerm(
   }
 }
 
-int ComputeArgumentsImplementation::ProcessD2EDr2Term(
-    double const de, double const * const r,
-    double const * const dx,
-    int const * const i,
-    int const * const j) const
+int ComputeArgumentsImplementation::ProcessD2EDr2Term(double const de,
+                                                      double const * const r,
+                                                      double const * const dx,
+                                                      int const * const i,
+                                                      int const * const j) const
 {
   // No debug logging for callbacks: too expensive
   //
@@ -974,27 +1004,29 @@ int ComputeArgumentsImplementation::ProcessD2EDr2Term(
   //       + SPTR(i) + ", " + SPTR(j) + ").";
   // #endif
   //   LOG_DEBUG("Enter  " + callString);
-  std::map<ComputeCallbackName const, LanguageName,
-           COMPUTE_CALLBACK_NAME::Comparator>::const_iterator
-      languageResult = computeCallbackLanguage_.find(
-          COMPUTE_CALLBACK_NAME::ProcessD2EDr2Term);
+  std::map<ComputeCallbackName const,
+           LanguageName,
+           COMPUTE_CALLBACK_NAME::Comparator>::const_iterator languageResult
+      = computeCallbackLanguage_.find(COMPUTE_CALLBACK_NAME::ProcessD2EDr2Term);
 
   LanguageName languageName = languageResult->second;
-  void const * dataObject = (computeCallbackDataObjectPointer_
-                             .find(COMPUTE_CALLBACK_NAME::ProcessD2EDr2Term)
-                             )->second;
+  void const * dataObject = (computeCallbackDataObjectPointer_.find(
+                                 COMPUTE_CALLBACK_NAME::ProcessD2EDr2Term))
+                                ->second;
 
-  Function * functionPointer
-      = (computeCallbackFunctionPointer_.find(
-          COMPUTE_CALLBACK_NAME::ProcessD2EDr2Term))->second;
+  Function * functionPointer = (computeCallbackFunctionPointer_.find(
+                                    COMPUTE_CALLBACK_NAME::ProcessD2EDr2Term))
+                                   ->second;
   ProcessD2EDr2TermFunction * CppProcess_d2Edr2
       = reinterpret_cast<ProcessD2EDr2TermFunction *>(functionPointer);
   KIM_ProcessD2EDr2TermFunction * CProcess_d2Edr2
       = reinterpret_cast<KIM_ProcessD2EDr2TermFunction *>(functionPointer);
   typedef void ProcessD2EDr2TermF(void * const dataObject,
-                                  double const de, double const * const r,
+                                  double const de,
+                                  double const * const r,
                                   double const * const dx,
-                                  int const * const i, int const * const j,
+                                  int const * const i,
+                                  int const * const j,
                                   int * const ierr);
   ProcessD2EDr2TermF * FProcess_d2Edr2
       = reinterpret_cast<ProcessD2EDr2TermF *>(functionPointer);
@@ -1012,18 +1044,23 @@ int ComputeArgumentsImplementation::ProcessD2EDr2Term(
   int error;
   if (languageName == LANGUAGE_NAME::cpp)
   {
-    error = CppProcess_d2Edr2(const_cast<void *>(dataObject),
-                              de, r, dx, simulatorI, simulatorJ);
+    error = CppProcess_d2Edr2(
+        const_cast<void *>(dataObject), de, r, dx, simulatorI, simulatorJ);
   }
   else if (languageName == LANGUAGE_NAME::c)
   {
-    error = CProcess_d2Edr2(const_cast<void *>(dataObject),
-                            de, r, dx, simulatorI, simulatorJ);
+    error = CProcess_d2Edr2(
+        const_cast<void *>(dataObject), de, r, dx, simulatorI, simulatorJ);
   }
   else if (languageName == LANGUAGE_NAME::fortran)
   {
     FProcess_d2Edr2(const_cast<void *>(dataObject),
-                    de, r, dx, simulatorI, simulatorJ, &error);
+                    de,
+                    r,
+                    dx,
+                    simulatorI,
+                    simulatorJ,
+                    &error);
   }
   else
   {
@@ -1057,8 +1094,8 @@ void ComputeArgumentsImplementation::SetModelBufferPointer(void * const ptr)
   LOG_DEBUG("Exit   " + callString);
 }
 
-void ComputeArgumentsImplementation::GetModelBufferPointer(void ** const ptr)
-    const
+void ComputeArgumentsImplementation::GetModelBufferPointer(
+    void ** const ptr) const
 {
 #if DEBUG_VERBOSITY
   std::string const callString = "GetModelBufferPointer(" + SPTR(ptr) + ").";
@@ -1074,8 +1111,8 @@ void ComputeArgumentsImplementation::GetModelBufferPointer(void ** const ptr)
 void ComputeArgumentsImplementation::SetSimulatorBufferPointer(void * const ptr)
 {
 #if DEBUG_VERBOSITY
-  std::string const callString = "SetSimulatorBufferPointer("
-      + SPTR(ptr) + ").";
+  std::string const callString
+      = "SetSimulatorBufferPointer(" + SPTR(ptr) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -1088,8 +1125,8 @@ void ComputeArgumentsImplementation::GetSimulatorBufferPointer(
     void ** const ptr) const
 {
 #if DEBUG_VERBOSITY
-  std::string const callString = "GetSimulatorBufferPointer("
-      + SPTR(ptr) + ").";
+  std::string const callString
+      = "GetSimulatorBufferPointer(" + SPTR(ptr) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -1114,8 +1151,8 @@ void ComputeArgumentsImplementation::PushLogVerbosity(
     LogVerbosity const logVerbosity)
 {
 #if DEBUG_VERBOSITY
-  std::string const callString = "PushLogVerbosity("
-      + logVerbosity.String() + ").";
+  std::string const callString
+      = "PushLogVerbosity(" + logVerbosity.String() + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -1136,19 +1173,21 @@ void ComputeArgumentsImplementation::PopLogVerbosity()
   LOG_DEBUG("Exit   " + callString);
 }
 
-void ComputeArgumentsImplementation::LogEntry(LogVerbosity const logVerbosity,
-                                   std::string const & message,
-                                   int const lineNumber,
-                                   std::string const & fileName) const
+void ComputeArgumentsImplementation::LogEntry(
+    LogVerbosity const logVerbosity,
+    std::string const & message,
+    int const lineNumber,
+    std::string const & fileName) const
 {
   // No debug logs to avoid infinite loop
   log_->LogEntry(logVerbosity, message, lineNumber, fileName);
 }
 
-void ComputeArgumentsImplementation::LogEntry(LogVerbosity const logVerbosity,
-                                   std::stringstream const & message,
-                                   int const lineNumber,
-                                   std::string const & fileName) const
+void ComputeArgumentsImplementation::LogEntry(
+    LogVerbosity const logVerbosity,
+    std::stringstream const & message,
+    int const lineNumber,
+    std::string const & fileName) const
 {
   // No debug logs to avoid infinite loop
   log_->LogEntry(logVerbosity, message, lineNumber, fileName);
@@ -1163,9 +1202,8 @@ std::string const & ComputeArgumentsImplementation::String() const
 
   std::stringstream ss;
   ss << std::setprecision(10) << std::scientific << std::left;
-  ss <<
-      "====================================================================="
-      "===========\n\n";
+  ss << "====================================================================="
+        "===========\n\n";
 
   ss << "ComputeArguments object\n"
      << "-----------------------\n\n";
@@ -1175,17 +1213,17 @@ std::string const & ComputeArgumentsImplementation::String() const
 
   ss << "Compute Arguments :\n";
   int const argW = 25;
-  ss << "\t" << std::setw(argW) << "Compute Argument Name"
-     << std::setw(argW) << "SupportStatus"
-     << std::setw(argW) << "Pointer"
+  ss << "\t" << std::setw(argW) << "Compute Argument Name" << std::setw(argW)
+     << "SupportStatus" << std::setw(argW) << "Pointer"
      << "\n";
   ss << "\t" << std::setw(argW) << "-------------------------"
-     << std::setw(argW) << "-------------------------"
-     << std::setw(argW) << "-------------------------"
+     << std::setw(argW) << "-------------------------" << std::setw(argW)
+     << "-------------------------"
      << "\n\n";
-  for (std::map<ComputeArgumentName const, SupportStatus,
-           COMPUTE_ARGUMENT_NAME::Comparator>::const_iterator
-           argName = computeArgumentSupportStatus_.begin();
+  for (std::map<ComputeArgumentName const,
+                SupportStatus,
+                COMPUTE_ARGUMENT_NAME::Comparator>::const_iterator argName
+       = computeArgumentSupportStatus_.begin();
        argName != computeArgumentSupportStatus_.end();
        ++argName)
   {
@@ -1194,13 +1232,12 @@ std::string const & ComputeArgumentsImplementation::String() const
 
     if ((argName->second) != SUPPORT_STATUS::notSupported)
     {
-      std::map<ComputeArgumentName const, void *,
-               COMPUTE_ARGUMENT_NAME::Comparator>::const_iterator
-          ptr = computeArgumentPointer_.find(argName->first);
+      std::map<ComputeArgumentName const,
+               void *,
+               COMPUTE_ARGUMENT_NAME::Comparator>::const_iterator ptr
+          = computeArgumentPointer_.find(argName->first);
       if (ptr != computeArgumentPointer_.end())
-      {
-        ss << std::setw(argW) << SPTR(ptr->second);
-      }
+      { ss << std::setw(argW) << SPTR(ptr->second); }
       else
       {
         ss << std::setw(argW) << "Not Set";
@@ -1221,43 +1258,43 @@ std::string const & ComputeArgumentsImplementation::String() const
   int const cbWl = 12;
   int const cbWd = 25;
   int const cbWf = 25;
-  ss << "\t" << std::setw(cbWn) << "Compute Callback Name"
-     << std::setw(cbWs) << "SupportStatus"
-     << std::setw(cbWl) << "Language"
-     << std::setw(cbWd) << "Data Pointer"
-     << std::setw(cbWf) << "Pointer (1-set / 0-unset)"
+  ss << "\t" << std::setw(cbWn) << "Compute Callback Name" << std::setw(cbWs)
+     << "SupportStatus" << std::setw(cbWl) << "Language" << std::setw(cbWd)
+     << "Data Pointer" << std::setw(cbWf) << "Pointer (1-set / 0-unset)"
      << "\n";
-  ss << "\t"
-     << std::setw(cbWn) << "-------------------------"
-     << std::setw(cbWs) << "---------------"
-     << std::setw(cbWl) << "------------"
-     << std::setw(cbWd) << "-------------------------"
+  ss << "\t" << std::setw(cbWn) << "-------------------------"
+     << std::setw(cbWs) << "---------------" << std::setw(cbWl)
+     << "------------" << std::setw(cbWd) << "-------------------------"
      << std::setw(cbWf) << "-------------------------"
      << "\n\n";
-  for (std::map<ComputeCallbackName const, SupportStatus,
-           COMPUTE_CALLBACK_NAME::Comparator>::const_iterator
-           cbName = computeCallbackSupportStatus_.begin();
+  for (std::map<ComputeCallbackName const,
+                SupportStatus,
+                COMPUTE_CALLBACK_NAME::Comparator>::const_iterator cbName
+       = computeCallbackSupportStatus_.begin();
        cbName != computeCallbackSupportStatus_.end();
        ++cbName)
   {
-    ss << "\t" << std::setw(cbWn) << (cbName->first).String()
-       << std::setw(cbWs) << (cbName->second).String();
+    ss << "\t" << std::setw(cbWn) << (cbName->first).String() << std::setw(cbWs)
+       << (cbName->second).String();
 
     if ((cbName->second) != SUPPORT_STATUS::notSupported)
     {
-      std::map<ComputeCallbackName const, LanguageName,
-               COMPUTE_CALLBACK_NAME::Comparator>::const_iterator
-          ptr = computeCallbackLanguage_.find(cbName->first);
+      std::map<ComputeCallbackName const,
+               LanguageName,
+               COMPUTE_CALLBACK_NAME::Comparator>::const_iterator ptr
+          = computeCallbackLanguage_.find(cbName->first);
       if (ptr != computeCallbackLanguage_.end())
       {
         ss << std::setw(cbWl) << (ptr->second).String();
-        std::map<ComputeCallbackName const, void *,
-                 COMPUTE_CALLBACK_NAME::Comparator>::const_iterator
-            ptr2 = computeCallbackDataObjectPointer_.find(cbName->first);
+        std::map<ComputeCallbackName const,
+                 void *,
+                 COMPUTE_CALLBACK_NAME::Comparator>::const_iterator ptr2
+            = computeCallbackDataObjectPointer_.find(cbName->first);
         ss << std::setw(cbWd) << SPTR(ptr2->second);
-        std::map<ComputeCallbackName const, Function *,
-                 COMPUTE_CALLBACK_NAME::Comparator>::const_iterator
-            ptr3 = computeCallbackFunctionPointer_.find(cbName->first);
+        std::map<ComputeCallbackName const,
+                 Function *,
+                 COMPUTE_CALLBACK_NAME::Comparator>::const_iterator ptr3
+            = computeCallbackFunctionPointer_.find(cbName->first);
         ss << std::setw(cbWf) << SFUNC(ptr3->second);
       }
       else
@@ -1274,26 +1311,18 @@ std::string const & ComputeArgumentsImplementation::String() const
   ss << "\n";
 
   ss << "Buffers\n";
-  ss << "\t"
-     << std::setw(15) << "Buffer"
-     << std::setw(15) << "Pointer"
+  ss << "\t" << std::setw(15) << "Buffer" << std::setw(15) << "Pointer"
      << "\n";
-  ss << "\t"
-     << std::setw(15) << "---------------"
-     << std::setw(15) << "---------------"
+  ss << "\t" << std::setw(15) << "---------------" << std::setw(15)
+     << "---------------"
      << "\n\n";
-  ss << "\t"
-     << std::setw(15) << "Model"
-     << std::setw(15) << SPTR(modelBuffer_)
+  ss << "\t" << std::setw(15) << "Model" << std::setw(15) << SPTR(modelBuffer_)
      << "\n"
-     << "\t"
-     << std::setw(15) << "Simulator"
-     << std::setw(15) << SPTR(simulatorBuffer_)
-     << "\n\n";
+     << "\t" << std::setw(15) << "Simulator" << std::setw(15)
+     << SPTR(simulatorBuffer_) << "\n\n";
 
-  ss <<
-      "====================================================================="
-      "===========\n";
+  ss << "====================================================================="
+        "===========\n";
 
   string_ = ss.str();
   LOG_DEBUG("Exit   " + callString);
@@ -1319,8 +1348,8 @@ ComputeArgumentsImplementation::ComputeArgumentsImplementation(
     simulatorBuffer_(NULL)
 {
 #if DEBUG_VERBOSITY
-  std::string const callString = "ComputeArgumentsImplementation("
-      + modelName + ", " + SPTR(log) + ").";
+  std::string const callString
+      = "ComputeArgumentsImplementation(" + modelName + ", " + SPTR(log) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -1328,7 +1357,7 @@ ComputeArgumentsImplementation::ComputeArgumentsImplementation(
   int numberOfComputeArgumentNames;
   COMPUTE_ARGUMENT_NAME::GetNumberOfComputeArgumentNames(
       &numberOfComputeArgumentNames);
-  for (int i=0; i<numberOfComputeArgumentNames; ++i)
+  for (int i = 0; i < numberOfComputeArgumentNames; ++i)
   {
     ComputeArgumentName computeArgumentName;
     COMPUTE_ARGUMENT_NAME::GetComputeArgumentName(i, &computeArgumentName);
@@ -1337,10 +1366,10 @@ ComputeArgumentsImplementation::ComputeArgumentsImplementation(
   }
   // populate requiredByAPI ComputeArguments
   for (std::vector<ComputeArgumentName>::const_iterator
-           requiredByAPI_ComputeArgument =
-           COMPUTE_ARGUMENT_NAME::requiredByAPI_ComputeArguments.begin();
+           requiredByAPI_ComputeArgument
+       = COMPUTE_ARGUMENT_NAME::requiredByAPI_ComputeArguments.begin();
        requiredByAPI_ComputeArgument
-           != COMPUTE_ARGUMENT_NAME::requiredByAPI_ComputeArguments.end();
+       != COMPUTE_ARGUMENT_NAME::requiredByAPI_ComputeArguments.end();
        ++requiredByAPI_ComputeArgument)
   {
     computeArgumentSupportStatus_[*requiredByAPI_ComputeArgument]
@@ -1352,7 +1381,7 @@ ComputeArgumentsImplementation::ComputeArgumentsImplementation(
   int numberOfComputeCallbackNames;
   COMPUTE_CALLBACK_NAME::GetNumberOfComputeCallbackNames(
       &numberOfComputeCallbackNames);
-  for (int i=0; i<numberOfComputeCallbackNames; ++i)
+  for (int i = 0; i < numberOfComputeCallbackNames; ++i)
   {
     ComputeCallbackName computeCallbackName;
     COMPUTE_CALLBACK_NAME::GetComputeCallbackName(i, &computeCallbackName);
@@ -1362,9 +1391,9 @@ ComputeArgumentsImplementation::ComputeArgumentsImplementation(
   // populate ComputeCallbacks
   for (std::vector<ComputeCallbackName>::const_iterator
            requiredByAPI_ComputeCallback
-           = COMPUTE_CALLBACK_NAME::requiredByAPI_ComputeCallbacks.begin();
+       = COMPUTE_CALLBACK_NAME::requiredByAPI_ComputeCallbacks.begin();
        requiredByAPI_ComputeCallback
-           != COMPUTE_CALLBACK_NAME::requiredByAPI_ComputeCallbacks.end();
+       != COMPUTE_CALLBACK_NAME::requiredByAPI_ComputeCallbacks.end();
        ++requiredByAPI_ComputeCallback)
   {
     computeCallbackSupportStatus_[*requiredByAPI_ComputeCallback]
@@ -1453,8 +1482,8 @@ int ComputeArgumentsImplementation::Validate(
   return true;
 }
 
-int ComputeArgumentsImplementation::Validate(LanguageName const languageName)
-    const
+int ComputeArgumentsImplementation::Validate(
+    LanguageName const languageName) const
 {
   // No debug logging for Validate: too expensive
   //
@@ -1484,8 +1513,8 @@ int ComputeArgumentsImplementation::Validate(LanguageName const languageName)
   return true;
 }
 
-int ComputeArgumentsImplementation::Validate(SupportStatus const supportStatus)
-    const
+int ComputeArgumentsImplementation::Validate(
+    SupportStatus const supportStatus) const
 {
   // No debug logging for Validate: too expensive
   //

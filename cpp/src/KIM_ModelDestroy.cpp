@@ -38,14 +38,12 @@
 #include "KIM_ModelImplementation.hpp"
 #endif
 
-#define CONVERT_POINTER ModelImplementation *pImpl      \
-  = reinterpret_cast<ModelImplementation *>(pimpl)
+#define CONVERT_POINTER \
+  ModelImplementation * pImpl = reinterpret_cast<ModelImplementation *>(pimpl)
 
 
 namespace KIM
 {
-
-
 void ModelDestroy::GetModelBufferPointer(void ** const ptr) const
 {
   CONVERT_POINTER;
@@ -80,12 +78,8 @@ std::string const & ModelDestroy::String() const
   return pImpl->String();
 }
 
-ModelDestroy::ModelDestroy() : pimpl(NULL)
-{
-}
+ModelDestroy::ModelDestroy() : pimpl(NULL) {}
 
-ModelDestroy::~ModelDestroy()
-{
-}
+ModelDestroy::~ModelDestroy() {}
 
 }  // namespace KIM

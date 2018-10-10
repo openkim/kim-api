@@ -38,7 +38,6 @@
 
 namespace KIM
 {
-
 // Order is important
 namespace LOG_VERBOSITY
 {
@@ -52,7 +51,7 @@ LogVerbosity const debug(KIM_LOG_VERBOSITY_DEBUG_);
 namespace
 {
 typedef std::map<LogVerbosity const, std::string, LOG_VERBOSITY::Comparator>
-StringMap;
+    StringMap;
 
 StringMap const GetStringMap()
 {
@@ -83,20 +82,20 @@ int GetLogVerbosity(int const index, LogVerbosity * const logVerbosity)
   if ((index < 0) || (index >= numberOfLogVerbosities)) return true;
 
   StringMap::const_iterator iter = logVerbosityToString.begin();
-  for (int i=0; i<index; ++i) ++iter;
+  for (int i = 0; i < index; ++i) ++iter;
   *logVerbosity = iter->first;
   return false;  // no error
 }
 }  // namespace LOG_VERBOSITY
 
 // implementation of LogVerbosity
-LogVerbosity::LogVerbosity() : logVerbosityID(0){}
-LogVerbosity::LogVerbosity(int const id) : logVerbosityID(id){}
+LogVerbosity::LogVerbosity() : logVerbosityID(0) {}
+LogVerbosity::LogVerbosity(int const id) : logVerbosityID(id) {}
 LogVerbosity::LogVerbosity(std::string const & str)
 {
   logVerbosityID = -1;
   for (LOG_VERBOSITY::StringMap::const_iterator iter
-           = LOG_VERBOSITY::logVerbosityToString.begin();
+       = LOG_VERBOSITY::logVerbosityToString.begin();
        iter != LOG_VERBOSITY::logVerbosityToString.end();
        ++iter)
   {
@@ -109,17 +108,29 @@ LogVerbosity::LogVerbosity(std::string const & str)
 }
 
 bool LogVerbosity::operator<(LogVerbosity const & rhs) const
-{return logVerbosityID < rhs.logVerbosityID;}
+{
+  return logVerbosityID < rhs.logVerbosityID;
+}
 bool LogVerbosity::operator>(LogVerbosity const & rhs) const
-{return logVerbosityID > rhs.logVerbosityID;}
+{
+  return logVerbosityID > rhs.logVerbosityID;
+}
 bool LogVerbosity::operator<=(LogVerbosity const & rhs) const
-{return logVerbosityID <= rhs.logVerbosityID;}
+{
+  return logVerbosityID <= rhs.logVerbosityID;
+}
 bool LogVerbosity::operator>=(LogVerbosity const & rhs) const
-{return logVerbosityID >= rhs.logVerbosityID;}
+{
+  return logVerbosityID >= rhs.logVerbosityID;
+}
 bool LogVerbosity::operator==(LogVerbosity const & rhs) const
-{return logVerbosityID == rhs.logVerbosityID;}
+{
+  return logVerbosityID == rhs.logVerbosityID;
+}
 bool LogVerbosity::operator!=(LogVerbosity const & rhs) const
-{return logVerbosityID != rhs.logVerbosityID;}
+{
+  return logVerbosityID != rhs.logVerbosityID;
+}
 
 std::string const & LogVerbosity::String() const
 {

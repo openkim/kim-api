@@ -58,45 +58,35 @@ void Log::Destroy(Log ** const log)
   *log = NULL;
 }
 
-std::string const & Log::GetID() const
-{
-  return pimpl->GetID();
-}
+std::string const & Log::GetID() const { return pimpl->GetID(); }
 
-void Log::SetID(std::string const & id)
-{
-  pimpl->SetID(id);
-}
+void Log::SetID(std::string const & id) { pimpl->SetID(id); }
 
 void Log::PushVerbosity(LogVerbosity const logVerbosity)
 {
   pimpl->PushVerbosity(logVerbosity);
 }
 
-void Log::PopVerbosity()
-{
-  pimpl->PopVerbosity();
-}
+void Log::PopVerbosity() { pimpl->PopVerbosity(); }
 
-void Log::LogEntry(LogVerbosity const logVerbosity, std::string const & message,
-                   int const lineNumber, std::string const & fileName) const
+void Log::LogEntry(LogVerbosity const logVerbosity,
+                   std::string const & message,
+                   int const lineNumber,
+                   std::string const & fileName) const
 {
   pimpl->LogEntry(logVerbosity, message, lineNumber, fileName);
 }
 
 void Log::LogEntry(LogVerbosity const logVerbosity,
                    std::stringstream const & message,
-                   int const lineNumber, std::string const & fileName) const
+                   int const lineNumber,
+                   std::string const & fileName) const
 {
   pimpl->LogEntry(logVerbosity, message.str(), lineNumber, fileName);
 }
 
-Log::Log() : pimpl(NULL)
-{
-}
+Log::Log() : pimpl(NULL) {}
 
-Log::~Log()
-{
-}
+Log::~Log() {}
 
 }  // namespace KIM

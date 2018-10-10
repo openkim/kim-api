@@ -45,8 +45,8 @@ struct KIM_ComputeCallbackName
 typedef struct KIM_ComputeCallbackName KIM_ComputeCallbackName;
 #endif
 
-KIM_ComputeCallbackName KIM_ComputeCallbackName_FromString(
-    char const * const str);
+KIM_ComputeCallbackName
+KIM_ComputeCallbackName_FromString(char const * const str);
 
 int KIM_ComputeCallbackName_Equal(KIM_ComputeCallbackName const left,
                                   KIM_ComputeCallbackName const right);
@@ -58,12 +58,12 @@ char const * KIM_ComputeCallbackName_ToString(
 
 extern KIM_ComputeCallbackName const KIM_COMPUTE_CALLBACK_NAME_GetNeighborList;
 extern KIM_ComputeCallbackName const KIM_COMPUTE_CALLBACK_NAME_ProcessDEDrTerm;
-extern
-KIM_ComputeCallbackName const KIM_COMPUTE_CALLBACK_NAME_ProcessD2EDr2Term;
+extern KIM_ComputeCallbackName const
+    KIM_COMPUTE_CALLBACK_NAME_ProcessD2EDr2Term;
 
 void KIM_COMPUTE_CALLBACK_NAME_GetNumberOfComputeCallbackNames(
     int * const numberOfComputeCallbackNames);
 int KIM_COMPUTE_CALLBACK_NAME_GetComputeCallbackName(
     int const index, KIM_ComputeCallbackName * const computeCallbackName);
 
-#endif  /* KIM_COMPUTE_CALLBACK_NAME_H_ */
+#endif /* KIM_COMPUTE_CALLBACK_NAME_H_ */

@@ -31,11 +31,13 @@
 //
 
 
-extern "C"
-{
+extern "C" {
 char kim_item_type[] = "@KIM_API_MODEL_DRIVER_IDENTIFIER@";
+// clang-format off
 int @MODEL_DRIVER_CREATE_ROUTINE_NAME@();
-int (* @MODEL_DRIVER_NAME@_create_pointer)() = @MODEL_DRIVER_CREATE_ROUTINE_NAME@;
+int (*@MODEL_DRIVER_NAME@_create_pointer)()
+    = @MODEL_DRIVER_CREATE_ROUTINE_NAME@;
 char @MODEL_DRIVER_NAME@_compiled_with_version[] = "@PROJECT_VERSION_STRING@";
 char @MODEL_DRIVER_NAME@_language[] = "@MODEL_DRIVER_CREATE_ROUTINE_LANGUAGE@";
+// clang-format on
 }

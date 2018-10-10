@@ -40,12 +40,12 @@
 /******************************************************************************/
 
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <math.h>
 #include "KIM_LogMacros.h"
 #include "KIM_ModelDriverHeaders.h"
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #define TRUE 1
 #define FALSE 0
@@ -53,27 +53,26 @@
 /******************************************************************************/
 /* Below are the definitions for some constants                               */
 /******************************************************************************/
-#define DIM 3  /* dimensionality of space */
-#define SPECCODE 1  /* internal species code */
+#define DIM 3 /* dimensionality of space */
+#define SPECCODE 1 /* internal species code */
 
 
 /* Define prototype for Model Driver init */
-int model_driver_create(
-    KIM_ModelDriverCreate * const modelDriverCreate,
-    KIM_LengthUnit const requestedLengthUnit,
-    KIM_EnergyUnit const requestedEnergyUnit,
-    KIM_ChargeUnit const requestedChargeUnit,
-    KIM_TemperatureUnit const requestedTemperatureUnit,
-    KIM_TimeUnit const requestedTimeUnit);
+int model_driver_create(KIM_ModelDriverCreate * const modelDriverCreate,
+                        KIM_LengthUnit const requestedLengthUnit,
+                        KIM_EnergyUnit const requestedEnergyUnit,
+                        KIM_ChargeUnit const requestedChargeUnit,
+                        KIM_TemperatureUnit const requestedTemperatureUnit,
+                        KIM_TimeUnit const requestedTimeUnit);
 
 /* Define prototypes for destroy */
 /* defined as static to avoid namespace clashes with other codes */
 static int destroy_routine(KIM_ModelDestroy * const modelDestroy);
 
 /* Define prototype for compute routine */
-static int compute_routine(
-    KIM_ModelCompute const * const modelCompute,
-    KIM_ModelComputeArguments const * const modelComputeArguments);
+static int
+compute_routine(KIM_ModelCompute const * const modelCompute,
+                KIM_ModelComputeArguments const * const modelComputeArguments);
 static int compute_arguments_create(
     KIM_ModelCompute const * const modelCompute,
     KIM_ModelComputeArgumentsCreate * const modelComputeArgumentsCreate);
@@ -83,14 +82,18 @@ static void calc_phi(double const * epsilon,
                      double const * C,
                      double const * Rzero,
                      double const * shift,
-                     double const cutoff, double const r, double* phi);
+                     double const cutoff,
+                     double const r,
+                     double * phi);
 
-static void calc_phi_dphi(double const* epsilon,
-                          double const* C,
-                          double const* Rzero,
-                          double const* shift,
-                          double const cutoff, double const r,
-                          double* phi, double* dphi);
+static void calc_phi_dphi(double const * epsilon,
+                          double const * C,
+                          double const * Rzero,
+                          double const * shift,
+                          double const cutoff,
+                          double const r,
+                          double * phi,
+                          double * dphi);
 
 /* Define model_buffer structure */
 struct model_buffer
@@ -107,18 +110,20 @@ struct model_buffer
 
 
 /* Calculate pair potential phi(r) */
-static void calc_phi(double const* epsilon,
-                     double const* C,
-                     double const* Rzero,
-                     double const* shift,
-                     double const cutoff, double const r, double* phi)
+static void calc_phi(double const * epsilon,
+                     double const * C,
+                     double const * Rzero,
+                     double const * shift,
+                     double const cutoff,
+                     double const r,
+                     double * phi)
 {
   /* local variables */
   double ep;
   double ep2;
 
-  ep = exp(-(*C)*(r-*Rzero));
-  ep2 = ep*ep;
+  ep = exp(-(*C) * (r - *Rzero));
+  ep2 = ep * ep;
 
   if (r > cutoff)
   {
@@ -127,26 +132,28 @@ static void calc_phi(double const* epsilon,
   }
   else
   {
-    *phi = (*epsilon)*( -ep2 + 2.0*ep ) + *shift;
+    *phi = (*epsilon) * (-ep2 + 2.0 * ep) + *shift;
   }
 
   return;
 }
 
 /* Calculate pair potential phi(r) and its derivative dphi(r) */
-static void calc_phi_dphi(double const* epsilon,
-                          double const* C,
-                          double const* Rzero,
-                          double const* shift,
-                          double const cutoff, double const r,
-                          double* phi, double* dphi)
+static void calc_phi_dphi(double const * epsilon,
+                          double const * C,
+                          double const * Rzero,
+                          double const * shift,
+                          double const cutoff,
+                          double const r,
+                          double * phi,
+                          double * dphi)
 {
   /* local variables */
   double ep;
   double ep2;
 
-  ep = exp(-(*C)*(r-*Rzero));
-  ep2 = ep*ep;
+  ep = exp(-(*C) * (r - *Rzero));
+  ep2 = ep * ep;
 
   if (r > cutoff)
   {
@@ -156,21 +163,21 @@ static void calc_phi_dphi(double const* epsilon,
   }
   else
   {
-    *phi = (*epsilon)*( -ep2 + 2.0*ep ) + *shift;
-    *dphi = 2.0*(*epsilon)*(*C)*( -ep + ep2 );
+    *phi = (*epsilon) * (-ep2 + 2.0 * ep) + *shift;
+    *dphi = 2.0 * (*epsilon) * (*C) * (-ep + ep2);
   }
 
   return;
 }
 
 /* compute function */
-#undef  LOG_FUNCITON
+#undef LOG_FUNCITON
 #define KIM_LOGGER_FUNCTION_NAME KIM_ModelCompute_LogEntry
-#undef  KIM_LOGGER_OBJECT_NAME
+#undef KIM_LOGGER_OBJECT_NAME
 #define KIM_LOGGER_OBJECT_NAME modelCompute
-static int compute_routine(
-    KIM_ModelCompute const * const modelCompute,
-    KIM_ModelComputeArguments const * const modelComputeArguments)
+static int
+compute_routine(KIM_ModelCompute const * const modelCompute,
+                KIM_ModelComputeArguments const * const modelComputeArguments)
 {
   /* local variables */
   double R;
@@ -185,24 +192,24 @@ static int compute_routine(
   int jj;
   int k;
   int const * neighListOfCurrentPart;
-  struct model_buffer* buffer;
+  struct model_buffer * buffer;
   int comp_energy;
   int comp_force;
   int comp_particleEnergy;
 
-  int* nParts;
-  int* particleSpeciesCodes;
-  int* particleContributing;
+  int * nParts;
+  int * particleSpeciesCodes;
+  int * particleContributing;
   double cutoff;
-  double* cutsq;
-  double* epsilon;
-  double* C;
-  double* Rzero;
-  double* shift;
-  double* coords;
-  double* energy;
-  double* force;
-  double* particleEnergy;
+  double * cutsq;
+  double * epsilon;
+  double * C;
+  double * Rzero;
+  double * shift;
+  double * coords;
+  double * energy;
+  double * force;
+  double * particleEnergy;
   int numOfPartNeigh;
 
   /* get buffer from KIM object */
@@ -216,41 +223,34 @@ static int compute_routine(
   Rzero = &(buffer->Rzero);
   shift = &(buffer->shift);
 
-  ier =
-      KIM_ModelComputeArguments_GetArgumentPointerInteger(
-          modelComputeArguments,
-          KIM_COMPUTE_ARGUMENT_NAME_numberOfParticles,
-          &nParts)
-      ||
-      KIM_ModelComputeArguments_GetArgumentPointerInteger(
-          modelComputeArguments,
-          KIM_COMPUTE_ARGUMENT_NAME_particleSpeciesCodes,
-          &particleSpeciesCodes)
-      ||
-      KIM_ModelComputeArguments_GetArgumentPointerInteger(
-          modelComputeArguments,
-          KIM_COMPUTE_ARGUMENT_NAME_particleContributing,
-          &particleContributing)
-      ||
-      KIM_ModelComputeArguments_GetArgumentPointerDouble(
-          modelComputeArguments,
-          KIM_COMPUTE_ARGUMENT_NAME_coordinates,
-          &coords)
-      ||
-      KIM_ModelComputeArguments_GetArgumentPointerDouble(
-          modelComputeArguments,
-          KIM_COMPUTE_ARGUMENT_NAME_partialEnergy,
-          &energy)
-      ||
-      KIM_ModelComputeArguments_GetArgumentPointerDouble(
-          modelComputeArguments,
-          KIM_COMPUTE_ARGUMENT_NAME_partialForces,
-          &force)
-      ||
-      KIM_ModelComputeArguments_GetArgumentPointerDouble(
-          modelComputeArguments,
-          KIM_COMPUTE_ARGUMENT_NAME_partialParticleEnergy,
-          &particleEnergy);
+  ier = KIM_ModelComputeArguments_GetArgumentPointerInteger(
+            modelComputeArguments,
+            KIM_COMPUTE_ARGUMENT_NAME_numberOfParticles,
+            &nParts)
+        || KIM_ModelComputeArguments_GetArgumentPointerInteger(
+               modelComputeArguments,
+               KIM_COMPUTE_ARGUMENT_NAME_particleSpeciesCodes,
+               &particleSpeciesCodes)
+        || KIM_ModelComputeArguments_GetArgumentPointerInteger(
+               modelComputeArguments,
+               KIM_COMPUTE_ARGUMENT_NAME_particleContributing,
+               &particleContributing)
+        || KIM_ModelComputeArguments_GetArgumentPointerDouble(
+               modelComputeArguments,
+               KIM_COMPUTE_ARGUMENT_NAME_coordinates,
+               &coords)
+        || KIM_ModelComputeArguments_GetArgumentPointerDouble(
+               modelComputeArguments,
+               KIM_COMPUTE_ARGUMENT_NAME_partialEnergy,
+               &energy)
+        || KIM_ModelComputeArguments_GetArgumentPointerDouble(
+               modelComputeArguments,
+               KIM_COMPUTE_ARGUMENT_NAME_partialForces,
+               &force)
+        || KIM_ModelComputeArguments_GetArgumentPointerDouble(
+               modelComputeArguments,
+               KIM_COMPUTE_ARGUMENT_NAME_partialParticleEnergy,
+               &particleEnergy);
   if (ier)
   {
     LOG_ERROR("GetArgumentPointer");
@@ -266,35 +266,26 @@ static int compute_routine(
   ier = TRUE; /* assume an error */
   for (i = 0; i < *nParts; ++i)
   {
-    if ( SPECCODE != particleSpeciesCodes[i])
+    if (SPECCODE != particleSpeciesCodes[i])
     {
       LOG_ERROR("Unexpected species code detected");
       return ier;
     }
   }
-  ier = FALSE;  /* everything is ok */
+  ier = FALSE; /* everything is ok */
 
   /* initialize potential energies, forces, and virial term */
   if (comp_particleEnergy)
   {
-    for (i = 0; i < *nParts; ++i)
-    {
-      particleEnergy[i] = 0.0;
-    }
+    for (i = 0; i < *nParts; ++i) { particleEnergy[i] = 0.0; }
   }
-  if (comp_energy)
-  {
-    *energy = 0.0;
-  }
+  if (comp_energy) { *energy = 0.0; }
 
   if (comp_force)
   {
     for (i = 0; i < *nParts; ++i)
     {
-      for (k = 0; k < DIM; ++k)
-      {
-        force[i*DIM + k] = 0.0;
-      }
+      for (k = 0; k < DIM; ++k) { force[i * DIM + k] = 0.0; }
     }
   }
 
@@ -305,9 +296,11 @@ static int compute_routine(
   {
     if (particleContributing[i])
     {
-      ier = KIM_ModelComputeArguments_GetNeighborList(
-          modelComputeArguments,
-          0, i, &numOfPartNeigh, &neighListOfCurrentPart);
+      ier = KIM_ModelComputeArguments_GetNeighborList(modelComputeArguments,
+                                                      0,
+                                                      i,
+                                                      &numOfPartNeigh,
+                                                      &neighListOfCurrentPart);
       if (ier)
       {
         /* some sort of problem, exit */
@@ -317,17 +310,17 @@ static int compute_routine(
       }
 
       /* loop over the neighbors of particle i */
-      for (jj = 0; jj < numOfPartNeigh; ++ jj)
+      for (jj = 0; jj < numOfPartNeigh; ++jj)
       {
-        j = neighListOfCurrentPart[jj];  /* get neighbor ID */
+        j = neighListOfCurrentPart[jj]; /* get neighbor ID */
 
         /* compute relative position vector and squared distance */
         Rsqij = 0.0;
         for (k = 0; k < DIM; ++k)
         {
-          Rij[k] = coords[j*DIM + k] - coords[i*DIM + k];
+          Rij[k] = coords[j * DIM + k] - coords[i * DIM + k];
           /* compute squared distance */
-          Rsqij += Rij[k]*Rij[k];
+          Rsqij += Rij[k] * Rij[k];
         }
 
         /* compute energy and force */
@@ -338,48 +331,36 @@ static int compute_routine(
           if (comp_force)
           {
             /* compute pair potential and its derivative */
-            calc_phi_dphi(epsilon,
-                          C,
-                          Rzero,
-                          shift,
-                          cutoff, R, &phi, &dphi);
+            calc_phi_dphi(epsilon, C, Rzero, shift, cutoff, R, &phi, &dphi);
 
             /* compute dEidr */
-            dEidr = 0.5*dphi;
+            dEidr = 0.5 * dphi;
           }
           else
           {
             /* compute just pair potential */
-            calc_phi(epsilon,
-                     C,
-                     Rzero,
-                     shift,
-                     cutoff, R, &phi);
+            calc_phi(epsilon, C, Rzero, shift, cutoff, R, &phi);
           }
 
           /* contribution to energy */
-          if (comp_particleEnergy)
-          {
-            particleEnergy[i] += 0.5*phi;
-          }
-          if (comp_energy)
-          {
-            *energy += 0.5*phi;
-          }
+          if (comp_particleEnergy) { particleEnergy[i] += 0.5 * phi; }
+          if (comp_energy) { *energy += 0.5 * phi; }
 
           /* contribution to forces */
           if (comp_force)
           {
             for (k = 0; k < DIM; ++k)
             {
-              force[i*DIM + k] += dEidr*Rij[k]/R;  /* accumulate force on i */
-              force[j*DIM + k] -= dEidr*Rij[k]/R;  /* accumulate force on j */
+              force[i * DIM + k]
+                  += dEidr * Rij[k] / R; /* accumulate force on i */
+              force[j * DIM + k]
+                  -= dEidr * Rij[k] / R; /* accumulate force on j */
             }
           }
-        }  /* if Rsqij */
-      }  /* loop on jj */
-    }  /* if particleContributing */
-  }  /* infinite while loop (terminated by break statements above) */
+        } /* if Rsqij */
+      } /* loop on jj */
+    } /* if particleContributing */
+  } /* infinite while loop (terminated by break statements above) */
 
   /* everything is great */
   ier = FALSE;
@@ -388,24 +369,23 @@ static int compute_routine(
 }
 
 /* Create function */
-#undef  KIM_LOGGER_FUNCTION_NAME
+#undef KIM_LOGGER_FUNCTION_NAME
 #define KIM_LOGGER_FUNCTION_NAME KIM_ModelDriverCreate_LogEntry
-#undef  KIM_LOGGER_OBJECT_NAME
+#undef KIM_LOGGER_OBJECT_NAME
 #define KIM_LOGGER_OBJECT_NAME modelDriverCreate
-int model_driver_create(
-    KIM_ModelDriverCreate * const modelDriverCreate,
-    KIM_LengthUnit const requestedLengthUnit,
-    KIM_EnergyUnit const requestedEnergyUnit,
-    KIM_ChargeUnit const requestedChargeUnit,
-    KIM_TemperatureUnit const requestedTemperatureUnit,
-    KIM_TimeUnit const requestedTimeUnit)
+int model_driver_create(KIM_ModelDriverCreate * const modelDriverCreate,
+                        KIM_LengthUnit const requestedLengthUnit,
+                        KIM_EnergyUnit const requestedEnergyUnit,
+                        KIM_ChargeUnit const requestedChargeUnit,
+                        KIM_TemperatureUnit const requestedTemperatureUnit,
+                        KIM_TimeUnit const requestedTimeUnit)
 {
   /* KIM variables */
   int numberOfParameterFiles;
   char const * paramfile1name;
 
   /* Local variables */
-  FILE* fid;
+  FILE * fid;
   char speciesNameString[100];
   KIM_SpeciesName speciesName;
   double cutoff;
@@ -414,7 +394,7 @@ int model_driver_create(
   double Rzero;
   int ier;
   double dummy;
-  struct model_buffer* buffer;
+  struct model_buffer * buffer;
 
   /* Use function pointer definitions to verify prototypes */
   KIM_ModelDestroyFunction * destroy = destroy_routine;
@@ -422,11 +402,11 @@ int model_driver_create(
   KIM_ModelComputeFunction * compute = compute_routine;
 
 
-  (void)requestedLengthUnit;  /* avoid unused parameter warnings */
-  (void)requestedEnergyUnit;
-  (void)requestedChargeUnit;
-  (void)requestedTemperatureUnit;
-  (void)requestedTimeUnit;
+  (void) requestedLengthUnit; /* avoid unused parameter warnings */
+  (void) requestedEnergyUnit;
+  (void) requestedChargeUnit;
+  (void) requestedTemperatureUnit;
+  (void) requestedTimeUnit;
 
 
   /* using fixed units */
@@ -452,21 +432,15 @@ int model_driver_create(
 
   /* store pointer to functions in KIM object */
   KIM_ModelDriverCreate_SetDestroyPointer(
-      modelDriverCreate,
-      KIM_LANGUAGE_NAME_c,
-      (KIM_Function *) destroy);
+      modelDriverCreate, KIM_LANGUAGE_NAME_c, (KIM_Function *) destroy);
   KIM_ModelDriverCreate_SetComputeArgumentsCreatePointer(
-      modelDriverCreate,
-      KIM_LANGUAGE_NAME_c,
-      (KIM_Function *) CACreate);
+      modelDriverCreate, KIM_LANGUAGE_NAME_c, (KIM_Function *) CACreate);
   KIM_ModelDriverCreate_SetComputePointer(
-      modelDriverCreate,
-      KIM_LANGUAGE_NAME_c,
-      (KIM_Function *) compute);
+      modelDriverCreate, KIM_LANGUAGE_NAME_c, (KIM_Function *) compute);
 
   /* get number of parameter files */
-  KIM_ModelDriverCreate_GetNumberOfParameterFiles(
-      modelDriverCreate, &numberOfParameterFiles);
+  KIM_ModelDriverCreate_GetNumberOfParameterFiles(modelDriverCreate,
+                                                  &numberOfParameterFiles);
   /* set paramfile1name */
   if (numberOfParameterFiles != 1)
   {
@@ -475,9 +449,7 @@ int model_driver_create(
     return ier;
   }
   ier = KIM_ModelDriverCreate_GetParameterFileName(
-      modelDriverCreate,
-      0,
-      &paramfile1name);
+      modelDriverCreate, 0, &paramfile1name);
   if (ier == TRUE)
   {
     LOG_ERROR("Unable to get parameter file name.");
@@ -493,13 +465,14 @@ int model_driver_create(
     return ier;
   }
 
-  ier = fscanf(fid, "%s \n%lf \n%lf \n%lf \n%lf",
+  ier = fscanf(fid,
+               "%s \n%lf \n%lf \n%lf \n%lf",
                speciesNameString, /* element symbol */
-               &cutoff,  /* cutoff distance in angstroms */
-               &epsilon,  /* Morse epsilon in eV */
-               &C,  /* Morse C in 1/Angstroms */
-               &Rzero  /* Morse Rzero in Angstroms */
-               );
+               &cutoff, /* cutoff distance in angstroms */
+               &epsilon, /* Morse epsilon in eV */
+               &C, /* Morse C in 1/Angstroms */
+               &Rzero /* Morse Rzero in Angstroms */
+  );
   fclose(fid);
 
   /* check that we read the right number of parameters */
@@ -513,9 +486,7 @@ int model_driver_create(
   /* register species */
   speciesName = KIM_SpeciesName_FromString(speciesNameString);
   ier = KIM_ModelDriverCreate_SetSpeciesCode(
-      modelDriverCreate,
-      speciesName,
-      SPECCODE);
+      modelDriverCreate, speciesName, SPECCODE);
   if (ier == TRUE)
   {
     LOG_ERROR("Unable to set species code for Ar.");
@@ -524,7 +495,7 @@ int model_driver_create(
 
 
   /* allocate buffer */
-  buffer = (struct model_buffer*) malloc(sizeof(struct model_buffer));
+  buffer = (struct model_buffer *) malloc(sizeof(struct model_buffer));
   if (NULL == buffer)
   {
     ier = TRUE;
@@ -536,7 +507,7 @@ int model_driver_create(
   /* set value of parameters */
   buffer->influenceDistance = cutoff;
   buffer->cutoff = cutoff;
-  buffer->cutsq = (cutoff)*(cutoff);
+  buffer->cutsq = (cutoff) * (cutoff);
   buffer->modelWillNotRequestNeighborsOfNoncontributingParticles = 1;
   buffer->epsilon = epsilon;
   buffer->C = C;
@@ -548,7 +519,9 @@ int model_driver_create(
            &(buffer->C),
            &(buffer->Rzero),
            &dummy,
-           cutoff, cutoff, &(buffer->shift));
+           cutoff,
+           cutoff,
+           &(buffer->shift));
   /* set shift to -shift */
   buffer->shift = -buffer->shift;
 
@@ -556,12 +529,11 @@ int model_driver_create(
 
   /* store in model buffer */
   KIM_ModelDriverCreate_SetModelBufferPointer(modelDriverCreate,
-                                              (void*) buffer);
+                                              (void *) buffer);
 
   /* store model cutoff in KIM object */
   KIM_ModelDriverCreate_SetInfluenceDistancePointer(
-      modelDriverCreate,
-      &(buffer->influenceDistance));
+      modelDriverCreate, &(buffer->influenceDistance));
   KIM_ModelDriverCreate_SetNeighborListPointers(
       modelDriverCreate,
       1,
@@ -575,7 +547,7 @@ int model_driver_create(
 static int destroy_routine(KIM_ModelDestroy * const modelDestroy)
 {
   /* Local variables */
-  struct model_buffer* buffer;
+  struct model_buffer * buffer;
   int ier;
 
   /* get model buffer from KIM object */
@@ -589,9 +561,9 @@ static int destroy_routine(KIM_ModelDestroy * const modelDestroy)
 }
 
 /* compute arguments create routine */
-#undef  KIM_LOGGER_FUNCTION_NAME
+#undef KIM_LOGGER_FUNCTION_NAME
 #define KIM_LOGGER_FUNCTION_NAME KIM_ModelCompute_LogEntry
-#undef  KIM_LOGGER_OBJECT_NAME
+#undef KIM_LOGGER_OBJECT_NAME
 #define KIM_LOGGER_OBJECT_NAME modelCompute
 static int compute_arguments_create(
     KIM_ModelCompute const * const modelCompute,
@@ -599,23 +571,21 @@ static int compute_arguments_create(
 {
   int ier;
 
-  (void)modelCompute;  /* avoid unused parameter warning */
+  (void) modelCompute; /* avoid unused parameter warning */
 
   /* register arguments */
   ier = KIM_ModelComputeArgumentsCreate_SetArgumentSupportStatus(
-      modelComputeArgumentsCreate,
-      KIM_COMPUTE_ARGUMENT_NAME_partialEnergy,
-      KIM_SUPPORT_STATUS_optional)
-      ||
-      KIM_ModelComputeArgumentsCreate_SetArgumentSupportStatus(
-          modelComputeArgumentsCreate,
-          KIM_COMPUTE_ARGUMENT_NAME_partialParticleEnergy,
-          KIM_SUPPORT_STATUS_optional)
-      ||
-      KIM_ModelComputeArgumentsCreate_SetArgumentSupportStatus(
-          modelComputeArgumentsCreate,
-          KIM_COMPUTE_ARGUMENT_NAME_partialForces,
-          KIM_SUPPORT_STATUS_optional);
+            modelComputeArgumentsCreate,
+            KIM_COMPUTE_ARGUMENT_NAME_partialEnergy,
+            KIM_SUPPORT_STATUS_optional)
+        || KIM_ModelComputeArgumentsCreate_SetArgumentSupportStatus(
+               modelComputeArgumentsCreate,
+               KIM_COMPUTE_ARGUMENT_NAME_partialParticleEnergy,
+               KIM_SUPPORT_STATUS_optional)
+        || KIM_ModelComputeArgumentsCreate_SetArgumentSupportStatus(
+               modelComputeArgumentsCreate,
+               KIM_COMPUTE_ARGUMENT_NAME_partialForces,
+               KIM_SUPPORT_STATUS_optional);
   if (ier == TRUE)
   {
     LOG_ERROR("Unable to set argument supportStatus.");

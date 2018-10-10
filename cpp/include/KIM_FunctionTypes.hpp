@@ -52,62 +52,57 @@ class ModelComputeArgumentsDestroy;
 class ModelDestroy;
 
 
-typedef void (Function)(void);  // Generic funciton pointer
+typedef void(Function)(void);  // Generic funciton pointer
 
-typedef int ModelCreateFunction(
-    ModelCreate * const modelCreate,
-    LengthUnit const requestedLengthUnit,
-    EnergyUnit const requestedEnergyUnit,
-    ChargeUnit const requestedChargeUnit,
-    TemperatureUnit const requestedTemperatureUnit,
-    TimeUnit const requestedTimeUnit);
+typedef int ModelCreateFunction(ModelCreate * const modelCreate,
+                                LengthUnit const requestedLengthUnit,
+                                EnergyUnit const requestedEnergyUnit,
+                                ChargeUnit const requestedChargeUnit,
+                                TemperatureUnit const requestedTemperatureUnit,
+                                TimeUnit const requestedTimeUnit);
 
-typedef int ModelDriverCreateFunction(
-    ModelDriverCreate * const modelDriverCreate,
-    LengthUnit const requestedLengthUnit,
-    EnergyUnit const requestedEnergyUnit,
-    ChargeUnit const requestedChargeUnit,
-    TemperatureUnit const requestedTemperatureUnit,
-    TimeUnit const requestedTimeUnit);
+typedef int
+ModelDriverCreateFunction(ModelDriverCreate * const modelDriverCreate,
+                          LengthUnit const requestedLengthUnit,
+                          EnergyUnit const requestedEnergyUnit,
+                          ChargeUnit const requestedChargeUnit,
+                          TemperatureUnit const requestedTemperatureUnit,
+                          TimeUnit const requestedTimeUnit);
 
-typedef int ModelComputeArgumentsCreateFunction(
-    ModelCompute const * const,
-    ModelComputeArgumentsCreate * const);
+typedef int
+ModelComputeArgumentsCreateFunction(ModelCompute const * const,
+                                    ModelComputeArgumentsCreate * const);
 
-typedef int ModelComputeFunction(
-    ModelCompute const * const,
-    ModelComputeArguments const * const);
+typedef int ModelComputeFunction(ModelCompute const * const,
+                                 ModelComputeArguments const * const);
 
-typedef int GetNeighborListFunction(
-    void * const dataObject,
-    int const numberOfNeighborLists,
-    double const * const cutoffs,
-    int const neighborListIndex,
-    int const particleNumber,
-    int * const numberOfNeighbors,
-    int const ** const neighborsOfParticle);
+typedef int GetNeighborListFunction(void * const dataObject,
+                                    int const numberOfNeighborLists,
+                                    double const * const cutoffs,
+                                    int const neighborListIndex,
+                                    int const particleNumber,
+                                    int * const numberOfNeighbors,
+                                    int const ** const neighborsOfParticle);
 
-typedef int ProcessDEDrTermFunction(
-    void * const dataObject,
-    double const de,
-    double const r,
-    double const * const dx,
-    int const i,
-    int const j);
+typedef int ProcessDEDrTermFunction(void * const dataObject,
+                                    double const de,
+                                    double const r,
+                                    double const * const dx,
+                                    int const i,
+                                    int const j);
 
-typedef int ProcessD2EDr2TermFunction(
-    void * const dataObject,
-    double const de,
-    double const * const r,
-    double const * const dx,
-    int const * const i,
-    int const * const j);
+typedef int ProcessD2EDr2TermFunction(void * const dataObject,
+                                      double const de,
+                                      double const * const r,
+                                      double const * const dx,
+                                      int const * const i,
+                                      int const * const j);
 
 typedef int ModelRefreshFunction(ModelRefresh * const);
 
-typedef int ModelComputeArgumentsDestroyFunction(
-    ModelCompute const * const,
-    ModelComputeArgumentsDestroy * const);
+typedef int
+ModelComputeArgumentsDestroyFunction(ModelCompute const * const,
+                                     ModelComputeArgumentsDestroy * const);
 
 typedef int ModelDestroyFunction(ModelDestroy * const);
 

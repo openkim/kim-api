@@ -34,9 +34,9 @@
 #ifndef KIM_LOG_IMPLEMENTATION_HPP_
 #define KIM_LOG_IMPLEMENTATION_HPP_
 
-#include <string>
-#include <stack>
 #include <fstream>
+#include <stack>
+#include <string>
 
 #ifndef KIM_LOG_VERBOSITY_HPP_
 #include "KIM_LogVerbosity.hpp"
@@ -58,8 +58,10 @@ class LogImplementation
   void PushVerbosity(LogVerbosity const logVerbosity);
   void PopVerbosity();
 
-  void LogEntry(LogVerbosity const logVerbosity, std::string const & message,
-                int const lineNumber, std::string const & fileName) const;
+  void LogEntry(LogVerbosity const logVerbosity,
+                std::string const & message,
+                int const lineNumber,
+                std::string const & fileName) const;
 
  private:
   // do not allow copy constructor or operator=

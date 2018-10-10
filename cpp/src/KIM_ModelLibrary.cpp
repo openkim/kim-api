@@ -31,13 +31,13 @@
 //
 
 #include <iostream>
-#include <vector>
 #include <sstream>
+#include <vector>
 
 #include <dlfcn.h>
 
-#include "old_KIM_API_DIRS.h"
 #include "KIM_Configuration.hpp"
+#include "old_KIM_API_DIRS.h"
 
 #ifndef KIM_MODEL_LIBRARY_HPP_
 #include "KIM_ModelLibrary.hpp"
@@ -54,22 +54,23 @@
 namespace KIM
 {
 // log helpers
-#define SNUM( x ) static_cast<std::ostringstream &>(    \
-    std::ostringstream() << std::dec << x).str()
-#define SPTR( x ) static_cast<std::ostringstream &>(                    \
-    std::ostringstream() << static_cast<void const *>(x) ).str()
-#define SFUNCP( x ) static_cast<std::ostringstream &>(           \
-    std::ostringstream() << static_cast<Function **>(x)).str()
-#define SBOOL( x ) std::string((x ? "true" : "false"))
+#define SNUM(x) \
+  static_cast<std::ostringstream &>(std::ostringstream() << std::dec << x).str()
+#define SPTR(x)                                                      \
+  static_cast<std::ostringstream &>(std::ostringstream()             \
+                                    << static_cast<void const *>(x)) \
+      .str()
+#define SFUNCP(x)                                                   \
+  static_cast<std::ostringstream &>(std::ostringstream()            \
+                                    << static_cast<Function **>(x)) \
+      .str()
+#define SBOOL(x) std::string((x ? "true" : "false"))
 
 #include "KIM_ModelLibraryLogMacros.hpp"
-ModelLibrary::ModelLibrary(Log * const log) :
-    libraryHandle_(NULL),
-    log_(log)
+ModelLibrary::ModelLibrary(Log * const log) : libraryHandle_(NULL), log_(log)
 {
 #if DEBUG_VERBOSITY
-  std::string const callString = "ModelLibrary("
-      + SPTR(log) + ").";
+  std::string const callString = "ModelLibrary(" + SPTR(log) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -91,8 +92,8 @@ ModelLibrary::~ModelLibrary()
 int ModelLibrary::Open(bool const typeIsModel, std::string const & modelName)
 {
 #if DEBUG_VERBOSITY
-  std::string const callString = "Open("
-      + SBOOL(typeIsModel) + ", '" + modelName + "').";
+  std::string const callString
+      = "Open(" + SBOOL(typeIsModel) + ", '" + modelName + "').";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -108,17 +109,20 @@ int ModelLibrary::Open(bool const typeIsModel, std::string const & modelName)
   std::vector<std::string> item;
   bool accessible = findItem(
       (typeIsModel ? OLD_KIM::KIM_MODELS_DIR : OLD_KIM::KIM_MODEL_DRIVERS_DIR),
-      modelName_, &item, log_);
+      modelName_,
+      &item,
+      log_);
   if (!accessible)
   {
     LOG_ERROR("");
     LOG_DEBUG("Exit 1=" + callString);
     return true;  // cannot find modelName
   }
-  libraryPath_ = item[OLD_KIM::IE_DIR] + "/" + item[OLD_KIM::IE_NAME]
-      + "/" KIM_SHARED_MODULE_PREFIX  KIM_PROJECT_NAME "-"
-      + (typeIsModel ? KIM_MODEL_IDENTIFIER : KIM_MODEL_DRIVER_IDENTIFIER)
-      + KIM_SHARED_MODULE_SUFFIX;
+  libraryPath_
+      = item[OLD_KIM::IE_DIR] + "/" + item[OLD_KIM::IE_NAME]
+        + "/" KIM_SHARED_MODULE_PREFIX KIM_PROJECT_NAME "-"
+        + (typeIsModel ? KIM_MODEL_IDENTIFIER : KIM_MODEL_DRIVER_IDENTIFIER)
+        + KIM_SHARED_MODULE_SUFFIX;
 
   libraryHandle_ = dlopen(libraryPath_.c_str(), RTLD_NOW);
   if (libraryHandle_ == NULL)
@@ -162,8 +166,7 @@ int ModelLibrary::Close()
 int ModelLibrary::GetModelType(ITEM_TYPE * const modelType) const
 {
 #if DEBUG_VERBOSITY
-  std::string const callString = "GetModelType("
-      + SPTR(modelType) + ").";
+  std::string const callString = "GetModelType(" + SPTR(modelType) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -201,21 +204,20 @@ int ModelLibrary::GetModelType(ITEM_TYPE * const modelType) const
 }
 
 int ModelLibrary::GetModelCreateFunctionPointer(
-    LanguageName * const languageName,
-    Function ** const functionPointer) const
+    LanguageName * const languageName, Function ** const functionPointer) const
 {
 #if DEBUG_VERBOSITY
   std::string const callString = "GetModelCreateFunctionPointer("
-      + SPTR(languageName) + ", " + SFUNCP(functionPointer) + ").";
+                                 + SPTR(languageName) + ", "
+                                 + SFUNCP(functionPointer) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
   if (libraryHandle_ == NULL) return true;  // not open
 
   std::string languageSymbol(modelName_ + "_language");
-  char const * const languageNameString
-      = reinterpret_cast<char const *>(dlsym(libraryHandle_,
-                                             languageSymbol.c_str()));
+  char const * const languageNameString = reinterpret_cast<char const *>(
+      dlsym(libraryHandle_, languageSymbol.c_str()));
   if (languageNameString == NULL)
   {
     std::cout << dlerror() << std::endl;
@@ -228,9 +230,8 @@ int ModelLibrary::GetModelCreateFunctionPointer(
   }
 
   std::string createFunctionSymbol(modelName_ + "_create_pointer");
-  Function ** pointerToFunctionPointer
-      = reinterpret_cast<Function **>(dlsym(libraryHandle_,
-                                            createFunctionSymbol.c_str()));
+  Function ** pointerToFunctionPointer = reinterpret_cast<Function **>(
+      dlsym(libraryHandle_, createFunctionSymbol.c_str()));
 
   if (pointerToFunctionPointer == NULL)
   {
@@ -244,12 +245,12 @@ int ModelLibrary::GetModelCreateFunctionPointer(
   return false;
 }
 
-int ModelLibrary::GetNumberOfParameterFiles(int * const numberOfParameterFiles)
-    const
+int ModelLibrary::GetNumberOfParameterFiles(
+    int * const numberOfParameterFiles) const
 {
 #if DEBUG_VERBOSITY
-  std::string const callString = "GetNumberOfParameterFiles("
-      + SPTR(numberOfParameterFiles) + ").";
+  std::string const callString
+      = "GetNumberOfParameterFiles(" + SPTR(numberOfParameterFiles) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -279,9 +280,9 @@ int ModelLibrary::GetParameterFileString(
     unsigned char const ** const parameterFileString) const
 {
 #if DEBUG_VERBOSITY
-  std::string const callString = "GetParameterFileString("
-      + SNUM(index) + ", " + SPTR(parameterFileStringLength)
-      + ", " + SPTR(parameterFileString) + ").";
+  std::string const callString = "GetParameterFileString(" + SNUM(index) + ", "
+                                 + SPTR(parameterFileStringLength) + ", "
+                                 + SPTR(parameterFileString) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -302,7 +303,7 @@ int ModelLibrary::GetParameterFileString(
   }
 
   std::stringstream paramFileStringSymbol;
-  paramFileStringSymbol << "parameter_file_" << (index+1);
+  paramFileStringSymbol << "parameter_file_" << (index + 1);
   unsigned char const * const paramFileString
       = static_cast<unsigned char const *>(
           dlsym(libraryHandle_, paramFileStringSymbol.str().c_str()));
@@ -334,8 +335,8 @@ int ModelLibrary::GetParameterFileString(
 int ModelLibrary::GetModelDriverName(std::string * const modelDriverName) const
 {
 #if DEBUG_VERBOSITY
-  std::string const callString = "GetModelDriverName("
-      + SPTR(modelDriverName) + ").";
+  std::string const callString
+      = "GetModelDriverName(" + SPTR(modelDriverName) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -354,9 +355,8 @@ int ModelLibrary::GetModelDriverName(std::string * const modelDriverName) const
   }
 
   std::string modelDriverNameSymbol(modelName_ + "_driver_name");
-  char const * const modelDriverNameString
-      = static_cast<char const *>(
-          dlsym(libraryHandle_, modelDriverNameSymbol.c_str()));
+  char const * const modelDriverNameString = static_cast<char const *>(
+      dlsym(libraryHandle_, modelDriverNameSymbol.c_str()));
   if (modelDriverNameString == NULL)
   {
     std::cout << dlerror() << std::endl;
@@ -374,8 +374,8 @@ int ModelLibrary::GetModelCompiledWithVersion(
     std::string * const versionString) const
 {
 #if DEBUG_VERBOSITY
-  std::string const callString = "GetModelCompiledWithVersion("
-      + SPTR(versionString) + ").";
+  std::string const callString
+      = "GetModelCompiledWithVersion(" + SPTR(versionString) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -405,8 +405,7 @@ void ModelLibrary::LogEntry(LogVerbosity const logVerbosity,
                             int const lineNumber,
                             std::string const & fileName) const
 {
-  if (log_)
-    log_->LogEntry(logVerbosity, message, lineNumber, fileName);
+  if (log_) log_->LogEntry(logVerbosity, message, lineNumber, fileName);
 }
 
 }  // namespace KIM

@@ -41,10 +41,13 @@ namespace KIM
 namespace SEM_VER
 {
 void GetSemVer(std::string const ** const version);
-int IsLessThan(std::string const & versionA, std::string const & versionB,
+int IsLessThan(std::string const & versionA,
+               std::string const & versionB,
                int * const isLessThan);
-int ParseSemVer(std::string const & version, int * const major,
-                int * const minor, int * const patch,
+int ParseSemVer(std::string const & version,
+                int * const major,
+                int * const minor,
+                int * const patch,
                 std::string * const prerelease,
                 std::string * const buildMetadata);
 }  // namespace SEM_VER

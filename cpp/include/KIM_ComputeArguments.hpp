@@ -87,6 +87,7 @@ class ComputeArguments
   void PopLogVerbosity();
 
   friend class ModelImplementation;
+
  private:
   // do not allow copy constructor or operator=
   ComputeArguments(ComputeArguments const &);

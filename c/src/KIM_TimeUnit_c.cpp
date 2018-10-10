@@ -35,8 +35,7 @@
 #ifndef KIM_TIME_UNIT_HPP_
 #include "KIM_TimeUnit.hpp"
 #endif
-extern "C"
-{
+extern "C" {
 #ifndef KIM_TIME_UNIT_H_
 #include "KIM_TimeUnit.h"
 #endif
@@ -48,20 +47,19 @@ namespace
 KIM::TimeUnit makeTimeUnitCpp(KIM_TimeUnit const timeUnit)
 {
   KIM::TimeUnit const * const timeUnitCpp
-      = reinterpret_cast <KIM::TimeUnit const *>(&timeUnit);
+      = reinterpret_cast<KIM::TimeUnit const *>(&timeUnit);
   return *timeUnitCpp;
 }
 
 KIM_TimeUnit makeTimeUnitC(KIM::TimeUnit const timeUnit)
 {
   KIM_TimeUnit const * const timeUnitC
-      = reinterpret_cast <KIM_TimeUnit const *>(&timeUnit);
+      = reinterpret_cast<KIM_TimeUnit const *>(&timeUnit);
   return *timeUnitC;
 }
 }  // namespace
 
-extern "C"
-{
+extern "C" {
 KIM_TimeUnit KIM_TimeUnit_FromString(char const * const str)
 {
   return makeTimeUnitC(KIM::TimeUnit(std::string(str)));

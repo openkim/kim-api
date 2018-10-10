@@ -36,14 +36,14 @@
 #ifndef KIM_COMPUTE_ARGUMENT_NAME_INC_
 #define KIM_COMPUTE_ARGUMENT_NAME_INC_
 
-#define ID_numberOfParticles     0
-#define ID_particleSpeciesCodes  1
-#define ID_particleContributing  2
-#define ID_coordinates           3
-#define ID_partialEnergy         4
-#define ID_partialForces         5
+#define ID_numberOfParticles 0
+#define ID_particleSpeciesCodes 1
+#define ID_particleContributing 2
+#define ID_coordinates 3
+#define ID_partialEnergy 4
+#define ID_partialForces 5
 #define ID_partialParticleEnergy 6
-#define ID_partialVirial         7
+#define ID_partialVirial 7
 #define ID_partialParticleVirial 8
 
-#endif  /* KIM_COMPUTE_ARGUMENT_NAME_INC_ */
+#endif /* KIM_COMPUTE_ARGUMENT_NAME_INC_ */

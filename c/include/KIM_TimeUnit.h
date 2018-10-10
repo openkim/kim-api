@@ -60,4 +60,4 @@ extern KIM_TimeUnit const KIM_TIME_UNIT_s;
 void KIM_TIME_UNIT_GetNumberOfTimeUnits(int * const numberOfTimeUnits);
 int KIM_TIME_UNIT_GetTimeUnit(int const index, KIM_TimeUnit * const timeUnit);
 
-#endif  /* KIM_TIME_UNIT_H_ */
+#endif /* KIM_TIME_UNIT_H_ */

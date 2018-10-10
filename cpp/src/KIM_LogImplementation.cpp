@@ -31,11 +31,11 @@
 //
 
 
-#include <iostream>
-#include <iomanip>
-#include <string>
-#include <sstream>
 #include <cstring>
+#include <iomanip>
+#include <iostream>
+#include <sstream>
+#include <string>
 #include <time.h>
 
 #ifndef KIM_LOG_IMPLEMENTATION_HPP_
@@ -50,8 +50,10 @@
 #define LOG_FILE "kim.log"
 
 // log helper
-#define SPTR( x ) static_cast<std::ostringstream &>(                    \
-    std::ostringstream() << static_cast<void const *>(x) ).str()
+#define SPTR(x)                                                      \
+  static_cast<std::ostringstream &>(std::ostringstream()             \
+                                    << static_cast<void const *>(x)) \
+      .str()
 
 
 namespace KIM
@@ -63,17 +65,14 @@ LogVerbosity const defaultLogVerbosity(KIM_LOG_MAXIMUM_LEVEL);
 int Validate(LogVerbosity const logVerbosity)
 {
   int numberOfLogVerbosities;
-  LOG_VERBOSITY::GetNumberOfLogVerbosities(& numberOfLogVerbosities);
+  LOG_VERBOSITY::GetNumberOfLogVerbosities(&numberOfLogVerbosities);
 
   for (int i = 0; i < numberOfLogVerbosities; ++i)
   {
     LogVerbosity logVerb;
     LOG_VERBOSITY::GetLogVerbosity(i, &logVerb);
 
-    if (logVerbosity == logVerb)
-    {
-      return true;
-    }
+    if (logVerbosity == logVerb) { return true; }
   }
 
   return false;
@@ -87,26 +86,24 @@ int LogImplementation::Create(LogImplementation ** const logImplementation)
   std::stringstream ss;
   ss << "Log object created.  Default verbosity level is '"
      << defaultLogVerbosity.String() << "'.";
-  (*logImplementation)->LogEntry(LOG_VERBOSITY::information,
-                                 ss.str(),
-                                 __LINE__, __FILE__);
+  (*logImplementation)
+      ->LogEntry(LOG_VERBOSITY::information, ss.str(), __LINE__, __FILE__);
 
   return false;
 }
 
 void LogImplementation::Destroy(LogImplementation ** const logImplementation)
 {
-  (*logImplementation)->LogEntry(LOG_VERBOSITY::information,
-                                 "Log object destroyed.",
-                                 __LINE__, __FILE__);
+  (*logImplementation)
+      ->LogEntry(LOG_VERBOSITY::information,
+                 "Log object destroyed.",
+                 __LINE__,
+                 __FILE__);
   delete (*logImplementation);
   *logImplementation = NULL;
 }
 
-std::string const & LogImplementation::GetID() const
-{
-  return idString_;
-}
+std::string const & LogImplementation::GetID() const { return idString_; }
 
 namespace
 {
@@ -114,12 +111,9 @@ std::string SanitizeID(std::string const & id)
 {
   std::string idCopy = id;
   std::string::iterator itr;
-  for (itr=idCopy.begin(); itr != idCopy.end(); ++itr)
+  for (itr = idCopy.begin(); itr != idCopy.end(); ++itr)
   {
-    if (isspace(*itr))
-    {
-      *itr = '_';
-    }
+    if (isspace(*itr)) { *itr = '_'; }
     else if ('*' == *itr)
     {
       *itr = '_';
@@ -138,25 +132,22 @@ void LogImplementation::SetID(std::string const & id)
   std::stringstream tt;
   tt << "Log object renamed.  ID changed from '" << idString_ << "'.";
 
-  LogEntry(LOG_VERBOSITY::information, ss.str(),
-           __LINE__, __FILE__);
+  LogEntry(LOG_VERBOSITY::information, ss.str(), __LINE__, __FILE__);
 
   idString_ = sanitizedID;
 
-  LogEntry(LOG_VERBOSITY::information, tt.str(),
-           __LINE__, __FILE__);
+  LogEntry(LOG_VERBOSITY::information, tt.str(), __LINE__, __FILE__);
 }
 
 void LogImplementation::PushVerbosity(LogVerbosity const logVerbosity)
 {
   LogVerbosity logVerb(logVerbosity);
-  if (! Validate(logVerbosity)) logVerb = verbosity_.top();
+  if (!Validate(logVerbosity)) logVerb = verbosity_.top();
 
   std::stringstream ss;
   ss << "Log verbosity '" << logVerb.String() << "' pushed (on top of "
      << verbosity_.top().String() << ").";
-  LogEntry(LOG_VERBOSITY::information, ss.str(),
-           __LINE__, __FILE__);
+  LogEntry(LOG_VERBOSITY::information, ss.str(), __LINE__, __FILE__);
 
   verbosity_.push(logVerb);
 }
@@ -168,14 +159,10 @@ void LogImplementation::PopVerbosity()
      << "' popped, revealing '";
 
   verbosity_.pop();
-  if (verbosity_.empty())
-  {
-    verbosity_.push(defaultLogVerbosity);
-  }
+  if (verbosity_.empty()) { verbosity_.push(defaultLogVerbosity); }
 
   ss << verbosity_.top().String() << "'.";
-  LogEntry(LOG_VERBOSITY::information, ss.str(),
-           __LINE__, __FILE__);
+  LogEntry(LOG_VERBOSITY::information, ss.str(), __LINE__, __FILE__);
 }
 
 void LogImplementation::LogEntry(LogVerbosity const logVerbosity,
@@ -184,7 +171,7 @@ void LogImplementation::LogEntry(LogVerbosity const logVerbosity,
                                  std::string const & fileName) const
 {
   LogVerbosity logVerb(logVerbosity);
-  if (! Validate(logVerbosity)) logVerb = verbosity_.top();
+  if (!Validate(logVerbosity)) logVerb = verbosity_.top();
 
   if ((logVerb != LOG_VERBOSITY::silent) && (logVerb <= verbosity_.top()))
   {
@@ -194,8 +181,7 @@ void LogImplementation::LogEntry(LogVerbosity const logVerbosity,
     FILE * file = fopen(LOG_DIR "/" LOG_FILE, "a");
     if (file == NULL)
     {
-      std::cerr << "Unable to open " LOG_DIR "/" LOG_FILE " file."
-                << std::endl;
+      std::cerr << "Unable to open " LOG_DIR "/" LOG_FILE " file." << std::endl;
     }
     else
     {
@@ -221,9 +207,7 @@ LogImplementation::LogImplementation() :
   verbosity_.push(defaultLogVerbosity);
 }
 
-LogImplementation::~LogImplementation()
-{
-}
+LogImplementation::~LogImplementation() {}
 
 std::string LogImplementation::EntryString(std::string const & logVerbosity,
                                            std::string const & date,
@@ -244,24 +228,15 @@ std::string LogImplementation::EntryString(std::string const & logVerbosity,
   }
 
   std::stringstream ssPrefix;
-  ssPrefix << date << " * " << sequence
-           << " * "
-           << logVerbosity
-           << " * "
-           << idString
-           << " * "
-           << flName << ":" << lineNumberString
-           << " * ";
+  ssPrefix << date << " * " << sequence << " * " << logVerbosity << " * "
+           << idString << " * " << flName << ":" << lineNumberString << " * ";
   std::string const prefix(ssPrefix.str());
 
   std::string line;
   std::stringstream ssMessage(message);
   std::stringstream ss;
 
-  while (std::getline(ssMessage, line, '\n'))
-  {
-    ss << prefix << line << "\n";
-  }
+  while (std::getline(ssMessage, line, '\n')) { ss << prefix << line << "\n"; }
 
   return ss.str();
 }
@@ -276,10 +251,7 @@ std::string LogImplementation::GetTimeStamp() const
   strftime(date, 1023, "%Y-%m-%d:%H:%M:%S%Z", timeInfo);
 
   std::string dateString(date);
-  if (dateString == latestTimeStamp_)
-  {
-    ++sequence_;
-  }
+  if (dateString == latestTimeStamp_) { ++sequence_; }
   else
   {
     sequence_ = 0;

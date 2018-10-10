@@ -33,8 +33,7 @@
 #ifndef KIM_LOG_VERBOSITY_HPP_
 #include "KIM_LogVerbosity.hpp"
 #endif
-extern "C"
-{
+extern "C" {
 #ifndef KIM_LOG_VERBOSITY_H_
 #include "KIM_LogVerbosity.h"
 #endif
@@ -43,8 +42,7 @@ extern "C"
 #ifndef KIM_DATA_TYPE_HPP_
 #include "KIM_DataType.hpp"
 #endif
-extern "C"
-{
+extern "C" {
 #ifndef KIM_DATA_TYPE_H_
 #include "KIM_DataType.h"
 #endif
@@ -53,8 +51,7 @@ extern "C"
 #ifndef KIM_SPECIES_NAME_HPP_
 #include "KIM_SpeciesName.hpp"
 #endif
-extern "C"
-{
+extern "C" {
 #ifndef KIM_SPECIES_NAME_H_
 #include "KIM_SpeciesName.h"
 #endif
@@ -63,8 +60,7 @@ extern "C"
 #ifndef KIM_NUMBERING_HPP_
 #include "KIM_Numbering.hpp"
 #endif
-extern "C"
-{
+extern "C" {
 #ifndef KIM_NUMBERING_H_
 #include "KIM_Numbering.h"
 #endif
@@ -73,8 +69,7 @@ extern "C"
 #ifndef KIM_UNIT_SYSTEM_HPP_
 #include "KIM_UnitSystem.hpp"
 #endif
-extern "C"
-{
+extern "C" {
 #ifndef KIM_UNIT_SYSTEM_H_
 #include "KIM_UnitSystem.h"
 #endif
@@ -83,8 +78,7 @@ extern "C"
 #ifndef KIM_COMPUTE_ARGUMENTS_HPP_
 #include "KIM_ComputeArguments.hpp"
 #endif
-extern "C"
-{
+extern "C" {
 #ifndef KIM_COMPUTE_ARGUMENTS_H_
 #include "KIM_ComputeArguments.h"
 #endif
@@ -93,8 +87,7 @@ extern "C"
 #ifndef KIM_MODEL_HPP_
 #include "KIM_Model.hpp"
 #endif
-extern "C"
-{
+extern "C" {
 #ifndef KIM_MODEL_H_
 #include "KIM_Model.h"
 #endif
@@ -111,13 +104,12 @@ struct KIM_Model
   void * p;
 };
 
-#define CONVERT_POINTER KIM::Model * pModel     \
-  = reinterpret_cast<KIM::Model *>(model->p)
+#define CONVERT_POINTER \
+  KIM::Model * pModel = reinterpret_cast<KIM::Model *>(model->p)
 
 namespace
 {
-KIM_DataType
-makeDataTypeC(KIM::DataType const dataType)
+KIM_DataType makeDataTypeC(KIM::DataType const dataType)
 {
   KIM_DataType typ;
   KIM_DataType * pTyp = (KIM_DataType *) &dataType;
@@ -167,8 +159,7 @@ KIM::LogVerbosity makeLogVerbosityCpp(KIM_LogVerbosity logVerbosity)
 }  // namespace
 
 
-extern "C"
-{
+extern "C" {
 int KIM_Model_Create(KIM_Numbering const numbering,
                      KIM_LengthUnit const requestedLengthUnit,
                      KIM_EnergyUnit const requestedEnergyUnit,
@@ -181,20 +172,16 @@ int KIM_Model_Create(KIM_Numbering const numbering,
 {
   std::string modelNameC(modelName);
   KIM::Model * pModel;
-  int err = KIM::Model::Create(
-      makeNumberingCpp(numbering),
-      makeLengthUnitCpp(requestedLengthUnit),
-      makeEnergyUnitCpp(requestedEnergyUnit),
-      makeChargeUnitCpp(requestedChargeUnit),
-      makeTemperatureUnitCpp(requestedTemperatureUnit),
-      makeTimeUnitCpp(requestedTimeUnit),
-      modelNameC,
-      requestedUnitsAccepted,
-      &pModel);
-  if (err)
-  {
-    return true;
-  }
+  int err = KIM::Model::Create(makeNumberingCpp(numbering),
+                               makeLengthUnitCpp(requestedLengthUnit),
+                               makeEnergyUnitCpp(requestedEnergyUnit),
+                               makeChargeUnitCpp(requestedChargeUnit),
+                               makeTemperatureUnitCpp(requestedTemperatureUnit),
+                               makeTimeUnitCpp(requestedTimeUnit),
+                               modelNameC,
+                               requestedUnitsAccepted,
+                               &pModel);
+  if (err) { return true; }
   else
   {
     (*model) = new KIM_Model;
@@ -243,12 +230,11 @@ void KIM_Model_GetUnits(KIM_Model const * const model,
 {
   CONVERT_POINTER;
 
-  pModel->GetUnits(
-      reinterpret_cast<KIM::LengthUnit *>(lengthUnit),
-      reinterpret_cast<KIM::EnergyUnit *>(energyUnit),
-      reinterpret_cast<KIM::ChargeUnit *>(chargeUnit),
-      reinterpret_cast<KIM::TemperatureUnit *>(temperatureUnit),
-      reinterpret_cast<KIM::TimeUnit *>(timeUnit));
+  pModel->GetUnits(reinterpret_cast<KIM::LengthUnit *>(lengthUnit),
+                   reinterpret_cast<KIM::EnergyUnit *>(energyUnit),
+                   reinterpret_cast<KIM::ChargeUnit *>(chargeUnit),
+                   reinterpret_cast<KIM::TemperatureUnit *>(temperatureUnit),
+                   reinterpret_cast<KIM::TimeUnit *>(timeUnit));
 }
 
 int KIM_Model_ComputeArgumentsCreate(
@@ -260,10 +246,7 @@ int KIM_Model_ComputeArgumentsCreate(
   KIM::ComputeArguments * pComputeArguments;
 
   int err = pModel->ComputeArgumentsCreate(&pComputeArguments);
-  if (err)
-  {
-    return true;
-  }
+  if (err) { return true; }
   else
   {
     (*computeArguments) = new KIM_ComputeArguments;
@@ -279,17 +262,13 @@ int KIM_Model_ComputeArgumentsDestroy(
   CONVERT_POINTER;
 
   KIM::ComputeArguments * pComputeArguments
-      = reinterpret_cast<KIM::ComputeArguments *>
-      ((*computeArguments)->p);
+      = reinterpret_cast<KIM::ComputeArguments *>((*computeArguments)->p);
 
   int err = pModel->ComputeArgumentsDestroy(&pComputeArguments);
-  if (err)
-  {
-    return true;
-  }
+  if (err) { return true; }
   else
   {
-    delete(*computeArguments);
+    delete (*computeArguments);
     *computeArguments = NULL;
     return false;
   }
@@ -320,8 +299,8 @@ int KIM_Model_GetSpeciesSupportAndCode(KIM_Model const * const model,
 {
   CONVERT_POINTER;
 
-  return pModel->GetSpeciesSupportAndCode(makeSpecNameCpp(speciesName),
-                                          speciesIsSupported, code);
+  return pModel->GetSpeciesSupportAndCode(
+      makeSpecNameCpp(speciesName), speciesIsSupported, code);
 }
 
 void KIM_Model_GetNumberOfParameters(KIM_Model const * const model,
@@ -332,10 +311,12 @@ void KIM_Model_GetNumberOfParameters(KIM_Model const * const model,
   pModel->GetNumberOfParameters(numberOfParameters);
 }
 
-int KIM_Model_GetParameterMetadata(
-    KIM_Model const * const model, int const parameterIndex,
-    KIM_DataType * const dataType, int * const extent,
-    char const ** const name, char const ** const description)
+int KIM_Model_GetParameterMetadata(KIM_Model const * const model,
+                                   int const parameterIndex,
+                                   KIM_DataType * const dataType,
+                                   int * const extent,
+                                   char const ** const name,
+                                   char const ** const description)
 {
   CONVERT_POINTER;
   KIM::DataType typ;
@@ -360,9 +341,8 @@ int KIM_Model_GetParameterMetadata(
   else
     ppStrDesc = &pStrDesc;
 
-  int error
-      = pModel->GetParameterMetadata(parameterIndex, pTyp, extent, ppStrName,
-                                     ppStrDesc);
+  int error = pModel->GetParameterMetadata(
+      parameterIndex, pTyp, extent, ppStrName, ppStrDesc);
 
   if (error)
     return true;

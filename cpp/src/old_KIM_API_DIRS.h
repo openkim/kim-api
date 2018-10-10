@@ -41,27 +41,26 @@
 
 namespace OLD_KIM
 {
+enum DirectoryPathType { KIM_MODEL_DRIVERS_DIR, KIM_MODELS_DIR };
 
-enum DirectoryPathType
-{
-   KIM_MODEL_DRIVERS_DIR,
-   KIM_MODELS_DIR
-};
-
-bool findItem(DirectoryPathType type, std::string const& name,
-              std::vector<std::string>* const Item, KIM::Log * const log);
+bool findItem(DirectoryPathType type,
+              std::string const & name,
+              std::vector<std::string> * const Item,
+              KIM::Log * const log);
 
 // needed by collection-info
 std::vector<std::string> getConfigFileName();
-std::string pushEnvDirs(DirectoryPathType type, std::list<std::pair<std::string, std::string> >* const lst);
+std::string
+pushEnvDirs(DirectoryPathType type,
+            std::list<std::pair<std::string, std::string> > * const lst);
 std::string getSystemLibraryFileName();
 std::vector<std::string> getSystemDirs();
 std::vector<std::string> getUserDirs(KIM::Log * const log);
-enum GET_ITEMS_ENTRIES {IE_COLLECTION, IE_NAME, IE_DIR, IE_VER};
+enum GET_ITEMS_ENTRIES { IE_COLLECTION, IE_NAME, IE_DIR, IE_VER };
 void getAvailableItems(DirectoryPathType type,
-                       std::list<std::vector<std::string> > &list,
+                       std::list<std::vector<std::string> > & list,
                        KIM::Log * const log);
 
-}
+}  // namespace OLD_KIM
 
 #endif /* KIMHDR_OLD_KIM_API_DIRS_H */

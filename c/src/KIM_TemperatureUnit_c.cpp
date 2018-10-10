@@ -35,8 +35,7 @@
 #ifndef KIM_TEMPERATURE_UNIT_HPP_
 #include "KIM_TemperatureUnit.hpp"
 #endif
-extern "C"
-{
+extern "C" {
 #ifndef KIM_TEMPERATURE_UNIT_H_
 #include "KIM_TemperatureUnit.h"
 #endif
@@ -45,25 +44,24 @@ extern "C"
 
 namespace
 {
-KIM::TemperatureUnit makeTemperatureUnitCpp(
-    KIM_TemperatureUnit const temperatureUnit)
+KIM::TemperatureUnit
+makeTemperatureUnitCpp(KIM_TemperatureUnit const temperatureUnit)
 {
   KIM::TemperatureUnit const * const temperatureUnitCpp
-      = reinterpret_cast <KIM::TemperatureUnit const *>(&temperatureUnit);
+      = reinterpret_cast<KIM::TemperatureUnit const *>(&temperatureUnit);
   return *temperatureUnitCpp;
 }
 
-KIM_TemperatureUnit makeTemperatureUnitC(
-    KIM::TemperatureUnit const temperatureUnit)
+KIM_TemperatureUnit
+makeTemperatureUnitC(KIM::TemperatureUnit const temperatureUnit)
 {
   KIM_TemperatureUnit const * const temperatureUnitC
-      = reinterpret_cast <KIM_TemperatureUnit const *>(&temperatureUnit);
+      = reinterpret_cast<KIM_TemperatureUnit const *>(&temperatureUnit);
   return *temperatureUnitC;
 }
 }  // namespace
 
-extern "C"
-{
+extern "C" {
 KIM_TemperatureUnit KIM_TemperatureUnit_FromString(char const * const str)
 {
   return makeTemperatureUnitC(KIM::TemperatureUnit(std::string(str)));
@@ -81,8 +79,8 @@ int KIM_TemperatureUnit_NotEqual(KIM_TemperatureUnit const left,
   return (!KIM_TemperatureUnit_Equal(left, right));
 }
 
-char const * KIM_TemperatureUnit_ToString(
-    KIM_TemperatureUnit const temperatureUnit)
+char const *
+KIM_TemperatureUnit_ToString(KIM_TemperatureUnit const temperatureUnit)
 {
   return makeTemperatureUnitCpp(temperatureUnit).String().c_str();
 }
@@ -98,12 +96,11 @@ void KIM_TEMPERATURE_UNIT_GetNumberOfTemperatureUnits(
 }
 
 int KIM_TEMPERATURE_UNIT_GetTemperatureUnit(
-    int const index,
-    KIM_TemperatureUnit * const temperatureUnit)
+    int const index, KIM_TemperatureUnit * const temperatureUnit)
 {
   KIM::TemperatureUnit temperatureUnitCpp;
-  int error = KIM::TEMPERATURE_UNIT::GetTemperatureUnit(index,
-                                                        &temperatureUnitCpp);
+  int error
+      = KIM::TEMPERATURE_UNIT::GetTemperatureUnit(index, &temperatureUnitCpp);
   if (error) return error;
   *temperatureUnit = makeTemperatureUnitC(temperatureUnitCpp);
   return false;

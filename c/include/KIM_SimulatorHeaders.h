@@ -80,4 +80,4 @@
 #include "KIM_SupportStatus.h"
 #endif
 
-#endif  /* KIM_SIMULATOR_HEADERS_H_ */
+#endif /* KIM_SIMULATOR_HEADERS_H_ */

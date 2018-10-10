@@ -30,21 +30,21 @@
 // Release: This file is part of the kim-api.git repository.
 //
 
-#include <iostream>
-#include <string>
-#include <list>
-#include <vector>
+#include "KIM_Configuration.hpp"
+#include "old_KIM_API_DIRS.h"
+#include <cstdio>
 #include <cstring>
 #include <dlfcn.h>
-#include <cstdio>
-#include "old_KIM_API_DIRS.h"
-#include "KIM_Configuration.hpp"
+#include <iostream>
+#include <list>
+#include <string>
+#include <vector>
 using namespace OLD_KIM;
 
 void usage(std::string name)
 {
   size_t beg = name.find_last_of("/");
-  if (beg != std::string::npos) name = name.substr(beg+1, std::string::npos);
+  if (beg != std::string::npos) name = name.substr(beg + 1, std::string::npos);
 
   // Follows docopt.org format
   std::cerr << "Usage:\n"
@@ -57,11 +57,11 @@ void usage(std::string name)
             << "<simulator-model-name> "
             << "(metadata-file | <parameter-file-index>) "
             << "(data | name)\n";
-      // note: this interface is likely to change in future kim-api releases
-      }
+  // note: this interface is likely to change in future kim-api releases
+}
 
 
-int main(int argc, char* argv[])
+int main(int argc, char * argv[])
 {
   if ((argc < 2) || (argc >= 5))
   {
@@ -129,26 +129,33 @@ int main(int argc, char* argv[])
   {
     std::string libFileName
         = item[IE_DIR] + "/" + item[IE_NAME]
-        +  "/" KIM_SHARED_MODULE_PREFIX KIM_PROJECT_NAME "-" KIM_MODEL_IDENTIFIER KIM_SHARED_MODULE_SUFFIX;
+          + "/" KIM_SHARED_MODULE_PREFIX KIM_PROJECT_NAME
+            "-" KIM_MODEL_IDENTIFIER KIM_SHARED_MODULE_SUFFIX;
     model_lib_handle = dlopen(libFileName.c_str(), RTLD_NOW);
   }
-  if(!accessible)
+  if (!accessible)
   {
-    std::cout<< "* Error: The Model shared library file is not readable for Model name: '" << modelname << "'" <<std::endl;
-    std::cout<<dlerror()<<std::endl;
+    std::cout << "* Error: The Model shared library file is not readable for "
+                 "Model name: '"
+              << modelname << "'" << std::endl;
+    std::cout << dlerror() << std::endl;
     return 1;
   }
-  else if(NULL == model_lib_handle) {
-    std::cout<< "* Error: A problem occurred with the Model shared library file for Model name: '" << modelname << "'" <<std::endl;
-    std::cout<<dlerror()<<std::endl;
+  else if (NULL == model_lib_handle)
+  {
+    std::cout << "* Error: A problem occurred with the Model shared library "
+                 "file for Model name: '"
+              << modelname << "'" << std::endl;
+    std::cout << dlerror() << std::endl;
     return 2;
   }
 
   char const * itemType
-      = (char const *) dlsym(model_lib_handle,"kim_item_type");
-  const char *dlsym_error = dlerror();
-  if (dlsym_error) {
-    std::cout << "* Error: Cannot load symbol: " << dlsym_error <<std::endl;
+      = (char const *) dlsym(model_lib_handle, "kim_item_type");
+  const char * dlsym_error = dlerror();
+  if (dlsym_error)
+  {
+    std::cout << "* Error: Cannot load symbol: " << dlsym_error << std::endl;
     dlclose(model_lib_handle);
     return 3;
   }
@@ -169,7 +176,7 @@ int main(int argc, char* argv[])
 
   if (std::string(itemType) != "simulator-model")
   {
-    std::cout << "* Error: not an simulator model" <<std::endl;
+    std::cout << "* Error: not an simulator model" << std::endl;
     dlclose(model_lib_handle);
     return 4;
   }
@@ -181,8 +188,10 @@ int main(int argc, char* argv[])
       char const * const namePointer
           = (char const *) dlsym(model_lib_handle, symbol.c_str());
       dlsym_error = dlerror();
-      if (dlsym_error) {
-        std::cout << "* Error: Cannot load symbol: " << dlsym_error <<std::endl;
+      if (dlsym_error)
+      {
+        std::cout << "* Error: Cannot load symbol: " << dlsym_error
+                  << std::endl;
         dlclose(model_lib_handle);
         return 5;
       }
@@ -196,8 +205,10 @@ int main(int argc, char* argv[])
       unsigned char const * const filePointer
           = (unsigned char const *) dlsym(model_lib_handle, symbol.c_str());
       dlsym_error = dlerror();
-      if (dlsym_error) {
-        std::cout << "* Error: Cannot load symbol: " << dlsym_error <<std::endl;
+      if (dlsym_error)
+      {
+        std::cout << "* Error: Cannot load symbol: " << dlsym_error
+                  << std::endl;
         dlclose(model_lib_handle);
         return 6;
       }
@@ -207,8 +218,10 @@ int main(int argc, char* argv[])
         unsigned int const * fileLength
             = (unsigned int const *) dlsym(model_lib_handle, symbol.c_str());
         dlsym_error = dlerror();
-        if (dlsym_error) {
-          std::cout << "* Error: Cannot load symbol: " << dlsym_error <<std::endl;
+        if (dlsym_error)
+        {
+          std::cout << "* Error: Cannot load symbol: " << dlsym_error
+                    << std::endl;
           dlclose(model_lib_handle);
           return 7;
         }
@@ -221,11 +234,11 @@ int main(int argc, char* argv[])
   }
   else
   {
-    int const * number
-        = (int const *) dlsym(model_lib_handle, symbol.c_str());
+    int const * number = (int const *) dlsym(model_lib_handle, symbol.c_str());
     dlsym_error = dlerror();
-    if (dlsym_error) {
-      std::cout << "* Error: Cannot load symbol: " << dlsym_error <<std::endl;
+    if (dlsym_error)
+    {
+      std::cout << "* Error: Cannot load symbol: " << dlsym_error << std::endl;
       dlclose(model_lib_handle);
       return 8;
     }

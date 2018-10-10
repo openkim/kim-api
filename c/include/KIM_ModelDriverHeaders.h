@@ -106,4 +106,4 @@
 #include "KIM_ModelDestroy.h"
 #endif
 
-#endif  /* KIM_MODEL_DRIVER_HEADERS_H_ */
+#endif /* KIM_MODEL_DRIVER_HEADERS_H_ */

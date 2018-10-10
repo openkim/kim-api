@@ -30,14 +30,14 @@
 // Release: This file is part of the kim-api.git repository.
 //
 
-#include <iostream>
-#include <string>
-#include <list>
-#include <vector>
-#include <cstring>
 #include "KIM_Log.hpp"
 #include "KIM_LogVerbosity.hpp"
 #include "old_KIM_API_DIRS.h"
+#include <cstring>
+#include <iostream>
+#include <list>
+#include <string>
+#include <vector>
 using namespace OLD_KIM;
 
 // TODO add KIM_API_V2_CMAKE_PREFIX_DIR environment var.
@@ -45,7 +45,7 @@ using namespace OLD_KIM;
 void usage(std::string name)
 {
   size_t beg = name.find_last_of("/");
-  if (beg != std::string::npos) name = name.substr(beg+1, std::string::npos);
+  if (beg != std::string::npos) name = name.substr(beg + 1, std::string::npos);
 
   // Follows docopt.org format
   std::cerr << "Usage:\n"
@@ -64,21 +64,20 @@ class collectionsInfo
   collectionsInfo() {};
   ~collectionsInfo() {};
 
-  enum ENV_OPTIONS {E_ENV, E_MODELS, E_MODEL_DRIVERS};
+  enum ENV_OPTIONS { E_ENV, E_MODELS, E_MODEL_DRIVERS };
   void env(ENV_OPTIONS const opt);
 
-  enum CONFIG_FILE_OPTIONS {CF_ENV, CF_NAME, CF_MODELS, CF_MODEL_DRIVERS};
+  enum CONFIG_FILE_OPTIONS { CF_ENV, CF_NAME, CF_MODELS, CF_MODEL_DRIVERS };
   void configFile(CONFIG_FILE_OPTIONS const opt);
 
-  void models(bool const list_all, std::string const& name,
-              KIM::Log * log);
+  void models(bool const list_all, std::string const & name, KIM::Log * log);
 
-  void drivers(bool const list_all, std::string const& name,
-               KIM::Log * log);
+  void drivers(bool const list_all, std::string const & name, KIM::Log * log);
+
  private:
-  void listItems(
-      std::list<std::vector<std::string> > const& items,
-      bool const list_all, std::string const& names);
+  void listItems(std::list<std::vector<std::string> > const & items,
+                 bool const list_all,
+                 std::string const & names);
 };
 
 void collectionsInfo::env(ENV_OPTIONS const opt)
@@ -97,19 +96,19 @@ void collectionsInfo::env(ENV_OPTIONS const opt)
     case E_MODELS:
       pushEnvDirs(KIM_MODELS_DIR, &lst);
 
-      for (std::list<std::pair<std::string, std::string> >::const_iterator itr = lst.begin();
-           itr != lst.end(); ++itr)
-      {
-        std::cout << itr->second << std::endl;
-      }
+      for (std::list<std::pair<std::string, std::string> >::const_iterator itr
+           = lst.begin();
+           itr != lst.end();
+           ++itr)
+      { std::cout << itr->second << std::endl; }
       break;
     case E_MODEL_DRIVERS:
       pushEnvDirs(KIM_MODEL_DRIVERS_DIR, &lst);
-           for (std::list<std::pair<std::string, std::string> >::const_iterator itr = lst.begin();
-           itr != lst.end(); ++itr)
-      {
-        std::cout << itr->second << std::endl;
-      }
+      for (std::list<std::pair<std::string, std::string> >::const_iterator itr
+           = lst.begin();
+           itr != lst.end();
+           ++itr)
+      { std::cout << itr->second << std::endl; }
       break;
   }
 }
@@ -143,7 +142,8 @@ void collectionsInfo::configFile(CONFIG_FILE_OPTIONS const opt)
   }
 }
 
-void collectionsInfo::models(bool const list_all, std::string const& name,
+void collectionsInfo::models(bool const list_all,
+                             std::string const & name,
                              KIM::Log * log)
 {
   std::list<std::vector<std::string> > items;
@@ -151,7 +151,8 @@ void collectionsInfo::models(bool const list_all, std::string const& name,
   listItems(items, list_all, name);
 }
 
-void collectionsInfo::drivers(bool list_all, std::string const& name,
+void collectionsInfo::drivers(bool list_all,
+                              std::string const & name,
                               KIM::Log * log)
 {
   std::list<std::vector<std::string> > items;
@@ -160,27 +161,24 @@ void collectionsInfo::drivers(bool list_all, std::string const& name,
 }
 
 void collectionsInfo::listItems(
-    std::list<std::vector<std::string> > const& items,
-    bool const list_all, std::string const& name)
+    std::list<std::vector<std::string> > const & items,
+    bool const list_all,
+    std::string const & name)
 {
   std::list<std::vector<std::string> >::const_iterator itr;
   for (itr = items.begin(); itr != items.end(); ++itr)
   {
     if (list_all)
     {
-      std::cout << (*itr)[IE_COLLECTION] << " "
-                << (*itr)[IE_NAME] << " "
-                << (*itr)[IE_DIR] << " "
-                << (*itr)[IE_VER] << std::endl;
+      std::cout << (*itr)[IE_COLLECTION] << " " << (*itr)[IE_NAME] << " "
+                << (*itr)[IE_DIR] << " " << (*itr)[IE_VER] << std::endl;
     }
     else
     {
       if (name == (*itr)[1])
       {
-        std::cout << (*itr)[IE_COLLECTION] << " "
-                  << (*itr)[IE_NAME] << " "
-                  << (*itr)[IE_DIR] << " "
-                  << (*itr)[IE_VER] << std::endl;
+        std::cout << (*itr)[IE_COLLECTION] << " " << (*itr)[IE_NAME] << " "
+                  << (*itr)[IE_DIR] << " " << (*itr)[IE_VER] << std::endl;
         break;
       }
     }
@@ -188,25 +186,19 @@ void collectionsInfo::listItems(
 }
 
 
-int processEnv(int argc, char* argv[]);
-int processConfigFile(int argc, char* argv[]);
-int processSystem(int argc, char* argv[]);
-int processItems(int argc, char* argv[]);
+int processEnv(int argc, char * argv[]);
+int processConfigFile(int argc, char * argv[]);
+int processSystem(int argc, char * argv[]);
+int processItems(int argc, char * argv[]);
 
-int main(int argc, char* argv[])
+int main(int argc, char * argv[])
 {
   int returnVal = 0;
 
-  if (argc < 2)
-  {
-    returnVal = 1;
-  }
+  if (argc < 2) { returnVal = 1; }
   else
   {
-    if (0 == strcmp("env", argv[1]))
-    {
-      returnVal = processEnv(argc, argv);
-    }
+    if (0 == strcmp("env", argv[1])) { returnVal = processEnv(argc, argv); }
     else if (0 == strcmp("config_file", argv[1]))
     {
       returnVal = processConfigFile(argc, argv);
@@ -215,8 +207,8 @@ int main(int argc, char* argv[])
     {
       returnVal = processSystem(argc, argv);
     }
-    else if ((0 == strcmp("models", argv[1])) ||
-             (0 == strcmp("model_drivers", argv[1])))
+    else if ((0 == strcmp("models", argv[1]))
+             || (0 == strcmp("model_drivers", argv[1])))
     {
       returnVal = processItems(argc, argv);
     }
@@ -231,20 +223,14 @@ int main(int argc, char* argv[])
 }
 
 
-int processEnv(int argc, char* argv[])
+int processEnv(int argc, char * argv[])
 {
   int returnVal = 0;
   collectionsInfo::ENV_OPTIONS opt;
-  if (argc != 3)
-  {
-    returnVal = 1;
-  }
+  if (argc != 3) { returnVal = 1; }
   else
   {
-    if (0 == strcmp("env", argv[2]))
-    {
-      opt = collectionsInfo::E_ENV;
-    }
+    if (0 == strcmp("env", argv[2])) { opt = collectionsInfo::E_ENV; }
     else if (0 == strcmp("models", argv[2]))
     {
       opt = collectionsInfo::E_MODELS;
@@ -268,20 +254,14 @@ int processEnv(int argc, char* argv[])
   return returnVal;
 }
 
-int processConfigFile(int argc, char* argv[])
+int processConfigFile(int argc, char * argv[])
 {
   int returnVal = 0;
   collectionsInfo::CONFIG_FILE_OPTIONS opt;
-  if (argc != 3)
-  {
-    returnVal = 1;
-  }
+  if (argc != 3) { returnVal = 1; }
   else
   {
-    if (0 == strcmp("env", argv[2]))
-    {
-      opt = collectionsInfo::CF_ENV;
-    }
+    if (0 == strcmp("env", argv[2])) { opt = collectionsInfo::CF_ENV; }
     else if (0 == strcmp("name", argv[2]))
     {
       opt = collectionsInfo::CF_NAME;
@@ -309,21 +289,16 @@ int processConfigFile(int argc, char* argv[])
   return returnVal;
 }
 
-int processSystem(int argc, char* argv[])
+int processSystem(int argc, char * argv[])
 {
   int returnVal = 0;
-  if (argc != 3)
-  {
-    returnVal = 1;
-  }
+  if (argc != 3) { returnVal = 1; }
   else
   {
     std::vector<std::string> systemDirs = getSystemDirs();
 
     if (0 == strcmp("library", argv[2]))
-    {
-      std::cout << getSystemLibraryFileName() << std::endl;
-    }
+    { std::cout << getSystemLibraryFileName() << std::endl; }
     else if (0 == strcmp("models", argv[2]))
     {
       std::cout << systemDirs[1] << std::endl;
@@ -341,7 +316,7 @@ int processSystem(int argc, char* argv[])
   return returnVal;
 }
 
-int processItems(int argc, char* argv[])
+int processItems(int argc, char * argv[])
 {
   int returnVal = 0;
   bool list_all = true;
@@ -352,17 +327,14 @@ int processItems(int argc, char* argv[])
   {
     if (0 == strcmp("--log", argv[2]))
     {
-      for (int i=3; i < argc; ++i) argv[i-1] = argv[i];
+      for (int i = 3; i < argc; ++i) argv[i - 1] = argv[i];
       argc--;
       KIM::Log::Create(&log);
       log->PushVerbosity(KIM::LOG_VERBOSITY::debug);
     }
   }
 
-  if ((argc == 3) || (argc > 4))
-  {
-    returnVal = 1;
-  }
+  if ((argc == 3) || (argc > 4)) { returnVal = 1; }
   else
   {
     if (argc == 4)
@@ -382,10 +354,7 @@ int processItems(int argc, char* argv[])
   if (0 == returnVal)
   {
     collectionsInfo col;
-    if (0 == strcmp("models", argv[1]))
-    {
-      col.models(list_all, name, log);
-    }
+    if (0 == strcmp("models", argv[1])) { col.models(list_all, name, log); }
     else
     {
       col.drivers(list_all, name, log);

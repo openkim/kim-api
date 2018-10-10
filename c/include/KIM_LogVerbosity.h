@@ -76,4 +76,4 @@ void KIM_LOG_VERBOSITY_GetNumberOfLogVerbosities(
 int KIM_LOG_VERBOSITY_GetLogVerbosity(int const index,
                                       KIM_LogVerbosity * const logVerbosity);
 
-#endif  /* KIM_LOG_VERBOSITY_H_ */
+#endif /* KIM_LOG_VERBOSITY_H_ */

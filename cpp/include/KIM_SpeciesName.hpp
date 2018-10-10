@@ -38,7 +38,6 @@
 
 namespace KIM
 {
-
 class SpeciesName
 {
  public:

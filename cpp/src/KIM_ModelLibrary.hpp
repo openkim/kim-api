@@ -56,8 +56,12 @@ class ModelLibrary
   ModelLibrary(Log * const log);
   ~ModelLibrary();
 
-  enum ITEM_TYPE {STAND_ALONE_MODEL, PARAMETERIZED_MODEL, SIMULATOR_MODEL,
-                  MODEL_DRIVER};
+  enum ITEM_TYPE {
+    STAND_ALONE_MODEL,
+    PARAMETERIZED_MODEL,
+    SIMULATOR_MODEL,
+    MODEL_DRIVER
+  };
 
   int Open(bool const typeIsModel, std::string const & modelName);
   int Close();
@@ -72,8 +76,10 @@ class ModelLibrary
   int GetModelDriverName(std::string * const modelDriverName) const;
   int GetModelCompiledWithVersion(std::string * const versionString) const;
 
-  void LogEntry(LogVerbosity const logVerbosity, std::string const & message,
-                int const lineNumber, std::string const & fileName) const;
+  void LogEntry(LogVerbosity const logVerbosity,
+                std::string const & message,
+                int const lineNumber,
+                std::string const & fileName) const;
 
  private:
   std::string modelName_;

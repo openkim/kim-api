@@ -106,7 +106,8 @@ void KIM_ModelDriverCreate_GetNumberOfParameterFiles(
 
 int KIM_ModelDriverCreate_GetParameterFileName(
     KIM_ModelDriverCreate * const modelDriverCreate,
-    int const index, char const ** const parameterFileName);
+    int const index,
+    char const ** const parameterFileName);
 
 int KIM_ModelDriverCreate_SetModelNumbering(
     KIM_ModelDriverCreate * const modelDriverCreate,
@@ -145,20 +146,24 @@ int KIM_ModelDriverCreate_SetComputePointer(
 
 int KIM_ModelDriverCreate_SetSpeciesCode(
     KIM_ModelDriverCreate * const modelDriverCreate,
-    KIM_SpeciesName const speciesName, int const code);
+    KIM_SpeciesName const speciesName,
+    int const code);
 
 int KIM_ModelDriverCreate_SetParameterPointerInteger(
     KIM_ModelDriverCreate * const modelDriverCreate,
-    int const extent, int * const ptr, char const * const name,
+    int const extent,
+    int * const ptr,
+    char const * const name,
     char const * const description);
 int KIM_ModelDriverCreate_SetParameterPointerDouble(
     KIM_ModelDriverCreate * const modelDriverCreate,
-    int const extent, double * const ptr, char const * const name,
+    int const extent,
+    double * const ptr,
+    char const * const name,
     char const * const description);
 
 void KIM_ModelDriverCreate_SetModelBufferPointer(
-    KIM_ModelDriverCreate * const modelDriverCreate,
-    void * const ptr);
+    KIM_ModelDriverCreate * const modelDriverCreate, void * const ptr);
 
 int KIM_ModelDriverCreate_SetUnits(
     KIM_ModelDriverCreate * const modelDriverCreate,
@@ -188,10 +193,12 @@ int KIM_ModelDriverCreate_ConvertUnit(
 
 void KIM_ModelDriverCreate_LogEntry(
     KIM_ModelDriverCreate const * const modelDriverCreate,
-    KIM_LogVerbosity const logVerbosity, char const * const message,
-    int const lineNumber, char const * const fileName);
+    KIM_LogVerbosity const logVerbosity,
+    char const * const message,
+    int const lineNumber,
+    char const * const fileName);
 
 char const * KIM_ModelDriverCreate_ToString(
     KIM_ModelDriverCreate const * const modelDriverCreate);
 
-#endif  /* KIM_MODEL_DRIVE_CREATE_H_ */
+#endif /* KIM_MODEL_DRIVE_CREATE_H_ */

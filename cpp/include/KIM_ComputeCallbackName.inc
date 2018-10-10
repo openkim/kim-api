@@ -36,8 +36,8 @@
 #ifndef KIM_COMPUTE_CALLBACK_NAME_INC_
 #define KIM_COMPUTE_CALLBACK_NAME_INC_
 
-#define ID_GetNeighborList   0
-#define ID_ProcessDEDrTerm   1
+#define ID_GetNeighborList 0
+#define ID_ProcessDEDrTerm 1
 #define ID_ProcessD2EDr2Term 2
 
-#endif  /* KIM_COMPUTE_CALLBACK_NAME_INC_ */
+#endif /* KIM_COMPUTE_CALLBACK_NAME_INC_ */

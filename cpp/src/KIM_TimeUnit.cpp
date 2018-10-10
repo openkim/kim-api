@@ -38,7 +38,6 @@
 
 namespace KIM
 {
-
 // Order doesn't matter as long as all values are unique
 namespace TIME_UNIT
 {
@@ -51,8 +50,7 @@ TimeUnit const s(ID_s);
 
 namespace
 {
-typedef std::map<TimeUnit const, std::string, TIME_UNIT::Comparator>
-StringMap;
+typedef std::map<TimeUnit const, std::string, TIME_UNIT::Comparator> StringMap;
 
 StringMap const GetStringMap()
 {
@@ -81,20 +79,20 @@ int GetTimeUnit(int const index, TimeUnit * const timeUnit)
   if ((index < 0) || (index >= numberOfTimeUnits)) return true;
 
   StringMap::const_iterator iter = timeUnitToString.begin();
-  for (int i=0; i<index; ++i) ++iter;
+  for (int i = 0; i < index; ++i) ++iter;
   *timeUnit = iter->first;
   return false;  // no error
 }
 }  // namespace TIME_UNIT
 
 // implementation of TimeUnit
-TimeUnit::TimeUnit() : timeUnitID(0){}
-TimeUnit::TimeUnit(int const id) : timeUnitID(id){}
+TimeUnit::TimeUnit() : timeUnitID(0) {}
+TimeUnit::TimeUnit(int const id) : timeUnitID(id) {}
 TimeUnit::TimeUnit(std::string const & str)
 {
   timeUnitID = -1;
   for (TIME_UNIT::StringMap::const_iterator iter
-           = TIME_UNIT::timeUnitToString.begin();
+       = TIME_UNIT::timeUnitToString.begin();
        iter != TIME_UNIT::timeUnitToString.end();
        ++iter)
   {
@@ -107,9 +105,13 @@ TimeUnit::TimeUnit(std::string const & str)
 }
 
 bool TimeUnit::operator==(TimeUnit const & rhs) const
-{return timeUnitID==rhs.timeUnitID;}
+{
+  return timeUnitID == rhs.timeUnitID;
+}
 bool TimeUnit::operator!=(TimeUnit const & rhs) const
-{return timeUnitID!=rhs.timeUnitID;}
+{
+  return timeUnitID != rhs.timeUnitID;
+}
 
 std::string const & TimeUnit::String() const
 {

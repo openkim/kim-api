@@ -51,8 +51,8 @@ int KIM_TemperatureUnit_Equal(KIM_TemperatureUnit const left,
                               KIM_TemperatureUnit const right);
 int KIM_TemperatureUnit_NotEqual(KIM_TemperatureUnit const left,
                                  KIM_TemperatureUnit const right);
-char const * KIM_TemperatureUnit_ToString(
-    KIM_TemperatureUnit const temperatureUnit);
+char const *
+KIM_TemperatureUnit_ToString(KIM_TemperatureUnit const temperatureUnit);
 
 extern KIM_TemperatureUnit const KIM_TEMPERATURE_UNIT_unused;
 extern KIM_TemperatureUnit const KIM_TEMPERATURE_UNIT_K;
@@ -60,7 +60,6 @@ extern KIM_TemperatureUnit const KIM_TEMPERATURE_UNIT_K;
 void KIM_TEMPERATURE_UNIT_GetNumberOfTemperatureUnits(
     int * const numberOfTemperatureUnits);
 int KIM_TEMPERATURE_UNIT_GetTemperatureUnit(
-    int const index,
-    KIM_TemperatureUnit * const temperatureUnit);
+    int const index, KIM_TemperatureUnit * const temperatureUnit);
 
-#endif  /* KIM_TEMPERATURE_UNIT_H_ */
+#endif /* KIM_TEMPERATURE_UNIT_H_ */

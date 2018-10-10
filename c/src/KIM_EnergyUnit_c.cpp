@@ -35,8 +35,7 @@
 #ifndef KIM_ENERGY_UNIT_HPP_
 #include "KIM_EnergyUnit.hpp"
 #endif
-extern "C"
-{
+extern "C" {
 #ifndef KIM_ENERGY_UNIT_H_
 #include "KIM_EnergyUnit.h"
 #endif
@@ -48,20 +47,19 @@ namespace
 KIM::EnergyUnit makeEnergyUnitCpp(KIM_EnergyUnit const energyUnit)
 {
   KIM::EnergyUnit const * const energyUnitCpp
-      = reinterpret_cast <KIM::EnergyUnit const *>(&energyUnit);
+      = reinterpret_cast<KIM::EnergyUnit const *>(&energyUnit);
   return *energyUnitCpp;
 }
 
 KIM_EnergyUnit makeEnergyUnitC(KIM::EnergyUnit const energyUnit)
 {
   KIM_EnergyUnit const * const energyUnitC
-      = reinterpret_cast <KIM_EnergyUnit const *>(&energyUnit);
+      = reinterpret_cast<KIM_EnergyUnit const *>(&energyUnit);
   return *energyUnitC;
 }
 }  // namespace
 
-extern "C"
-{
+extern "C" {
 KIM_EnergyUnit KIM_EnergyUnit_FromString(char const * const str)
 {
   return makeEnergyUnitC(KIM::EnergyUnit(std::string(str)));

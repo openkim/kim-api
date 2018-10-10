@@ -33,14 +33,14 @@
 
 #include <cstddef>
 
-extern "C"
-{
+extern "C" {
 char kim_item_type[] = "@KIM_API_SIMULATOR_MODEL_IDENTIFIER@";
 char metadata_file_name[] = "@MODEL_METADATA_FILE@";
+// clang-format off
 int number_of_parameter_files = @NUMBER_OF_PARAMETER_FILES@;
-@PARAM_FILE_NAMES@
-int (* @MODEL_NAME@_create_pointer)() = NULL;
+@PARAM_FILE_NAMES@ int (*@MODEL_NAME@_create_pointer)() = NULL;
 char @MODEL_NAME@_compiled_with_version[] = "@PROJECT_VERSION_STRING@";
 char @MODEL_NAME@_language[] = "cpp";
 char @MODEL_NAME@_driver_name[] = "@MODEL_DRIVER_NAME@";
+// clang-format on
 }

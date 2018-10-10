@@ -56,29 +56,25 @@ int ComputeArguments::GetCallbackSupportStatus(
 }
 
 int ComputeArguments::SetArgumentPointer(
-    ComputeArgumentName const computeArgumentName,
-    int const * const ptr)
+    ComputeArgumentName const computeArgumentName, int const * const ptr)
 {
   return pimpl->SetArgumentPointer(computeArgumentName, ptr);
 }
 
 int ComputeArguments::SetArgumentPointer(
-    ComputeArgumentName const computeArgumentName,
-    int * const ptr)
+    ComputeArgumentName const computeArgumentName, int * const ptr)
 {
   return pimpl->SetArgumentPointer(computeArgumentName, ptr);
 }
 
 int ComputeArguments::SetArgumentPointer(
-    ComputeArgumentName const computeArgumentName,
-    double const * const ptr)
+    ComputeArgumentName const computeArgumentName, double const * const ptr)
 {
   return pimpl->SetArgumentPointer(computeArgumentName, ptr);
 }
 
 int ComputeArguments::SetArgumentPointer(
-    ComputeArgumentName const computeArgumentName,
-    double * const ptr)
+    ComputeArgumentName const computeArgumentName, double * const ptr)
 {
   return pimpl->SetArgumentPointer(computeArgumentName, ptr);
 }
@@ -89,8 +85,8 @@ int ComputeArguments::SetCallbackPointer(
     Function * const fptr,
     void * const dataObject)
 {
-  return pimpl->SetCallbackPointer(computeCallbackName, languageName, fptr,
-                                   dataObject);
+  return pimpl->SetCallbackPointer(
+      computeCallbackName, languageName, fptr, dataObject);
 }
 
 void ComputeArguments::AreAllRequiredArgumentsAndCallbacksPresent(
@@ -109,10 +105,7 @@ void ComputeArguments::GetSimulatorBufferPointer(void ** const ptr) const
   pimpl->GetSimulatorBufferPointer(ptr);
 }
 
-std::string const & ComputeArguments::String() const
-{
-  return pimpl->String();
-}
+std::string const & ComputeArguments::String() const { return pimpl->String(); }
 
 void ComputeArguments::SetLogID(std::string const & logID)
 {
@@ -124,17 +117,10 @@ void ComputeArguments::PushLogVerbosity(LogVerbosity const logVerbosity)
   pimpl->PushLogVerbosity(logVerbosity);
 }
 
-void ComputeArguments::PopLogVerbosity()
-{
-  pimpl->PopLogVerbosity();
-}
+void ComputeArguments::PopLogVerbosity() { pimpl->PopLogVerbosity(); }
 
-ComputeArguments::ComputeArguments() : pimpl(NULL)
-{
-}
+ComputeArguments::ComputeArguments() : pimpl(NULL) {}
 
-ComputeArguments::~ComputeArguments()
-{
-}
+ComputeArguments::~ComputeArguments() {}
 
 }  // namespace KIM

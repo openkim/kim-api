@@ -34,8 +34,7 @@
 #ifndef KIM_LOG_VERBOSITY_HPP_
 #include "KIM_LogVerbosity.hpp"
 #endif
-extern "C"
-{
+extern "C" {
 #ifndef KIM_LOG_VERBOSITY_H_
 #include "KIM_LogVerbosity.h"
 #endif
@@ -44,8 +43,7 @@ extern "C"
 #ifndef KIM_MODEL_REFRESH_HPP_
 #include "KIM_ModelRefresh.hpp"
 #endif
-extern "C"
-{
+extern "C" {
 #ifndef KIM_MODEL_REFRESH_H_
 #include "KIM_ModelRefresh.h"
 #endif
@@ -57,8 +55,9 @@ struct KIM_ModelRefresh
   void * p;
 };
 
-#define CONVERT_POINTER KIM::ModelRefresh * pModelRefresh       \
-  = reinterpret_cast<KIM::ModelRefresh *>(modelRefresh->p)
+#define CONVERT_POINTER             \
+  KIM::ModelRefresh * pModelRefresh \
+      = reinterpret_cast<KIM::ModelRefresh *>(modelRefresh->p)
 
 namespace
 {
@@ -68,11 +67,9 @@ KIM::LogVerbosity makeLogVerbosityCpp(KIM_LogVerbosity const logVerbosity)
 }
 }  // namespace
 
-extern "C"
-{
+extern "C" {
 void KIM_ModelRefresh_SetInfluenceDistancePointer(
-    KIM_ModelRefresh * const modelRefresh,
-    double * const influenceDistance)
+    KIM_ModelRefresh * const modelRefresh, double * const influenceDistance)
 {
   CONVERT_POINTER;
 
@@ -94,27 +91,27 @@ void KIM_ModelRefresh_SetNeighborListPointers(
 }
 
 void KIM_ModelRefresh_GetModelBufferPointer(
-    KIM_ModelRefresh const * const modelRefresh,
-    void ** const ptr)
+    KIM_ModelRefresh const * const modelRefresh, void ** const ptr)
 {
   CONVERT_POINTER;
 
   pModelRefresh->GetModelBufferPointer(ptr);
 }
 
-void KIM_ModelRefresh_LogEntry(
-    KIM_ModelRefresh const * const modelRefresh,
-    KIM_LogVerbosity const logVerbosity, char const * const message,
-    int const lineNumber, char const * const fileName)
+void KIM_ModelRefresh_LogEntry(KIM_ModelRefresh const * const modelRefresh,
+                               KIM_LogVerbosity const logVerbosity,
+                               char const * const message,
+                               int const lineNumber,
+                               char const * const fileName)
 {
   CONVERT_POINTER;
 
-  pModelRefresh->LogEntry(makeLogVerbosityCpp(logVerbosity), message,
-                          lineNumber, fileName);
+  pModelRefresh->LogEntry(
+      makeLogVerbosityCpp(logVerbosity), message, lineNumber, fileName);
 }
 
-char const * KIM_ModelRefresh_ToString(
-    KIM_ModelRefresh const * const modelRefresh)
+char const *
+KIM_ModelRefresh_ToString(KIM_ModelRefresh const * const modelRefresh)
 {
   CONVERT_POINTER;
 

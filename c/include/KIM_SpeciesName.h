@@ -198,4 +198,4 @@ void KIM_SPECIES_NAME_GetNumberOfSpeciesNames(int * const numberOfSpeciesNames);
 int KIM_SPECIES_NAME_GetSpeciesName(int const index,
                                     KIM_SpeciesName * const speciesName);
 
-#endif  /* KIM_SPECIES_NAME_H_ */
+#endif /* KIM_SPECIES_NAME_H_ */

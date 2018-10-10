@@ -30,8 +30,8 @@
 // Release: This file is part of the kim-api.git repository.
 //
 
-#include <vector>
 #include <map>
+#include <vector>
 
 #ifndef KIM_COMPUTE_CALLBACK_NAME_HPP_
 #include "KIM_ComputeCallbackName.hpp"
@@ -39,7 +39,6 @@
 
 namespace KIM
 {
-
 // Order doesn't matter as long as all values are unique
 namespace COMPUTE_CALLBACK_NAME
 {
@@ -50,9 +49,10 @@ ComputeCallbackName const ProcessD2EDr2Term(ID_ProcessD2EDr2Term);
 
 namespace
 {
-typedef std::map<ComputeCallbackName const, std::string,
+typedef std::map<ComputeCallbackName const,
+                 std::string,
                  COMPUTE_CALLBACK_NAME::Comparator>
-StringMap;
+    StringMap;
 
 StringMap const GetStringMap()
 {
@@ -81,7 +81,7 @@ ComputeCallbackVector const GetComputeCallbackVector()
 }  // namespace
 // Used by KIM::ModelImplementation
 extern ComputeCallbackVector const requiredByAPI_ComputeCallbacks
-= GetComputeCallbackVector();
+    = GetComputeCallbackVector();
 
 
 void GetNumberOfComputeCallbackNames(int * const numberOfComputeCallbackNames)
@@ -97,7 +97,7 @@ int GetComputeCallbackName(int const index,
   if ((index < 0) || (index >= numberOfComputeCallbackNames)) return true;
 
   StringMap::const_iterator iter = computeCallbackNameToString.begin();
-  for (int i=0; i<index; ++i) ++iter;
+  for (int i = 0; i < index; ++i) ++iter;
   *computeCallbackName = iter->first;
   return false;  // no error
 }
@@ -105,15 +105,15 @@ int GetComputeCallbackName(int const index,
 
 // implementation of ComputeCallbackName
 ComputeCallbackName::ComputeCallbackName() : computeCallbackNameID(0) {}
-ComputeCallbackName::ComputeCallbackName(int const id)
-    : computeCallbackNameID(id)
+ComputeCallbackName::ComputeCallbackName(int const id) :
+    computeCallbackNameID(id)
 {
 }
 ComputeCallbackName::ComputeCallbackName(std::string const & str)
 {
   computeCallbackNameID = -1;
   for (COMPUTE_CALLBACK_NAME::StringMap::const_iterator iter
-           = COMPUTE_CALLBACK_NAME::computeCallbackNameToString.begin();
+       = COMPUTE_CALLBACK_NAME::computeCallbackNameToString.begin();
        iter != COMPUTE_CALLBACK_NAME::computeCallbackNameToString.end();
        ++iter)
   {
@@ -126,9 +126,13 @@ ComputeCallbackName::ComputeCallbackName(std::string const & str)
 }
 
 bool ComputeCallbackName::operator==(ComputeCallbackName const & rhs) const
-{return computeCallbackNameID == rhs.computeCallbackNameID;}
+{
+  return computeCallbackNameID == rhs.computeCallbackNameID;
+}
 bool ComputeCallbackName::operator!=(ComputeCallbackName const & rhs) const
-{return computeCallbackNameID != rhs.computeCallbackNameID;}
+{
+  return computeCallbackNameID != rhs.computeCallbackNameID;
+}
 
 std::string const & ComputeCallbackName::String() const
 {

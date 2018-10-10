@@ -37,10 +37,12 @@
 #define FATAL_VERBOSITY (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_FATAL_)
 #undef LOG_FATAL
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_FATAL_)
-#define LOG_FATAL(message)                                              \
-  KIM_LOGGER_FUNCTION_NAME(KIM_LOGGER_OBJECT_NAME,                      \
-                           KIM_LOG_VERBOSITY_fatal, message,            \
-                           __LINE__, __FILE__)
+#define LOG_FATAL(message)                          \
+  KIM_LOGGER_FUNCTION_NAME(KIM_LOGGER_OBJECT_NAME,  \
+                           KIM_LOG_VERBOSITY_fatal, \
+                           message,                 \
+                           __LINE__,                \
+                           __FILE__)
 #else
 #define LOG_FATAL(message)
 #endif
@@ -49,10 +51,12 @@
 #define ERROR_VERBOSITY (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_ERROR_)
 #undef LOG_ERROR
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_ERROR_)
-#define LOG_ERROR(message)                                              \
-  KIM_LOGGER_FUNCTION_NAME(KIM_LOGGER_OBJECT_NAME,                      \
-                           KIM_LOG_VERBOSITY_error, message,            \
-                           __LINE__, __FILE__)
+#define LOG_ERROR(message)                          \
+  KIM_LOGGER_FUNCTION_NAME(KIM_LOGGER_OBJECT_NAME,  \
+                           KIM_LOG_VERBOSITY_error, \
+                           message,                 \
+                           __LINE__,                \
+                           __FILE__)
 #else
 #define LOG_ERROR(message)
 #endif
@@ -61,22 +65,27 @@
 #define WARNING_VERBOSITY (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_WARNING_)
 #undef LOG_WARNING
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_WARNING_)
-#define LOG_WARNING(message)                                            \
-  KIM_LOGGER_FUNCTION_NAME(KIM_LOGGER_OBJECT_NAME,                      \
-                           KIM_LOG_VERBOSITY_warning, message,          \
-                           __LINE__, __FILE__)
+#define LOG_WARNING(message)                          \
+  KIM_LOGGER_FUNCTION_NAME(KIM_LOGGER_OBJECT_NAME,    \
+                           KIM_LOG_VERBOSITY_warning, \
+                           message,                   \
+                           __LINE__,                  \
+                           __FILE__)
 #else
 #define LOG_WARNING(message)
 #endif
 
 #undef INFORMATION_VERBOSITY
-#define INFORMATION_VERBOSITY (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_INFORMATION_)
+#define INFORMATION_VERBOSITY \
+  (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_INFORMATION_)
 #undef LOG_INFORMATION
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_INFORMATION_)
-#define LOG_INFORMATION(message)                                        \
-  KIM_LOGGER_FUNCTION_NAME(KIM_LOGGER_OBJECT_NAME,                      \
-                           KIM_LOG_VERBOSITY_information, message,      \
-                           __LINE__, __FILE__)
+#define LOG_INFORMATION(message)                          \
+  KIM_LOGGER_FUNCTION_NAME(KIM_LOGGER_OBJECT_NAME,        \
+                           KIM_LOG_VERBOSITY_information, \
+                           message,                       \
+                           __LINE__,                      \
+                           __FILE__)
 #else
 #define LOG_INFORMATION(message)
 #endif
@@ -85,10 +94,12 @@
 #define DEBUG_VERBOSITY (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_DEBUG_)
 #undef LOG_DEBUG
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_DEBUG_)
-#define LOG_DEBUG(message)                                              \
-  KIM_LOGGER_FUNCTION_NAME(KIM_LOGGER_OBJECT_NAME,                      \
-                           KIM_LOG_VERBOSITY_debug, message,            \
-                           __LINE__, __FILE__)
+#define LOG_DEBUG(message)                          \
+  KIM_LOGGER_FUNCTION_NAME(KIM_LOGGER_OBJECT_NAME,  \
+                           KIM_LOG_VERBOSITY_debug, \
+                           message,                 \
+                           __LINE__,                \
+                           __FILE__)
 #else
 #define LOG_DEBUG(message)
 #endif

@@ -31,11 +31,11 @@
 #ifndef LENNARD_JONES_612_IMPLEMENTATION_HPP_
 #define LENNARD_JONES_612_IMPLEMENTATION_HPP_
 
-#include <vector>
-#include <cmath>
 #include "KIM_LogMacros.hpp"
 #include "KIM_LogVerbosity.hpp"
 #include "LennardJones612.hpp"
+#include <cmath>
+#include <vector>
 
 #define DIMENSION 3
 #define ONE 1.0
@@ -56,16 +56,19 @@
 //==============================================================================
 
 // type declaration for get neighbor functions
-typedef int (GetNeighborFunction)(void const * const, int const,
-                                  int * const, int const ** const);
+typedef int(GetNeighborFunction)(void const * const,
+                                 int const,
+                                 int * const,
+                                 int const ** const);
 // type declaration for vector of constant dimension
 typedef double VectorOfSizeDIM[DIMENSION];
 typedef double VectorOfSizeSix[6];
 
 // helper routine declarations
-void AllocateAndInitialize2DArray(double**& arrayPtr, int const extentZero,
+void AllocateAndInitialize2DArray(double **& arrayPtr,
+                                  int const extentZero,
                                   int const extentOne);
-void Deallocate2DArray(double**& arrayPtr);
+void Deallocate2DArray(double **& arrayPtr);
 
 //==============================================================================
 //
@@ -88,12 +91,10 @@ class LennardJones612Implementation
   ~LennardJones612Implementation();  // no explicit Destroy() needed here
 
   int Refresh(KIM::ModelRefresh * const modelRefresh);
-  int Compute(
-      KIM::ModelCompute const * const modelCompute,
-      KIM::ModelComputeArguments const * const modelComputeArguments);
-  int ComputeArgumentsCreate(
-      KIM::ModelComputeArgumentsCreate * const modelComputeArgumentsCreate)
-      const;
+  int Compute(KIM::ModelCompute const * const modelCompute,
+              KIM::ModelComputeArguments const * const modelComputeArguments);
+  int ComputeArgumentsCreate(KIM::ModelComputeArgumentsCreate * const
+                                 modelComputeArgumentsCreate) const;
 
 
  private:
@@ -122,9 +123,9 @@ class LennardJones612Implementation
   //   Memory deallocated in destructor
   //   Data set in ReadParameterFile routines OR by KIM Simulator
   int shift_;
-  double* cutoffs_;
-  double* epsilons_;
-  double* sigmas_;
+  double * cutoffs_;
+  double * epsilons_;
+  double * sigmas_;
 
   // Mutable values that only change when Refresh() executes
   //   Set in Refresh (via SetRefreshMutableValues)
@@ -135,15 +136,15 @@ class LennardJones612Implementation
   //
   // LennardJones612Implementation: values (changed only by Refresh())
   double influenceDistance_;
-  double** cutoffsSq2D_;
+  double ** cutoffsSq2D_;
   int modelWillNotRequestNeighborsOfNoncontributingParticles_;
-  double** fourEpsilonSigma6_2D_;
-  double** fourEpsilonSigma12_2D_;
-  double** twentyFourEpsilonSigma6_2D_;
-  double** fortyEightEpsilonSigma12_2D_;
-  double** oneSixtyEightEpsilonSigma6_2D_;
-  double** sixTwentyFourEpsilonSigma12_2D_;
-  double** shifts2D_;
+  double ** fourEpsilonSigma6_2D_;
+  double ** fourEpsilonSigma12_2D_;
+  double ** twentyFourEpsilonSigma6_2D_;
+  double ** fortyEightEpsilonSigma12_2D_;
+  double ** oneSixtyEightEpsilonSigma6_2D_;
+  double ** sixTwentyFourEpsilonSigma12_2D_;
+  double ** shifts2D_;
 
 
   // Mutable values that can change with each call to Refresh() and Compute()
@@ -160,33 +161,33 @@ class LennardJones612Implementation
   // Related to constructor
   void AllocatePrivateParameterMemory();
   void AllocateParameterMemory();
-  static int OpenParameterFiles(
-      KIM::ModelDriverCreate * const modelDriverCreate,
-      int const numberParameterFiles,
-      FILE* parameterFilePointers[MAX_PARAMETER_FILES]);
+  static int
+  OpenParameterFiles(KIM::ModelDriverCreate * const modelDriverCreate,
+                     int const numberParameterFiles,
+                     FILE * parameterFilePointers[MAX_PARAMETER_FILES]);
   int ProcessParameterFiles(
       KIM::ModelDriverCreate * const modelDriverCreate,
       int const numberParameterFiles,
-      FILE* const parameterFilePointers[MAX_PARAMETER_FILES]);
-  void getNextDataLine(FILE* const filePtr, char* const nextLine,
-                       int const maxSize, int* endOfFileFlag);
-  static void CloseParameterFiles(
-      int const numberParameterFiles,
-      FILE* const parameterFilePointers[MAX_PARAMETER_FILES]);
-  int ConvertUnits(
-      KIM::ModelDriverCreate * const modelDriverCreate,
-      KIM::LengthUnit const requestedLengthUnit,
-      KIM::EnergyUnit const requestedEnergyUnit,
-      KIM::ChargeUnit const requestedChargeUnit,
-      KIM::TemperatureUnit const requestedTemperatureUnit,
-      KIM::TimeUnit const requestedTimeUnit);
+      FILE * const parameterFilePointers[MAX_PARAMETER_FILES]);
+  void getNextDataLine(FILE * const filePtr,
+                       char * const nextLine,
+                       int const maxSize,
+                       int * endOfFileFlag);
+  static void
+  CloseParameterFiles(int const numberParameterFiles,
+                      FILE * const parameterFilePointers[MAX_PARAMETER_FILES]);
+  int ConvertUnits(KIM::ModelDriverCreate * const modelDriverCreate,
+                   KIM::LengthUnit const requestedLengthUnit,
+                   KIM::EnergyUnit const requestedEnergyUnit,
+                   KIM::ChargeUnit const requestedChargeUnit,
+                   KIM::TemperatureUnit const requestedTemperatureUnit,
+                   KIM::TimeUnit const requestedTimeUnit);
   int RegisterKIMModelSettings(
       KIM::ModelDriverCreate * const modelDriverCreate) const;
   int RegisterKIMComputeArgumentsSettings(
       KIM::ModelComputeArgumentsCreate * const modelComputeArgumentsCreate)
       const;
-  int RegisterKIMParameters(
-      KIM::ModelDriverCreate * const modelDriverCreate);
+  int RegisterKIMParameters(KIM::ModelDriverCreate * const modelDriverCreate);
   int RegisterKIMFunctions(
       KIM::ModelDriverCreate * const modelDriverCreate) const;
   //
@@ -198,59 +199,63 @@ class LennardJones612Implementation
   // Related to Compute()
   int SetComputeMutableValues(
       KIM::ModelComputeArguments const * const modelComputeArguments,
-      bool& isComputeProcess_dEdr,
-      bool& isComputeProcess_d2Edr2,
-      bool& isComputeEnergy,
-      bool& isComputeForces,
-      bool& isComputeParticleEnergy,
-      bool& isComputeVirial,
-      bool& isComputeParticleVirial,
-      int const*& particleSpeciesCodes,
-      int const*& particleContributing,
-      VectorOfSizeDIM const*& coordinates,
-      double*& energy,
-      double*& particleEnergy,
-      VectorOfSizeDIM*& forces,
-      VectorOfSizeSix*& virial,
-      VectorOfSizeSix*& particleViral);
+      bool & isComputeProcess_dEdr,
+      bool & isComputeProcess_d2Edr2,
+      bool & isComputeEnergy,
+      bool & isComputeForces,
+      bool & isComputeParticleEnergy,
+      bool & isComputeVirial,
+      bool & isComputeParticleVirial,
+      int const *& particleSpeciesCodes,
+      int const *& particleContributing,
+      VectorOfSizeDIM const *& coordinates,
+      double *& energy,
+      double *& particleEnergy,
+      VectorOfSizeDIM *& forces,
+      VectorOfSizeSix *& virial,
+      VectorOfSizeSix *& particleViral);
   int CheckParticleSpeciesCodes(KIM::ModelCompute const * const modelCompute,
-                                int const* const particleSpeciesCodes) const;
-  int GetComputeIndex(const bool& isComputeProcess_dEdr,
-                      const bool& isComputeProcess_d2Edr2,
-                      const bool& isComputeEnergy,
-                      const bool& isComputeForces,
-                      const bool& isComputeParticleEnergy,
-                      const bool& isComputeVirial,
-                      const bool& isComputeParticleVirial,
-                      const bool& isShift) const;
-  void ProcessVirialTerm(const double& dEidr,
-                         const double& rij,
-                         const double* const r_ij,
-                         const int& i,
-                         const int& j,
+                                int const * const particleSpeciesCodes) const;
+  int GetComputeIndex(const bool & isComputeProcess_dEdr,
+                      const bool & isComputeProcess_d2Edr2,
+                      const bool & isComputeEnergy,
+                      const bool & isComputeForces,
+                      const bool & isComputeParticleEnergy,
+                      const bool & isComputeVirial,
+                      const bool & isComputeParticleVirial,
+                      const bool & isShift) const;
+  void ProcessVirialTerm(const double & dEidr,
+                         const double & rij,
+                         const double * const r_ij,
+                         const int & i,
+                         const int & j,
                          VectorOfSizeSix virial) const;
-  void ProcessParticleVirialTerm(const double& dEidr,
-                                 const double& rij,
-                                 const double* const r_ij,
-                                 const int& i,
-                                 const int& j,
-                                 VectorOfSizeSix* const particleVirial) const;
+  void ProcessParticleVirialTerm(const double & dEidr,
+                                 const double & rij,
+                                 const double * const r_ij,
+                                 const int & i,
+                                 const int & j,
+                                 VectorOfSizeSix * const particleVirial) const;
 
   // compute functions
-  template< bool isComputeProcess_dEdr, bool isComputeProcess_d2Edr2,
-            bool isComputeEnergy, bool isComputeForces,
-            bool isComputeParticleEnergy, bool isComputeVirial,
-            bool isComputeParticleVirial, bool isShift >
+  template<bool isComputeProcess_dEdr,
+           bool isComputeProcess_d2Edr2,
+           bool isComputeEnergy,
+           bool isComputeForces,
+           bool isComputeParticleEnergy,
+           bool isComputeVirial,
+           bool isComputeParticleVirial,
+           bool isShift>
   int Compute(KIM::ModelCompute const * const modelCompute,
               KIM::ModelComputeArguments const * const modelComputeArguments,
-              const int* const particleSpeciesCodes,
-              const int* const particleContributing,
-              const VectorOfSizeDIM* const coordinates,
-              double* const energy,
-              VectorOfSizeDIM* const forces,
-              double* const particleEnergy,
+              const int * const particleSpeciesCodes,
+              const int * const particleContributing,
+              const VectorOfSizeDIM * const coordinates,
+              double * const energy,
+              VectorOfSizeDIM * const forces,
+              double * const particleEnergy,
               VectorOfSizeSix virial,
-              VectorOfSizeSix* const particleVirial) const;
+              VectorOfSizeSix * const particleVirial) const;
 };
 
 //==============================================================================
@@ -268,45 +273,44 @@ class LennardJones612Implementation
 // (used for efficiency)
 //
 // exshift - expression to be added to the end of the phi value
-#define LENNARD_JONES_PHI(exshift)                                      \
-  phi = r6iv * (constFourEpsSig12_2D[iSpecies][jSpecies]*r6iv -         \
-                constFourEpsSig6_2D[iSpecies][jSpecies]) exshift;
+#define LENNARD_JONES_PHI(exshift)                         \
+  phi = r6iv                                               \
+        * (constFourEpsSig12_2D[iSpecies][jSpecies] * r6iv \
+           - constFourEpsSig6_2D[iSpecies][jSpecies]) exshift;
 
 //******************************************************************************
 #define KIM_LOGGER_OBJECT_NAME modelCompute
 //
-template< bool isComputeProcess_dEdr, bool isComputeProcess_d2Edr2,
-          bool isComputeEnergy, bool isComputeForces,
-          bool isComputeParticleEnergy, bool isComputeVirial,
-          bool isComputeParticleVirial, bool isShift >
+template<bool isComputeProcess_dEdr,
+         bool isComputeProcess_d2Edr2,
+         bool isComputeEnergy,
+         bool isComputeForces,
+         bool isComputeParticleEnergy,
+         bool isComputeVirial,
+         bool isComputeParticleVirial,
+         bool isShift>
 int LennardJones612Implementation::Compute(
     KIM::ModelCompute const * const modelCompute,
     KIM::ModelComputeArguments const * const modelComputeArguments,
-    const int* const particleSpeciesCodes,
-    const int* const particleContributing,
-    const VectorOfSizeDIM* const coordinates,
-    double* const energy,
-    VectorOfSizeDIM* const forces,
-    double* const particleEnergy,
+    const int * const particleSpeciesCodes,
+    const int * const particleContributing,
+    const VectorOfSizeDIM * const coordinates,
+    double * const energy,
+    VectorOfSizeDIM * const forces,
+    double * const particleEnergy,
     VectorOfSizeSix virial,
-    VectorOfSizeSix* const particleVirial) const
+    VectorOfSizeSix * const particleVirial) const
 {
   int ier = false;
 
-  if ((isComputeEnergy == false) &&
-      (isComputeParticleEnergy == false) &&
-      (isComputeForces == false) &&
-      (isComputeProcess_dEdr == false) &&
-      (isComputeProcess_d2Edr2 == false) &&
-      (isComputeVirial == false) &&
-      (isComputeParticleVirial == false))
+  if ((isComputeEnergy == false) && (isComputeParticleEnergy == false)
+      && (isComputeForces == false) && (isComputeProcess_dEdr == false)
+      && (isComputeProcess_d2Edr2 == false) && (isComputeVirial == false)
+      && (isComputeParticleVirial == false))
     return ier;
 
   // initialize energy and forces
-  if (isComputeEnergy == true)
-  {
-    *energy = 0.0;
-  }
+  if (isComputeEnergy == true) { *energy = 0.0; }
   if (isComputeVirial == true)
   {
     for (int i = 0; i < 6; ++i) virial[i] = 0.0;
@@ -314,18 +318,14 @@ int LennardJones612Implementation::Compute(
   if (isComputeParticleEnergy == true)
   {
     int const cachedNumParticles = cachedNumberOfParticles_;
-    for (int i = 0; i < cachedNumParticles; ++i)
-    {
-      particleEnergy[i] = 0.0;
-    }
+    for (int i = 0; i < cachedNumParticles; ++i) { particleEnergy[i] = 0.0; }
   }
   if (isComputeForces == true)
   {
     int const cachedNumParticles = cachedNumberOfParticles_;
     for (int i = 0; i < cachedNumParticles; ++i)
     {
-      for (int j = 0; j < DIMENSION; ++j)
-        forces[i][j] = 0.0;
+      for (int j = 0; j < DIMENSION; ++j) forces[i][j] = 0.0;
     }
   }
   if (isComputeParticleVirial == true)
@@ -333,8 +333,7 @@ int LennardJones612Implementation::Compute(
     int const cachedNumParticles = cachedNumberOfParticles_;
     for (int i = 0; i < cachedNumParticles; ++i)
     {
-      for (int j = 0; j < 6; ++j)
-        particleVirial[i][j] = 0.0;
+      for (int j = 0; j < 6; ++j) particleVirial[i][j] = 0.0;
     }
   }
 
@@ -344,18 +343,18 @@ int LennardJones612Implementation::Compute(
   int ii = 0;
   int numnei = 0;
   int const * n1atom = NULL;
-  double const* const* const  constCutoffsSq2D = cutoffsSq2D_;
-  double const* const* const  constFourEpsSig6_2D = fourEpsilonSigma6_2D_;
-  double const* const* const  constFourEpsSig12_2D = fourEpsilonSigma12_2D_;
-  double const* const* const  constTwentyFourEpsSig6_2D
+  double const * const * const constCutoffsSq2D = cutoffsSq2D_;
+  double const * const * const constFourEpsSig6_2D = fourEpsilonSigma6_2D_;
+  double const * const * const constFourEpsSig12_2D = fourEpsilonSigma12_2D_;
+  double const * const * const constTwentyFourEpsSig6_2D
       = twentyFourEpsilonSigma6_2D_;
-  double const* const* const  constFortyEightEpsSig12_2D
+  double const * const * const constFortyEightEpsSig12_2D
       = fortyEightEpsilonSigma12_2D_;
-  double const* const* const  constOneSixtyEightEpsSig6_2D
+  double const * const * const constOneSixtyEightEpsSig6_2D
       = oneSixtyEightEpsilonSigma6_2D_;
-  double const* const* const  constSixTwentyFourEpsSig12_2D
+  double const * const * const constSixTwentyFourEpsSig12_2D
       = sixTwentyFourEpsilonSigma12_2D_;
-  double const* const* const  constShifts2D = shifts2D_;
+  double const * const * const constShifts2D = shifts2D_;
   for (ii = 0; ii < cachedNumberOfParticles_; ++ii)
   {
     if (particleContributing[ii])
@@ -372,73 +371,66 @@ int LennardJones612Implementation::Compute(
         int const j = n1Atom[jj];
         int const jContrib = particleContributing[j];
 
-        if (! (jContrib && (j < i)))  // effective half-list
+        if (!(jContrib && (j < i)))  // effective half-list
         {
           int const jSpecies = particleSpeciesCodes[j];
-          double* r_ij;
+          double * r_ij;
           double r_ijValue[DIMENSION];
           // Compute r_ij
           r_ij = r_ijValue;
           for (int k = 0; k < DIMENSION; ++k)
             r_ij[k] = coordinates[j][k] - coordinates[i][k];
-          double const* const r_ij_const = const_cast<double*>(r_ij);
+          double const * const r_ij_const = const_cast<double *>(r_ij);
 
           // compute distance squared
-          double const rij2 =
-              r_ij_const[0] * r_ij_const[0] +
-              r_ij_const[1] * r_ij_const[1] +
-              r_ij_const[2] * r_ij_const[2];
+          double const rij2 = r_ij_const[0] * r_ij_const[0]
+                              + r_ij_const[1] * r_ij_const[1]
+                              + r_ij_const[2] * r_ij_const[2];
 
           if (rij2 <= constCutoffsSq2D[iSpecies][jSpecies])
-          { // compute contribution to energy, force, etc.
+          {  // compute contribution to energy, force, etc.
             double phi = 0.0;
             double dphiByR = 0.0;
             double d2phi = 0.0;
             double dEidrByR = 0.0;
             double d2Eidr2 = 0.0;
-            double const r2iv = 1.0/rij2;
-            double const r6iv = r2iv*r2iv*r2iv;
+            double const r2iv = 1.0 / rij2;
+            double const r6iv = r2iv * r2iv * r2iv;
             // Compute pair potential and its derivatives
             if (isComputeProcess_d2Edr2 == true)
-            { // Compute d2phi
-              d2phi =
-                  r6iv * (constSixTwentyFourEpsSig12_2D[iSpecies][jSpecies]
-                          *r6iv -
-                          constOneSixtyEightEpsSig6_2D[iSpecies][jSpecies])
-                  * r2iv;
-              if (jContrib == 1)
-              {
-                d2Eidr2 = d2phi;
-              }
+            {  // Compute d2phi
+              d2phi
+                  = r6iv
+                    * (constSixTwentyFourEpsSig12_2D[iSpecies][jSpecies] * r6iv
+                       - constOneSixtyEightEpsSig6_2D[iSpecies][jSpecies])
+                    * r2iv;
+              if (jContrib == 1) { d2Eidr2 = d2phi; }
               else
               {
-                d2Eidr2 = 0.5*d2phi;
+                d2Eidr2 = 0.5 * d2phi;
               }
             }
 
-            if ((isComputeProcess_dEdr == true) || (isComputeForces == true) ||
-                (isComputeVirial == true) || (isComputeParticleVirial == true))
-            { // Compute dphi
-              dphiByR =
-                  r6iv * (constTwentyFourEpsSig6_2D[iSpecies][jSpecies] -
-                          constFortyEightEpsSig12_2D[iSpecies][jSpecies]*r6iv)
-                  * r2iv;
-              if (jContrib == 1)
-              {
-                dEidrByR = dphiByR;
-              }
+            if ((isComputeProcess_dEdr == true) || (isComputeForces == true)
+                || (isComputeVirial == true)
+                || (isComputeParticleVirial == true))
+            {  // Compute dphi
+              dphiByR
+                  = r6iv
+                    * (constTwentyFourEpsSig6_2D[iSpecies][jSpecies]
+                       - constFortyEightEpsSig12_2D[iSpecies][jSpecies] * r6iv)
+                    * r2iv;
+              if (jContrib == 1) { dEidrByR = dphiByR; }
               else
               {
-                dEidrByR = 0.5*dphiByR;
+                dEidrByR = 0.5 * dphiByR;
               }
             }
 
             if ((isComputeEnergy == true) || (isComputeParticleEnergy == true))
-            { // Compute phi
+            {  // Compute phi
               if (isShift == true)
-              {
-                LENNARD_JONES_PHI(- constShifts2D[iSpecies][jSpecies]);
-              }
+              { LENNARD_JONES_PHI(-constShifts2D[iSpecies][jSpecies]); }
               else
               {
                 LENNARD_JONES_PHI(;);
@@ -448,25 +440,19 @@ int LennardJones612Implementation::Compute(
             // Contribution to energy
             if (isComputeEnergy == true)
             {
-              if (jContrib == 1)
-              {
-                *energy += phi;
-              }
+              if (jContrib == 1) { *energy += phi; }
               else
               {
-                *energy += 0.5*phi;
+                *energy += 0.5 * phi;
               }
             }
 
             // Contribution to particleEnergy
             if (isComputeParticleEnergy == true)
             {
-              double const halfPhi = 0.5*phi;
+              double const halfPhi = 0.5 * phi;
               particleEnergy[i] += halfPhi;
-              if (jContrib == 1)
-              {
-                particleEnergy[j] += halfPhi;
-              }
+              if (jContrib == 1) { particleEnergy[j] += halfPhi; }
             }
 
             // Contribution to forces
@@ -481,17 +467,16 @@ int LennardJones612Implementation::Compute(
             }
 
             // Call process_dEdr
-            if ((isComputeProcess_dEdr == true) ||
-                (isComputeVirial == true) ||
-                (isComputeParticleVirial == true))
+            if ((isComputeProcess_dEdr == true) || (isComputeVirial == true)
+                || (isComputeParticleVirial == true))
             {
               double const rij = sqrt(rij2);
-              double const dEidr = dEidrByR*rij;
+              double const dEidr = dEidrByR * rij;
 
               if (isComputeProcess_dEdr == true)
               {
-                ier = modelComputeArguments
-                    ->ProcessDEDrTerm(dEidr, rij, r_ij_const, i, j);
+                ier = modelComputeArguments->ProcessDEDrTerm(
+                    dEidr, rij, r_ij_const, i, j);
                 if (ier)
                 {
                   LOG_ERROR("process_dEdr");
@@ -500,14 +485,12 @@ int LennardJones612Implementation::Compute(
               }
 
               if (isComputeVirial == true)
-              {
-                ProcessVirialTerm(dEidr, rij, r_ij_const, i, j, virial);
-              }
+              { ProcessVirialTerm(dEidr, rij, r_ij_const, i, j, virial); }
 
               if (isComputeParticleVirial == true)
               {
-                ProcessParticleVirialTerm(dEidr, rij, r_ij_const, i, j,
-                                          particleVirial);
+                ProcessParticleVirialTerm(
+                    dEidr, rij, r_ij_const, i, j, particleVirial);
               }
             }
 
@@ -516,18 +499,21 @@ int LennardJones612Implementation::Compute(
             {
               double const rij = sqrt(rij2);
               double const R_pairs[2] = {rij, rij};
-              double const* const pRs = &R_pairs[0];
-              double const Rij_pairs[6]
-                  = {r_ij_const[0], r_ij_const[1], r_ij_const[2],
-                     r_ij_const[0], r_ij_const[1], r_ij_const[2]};
-              double const* const pRijConsts = &Rij_pairs[0];
+              double const * const pRs = &R_pairs[0];
+              double const Rij_pairs[6] = {r_ij_const[0],
+                                           r_ij_const[1],
+                                           r_ij_const[2],
+                                           r_ij_const[0],
+                                           r_ij_const[1],
+                                           r_ij_const[2]};
+              double const * const pRijConsts = &Rij_pairs[0];
               int const i_pairs[2] = {i, i};
               int const j_pairs[2] = {j, j};
-              int const* const pis = &i_pairs[0];
-              int const* const pjs = &j_pairs[0];
+              int const * const pis = &i_pairs[0];
+              int const * const pjs = &j_pairs[0];
 
-              ier = modelComputeArguments
-                  ->ProcessD2EDr2Term(d2Eidr2, pRs, pRijConsts, pis, pjs);
+              ier = modelComputeArguments->ProcessD2EDr2Term(
+                  d2Eidr2, pRs, pRijConsts, pis, pjs);
               if (ier)
               {
                 LOG_ERROR("process_d2Edr2");

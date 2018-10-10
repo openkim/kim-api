@@ -42,7 +42,6 @@
 
 namespace KIM
 {
-
 class LogVerbosity
 {
  public:

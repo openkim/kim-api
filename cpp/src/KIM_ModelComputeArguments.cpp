@@ -38,28 +38,31 @@
 #include "KIM_ComputeArgumentsImplementation.hpp"
 #endif
 
-#define CONVERT_POINTER ComputeArgumentsImplementation *pImpl   \
-  = reinterpret_cast<ComputeArgumentsImplementation *>(pimpl)
+#define CONVERT_POINTER                  \
+  ComputeArgumentsImplementation * pImpl \
+      = reinterpret_cast<ComputeArgumentsImplementation *>(pimpl)
 
 namespace KIM
 {
-
 int ModelComputeArguments::GetNeighborList(
     int const neighborListIndex,
     int const particleNumber,
     int * const numberOfNeighbors,
-    int const ** const neighborsOfParticle)
-    const
+    int const ** const neighborsOfParticle) const
 {
   CONVERT_POINTER;
 
-  return pImpl->GetNeighborList(neighborListIndex, particleNumber,
-                                numberOfNeighbors, neighborsOfParticle);
+  return pImpl->GetNeighborList(neighborListIndex,
+                                particleNumber,
+                                numberOfNeighbors,
+                                neighborsOfParticle);
 }
 
-int ModelComputeArguments::ProcessDEDrTerm(double const de, double const r,
+int ModelComputeArguments::ProcessDEDrTerm(double const de,
+                                           double const r,
                                            double const * const dx,
-                                           int const i, int const j) const
+                                           int const i,
+                                           int const j) const
 {
   CONVERT_POINTER;
 
@@ -70,8 +73,7 @@ int ModelComputeArguments::ProcessD2EDr2Term(double const de,
                                              double const * const r,
                                              double const * const dx,
                                              int const * const i,
-                                             int const * const j)
-    const
+                                             int const * const j) const
 {
   CONVERT_POINTER;
 
@@ -79,8 +81,7 @@ int ModelComputeArguments::ProcessD2EDr2Term(double const de,
 }
 
 int ModelComputeArguments::GetArgumentPointer(
-    ComputeArgumentName const computeArgumentName,
-    int const ** const ptr) const
+    ComputeArgumentName const computeArgumentName, int const ** const ptr) const
 {
   CONVERT_POINTER;
 
@@ -88,8 +89,7 @@ int ModelComputeArguments::GetArgumentPointer(
 }
 
 int ModelComputeArguments::GetArgumentPointer(
-    ComputeArgumentName const computeArgumentName,
-    int ** const ptr) const
+    ComputeArgumentName const computeArgumentName, int ** const ptr) const
 {
   CONVERT_POINTER;
 
@@ -97,8 +97,7 @@ int ModelComputeArguments::GetArgumentPointer(
 }
 
 int ModelComputeArguments::GetArgumentPointer(
-    ComputeArgumentName const computeArgumentName,
-    double ** const ptr) const
+    ComputeArgumentName const computeArgumentName, double ** const ptr) const
 {
   CONVERT_POINTER;
 
@@ -115,8 +114,7 @@ int ModelComputeArguments::GetArgumentPointer(
 }
 
 int ModelComputeArguments::IsCallbackPresent(
-    ComputeCallbackName const computeCallbackName,
-    int * const present) const
+    ComputeCallbackName const computeCallbackName, int * const present) const
 {
   CONVERT_POINTER;
 
@@ -164,12 +162,8 @@ std::string const & ModelComputeArguments::String() const
   return pImpl->String();
 }
 
-ModelComputeArguments::ModelComputeArguments() : pimpl(NULL)
-{
-}
+ModelComputeArguments::ModelComputeArguments() : pimpl(NULL) {}
 
-ModelComputeArguments::~ModelComputeArguments()
-{
-}
+ModelComputeArguments::~ModelComputeArguments() {}
 
 }  // namespace KIM

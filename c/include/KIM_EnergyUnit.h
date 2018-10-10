@@ -64,4 +64,4 @@ void KIM_ENERGY_UNIT_GetNumberOfEnergyUnits(int * const numberOfEnergyUnits);
 int KIM_ENERGY_UNIT_GetEnergyUnit(int const index,
                                   KIM_EnergyUnit * const energyUnit);
 
-#endif  /* KIM_ENERGY_UNIT_H_ */
+#endif /* KIM_ENERGY_UNIT_H_ */

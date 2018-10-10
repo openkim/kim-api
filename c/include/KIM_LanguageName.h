@@ -62,4 +62,4 @@ void KIM_LANGUAGE_NAME_GetNumberOfLanguageNames(
 int KIM_LANGUAGE_NAME_GetLanguageName(int const index,
                                       KIM_LanguageName * const languageName);
 
-#endif  /* KIM_LANGUAGE_NAME_H_ */
+#endif /* KIM_LANGUAGE_NAME_H_ */

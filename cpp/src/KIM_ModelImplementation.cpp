@@ -30,13 +30,13 @@
 // Release: This file is part of the kim-api.git repository.
 //
 
-#include <sstream>
-#include <iomanip>
-#include <cstdlib>
-#include <cstdio>
-#include <cstring>
-#include <cmath>
 #include <algorithm>
+#include <cmath>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <iomanip>
+#include <sstream>
 
 #ifndef KIM_LOG_HPP_
 #include "KIM_Log.hpp"
@@ -51,15 +51,13 @@
 #endif
 
 #ifndef KIM_UNIT_SYSTEM_H_
-extern "C"
-{
+extern "C" {
 #include "KIM_UnitSystem.h"
 }  // extern "C"
 #endif
 
 #ifndef KIM_MODEL_CREATE_H_
-extern "C"
-{
+extern "C" {
 #include "KIM_ModelCreate.h"
 
 struct KIM_ModelCreate
@@ -70,8 +68,7 @@ struct KIM_ModelCreate
 #endif
 
 #ifndef KIM_MODEL_DRIVER_CREATE_H_
-extern "C"
-{
+extern "C" {
 #include "KIM_ModelDriverCreate.h"
 
 struct KIM_ModelDriverCreate
@@ -82,8 +79,7 @@ struct KIM_ModelDriverCreate
 #endif
 
 #ifndef KIM_MODEL_COMPUTE_ARGUMENTS_CREATE_H_
-extern "C"
-{
+extern "C" {
 #include "KIM_ModelComputeArgumentsCreate.h"
 
 struct KIM_ModelComputeArgumentsCreate
@@ -94,8 +90,7 @@ struct KIM_ModelComputeArgumentsCreate
 #endif
 
 #ifndef KIM_MODEL_REFRESH_H_
-extern "C"
-{
+extern "C" {
 #include "KIM_ModelRefresh.h"
 
 struct KIM_ModelRefresh
@@ -106,8 +101,7 @@ struct KIM_ModelRefresh
 #endif
 
 #ifndef KIM_MODEL_COMPUTE_H_
-extern "C"
-{
+extern "C" {
 #include "KIM_ModelCompute.h"
 
 struct KIM_ModelCompute
@@ -118,8 +112,7 @@ struct KIM_ModelCompute
 #endif
 
 #ifndef KIM_MODEL_COMPUTE_ARGUMENTS_H_
-extern "C"
-{
+extern "C" {
 #include "KIM_ModelComputeArguments.h"
 
 struct KIM_ModelComputeArguments
@@ -130,8 +123,7 @@ struct KIM_ModelComputeArguments
 #endif
 
 #ifndef KIM_MODEL_COMPUTE_ARGUMENTS_DESTROY_H_
-extern "C"
-{
+extern "C" {
 #include "KIM_ModelComputeArgumentsDestroy.h"
 
 struct KIM_ModelComputeArgumentsDestroy
@@ -142,8 +134,7 @@ struct KIM_ModelComputeArgumentsDestroy
 #endif
 
 #ifndef KIM_MODEL_DESTROY_H_
-extern "C"
-{
+extern "C" {
 #include "KIM_ModelDestroy.h"
 
 struct KIM_ModelDestroy
@@ -154,12 +145,10 @@ struct KIM_ModelDestroy
 #endif
 
 #ifndef KIM_FUNCTION_TYPES_H_
-extern "C"
-{
+extern "C" {
 #include "KIM_FunctionTypes.h"
 }
 #endif
-
 
 
 namespace
@@ -182,8 +171,8 @@ KIM_ChargeUnit makeChargeUnitC(KIM::ChargeUnit const chargeUnit)
   return chargeUnitC;
 }
 
-KIM_TemperatureUnit makeTemperatureUnitC(
-    KIM::TemperatureUnit const temperatureUnit)
+KIM_TemperatureUnit
+makeTemperatureUnitC(KIM::TemperatureUnit const temperatureUnit)
 {
   KIM_TemperatureUnit temperatureUnitC = {temperatureUnit.temperatureUnitID};
   return temperatureUnitC;
@@ -197,12 +186,16 @@ KIM_TimeUnit makeTimeUnitC(KIM::TimeUnit const timeUnit)
 }  // namespace
 
 // log helpers
-#define SNUM( x ) static_cast<std::ostringstream &>(    \
-    std::ostringstream() << std::dec << x).str()
-#define SPTR( x ) static_cast<std::ostringstream &>(                    \
-    std::ostringstream() << static_cast<void const *>(x) ).str()
-#define SFUNC( x ) static_cast<std::ostringstream &>(           \
-    std::ostringstream() << reinterpret_cast<KIM::Function *>(x)).str()
+#define SNUM(x) \
+  static_cast<std::ostringstream &>(std::ostringstream() << std::dec << x).str()
+#define SPTR(x)                                                      \
+  static_cast<std::ostringstream &>(std::ostringstream()             \
+                                    << static_cast<void const *>(x)) \
+      .str()
+#define SFUNC(x)                                                             \
+  static_cast<std::ostringstream &>(std::ostringstream()                     \
+                                    << reinterpret_cast<KIM::Function *>(x)) \
+      .str()
 
 
 #include "KIM_LogMacros.hpp"
@@ -234,40 +227,40 @@ int ModelImplementation::Create(
 
   Log * pLog;
   int error = Log::Create(&pLog);
-  if (error)
-  {
-    return true;
-  }
+  if (error) { return true; }
 
   ModelImplementation * pModelImplementation;
   pModelImplementation = new ModelImplementation(new ModelLibrary(pLog), pLog);
 #if DEBUG_VERBOSITY
-  std::string const callString = "Create("
-      + numbering.String() + ", "
-      + requestedLengthUnit.String() + ", "
-      + requestedEnergyUnit.String() + ", "
-      + requestedChargeUnit.String() + ", "
-      + requestedTemperatureUnit.String() + ", "
-      + requestedTimeUnit.String() + ", '"
-      + modelName + "', "
-      + SPTR(requestedUnitsAccepted) + ", "
-      + SPTR(modelImplementation) + ").";
+  std::string const callString
+      = "Create(" + numbering.String() + ", " + requestedLengthUnit.String()
+        + ", " + requestedEnergyUnit.String() + ", "
+        + requestedChargeUnit.String() + ", "
+        + requestedTemperatureUnit.String() + ", " + requestedTimeUnit.String()
+        + ", '" + modelName + "', " + SPTR(requestedUnitsAccepted) + ", "
+        + SPTR(modelImplementation) + ").";
   pModelImplementation->LogEntry(
       LOG_VERBOSITY::debug,
       "Created Log and ModelImplementation objects after enter " + callString,
-      __LINE__, __FILE__);
+      __LINE__,
+      __FILE__);
 #endif
 
-  error = pModelImplementation->ModelCreate(
-      numbering, requestedLengthUnit, requestedEnergyUnit, requestedChargeUnit,
-      requestedTemperatureUnit, requestedTimeUnit, modelName);
+  error = pModelImplementation->ModelCreate(numbering,
+                                            requestedLengthUnit,
+                                            requestedEnergyUnit,
+                                            requestedChargeUnit,
+                                            requestedTemperatureUnit,
+                                            requestedTimeUnit,
+                                            modelName);
   if (error)
   {
 #if DEBUG_VERBOSITY
     pModelImplementation->LogEntry(
         LOG_VERBOSITY::debug,
         "Destroying ModelImplementation object and exit " + callString,
-        __LINE__, __FILE__);
+        __LINE__,
+        __FILE__);
 #endif
     delete pModelImplementation;  // also deletes pLog
 
@@ -279,44 +272,39 @@ int ModelImplementation::Create(
   ChargeUnit finalChargeUnit;
   TemperatureUnit finalTemperatureUnit;
   TimeUnit finalTimeUnit;
-  pModelImplementation->GetUnits(&finalLengthUnit, &finalEnergyUnit,
-                                 &finalChargeUnit, &finalTemperatureUnit,
+  pModelImplementation->GetUnits(&finalLengthUnit,
+                                 &finalEnergyUnit,
+                                 &finalChargeUnit,
+                                 &finalTemperatureUnit,
                                  &finalTimeUnit);
 
-  if (((finalLengthUnit == LENGTH_UNIT::unused) ||
-       (finalLengthUnit == requestedLengthUnit))
-      &&
-      ((finalEnergyUnit == ENERGY_UNIT::unused) ||
-       (finalEnergyUnit == requestedEnergyUnit))
-      &&
-      ((finalChargeUnit == CHARGE_UNIT::unused) ||
-       (finalChargeUnit == requestedChargeUnit))
-      &&
-      ((finalTemperatureUnit == TEMPERATURE_UNIT::unused) ||
-       (finalTemperatureUnit == requestedTemperatureUnit))
-      &&
-      ((finalTimeUnit == TIME_UNIT::unused) ||
-       (finalTimeUnit == requestedTimeUnit)))
+  if (((finalLengthUnit == LENGTH_UNIT::unused)
+       || (finalLengthUnit == requestedLengthUnit))
+      && ((finalEnergyUnit == ENERGY_UNIT::unused)
+          || (finalEnergyUnit == requestedEnergyUnit))
+      && ((finalChargeUnit == CHARGE_UNIT::unused)
+          || (finalChargeUnit == requestedChargeUnit))
+      && ((finalTemperatureUnit == TEMPERATURE_UNIT::unused)
+          || (finalTemperatureUnit == requestedTemperatureUnit))
+      && ((finalTimeUnit == TIME_UNIT::unused)
+          || (finalTimeUnit == requestedTimeUnit)))
   {
-    pModelImplementation->LogEntry(LOG_VERBOSITY::debug,
-                                   "Accepted requested units.",
-                                   __LINE__, __FILE__);
+    pModelImplementation->LogEntry(
+        LOG_VERBOSITY::debug, "Accepted requested units.", __LINE__, __FILE__);
     *requestedUnitsAccepted = true;
   }
   else
   {
-    pModelImplementation->LogEntry(LOG_VERBOSITY::debug,
-                                   "Rejected requested units.",
-                                   __LINE__, __FILE__);
+    pModelImplementation->LogEntry(
+        LOG_VERBOSITY::debug, "Rejected requested units.", __LINE__, __FILE__);
     *requestedUnitsAccepted = false;
   }
 
   *modelImplementation = pModelImplementation;
 #if DEBUG_VERBOSITY
-  (*modelImplementation)->LogEntry(
-      LOG_VERBOSITY::debug,
-      "Exit 0=" + callString,
-      __LINE__, __FILE__);
+  (*modelImplementation)
+      ->LogEntry(
+          LOG_VERBOSITY::debug, "Exit 0=" + callString, __LINE__, __FILE__);
 #endif
   return false;
 }
@@ -327,18 +315,19 @@ void ModelImplementation::Destroy(
 {
 #if DEBUG_VERBOSITY
   std::string callString = "Destroy(" + SPTR(modelImplementation) + ").";
-  (*modelImplementation)->LogEntry(LOG_VERBOSITY::debug,
-                                   "Enter  " + callString,
-                                   __LINE__, __FILE__);
+  (*modelImplementation)
+      ->LogEntry(
+          LOG_VERBOSITY::debug, "Enter  " + callString, __LINE__, __FILE__);
 #endif
 
   (*modelImplementation)->ModelDestroy();
 
 #if DEBUG_VERBOSITY
-  (*modelImplementation)->LogEntry(
-      LOG_VERBOSITY::debug,
-      "Destroying ModelImplementation object and exit " + callString,
-      __LINE__, __FILE__);
+  (*modelImplementation)
+      ->LogEntry(LOG_VERBOSITY::debug,
+                 "Destroying ModelImplementation object and exit " + callString,
+                 __LINE__,
+                 __FILE__);
 #endif
   delete *modelImplementation;  // also deletes Log object
   *modelImplementation = NULL;
@@ -348,20 +337,20 @@ int ModelImplementation::ComputeArgumentsCreate(
     ComputeArguments ** const computeArguments) const
 {
 #if DEBUG_VERBOSITY
-  std::string const callString = "ComputeArgumentsCreate("
-      + SPTR(computeArguments) + ").";
+  std::string const callString
+      = "ComputeArgumentsCreate(" + SPTR(computeArguments) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
   *computeArguments = new ComputeArguments();
 
-  int error = ComputeArgumentsImplementation::Create(
-      modelName_,
-      log_->GetID(),
-      modelNumbering_,
-      simulatorNumbering_,
-      numberingOffset_,
-      &((*computeArguments)->pimpl));
+  int error
+      = ComputeArgumentsImplementation::Create(modelName_,
+                                               log_->GetID(),
+                                               modelNumbering_,
+                                               simulatorNumbering_,
+                                               numberingOffset_,
+                                               &((*computeArguments)->pimpl));
   if (error)
   {
     delete *computeArguments;
@@ -381,7 +370,7 @@ int ModelImplementation::ComputeArgumentsCreate(
     return true;
   }
 
-  //No further error checking needed
+  // No further error checking needed
 
   LOG_DEBUG("Exit 0=" + callString);
   return false;
@@ -391,8 +380,8 @@ int ModelImplementation::ComputeArgumentsDestroy(
     ComputeArguments ** const computeArguments) const
 {
 #if DEBUG_VERBOSITY
-  std::string const callString = "ComputeArgumentsDestroy("
-      + SPTR(computeArguments) + ").";
+  std::string const callString
+      = "ComputeArgumentsDestroy(" + SPTR(computeArguments) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -401,7 +390,8 @@ int ModelImplementation::ComputeArgumentsDestroy(
     LOG_ERROR("ComputeArguments object for Model '"
               + (*computeArguments)->pimpl->modelName_
               + "' cannot be Destroyed with the "
-              "ModelDestroy() routine of Model '" + modelName_ + "'.");
+                "ModelDestroy() routine of Model '"
+              + modelName_ + "'.");
 
     LOG_DEBUG("Exit 1=" + callString);
     return true;
@@ -427,8 +417,8 @@ void ModelImplementation::SetInfluenceDistancePointer(
     double const * const influenceDistance)
 {
 #if DEBUG_VERBOSITY
-  std::string const callString = "SetInfluenceDistancePointer("
-      + SPTR(influenceDistance) + ").";
+  std::string const callString
+      = "SetInfluenceDistancePointer(" + SPTR(influenceDistance) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -446,8 +436,8 @@ void ModelImplementation::GetInfluenceDistance(
     double * const influenceDistance) const
 {
 #if DEBUG_VERBOSITY
-  std::string const callString = "GetInfluenceDistance("
-      + SPTR(influenceDistance) + ").";
+  std::string const callString
+      = "GetInfluenceDistance(" + SPTR(influenceDistance) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -463,10 +453,10 @@ void ModelImplementation::SetNeighborListPointers(
     int const * const modelWillNotRequestNeighborsOfNoncontributingParticles)
 {
 #if DEBUG_VERBOSITY
-  std::string const callString = "SetNeighborListPointers("
-      + SNUM(numberOfNeighborLists) + ", "
-      + SPTR(cutoffs) + ", "
-      + SPTR(modelWillNotRequestNeighborsOfNoncontributingParticles) + ").";
+  std::string const callString
+      = "SetNeighborListPointers(" + SNUM(numberOfNeighborLists) + ", "
+        + SPTR(cutoffs) + ", "
+        + SPTR(modelWillNotRequestNeighborsOfNoncontributingParticles) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -474,8 +464,7 @@ void ModelImplementation::SetNeighborListPointers(
   if (numberOfNeighborLists < 1)
     LOG_ERROR("Number of neighbor lists, " + SNUM(numberOfNeighborLists)
               + ", must be >= 1.");
-  if (cutoffs == NULL)
-    LOG_ERROR("Null pointer provided for cutoffs.");
+  if (cutoffs == NULL) LOG_ERROR("Null pointer provided for cutoffs.");
   if (modelWillNotRequestNeighborsOfNoncontributingParticles == NULL)
     LOG_ERROR("Null pointer provided for "
               "modelWillNotRequestNeighborsOfNoncontributingParticles.");
@@ -483,8 +472,8 @@ void ModelImplementation::SetNeighborListPointers(
 
   numberOfNeighborLists_ = numberOfNeighborLists;
   cutoffs_ = cutoffs;
-  modelWillNotRequestNeighborsOfNoncontributingParticles_ =
-      modelWillNotRequestNeighborsOfNoncontributingParticles;
+  modelWillNotRequestNeighborsOfNoncontributingParticles_
+      = modelWillNotRequestNeighborsOfNoncontributingParticles;
 
   LOG_DEBUG("Exit   " + callString);
 }
@@ -496,20 +485,19 @@ void ModelImplementation::GetNeighborListPointers(
     const
 {
 #if DEBUG_VERBOSITY
-  std::string const callString = "GetNeighborListPointers("
-      + SPTR(numberOfNeighborLists) + ", "
-      + SPTR(cutoffs) + ", "
-      + SPTR(modelWillNotRequestNeighborsOfNoncontributingParticles) + ").";
+  std::string const callString
+      = "GetNeighborListPointers(" + SPTR(numberOfNeighborLists) + ", "
+        + SPTR(cutoffs) + ", "
+        + SPTR(modelWillNotRequestNeighborsOfNoncontributingParticles) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
   if (numberOfNeighborLists != NULL)
     *numberOfNeighborLists = numberOfNeighborLists_;
-  if (cutoffs != NULL)
-    *cutoffs = cutoffs_;
+  if (cutoffs != NULL) *cutoffs = cutoffs_;
   if (modelWillNotRequestNeighborsOfNoncontributingParticles != NULL)
-    *modelWillNotRequestNeighborsOfNoncontributingParticles =
-        modelWillNotRequestNeighborsOfNoncontributingParticles_;
+    *modelWillNotRequestNeighborsOfNoncontributingParticles
+        = modelWillNotRequestNeighborsOfNoncontributingParticles_;
 
   LOG_DEBUG("Exit   " + callString);
 }
@@ -518,8 +506,8 @@ int ModelImplementation::SetRefreshPointer(LanguageName const languageName,
                                            Function * const fptr)
 {
 #if DEBUG_VERBOSITY
-  std::string const callString = "SetRefreshPointer("
-      + languageName.String() + ", " + SFUNC(fptr) + ").";
+  std::string const callString = "SetRefreshPointer(" + languageName.String()
+                                 + ", " + SFUNC(fptr) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -544,8 +532,8 @@ int ModelImplementation::SetDestroyPointer(LanguageName const languageName,
                                            Function * const fptr)
 {
 #if DEBUG_VERBOSITY
-  std::string const callString = "SetDestroyPointer("
-      + languageName.String() + ", " + SFUNC(fptr) + ").";
+  std::string const callString = "SetDestroyPointer(" + languageName.String()
+                                 + ", " + SFUNC(fptr) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -571,7 +559,8 @@ int ModelImplementation::SetComputeArgumentsCreatePointer(
 {
 #if DEBUG_VERBOSITY
   std::string const callString = "SetComputeArgumentsCreatePointer("
-      + languageName.String() + ", " + SFUNC(fptr) + ").";
+                                 + languageName.String() + ", " + SFUNC(fptr)
+                                 + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -597,7 +586,8 @@ int ModelImplementation::SetComputeArgumentsDestroyPointer(
 {
 #if DEBUG_VERBOSITY
   std::string const callString = "SetComputeArgumentsDestroyPointer("
-      + languageName.String() + ", " + SFUNC(fptr) + ").";
+                                 + languageName.String() + ", " + SFUNC(fptr)
+                                 + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -622,8 +612,8 @@ int ModelImplementation::SetComputePointer(LanguageName const languageName,
                                            Function * const fptr)
 {
 #if DEBUG_VERBOSITY
-  std::string const callString = "SetComputePointer("
-      + languageName.String() + ", " + SFUNC(fptr) + ").";
+  std::string const callString = "SetComputePointer(" + languageName.String()
+                                 + ", " + SFUNC(fptr) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -648,8 +638,8 @@ int ModelImplementation::SetSpeciesCode(SpeciesName const speciesName,
                                         int const code)
 {
 #if DEBUG_VERBOSITY
-  std::string const callString = "SetSpeciesCode("
-      + speciesName.String() + ", " + SNUM(code) + ").";
+  std::string const callString
+      = "SetSpeciesCode(" + speciesName.String() + ", " + SNUM(code) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -675,9 +665,9 @@ int ModelImplementation::GetSpeciesSupportAndCode(
     int * const code) const
 {
 #if DEBUG_VERBOSITY
-  std::string const callString = "GetSpeciesSupportAndCode("
-      + speciesName.String() + ", " + SPTR(speciesIsSupported)
-      + ", " + SPTR(code) + ").";
+  std::string const callString
+      = "GetSpeciesSupportAndCode(" + speciesName.String() + ", "
+        + SPTR(speciesIsSupported) + ", " + SPTR(code) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -692,7 +682,8 @@ int ModelImplementation::GetSpeciesSupportAndCode(
 #endif
 
   std::map<SpeciesName const, int, SPECIES_NAME::Comparator>::const_iterator
-      result = supportedSpecies_.find(speciesName);
+      result
+      = supportedSpecies_.find(speciesName);
   if (result == supportedSpecies_.end())
   {
     LOG_DEBUG("Species is not supported.");
@@ -702,8 +693,7 @@ int ModelImplementation::GetSpeciesSupportAndCode(
   {
     LOG_DEBUG("Species is supported.");
     *speciesIsSupported = true;
-    if (code != NULL)
-      *code = result->second;
+    if (code != NULL) *code = result->second;
   }
 
   LOG_DEBUG("Exit 0=" + callString);
@@ -713,8 +703,8 @@ int ModelImplementation::GetSpeciesSupportAndCode(
 int ModelImplementation::SetModelNumbering(Numbering const numbering)
 {
 #if DEBUG_VERBOSITY
-  std::string const callString = "SetModelNumbering("
-      + numbering.String() + ").";
+  std::string const callString
+      = "SetModelNumbering(" + numbering.String() + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -738,8 +728,8 @@ int ModelImplementation::SetModelNumbering(Numbering const numbering)
 int ModelImplementation::SetSimulatorNumbering(Numbering const numbering)
 {
 #if DEBUG_VERBOSITY
-  std::string const callString = "SetSimulatorNumbering("
-      + numbering.String() + ").";
+  std::string const callString
+      = "SetSimulatorNumbering(" + numbering.String() + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -766,23 +756,17 @@ int ModelImplementation::SetUnits(LengthUnit const lengthUnit,
                                   TimeUnit const timeUnit)
 {
 #if DEBUG_VERBOSITY
-  std::string const callString = "SetUnits("
-      + lengthUnit.String() + ", "
-      + energyUnit.String() + ", "
-      + chargeUnit.String() + ", "
-      + temperatureUnit.String() + ", "
-      + timeUnit.String()
-      + ").";
+  std::string const callString
+      = "SetUnits(" + lengthUnit.String() + ", " + energyUnit.String() + ", "
+        + chargeUnit.String() + ", " + temperatureUnit.String() + ", "
+        + timeUnit.String() + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
 #if ERROR_VERBOSITY
-  int error =
-      Validate(lengthUnit) ||
-      Validate(energyUnit) ||
-      Validate(chargeUnit) ||
-      Validate(temperatureUnit) ||
-      Validate(timeUnit);
+  int error = Validate(lengthUnit) || Validate(energyUnit)
+              || Validate(chargeUnit) || Validate(temperatureUnit)
+              || Validate(timeUnit);
   if (error)
   {
     LOG_ERROR("Invalid arguments.");
@@ -824,25 +808,18 @@ void ModelImplementation::GetUnits(LengthUnit * const lengthUnit,
                                    TimeUnit * const timeUnit) const
 {
 #if DEBUG_VERBOSITY
-  std::string const callString = "GetUnits("
-      + SPTR(lengthUnit) + ", "
-      + SPTR(energyUnit) + ", "
-      + SPTR(chargeUnit) + ", "
-      + SPTR(temperatureUnit) + ", "
-      + SPTR(timeUnit) + ").";
+  std::string const callString = "GetUnits(" + SPTR(lengthUnit) + ", "
+                                 + SPTR(energyUnit) + ", " + SPTR(chargeUnit)
+                                 + ", " + SPTR(temperatureUnit) + ", "
+                                 + SPTR(timeUnit) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
-  if (lengthUnit != NULL)
-    *lengthUnit = lengthUnit_;
-  if (energyUnit != NULL)
-    *energyUnit = energyUnit_;
-  if (chargeUnit != NULL)
-    *chargeUnit = chargeUnit_;
-  if (temperatureUnit != NULL)
-    *temperatureUnit = temperatureUnit_;
-  if (timeUnit != NULL)
-    *timeUnit = timeUnit_;
+  if (lengthUnit != NULL) *lengthUnit = lengthUnit_;
+  if (energyUnit != NULL) *energyUnit = energyUnit_;
+  if (chargeUnit != NULL) *chargeUnit = chargeUnit_;
+  if (temperatureUnit != NULL) *temperatureUnit = temperatureUnit_;
+  if (timeUnit != NULL) *timeUnit = timeUnit_;
 
   LOG_DEBUG("Exit   " + callString);
 }
@@ -851,8 +828,8 @@ int ModelImplementation::GetNumberOfParameterFiles(
     int * const numberOfParameterFiles) const
 {
 #if DEBUG_VERBOSITY
-  std::string const callString = "GetNumberOfParameterFiles("
-      + SPTR(numberOfParameterFiles) + ").";
+  std::string const callString
+      = "GetNumberOfParameterFiles(" + SPTR(numberOfParameterFiles) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -875,8 +852,8 @@ int ModelImplementation::GetParameterFileName(
     int const index, std::string const ** const parameterFileName) const
 {
 #if DEBUG_VERBOSITY
-  std::string const callString = "GetParameterFileName("
-      + SNUM(index) + ", " + SPTR(parameterFileName) + ").";
+  std::string const callString = "GetParameterFileName(" + SNUM(index) + ", "
+                                 + SPTR(parameterFileName) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -909,14 +886,15 @@ int ModelImplementation::GetParameterFileName(
   return false;
 }
 
-int ModelImplementation::SetParameterPointer(int const extent, int * const ptr,
+int ModelImplementation::SetParameterPointer(int const extent,
+                                             int * const ptr,
                                              std::string const & name,
                                              std::string const & description)
 {
 #if DEBUG_VERBOSITY
-  std::string const callString = "SetParameterPointer("
-      + SNUM(extent) + ", " + SPTR(ptr) + ", '" + name + "', '" + description
-      + "').";
+  std::string const callString = "SetParameterPointer(" + SNUM(extent) + ", "
+                                 + SPTR(ptr) + ", '" + name + "', '"
+                                 + description + "').";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -934,7 +912,7 @@ int ModelImplementation::SetParameterPointer(int const extent, int * const ptr,
     return true;
   }
 
-  if (! IsCIdentifier(name))
+  if (!IsCIdentifier(name))
   {
     LOG_ERROR("Name '" + name + "' is not a valid C identifier.");
     LOG_DEBUG("Exit 1=" + callString);
@@ -944,8 +922,9 @@ int ModelImplementation::SetParameterPointer(int const extent, int * const ptr,
   if (std::find(parameterName_.begin(), parameterName_.end(), name)
       != parameterName_.end())
   {
-    LOG_ERROR("Name '" + name + "' is already associated with another "
-              "parameter.  Parameter names must be unique.");
+    LOG_ERROR("Name '" + name
+              + "' is already associated with another "
+                "parameter.  Parameter names must be unique.");
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
@@ -967,9 +946,9 @@ int ModelImplementation::SetParameterPointer(int const extent,
                                              std::string const & description)
 {
 #if DEBUG_VERBOSITY
-  std::string const callString = "SetParameterPointer("
-      + SNUM(extent) + ", " + SPTR(ptr) + ", '" + name + "', '" + description
-      + "').";
+  std::string const callString = "SetParameterPointer(" + SNUM(extent) + ", "
+                                 + SPTR(ptr) + ", '" + name + "', '"
+                                 + description + "').";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -987,7 +966,7 @@ int ModelImplementation::SetParameterPointer(int const extent,
     return true;
   }
 
-  if (! IsCIdentifier(name))
+  if (!IsCIdentifier(name))
   {
     LOG_ERROR("Name '" + name + "' is not a valid C identifier.");
     LOG_DEBUG("Exit 1=" + callString);
@@ -997,8 +976,9 @@ int ModelImplementation::SetParameterPointer(int const extent,
   if (std::find(parameterName_.begin(), parameterName_.end(), name)
       != parameterName_.end())
   {
-    LOG_ERROR("Name '" + name + "' is already associated with another "
-              "parameter.  Parameter names must be unique.");
+    LOG_ERROR("Name '" + name
+              + "' is already associated with another "
+                "parameter.  Parameter names must be unique.");
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
@@ -1014,12 +994,12 @@ int ModelImplementation::SetParameterPointer(int const extent,
   return false;
 }
 
-void ModelImplementation::GetNumberOfParameters(int * const numberOfParameters)
-    const
+void ModelImplementation::GetNumberOfParameters(
+    int * const numberOfParameters) const
 {
 #if DEBUG_VERBOSITY
-  std::string const callString = "GetNumberOfParameters("
-      + SPTR(numberOfParameters) + ").";
+  std::string const callString
+      = "GetNumberOfParameters(" + SPTR(numberOfParameters) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -1029,22 +1009,24 @@ void ModelImplementation::GetNumberOfParameters(int * const numberOfParameters)
 }
 
 int ModelImplementation::GetParameterMetadata(
-    int const parameterIndex, DataType * const dataType, int * const extent,
-    std::string const ** const name, std::string const ** const description)
-    const
+    int const parameterIndex,
+    DataType * const dataType,
+    int * const extent,
+    std::string const ** const name,
+    std::string const ** const description) const
 {
 #if DEBUG_VERBOSITY
-  std::string const callString
-      = "GetParameterMetadata("
-      + SNUM(parameterIndex) + ", " + SPTR(dataType) + ", "
-      + SPTR(extent) + ", " + SPTR(name) + ", " + SPTR(description) + ").";
+  std::string const callString = "GetParameterMetadata(" + SNUM(parameterIndex)
+                                 + ", " + SPTR(dataType) + ", " + SPTR(extent)
+                                 + ", " + SPTR(name) + ", " + SPTR(description)
+                                 + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
 #if ERROR_VERBOSITY
-  if ((parameterIndex < 0) ||
-      (static_cast<unsigned int>(parameterIndex)
-       >= parameterPointer_.size()))
+  if ((parameterIndex < 0)
+      || (static_cast<unsigned int>(parameterIndex)
+          >= parameterPointer_.size()))
   {
     LOG_ERROR("Invalid parameter index, " + SNUM(parameterIndex) + ".");
     LOG_DEBUG("Exit 1=" + callString);
@@ -1052,12 +1034,9 @@ int ModelImplementation::GetParameterMetadata(
   }
 #endif
 
-  if (dataType != NULL)
-    *dataType = parameterDataType_[parameterIndex];
-  if (extent != NULL)
-    *extent = parameterExtent_[parameterIndex];
-  if (name != NULL)
-    *name = &(parameterName_[parameterIndex]);
+  if (dataType != NULL) *dataType = parameterDataType_[parameterIndex];
+  if (extent != NULL) *extent = parameterExtent_[parameterIndex];
+  if (name != NULL) *name = &(parameterName_[parameterIndex]);
   if (description != NULL)
     *description = &(parameterDescription_[parameterIndex]);
 
@@ -1070,16 +1049,16 @@ int ModelImplementation::GetParameter(int const parameterIndex,
                                       int * const parameterValue) const
 {
 #if DEBUG_VERBOSITY
-  std::string const callString = "GetParameter("
-      + SNUM(parameterIndex) + ", " + SNUM(arrayIndex) + ", "
-      + SPTR(parameterValue) + ").";
+  std::string const callString = "GetParameter(" + SNUM(parameterIndex) + ", "
+                                 + SNUM(arrayIndex) + ", "
+                                 + SPTR(parameterValue) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
 #if ERROR_VERBOSITY
-  if ((parameterIndex < 0) ||
-      (static_cast<unsigned int>(parameterIndex)
-       >= parameterPointer_.size()))
+  if ((parameterIndex < 0)
+      || (static_cast<unsigned int>(parameterIndex)
+          >= parameterPointer_.size()))
   {
     LOG_ERROR("Invalid parameter index, " + SNUM(parameterIndex) + ".");
     LOG_DEBUG("Exit 1=" + callString);
@@ -1094,8 +1073,8 @@ int ModelImplementation::GetParameter(int const parameterIndex,
   }
 #endif
 
-  *parameterValue = reinterpret_cast<int const *>
-      (parameterPointer_[parameterIndex])[arrayIndex];
+  *parameterValue = reinterpret_cast<int const *>(
+      parameterPointer_[parameterIndex])[arrayIndex];
 
   LOG_DEBUG("Exit 0=" + callString);
   return false;
@@ -1106,16 +1085,16 @@ int ModelImplementation::GetParameter(int const parameterIndex,
                                       double * const parameterValue) const
 {
 #if DEBUG_VERBOSITY
-  std::string const callString = "GetParameter("
-      + SNUM(parameterIndex) + ", " + SNUM(arrayIndex) + ", "
-      + SPTR(parameterValue) + ").";
+  std::string const callString = "GetParameter(" + SNUM(parameterIndex) + ", "
+                                 + SNUM(arrayIndex) + ", "
+                                 + SPTR(parameterValue) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
 #if ERROR_VERBOSITY
-  if ((parameterIndex < 0) ||
-      (static_cast<unsigned int>(parameterIndex)
-       >= parameterPointer_.size()))
+  if ((parameterIndex < 0)
+      || (static_cast<unsigned int>(parameterIndex)
+          >= parameterPointer_.size()))
   {
     LOG_ERROR("Invalid parameter index, " + SNUM(parameterIndex) + ".");
     LOG_DEBUG("Exit 1=" + callString);
@@ -1130,8 +1109,8 @@ int ModelImplementation::GetParameter(int const parameterIndex,
   }
 #endif
 
-  *parameterValue = reinterpret_cast<double const *>
-      (parameterPointer_[parameterIndex])[arrayIndex];
+  *parameterValue = reinterpret_cast<double const *>(
+      parameterPointer_[parameterIndex])[arrayIndex];
 
   LOG_DEBUG("Exit 0=" + callString);
   return false;
@@ -1142,16 +1121,16 @@ int ModelImplementation::SetParameter(int const parameterIndex,
                                       int const parameterValue)
 {
 #if DEBUG_VERBOSITY
-  std::string const callString = "SetParameter("
-      + SNUM(parameterIndex) + ", " + SNUM(arrayIndex) + ", "
-      + SNUM(parameterValue) + ").";
+  std::string const callString = "SetParameter(" + SNUM(parameterIndex) + ", "
+                                 + SNUM(arrayIndex) + ", "
+                                 + SNUM(parameterValue) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
 #if ERROR_VERBOSITY
-  if ((parameterIndex < 0) ||
-      (static_cast<unsigned int>(parameterIndex)
-       >= parameterPointer_.size()))
+  if ((parameterIndex < 0)
+      || (static_cast<unsigned int>(parameterIndex)
+          >= parameterPointer_.size()))
   {
     LOG_ERROR("Invalid parameter index, " + SNUM(parameterIndex) + ".");
     LOG_DEBUG("Exit 1=" + callString);
@@ -1178,16 +1157,16 @@ int ModelImplementation::SetParameter(int const parameterIndex,
                                       double const parameterValue)
 {
 #if DEBUG_VERBOSITY
-  std::string const callString = "SetParameter("
-      + SNUM(parameterIndex) + ", " + SNUM(arrayIndex) + ", "
-      + SNUM(parameterValue) + ").";
+  std::string const callString = "SetParameter(" + SNUM(parameterIndex) + ", "
+                                 + SNUM(arrayIndex) + ", "
+                                 + SNUM(parameterValue) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
 #if ERROR_VERBOSITY
-  if ((parameterIndex < 0) ||
-      (static_cast<unsigned int>(parameterIndex)
-       >= parameterPointer_.size()))
+  if ((parameterIndex < 0)
+      || (static_cast<unsigned int>(parameterIndex)
+          >= parameterPointer_.size()))
   {
     LOG_ERROR("Invalid parameter index, " + SNUM(parameterIndex) + ".");
     LOG_DEBUG("Exit 1=" + callString);
@@ -1213,8 +1192,7 @@ int ModelImplementation::Compute(
     ComputeArguments const * const computeArguments) const
 {
 #if DEBUG_VERBOSITY
-  std::string const callString = "Compute("
-      + SPTR(computeArguments) + ").";
+  std::string const callString = "Compute(" + SPTR(computeArguments) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -1224,7 +1202,8 @@ int ModelImplementation::Compute(
     LOG_ERROR("ComputeArguments object for Model '"
               + computeArguments->pimpl->modelName_
               + "' cannot be used with the "
-              "ModelCompute() routine of Model '" + modelName_ + "'.");
+                "ModelCompute() routine of Model '"
+              + modelName_ + "'.");
 
     LOG_DEBUG("Exit 1=" + callString);
     return true;
@@ -1251,8 +1230,8 @@ int ModelImplementation::Compute(
   // Resize computeArguments storage if needed
   if (simulatorNumbering_ != modelNumbering_)
   {
-    computeArguments->pimpl
-        ->getNeighborListStorage_.resize(numberOfNeighborLists_);
+    computeArguments->pimpl->getNeighborListStorage_.resize(
+        numberOfNeighborLists_);
   }
 
 
@@ -1267,23 +1246,25 @@ int ModelImplementation::Compute(
       = reinterpret_cast<ModelComputeF *>(computeFunction_);
 
   int error;
-  struct Mdl {void const * p;};
+  struct Mdl
+  {
+    void const * p;
+  };
   Mdl M;
   M.p = this;
   if (computeLanguage_ == LANGUAGE_NAME::cpp)
   {
     error = CppCompute(
         reinterpret_cast<KIM::ModelCompute const *>(&M),
-        reinterpret_cast<KIM::ModelComputeArguments const *>(
-            computeArguments));
+        reinterpret_cast<KIM::ModelComputeArguments const *>(computeArguments));
   }
   else if (computeLanguage_ == LANGUAGE_NAME::c)
   {
     KIM_ModelCompute cM;
     cM.p = &M;
     KIM_ModelComputeArguments cMca;
-    cMca.p = reinterpret_cast<void *>
-        (const_cast<KIM::ComputeArguments *>(computeArguments));
+    cMca.p = reinterpret_cast<void *>(
+        const_cast<KIM::ComputeArguments *>(computeArguments));
     error = CCompute(&cM, &cMca);
   }
   else if (computeLanguage_ == LANGUAGE_NAME::fortran)
@@ -1293,8 +1274,8 @@ int ModelImplementation::Compute(
     KIM_ModelCompute cM_Handle;
     cM_Handle.p = &cM;
     KIM_ModelComputeArguments cMca;
-    cMca.p = reinterpret_cast<void *>
-        (const_cast<KIM::ComputeArguments *>(computeArguments));
+    cMca.p = reinterpret_cast<void *>(
+        const_cast<KIM::ComputeArguments *>(computeArguments));
     KIM_ModelComputeArguments cMca_Handle;
     cMca_Handle.p = &cMca;
     FCompute(&cM_Handle, &cMca_Handle, &error);
@@ -1327,8 +1308,7 @@ int ModelImplementation::Compute(
 int ModelImplementation::ClearThenRefresh()
 {
 #if DEBUG_VERBOSITY
-  std::string const callString =
-      "ClearThenRefresh().";
+  std::string const callString = "ClearThenRefresh().";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -1354,14 +1334,14 @@ int ModelImplementation::ClearThenRefresh()
       = reinterpret_cast<ModelRefreshF *>(refreshFunction_);
 
   int error;
-  struct Mdl {void * p;};
+  struct Mdl
+  {
+    void * p;
+  };
   Mdl M;
   M.p = this;
   if (refreshLanguage_ == LANGUAGE_NAME::cpp)
-  {
-    error = CppRefresh(
-        reinterpret_cast<KIM::ModelRefresh *>(&M));
-  }
+  { error = CppRefresh(reinterpret_cast<KIM::ModelRefresh *>(&M)); }
   else if (refreshLanguage_ == LANGUAGE_NAME::c)
   {
     KIM_ModelRefresh cM;
@@ -1415,7 +1395,7 @@ int ModelImplementation::ClearThenRefresh()
       return true;
     }
     double maxCutoff = 0.0;
-    for (int i=0; i < numberOfNeighborLists_; ++i)
+    for (int i = 0; i < numberOfNeighborLists_; ++i)
     {
       if (maxCutoff < cutoffs_[i]) maxCutoff = cutoffs_[i];
     }
@@ -1466,8 +1446,8 @@ void ModelImplementation::GetModelBufferPointer(void ** const ptr) const
 void ModelImplementation::SetSimulatorBufferPointer(void * const ptr)
 {
 #if DEBUG_VERBOSITY
-  std::string const callString = "SetSimulatorBufferPointer("
-      + SPTR(ptr) + ").";
+  std::string const callString
+      = "SetSimulatorBufferPointer(" + SPTR(ptr) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -1479,8 +1459,8 @@ void ModelImplementation::SetSimulatorBufferPointer(void * const ptr)
 void ModelImplementation::GetSimulatorBufferPointer(void ** const ptr) const
 {
 #if DEBUG_VERBOSITY
-  std::string const callString = "GetSimulatorBufferPointer("
-      + SPTR(ptr) + ").";
+  std::string const callString
+      = "GetSimulatorBufferPointer(" + SPTR(ptr) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -1491,8 +1471,7 @@ void ModelImplementation::GetSimulatorBufferPointer(void ** const ptr) const
 
 namespace
 {
-typedef std::map<LengthUnit const, double, LENGTH_UNIT::Comparator>
-LengthMap;
+typedef std::map<LengthUnit const, double, LENGTH_UNIT::Comparator> LengthMap;
 
 LengthMap const GetLengthMap()
 {
@@ -1505,8 +1484,7 @@ LengthMap const GetLengthMap()
   return mm;
 }
 
-typedef std::map<EnergyUnit const, double, ENERGY_UNIT::Comparator>
-EnergyMap;
+typedef std::map<EnergyUnit const, double, ENERGY_UNIT::Comparator> EnergyMap;
 
 EnergyMap const GetEnergyMap()
 {
@@ -1520,8 +1498,7 @@ EnergyMap const GetEnergyMap()
   return m;
 }
 
-typedef std::map<ChargeUnit const, double, CHARGE_UNIT::Comparator>
-ChargeMap;
+typedef std::map<ChargeUnit const, double, CHARGE_UNIT::Comparator> ChargeMap;
 
 ChargeMap const GetChargeMap()
 {
@@ -1533,7 +1510,7 @@ ChargeMap const GetChargeMap()
 }
 
 typedef std::map<TemperatureUnit const, double, TEMPERATURE_UNIT::Comparator>
-TemperatureMap;
+    TemperatureMap;
 
 TemperatureMap const GetTemperatureMap()
 {
@@ -1542,8 +1519,7 @@ TemperatureMap const GetTemperatureMap()
   return m;
 }
 
-typedef std::map<TimeUnit const, double, TIME_UNIT::Comparator>
-TimeMap;
+typedef std::map<TimeUnit const, double, TIME_UNIT::Comparator> TimeMap;
 
 TimeMap const GetTimeMap()
 {
@@ -1556,23 +1532,22 @@ TimeMap const GetTimeMap()
 }
 }  // namespace
 
-int ModelImplementation::ConvertUnit(
-    LengthUnit const fromLengthUnit,
-    EnergyUnit const fromEnergyUnit,
-    ChargeUnit const fromChargeUnit,
-    TemperatureUnit const fromTemperatureUnit,
-    TimeUnit const fromTimeUnit,
-    LengthUnit const toLengthUnit,
-    EnergyUnit const toEnergyUnit,
-    ChargeUnit const toChargeUnit,
-    TemperatureUnit const toTemperatureUnit,
-    TimeUnit const toTimeUnit,
-    double const lengthExponent,
-    double const energyExponent,
-    double const chargeExponent,
-    double const temperatureExponent,
-    double const timeExponent,
-    double * const conversionFactor)
+int ModelImplementation::ConvertUnit(LengthUnit const fromLengthUnit,
+                                     EnergyUnit const fromEnergyUnit,
+                                     ChargeUnit const fromChargeUnit,
+                                     TemperatureUnit const fromTemperatureUnit,
+                                     TimeUnit const fromTimeUnit,
+                                     LengthUnit const toLengthUnit,
+                                     EnergyUnit const toEnergyUnit,
+                                     ChargeUnit const toChargeUnit,
+                                     TemperatureUnit const toTemperatureUnit,
+                                     TimeUnit const toTimeUnit,
+                                     double const lengthExponent,
+                                     double const energyExponent,
+                                     double const chargeExponent,
+                                     double const temperatureExponent,
+                                     double const timeExponent,
+                                     double * const conversionFactor)
 {
   // No debug logging for ConvertUnit: no log object available
   //
@@ -1604,17 +1579,11 @@ int ModelImplementation::ConvertUnit(
   static TimeMap const timeConvertToSI = GetTimeMap();
 
 #if ERROR_VERBOSITY
-  int error =
-      Validate(fromLengthUnit) ||
-      Validate(fromEnergyUnit) ||
-      Validate(fromChargeUnit) ||
-      Validate(fromTemperatureUnit) ||
-      Validate(fromTimeUnit) ||
-      Validate(toLengthUnit) ||
-      Validate(toEnergyUnit) ||
-      Validate(toChargeUnit) ||
-      Validate(toTemperatureUnit) ||
-      Validate(toTimeUnit);
+  int error = Validate(fromLengthUnit) || Validate(fromEnergyUnit)
+              || Validate(fromChargeUnit) || Validate(fromTemperatureUnit)
+              || Validate(fromTimeUnit) || Validate(toLengthUnit)
+              || Validate(toEnergyUnit) || Validate(toChargeUnit)
+              || Validate(toTemperatureUnit) || Validate(toTimeUnit);
   if (error)
   {
     // LOG_ERROR("Invalid arguments.");
@@ -1623,8 +1592,8 @@ int ModelImplementation::ConvertUnit(
   }
 #endif
 
-  bool lengthUnused = ((fromLengthUnit == KIM::LENGTH_UNIT::unused) ||
-                       (toLengthUnit == KIM::LENGTH_UNIT::unused));
+  bool lengthUnused = ((fromLengthUnit == KIM::LENGTH_UNIT::unused)
+                       || (toLengthUnit == KIM::LENGTH_UNIT::unused));
   if ((lengthExponent != 0.0) && lengthUnused)
   {
     // LOG_ERROR("Unable to convert unit.");
@@ -1632,12 +1601,12 @@ int ModelImplementation::ConvertUnit(
     return true;
   }
   double const lengthConversion
-      = (lengthUnused) ? 1 : (
-          lengthConvertToSI.find(fromLengthUnit)->second /
-          lengthConvertToSI.find(toLengthUnit)->second);
+      = (lengthUnused) ? 1
+                       : (lengthConvertToSI.find(fromLengthUnit)->second
+                          / lengthConvertToSI.find(toLengthUnit)->second);
 
-  bool energyUnused = ((fromEnergyUnit == KIM::ENERGY_UNIT::unused) ||
-                       (toEnergyUnit == KIM::ENERGY_UNIT::unused));
+  bool energyUnused = ((fromEnergyUnit == KIM::ENERGY_UNIT::unused)
+                       || (toEnergyUnit == KIM::ENERGY_UNIT::unused));
   if ((energyExponent != 0.0) && energyUnused)
   {
     // LOG_ERROR("Unable to convert unit.");
@@ -1645,12 +1614,12 @@ int ModelImplementation::ConvertUnit(
     return true;
   }
   double const energyConversion
-      = (energyUnused) ? 1 : (
-          energyConvertToSI.find(fromEnergyUnit)->second /
-          energyConvertToSI.find(toEnergyUnit)->second);
+      = (energyUnused) ? 1
+                       : (energyConvertToSI.find(fromEnergyUnit)->second
+                          / energyConvertToSI.find(toEnergyUnit)->second);
 
-  bool chargeUnused = ((fromChargeUnit == KIM::CHARGE_UNIT::unused) ||
-                       (toChargeUnit == KIM::CHARGE_UNIT::unused));
+  bool chargeUnused = ((fromChargeUnit == KIM::CHARGE_UNIT::unused)
+                       || (toChargeUnit == KIM::CHARGE_UNIT::unused));
   if ((chargeExponent != 0.0) && chargeUnused)
   {
     // LOG_ERROR("Unable to convert unit.");
@@ -1658,13 +1627,13 @@ int ModelImplementation::ConvertUnit(
     return true;
   }
   double const chargeConversion
-      = (chargeUnused) ? 1 : (
-          chargeConvertToSI.find(fromChargeUnit)->second /
-          chargeConvertToSI.find(toChargeUnit)->second);
+      = (chargeUnused) ? 1
+                       : (chargeConvertToSI.find(fromChargeUnit)->second
+                          / chargeConvertToSI.find(toChargeUnit)->second);
 
-  bool temperatureUnused =
-      ((fromTemperatureUnit == KIM::TEMPERATURE_UNIT::unused) ||
-       (toTemperatureUnit == KIM::TEMPERATURE_UNIT::unused));
+  bool temperatureUnused
+      = ((fromTemperatureUnit == KIM::TEMPERATURE_UNIT::unused)
+         || (toTemperatureUnit == KIM::TEMPERATURE_UNIT::unused));
   if ((temperatureExponent != 0.0) && temperatureUnused)
   {
     // LOG_ERROR("Unable to convert unit.");
@@ -1672,12 +1641,13 @@ int ModelImplementation::ConvertUnit(
     return true;
   }
   double const temperatureConversion
-      = (temperatureUnused) ? 1 : (
-          temperatureConvertToSI.find(fromTemperatureUnit)->second /
-          temperatureConvertToSI.find(toTemperatureUnit)->second);
+      = (temperatureUnused)
+            ? 1
+            : (temperatureConvertToSI.find(fromTemperatureUnit)->second
+               / temperatureConvertToSI.find(toTemperatureUnit)->second);
 
-  bool timeUnused = ((fromTimeUnit == KIM::TIME_UNIT::unused) ||
-                     (toTimeUnit == KIM::TIME_UNIT::unused));
+  bool timeUnused = ((fromTimeUnit == KIM::TIME_UNIT::unused)
+                     || (toTimeUnit == KIM::TIME_UNIT::unused));
   if ((timeExponent != 0.0) && timeUnused)
   {
     // LOG_ERROR("Unable to convert unit.");
@@ -1685,16 +1655,15 @@ int ModelImplementation::ConvertUnit(
     return true;
   }
   double const timeConversion
-      = (timeUnused) ? 1 : (
-          timeConvertToSI.find(fromTimeUnit)->second /
-          timeConvertToSI.find(toTimeUnit)->second);
+      = (timeUnused) ? 1
+                     : (timeConvertToSI.find(fromTimeUnit)->second
+                        / timeConvertToSI.find(toTimeUnit)->second);
 
-  *conversionFactor
-      = pow(lengthConversion, lengthExponent)
-      * pow(energyConversion, energyExponent)
-      * pow(chargeConversion, chargeExponent)
-      * pow(temperatureConversion, temperatureExponent)
-      * pow(timeConversion, timeExponent);
+  *conversionFactor = pow(lengthConversion, lengthExponent)
+                      * pow(energyConversion, energyExponent)
+                      * pow(chargeConversion, chargeExponent)
+                      * pow(temperatureConversion, temperatureExponent)
+                      * pow(timeConversion, timeExponent);
 
   // LOG_DEBUG("Exit 0=" + callString);
   return false;
@@ -1715,8 +1684,8 @@ void ModelImplementation::SetLogID(std::string const & logID)
 void ModelImplementation::PushLogVerbosity(LogVerbosity const logVerbosity)
 {
 #if DEBUG_VERBOSITY
-  std::string const callString = "PushLogVerbosity("
-      + logVerbosity.String() + ").";
+  std::string const callString
+      = "PushLogVerbosity(" + logVerbosity.String() + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -1764,90 +1733,91 @@ std::string const & ModelImplementation::String() const
 
   std::stringstream ss;
   ss << std::setprecision(10) << std::scientific << std::left;
-  ss <<
-      "====================================================================="
-      "===========\n\n";
+  ss << "====================================================================="
+        "===========\n\n";
 
   ss << "Model object\n"
      << "------------\n\n";
   ss << "Model Name : " << modelName_ << "\n";
   if (modelType_ == ModelLibrary::PARAMETERIZED_MODEL)
-  {
-    ss << "Model Driver Name : " << modelDriverName_ << "\n";
-  }
+  { ss << "Model Driver Name : " << modelDriverName_ << "\n"; }
   ss << "Log ID : " << log_->GetID() << "\n";
   ss << "\n";
 
   ss << "Model Supplied Functions :\n"
-     << "\t" << std::setw(25) << "Function Name"
-     << std::setw(10) << "Language"
+     << "\t" << std::setw(25) << "Function Name" << std::setw(10) << "Language"
      << std::setw(25) << "Pointer (1-set / 0-unset)"
      << "\n"
-     << "\t" << std::setw(25) << "-------------------------"
-     << std::setw(10) << "----------"
-     << std::setw(25) << "-------------------------"
+     << "\t" << std::setw(25) << "-------------------------" << std::setw(10)
+     << "----------" << std::setw(25) << "-------------------------"
      << "\n\n"
-     << "\t"
-     << std::setw(25) << "Refresh"
-     << std::setw(10) << refreshLanguage_.String()
-     << std::setw(25) << SFUNC(refreshFunction_)
+     << "\t" << std::setw(25) << "Refresh" << std::setw(10)
+     << refreshLanguage_.String() << std::setw(25) << SFUNC(refreshFunction_)
      << "\n"
-     << "\t"
-     << std::setw(25) << "Destroy"
-     << std::setw(10) << destroyLanguage_.String()
-     << std::setw(25) << SFUNC(destroyFunction_)
+     << "\t" << std::setw(25) << "Destroy" << std::setw(10)
+     << destroyLanguage_.String() << std::setw(25) << SFUNC(destroyFunction_)
      << "\n"
-     << "\t"
-     << std::setw(25) << "ComputeArgumentsCreate"
-     << std::setw(10) << computeArgumentsCreateLanguage_.String()
-     << std::setw(25) << SFUNC(computeArgumentsCreateFunction_)
-     << "\n"
-     << "\t"
-     << std::setw(25) << "ComputeArgumentsDestroy"
-     << std::setw(10) << computeArgumentsDestroyLanguage_.String()
-     << std::setw(25) << SFUNC(computeArgumentsDestroyFunction_)
-     << "\n"
-     << "\t"
-     << std::setw(25) << "Compute"
-     << std::setw(10) << computeLanguage_.String()
-     << std::setw(25) << SFUNC(computeFunction_)
+     << "\t" << std::setw(25) << "ComputeArgumentsCreate" << std::setw(10)
+     << computeArgumentsCreateLanguage_.String() << std::setw(25)
+     << SFUNC(computeArgumentsCreateFunction_) << "\n"
+     << "\t" << std::setw(25) << "ComputeArgumentsDestroy" << std::setw(10)
+     << computeArgumentsDestroyLanguage_.String() << std::setw(25)
+     << SFUNC(computeArgumentsDestroyFunction_) << "\n"
+     << "\t" << std::setw(25) << "Compute" << std::setw(10)
+     << computeLanguage_.String() << std::setw(25) << SFUNC(computeFunction_)
      << "\n\n";
 
   ss << "Numbering : " << modelNumbering_.String() << "\n\n";
 
   ss << "Units : \n"
-      "\tLength Unit      : " << lengthUnit_.String() << "\n"
-      "\tEnergy Unit      : " << energyUnit_.String() << "\n"
-      "\tCharge Unit      : " << chargeUnit_.String() << "\n"
-      "\tTemperature Unit : " << temperatureUnit_.String() << "\n"
-      "\tTime Unit        : " << timeUnit_.String() << "\n\n";
+        "\tLength Unit      : "
+     << lengthUnit_.String()
+     << "\n"
+        "\tEnergy Unit      : "
+     << energyUnit_.String()
+     << "\n"
+        "\tCharge Unit      : "
+     << chargeUnit_.String()
+     << "\n"
+        "\tTemperature Unit : "
+     << temperatureUnit_.String()
+     << "\n"
+        "\tTime Unit        : "
+     << timeUnit_.String() << "\n\n";
 
   ss << "Influence Distance : " << *influenceDistance_ << "\n\n";
 
   ss << "Number Of Neighbor Lists : " << numberOfNeighborLists_ << "\n";
   ss << "Neighbor List Cutoffs :\n";
-  ss << "\t" << "index" << " : " << std::setw(20) << "cutoff distance"
-     << std::setw(40)
-     << "modelWillNotRequestNeighborsOfNoncontributingParticles" << "\n";
-  ss << "\t" << "-----" << "---" << std::setw(20) << "--------------------"
-     << std::setw(40) << "----------------------------------------" << "\n";
-  for (int i=0; i<numberOfNeighborLists_; ++i)
+  ss << "\t"
+     << "index"
+     << " : " << std::setw(20) << "cutoff distance" << std::setw(40)
+     << "modelWillNotRequestNeighborsOfNoncontributingParticles"
+     << "\n";
+  ss << "\t"
+     << "-----"
+     << "---" << std::setw(20) << "--------------------" << std::setw(40)
+     << "----------------------------------------"
+     << "\n";
+  for (int i = 0; i < numberOfNeighborLists_; ++i)
   {
     ss << "\t" << std::setw(5) << i << " : " << std::setw(20) << cutoffs_[i]
        << std::setw(40)
-       << modelWillNotRequestNeighborsOfNoncontributingParticles_[i]
-       << "\n";
+       << modelWillNotRequestNeighborsOfNoncontributingParticles_[i] << "\n";
   }
   ss << "\n\n";
 
   ss << "Supported Species :\n";
   int const specWidth = 10;
   ss << "\t" << std::setw(specWidth) << "Species" << std::setw(specWidth)
-     << "Code" << "\n";
+     << "Code"
+     << "\n";
   ss << "\t" << std::setw(specWidth) << "----------" << std::setw(specWidth)
-     << "----------" << "\n\n";
+     << "----------"
+     << "\n\n";
   for (std::map<SpeciesName const, int, SPECIES_NAME::Comparator>::
-           const_iterator spec = supportedSpecies_.begin();
+           const_iterator spec
+       = supportedSpecies_.begin();
        spec != supportedSpecies_.end();
        ++spec)
   {
@@ -1859,50 +1829,36 @@ std::string const & ModelImplementation::String() const
 
   int numberOfParameters = parameterPointer_.size();
   ss << "Number Of Prameters : " << numberOfParameters << "\n";
-  ss << "\t" << std::setw(8) << "index"
-     << std::setw(10) << "Data Type"
-     << std::setw(10) << "Extent"
-     << std::setw(15) << "Pointer"
+  ss << "\t" << std::setw(8) << "index" << std::setw(10) << "Data Type"
+     << std::setw(10) << "Extent" << std::setw(15) << "Pointer"
      << "Name"
      << "\n";
-  ss << "\t" << std::setw(8) << "--------"
-     << std::setw(10) << "----------"
-     << std::setw(10) << "----------"
-     << std::setw(15) << "---------------"
+  ss << "\t" << std::setw(8) << "--------" << std::setw(10) << "----------"
+     << std::setw(10) << "----------" << std::setw(15) << "---------------"
      << "-------------------------"
      << "\n\n";
-  for (int i=0; i<numberOfParameters; ++i)
+  for (int i = 0; i < numberOfParameters; ++i)
   {
-    ss << "\t" << std::setw(8) << i
-       << std::setw(10) << parameterDataType_[i].String()
-       << std::setw(10) << parameterExtent_[i]
-       << std::setw(15) << SPTR(parameterPointer_[i])
-       << parameterName_[i]
+    ss << "\t" << std::setw(8) << i << std::setw(10)
+       << parameterDataType_[i].String() << std::setw(10) << parameterExtent_[i]
+       << std::setw(15) << SPTR(parameterPointer_[i]) << parameterName_[i]
        << "\n";
   }
   ss << "\n";
 
   ss << "Buffers\n";
-  ss << "\t"
-     << std::setw(15) << "Buffer"
-     << std::setw(15) << "Pointer"
+  ss << "\t" << std::setw(15) << "Buffer" << std::setw(15) << "Pointer"
      << "\n";
-  ss << "\t"
-     << std::setw(15) << "---------------"
-     << std::setw(15) << "---------------"
+  ss << "\t" << std::setw(15) << "---------------" << std::setw(15)
+     << "---------------"
      << "\n\n";
-  ss << "\t"
-     << std::setw(15) << "Model"
-     << std::setw(15) << SPTR(modelBuffer_)
+  ss << "\t" << std::setw(15) << "Model" << std::setw(15) << SPTR(modelBuffer_)
      << "\n"
-     << "\t"
-     << std::setw(15) << "Simulator"
-     << std::setw(15) << SPTR(simulatorBuffer_)
-     << "\n\n";
+     << "\t" << std::setw(15) << "Simulator" << std::setw(15)
+     << SPTR(simulatorBuffer_) << "\n\n";
 
-  ss <<
-      "====================================================================="
-      "===========\n";
+  ss << "====================================================================="
+        "===========\n";
 
   string_ = ss.str();
   LOG_DEBUG("Exit   " + callString);
@@ -1947,8 +1903,8 @@ ModelImplementation::ModelImplementation(ModelLibrary * const modelLibrary,
     string_("")
 {
 #if DEBUG_VERBOSITY
-  std::string const callString = "ModelImplementation("
-      + SPTR(modelLibrary) + ", " + SPTR(log) + ").";
+  std::string const callString
+      = "ModelImplementation(" + SPTR(modelLibrary) + ", " + SPTR(log) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -1979,25 +1935,20 @@ int ModelImplementation::ModelCreate(
     std::string const & modelName)
 {
 #if DEBUG_VERBOSITY
-  std::string const callString = "ModelCreate("
-      + numbering.String() + ", "
-      + requestedLengthUnit.String() + ", "
-      + requestedEnergyUnit.String() + ", "
-      + requestedChargeUnit.String() + ", "
-      + requestedTemperatureUnit.String() + ", "
-      + requestedTimeUnit.String() + ", '"
-      + modelName + "').";
+  std::string const callString
+      = "ModelCreate(" + numbering.String() + ", "
+        + requestedLengthUnit.String() + ", " + requestedEnergyUnit.String()
+        + ", " + requestedChargeUnit.String() + ", "
+        + requestedTemperatureUnit.String() + ", " + requestedTimeUnit.String()
+        + ", '" + modelName + "').";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
 #if ERROR_VERBOSITY
-  int error =
-      Validate(numbering) ||
-      Validate(requestedLengthUnit) ||
-      Validate(requestedEnergyUnit) ||
-      Validate(requestedChargeUnit) ||
-      Validate(requestedTemperatureUnit) ||
-      Validate(requestedTimeUnit);
+  int error = Validate(numbering) || Validate(requestedLengthUnit)
+              || Validate(requestedEnergyUnit) || Validate(requestedChargeUnit)
+              || Validate(requestedTemperatureUnit)
+              || Validate(requestedTimeUnit);
   if (error)
   {
     LOG_ERROR("Invalid arguments.");
@@ -2114,7 +2065,7 @@ int ModelImplementation::ModelCreate(
   }
 
   double maxCutoff = 0.0;
-  for (int i=0; i < numberOfNeighborLists_; ++i)
+  for (int i = 0; i < numberOfNeighborLists_; ++i)
   {
     if (maxCutoff < cutoffs_[i]) maxCutoff = cutoffs_[i];
   }
@@ -2224,13 +2175,14 @@ int ModelImplementation::ModelDestroy()
       = reinterpret_cast<ModelDestroyF *>(destroyFunction_);
 
   int error;
-  struct Mdl {void * p;};
+  struct Mdl
+  {
+    void * p;
+  };
   Mdl M;
   M.p = this;
   if (destroyLanguage_ == LANGUAGE_NAME::cpp)
-  {
-    error = CppDestroy(reinterpret_cast<KIM::ModelDestroy *>(&M));
-  }
+  { error = CppDestroy(reinterpret_cast<KIM::ModelDestroy *>(&M)); }
   else if (destroyLanguage_ == LANGUAGE_NAME::c)
   {
     KIM_ModelDestroy cM;
@@ -2265,8 +2217,8 @@ int ModelImplementation::ModelDestroy()
   }
 }
 
-int ModelImplementation::ModelComputeArgumentsCreate(ComputeArguments * const
-                                                     computeArguments) const
+int ModelImplementation::ModelComputeArgumentsCreate(
+    ComputeArguments * const computeArguments) const
 {
 #if DEBUG_VERBOSITY
   std::string const callString = "ModelComputeArgumentsCreate().";
@@ -2281,13 +2233,17 @@ int ModelImplementation::ModelComputeArgumentsCreate(ComputeArguments * const
           computeArgumentsCreateFunction_);
   typedef void ModelComputeArgumentsCreateF(
       KIM_ModelCompute const * const,
-      KIM_ModelComputeArgumentsCreate * const, int * const);
+      KIM_ModelComputeArgumentsCreate * const,
+      int * const);
   ModelComputeArgumentsCreateF * FComputeArgumentsCreate
       = reinterpret_cast<ModelComputeArgumentsCreateF *>(
           computeArgumentsCreateFunction_);
 
   int error;
-  struct Mdl {void const * p;};
+  struct Mdl
+  {
+    void const * p;
+  };
   Mdl M;
   M.p = this;
   if (computeArgumentsCreateLanguage_ == LANGUAGE_NAME::cpp)
@@ -2337,8 +2293,8 @@ int ModelImplementation::ModelComputeArgumentsCreate(ComputeArguments * const
   }
 }
 
-int ModelImplementation::ModelComputeArgumentsDestroy(ComputeArguments * const
-                                                      computeArguments) const
+int ModelImplementation::ModelComputeArgumentsDestroy(
+    ComputeArguments * const computeArguments) const
 {
 #if DEBUG_VERBOSITY
   std::string const callString = "ModelComputeArgumentsDestroy().";
@@ -2359,13 +2315,17 @@ int ModelImplementation::ModelComputeArgumentsDestroy(ComputeArguments * const
           computeArgumentsDestroyFunction_);
   typedef void ModelComputeArgumentsDestroyF(
       KIM_ModelCompute const * const,
-      KIM_ModelComputeArgumentsDestroy * const, int * const);
+      KIM_ModelComputeArgumentsDestroy * const,
+      int * const);
   ModelComputeArgumentsDestroyF * FComputeArgumentsDestroy
       = reinterpret_cast<ModelComputeArgumentsDestroyF *>(
           computeArgumentsDestroyFunction_);
 
   int error;
-  struct Mdl {void const * p;};
+  struct Mdl
+  {
+    void const * p;
+  };
   Mdl M;
   M.p = this;
   if (computeArgumentsDestroyLanguage_ == LANGUAGE_NAME::cpp)
@@ -2425,22 +2385,19 @@ int ModelImplementation::InitializeStandAloneModel(
     TimeUnit const requestedTimeUnit)
 {
 #if DEBUG_VERBOSITY
-  std::string const callString = "InitializeStandAloneModel("
-      + requestedLengthUnit.String() + ", "
-      + requestedEnergyUnit.String() + ", "
-      + requestedChargeUnit.String() + ", "
-      + requestedTemperatureUnit.String() + ", "
-      + requestedTimeUnit.String() + ").";
+  std::string const callString
+      = "InitializeStandAloneModel(" + requestedLengthUnit.String() + ", "
+        + requestedEnergyUnit.String() + ", " + requestedChargeUnit.String()
+        + ", " + requestedTemperatureUnit.String() + ", "
+        + requestedTimeUnit.String() + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
 #if ERROR_VERBOSITY
-  int error =
-      Validate(requestedLengthUnit) ||
-      Validate(requestedEnergyUnit) ||
-      Validate(requestedChargeUnit) ||
-      Validate(requestedTemperatureUnit) ||
-      Validate(requestedTimeUnit);
+  int error = Validate(requestedLengthUnit) || Validate(requestedEnergyUnit)
+              || Validate(requestedChargeUnit)
+              || Validate(requestedTemperatureUnit)
+              || Validate(requestedTimeUnit);
   if (error)
   {
     LOG_ERROR("Invalid arguments.");
@@ -2451,8 +2408,8 @@ int ModelImplementation::InitializeStandAloneModel(
 
   LanguageName languageName;
   Function * functionPointer = NULL;
-  error = modelLibrary_->GetModelCreateFunctionPointer(
-      &languageName, &functionPointer);
+  error = modelLibrary_->GetModelCreateFunctionPointer(&languageName,
+                                                       &functionPointer);
   if (error)
   {
     LOG_ERROR("Could not get ModelCreateFunctionPointer.");
@@ -2464,43 +2421,45 @@ int ModelImplementation::InitializeStandAloneModel(
       = reinterpret_cast<ModelCreateFunction *>(functionPointer);
   KIM_ModelCreateFunction * CCreate
       = reinterpret_cast<KIM_ModelCreateFunction *>(functionPointer);
-  typedef void ModelCreateF(
-      KIM_ModelCreate * const modelCreate,
-      KIM_LengthUnit const requestedLengthUnit,
-      KIM_EnergyUnit const requestedEnergyUnit,
-      KIM_ChargeUnit const requestedChargeUnit,
-      KIM_TemperatureUnit const requestedTemperatureUnit,
-      KIM_TimeUnit const requestedTimeUnit,
-      int * const);
-  ModelCreateF * FCreate
-      = reinterpret_cast<ModelCreateF *>(functionPointer);
+  typedef void ModelCreateF(KIM_ModelCreate * const modelCreate,
+                            KIM_LengthUnit const requestedLengthUnit,
+                            KIM_EnergyUnit const requestedEnergyUnit,
+                            KIM_ChargeUnit const requestedChargeUnit,
+                            KIM_TemperatureUnit const requestedTemperatureUnit,
+                            KIM_TimeUnit const requestedTimeUnit,
+                            int * const);
+  ModelCreateF * FCreate = reinterpret_cast<ModelCreateF *>(functionPointer);
 
-  struct Mdl {void * p;};
+  struct Mdl
+  {
+    void * p;
+  };
   Mdl M;
   M.p = this;
-  KIM_LengthUnit requestedLengthUnitC
-      = makeLengthUnitC(requestedLengthUnit);
-  KIM_EnergyUnit requestedEnergyUnitC
-      = makeEnergyUnitC(requestedEnergyUnit);
-  KIM_ChargeUnit requestedChargeUnitC
-      = makeChargeUnitC(requestedChargeUnit);
+  KIM_LengthUnit requestedLengthUnitC = makeLengthUnitC(requestedLengthUnit);
+  KIM_EnergyUnit requestedEnergyUnitC = makeEnergyUnitC(requestedEnergyUnit);
+  KIM_ChargeUnit requestedChargeUnitC = makeChargeUnitC(requestedChargeUnit);
   KIM_TemperatureUnit requestedTemperatureUnitC
       = makeTemperatureUnitC(requestedTemperatureUnit);
   KIM_TimeUnit requestedTimeUnitC = makeTimeUnitC(requestedTimeUnit);
   if (languageName == LANGUAGE_NAME::cpp)
   {
-    error = CppCreate(
-        reinterpret_cast<KIM::ModelCreate *>(&M),
-        requestedLengthUnit, requestedEnergyUnit,
-        requestedChargeUnit, requestedTemperatureUnit,
-        requestedTimeUnit);
+    error = CppCreate(reinterpret_cast<KIM::ModelCreate *>(&M),
+                      requestedLengthUnit,
+                      requestedEnergyUnit,
+                      requestedChargeUnit,
+                      requestedTemperatureUnit,
+                      requestedTimeUnit);
   }
   else if (languageName == LANGUAGE_NAME::c)
   {
     KIM_ModelCreate cM;
     cM.p = &M;
-    error = CCreate(&cM, requestedLengthUnitC, requestedEnergyUnitC,
-                    requestedChargeUnitC, requestedTemperatureUnitC,
+    error = CCreate(&cM,
+                    requestedLengthUnitC,
+                    requestedEnergyUnitC,
+                    requestedChargeUnitC,
+                    requestedTemperatureUnitC,
                     requestedTimeUnitC);
   }
   else if (languageName == LANGUAGE_NAME::fortran)
@@ -2509,9 +2468,13 @@ int ModelImplementation::InitializeStandAloneModel(
     cM.p = &M;
     KIM_ModelCreate cM_Handle;
     cM_Handle.p = &cM;
-    FCreate(&cM_Handle, requestedLengthUnitC, requestedEnergyUnitC,
-            requestedChargeUnitC, requestedTemperatureUnitC,
-            requestedTimeUnitC, &error);
+    FCreate(&cM_Handle,
+            requestedLengthUnitC,
+            requestedEnergyUnitC,
+            requestedChargeUnitC,
+            requestedTemperatureUnitC,
+            requestedTimeUnitC,
+            &error);
   }
   else
   {
@@ -2540,22 +2503,19 @@ int ModelImplementation::InitializeParameterizedModel(
     TimeUnit const requestedTimeUnit)
 {
 #if DEBUG_VERBOSITY
-  std::string const callString = "InitializeParameterizedModel("
-      + requestedLengthUnit.String() + ", "
-      + requestedEnergyUnit.String() + ", "
-      + requestedChargeUnit.String() + ", "
-      + requestedTemperatureUnit.String() + ", "
-      + requestedTimeUnit.String() + ").";
+  std::string const callString
+      = "InitializeParameterizedModel(" + requestedLengthUnit.String() + ", "
+        + requestedEnergyUnit.String() + ", " + requestedChargeUnit.String()
+        + ", " + requestedTemperatureUnit.String() + ", "
+        + requestedTimeUnit.String() + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
 #if ERROR_VERBOSITY
-  int error =
-      Validate(requestedLengthUnit) ||
-      Validate(requestedEnergyUnit) ||
-      Validate(requestedChargeUnit) ||
-      Validate(requestedTemperatureUnit) ||
-      Validate(requestedTimeUnit);
+  int error = Validate(requestedLengthUnit) || Validate(requestedEnergyUnit)
+              || Validate(requestedChargeUnit)
+              || Validate(requestedTemperatureUnit)
+              || Validate(requestedTimeUnit);
   if (error)
   {
     LOG_ERROR("Invalid arguments.");
@@ -2609,8 +2569,8 @@ int ModelImplementation::InitializeParameterizedModel(
 
   LanguageName languageName;
   Function * functionPointer = NULL;
-  error = modelLibrary_->GetModelCreateFunctionPointer(
-      &languageName, &functionPointer);
+  error = modelLibrary_->GetModelCreateFunctionPointer(&languageName,
+                                                       &functionPointer);
   if (error)
   {
     LOG_ERROR("Could not get ModelCreateFunctionPointer.");
@@ -2634,32 +2594,36 @@ int ModelImplementation::InitializeParameterizedModel(
       = reinterpret_cast<ModelDriverCreateF *>(functionPointer);
 
 
-  struct Mdl {void * p;};
+  struct Mdl
+  {
+    void * p;
+  };
   Mdl M;
   M.p = this;
-  KIM_LengthUnit requestedLengthUnitC
-      = makeLengthUnitC(requestedLengthUnit);
-  KIM_EnergyUnit requestedEnergyUnitC
-      = makeEnergyUnitC(requestedEnergyUnit);
-  KIM_ChargeUnit requestedChargeUnitC
-      = makeChargeUnitC(requestedChargeUnit);
+  KIM_LengthUnit requestedLengthUnitC = makeLengthUnitC(requestedLengthUnit);
+  KIM_EnergyUnit requestedEnergyUnitC = makeEnergyUnitC(requestedEnergyUnit);
+  KIM_ChargeUnit requestedChargeUnitC = makeChargeUnitC(requestedChargeUnit);
   KIM_TemperatureUnit requestedTemperatureUnitC
       = makeTemperatureUnitC(requestedTemperatureUnit);
   KIM_TimeUnit requestedTimeUnitC = makeTimeUnitC(requestedTimeUnit);
   if (languageName == LANGUAGE_NAME::cpp)
   {
-    error = CppCreate(
-        reinterpret_cast<KIM::ModelDriverCreate *>(&M),
-        requestedLengthUnit, requestedEnergyUnit,
-        requestedChargeUnit, requestedTemperatureUnit,
-        requestedTimeUnit);
+    error = CppCreate(reinterpret_cast<KIM::ModelDriverCreate *>(&M),
+                      requestedLengthUnit,
+                      requestedEnergyUnit,
+                      requestedChargeUnit,
+                      requestedTemperatureUnit,
+                      requestedTimeUnit);
   }
   else if (languageName == LANGUAGE_NAME::c)
   {
     KIM_ModelDriverCreate cM;
     cM.p = &M;
-    error = CCreate(&cM, requestedLengthUnitC, requestedEnergyUnitC,
-                    requestedChargeUnitC, requestedTemperatureUnitC,
+    error = CCreate(&cM,
+                    requestedLengthUnitC,
+                    requestedEnergyUnitC,
+                    requestedChargeUnitC,
+                    requestedTemperatureUnitC,
                     requestedTimeUnitC);
   }
   else if (languageName == LANGUAGE_NAME::fortran)
@@ -2668,9 +2632,13 @@ int ModelImplementation::InitializeParameterizedModel(
     cM.p = &M;
     KIM_ModelDriverCreate cM_Handle;
     cM_Handle.p = &cM;
-    FCreate(&cM_Handle, requestedLengthUnitC, requestedEnergyUnitC,
-            requestedChargeUnitC, requestedTemperatureUnitC,
-            requestedTimeUnitC, &error);
+    FCreate(&cM_Handle,
+            requestedLengthUnitC,
+            requestedEnergyUnitC,
+            requestedChargeUnitC,
+            requestedTemperatureUnitC,
+            requestedTimeUnitC,
+            &error);
   }
   else
   {
@@ -2686,10 +2654,8 @@ int ModelImplementation::InitializeParameterizedModel(
   }
 
   // remove parameter files
-  for (int i=0; i<numberOfParameterFiles_; ++i)
-  {
-    remove(parameterFileNames_[i].c_str());
-  }
+  for (int i = 0; i < numberOfParameterFiles_; ++i)
+  { remove(parameterFileNames_[i].c_str()); }
   // clear out parameter file stuff
   numberOfParameterFiles_ = -1;
   parameterFileNames_.clear();
@@ -2708,11 +2674,11 @@ int ModelImplementation::WriteParameterFiles()
   modelLibrary_->GetNumberOfParameterFiles(&numberOfParameterFiles_);
   std::vector<unsigned char const *> parameterFileStrings;
   std::vector<unsigned int> parameterFileStringLengths;
-  for (int i=0; i<numberOfParameterFiles_; ++i)
+  for (int i = 0; i < numberOfParameterFiles_; ++i)
   {
     unsigned char const * strPtr;
     unsigned int length;
-    int error = modelLibrary_->GetParameterFileString(i, &length , &strPtr);
+    int error = modelLibrary_->GetParameterFileString(i, &length, &strPtr);
     if (error)
     {
       LOG_ERROR("Could not get parameter file data.");
@@ -2724,7 +2690,7 @@ int ModelImplementation::WriteParameterFiles()
   }
 
   static char const fileNameString[] = "kim-model-parameter-file-XXXXXXXXXXXX";
-  for (int i=0; i<numberOfParameterFiles_; ++i)
+  for (int i = 0; i < numberOfParameterFiles_; ++i)
   {
     std::stringstream templateString;
     templateString << P_tmpdir << "/" << fileNameString;
@@ -2740,9 +2706,11 @@ int ModelImplementation::WriteParameterFiles()
     parameterFileNames_.push_back(cstr);
     free(cstr);
 
-    FILE* fl = fdopen(fileid,"w");
-    fwrite(parameterFileStrings[i], sizeof(unsigned char),
-           parameterFileStringLengths[i], fl);
+    FILE * fl = fdopen(fileid, "w");
+    fwrite(parameterFileStrings[i],
+           sizeof(unsigned char),
+           parameterFileStringLengths[i],
+           fl);
     fclose(fl);  // also closed the fileid
   }
 
@@ -3052,18 +3020,14 @@ int ModelImplementation::Validate(TimeUnit const timeUnit)
 int ModelImplementation::IsCIdentifier(std::string const & id) const
 {
   std::string const numbers("0123456789");
-  std::string const cIdentifierChars(
-      "_"
-      "abcdefghijklmnopqrstuvwxyz"
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-      + numbers);
+  std::string const cIdentifierChars("_"
+                                     "abcdefghijklmnopqrstuvwxyz"
+                                     "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                                     + numbers);
 
-  if (id.length() == 0)
-    return false;
-  if (std::string::npos != id.find_first_not_of(cIdentifierChars))
-    return false;
-  if (0 == id.find_first_of(numbers))
-    return false;
+  if (id.length() == 0) return false;
+  if (std::string::npos != id.find_first_not_of(cIdentifierChars)) return false;
+  if (0 == id.find_first_of(numbers)) return false;
 
   return true;
 }

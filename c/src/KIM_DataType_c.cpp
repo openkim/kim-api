@@ -35,8 +35,7 @@
 #ifndef KIM_DATA_TYPE_HPP_
 #include "KIM_DataType.hpp"
 #endif
-extern "C"
-{
+extern "C" {
 #ifndef KIM_DATA_TYPE_H_
 #include "KIM_DataType.h"
 #endif
@@ -48,20 +47,19 @@ namespace
 KIM::DataType makeDataTypeCpp(KIM_DataType const dataType)
 {
   KIM::DataType const * const dataTypeCpp
-      = reinterpret_cast <KIM::DataType const *>(&dataType);
+      = reinterpret_cast<KIM::DataType const *>(&dataType);
   return *dataTypeCpp;
 }
 
 KIM_DataType makeDataTypeC(KIM::DataType const dataType)
 {
   KIM_DataType const * const dataTypeC
-      = reinterpret_cast <KIM_DataType const *>(&dataType);
+      = reinterpret_cast<KIM_DataType const *>(&dataType);
   return *dataTypeC;
 }
 }  // namespace
 
-extern "C"
-{
+extern "C" {
 KIM_DataType KIM_DataType_FromString(char const * const str)
 {
   return makeDataTypeC(KIM::DataType(std::string(str)));

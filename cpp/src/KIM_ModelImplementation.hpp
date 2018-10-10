@@ -34,9 +34,9 @@
 #ifndef KIM_MODEL_IMPLEMENTATION_HPP_
 #define KIM_MODEL_IMPLEMENTATION_HPP_
 
-#include <string>
-#include <sstream>
 #include <map>
+#include <sstream>
+#include <string>
 #include <vector>
 
 #ifndef KIM_FUNCTION_TYPES_HPP_
@@ -113,8 +113,8 @@ class ModelImplementation
   void GetNeighborListPointers(
       int * const numberOfNeighborLists,
       double const ** const cutoffs,
-      int const ** const
-      modelWillNotRequestNeighborsOfNoncontributingParticles) const;
+      int const ** const modelWillNotRequestNeighborsOfNoncontributingParticles)
+      const;
 
 
   int SetRefreshPointer(LanguageName const languageName, Function * const fptr);
@@ -133,10 +133,11 @@ class ModelImplementation
 
 
   int SetModelNumbering(Numbering const numbering);
+
  private:
   int SetSimulatorNumbering(Numbering const numbering);
- public:
 
+ public:
   int SetUnits(LengthUnit const lengthUnit,
                EnergyUnit const energyUnit,
                ChargeUnit const chargeUnit,
@@ -153,23 +154,31 @@ class ModelImplementation
   int GetParameterFileName(int const index,
                            std::string const ** const parameterFileName) const;
 
-  int SetParameterPointer(int const extent, int * const ptr,
+  int SetParameterPointer(int const extent,
+                          int * const ptr,
                           std::string const & name,
                           std::string const & description);
-  int SetParameterPointer(int const extent, double * const ptr,
+  int SetParameterPointer(int const extent,
+                          double * const ptr,
                           std::string const & name,
                           std::string const & description);
   void GetNumberOfParameters(int * const numberOfParameters) const;
-  int GetParameterMetadata(int const parameterIndex, DataType * const dataType,
-                           int * const extent, std::string const ** const name,
+  int GetParameterMetadata(int const parameterIndex,
+                           DataType * const dataType,
+                           int * const extent,
+                           std::string const ** const name,
                            std::string const ** const description) const;
-  int GetParameter(int const parameterIndex, int const arrayIndex,
+  int GetParameter(int const parameterIndex,
+                   int const arrayIndex,
                    int * const parameterValue) const;
-  int GetParameter(int const parameterIndex, int const arrayIndex,
+  int GetParameter(int const parameterIndex,
+                   int const arrayIndex,
                    double * const parameterValue) const;
-  int SetParameter(int const parameterIndex, int const arrayIndex,
+  int SetParameter(int const parameterIndex,
+                   int const arrayIndex,
                    int const parameterValue);
-  int SetParameter(int const parameterIndex, int const arrayIndex,
+  int SetParameter(int const parameterIndex,
+                   int const arrayIndex,
                    double const parameterValue);
 
 
@@ -184,33 +193,35 @@ class ModelImplementation
   void SetSimulatorBufferPointer(void * const ptr);
   void GetSimulatorBufferPointer(void ** const ptr) const;
 
-  static int ConvertUnit(
-      LengthUnit const fromLengthUnit,
-      EnergyUnit const fromEnergyUnit,
-      ChargeUnit const fromChargeUnit,
-      TemperatureUnit const fromTemperatureUnit,
-      TimeUnit const fromTimeUnit,
-      LengthUnit const toLengthUnit,
-      EnergyUnit const toEnergyUnit,
-      ChargeUnit const toChargeUnit,
-      TemperatureUnit const toTemperatureUnit,
-      TimeUnit const toTimeUnit,
-      double const lengthExponent,
-      double const energyExponent,
-      double const chargeExponent,
-      double const temperatureExponent,
-      double const timeExponent,
-      double * const conversionFactor);
+  static int ConvertUnit(LengthUnit const fromLengthUnit,
+                         EnergyUnit const fromEnergyUnit,
+                         ChargeUnit const fromChargeUnit,
+                         TemperatureUnit const fromTemperatureUnit,
+                         TimeUnit const fromTimeUnit,
+                         LengthUnit const toLengthUnit,
+                         EnergyUnit const toEnergyUnit,
+                         ChargeUnit const toChargeUnit,
+                         TemperatureUnit const toTemperatureUnit,
+                         TimeUnit const toTimeUnit,
+                         double const lengthExponent,
+                         double const energyExponent,
+                         double const chargeExponent,
+                         double const temperatureExponent,
+                         double const timeExponent,
+                         double * const conversionFactor);
 
 
   void SetLogID(std::string const & logID);
   void PushLogVerbosity(LogVerbosity const logVerbosity);
   void PopLogVerbosity();
-  void LogEntry(LogVerbosity const logVerbosity, std::string const & message,
-                int const lineNumber, std::string const & fileName) const;
+  void LogEntry(LogVerbosity const logVerbosity,
+                std::string const & message,
+                int const lineNumber,
+                std::string const & fileName) const;
   void LogEntry(LogVerbosity const logVerbosity,
                 std::stringstream const & message,
-                int const lineNumber, std::string const & fileName) const;
+                int const lineNumber,
+                std::string const & fileName) const;
   std::string const & String() const;
 
  private:
@@ -230,10 +241,10 @@ class ModelImplementation
                   std::string const & modelName);
   int ModelDestroy();
 
-  int ModelComputeArgumentsCreate(ComputeArguments * const computeArguments)
-      const;
-  int ModelComputeArgumentsDestroy(ComputeArguments * const computeArguments)
-      const;
+  int ModelComputeArgumentsCreate(
+      ComputeArguments * const computeArguments) const;
+  int ModelComputeArgumentsDestroy(
+      ComputeArguments * const computeArguments) const;
 
 
   static int Validate(ChargeUnit const chargeUnit);
@@ -259,12 +270,11 @@ class ModelImplementation
 
   Log * log_;
 
-  int InitializeStandAloneModel(
-      LengthUnit const requestedLengthUnit,
-      EnergyUnit const requestedEnergyUnit,
-      ChargeUnit const requestedChargeUnit,
-      TemperatureUnit const requestedTemperatureUnit,
-      TimeUnit const requestedTimeUnit);
+  int InitializeStandAloneModel(LengthUnit const requestedLengthUnit,
+                                EnergyUnit const requestedEnergyUnit,
+                                ChargeUnit const requestedChargeUnit,
+                                TemperatureUnit const requestedTemperatureUnit,
+                                TimeUnit const requestedTimeUnit);
 
   int InitializeParameterizedModel(
       LengthUnit const requestedLengthUnit,

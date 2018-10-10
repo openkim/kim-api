@@ -34,9 +34,9 @@
 #ifndef KIM_COMPUTE_ARGUMENTS_IMPLEMENTATION_HPP_
 #define KIM_COMPUTE_ARGUMENTS_IMPLEMENTATION_HPP_
 
-#include <string>
-#include <sstream>
 #include <map>
+#include <sstream>
+#include <string>
 #include <vector>
 
 #ifndef KIM_FUNCTION_TYPES_HPP_
@@ -79,15 +79,15 @@ class ComputeArgumentsImplementation
  public:
   friend class ModelImplementation;
 
-  static int Create(std::string const & modelName,
-                    std::string const & modelLogID,
-                    Numbering const modelNumbering,
-                    Numbering const simulatorNumbering,
-                    int const numberingOffset,
-                    ComputeArgumentsImplementation ** const
-                    computeArgumentsImplementation);
-  static void Destroy(ComputeArgumentsImplementation ** const
-                      computeArgumentsImplementation);
+  static int Create(
+      std::string const & modelName,
+      std::string const & modelLogID,
+      Numbering const modelNumbering,
+      Numbering const simulatorNumbering,
+      int const numberingOffset,
+      ComputeArgumentsImplementation ** const computeArgumentsImplementation);
+  static void Destroy(
+      ComputeArgumentsImplementation ** const computeArgumentsImplementation);
 
   int SetArgumentSupportStatus(ComputeArgumentName const computeArgumentName,
                                SupportStatus const supportStatus);
@@ -127,15 +127,21 @@ class ComputeArgumentsImplementation
 
   void AreAllRequiredArgumentsAndCallbacksPresent(int * const result) const;
 
-  int GetNeighborList(int const neighborListIndex, int const particleNumber,
+  int GetNeighborList(int const neighborListIndex,
+                      int const particleNumber,
                       int * const numberOfNeighbors,
                       int const ** const neighborsOfParticle) const;
 
-  int ProcessDEDrTerm(double const de, double const r, double const * const dx,
-                      int const i, int const j) const;
+  int ProcessDEDrTerm(double const de,
+                      double const r,
+                      double const * const dx,
+                      int const i,
+                      int const j) const;
 
-  int ProcessD2EDr2Term(double const de, double const * const r,
-                        double const * const dx, int const * const i,
+  int ProcessD2EDr2Term(double const de,
+                        double const * const r,
+                        double const * const dx,
+                        int const * const i,
                         int const * const j) const;
 
 
@@ -151,11 +157,14 @@ class ComputeArgumentsImplementation
   void SetLogID(std::string const & logID);
   void PushLogVerbosity(LogVerbosity const logVerbosity);
   void PopLogVerbosity();
-  void LogEntry(LogVerbosity const logVerbosity, std::string const & message,
-                int const lineNumber, std::string const & fileName) const;
+  void LogEntry(LogVerbosity const logVerbosity,
+                std::string const & message,
+                int const lineNumber,
+                std::string const & fileName) const;
   void LogEntry(LogVerbosity const logVerbosity,
                 std::stringstream const & message,
-                int const lineNumber, std::string const & fileName) const;
+                int const lineNumber,
+                std::string const & fileName) const;
 
  private:
   // do not allow copy constructor or operator=
@@ -188,20 +197,28 @@ class ComputeArgumentsImplementation
   mutable int numberOfNeighborLists_;
   mutable double const * cutoffs_;
 
-  std::map<ComputeArgumentName const, SupportStatus,
-           COMPUTE_ARGUMENT_NAME::Comparator> computeArgumentSupportStatus_;
-  std::map<ComputeArgumentName const, void *,
-           COMPUTE_ARGUMENT_NAME::Comparator> computeArgumentPointer_;
+  std::map<ComputeArgumentName const,
+           SupportStatus,
+           COMPUTE_ARGUMENT_NAME::Comparator>
+      computeArgumentSupportStatus_;
+  std::map<ComputeArgumentName const, void *, COMPUTE_ARGUMENT_NAME::Comparator>
+      computeArgumentPointer_;
 
 
-  std::map<ComputeCallbackName const, SupportStatus,
-           COMPUTE_CALLBACK_NAME::Comparator> computeCallbackSupportStatus_;
-  std::map<ComputeCallbackName const, LanguageName,
-           COMPUTE_CALLBACK_NAME::Comparator> computeCallbackLanguage_;
-  std::map<ComputeCallbackName const, Function *,
-           COMPUTE_CALLBACK_NAME::Comparator> computeCallbackFunctionPointer_;
-  std::map<ComputeCallbackName const, void *,
-           COMPUTE_CALLBACK_NAME::Comparator> computeCallbackDataObjectPointer_;
+  std::map<ComputeCallbackName const,
+           SupportStatus,
+           COMPUTE_CALLBACK_NAME::Comparator>
+      computeCallbackSupportStatus_;
+  std::map<ComputeCallbackName const,
+           LanguageName,
+           COMPUTE_CALLBACK_NAME::Comparator>
+      computeCallbackLanguage_;
+  std::map<ComputeCallbackName const,
+           Function *,
+           COMPUTE_CALLBACK_NAME::Comparator>
+      computeCallbackFunctionPointer_;
+  std::map<ComputeCallbackName const, void *, COMPUTE_CALLBACK_NAME::Comparator>
+      computeCallbackDataObjectPointer_;
 
   mutable std::vector<std::vector<int> > getNeighborListStorage_;
 

@@ -33,15 +33,13 @@
 
 #include "KIM_ModelDriverHeaders.hpp"
 
-extern "C"
-{
-int model_driver_create(
-    KIM::ModelDriverCreate * const modelDriverCreate,
-    KIM::LengthUnit const requestedLengthUnit,
-    KIM::EnergyUnit const requestedEnergyUnit,
-    KIM::ChargeUnit const requestedChargeUnit,
-    KIM::TemperatureUnit const requestedTemperatureUnit,
-    KIM::TimeUnit const requestedTimeUnit);
+extern "C" {
+int model_driver_create(KIM::ModelDriverCreate * const modelDriverCreate,
+                        KIM::LengthUnit const requestedLengthUnit,
+                        KIM::EnergyUnit const requestedEnergyUnit,
+                        KIM::ChargeUnit const requestedChargeUnit,
+                        KIM::TemperatureUnit const requestedTemperatureUnit,
+                        KIM::TimeUnit const requestedTimeUnit);
 }
 
 class LennardJones612Implementation;
@@ -49,14 +47,13 @@ class LennardJones612Implementation;
 class LennardJones612
 {
  public:
-  LennardJones612(
-      KIM::ModelDriverCreate* const modelDriverCreate,
-      KIM::LengthUnit const requestedLengthUnit,
-      KIM::EnergyUnit const requestedEnergyUnit,
-      KIM::ChargeUnit const requestedChargeUnit,
-      KIM::TemperatureUnit const requestedTemperatureUnit,
-      KIM::TimeUnit const requestedTimeUnit,
-      int* const ier);
+  LennardJones612(KIM::ModelDriverCreate * const modelDriverCreate,
+                  KIM::LengthUnit const requestedLengthUnit,
+                  KIM::EnergyUnit const requestedEnergyUnit,
+                  KIM::ChargeUnit const requestedChargeUnit,
+                  KIM::TemperatureUnit const requestedTemperatureUnit,
+                  KIM::TimeUnit const requestedTimeUnit,
+                  int * const ier);
   ~LennardJones612();
 
   // no need to make these "extern" since KIM will only access them
@@ -64,15 +61,15 @@ class LennardJones612
   // an implicit this pointer added to the prototype by the C++ compiler
   static int Destroy(KIM::ModelDestroy * const modelDestroy);
   static int Refresh(KIM::ModelRefresh * const modelRefresh);
-  static int Compute(
-      KIM::ModelCompute const * const modelCompute,
-      KIM::ModelComputeArguments const * const modelComputeArguments);
+  static int
+  Compute(KIM::ModelCompute const * const modelCompute,
+          KIM::ModelComputeArguments const * const modelComputeArguments);
   static int ComputeArgumentsCreate(
       KIM::ModelCompute const * const modelCompute,
       KIM::ModelComputeArgumentsCreate * const modelComputeArgumentsCreate);
 
  private:
-  LennardJones612Implementation* implementation_;
+  LennardJones612Implementation * implementation_;
 };
 
 #endif  // LENNARD_JONES_612_HPP_

@@ -38,7 +38,6 @@
 
 namespace KIM
 {
-
 // Order doesn't matter as long as all values are unique
 namespace TEMPERATURE_UNIT
 {
@@ -48,9 +47,9 @@ TemperatureUnit const K(ID_K);
 
 namespace
 {
-typedef std::map<TemperatureUnit const, std::string,
-                 TEMPERATURE_UNIT::Comparator>
-StringMap;
+typedef std::
+    map<TemperatureUnit const, std::string, TEMPERATURE_UNIT::Comparator>
+        StringMap;
 
 StringMap const GetStringMap()
 {
@@ -77,20 +76,20 @@ int GetTemperatureUnit(int const index, TemperatureUnit * const temperatureUnit)
   if ((index < 0) || (index >= numberOfTemperatureUnits)) return true;
 
   StringMap::const_iterator iter = temperatureUnitToString.begin();
-  for (int i=0; i<index; ++i) ++iter;
+  for (int i = 0; i < index; ++i) ++iter;
   *temperatureUnit = iter->first;
   return false;  // no error
 }
 }  // namespace TEMPERATURE_UNIT
 
 // implementation of TemperatureUnit
-TemperatureUnit::TemperatureUnit() : temperatureUnitID(0){}
-TemperatureUnit::TemperatureUnit(int const id) : temperatureUnitID(id){}
+TemperatureUnit::TemperatureUnit() : temperatureUnitID(0) {}
+TemperatureUnit::TemperatureUnit(int const id) : temperatureUnitID(id) {}
 TemperatureUnit::TemperatureUnit(std::string const & str)
 {
   temperatureUnitID = -1;
-  for (TEMPERATURE_UNIT::StringMap::const_iterator iter =
-           TEMPERATURE_UNIT::temperatureUnitToString.begin();
+  for (TEMPERATURE_UNIT::StringMap::const_iterator iter
+       = TEMPERATURE_UNIT::temperatureUnitToString.begin();
        iter != TEMPERATURE_UNIT::temperatureUnitToString.end();
        ++iter)
   {
@@ -103,9 +102,13 @@ TemperatureUnit::TemperatureUnit(std::string const & str)
 }
 
 bool TemperatureUnit::operator==(TemperatureUnit const & rhs) const
-{return temperatureUnitID==rhs.temperatureUnitID;}
+{
+  return temperatureUnitID == rhs.temperatureUnitID;
+}
 bool TemperatureUnit::operator!=(TemperatureUnit const & rhs) const
-{return temperatureUnitID!=rhs.temperatureUnitID;}
+{
+  return temperatureUnitID != rhs.temperatureUnitID;
+}
 
 std::string const & TemperatureUnit::String() const
 {

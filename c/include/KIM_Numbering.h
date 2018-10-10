@@ -58,4 +58,4 @@ void KIM_NUMBERING_GetNumberOfNumberings(int * const numberOfNumberings);
 int KIM_NUMBERING_GetNumbering(int const index,
                                KIM_Numbering * const numbering);
 
-#endif  /* KIM_NUMBERING_H_ */
+#endif /* KIM_NUMBERING_H_ */

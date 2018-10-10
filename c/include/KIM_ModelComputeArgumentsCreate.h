@@ -82,10 +82,12 @@ void KIM_ModelComputeArgumentsCreate_SetModelBufferPointer(
 
 void KIM_ModelComputeArgumentsCreate_LogEntry(
     KIM_ModelComputeArgumentsCreate const * const modelComputeArgumentsCreate,
-    KIM_LogVerbosity const logVerbosity, char const * const message,
-    int const lineNumber, char const * const fileName);
+    KIM_LogVerbosity const logVerbosity,
+    char const * const message,
+    int const lineNumber,
+    char const * const fileName);
 
 char const * KIM_ModelComputeArgumentsCreate_ToString(
     KIM_ModelComputeArgumentsCreate const * const modelComputeArgumentsCreate);
 
-#endif  /* KIM_MODEL_COMPUTE_ARGUMENTS_CREATE_H_ */
+#endif /* KIM_MODEL_COMPUTE_ARGUMENTS_CREATE_H_ */

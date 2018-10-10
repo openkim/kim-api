@@ -39,13 +39,12 @@
 #include "KIM_ModelImplementation.hpp"
 #endif
 
-#define CONVERT_POINTER ModelImplementation *pImpl      \
-  = reinterpret_cast<ModelImplementation *>(pimpl)
+#define CONVERT_POINTER \
+  ModelImplementation * pImpl = reinterpret_cast<ModelImplementation *>(pimpl)
 
 
 namespace KIM
 {
-
 void ModelRefresh::SetInfluenceDistancePointer(
     double const * const influenceDistance)
 {
@@ -101,12 +100,8 @@ std::string const & ModelRefresh::String() const
   return pImpl->String();
 }
 
-ModelRefresh::ModelRefresh() : pimpl(NULL)
-{
-}
+ModelRefresh::ModelRefresh() : pimpl(NULL) {}
 
-ModelRefresh::~ModelRefresh()
-{
-}
+ModelRefresh::~ModelRefresh() {}
 
 }  // namespace KIM

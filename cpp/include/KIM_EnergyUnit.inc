@@ -36,12 +36,12 @@
 #ifndef KIM_ENERGY_UNIT_INC_
 #define KIM_ENERGY_UNIT_INC_
 
-#define ID_unused         0
+#define ID_unused 0
 #define ID_amu_A2_per_ps2 1
-#define ID_erg            2
-#define ID_eV             3
-#define ID_Hartree        4
-#define ID_J              5
-#define ID_kcal_mol       6
+#define ID_erg 2
+#define ID_eV 3
+#define ID_Hartree 4
+#define ID_J 5
+#define ID_kcal_mol 6
 
-#endif  /* KIM_ENERGY_UNIT_INC_ */
+#endif /* KIM_ENERGY_UNIT_INC_ */

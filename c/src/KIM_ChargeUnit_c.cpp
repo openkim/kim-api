@@ -35,8 +35,7 @@
 #ifndef KIM_CHARGE_UNIT_HPP_
 #include "KIM_ChargeUnit.hpp"
 #endif
-extern "C"
-{
+extern "C" {
 #ifndef KIM_CHARGE_UNIT_H_
 #include "KIM_ChargeUnit.h"
 #endif
@@ -48,20 +47,19 @@ namespace
 KIM::ChargeUnit makeChargeUnitCpp(KIM_ChargeUnit const chargeUnit)
 {
   KIM::ChargeUnit const * const chargeUnitCpp
-      = reinterpret_cast <KIM::ChargeUnit const *>(&chargeUnit);
+      = reinterpret_cast<KIM::ChargeUnit const *>(&chargeUnit);
   return *chargeUnitCpp;
 }
 
 KIM_ChargeUnit makeChargeUnitC(KIM::ChargeUnit const chargeUnit)
 {
   KIM_ChargeUnit const * const chargeUnitC
-      = reinterpret_cast <KIM_ChargeUnit const *>(&chargeUnit);
+      = reinterpret_cast<KIM_ChargeUnit const *>(&chargeUnit);
   return *chargeUnitC;
 }
 }  // namespace
 
-extern "C"
-{
+extern "C" {
 KIM_ChargeUnit KIM_ChargeUnit_FromString(char const * const str)
 {
   return makeChargeUnitC(KIM::ChargeUnit(std::string(str)));

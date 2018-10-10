@@ -100,13 +100,11 @@ typedef struct KIM_ModelCreate KIM_ModelCreate;
 #endif
 
 
-int KIM_ModelCreate_SetModelNumbering(
-    KIM_ModelCreate * const modelCreate,
-    KIM_Numbering const numbering);
+int KIM_ModelCreate_SetModelNumbering(KIM_ModelCreate * const modelCreate,
+                                      KIM_Numbering const numbering);
 
 void KIM_ModelCreate_SetInfluenceDistancePointer(
-    KIM_ModelCreate * const modelCreate,
-    double * const influenceDistance);
+    KIM_ModelCreate * const modelCreate, double * const influenceDistance);
 
 void KIM_ModelCreate_SetNeighborListPointers(
     KIM_ModelCreate * const modelCreate,
@@ -114,14 +112,12 @@ void KIM_ModelCreate_SetNeighborListPointers(
     double const * const cutoffs,
     int const * const modelWillNotRequestNeighborsOfNoncontributingParticles);
 
-int KIM_ModelCreate_SetRefreshPointer(
-    KIM_ModelCreate * const modelCreate,
-    KIM_LanguageName const languageName,
-    KIM_Function * const fptr);
-int KIM_ModelCreate_SetDestroyPointer(
-    KIM_ModelCreate * const modelCreate,
-    KIM_LanguageName const languageName,
-    KIM_Function * const fptr);
+int KIM_ModelCreate_SetRefreshPointer(KIM_ModelCreate * const modelCreate,
+                                      KIM_LanguageName const languageName,
+                                      KIM_Function * const fptr);
+int KIM_ModelCreate_SetDestroyPointer(KIM_ModelCreate * const modelCreate,
+                                      KIM_LanguageName const languageName,
+                                      KIM_Function * const fptr);
 int KIM_ModelCreate_SetComputeArgumentsCreatePointer(
     KIM_ModelCreate * const modelCreate,
     KIM_LanguageName const languageName,
@@ -130,59 +126,61 @@ int KIM_ModelCreate_SetComputeArgumentsDestroyPointer(
     KIM_ModelCreate * const modelCreate,
     KIM_LanguageName const languageName,
     KIM_Function * const fptr);
-int KIM_ModelCreate_SetComputePointer(
-    KIM_ModelCreate * const modelCreate,
-    KIM_LanguageName const languageName,
-    KIM_Function * const fptr);
+int KIM_ModelCreate_SetComputePointer(KIM_ModelCreate * const modelCreate,
+                                      KIM_LanguageName const languageName,
+                                      KIM_Function * const fptr);
 
-int KIM_ModelCreate_SetSpeciesCode(
-    KIM_ModelCreate * const modelCreate,
-    KIM_SpeciesName const speciesName, int const code);
+int KIM_ModelCreate_SetSpeciesCode(KIM_ModelCreate * const modelCreate,
+                                   KIM_SpeciesName const speciesName,
+                                   int const code);
 
 int KIM_ModelCreate_SetParameterPointerInteger(
     KIM_ModelCreate * const modelCreate,
-    int const extent, int * const ptr, char const * const name,
+    int const extent,
+    int * const ptr,
+    char const * const name,
     char const * const description);
 int KIM_ModelCreate_SetParameterPointerDouble(
     KIM_ModelCreate * const modelCreate,
-    int const extent, double * const ptr, char const * const name,
+    int const extent,
+    double * const ptr,
+    char const * const name,
     char const * const description);
 
-void KIM_ModelCreate_SetModelBufferPointer(
-    KIM_ModelCreate * const modelCreate, void * const ptr);
+void KIM_ModelCreate_SetModelBufferPointer(KIM_ModelCreate * const modelCreate,
+                                           void * const ptr);
 
-int KIM_ModelCreate_SetUnits(
-    KIM_ModelCreate * const modelCreate,
-    KIM_LengthUnit const lengthUnit,
-    KIM_EnergyUnit const energyUnit,
-    KIM_ChargeUnit const chargeUnit,
-    KIM_TemperatureUnit const temperatureUnit,
-    KIM_TimeUnit const timeUnit);
+int KIM_ModelCreate_SetUnits(KIM_ModelCreate * const modelCreate,
+                             KIM_LengthUnit const lengthUnit,
+                             KIM_EnergyUnit const energyUnit,
+                             KIM_ChargeUnit const chargeUnit,
+                             KIM_TemperatureUnit const temperatureUnit,
+                             KIM_TimeUnit const timeUnit);
 
-int KIM_ModelCreate_ConvertUnit(
-    KIM_LengthUnit const fromLengthUnit,
-    KIM_EnergyUnit const fromEnergyUnit,
-    KIM_ChargeUnit const fromChargeUnit,
-    KIM_TemperatureUnit const fromTemperatureUnit,
-    KIM_TimeUnit const fromTimeUnit,
-    KIM_LengthUnit const toLengthUnit,
-    KIM_EnergyUnit const toEnergyUnit,
-    KIM_ChargeUnit const toChargeUnit,
-    KIM_TemperatureUnit const toTemperatureUnit,
-    KIM_TimeUnit const toTimeUnit,
-    double const lengthExponent,
-    double const energyExponent,
-    double const chargeExponent,
-    double const temperatureExponent,
-    double const timeExponent,
-    double * const conversionFactor);
+int KIM_ModelCreate_ConvertUnit(KIM_LengthUnit const fromLengthUnit,
+                                KIM_EnergyUnit const fromEnergyUnit,
+                                KIM_ChargeUnit const fromChargeUnit,
+                                KIM_TemperatureUnit const fromTemperatureUnit,
+                                KIM_TimeUnit const fromTimeUnit,
+                                KIM_LengthUnit const toLengthUnit,
+                                KIM_EnergyUnit const toEnergyUnit,
+                                KIM_ChargeUnit const toChargeUnit,
+                                KIM_TemperatureUnit const toTemperatureUnit,
+                                KIM_TimeUnit const toTimeUnit,
+                                double const lengthExponent,
+                                double const energyExponent,
+                                double const chargeExponent,
+                                double const temperatureExponent,
+                                double const timeExponent,
+                                double * const conversionFactor);
 
-void KIM_ModelCreate_LogEntry(
-    KIM_ModelCreate const * const modelCreate,
-    KIM_LogVerbosity const logVerbosity, char const * const message,
-    int const lineNumber, char const * const fileName);
+void KIM_ModelCreate_LogEntry(KIM_ModelCreate const * const modelCreate,
+                              KIM_LogVerbosity const logVerbosity,
+                              char const * const message,
+                              int const lineNumber,
+                              char const * const fileName);
 
-char const * KIM_ModelCreate_ToString(
-    KIM_ModelCreate const * const modelCreate);
+char const *
+KIM_ModelCreate_ToString(KIM_ModelCreate const * const modelCreate);
 
-#endif  /* KIM_MODEL_CREATE_H_ */
+#endif /* KIM_MODEL_CREATE_H_ */

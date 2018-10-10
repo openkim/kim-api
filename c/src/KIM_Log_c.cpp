@@ -35,8 +35,7 @@
 #ifndef KIM_LOG_VERBOSITY_HPP_
 #include "KIM_LogVerbosity.hpp"
 #endif
-extern "C"
-{
+extern "C" {
 #ifndef KIM_LOG_VERBOSITY_H_
 #include "KIM_LogVerbosity.h"
 #endif
@@ -45,8 +44,7 @@ extern "C"
 #ifndef KIM_LOG_HPP_
 #include "KIM_Log.hpp"
 #endif
-extern "C"
-{
+extern "C" {
 #ifndef KIM_LOG_H_
 #include "KIM_Log.h"
 #endif
@@ -58,8 +56,7 @@ struct KIM_Log
   void * p;
 };
 
-#define CONVERT_POINTER KIM::Log * pLog         \
-  = reinterpret_cast<KIM::Log *>(log->p)
+#define CONVERT_POINTER KIM::Log * pLog = reinterpret_cast<KIM::Log *>(log->p)
 
 namespace
 {
@@ -70,16 +67,12 @@ KIM::LogVerbosity makeLogVerbosityCpp(KIM_LogVerbosity const logVerbosity)
 }  // namespace
 
 
-extern "C"
-{
+extern "C" {
 int KIM_Log_Create(KIM_Log ** const log)
 {
   KIM::Log * pLog;
   int error = KIM::Log::Create(&pLog);
-  if (error)
-  {
-    return true;
-  }
+  if (error) { return true; }
   else
   {
     (*log) = new KIM_Log;
@@ -129,14 +122,13 @@ void KIM_Log_PopVerbosity(KIM_Log * const log)
 void KIM_Log_LogEntry(KIM_Log const * const log,
                       KIM_LogVerbosity const logVerbosity,
                       char const * const message,
-                      int const lineNumber, char const * const fileName)
+                      int const lineNumber,
+                      char const * const fileName)
 {
   CONVERT_POINTER;
 
-  pLog->LogEntry(makeLogVerbosityCpp(logVerbosity),
-                 message,
-                 lineNumber,
-                 fileName);
+  pLog->LogEntry(
+      makeLogVerbosityCpp(logVerbosity), message, lineNumber, fileName);
 }
 
 }  // extern "C"

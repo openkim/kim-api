@@ -37,6 +37,6 @@
 #define KIM_NUMBERING_INC_
 
 #define ID_zeroBased 0
-#define ID_oneBased  1
+#define ID_oneBased 1
 
-#endif  /* KIM_NUMBERING_INC_ */
+#endif /* KIM_NUMBERING_INC_ */

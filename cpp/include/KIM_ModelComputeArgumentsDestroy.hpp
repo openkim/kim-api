@@ -34,8 +34,8 @@
 #ifndef KIM_MODEL_COMPUTE_ARGUMENTS_DESTROY_HPP_
 #define KIM_MODEL_COMPUTE_ARGUMENTS_DESTROY_HPP_
 
-#include <string>
 #include <sstream>
+#include <string>
 
 namespace KIM
 {
@@ -44,15 +44,19 @@ class LogVerbosity;
 class ModelComputeArgumentsDestroyImplementation;
 
 
-class ModelComputeArgumentsDestroy{
+class ModelComputeArgumentsDestroy
+{
  public:
   void GetModelBufferPointer(void ** const ptr) const;
 
-  void LogEntry(LogVerbosity const logVerbosity, std::string const & message,
-                int const lineNumber, std::string const & fileName) const;
+  void LogEntry(LogVerbosity const logVerbosity,
+                std::string const & message,
+                int const lineNumber,
+                std::string const & fileName) const;
   void LogEntry(LogVerbosity const logVerbosity,
                 std::stringstream const & message,
-                int const lineNumber, std::string const & fileName) const;
+                int const lineNumber,
+                std::string const & fileName) const;
 
   std::string const & String() const;
 

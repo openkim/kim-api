@@ -31,29 +31,28 @@
 //
 
 
-#include <cstdlib>
-#include <cstring>
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <dirent.h>
-#include <sys/stat.h>
-#include <errno.h>
-#include <dlfcn.h>
 #include "old_KIM_API_DIRS.h"
+#include "KIM_Configuration.hpp"
 #include "KIM_LogVerbosity.hpp"
 #include "KIM_Version.hpp"
-#include "KIM_Configuration.hpp"
+#include <cstdlib>
+#include <cstring>
+#include <dirent.h>
+#include <dlfcn.h>
+#include <errno.h>
+#include <fstream>
+#include <iostream>
+#include <sstream>
+#include <sys/stat.h>
 
 #define LINELEN 256
 
 // helper
-#define SNUM( x ) static_cast<std::ostringstream &>(    \
-    std::ostringstream() << std::dec << x).str()
+#define SNUM(x) \
+  static_cast<std::ostringstream &>(std::ostringstream() << std::dec << x).str()
 
 namespace OLD_KIM
 {
-
 int makeDirWrapper(const char * const path, mode_t mode)
 {
   if (mkdir(path, mode))
@@ -79,12 +78,12 @@ std::vector<std::string> getConfigFileName()
   if (configFileName[0][0] != '/')
   {
     // probably need a better way to get HOME
-    configFileName[0] = std::string(getenv("HOME")).append("/")
-        .append(configFileName[0]);
+    configFileName[0]
+        = std::string(getenv("HOME")).append("/").append(configFileName[0]);
   }
 
   configFileName[1] = KIM_ENVIRONMENT_CONFIGURATION_FILE;
-  char const* const varVal = getenv(KIM_ENVIRONMENT_CONFIGURATION_FILE);
+  char const * const varVal = getenv(KIM_ENVIRONMENT_CONFIGURATION_FILE);
   if (NULL != varVal)
   {
     // ensure we have an absolute path
@@ -103,7 +102,7 @@ std::vector<std::string> getConfigFileName()
   }
   else
   {
-    configFileName[2]=std::string("");
+    configFileName[2] = std::string("");
   }
 
   return configFileName;
@@ -111,10 +110,9 @@ std::vector<std::string> getConfigFileName()
 
 std::string getSystemLibraryFileName()
 {
-  return std::string(
-      KIM_LIBDIR "/" KIM_SHARED_LIBRARY_PREFIX KIM_PROJECT_NAME
-      "."
-      + SNUM(KIM_VERSION_MAJOR) + KIM_SHARED_LIBRARY_SUFFIX);
+  return std::string(KIM_LIBDIR "/" KIM_SHARED_LIBRARY_PREFIX KIM_PROJECT_NAME
+                                "."
+                     + SNUM(KIM_VERSION_MAJOR) + KIM_SHARED_LIBRARY_SUFFIX);
 }
 
 std::vector<std::string> getSystemDirs()
@@ -122,8 +120,8 @@ std::vector<std::string> getSystemDirs()
   std::vector<std::string> systemDirs(2);
   systemDirs[0] = std::string(
       KIM_LIBDIR "/" KIM_PROJECT_NAME "/" KIM_MODEL_DRIVER_PLURAL_IDENTIFIER);
-  systemDirs[1] = std::string(
-      KIM_LIBDIR "/" KIM_PROJECT_NAME "/" KIM_MODEL_PLURAL_IDENTIFIER);
+  systemDirs[1] = std::string(KIM_LIBDIR "/" KIM_PROJECT_NAME
+                                         "/" KIM_MODEL_PLURAL_IDENTIFIER);
 
   return systemDirs;
 }
@@ -161,7 +159,7 @@ std::vector<std::string> getUserDirs(KIM::Log * const log)
   {
     // unable to open file; create with default locations
     size_t const pos = configFile[0].find_last_of('/');
-    std::string const path = configFile[0].substr(0,pos);
+    std::string const path = configFile[0].substr(0, pos);
     // std::string const name = configFile[0].substr(pos+1);  // NOT USED
     std::ofstream fl;
 
@@ -169,15 +167,15 @@ std::vector<std::string> getUserDirs(KIM::Log * const log)
     userDirs[0] = ProcessConfigFileDirectoryString(
         KIM_USER_MODEL_DRIVER_PLURAL_DIR_DEFAULT);
     if (makeDirWrapper(userDirs[0].c_str(), 0755)) exit(1);
-    userDirs[1] = ProcessConfigFileDirectoryString(
-        KIM_USER_MODEL_PLURAL_DIR_DEFAULT);
+    userDirs[1]
+        = ProcessConfigFileDirectoryString(KIM_USER_MODEL_PLURAL_DIR_DEFAULT);
     if (makeDirWrapper(userDirs[1].c_str(), 0755)) exit(1);
 
     fl.open(configFile[0].c_str(), std::ofstream::out);
-    fl << KIM_MODEL_DRIVER_PLURAL_DIR_IDENTIFIER " = "
-        KIM_USER_MODEL_DRIVER_PLURAL_DIR_DEFAULT "\n";
-    fl << KIM_MODEL_PLURAL_DIR_IDENTIFIER " = "
-        KIM_USER_MODEL_PLURAL_DIR_DEFAULT "\n";
+    fl << KIM_MODEL_DRIVER_PLURAL_DIR_IDENTIFIER
+        " = " KIM_USER_MODEL_DRIVER_PLURAL_DIR_DEFAULT "\n";
+    fl << KIM_MODEL_PLURAL_DIR_IDENTIFIER
+        " = " KIM_USER_MODEL_PLURAL_DIR_DEFAULT "\n";
     fl.close();
   }
   else
@@ -185,8 +183,8 @@ std::vector<std::string> getUserDirs(KIM::Log * const log)
     char line[LINELEN];
     if (cfl.getline(line, LINELEN))
     {
-      char *word;
-      char const* const sep = " \t=";
+      char * word;
+      char const * const sep = " \t=";
 
       word = strtok(line, sep);
       if (strcmp(KIM_MODEL_DRIVER_PLURAL_DIR_IDENTIFIER, word))
@@ -194,10 +192,9 @@ std::vector<std::string> getUserDirs(KIM::Log * const log)
         if (log)
         {
           std::stringstream ss;
-          ss << "Unknown line in " << configFile[0] << " file: "
-             << word << std::endl;
-          log->LogEntry(KIM::LOG_VERBOSITY::error, ss,
-                        __LINE__, __FILE__);
+          ss << "Unknown line in " << configFile[0] << " file: " << word
+             << std::endl;
+          log->LogEntry(KIM::LOG_VERBOSITY::error, ss, __LINE__, __FILE__);
         }
         userDirs[0] = "";
         goto cleanUp;
@@ -209,10 +206,9 @@ std::vector<std::string> getUserDirs(KIM::Log * const log)
         if (log)
         {
           std::stringstream ss;
-          ss << "Invalid value in " << configFile[0] << " file: "
-             << word << std::endl;
-          log->LogEntry(KIM::LOG_VERBOSITY::error, ss,
-                        __LINE__, __FILE__);
+          ss << "Invalid value in " << configFile[0] << " file: " << word
+             << std::endl;
+          log->LogEntry(KIM::LOG_VERBOSITY::error, ss, __LINE__, __FILE__);
         }
         goto cleanUp;
       }
@@ -220,8 +216,8 @@ std::vector<std::string> getUserDirs(KIM::Log * const log)
 
     if (cfl.getline(line, LINELEN))
     {
-      char *word;
-      char const* const sep = " \t=";
+      char * word;
+      char const * const sep = " \t=";
 
       word = strtok(line, sep);
       if (strcmp(KIM_MODEL_PLURAL_DIR_IDENTIFIER, word))
@@ -229,10 +225,9 @@ std::vector<std::string> getUserDirs(KIM::Log * const log)
         if (log)
         {
           std::stringstream ss;
-          ss << "Unknown line in " << configFile[0] << " file: "
-             << word << std::endl;
-          log->LogEntry(KIM::LOG_VERBOSITY::error, ss,
-                        __LINE__, __FILE__);
+          ss << "Unknown line in " << configFile[0] << " file: " << word
+             << std::endl;
+          log->LogEntry(KIM::LOG_VERBOSITY::error, ss, __LINE__, __FILE__);
         }
         userDirs[1] = "";
         goto cleanUp;
@@ -244,25 +239,24 @@ std::vector<std::string> getUserDirs(KIM::Log * const log)
         if (log)
         {
           std::stringstream ss;
-          ss << "Invalid value in " << configFile[0] << " file: "
-             << word << std::endl;
-          log->LogEntry(KIM::LOG_VERBOSITY::error, ss,
-                        __LINE__, __FILE__);
+          ss << "Invalid value in " << configFile[0] << " file: " << word
+             << std::endl;
+          log->LogEntry(KIM::LOG_VERBOSITY::error, ss, __LINE__, __FILE__);
         }
         goto cleanUp;
       }
     }
 
- cleanUp:
+  cleanUp:
     cfl.close();
   }
 
   return userDirs;
 }
 
-std::string pushEnvDirs(
-    DirectoryPathType type,
-    std::list<std::pair<std::string,std::string> >* const lst)
+std::string
+pushEnvDirs(DirectoryPathType type,
+            std::list<std::pair<std::string, std::string> > * const lst)
 {
   std::string varName;
   switch (type)
@@ -270,29 +264,24 @@ std::string pushEnvDirs(
     case KIM_MODEL_DRIVERS_DIR:
       varName = KIM_ENVIRONMENT_MODEL_DRIVER_PLURAL_DIR;
       break;
-    case KIM_MODELS_DIR:
-      varName = KIM_ENVIRONMENT_MODEL_PLURAL_DIR;
-      break;
-    default:
-      break;
+    case KIM_MODELS_DIR: varName = KIM_ENVIRONMENT_MODEL_PLURAL_DIR; break;
+    default: break;
   }
-  char const* const varVal = getenv(varName.c_str());
+  char const * const varVal = getenv(varName.c_str());
   if (NULL != varVal)
   {
     std::string varValString(varVal);
     std::istringstream iss(varValString);
     std::string token;
     while (std::getline(iss, token, ':'))
-    {
-      lst->push_back(std::make_pair(std::string("environment"),token));
-    }
+    { lst->push_back(std::make_pair(std::string("environment"), token)); }
   }
 
   return varName;
 }
 
 void searchPaths(DirectoryPathType type,
-                 std::list<std::pair<std::string,std::string> >* const lst,
+                 std::list<std::pair<std::string, std::string> > * const lst,
                  KIM::Log * const log)
 {
   std::vector<std::string> userDirs = getUserDirs(log);
@@ -302,34 +291,29 @@ void searchPaths(DirectoryPathType type,
   {
     case KIM_MODEL_DRIVERS_DIR:
       lst->push_back(std::make_pair(std::string("CWD"), std::string(".")));
-      pushEnvDirs(type,lst);
+      pushEnvDirs(type, lst);
       if (0 != userDirs[0].compare(""))
-      {
-        lst->push_back(std::make_pair(std::string("user"), userDirs[0]));
-      }
+      { lst->push_back(std::make_pair(std::string("user"), userDirs[0])); }
       lst->push_back(std::make_pair(std::string("system"), systemDirs[0]));
       break;
     case KIM_MODELS_DIR:
       lst->push_back(std::make_pair(std::string("CWD"), std::string(".")));
-      pushEnvDirs(type,lst);
+      pushEnvDirs(type, lst);
       if (0 != userDirs[1].compare(""))
-      {
-        lst->push_back(std::make_pair(std::string("user"), userDirs[1]));
-      }
+      { lst->push_back(std::make_pair(std::string("user"), userDirs[1])); }
       lst->push_back(std::make_pair(std::string("system"), systemDirs[1]));
       break;
-    default:
-      break;
+    default: break;
   }
   return;
 }
 
-void getSubDirectories(std::string const &dir, std::list<std::string> &list)
+void getSubDirectories(std::string const & dir, std::list<std::string> & list)
 {
   list.clear();
 
-  DIR* dirp = NULL;
-  struct dirent* dp = NULL;
+  DIR * dirp = NULL;
+  struct dirent * dp = NULL;
 
   if (NULL != (dirp = opendir(dir.c_str())))
   {
@@ -337,18 +321,15 @@ void getSubDirectories(std::string const &dir, std::list<std::string> &list)
     {
       std::string fullPath(dir);
       struct stat statBuf;
-      if ((NULL != (dp = readdir(dirp))) &&
-          (0 != strcmp(dp->d_name, ".")) && (0 != strcmp(dp->d_name, "..")))
+      if ((NULL != (dp = readdir(dirp))) && (0 != strcmp(dp->d_name, "."))
+          && (0 != strcmp(dp->d_name, "..")))
       {
         fullPath.append("/").append(dp->d_name);
-        if ((0 == stat(fullPath.c_str(), &statBuf)) &&
-            (S_ISDIR(statBuf.st_mode)))
-        {
-          list.push_back(fullPath);
-        }
+        if ((0 == stat(fullPath.c_str(), &statBuf))
+            && (S_ISDIR(statBuf.st_mode)))
+        { list.push_back(fullPath); }
       }
-    }
-    while (NULL != dp);
+    } while (NULL != dp);
     closedir(dirp);
   }
 }
@@ -360,13 +341,13 @@ bool lessThan(std::vector<std::string> lhs, std::vector<std::string> rhs)
 }
 
 void getAvailableItems(DirectoryPathType type,
-                       std::list<std::vector<std::string> > &list,
+                       std::list<std::vector<std::string> > & list,
                        KIM::Log * const log)
 {
-  std::list<std::pair<std::string,std::string> > paths;
+  std::list<std::pair<std::string, std::string> > paths;
   searchPaths(type, &paths, log);
 
-  std::list<std::pair<std::string,std::string> >::const_iterator itr;
+  std::list<std::pair<std::string, std::string> >::const_iterator itr;
   for (itr = paths.begin(); itr != paths.end(); ++itr)
   {
     std::list<std::string> items;
@@ -379,41 +360,35 @@ void getAvailableItems(DirectoryPathType type,
       std::vector<std::string> entry(4);
       entry[IE_COLLECTION] = collection;
       std::size_t split = itemItr->find_last_of("/");
-      entry[IE_NAME] = itemItr->substr(split+1);
-      entry[IE_DIR] = itemItr->substr(0,split);
+      entry[IE_NAME] = itemItr->substr(split + 1);
+      entry[IE_DIR] = itemItr->substr(0, split);
 
-      std::string lib = entry[IE_DIR] + "/"
-          + entry[IE_NAME]
-          + "/" KIM_SHARED_MODULE_PREFIX
-          + KIM_PROJECT_NAME "-";
+      std::string lib = entry[IE_DIR] + "/" + entry[IE_NAME]
+                        + "/" KIM_SHARED_MODULE_PREFIX + KIM_PROJECT_NAME "-";
       switch (type)
       {
-        case KIM_MODELS_DIR:
-          lib.append(KIM_MODEL_IDENTIFIER);
-          break;
+        case KIM_MODELS_DIR: lib.append(KIM_MODEL_IDENTIFIER); break;
         case KIM_MODEL_DRIVERS_DIR:
           lib.append(KIM_MODEL_DRIVER_IDENTIFIER);
           break;
-        default:
-          break;
+        default: break;
       }
       lib.append(KIM_SHARED_MODULE_SUFFIX);
-      void* tmp_lib_handle = NULL;
+      void * tmp_lib_handle = NULL;
       tmp_lib_handle = dlopen(lib.c_str(), RTLD_NOW);
       if (tmp_lib_handle != NULL)
       {
         std::string verSymbolName = entry[IE_NAME] + "_compiled_with_version";
-        char const* const verSymbolPtr = (char const*)
-            dlsym(tmp_lib_handle, verSymbolName.c_str());
-        char* dlsym_error = dlerror();
+        char const * const verSymbolPtr
+            = (char const *) dlsym(tmp_lib_handle, verSymbolName.c_str());
+        char * dlsym_error = dlerror();
         if (dlsym_error)
         {
           if (log)
           {
             std::stringstream ss;
-            ss << " Cannot load symbol: " << dlsym_error <<std::endl;
-            log->LogEntry(KIM::LOG_VERBOSITY::error, ss,
-                          __LINE__, __FILE__);
+            ss << " Cannot load symbol: " << dlsym_error << std::endl;
+            log->LogEntry(KIM::LOG_VERBOSITY::error, ss, __LINE__, __FILE__);
           }
           entry[IE_VER] = "unknown";
         }
@@ -430,9 +405,8 @@ void getAvailableItems(DirectoryPathType type,
         if (log)
         {
           std::stringstream ss;
-          ss << dlerror() <<std::endl;
-          log->LogEntry(KIM::LOG_VERBOSITY::debug, ss,
-                        __LINE__, __FILE__);
+          ss << dlerror() << std::endl;
+          log->LogEntry(KIM::LOG_VERBOSITY::debug, ss, __LINE__, __FILE__);
         }
       }
     }
@@ -441,15 +415,18 @@ void getAvailableItems(DirectoryPathType type,
   list.sort(lessThan);
 }
 
-bool findItem(DirectoryPathType type, std::string const& name,
-              std::vector<std::string>* const Item, KIM::Log * const log)
+bool findItem(DirectoryPathType type,
+              std::string const & name,
+              std::vector<std::string> * const Item,
+              KIM::Log * const log)
 {
   bool success = false;
   std::list<std::vector<std::string> > list;
   getAvailableItems(type, list, log);
 
-  for (std::list<std::vector<std::string> >::const_iterator
-           itr = list.begin(); itr != list.end(); ++itr)
+  for (std::list<std::vector<std::string> >::const_iterator itr = list.begin();
+       itr != list.end();
+       ++itr)
   {
     if ((*itr)[IE_NAME] == name)
     {
@@ -462,4 +439,4 @@ bool findItem(DirectoryPathType type, std::string const& name,
   return success;
 }
 
-}
+}  // namespace OLD_KIM

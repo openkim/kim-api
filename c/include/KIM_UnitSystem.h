@@ -56,4 +56,4 @@
 #include "KIM_TimeUnit.h"
 #endif
 
-#endif  /* KIM_UNIT_SYSTEM_H_ */
+#endif /* KIM_UNIT_SYSTEM_H_ */

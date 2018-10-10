@@ -49,8 +49,7 @@ typedef struct KIM_ModelRefresh KIM_ModelRefresh;
 #endif
 
 void KIM_ModelRefresh_SetInfluenceDistancePointer(
-    KIM_ModelRefresh * const modelRefresh,
-    double * const influenceDistance);
+    KIM_ModelRefresh * const modelRefresh, double * const influenceDistance);
 
 void KIM_ModelRefresh_SetNeighborListPointers(
     KIM_ModelRefresh * const modelRefresh,
@@ -59,15 +58,15 @@ void KIM_ModelRefresh_SetNeighborListPointers(
     int const * const modelWillNotRequestNeighborsOfNoncontributingParticles);
 
 void KIM_ModelRefresh_GetModelBufferPointer(
-    KIM_ModelRefresh const * const modelRefresh,
-    void ** const ptr);
+    KIM_ModelRefresh const * const modelRefresh, void ** const ptr);
 
-void KIM_ModelRefresh_LogEntry(
-    KIM_ModelRefresh const * const modelRefresh,
-    KIM_LogVerbosity const logVerbosity, char const * const message,
-    int const lineNumber, char const * const fileName);
+void KIM_ModelRefresh_LogEntry(KIM_ModelRefresh const * const modelRefresh,
+                               KIM_LogVerbosity const logVerbosity,
+                               char const * const message,
+                               int const lineNumber,
+                               char const * const fileName);
 
-char const * KIM_ModelRefresh_ToString(
-    KIM_ModelRefresh const * const modelRefresh);
+char const *
+KIM_ModelRefresh_ToString(KIM_ModelRefresh const * const modelRefresh);
 
-#endif  /* KIM_MODEL_REFRESH_H_ */
+#endif /* KIM_MODEL_REFRESH_H_ */

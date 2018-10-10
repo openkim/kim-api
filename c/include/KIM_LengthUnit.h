@@ -62,4 +62,4 @@ void KIM_LENGTH_UNIT_GetNumberOfLengthUnits(int * const numberOfLengthUnits);
 int KIM_LENGTH_UNIT_GetLengthUnit(int const index,
                                   KIM_LengthUnit * const lengthUnit);
 
-#endif  /* KIM_LENGTH_UNIT_H_ */
+#endif /* KIM_LENGTH_UNIT_H_ */

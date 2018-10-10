@@ -39,14 +39,15 @@
 #include "KIM_ComputeArgumentsImplementation.hpp"
 #endif
 
-#define CONVERT_POINTER ComputeArgumentsImplementation *pImpl   \
-  = reinterpret_cast<ComputeArgumentsImplementation *>(pimpl)
+#define CONVERT_POINTER                  \
+  ComputeArgumentsImplementation * pImpl \
+      = reinterpret_cast<ComputeArgumentsImplementation *>(pimpl)
 
 
 namespace KIM
 {
-void ModelComputeArgumentsDestroy::GetModelBufferPointer(void ** const ptr)
-    const
+void ModelComputeArgumentsDestroy::GetModelBufferPointer(
+    void ** const ptr) const
 {
   CONVERT_POINTER;
 
@@ -80,12 +81,8 @@ std::string const & ModelComputeArgumentsDestroy::String() const
   return pImpl->String();
 }
 
-ModelComputeArgumentsDestroy::ModelComputeArgumentsDestroy() : pimpl(NULL)
-{
-}
+ModelComputeArgumentsDestroy::ModelComputeArgumentsDestroy() : pimpl(NULL) {}
 
-ModelComputeArgumentsDestroy::~ModelComputeArgumentsDestroy()
-{
-}
+ModelComputeArgumentsDestroy::~ModelComputeArgumentsDestroy() {}
 
 }  // namespace KIM

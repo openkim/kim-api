@@ -51,8 +51,8 @@ struct KIM_ComputeArgumentName
 typedef struct KIM_ComputeArgumentName KIM_ComputeArgumentName;
 #endif
 
-KIM_ComputeArgumentName KIM_ComputeArgumentName_FromString(
-    char const * const str);
+KIM_ComputeArgumentName
+KIM_ComputeArgumentName_FromString(char const * const str);
 
 int KIM_ComputeArgumentName_Equal(KIM_ComputeArgumentName const left,
                                   KIM_ComputeArgumentName const right);
@@ -61,20 +61,20 @@ int KIM_ComputeArgumentName_NotEqual(KIM_ComputeArgumentName const left,
 char const * KIM_ComputeArgumentName_ToString(
     KIM_ComputeArgumentName const computeArgumentName);
 
-extern
-KIM_ComputeArgumentName const KIM_COMPUTE_ARGUMENT_NAME_numberOfParticles;
-extern
-KIM_ComputeArgumentName const KIM_COMPUTE_ARGUMENT_NAME_particleSpeciesCodes;
-extern
-KIM_ComputeArgumentName const KIM_COMPUTE_ARGUMENT_NAME_particleContributing;
+extern KIM_ComputeArgumentName const
+    KIM_COMPUTE_ARGUMENT_NAME_numberOfParticles;
+extern KIM_ComputeArgumentName const
+    KIM_COMPUTE_ARGUMENT_NAME_particleSpeciesCodes;
+extern KIM_ComputeArgumentName const
+    KIM_COMPUTE_ARGUMENT_NAME_particleContributing;
 extern KIM_ComputeArgumentName const KIM_COMPUTE_ARGUMENT_NAME_coordinates;
 extern KIM_ComputeArgumentName const KIM_COMPUTE_ARGUMENT_NAME_partialEnergy;
 extern KIM_ComputeArgumentName const KIM_COMPUTE_ARGUMENT_NAME_partialForces;
-extern
-KIM_ComputeArgumentName const KIM_COMPUTE_ARGUMENT_NAME_partialParticleEnergy;
+extern KIM_ComputeArgumentName const
+    KIM_COMPUTE_ARGUMENT_NAME_partialParticleEnergy;
 extern KIM_ComputeArgumentName const KIM_COMPUTE_ARGUMENT_NAME_partialVirial;
-extern
-KIM_ComputeArgumentName const KIM_COMPUTE_ARGUMENT_NAME_partialParticleVirial;
+extern KIM_ComputeArgumentName const
+    KIM_COMPUTE_ARGUMENT_NAME_partialParticleVirial;
 
 void KIM_COMPUTE_ARGUMENT_NAME_GetNumberOfComputeArgumentNames(
     int * const numberOfComputeArgumentNames);
@@ -85,4 +85,4 @@ int KIM_COMPUTE_ARGUMENT_NAME_GetComputeArgumentDataType(
     KIM_ComputeArgumentName const computeArgumentName,
     KIM_DataType * const dataType);
 
-#endif  /* KIM_COMPUTE_ARGUMENT_NAME_H_ */
+#endif /* KIM_COMPUTE_ARGUMENT_NAME_H_ */

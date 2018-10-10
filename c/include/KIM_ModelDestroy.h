@@ -53,12 +53,13 @@ typedef struct KIM_ModelDestroy KIM_ModelDestroy;
 void KIM_ModelDestroy_GetModelBufferPointer(
     KIM_ModelDestroy const * const modelDestroy, void ** const ptr);
 
-void KIM_ModelDestroy_LogEntry(
-    KIM_ModelDestroy const * const modelDestroy,
-    KIM_LogVerbosity const logVerbosity, char const * const message,
-    int const lineNumber, char const * const fileName);
+void KIM_ModelDestroy_LogEntry(KIM_ModelDestroy const * const modelDestroy,
+                               KIM_LogVerbosity const logVerbosity,
+                               char const * const message,
+                               int const lineNumber,
+                               char const * const fileName);
 
-char const * KIM_ModelDestroy_ToString(
-    KIM_ModelDestroy const * const modelDestroy);
+char const *
+KIM_ModelDestroy_ToString(KIM_ModelDestroy const * const modelDestroy);
 
-#endif  /* KIM_MODEL_DESTROY_H_ */
+#endif /* KIM_MODEL_DESTROY_H_ */

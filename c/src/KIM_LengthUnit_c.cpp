@@ -35,8 +35,7 @@
 #ifndef KIM_LENGTH_UNIT_HPP_
 #include "KIM_LengthUnit.hpp"
 #endif
-extern "C"
-{
+extern "C" {
 #ifndef KIM_LENGTH_UNIT_H_
 #include "KIM_LengthUnit.h"
 #endif
@@ -48,20 +47,19 @@ namespace
 KIM::LengthUnit makeLengthUnitCpp(KIM_LengthUnit const lengthUnit)
 {
   KIM::LengthUnit const * const lengthUnitCpp
-      = reinterpret_cast <KIM::LengthUnit const *>(&lengthUnit);
+      = reinterpret_cast<KIM::LengthUnit const *>(&lengthUnit);
   return *lengthUnitCpp;
 }
 
 KIM_LengthUnit makeLengthUnitC(KIM::LengthUnit const lengthUnit)
 {
   KIM_LengthUnit const * const lengthUnitC
-      = reinterpret_cast <KIM_LengthUnit const *>(&lengthUnit);
+      = reinterpret_cast<KIM_LengthUnit const *>(&lengthUnit);
   return *lengthUnitC;
 }
 }  // namespace
 
-extern "C"
-{
+extern "C" {
 KIM_LengthUnit KIM_LengthUnit_FromString(char const * const str)
 {
   return makeLengthUnitC(KIM::LengthUnit(std::string(str)));

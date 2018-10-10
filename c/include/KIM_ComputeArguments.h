@@ -100,26 +100,22 @@ int KIM_ComputeArguments_SetCallbackPointer(
     void * const dataObject);
 
 void KIM_ComputeArguments_AreAllRequiredArgumentsAndCallbacksPresent(
-    KIM_ComputeArguments const * const computeArguments,
-    int * const result);
+    KIM_ComputeArguments const * const computeArguments, int * const result);
 
 void KIM_ComputeArguments_SetSimulatorBufferPointer(
-    KIM_ComputeArguments * const computeArguments,
-    void * const ptr);
+    KIM_ComputeArguments * const computeArguments, void * const ptr);
 void KIM_ComputeArguments_GetSimulatorBufferPointer(
-    KIM_ComputeArguments const * const computeArguments,
-    void ** const ptr);
+    KIM_ComputeArguments const * const computeArguments, void ** const ptr);
 
 char const * KIM_ComputeArguments_ToString(
     KIM_ComputeArguments const * const computeArguments);
 
 void KIM_ComputeArguments_SetLogID(
-    KIM_ComputeArguments * const computeArguments,
-    char const * const logID);
+    KIM_ComputeArguments * const computeArguments, char const * const logID);
 void KIM_ComputeArguments_PushLogVerbosity(
     KIM_ComputeArguments * const computeArguments,
     KIM_LogVerbosity const logVerbosity);
 void KIM_ComputeArguments_PopLogVerbosity(
     KIM_ComputeArguments * const computeArguments);
 
-#endif  /* KIM_COMPUTE_ARGUMENTS_H_ */
+#endif /* KIM_COMPUTE_ARGUMENTS_H_ */

@@ -57,4 +57,4 @@ extern KIM_DataType const KIM_DATA_TYPE_Double;
 void KIM_DATA_TYPE_GetNumberOfDataTypes(int * const numberOfDataTypes);
 int KIM_DATA_TYPE_GetDataType(int const index, KIM_DataType * const dataType);
 
-#endif  /* KIM_DATA_TYPE_H_ */
+#endif /* KIM_DATA_TYPE_H_ */

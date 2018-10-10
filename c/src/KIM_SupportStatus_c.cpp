@@ -35,8 +35,7 @@
 #ifndef KIM_SUPPORT_STATUS_HPP_
 #include "KIM_SupportStatus.hpp"
 #endif
-extern "C"
-{
+extern "C" {
 #ifndef KIM_SUPPORT_STATUS_H_
 #include "KIM_SupportStatus.h"
 #endif
@@ -44,25 +43,22 @@ extern "C"
 
 namespace
 {
-KIM::SupportStatus makeSupportStatusCpp(
-    KIM_SupportStatus const supportStatus)
+KIM::SupportStatus makeSupportStatusCpp(KIM_SupportStatus const supportStatus)
 {
   KIM::SupportStatus const * const supportStatusCpp
-      = reinterpret_cast <KIM::SupportStatus const *>(&supportStatus);
+      = reinterpret_cast<KIM::SupportStatus const *>(&supportStatus);
   return *supportStatusCpp;
 }
 
-KIM_SupportStatus makeSupportStatusC(
-    KIM::SupportStatus const supportStatus)
+KIM_SupportStatus makeSupportStatusC(KIM::SupportStatus const supportStatus)
 {
   KIM_SupportStatus const * const supportStatusC
-      = reinterpret_cast <KIM_SupportStatus const *>(&supportStatus);
+      = reinterpret_cast<KIM_SupportStatus const *>(&supportStatus);
   return *supportStatusC;
 }
 }  // namespace
 
-extern "C"
-{
+extern "C" {
 KIM_SupportStatus KIM_SupportStatus_FromString(char const * const str)
 {
   return makeSupportStatusC(KIM::SupportStatus(std::string(str)));
@@ -97,9 +93,8 @@ void KIM_SUPPORT_STATUS_GetNumberOfSupportStatuses(
   KIM::SUPPORT_STATUS::GetNumberOfSupportStatuses(numberOfSupportStatuses);
 }
 
-int KIM_SUPPORT_STATUS_GetSupportStatus(
-    int const index,
-    KIM_SupportStatus * const supportStatus)
+int KIM_SUPPORT_STATUS_GetSupportStatus(int const index,
+                                        KIM_SupportStatus * const supportStatus)
 {
   KIM::SupportStatus supportStatusCpp;
   int error = KIM::SUPPORT_STATUS::GetSupportStatus(index, &supportStatusCpp);
