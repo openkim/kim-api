@@ -115,6 +115,7 @@ add_subdirectory(fortran/include)
 #
 add_subdirectory(cmake)
 add_subdirectory(completions)
+add_subdirectory(editors/emacs)
 add_subdirectory(pkg-config)
 add_subdirectory(utils)
 
