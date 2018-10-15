@@ -70,8 +70,6 @@ set(SOURCES
   "src/theory.txt"
   "src/implementation.txt"
   "src/version2-differences.txt"
-  "src/porting-content-from-v1-to-v2.txt"
-  "porting-content-from-v1-to-v2-examples/"
   "../cpp/include/"
   "../c/include/"
   "../fortran/include/"
