@@ -76,8 +76,6 @@ This documentation is organized into the following components:
 
 -# \ref version2_differences
 
--# \ref porting_content_from_v1_to_v2
-
 In addition, all public header files and included example codes are available
 for [browsing](files.html).
 

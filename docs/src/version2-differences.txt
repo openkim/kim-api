@@ -397,7 +397,7 @@ In addition, the KIM::ComputeArgumentName enumeration also has the
 KIM::COMPUTE_ARGUMENT_NAME::GetComputeArgumentDataType() function.
 
 
-Next Section: \ref porting_content_from_v1_to_v2.
+Next Seciton: [Browse files](files.html).
 
 */
 
