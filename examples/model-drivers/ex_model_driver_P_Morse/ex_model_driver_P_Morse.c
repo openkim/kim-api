@@ -171,7 +171,7 @@ static void calc_phi_dphi(double const * epsilon,
 }
 
 /* compute function */
-#undef LOG_FUNCITON
+#undef KIM_LOGGER_FUNCTION_NAME
 #define KIM_LOGGER_FUNCTION_NAME KIM_ModelCompute_LogEntry
 #undef KIM_LOGGER_OBJECT_NAME
 #define KIM_LOGGER_OBJECT_NAME modelCompute

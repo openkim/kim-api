@@ -279,6 +279,7 @@ class LennardJones612Implementation
            - constFourEpsSig6_2D[iSpecies][jSpecies]) exshift;
 
 //******************************************************************************
+#undef KIM_LOGGER_OBJECT_NAME
 #define KIM_LOGGER_OBJECT_NAME modelCompute
 //
 template<bool isComputeProcess_dEdr,
