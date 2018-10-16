@@ -57,7 +57,7 @@ void KIM_Log_SetID(KIM_Log * const log, char const * const id);
 
 void KIM_Log_PushVerbosity(KIM_Log * const log,
                            KIM_LogVerbosity const logVerbosity);
-void KIM_Log_PopVerboisty(KIM_Log * const log);
+void KIM_Log_PopVerbosity(KIM_Log * const log);
 
 void KIM_Log_LogEntry(KIM_Log const * const log,
                       KIM_LogVerbosity const logVerbosity,
