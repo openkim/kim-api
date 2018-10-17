@@ -562,9 +562,9 @@ static int destroy_routine(KIM_ModelDestroy * const modelDestroy)
 
 /* compute arguments create routine */
 #undef KIM_LOGGER_FUNCTION_NAME
-#define KIM_LOGGER_FUNCTION_NAME KIM_ModelCompute_LogEntry
+#define KIM_LOGGER_FUNCTION_NAME KIM_ModelComputeArgumentsCreate_LogEntry
 #undef KIM_LOGGER_OBJECT_NAME
-#define KIM_LOGGER_OBJECT_NAME modelCompute
+#define KIM_LOGGER_OBJECT_NAME modelComputeArgumentsCreate
 static int compute_arguments_create(
     KIM_ModelCompute const * const modelCompute,
     KIM_ModelComputeArgumentsCreate * const modelComputeArgumentsCreate)

@@ -835,7 +835,7 @@ call kim_set_model_buffer_pointer( &
 ! set pointers to parameters in KIM object
 call kim_set_parameter_pointer( &
   model_driver_create_handle, buf%pcutoff, "cutoff", &
-  "Distance at which the energy becomes zero.", ierr)
+  "Distance beyond which particles do not interact with one another.", ierr)
 if (ierr /= 0) then
   call kim_log_entry(model_driver_create_handle, &
     KIM_LOG_VERBOSITY_ERROR, "set_parameter")
@@ -845,7 +845,7 @@ endif
 
 call kim_set_parameter_pointer( &
   model_driver_create_handle, buf%epsilon, "epsilon", &
-  "Energy scale coefficient.", ierr)
+  "Maximum depth of the potential well.", ierr)
 if (ierr /= 0) then
   call kim_log_entry(model_driver_create_handle, &
     KIM_LOG_VERBOSITY_ERROR, "set_parameter")
@@ -855,7 +855,7 @@ endif
 
 call kim_set_parameter_pointer( &
   model_driver_create_handle, buf%sigma, "sigma", &
-  "Length scale coefficient.", ierr)
+  "Distance at which energy is zero and force is repulsive.", ierr)
 if (ierr /= 0) then
   call kim_log_entry(model_driver_create_handle, &
     KIM_LOG_VERBOSITY_ERROR, "set_parameter")
