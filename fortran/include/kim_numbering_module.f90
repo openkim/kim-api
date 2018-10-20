@@ -49,7 +49,7 @@ module kim_numbering_module
     operator (.ne.), &
     kim_from_string, &
     kim_to_string, &
-    kim_number_of_numberings, &
+    kim_get_number_of_numberings, &
     kim_get_numbering
 
 
@@ -144,7 +144,7 @@ contains
     end if
   end subroutine kim_numbering_to_string
 
-  subroutine kim_number_of_numberings(number_of_numberings)
+  subroutine kim_get_number_of_numberings(number_of_numberings)
     use, intrinsic :: iso_c_binding
     implicit none
     interface
@@ -158,7 +158,7 @@ contains
     integer(c_int), intent(out) :: number_of_numberings
 
     call get_number_of_numberings(number_of_numberings)
-  end subroutine kim_number_of_numberings
+  end subroutine kim_get_number_of_numberings
 
   subroutine kim_get_numbering(index, numbering, ierr)
     use, intrinsic :: iso_c_binding
