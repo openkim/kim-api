@@ -28,6 +28,11 @@
 #    Ryan S. Elliott
 #
 
+#
+# Release: This file is part of the kim-api.git repository.
+#
+
+
 # check for errors
 
 if test $# -lt 4; then

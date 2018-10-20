@@ -4,3 +4,4 @@
 /scripts        export-ignore
 .gitignore      export-ignore
 .gitattributes  export-ignore
+git-hooks       export-ignore

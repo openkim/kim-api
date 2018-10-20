@@ -33,19 +33,5 @@
 #
 
 
-# goto the top level repo directory
-cd "`git rev-parse --show-toplevel`"
-
-files=`find .    -name "*.hpp"     \
-              -o -name "*.hpp.in"  \
-              -o -name "*.cpp"     \
-              -o -name "*.cpp.in"  \
-              -o -name "*.inc"     \
-              -o -name "*.inc.in"  \
-              -o -name "*.h"       \
-              -o -name "*.h.in"    \
-              -o -name "*.c"       \
-              -o -name "*.c.in"`
-
-
-clang-format -style=file -i ${files}
+# set hooksPath to repo local hooks directory
+git config core.hooksPath git-hooks

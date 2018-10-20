@@ -1,0 +1,138 @@
+#!/bin/sh
+#
+
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the Common Development
+# and Distribution License Version 1.0 (the "License").
+#
+# You can obtain a copy of the license at
+# http://www.opensource.org/licenses/CDDL-1.0.  See the License for the
+# specific language governing permissions and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each file and
+# include the License file in a prominent location with the name LICENSE.CDDL.
+# If applicable, add the following below this CDDL HEADER, with the fields
+# enclosed by brackets "[]" replaced with your own identifying information:
+#
+# Portions Copyright (c) [yyyy] [name of copyright owner]. All rights reserved.
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2018, Regents of the University of Minnesota.
+# All rights reserved.
+#
+# Contributors:
+#    Ryan S. Elliott
+#
+
+#
+# Release: This file is part of the kim-api.git repository.
+#
+
+
+# Called by "git commit" with no arguments.  The hook should
+# exit with non-zero status after issuing an appropriate message if
+# it wants to stop the commit.
+
+
+# filter file list
+filter_file_list () {
+  local file_list="$1"
+  files_to_check_format=""
+
+  for file in ${file_list}; do
+    local keep=`printf ${file} | sed -e 's/^.*\.hpp$//'     \
+                                     -e 's/^.*\.hpp\.in$//' \
+                                     -e 's/^.*\.cpp$//'     \
+                                     -e 's/^.*\.cpp\.in$//' \
+                                     -e 's/^.*\.inc$//'     \
+                                     -e 's/^.*\.inc\.in$//' \
+                                     -e 's/^.*\.h$//'       \
+                                     -e 's/^.*\.h\.in$//'   \
+                                     -e 's/^.*\.c$//'       \
+                                     -e 's/^.*\.c\.in$//'`
+    if test x"${keep}" = x""; then
+      files_to_check_format="${files_to_check_format} ${file}"
+    fi
+  done
+}
+
+if git rev-parse --verify HEAD >/dev/null 2>&1
+then
+  against=HEAD
+else
+  # Initial commit: diff against an empty tree object
+  against=4b825dc642cb6eb9a060e54bf8d69288fbee4904
+fi
+
+file_list=`git diff-index --cached --name-only $against`
+files_to_check_format=""
+filter_file_list "${file_list}"
+
+# printf "The files identified as in the commit are:\n\n"
+# for file in ${file_list}; do
+#   printf "\t%s\n" ${file}
+# done
+# printf "\nThe files identified for format checking in the commit are:\n\n"
+# for file in ${files_to_check_format}; do
+#   printf "\t%s\n" ${file}
+# done
+
+files_needing_formatting=""
+for file in ${files_to_check_format}; do
+  # ":${file}" references file in the git index
+  git show :${file} | clang-format -assume-filename=${file} \
+                                   -style=file -output-replacements-xml \
+    | grep -c "<replacement " > /dev/null
+  if test $? -ne 1; then
+    files_needing_formatting="${files_needing_formatting} ${file}"
+  fi
+done
+
+# printf "\nThe files identified as needing formatting in the commit are:\n\n"
+# for file in ${files_needing_formatting}; do
+#   printf "\t%s\n" ${file}
+# done
+
+if test x"${files_needing_formatting}" != x""; then
+  printf "kim-api pre-commit hook:\n"
+  printf "The following files must be processed with clang-format:\n"
+  printf "\n"
+  for file in ${files_needing_formatting}; do
+    printf "\t${file}\n"
+  done
+  printf "\n"
+  printf "The following commands may be used to resolve this issue:\n\n"
+
+  dir_prefix=`printf "${GIT_PREFIX}" | sed -e 's|\([^/][^/]*\)|..|g'`
+  for file in ${files_needing_formatting}; do
+    printf "  clang-format -style=file -i ${dir_prefix}${file}"
+  done
+  printf "\n"
+
+  for file in ${files_needing_formatting}; do
+    printf "  git add ${dir_prefix}${file}"
+  done
+  printf "\n"
+  printf "\n"
+
+  exit 1
+else
+  additional_precommit="`git rev-parse --absolute-git-dir`/hooks/pre-commit"
+  if test -x "${additional_precommit}"; then
+    if ${additional_precommit}; then
+      # everything is OK
+      exit 0
+    else
+      # additional pre-commit failed
+      exit 1
+    fi
+  else
+    # everything is OK
+    exit 0
+  fi
+fi
