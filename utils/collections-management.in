@@ -138,15 +138,11 @@ check_item_compatibility () {
 
 check_for_local_build () {
   local name="$1"
-  local_build_path=""
-  local base_name="`printf -- "${name}" | sed 's|.*/\([^/][^/]*\)/*$|\1|'`"
-  if test x"${base_name}" != x"${name}"; then
-    local_build_path="`printf -- "${name}" | sed 's|/*$||'`"
-    if test x"/" != x"`expr ${local_build_path} : '\(.\)'`"; then
-      local_build_path="${PWD}/${local_build_path}"
-    fi
+  if test -d "${name}"; then
+    local_build_path=`cd "${name}" && pwd`
     return 0
   else
+    local_build_path=""
     return 1
   fi
   # output is: local_build_path
@@ -179,13 +175,15 @@ get_local_build_item_name () {
     local item_type="`grep -- "model-type:" model-info.txt | sed -e 's/^model-type://'`"
     case "${item_type}" in
       stand-alone-model|parameterized-model|simulator-model)
-        item_name="`grep -- "model-name:" model-info.txt | sed -e 's/^model-name://'`"
+        printf -- "`grep -- "model-name:" model-info.txt | sed -e 's/^model-name://'`" \
+               > "${build_dir}/item_name"
         ;;
       model-driver)
-        item_name="`grep -- "driver-name:" model-info.txt | sed -e 's/^driver-name://'`"
+        printf -- "`grep -- "driver-name:" model-info.txt | sed -e 's/^driver-name://'`" \
+               > "${build_dir}/item_name"
         ;;
       *)
-        item_name=""
+        printf -- "" > "${build_dir}/item_name"
         printf "Item type '${item_type}' unknown.\n"
         error="true"
         ;;
@@ -198,6 +196,7 @@ get_local_build_item_name () {
     fi
   ) || return 1  # exit subshell
 
+  item_name=`cat ${build_dir}/item_name`
   rm -rf "${build_dir}" || return 1
 
   return 0
@@ -274,6 +273,13 @@ get_build_install_item () {
     if ! get_local_build_item_name "${local_build_path}"; then  # sets item_name
       # error message already printed
       return 1
+    else
+      printf "Found local item named: ${item_name}.\n"
+      printf "In source directory: ${local_build_path}.\n"
+      printf "   (If you are trying to install an item from openkim.org\n"
+      printf "    rerun this command from a different working directory,\n"
+      printf "    or rename the source directory mentioned above.)\n"
+      printf "\n"
     fi
   fi
 
