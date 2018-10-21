@@ -31,17 +31,14 @@ This directory (examples) contains directories with example Model Drivers,
 Models, and Simulators.  Please see the README files within each directory for
 information about the examples.
 
-To build and install these examples:
+Items in these directories may be built as part of the main KIM API build.  Or,
+they may be build separately, after the KIM API has been built and installed.
+In the latter case, for Models and Model Drivers, use the
+kim-api-vX-collections-management utility to build and install the items.  For
+the simulators, the following example sequence of commands is typical.
 
-(Assuming the KIM API has previously been installed and that the KIM API bin
-directory is on the path.)
-
-$ make all-user
-
-This will build and install (to the user collection) all example Model Drivers,
-then Models.  It will also build the example Simulators.
-
-Once this is complete, you can use the example Simulator inplace.  For example,
-
-$ cd simulators/utility_forces_numer_deriv
-$ printf "ex_model_Ar_P_Morse" | ./utilityforces_numer_deriv
+$ cd simulators/ex_test_Ar_fcc_cluster
+$ mkdir build
+$ cd build
+$ cmake ../ -DCMAKE_BUILD_TYPE=Release
+$ make
