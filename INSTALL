@@ -59,6 +59,7 @@ D. KIM API Installation
        D.2.2 CMAKE_BUILD_TYPE
        D.2.3 Installation prefix
        D.2.4 KIM API specific build options
+   D.3 Uninstall the KIM API
 
 E. Adding Models and/or Model Drivers to the collections
    E.1 Adding Models and/or Model Drivers to the system-collection
@@ -76,17 +77,23 @@ To install and run the KIM API package you need the following:
 
 1. A Unix/Linux/macOS system.
 
-2. CMake (3.4 or later).
+2. CMake (3.4 or later).  (CMake 3.8 or later is required for building the
+   Doxygen documentation.)
 
 3. GNU compilers (gcc, g++, gfortran) version 4.8.x or higher or the
    corresponding Intel compilers, version 11.1 or higher.  Other compilers may
    also work.
 
-4. the 'xxd' utility (distributed as part of the vim package).
+4. The 'xxd' utility (distributed as part of the vim package).
 
 5. wget and tar (used by the kim-api-vX-collections-management utility).
 
-6. pkg-config can be used by code needing to link against the kim-api library.
+6. Doxygen and Graphviz (for generating the documentation).
+
+7. The bash-completion package (for facilitating command-line usage of the
+   helper utilities).
+
+8. pkg-config can be used by code needing to link against the kim-api library.
 
 
 -------------------------------------------------------------------------------
@@ -98,6 +105,8 @@ Try the following:
 $ mkdir build && cd build
 $ cmake .. -DCMAKE_INSTALL_TYPE=Release
 $ make
+$ sudo make install
+$ sudo ldconfig
 
 For more information, see section D.
 
@@ -195,7 +204,12 @@ C.3 HELPER UTILITIES
 
 The KIM API package also includes a utility for managing the models and drivers
 contained in the various collections and for managing the configuration file.
-This utility is called "kim-api-vX-collections-management".
+This utility is called "kim-api-vX-collections-management".  The KIM API
+package installs bash completion scripts that are designed to work with the
+"bash-completion" package (https://github.com/scop/bash-completion).  When
+"bash-completion" is installed and activated on the system, tab-completions for
+the collections management utility should be automatically loaded and available
+for use.
 
 In addition, when the KIM API package is installed to a "Local (non-global)"
 (see D below) directory, the package also installs the "kim-api-vX-activate"
@@ -236,24 +250,37 @@ $ cd build
 $ cmake .. -DCMAKE_BUILD_TYPE=Release
 $ make
 
+If you want, build the documentation.
+
+$ make docs
+
 If you want, before installing the package, you can run the tests.
 
 $ make test
 
-Now, install the package.
+Now, install the package (and docs, if built).
 
 $ sudo make install
 $ sudo ldconfig  # All linux systems should do this; on Redhat-like systems you may need to first add /usr/local/lib to /etc/ld.so.conf
 $ cp -r ../examples/simulators/utility_forces_numer_deriv "${HOME}/"
 $ cd "${HOME}"
+
+If you want, you can now delete the source and build tree.  However, you may
+also want to preserve the "install_manifest.txt" file which would be needed for
+uninstalling the KIM API package (see D.3 below).
+
 $ rm -r kim-api-vX.Y.Z kim-api-vX.Y.Z.txz # replace X.Y.Z with the current version number
+
+Now, we can build the simulator using the KIM API library that we have just
+installed.
+
 $ cd utility_forces_numer_deriv
 $ mkdir build
 $ cd build
 $ cmake ..
 $ make
 
-Now we can try it with one of the example models:
+Try it with one of the example models:
 $ printf "ex_model_Ar_P_LJ" | ./utility_forces_numer_deriv
 
 Next, we can try it with a model installed from https://openkim.org:
@@ -263,7 +290,7 @@ $ printf "EDIP_BOP_Bazant_Kaxiras_Si__MO_958932894036_001" | ./utility_forces_nu
 
 Congratulations, you have now successfully installed the KIM API.  If you would
 like to learn more about the KIM API, read the documentation in the docs
-directory.
+directory (/usr/local/share/doc/kim-api-vX).
 
 D.2 CMAKE BUILD OPTIONS
 
@@ -352,6 +379,31 @@ Additionally, the KIM API defines the following four advanced options.
   build and install, on the same machine, two different copies of the same
   major version of the package.  This could be desirable for debugging.
 
+D.3 Uninstall the KIM API
+
+When the KIM API package is installed, CMake creates a file in the build tree
+named "install_manifest.txt".  For the above commands this file would be
+located at "${HOME}/kim-api-vX.Y.Z/build/install_manifest.txt".  The manifest
+file contains the absolute file name of every file installed as part of the KIM
+API package.  The contents of the install_manifest.txt file can be used to
+remove these files and, thus, uninstall the KIM API package.  Thus, the
+install_manifest.txt file should be saved for later use, if necessary.
+
+For example, the following commands could be used to uninstall the KIM API
+package (assuming the "install_manifest.txt" file is located in your home
+directory).
+
+$ cd "${HOME}"
+$ while read line || test -n "${line}"; do sudo rm -f "${line}"; done < install_manifest.txt
+
+A more sophisticated set of commands could also remove any empty subdirectories
+left behind by this process.
+
+It may also be desirable to remove the user configuration file and user
+collection directories.
+
+$ rm -rf "${HOME}/.kim-api-vX"
+
 
 -------------------------------------------------------------------------------
 
@@ -382,7 +434,7 @@ $ kim-api-vX-collections-management list
 
 Now we can test the newly installed Model.
 
-$ cd "${HOME}/build/utility_forces_numer_deriv"  # we'll assume this is already built
+$ cd "${HOME}/utility_forces_numer_deriv/build"  # we'll assume this is already built
 $ printf "Pair_Morse_Shifted_Jelinek_Ar__MO_831902330215_001" | ./utility_forces_numer_deriv
 
 E.2 ADDING MODELS AND/OR MODEL DRIVERS TO THE USER-COLLECTION
@@ -393,7 +445,7 @@ $ cd "${HOME}"
 
 $ kim-api-vX-collections-management install user Pair_Lennard_Jones_Shifted_Bernardes_HighCutoff_Ar__MO_242741380554_001
 $ kim-api-vX-collections-management list
-$ cd "${HOME}/build/utility_forces_numer_deriv"  # we'll assume this is already built
+$ cd "${HOME}/utility_forces_numer_deriv/build"  # we'll assume this is already built
 $ printf "Pair_Lennard_Jones_Shifted_Bernardes_HighCutoff_Ar__MO_242741380554_001" | ./utility_forces_numer_deriv
 
 E.3 ADDING MODELS AND/OR MODEL DRIVERS TO THE ENVIRONMENT-VARIABLE-COLLECTION
@@ -409,7 +461,7 @@ $ mkdir -p "${HOME}/my-env-collection/models"
 $ export KIM_API_VX_MODELS="${HOME}/my-env-collection/models"
 $ kim-api-vX-collections-management install environment Pair_Morse_Shifted_GirifalcoWeizer_HighCutoff_Cu__MO_151002396060_001
 $ kim-api-vX-collections-management list
-$ cd "${HOME}/build/utility_forces_numer_deriv"  # we'll assume this is already built
+$ cd "${HOME}/utility_forces_numer_deriv/build"  # we'll assume this is already built
 $ printf "Pair_Morse_Shifted_GirifalcoWeizer_HighCutoff_Cu__MO_151002396060_001" | ./utility_forces_numer_deriv
 
 E.4 ADDING MODELS AND/OR MODEL DRIVERS TO THE CWD-COLLECTION
@@ -420,7 +472,7 @@ $ cd "${HOME}"
 
 $ kim-api-vX-collections-management install CWD Pair_Exp6_Hogervorst_Mixing_Kong_Chakrabarty_ArNe__MO_946046425752_001
 $ kim-api-vX-collections-management list
-$ cd "${HOME}/build/utility_forces_numer_deriv"  # we'll assume this is already built
+$ cd "${HOME}/utility_forces_numer_deriv/build"  # we'll assume this is already built
 $ printf "Pair_Exp6_Hogervorst_Mixing_Kong_Chakrabarty_ArNe__MO_946046425752_001" | ./utility_forces_numer_deriv
 
 *******************************************************************************
