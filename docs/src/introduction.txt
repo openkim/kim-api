@@ -87,4 +87,5 @@ for [browsing](files.html).
 */
 
 LocalWords:  CDDL yyyy Ellad Tadmor kim api mainpage atomistic interatomic ref
-LocalWords:  Ar fcc cpp fortran MLJ LennardJones hpp LJ params html
+LocalWords:  Ar fcc cpp fortran MLJ LennardJones hpp LJ params html SLJ
+LocalWords:  MultiCutoff UniversalShifted

@@ -57,7 +57,7 @@ tasks for the model object.  These are summarized in the following table.
 | Model Routine                       | Required / Optional |
 | ----------------------------------- | ------------------- |
 | *ModelCreate* / *ModelDriverCreate* | required            |
-| *ModelComputeArgumentsCreate*       | requried            |
+| *ModelComputeArgumentsCreate*       | required            |
 | *ModelCompute*                      | required            |
 | *ModelRefresh*                      | required if one or more parameter pointers set, otherwise should not be provided |
 | *Modelcompureargumentsdestroy*      | optional            |
@@ -204,14 +204,11 @@ Compute-callback table:
   formula
 
   \f[
-  \mathbf{V}^{\mathcal{C}} = \sum_{i \in C_p} \mathbf{V}^{\mathcal{C}(i)}
-  = \sum_{i \in C_p} \sum_{j \in \mathcal{N}^{(i)}_{r_{\text{infl}}}}
-  \frac{\bar{E}_i}{\partial \mathbf{r}^{(j)}} \otimes \mathbf{r}^{(j)}
+  \mathbf{V}^{\mathcal{C}}
   = \sum_{i \in C_p} \sum_{j \in \mathcal{N}^{(i)}_{r_{\text{infl}}}} \;\;
   \sum_{k \not= j; \; k \in \bar{\mathcal{N}}^{(i)}_{r_{\text{infl}}}}
-  \frac{\partial \tilde{E}_i}{\partial r^{(j,k)}}
-  \frac{\partial r^{(j,k)}}{\partial \mathbf{r}^{(j)}}
-  \otimes \mathbf{r}^{(j)}.
+  \left(\frac{1}{2 r^{(j,k)}} \frac{\partial \tilde{E}_i}{\partial r^{(j,k)}}
+  \right) \mathbf{r}^{(j,k)} \otimes \mathbf{r}^{(j,k)}.
   \f]
 
 - ProcessD2EDr2Term is a callback function that allows for access to the second
@@ -229,5 +226,7 @@ LocalWords:  ModelDriverCreate ModelRefresh ModelDestroy requiredByAPI sc Cu
 LocalWords:  notSupported numberOfParticles particleSpeciesCodes Ni mathbf EDr
 LocalWords:  particleContributing leftrightarrow partialEnergy partialForces
 LocalWords:  mathcal partialParticleEnergy partialVirial partialParticleVirial
-LocalWords:  virial GetNeighborList ProcessDEDrTerm ProcessD ac infl otimes
-LocalWords:  ModelComputeArgumentsCreate ModelComputeArgumentsDestroy
+LocalWords:  virial GetNeighborList ProcessDEDrTerm ProcessD ac infl otimes em
+LocalWords:  ModelComputeArgumentsCreate ModelComputeArgumentsDestroy ge cdot
+LocalWords:  Modelcompureargumentsdestroy
+LocalWords:  modelWillNotRequestNeighborsOfNoncontributingParticles

@@ -39,7 +39,7 @@
 
 Previous Section: \ref features.
 
-\anchor energy_per_partilce At the highest level there are "Simulators" and
+\anchor energy_per_particle At the highest level there are "Simulators" and
 "Models".  Conceptually, a %KIM Model is something that defines an
 energy-per-particle function, \f$E_i\f$, and an "influence distance",
 \f$r_{\text{infl}}\f$, that identifies the particle separation range over which
