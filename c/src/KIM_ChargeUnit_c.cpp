@@ -65,14 +65,14 @@ KIM_ChargeUnit KIM_ChargeUnit_FromString(char const * const str)
   return makeChargeUnitC(KIM::ChargeUnit(std::string(str)));
 }
 
-int KIM_ChargeUnit_Equal(KIM_ChargeUnit const left, KIM_ChargeUnit right)
+int KIM_ChargeUnit_Equal(KIM_ChargeUnit const lhs, KIM_ChargeUnit const rhs)
 {
-  return (left.chargeUnitID == right.chargeUnitID);
+  return (lhs.chargeUnitID == rhs.chargeUnitID);
 }
 
-int KIM_ChargeUnit_NotEqual(KIM_ChargeUnit const left, KIM_ChargeUnit right)
+int KIM_ChargeUnit_NotEqual(KIM_ChargeUnit const lhs, KIM_ChargeUnit const rhs)
 {
-  return (!KIM_ChargeUnit_Equal(left, right));
+  return (!KIM_ChargeUnit_Equal(lhs, rhs));
 }
 
 char const * KIM_ChargeUnit_ToString(KIM_ChargeUnit const chargeUnit)

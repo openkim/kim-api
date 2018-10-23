@@ -65,38 +65,38 @@ KIM_LogVerbosity KIM_LogVerbosity_FromString(char const * const str)
   return makeLogVerbosityC(KIM::LogVerbosity(std::string(str)));
 }
 
-int KIM_LogVerbosity_LessThan(KIM_LogVerbosity const left,
-                              KIM_LogVerbosity const right)
+int KIM_LogVerbosity_LessThan(KIM_LogVerbosity const lhs,
+                              KIM_LogVerbosity const rhs)
 {
-  return (left.logVerbosityID < right.logVerbosityID);
+  return (lhs.logVerbosityID < rhs.logVerbosityID);
 }
 
-int KIM_LogVerbosity_GreaterThan(KIM_LogVerbosity const left,
-                                 KIM_LogVerbosity const right)
+int KIM_LogVerbosity_GreaterThan(KIM_LogVerbosity const lhs,
+                                 KIM_LogVerbosity const rhs)
 {
-  return (left.logVerbosityID > right.logVerbosityID);
+  return (lhs.logVerbosityID > rhs.logVerbosityID);
 }
-int KIM_LogVerbosity_LessThanEqual(KIM_LogVerbosity const left,
-                                   KIM_LogVerbosity const right)
+int KIM_LogVerbosity_LessThanEqual(KIM_LogVerbosity const lhs,
+                                   KIM_LogVerbosity const rhs)
 {
-  return (left.logVerbosityID <= right.logVerbosityID);
+  return (lhs.logVerbosityID <= rhs.logVerbosityID);
 }
-int KIM_LogVerbosity_GreaterThanEqual(KIM_LogVerbosity const left,
-                                      KIM_LogVerbosity const right)
+int KIM_LogVerbosity_GreaterThanEqual(KIM_LogVerbosity const lhs,
+                                      KIM_LogVerbosity const rhs)
 {
-  return (left.logVerbosityID >= right.logVerbosityID);
-}
-
-int KIM_LogVerbosity_Equal(KIM_LogVerbosity const left,
-                           KIM_LogVerbosity const right)
-{
-  return (left.logVerbosityID == right.logVerbosityID);
+  return (lhs.logVerbosityID >= rhs.logVerbosityID);
 }
 
-int KIM_LogVerbosity_NotEqual(KIM_LogVerbosity const left,
-                              KIM_LogVerbosity const right)
+int KIM_LogVerbosity_Equal(KIM_LogVerbosity const lhs,
+                           KIM_LogVerbosity const rhs)
 {
-  return (!KIM_LogVerbosity_Equal(left, right));
+  return (lhs.logVerbosityID == rhs.logVerbosityID);
+}
+
+int KIM_LogVerbosity_NotEqual(KIM_LogVerbosity const lhs,
+                              KIM_LogVerbosity const rhs)
+{
+  return (!KIM_LogVerbosity_Equal(lhs, rhs));
 }
 
 char const * KIM_LogVerbosity_ToString(KIM_LogVerbosity const logVerbosity)

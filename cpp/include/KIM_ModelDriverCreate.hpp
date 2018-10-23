@@ -41,7 +41,6 @@
 #include "KIM_FunctionTypes.hpp"
 #endif
 
-
 namespace KIM
 {
 // Forward declarations
@@ -140,4 +139,5 @@ class ModelDriverCreate
   ModelDriverCreateImplementation * pimpl;
 };  // class ModelDriverCreate
 }  // namespace KIM
+
 #endif  // KIM_MODEL_DRIVER_CREATE_HPP_

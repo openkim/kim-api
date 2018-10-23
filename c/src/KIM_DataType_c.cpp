@@ -65,14 +65,14 @@ KIM_DataType KIM_DataType_FromString(char const * const str)
   return makeDataTypeC(KIM::DataType(std::string(str)));
 }
 
-int KIM_DataType_Equal(KIM_DataType const left, KIM_DataType const right)
+int KIM_DataType_Equal(KIM_DataType const lhs, KIM_DataType const rhs)
 {
-  return (left.dataTypeID == right.dataTypeID);
+  return (lhs.dataTypeID == rhs.dataTypeID);
 }
 
-int KIM_DataType_NotEqual(KIM_DataType const left, KIM_DataType const right)
+int KIM_DataType_NotEqual(KIM_DataType const lhs, KIM_DataType const rhs)
 {
-  return (!KIM_DataType_Equal(left, right));
+  return (!KIM_DataType_Equal(lhs, rhs));
 }
 
 char const * KIM_DataType_ToString(KIM_DataType const dataType)

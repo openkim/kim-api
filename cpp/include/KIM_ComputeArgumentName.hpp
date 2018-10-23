@@ -52,7 +52,7 @@ class ComputeArgumentName
   bool operator==(ComputeArgumentName const & rhs) const;
   bool operator!=(ComputeArgumentName const & rhs) const;
   std::string const & String() const;
-};
+};  // class ComputeArgumentName
 
 namespace COMPUTE_ARGUMENT_NAME
 {
@@ -69,7 +69,6 @@ extern ComputeArgumentName const partialParticleVirial;
 void GetNumberOfComputeArgumentNames(int * const numberOfComputeArgumentNames);
 int GetComputeArgumentName(int const index,
                            ComputeArgumentName * const computeArgumentName);
-
 int GetComputeArgumentDataType(ComputeArgumentName const computeArgumentName,
                                DataType * const dataType);
 
@@ -80,7 +79,8 @@ struct Comparator
   {
     return a.computeArgumentNameID < b.computeArgumentNameID;
   }
-};
+};  // struct Comparator
 }  // namespace COMPUTE_ARGUMENT_NAME
 }  // namespace KIM
+
 #endif  // KIM_COMPUTE_ARGUMENT_NAME_HPP_

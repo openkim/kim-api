@@ -49,7 +49,7 @@ class DataType
   bool operator==(DataType const & rhs) const;
   bool operator!=(DataType const & rhs) const;
   std::string const & String() const;
-};
+};  // class DataType
 
 namespace DATA_TYPE
 {
@@ -65,7 +65,8 @@ struct Comparator
   {
     return a.dataTypeID < b.dataTypeID;
   }
-};
+};  // struct Comparator
 }  // namespace DATA_TYPE
 }  // namespace KIM
+
 #endif  // KIM_DATA_TYPE_HPP_

@@ -69,16 +69,16 @@ KIM_ComputeCallbackName_FromString(char const * const str)
   return makeComputeCallbackNameC(KIM::ComputeCallbackName(std::string(str)));
 }
 
-int KIM_ComputeCallbackName_Equal(KIM_ComputeCallbackName const left,
-                                  KIM_ComputeCallbackName const right)
+int KIM_ComputeCallbackName_Equal(KIM_ComputeCallbackName const lhs,
+                                  KIM_ComputeCallbackName const rhs)
 {
-  return (left.computeCallbackNameID == right.computeCallbackNameID);
+  return (lhs.computeCallbackNameID == rhs.computeCallbackNameID);
 }
 
-int KIM_ComputeCallbackNameNot_Equal(KIM_ComputeCallbackName const left,
-                                     KIM_ComputeCallbackName const right)
+int KIM_ComputeCallbackNameNot_Equal(KIM_ComputeCallbackName const lhs,
+                                     KIM_ComputeCallbackName const rhs)
 {
-  return (!KIM_ComputeCallbackName_Equal(left, right));
+  return (!KIM_ComputeCallbackName_Equal(lhs, rhs));
 }
 
 char const *

@@ -40,6 +40,5 @@ module kim_unit_system_module
   use kim_temperature_unit_module
   use kim_time_unit_module
 
-  implicit none
   public
 end module kim_unit_system_module

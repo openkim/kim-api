@@ -46,9 +46,8 @@ typedef struct KIM_ChargeUnit KIM_ChargeUnit;
 #endif
 
 KIM_ChargeUnit KIM_ChargeUnit_FromString(char const * const str);
-
-int KIM_ChargeUnit_Equal(KIM_ChargeUnit const left, KIM_ChargeUnit right);
-int KIM_ChargeUnit_NotEqual(KIM_ChargeUnit const left, KIM_ChargeUnit right);
+int KIM_ChargeUnit_Equal(KIM_ChargeUnit const lhs, KIM_ChargeUnit const rhs);
+int KIM_ChargeUnit_NotEqual(KIM_ChargeUnit const lhs, KIM_ChargeUnit const rhs);
 char const * KIM_ChargeUnit_ToString(KIM_ChargeUnit const chargeUnit);
 
 extern KIM_ChargeUnit const KIM_CHARGE_UNIT_unused;

@@ -41,7 +41,6 @@
 #include "KIM_FunctionTypes.hpp"
 #endif
 
-
 namespace KIM
 {
 // Forward declarations
@@ -136,4 +135,5 @@ class ModelCreate
   ModelCreateImplementation * pimpl;
 };  // class ModelCreate
 }  // namespace KIM
+
 #endif  // KIM_MODEL_CREATE_HPP_

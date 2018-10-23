@@ -64,14 +64,14 @@ KIM_Numbering KIM_Numbering_FromString(char const * const str)
   return makeNumberingC(KIM::Numbering(std::string(str)));
 }
 
-int KIM_Numbering_Equal(KIM_Numbering const left, KIM_Numbering const right)
+int KIM_Numbering_Equal(KIM_Numbering const lhs, KIM_Numbering const rhs)
 {
-  return (left.numberingID == right.numberingID);
+  return (lhs.numberingID == rhs.numberingID);
 }
 
-int KIM_Numbering_NotEqual(KIM_Numbering const left, KIM_Numbering const right)
+int KIM_Numbering_NotEqual(KIM_Numbering const lhs, KIM_Numbering const rhs)
 {
-  return (!KIM_Numbering_Equal(left, right));
+  return (!KIM_Numbering_Equal(lhs, rhs));
 }
 
 char const * KIM_Numbering_ToString(KIM_Numbering const numbering)

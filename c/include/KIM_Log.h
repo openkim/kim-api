@@ -65,5 +65,4 @@ void KIM_Log_LogEntry(KIM_Log const * const log,
                       int const lineNumber,
                       char const * const fileName);
 
-
 #endif /* KIM_LOG_H_ */

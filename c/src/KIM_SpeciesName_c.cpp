@@ -64,16 +64,15 @@ KIM_SpeciesName KIM_SpeciesName_FromString(char const * const str)
   return makeSpeciesNameC(KIM::SpeciesName(std::string(str)));
 }
 
-int KIM_SpeciesName_Equal(KIM_SpeciesName const left,
-                          KIM_SpeciesName const right)
+int KIM_SpeciesName_Equal(KIM_SpeciesName const lhs, KIM_SpeciesName const rhs)
 {
-  return (left.speciesNameID == right.speciesNameID);
+  return (lhs.speciesNameID == rhs.speciesNameID);
 }
 
-int KIM_SpeciesName_NotEqual(KIM_SpeciesName const left,
-                             KIM_SpeciesName const right)
+int KIM_SpeciesName_NotEqual(KIM_SpeciesName const lhs,
+                             KIM_SpeciesName const rhs)
 {
-  return (!KIM_SpeciesName_Equal(left, right));
+  return (!KIM_SpeciesName_Equal(lhs, rhs));
 }
 
 char const * KIM_SpeciesName_ToString(KIM_SpeciesName const speciesName)

@@ -77,14 +77,14 @@ typedef struct KIM_ModelDriverCreate KIM_ModelDriverCreate;
 typedef struct KIM_ModelCompute KIM_ModelCompute;
 #endif
 
-#ifndef KIM_MODEL_COMPUTE_ARGUMENTS_DEFINED_
-#define KIM_MODEL_COMPUTE_ARGUMENTS_DEFINED_
-typedef struct KIM_ModelComputeArguments KIM_ModelComputeArguments;
-#endif
-
 #ifndef KIM_MODEL_COMPUTE_ARGUMENTS_CREATE_DEFINED_
 #define KIM_MODEL_COMPUTE_ARGUMENTS_CREATE_DEFINED_
 typedef struct KIM_ModelComputeArgumentsCreate KIM_ModelComputeArgumentsCreate;
+#endif
+
+#ifndef KIM_MODEL_COMPUTE_ARGUMENTS_DEFINED_
+#define KIM_MODEL_COMPUTE_ARGUMENTS_DEFINED_
+typedef struct KIM_ModelComputeArguments KIM_ModelComputeArguments;
 #endif
 
 #ifndef KIM_MODEL_REFRESH_DEFINED_
@@ -104,7 +104,7 @@ typedef struct KIM_ModelDestroy KIM_ModelDestroy;
 #endif
 
 
-typedef void(KIM_Function)(void);
+typedef void(KIM_Function)(void); /* Generic function pointer */
 
 typedef int
 KIM_ModelCreateFunction(KIM_ModelCreate * const modelCreate,
@@ -123,10 +123,12 @@ typedef int KIM_ModelDriverCreateFunction(
     KIM_TimeUnit const requestedTimeUnit);
 
 typedef int KIM_ModelComputeArgumentsCreateFunction(
-    KIM_ModelCompute const * const, KIM_ModelComputeArgumentsCreate * const);
+    KIM_ModelCompute const * const modelCompute,
+    KIM_ModelComputeArgumentsCreate * const modelComputeArgumentsCreate);
 
-typedef int KIM_ModelComputeFunction(KIM_ModelCompute const * const,
-                                     KIM_ModelComputeArguments const * const);
+typedef int KIM_ModelComputeFunction(
+    KIM_ModelCompute const * const modelCompute,
+    KIM_ModelComputeArguments const * const modelComputeArguments);
 
 typedef int KIM_GetNeighborListFunction(void * const dataObject,
                                         int const numberOfNeighborLists,
@@ -150,11 +152,12 @@ typedef int KIM_ProcessD2EDr2TermFunction(void * const dataObject,
                                           int const * const i,
                                           int const * const j);
 
-typedef int KIM_ModelRefreshFunction(KIM_ModelRefresh * const);
+typedef int KIM_ModelRefreshFunction(KIM_ModelRefresh * const modelRefresh);
 
 typedef int KIM_ModelComputeArgumentsDestroyFunction(
-    KIM_ModelCompute const * const, KIM_ModelComputeArgumentsDestroy * const);
+    KIM_ModelCompute const * const modelCompute,
+    KIM_ModelComputeArgumentsDestroy * const modelComputeArgumentsDestroy);
 
-typedef int KIM_ModelDestroyFunction(KIM_ModelDestroy * const);
+typedef int KIM_ModelDestroyFunction(KIM_ModelDestroy * const modelDestroy);
 
 #endif /* KIM_FUNCTION_TYPES_H_ */

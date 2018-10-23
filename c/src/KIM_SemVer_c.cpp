@@ -42,11 +42,9 @@ extern "C" {
 }  // extern "C"
 
 extern "C" {
-void KIM_SEM_VER_GetSemVer(char const ** const version)
+char const * KIM_SEM_VER_GetSemVer()
 {
-  std::string const * pStr;
-  KIM::SEM_VER::GetSemVer(&pStr);
-  *version = pStr->c_str();
+  return KIM::SEM_VER::GetSemVer().c_str();
 }
 
 int KIM_SEM_VER_IsLessThan(char const * const versionA,
@@ -58,13 +56,13 @@ int KIM_SEM_VER_IsLessThan(char const * const versionA,
 }
 
 int KIM_SEM_VER_ParseSemVer(char const * const version,
+                            int const prereleaseLength,
+                            int const buildMetadataLength,
                             int * const major,
                             int * const minor,
                             int * const patch,
                             char * const prerelease,
-                            int const prereleaseLength,
-                            char * const buildMetadata,
-                            int const buildMetadataLength)
+                            char * const buildMetadata)
 {
   std::string prereleaseLocal;
   std::string buildMetadataLocal;

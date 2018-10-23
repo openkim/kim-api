@@ -49,7 +49,7 @@ class SupportStatus
   bool operator==(SupportStatus const & rhs) const;
   bool operator!=(SupportStatus const & rhs) const;
   std::string const & String() const;
-};
+};  // class SupportStatus
 
 namespace SUPPORT_STATUS
 {
@@ -67,7 +67,8 @@ struct Comparator
   {
     return a.supportStatusID < b.supportStatusID;
   }
-};
+};  // struct Comparator
 }  // namespace SUPPORT_STATUS
 }  // namespace KIM
+
 #endif  // KIM_SUPPORT_STATUS_HPP_

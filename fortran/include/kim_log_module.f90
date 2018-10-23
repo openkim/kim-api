@@ -59,11 +59,6 @@ module kim_log_module
     type(c_ptr) :: p = c_null_ptr
   end type kim_log_handle_type
 
-  type, bind(c) :: kim_log_type
-    private
-    type(c_ptr) :: p
-  end type kim_log_type
-
   type(kim_log_handle_type), protected, save &
     :: KIM_LOG_NULL_HANDLE
 
@@ -96,30 +91,27 @@ module kim_log_module
   end interface kim_log_entry
 
 contains
-  logical function kim_log_handle_equal(left, right)
-    use, intrinsic :: iso_c_binding
+  logical function kim_log_handle_equal(lhs, rhs)
     implicit none
-    type(kim_log_handle_type), intent(in) :: left
-    type(kim_log_handle_type), intent(in) :: right
+    type(kim_log_handle_type), intent(in) :: lhs
+    type(kim_log_handle_type), intent(in) :: rhs
 
-    if ((.not. c_associated(left%p)) .and. (.not. c_associated(right%p))) then
+    if ((.not. c_associated(lhs%p)) .and. (.not. c_associated(rhs%p))) then
       kim_log_handle_equal = .true.
     else
-      kim_log_handle_equal = c_associated(left%p, right%p)
+      kim_log_handle_equal = c_associated(lhs%p, rhs%p)
     end if
   end function kim_log_handle_equal
 
-  logical function kim_log_handle_not_equal(left, right)
-    use, intrinsic :: iso_c_binding
+  logical function kim_log_handle_not_equal(lhs, rhs)
     implicit none
-    type(kim_log_handle_type), intent(in) :: left
-    type(kim_log_handle_type), intent(in) :: right
+    type(kim_log_handle_type), intent(in) :: lhs
+    type(kim_log_handle_type), intent(in) :: rhs
 
-    kim_log_handle_not_equal = .not. (left .eq. right)
+    kim_log_handle_not_equal = .not. (lhs .eq. rhs)
   end function kim_log_handle_not_equal
 
   subroutine kim_log_create(log_handle, ierr)
-    use, intrinsic :: iso_c_binding
     implicit none
     interface
       integer(c_int) function create(log) bind(c, name="KIM_Log_Create")
@@ -138,7 +130,6 @@ contains
   end subroutine kim_log_create
 
   subroutine kim_log_destroy(log_handle)
-    use, intrinsic :: iso_c_binding
     implicit none
     interface
       subroutine destroy(log) bind(c, name="KIM_Log_Destroy")
@@ -156,13 +147,13 @@ contains
   end subroutine kim_log_destroy
 
   subroutine kim_log_get_id(log_handle, id_string)
-    use, intrinsic :: iso_c_binding
     use kim_convert_string_module, only : kim_convert_string
+    use kim_interoperable_types_module, only : kim_log_type
     implicit none
     interface
       type(c_ptr) function get_id(log) bind(c, name="KIM_Log_GetID")
         use, intrinsic :: iso_c_binding
-        import kim_log_type
+        use kim_interoperable_types_module, only : kim_log_type
         implicit none
         type(kim_log_type), intent(in) :: log
       end function get_id
@@ -183,14 +174,14 @@ contains
   end subroutine kim_log_get_id
 
   subroutine kim_log_set_id(log_handle, id_string)
-    use, intrinsic :: iso_c_binding
+    use kim_interoperable_types_module, only : kim_log_type
     implicit none
     interface
       subroutine set_id(log, id_string) bind(c, name="KIM_Log_SetID")
         use, intrinsic :: iso_c_binding
-        import kim_log_type
+        use kim_interoperable_types_module, only : kim_log_type
         implicit none
-        type(kim_log_type), intent(inout) :: log
+        type(kim_log_type), intent(in) :: log
         character(c_char), intent(in) :: id_string(*)
       end subroutine set_id
     end interface
@@ -203,22 +194,22 @@ contains
   end subroutine kim_log_set_id
 
   subroutine kim_log_push_verbosity(log_handle, log_verbosity)
-    use, intrinsic :: iso_c_binding
     use kim_log_verbosity_module, only : kim_log_verbosity_type
+    use kim_interoperable_types_module, only : kim_log_type
     implicit none
     interface
       subroutine push_verbosity(log, log_verbosity) &
         bind(c, name="KIM_Log_PushVerbosity")
         use, intrinsic :: iso_c_binding
-        import kim_log_verbosity_type
-        import kim_log_type
+        use kim_log_verbosity_module, only : kim_log_verbosity_type
+        use kim_interoperable_types_module, only : kim_log_type
         implicit none
-        type(kim_log_type), intent(inout) :: log
+        type(kim_log_type), intent(in) :: log
         type(kim_log_verbosity_type), intent(in), value :: log_verbosity
       end subroutine push_verbosity
     end interface
     type(kim_log_handle_type), intent(in) :: log_handle
-    type(kim_log_verbosity_type), intent(in), value :: log_verbosity
+    type(kim_log_verbosity_type), intent(in) :: log_verbosity
     type(kim_log_type), pointer :: log
 
     call c_f_pointer(log_handle%p, log)
@@ -226,14 +217,14 @@ contains
   end subroutine kim_log_push_verbosity
 
   subroutine kim_log_pop_verbosity(log_handle)
-    use, intrinsic :: iso_c_binding
+    use kim_interoperable_types_module, only : kim_log_type
     implicit none
     interface
       subroutine pop_verbosity(log) bind(c, name="KIM_Log_PopVerbosity")
         use, intrinsic :: iso_c_binding
-        import kim_log_type
+        use kim_interoperable_types_module, only : kim_log_type
         implicit none
-        type(kim_log_type), intent(inout) :: log
+        type(kim_log_type), intent(in) :: log
       end subroutine pop_verbosity
     end interface
     type(kim_log_handle_type), intent(in) :: log_handle
@@ -244,15 +235,15 @@ contains
   end subroutine kim_log_pop_verbosity
 
   subroutine kim_log_log_entry(log_handle, log_verbosity, message)
-    use, intrinsic :: iso_c_binding
     use kim_log_verbosity_module, only : kim_log_verbosity_type
+    use kim_interoperable_types_module, only : kim_log_type
     implicit none
     interface
       subroutine log_entry(log, log_verbosity, message, line_number, &
         file_name) bind(c, name="KIM_Log_LogEntry")
         use, intrinsic :: iso_c_binding
-        import kim_log_verbosity_type
-        import kim_log_type
+        use kim_log_verbosity_module, only : kim_log_verbosity_type
+        use kim_interoperable_types_module, only : kim_log_type
         implicit none
         type(kim_log_type), intent(in) :: log
         type(kim_log_verbosity_type), intent(in), value :: log_verbosity
@@ -262,7 +253,7 @@ contains
       end subroutine log_entry
     end interface
     type(kim_log_handle_type), intent(in) :: log_handle
-    type(kim_log_verbosity_type), intent(in), value :: log_verbosity
+    type(kim_log_verbosity_type), intent(in) :: log_verbosity
     character(len=*, kind=c_char), intent(in) :: message
     type(kim_log_type), pointer :: log
 

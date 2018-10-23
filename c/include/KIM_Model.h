@@ -42,14 +42,19 @@
 typedef struct KIM_LogVerbosity KIM_LogVerbosity;
 #endif
 
-#ifndef KIM_SPECIES_NAME_DEFINED_
-#define KIM_SPECIES_NAME_DEFINED_
-typedef struct KIM_SpeciesName KIM_SpeciesName;
+#ifndef KIM_DATA_TYPE_DEFINED_
+#define KIM_DATA_TYPE_DEFINED_
+typedef struct KIM_DataType KIM_DataType;
 #endif
 
 #ifndef KIM_LANGUAGE_NAME_DEFINED_
 #define KIM_LANGUAGE_NAME_DEFINED_
 typedef struct KIM_LanguageName KIM_LanguageName;
+#endif
+
+#ifndef KIM_SPECIES_NAME_DEFINED_
+#define KIM_SPECIES_NAME_DEFINED_
+typedef struct KIM_SpeciesName KIM_SpeciesName;
 #endif
 
 #ifndef KIM_NUMBERING_DEFINED_
@@ -60,11 +65,6 @@ typedef struct KIM_Numbering KIM_Numbering;
 #ifndef KIM_LENGTH_UNIT_DEFINED_
 #define KIM_LENGTH_UNIT_DEFINED_
 typedef struct KIM_LengthUnit KIM_LengthUnit;
-#endif
-
-#ifndef KIM_DATA_TYPE_DEFINED_
-#define KIM_DATA_TYPE_DEFINED_
-typedef struct KIM_DataType KIM_DataType;
 #endif
 
 #ifndef KIM_ENERGY_UNIT_DEFINED_

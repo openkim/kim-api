@@ -71,4 +71,5 @@ class ModelComputeArgumentsDestroy
   ModelComputeArgumentsDestroyImplementation * pimpl;
 };  // class ModelComputeArgumentsDestroy
 }  // namespace KIM
+
 #endif  // KIM_MODEL_COMPUTE_ARGUMENTS_DESTROY_HPP_

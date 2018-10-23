@@ -66,7 +66,6 @@ int KIM_ModelComputeArguments_GetNeighborList(
     int const particleNumber,
     int * const numberOfNeighbors,
     int const ** const neighborsOfParticle);
-
 int KIM_ModelComputeArguments_ProcessDEDrTerm(
     KIM_ModelComputeArguments const * const modelComputeArguments,
     double const de,
@@ -74,7 +73,6 @@ int KIM_ModelComputeArguments_ProcessDEDrTerm(
     double const * const dx,
     int const i,
     int const j);
-
 int KIM_ModelComputeArguments_ProcessD2EDr2Term(
     KIM_ModelComputeArguments const * const modelComputeArguments,
     double const de,

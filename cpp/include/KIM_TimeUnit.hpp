@@ -49,7 +49,7 @@ class TimeUnit
   bool operator==(TimeUnit const & rhs) const;
   bool operator!=(TimeUnit const & rhs) const;
   std::string const & String() const;
-};
+};  // class TimeUnit
 
 namespace TIME_UNIT
 {
@@ -68,7 +68,8 @@ struct Comparator
   {
     return a.timeUnitID < b.timeUnitID;
   }
-};
+};  // struct Comparator
 }  // namespace TIME_UNIT
 }  // namespace KIM
+
 #endif  // KIM_TIME_UNIT_HPP_

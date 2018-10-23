@@ -67,16 +67,16 @@ KIM_TemperatureUnit KIM_TemperatureUnit_FromString(char const * const str)
   return makeTemperatureUnitC(KIM::TemperatureUnit(std::string(str)));
 }
 
-int KIM_TemperatureUnit_Equal(KIM_TemperatureUnit const left,
-                              KIM_TemperatureUnit const right)
+int KIM_TemperatureUnit_Equal(KIM_TemperatureUnit const lhs,
+                              KIM_TemperatureUnit const rhs)
 {
-  return (left.temperatureUnitID == right.temperatureUnitID);
+  return (lhs.temperatureUnitID == rhs.temperatureUnitID);
 }
 
-int KIM_TemperatureUnit_NotEqual(KIM_TemperatureUnit const left,
-                                 KIM_TemperatureUnit const right)
+int KIM_TemperatureUnit_NotEqual(KIM_TemperatureUnit const lhs,
+                                 KIM_TemperatureUnit const rhs)
 {
-  return (!KIM_TemperatureUnit_Equal(left, right));
+  return (!KIM_TemperatureUnit_Equal(lhs, rhs));
 }
 
 char const *

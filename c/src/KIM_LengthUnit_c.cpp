@@ -65,14 +65,14 @@ KIM_LengthUnit KIM_LengthUnit_FromString(char const * const str)
   return makeLengthUnitC(KIM::LengthUnit(std::string(str)));
 }
 
-int KIM_LengthUnit_Equal(KIM_LengthUnit left, KIM_LengthUnit right)
+int KIM_LengthUnit_Equal(KIM_LengthUnit const lhs, KIM_LengthUnit const rhs)
 {
-  return (left.lengthUnitID == right.lengthUnitID);
+  return (lhs.lengthUnitID == rhs.lengthUnitID);
 }
 
-int KIM_LengthUnit_NotEqual(KIM_LengthUnit left, KIM_LengthUnit right)
+int KIM_LengthUnit_NotEqual(KIM_LengthUnit const lhs, KIM_LengthUnit const rhs)
 {
-  return (!KIM_LengthUnit_Equal(left, right));
+  return (!KIM_LengthUnit_Equal(lhs, rhs));
 }
 
 char const * KIM_LengthUnit_ToString(KIM_LengthUnit const lengthUnit)

@@ -154,7 +154,7 @@ int KIM_ModelCreate_SetModelNumbering(KIM_ModelCreate * const modelCreate,
 }
 
 void KIM_ModelCreate_SetInfluenceDistancePointer(
-    KIM_ModelCreate * const modelCreate, double * const influenceDistance)
+    KIM_ModelCreate * const modelCreate, double const * const influenceDistance)
 {
   CONVERT_POINTER;
 

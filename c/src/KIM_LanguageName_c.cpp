@@ -65,16 +65,16 @@ KIM_LanguageName KIM_LanguageName_FromString(char const * const str)
   return makeLanguageNameC(KIM::LanguageName(std::string(str)));
 }
 
-int KIM_LanguageName_Equal(KIM_LanguageName const left,
-                           KIM_LanguageName const right)
+int KIM_LanguageName_Equal(KIM_LanguageName const lhs,
+                           KIM_LanguageName const rhs)
 {
-  return (left.languageNameID == right.languageNameID);
+  return (lhs.languageNameID == rhs.languageNameID);
 }
 
-int KIM_LanguageName_NotEqual(KIM_LanguageName const left,
-                              KIM_LanguageName const right)
+int KIM_LanguageName_NotEqual(KIM_LanguageName const lhs,
+                              KIM_LanguageName const rhs)
 {
-  return (!KIM_LanguageName_Equal(left, right));
+  return (!KIM_LanguageName_Equal(lhs, rhs));
 }
 
 char const * KIM_LanguageName_ToString(KIM_LanguageName languageName)

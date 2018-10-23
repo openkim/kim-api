@@ -210,10 +210,7 @@ enum HAS_ANCILLARY {
 }  // namespace
 
 
-void GetSemVer(std::string const ** const version)
-{
-  *version = &(SEM_VER::version);
-}
+std::string const & GetSemVer() { return SEM_VER::version; }
 
 int IsLessThan(std::string const & versionA,
                std::string const & versionB,

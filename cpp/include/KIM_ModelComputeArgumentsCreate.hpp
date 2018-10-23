@@ -37,7 +37,6 @@
 #include <sstream>
 #include <string>
 
-
 namespace KIM
 {
 // Forward declarations
@@ -81,4 +80,5 @@ class ModelComputeArgumentsCreate
   ModelComputeArgumentsCreateImplementation * pimpl;
 };  // class ModelComputeArgumentsCreate
 }  // namespace KIM
+
 #endif  // KIM_MODEL_COMPUTE_ARGUMENTS_CREATE_HPP_

@@ -146,7 +146,7 @@ KIM::SpeciesName makeSpeciesNameCpp(KIM_SpeciesName const speciesName)
 
 extern "C" {
 void KIM_ModelDriverCreate_GetNumberOfParameterFiles(
-    KIM_ModelDriverCreate * const modelDriverCreate,
+    KIM_ModelDriverCreate const * const modelDriverCreate,
     int * const numberOfParameterFiles)
 {
   CONVERT_POINTER;
@@ -155,7 +155,7 @@ void KIM_ModelDriverCreate_GetNumberOfParameterFiles(
 }
 
 int KIM_ModelDriverCreate_GetParameterFileName(
-    KIM_ModelDriverCreate * const modelDriverCreate,
+    KIM_ModelDriverCreate const * const modelDriverCreate,
     int const index,
     char const ** const parameterFileName)
 {

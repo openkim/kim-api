@@ -84,30 +84,26 @@ module kim_compute_callback_name_module
     module procedure kim_compute_callback_name_to_string
   end interface kim_to_string
 
-
 contains
-  logical function kim_compute_callback_name_equal(left, right)
-    use, intrinsic :: iso_c_binding
+  logical function kim_compute_callback_name_equal(lhs, rhs)
     implicit none
-    type(kim_compute_callback_name_type), intent(in) :: left
-    type(kim_compute_callback_name_type), intent(in) :: right
+    type(kim_compute_callback_name_type), intent(in) :: lhs
+    type(kim_compute_callback_name_type), intent(in) :: rhs
 
     kim_compute_callback_name_equal &
-      = (left%compute_callback_name_id .eq. right%compute_callback_name_id)
+      = (lhs%compute_callback_name_id .eq. rhs%compute_callback_name_id)
   end function kim_compute_callback_name_equal
 
-  logical function kim_compute_callback_name_not_equal(left, right)
-    use, intrinsic :: iso_c_binding
+  logical function kim_compute_callback_name_not_equal(lhs, rhs)
     implicit none
-    type(kim_compute_callback_name_type), intent(in) :: left
-    type(kim_compute_callback_name_type), intent(in) :: right
+    type(kim_compute_callback_name_type), intent(in) :: lhs
+    type(kim_compute_callback_name_type), intent(in) :: rhs
 
-    kim_compute_callback_name_not_equal = .not. (left .eq. right)
+    kim_compute_callback_name_not_equal = .not. (lhs .eq. rhs)
   end function kim_compute_callback_name_not_equal
 
   subroutine kim_compute_callback_name_from_string(string, &
     compute_callback_name)
-    use, intrinsic :: iso_c_binding
     implicit none
     interface
       type(kim_compute_callback_name_type) function from_string(string) &
@@ -125,7 +121,6 @@ contains
   end subroutine kim_compute_callback_name_from_string
 
   subroutine kim_compute_callback_name_to_string(compute_callback_name, string)
-    use, intrinsic :: iso_c_binding
     use kim_convert_string_module, only : kim_convert_string
     implicit none
     interface
@@ -138,7 +133,7 @@ contains
           compute_callback_name
       end function get_string
     end interface
-    type(kim_compute_callback_name_type), intent(in), value :: &
+    type(kim_compute_callback_name_type), intent(in) :: &
       compute_callback_name
     character(len=*, kind=c_char), intent(out) :: string
 
@@ -154,7 +149,6 @@ contains
 
   subroutine kim_get_number_of_compute_callback_names( &
     number_of_compute_callback_names)
-    use, intrinsic :: iso_c_binding
     implicit none
     interface
       subroutine get_number_of_compute_callback_names( &
@@ -172,7 +166,6 @@ contains
 
   subroutine kim_get_compute_callback_name(index, &
     compute_callback_name, ierr)
-    use, intrinsic :: iso_c_binding
     implicit none
     interface
       integer(c_int) function get_compute_callback_name(index, &
@@ -186,7 +179,7 @@ contains
           compute_callback_name
       end function get_compute_callback_name
     end interface
-    integer(c_int), intent(in), value :: index
+    integer(c_int), intent(in) :: index
     type(kim_compute_callback_name_type), intent(out) :: compute_callback_name
     integer(c_int), intent(out) :: ierr
 

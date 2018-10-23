@@ -47,12 +47,10 @@ typedef struct KIM_ComputeCallbackName KIM_ComputeCallbackName;
 
 KIM_ComputeCallbackName
 KIM_ComputeCallbackName_FromString(char const * const str);
-
-int KIM_ComputeCallbackName_Equal(KIM_ComputeCallbackName const left,
-                                  KIM_ComputeCallbackName const right);
-int KIM_ComputeCallbackName_NotEqual(KIM_ComputeCallbackName const left,
-                                     KIM_ComputeCallbackName const right);
-
+int KIM_ComputeCallbackName_Equal(KIM_ComputeCallbackName const lhs,
+                                  KIM_ComputeCallbackName const rhs);
+int KIM_ComputeCallbackName_NotEqual(KIM_ComputeCallbackName const lhs,
+                                     KIM_ComputeCallbackName const rhs);
 char const * KIM_ComputeCallbackName_ToString(
     KIM_ComputeCallbackName const computeCallbackName);
 

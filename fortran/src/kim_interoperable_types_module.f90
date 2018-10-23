@@ -39,20 +39,27 @@ module kim_interoperable_types_module
   public &
     ! Derived types
     kim_compute_arguments_type, &
+    kim_log_type, &
     kim_model_compute_arguments_create_type, &
     kim_model_compute_arguments_destroy_type, &
     kim_model_compute_arguments_type, &
     kim_model_compute_type, &
+    kim_model_create_type, &
     kim_model_destroy_type, &
     kim_model_driver_create_type, &
-    kim_model_create_type, &
-    kim_model_type
+    kim_model_type, &
+    kim_model_refresh_type
 
 
   type, bind(c) :: kim_compute_arguments_type
     private
     type(c_ptr) :: p
   end type kim_compute_arguments_type
+
+  type, bind(c) :: kim_log_type
+    private
+    type(c_ptr) :: p
+  end type kim_log_type
 
   type, bind(c) :: kim_model_compute_arguments_create_type
     private
@@ -69,11 +76,6 @@ module kim_interoperable_types_module
     type(c_ptr) :: p
   end type kim_model_compute_arguments_type
 
-  type, bind(c) :: kim_model_driver_create_type
-    private
-    type(c_ptr) :: p
-  end type kim_model_driver_create_type
-
   type, bind(c) :: kim_model_compute_type
     private
     type(c_ptr) :: p
@@ -89,8 +91,18 @@ module kim_interoperable_types_module
     type(c_ptr) :: p
   end type kim_model_destroy_type
 
+  type, bind(c) :: kim_model_driver_create_type
+    private
+    type(c_ptr) :: p
+  end type kim_model_driver_create_type
+
   type, bind(c) :: kim_model_type
     private
     type(c_ptr) :: p
   end type kim_model_type
+
+  type, bind(c) :: kim_model_refresh_type
+    private
+    type(c_ptr) :: p
+  end type kim_model_refresh_type
 end module kim_interoperable_types_module

@@ -71,4 +71,5 @@ class ModelCompute
   ModelComputeImplementation * pimpl;
 };  // class ModelCompute
 }  // namespace KIM
+
 #endif  // KIM_MODEL_COMPUTE_HPP_

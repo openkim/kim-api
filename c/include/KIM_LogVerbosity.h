@@ -36,8 +36,9 @@
 #ifndef KIM_LOG_VERBOSITY_H_
 #define KIM_LOG_VERBOSITY_H_
 
+#ifndef KIM_LOG_DEFINES_INC_
 #include "KIM_LOG_DEFINES.inc"
-
+#endif
 
 struct KIM_LogVerbosity
 {
@@ -49,19 +50,18 @@ typedef struct KIM_LogVerbosity KIM_LogVerbosity;
 #endif
 
 KIM_LogVerbosity KIM_LogVerbosity_FromString(char const * const str);
-
-int KIM_LogVerbosity_LessThan(KIM_LogVerbosity const left,
-                              KIM_LogVerbosity const right);
-int KIM_LogVerbosity_GreaterThan(KIM_LogVerbosity const left,
-                                 KIM_LogVerbosity const right);
-int KIM_LogVerbosity_LessThanEqual(KIM_LogVerbosity const left,
-                                   KIM_LogVerbosity const right);
-int KIM_LogVerbosity_GreaterThanEqual(KIM_LogVerbosity const left,
-                                      KIM_LogVerbosity const right);
-int KIM_LogVerbosity_Equal(KIM_LogVerbosity const left,
-                           KIM_LogVerbosity const right);
-int KIM_LogVerbosity_NotEqual(KIM_LogVerbosity const left,
-                              KIM_LogVerbosity const right);
+int KIM_LogVerbosity_LessThan(KIM_LogVerbosity const lhs,
+                              KIM_LogVerbosity const rhs);
+int KIM_LogVerbosity_GreaterThan(KIM_LogVerbosity const lhs,
+                                 KIM_LogVerbosity const rhs);
+int KIM_LogVerbosity_LessThanEqual(KIM_LogVerbosity const lhs,
+                                   KIM_LogVerbosity const rhs);
+int KIM_LogVerbosity_GreaterThanEqual(KIM_LogVerbosity const lhs,
+                                      KIM_LogVerbosity const rhs);
+int KIM_LogVerbosity_Equal(KIM_LogVerbosity const lhs,
+                           KIM_LogVerbosity const rhs);
+int KIM_LogVerbosity_NotEqual(KIM_LogVerbosity const lhs,
+                              KIM_LogVerbosity const rhs);
 char const * KIM_LogVerbosity_ToString(KIM_LogVerbosity const logVerbosity);
 
 extern KIM_LogVerbosity const KIM_LOG_VERBOSITY_silent;

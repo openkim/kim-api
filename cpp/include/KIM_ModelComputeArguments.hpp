@@ -53,13 +53,11 @@ class ModelComputeArguments
                       int const particleNumber,
                       int * const numberOfNeighbors,
                       int const ** const neighborsOfParticle) const;
-
   int ProcessDEDrTerm(double const de,
                       double const r,
                       double const * const dx,
                       int const i,
                       int const j) const;
-
   int ProcessD2EDr2Term(double const de,
                         double const * const r,
                         double const * const dx,
@@ -103,4 +101,5 @@ class ModelComputeArguments
   ModelComputeArgumentsImplementation * pimpl;
 };  // class ModelCompute
 }  // namespace KIM
-#endif  // KIM_MODEL_COMPUTE_HPP_
+
+#endif  // KIM_MODEL_COMPUTE_ARGUMENTS_HPP_

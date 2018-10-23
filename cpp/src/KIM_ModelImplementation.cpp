@@ -1828,7 +1828,7 @@ std::string const & ModelImplementation::String() const
 
 
   int numberOfParameters = parameterPointer_.size();
-  ss << "Number Of Prameters : " << numberOfParameters << "\n";
+  ss << "Number Of Parameters : " << numberOfParameters << "\n";
   ss << "\t" << std::setw(8) << "index" << std::setw(10) << "Data Type"
      << std::setw(10) << "Extent" << std::setw(15) << "Pointer"
      << "Name"

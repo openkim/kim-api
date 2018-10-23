@@ -47,11 +47,9 @@ typedef struct KIM_SpeciesName KIM_SpeciesName;
 #endif
 
 KIM_SpeciesName KIM_SpeciesName_FromString(char const * const str);
-
-int KIM_SpeciesName_Equal(KIM_SpeciesName const left,
-                          KIM_SpeciesName const right);
-int KIM_SpeciesName_NotEqual(KIM_SpeciesName const left,
-                             KIM_SpeciesName const right);
+int KIM_SpeciesName_Equal(KIM_SpeciesName const lhs, KIM_SpeciesName const rhs);
+int KIM_SpeciesName_NotEqual(KIM_SpeciesName const lhs,
+                             KIM_SpeciesName const rhs);
 char const * KIM_SpeciesName_ToString(KIM_SpeciesName const speciesName);
 
 extern KIM_SpeciesName const KIM_SPECIES_NAME_electron;

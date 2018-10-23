@@ -92,9 +92,9 @@ class Model
                                int * const code) const;
 
   void GetNumberOfParameters(int * const numberOfParameters) const;
-  int GetParameterMetadata(int const index,
+  int GetParameterMetadata(int const parameterIndex,
                            DataType * const dataType,
-                           int * extent,
+                           int * const extent,
                            std::string const ** const name,
                            std::string const ** const description) const;
   int GetParameter(int const parameterIndex,
@@ -130,4 +130,5 @@ class Model
   ModelImplementation * pimpl;
 };  // class Model
 }  // namespace KIM
+
 #endif  // KIM_MODEL_HPP_

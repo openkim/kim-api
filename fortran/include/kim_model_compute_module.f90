@@ -79,31 +79,28 @@ module kim_model_compute_module
   end interface kim_to_string
 
 contains
-  logical function kim_model_compute_handle_equal(left, right)
-    use, intrinsic :: iso_c_binding
+  logical function kim_model_compute_handle_equal(lhs, rhs)
     implicit none
-    type(kim_model_compute_handle_type), intent(in) :: left
-    type(kim_model_compute_handle_type), intent(in) :: right
+    type(kim_model_compute_handle_type), intent(in) :: lhs
+    type(kim_model_compute_handle_type), intent(in) :: rhs
 
-    if ((.not. c_associated(left%p)) .and. (.not. c_associated(left%p))) then
+    if ((.not. c_associated(lhs%p)) .and. (.not. c_associated(rhs%p))) then
       kim_model_compute_handle_equal = .true.
     else
-      kim_model_compute_handle_equal = c_associated(left%p, right%p)
+      kim_model_compute_handle_equal = c_associated(lhs%p, rhs%p)
     end if
   end function kim_model_compute_handle_equal
 
-  logical function kim_model_compute_handle_not_equal(left, right)
-    use, intrinsic :: iso_c_binding
+  logical function kim_model_compute_handle_not_equal(lhs, rhs)
     implicit none
-    type(kim_model_compute_handle_type), intent(in) :: left
-    type(kim_model_compute_handle_type), intent(in) :: right
+    type(kim_model_compute_handle_type), intent(in) :: lhs
+    type(kim_model_compute_handle_type), intent(in) :: rhs
 
-    kim_model_compute_handle_not_equal = .not. (left .eq. right)
+    kim_model_compute_handle_not_equal = .not. (lhs .eq. rhs)
   end function kim_model_compute_handle_not_equal
 
   subroutine kim_model_compute_get_model_buffer_pointer(model_compute_handle, &
     ptr)
-    use, intrinsic :: iso_c_binding
     use kim_interoperable_types_module, only : kim_model_compute_type
     implicit none
     interface
@@ -126,7 +123,6 @@ contains
 
   subroutine kim_model_compute_log_entry(model_compute_handle, log_verbosity, &
     message)
-    use, intrinsic :: iso_c_binding
     use kim_log_verbosity_module, only : kim_log_verbosity_type
     use kim_interoperable_types_module, only : kim_model_compute_type
     implicit none
@@ -145,7 +141,7 @@ contains
       end subroutine log_entry
     end interface
     type(kim_model_compute_handle_type), intent(in) :: model_compute_handle
-    type(kim_log_verbosity_type), intent(in), value :: log_verbosity
+    type(kim_log_verbosity_type), intent(in) :: log_verbosity
     character(len=*, kind=c_char), intent(in) :: message
     type(kim_model_compute_type), pointer :: model_compute
 
@@ -155,7 +151,6 @@ contains
   end subroutine kim_model_compute_log_entry
 
   subroutine kim_model_compute_to_string(model_compute_handle, string)
-    use, intrinsic :: iso_c_binding
     use kim_convert_string_module, only : kim_convert_string
     use kim_interoperable_types_module, only : kim_model_compute_type
     implicit none

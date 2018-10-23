@@ -49,7 +49,7 @@ class EnergyUnit
   bool operator==(EnergyUnit const & rhs) const;
   bool operator!=(EnergyUnit const & rhs) const;
   std::string const & String() const;
-};
+};  // class EnergyUnit
 
 namespace ENERGY_UNIT
 {
@@ -70,7 +70,8 @@ struct Comparator
   {
     return a.energyUnitID < b.energyUnitID;
   }
-};
+};  // struct Comparator
 }  // namespace ENERGY_UNIT
 }  // namespace KIM
+
 #endif  // KIM_ENERGY_UNIT_HPP_

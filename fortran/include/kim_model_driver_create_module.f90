@@ -152,31 +152,28 @@ module kim_model_driver_create_module
   end interface kim_to_string
 
 contains
-  logical function kim_model_driver_create_handle_equal(left, right)
-    use, intrinsic :: iso_c_binding
+  logical function kim_model_driver_create_handle_equal(lhs, rhs)
     implicit none
-    type(kim_model_driver_create_handle_type), intent(in) :: left
-    type(kim_model_driver_create_handle_type), intent(in) :: right
+    type(kim_model_driver_create_handle_type), intent(in) :: lhs
+    type(kim_model_driver_create_handle_type), intent(in) :: rhs
 
-    if ((.not. c_associated(left%p)) .and. (.not. c_associated(right%p))) then
+    if ((.not. c_associated(lhs%p)) .and. (.not. c_associated(rhs%p))) then
       kim_model_driver_create_handle_equal = .true.
     else
-      kim_model_driver_create_handle_equal = c_associated(left%p, right%p)
+      kim_model_driver_create_handle_equal = c_associated(lhs%p, rhs%p)
     end if
   end function kim_model_driver_create_handle_equal
 
-  logical function kim_model_driver_create_handle_not_equal(left, right)
-    use, intrinsic :: iso_c_binding
+  logical function kim_model_driver_create_handle_not_equal(lhs, rhs)
     implicit none
-    type(kim_model_driver_create_handle_type), intent(in) :: left
-    type(kim_model_driver_create_handle_type), intent(in) :: right
+    type(kim_model_driver_create_handle_type), intent(in) :: lhs
+    type(kim_model_driver_create_handle_type), intent(in) :: rhs
 
-    kim_model_driver_create_handle_not_equal = .not. (left .eq. right)
+    kim_model_driver_create_handle_not_equal = .not. (lhs .eq. rhs)
   end function kim_model_driver_create_handle_not_equal
 
   subroutine kim_model_driver_create_get_number_of_parameter_files( &
     model_driver_create_handle, number_of_parameter_files)
-    use, intrinsic :: iso_c_binding
     use kim_interoperable_types_module, only : kim_model_driver_create_type
     implicit none
     interface
@@ -203,7 +200,6 @@ contains
 
   subroutine kim_model_driver_create_get_parameter_file_name( &
     model_driver_create_handle, index, parameter_file_name, ierr)
-    use, intrinsic :: iso_c_binding
     use kim_convert_string_module, only : kim_convert_string
     use kim_interoperable_types_module, only : kim_model_driver_create_type
     implicit none
@@ -222,7 +218,7 @@ contains
     end interface
     type(kim_model_driver_create_handle_type), intent(in) &
       :: model_driver_create_handle
-    integer(c_int), intent(in), value :: index
+    integer(c_int), intent(in) :: index
     character(len=*, kind=c_char), intent(out) :: parameter_file_name
     integer(c_int), intent(out) :: ierr
     type(kim_model_driver_create_type), pointer :: model_driver_create
@@ -241,7 +237,6 @@ contains
 
   subroutine kim_model_driver_create_set_model_numbering( &
     model_driver_create_handle, numbering, ierr)
-    use, intrinsic :: iso_c_binding
     use kim_numbering_module, only : kim_numbering_type
     use kim_interoperable_types_module, only : kim_model_driver_create_type
     implicit none
@@ -253,14 +248,14 @@ contains
         use kim_numbering_module, only : kim_numbering_type
         use kim_interoperable_types_module, only : kim_model_driver_create_type
         implicit none
-        type(kim_model_driver_create_type), intent(inout) &
+        type(kim_model_driver_create_type), intent(in) &
           :: model_driver_create
         type(kim_numbering_type), intent(in), value :: numbering
       end function set_model_numbering
     end interface
     type(kim_model_driver_create_handle_type), intent(in) &
       :: model_driver_create_handle
-    type(kim_numbering_type), intent(in), value :: numbering
+    type(kim_numbering_type), intent(in) :: numbering
     integer(c_int), intent(out) :: ierr
     type(kim_model_driver_create_type), pointer :: model_driver_create
 
@@ -270,7 +265,6 @@ contains
 
   subroutine kim_model_driver_create_set_influence_distance_pointer( &
     model_driver_create_handle, influence_distance)
-    use, intrinsic :: iso_c_binding
     use kim_interoperable_types_module, only : kim_model_driver_create_type
     implicit none
     interface
@@ -280,7 +274,7 @@ contains
         use, intrinsic :: iso_c_binding
         use kim_interoperable_types_module, only : kim_model_driver_create_type
         implicit none
-        type(kim_model_driver_create_type), intent(inout) &
+        type(kim_model_driver_create_type), intent(in) &
           :: model_driver_create
         type(c_ptr), intent(in), value :: influence_distance
       end subroutine set_influence_distance_pointer
@@ -298,7 +292,6 @@ contains
   subroutine kim_model_driver_create_set_neighbor_list_pointers( &
     model_driver_create_handle, number_of_neighbor_lists, cutoffs, &
     model_will_not_request_neighbors_of_noncontributing_particles)
-    use, intrinsic :: iso_c_binding
     use kim_interoperable_types_module, only : kim_model_driver_create_type
     implicit none
     interface
@@ -309,7 +302,7 @@ contains
         use, intrinsic :: iso_c_binding
         use kim_interoperable_types_module, only : kim_model_driver_create_type
         implicit none
-        type(kim_model_driver_create_type), intent(inout) &
+        type(kim_model_driver_create_type), intent(in) &
           :: model_driver_create
         integer(c_int), intent(in), value :: number_of_neighbor_lists
         type(c_ptr), intent(in), value :: cutoffs_ptr
@@ -319,7 +312,7 @@ contains
     end interface
     type(kim_model_driver_create_handle_type), intent(in) &
       :: model_driver_create_handle
-    integer(c_int), intent(in), value :: number_of_neighbor_lists
+    integer(c_int), intent(in) :: number_of_neighbor_lists
     real(c_double), intent(in), target :: cutoffs(number_of_neighbor_lists)
     integer(c_int), intent(in), target :: &
       model_will_not_request_neighbors_of_noncontributing_particles( &
@@ -335,7 +328,6 @@ contains
 
   subroutine kim_model_driver_create_set_refresh_pointer( &
     model_driver_create_handle, language_name, fptr, ierr)
-    use, intrinsic :: iso_c_binding
     use kim_language_name_module, only : kim_language_name_type
     use kim_interoperable_types_module, only : kim_model_driver_create_type
     implicit none
@@ -347,7 +339,7 @@ contains
         use kim_language_name_module, only : kim_language_name_type
         use kim_interoperable_types_module, only : kim_model_driver_create_type
         implicit none
-        type(kim_model_driver_create_type), intent(inout) &
+        type(kim_model_driver_create_type), intent(in) &
           :: model_driver_create
         type(kim_language_name_type), intent(in), value :: language_name
         type(c_funptr), intent(in), value :: fptr
@@ -355,8 +347,8 @@ contains
     end interface
     type(kim_model_driver_create_handle_type), intent(in) &
       :: model_driver_create_handle
-    type(kim_language_name_type), intent(in), value :: language_name
-    type(c_funptr), intent(in), value :: fptr
+    type(kim_language_name_type), intent(in) :: language_name
+    type(c_funptr), intent(in), value :: fptr  ! must be left as "value"!?!
     integer(c_int), intent(out) :: ierr
     type(kim_model_driver_create_type), pointer :: model_driver_create
 
@@ -367,7 +359,6 @@ contains
 
   subroutine kim_model_driver_create_set_destroy_pointer( &
     model_driver_create_handle, language_name, fptr, ierr)
-    use, intrinsic :: iso_c_binding
     use kim_language_name_module, only : kim_language_name_type
     use kim_interoperable_types_module, only : kim_model_driver_create_type
     implicit none
@@ -379,7 +370,7 @@ contains
         use kim_language_name_module, only : kim_language_name_type
         use kim_interoperable_types_module, only : kim_model_driver_create_type
         implicit none
-        type(kim_model_driver_create_type), intent(inout) &
+        type(kim_model_driver_create_type), intent(in) &
           :: model_driver_create
         type(kim_language_name_type), intent(in), value :: language_name
         type(c_funptr), intent(in), value :: fptr
@@ -387,8 +378,8 @@ contains
     end interface
     type(kim_model_driver_create_handle_type), intent(in) &
       :: model_driver_create_handle
-    type(kim_language_name_type), intent(in), value :: language_name
-    type(c_funptr), intent(in), value :: fptr
+    type(kim_language_name_type), intent(in) :: language_name
+    type(c_funptr), intent(in), value :: fptr  ! must be left as "value"!?!
     integer(c_int), intent(out) :: ierr
     type(kim_model_driver_create_type), pointer :: model_driver_create
 
@@ -398,7 +389,6 @@ contains
 
   subroutine kim_model_driver_create_set_compute_arguments_create_pointer( &
     model_driver_create_handle, language_name, fptr, ierr)
-    use, intrinsic :: iso_c_binding
     use kim_language_name_module, only : kim_language_name_type
     use kim_interoperable_types_module, only : kim_model_driver_create_type
     implicit none
@@ -410,7 +400,7 @@ contains
         use kim_language_name_module, only : kim_language_name_type
         use kim_interoperable_types_module, only : kim_model_driver_create_type
         implicit none
-        type(kim_model_driver_create_type), intent(inout) &
+        type(kim_model_driver_create_type), intent(in) &
           :: model_driver_create
         type(kim_language_name_type), intent(in), value :: language_name
         type(c_funptr), intent(in), value :: fptr
@@ -418,8 +408,8 @@ contains
     end interface
     type(kim_model_driver_create_handle_type), intent(in) &
       :: model_driver_create_handle
-    type(kim_language_name_type), intent(in), value :: language_name
-    type(c_funptr), intent(in), value :: fptr
+    type(kim_language_name_type), intent(in) :: language_name
+    type(c_funptr), intent(in), value :: fptr  ! must be left as "value"!?!
     integer(c_int), intent(out) :: ierr
     type(kim_model_driver_create_type), pointer :: model_driver_create
 
@@ -430,7 +420,6 @@ contains
 
   subroutine kim_model_driver_create_set_compute_arguments_destroy_pointer( &
     model_driver_create_handle, language_name, fptr, ierr)
-    use, intrinsic :: iso_c_binding
     use kim_language_name_module, only : kim_language_name_type
     use kim_interoperable_types_module, only : kim_model_driver_create_type
     implicit none
@@ -442,7 +431,7 @@ contains
         use kim_language_name_module, only : kim_language_name_type
         use kim_interoperable_types_module, only : kim_model_driver_create_type
         implicit none
-        type(kim_model_driver_create_type), intent(inout) &
+        type(kim_model_driver_create_type), intent(in) &
           :: model_driver_create
         type(kim_language_name_type), intent(in), value :: language_name
         type(c_funptr), intent(in), value :: fptr
@@ -450,8 +439,8 @@ contains
     end interface
     type(kim_model_driver_create_handle_type), intent(in) &
       :: model_driver_create_handle
-    type(kim_language_name_type), intent(in), value :: language_name
-    type(c_funptr), intent(in), value :: fptr
+    type(kim_language_name_type), intent(in) :: language_name
+    type(c_funptr), intent(in), value :: fptr  ! must be left as "value"!?!
     integer(c_int), intent(out) :: ierr
     type(kim_model_driver_create_type), pointer :: model_driver_create
 
@@ -460,9 +449,38 @@ contains
       language_name, fptr)
   end subroutine kim_model_driver_create_set_compute_arguments_destroy_pointer
 
+  subroutine kim_model_driver_create_set_compute_pointer( &
+    model_driver_create_handle, language_name, fptr, ierr)
+    use kim_language_name_module, only : kim_language_name_type
+    use kim_interoperable_types_module, only : kim_model_driver_create_type
+    implicit none
+    interface
+      integer(c_int) function set_compute_pointer(model_driver_create, &
+        language_name, fptr) &
+        bind(c, name="KIM_ModelDriverCreate_SetComputePointer")
+        use, intrinsic :: iso_c_binding
+        use kim_language_name_module, only : kim_language_name_type
+        use kim_interoperable_types_module, only : kim_model_driver_create_type
+        implicit none
+        type(kim_model_driver_create_type), intent(in) &
+          :: model_driver_create
+        type(kim_language_name_type), intent(in), value :: language_name
+        type(c_funptr), intent(in), value :: fptr
+      end function set_compute_pointer
+    end interface
+    type(kim_model_driver_create_handle_type), intent(in) &
+      :: model_driver_create_handle
+    type(kim_language_name_type), intent(in) :: language_name
+    type(c_funptr), intent(in), value :: fptr  ! must be left as "value"!?!
+    integer(c_int), intent(out) :: ierr
+    type(kim_model_driver_create_type), pointer :: model_driver_create
+
+    call c_f_pointer(model_driver_create_handle%p, model_driver_create)
+    ierr = set_compute_pointer(model_driver_create, language_name, fptr)
+  end subroutine kim_model_driver_create_set_compute_pointer
+
   subroutine kim_model_driver_create_set_species_code( &
     model_driver_create_handle, species_name, code, ierr)
-    use, intrinsic :: iso_c_binding
     use kim_species_name_module, only : kim_species_name_type
     use kim_interoperable_types_module, only : kim_model_driver_create_type
     implicit none
@@ -482,8 +500,8 @@ contains
     end interface
     type(kim_model_driver_create_handle_type), intent(in) &
       :: model_driver_create_handle
-    type(kim_species_name_type), intent(in), value :: species_name
-    integer(c_int), intent(in), value :: code
+    type(kim_species_name_type), intent(in) :: species_name
+    integer(c_int), intent(in) :: code
     integer(c_int), intent(out) :: ierr
     type(kim_model_driver_create_type), pointer :: model_driver_create
 
@@ -491,40 +509,8 @@ contains
     ierr = set_species_code(model_driver_create, species_name, code)
   end subroutine kim_model_driver_create_set_species_code
 
-  subroutine kim_model_driver_create_set_compute_pointer( &
-    model_driver_create_handle, language_name, fptr, ierr)
-    use, intrinsic :: iso_c_binding
-    use kim_language_name_module, only : kim_language_name_type
-    use kim_interoperable_types_module, only : kim_model_driver_create_type
-    implicit none
-    interface
-      integer(c_int) function set_compute_pointer(model_driver_create, &
-        language_name, fptr) &
-        bind(c, name="KIM_ModelDriverCreate_SetComputePointer")
-        use, intrinsic :: iso_c_binding
-        use kim_language_name_module, only : kim_language_name_type
-        use kim_interoperable_types_module, only : kim_model_driver_create_type
-        implicit none
-        type(kim_model_driver_create_type), intent(inout) &
-          :: model_driver_create
-        type(kim_language_name_type), intent(in), value :: language_name
-        type(c_funptr), intent(in), value :: fptr
-      end function set_compute_pointer
-    end interface
-    type(kim_model_driver_create_handle_type), intent(in) &
-      :: model_driver_create_handle
-    type(kim_language_name_type), intent(in), value :: language_name
-    type(c_funptr), intent(in), value :: fptr
-    integer(c_int), intent(out) :: ierr
-    type(kim_model_driver_create_type), pointer :: model_driver_create
-
-    call c_f_pointer(model_driver_create_handle%p, model_driver_create)
-    ierr = set_compute_pointer(model_driver_create, language_name, fptr)
-  end subroutine kim_model_driver_create_set_compute_pointer
-
   subroutine kim_model_driver_create_set_parameter_pointer_integer( &
     model_driver_create_handle, int1, name, description, ierr)
-    use, intrinsic :: iso_c_binding
     use kim_interoperable_types_module, only : kim_model_driver_create_type
     implicit none
     type(kim_model_driver_create_handle_type), intent(in) &
@@ -543,7 +529,6 @@ contains
   contains
     subroutine set_parameter(model_driver_create, extent, int1, name, &
       description, ierr)
-      use, intrinsic :: iso_c_binding
       use kim_interoperable_types_module, only : kim_model_driver_create_type
       implicit none
       interface
@@ -554,7 +539,7 @@ contains
           use kim_interoperable_types_module, only : &
             kim_model_driver_create_type
           implicit none
-          type(kim_model_driver_create_type), intent(inout) &
+          type(kim_model_driver_create_type), intent(in) &
             :: model_driver_create
           integer(c_int), intent(in), value :: extent
           type(c_ptr), intent(in), value :: ptr
@@ -562,9 +547,9 @@ contains
           character(c_char), intent(in) :: description(*)
         end function set_parameter_pointer_integer
       end interface
-      type(kim_model_driver_create_type), intent(inout) &
+      type(kim_model_driver_create_type), intent(in) &
         :: model_driver_create
-      integer(c_int), intent(in), value :: extent
+      integer(c_int), intent(in) :: extent
       integer(c_int), intent(in), target :: int1(extent)
       character(len=*, kind=c_char), intent(in) :: name
       character(len=*, kind=c_char), intent(in) :: description
@@ -578,7 +563,6 @@ contains
 
   subroutine kim_model_driver_create_set_parameter_pointer_double( &
     model_driver_create_handle, double1, name, description, ierr)
-    use, intrinsic :: iso_c_binding
     use kim_interoperable_types_module, only : kim_model_driver_create_type
     implicit none
     type(kim_model_driver_create_handle_type), intent(in) &
@@ -597,7 +581,6 @@ contains
   contains
     subroutine set_parameter(model_driver_create, extent, double1, &
       name, description, ierr)
-      use, intrinsic :: iso_c_binding
       use kim_interoperable_types_module, only : kim_model_driver_create_type
       implicit none
       interface
@@ -608,7 +591,7 @@ contains
           use kim_interoperable_types_module, only : &
             kim_model_driver_create_type
           implicit none
-          type(kim_model_driver_create_type), intent(inout) &
+          type(kim_model_driver_create_type), intent(in) &
             :: model_driver_create
           integer(c_int), intent(in), value :: extent
           type(c_ptr), intent(in), value :: ptr
@@ -616,9 +599,9 @@ contains
           character(c_char), intent(in) :: description(*)
         end function set_parameter_pointer_double
       end interface
-      type(kim_model_driver_create_type), intent(inout) &
+      type(kim_model_driver_create_type), intent(in) &
         :: model_driver_create
-      integer(c_int), intent(in), value :: extent
+      integer(c_int), intent(in) :: extent
       real(c_double), intent(in), target :: double1(extent)
       character(len=*, kind=c_char), intent(in) :: name
       character(len=*, kind=c_char), intent(in) :: description
@@ -632,7 +615,6 @@ contains
 
   subroutine kim_model_driver_create_set_model_buffer_pointer( &
     model_driver_create_handle, ptr)
-    use, intrinsic :: iso_c_binding
     use kim_interoperable_types_module, only : kim_model_driver_create_type
     implicit none
     interface
@@ -641,14 +623,14 @@ contains
         use, intrinsic :: iso_c_binding
         use kim_interoperable_types_module, only : kim_model_driver_create_type
         implicit none
-        type(kim_model_driver_create_type), intent(inout) &
+        type(kim_model_driver_create_type), intent(in) &
           :: model_driver_create
         type(c_ptr), intent(in), value :: ptr
       end subroutine set_model_buffer_pointer
     end interface
     type(kim_model_driver_create_handle_type), intent(in) &
       :: model_driver_create_handle
-    type(c_ptr), intent(in), value :: ptr
+    type(c_ptr), intent(in) :: ptr
     type(kim_model_driver_create_type), pointer :: model_driver_create
 
     call c_f_pointer(model_driver_create_handle%p, model_driver_create)
@@ -658,7 +640,6 @@ contains
   subroutine kim_model_driver_create_set_units( &
     model_driver_create_handle, length_unit, energy_unit, charge_unit, &
     temperature_unit, time_unit, ierr)
-    use, intrinsic :: iso_c_binding
     use kim_unit_system_module, only : &
       kim_length_unit_type, &
       kim_energy_unit_type, &
@@ -691,11 +672,11 @@ contains
     end interface
     type(kim_model_driver_create_handle_type), intent(in) &
       :: model_driver_create_handle
-    type(kim_length_unit_type), intent(in), value :: length_unit
-    type(kim_energy_unit_type), intent(in), value :: energy_unit
-    type(kim_charge_unit_type), intent(in), value :: charge_unit
-    type(kim_temperature_unit_type), intent(in), value :: temperature_unit
-    type(kim_time_unit_type), intent(in), value :: time_unit
+    type(kim_length_unit_type), intent(in) :: length_unit
+    type(kim_energy_unit_type), intent(in) :: energy_unit
+    type(kim_charge_unit_type), intent(in) :: charge_unit
+    type(kim_temperature_unit_type), intent(in) :: temperature_unit
+    type(kim_time_unit_type), intent(in) :: time_unit
     integer(c_int), intent(out) :: ierr
     type(kim_model_driver_create_type), pointer :: model_driver_create
 
@@ -710,7 +691,6 @@ contains
     to_length_unit, to_energy_unit, to_charge_unit, to_temperature_unit, &
     to_time_unit, length_exponent, energy_exponent, charge_exponent, &
     temperature_exponent, time_exponent, conversion_factor, ierr)
-    use, intrinsic :: iso_c_binding
     use kim_unit_system_module, only : kim_length_unit_type
     use kim_unit_system_module, only : kim_energy_unit_type
     use kim_unit_system_module, only : kim_charge_unit_type
@@ -752,21 +732,21 @@ contains
         real(c_double), intent(out) :: conversion_factor
       end function convert_unit
     end interface
-    type(kim_length_unit_type), intent(in), value :: from_length_unit
-    type(kim_energy_unit_type), intent(in), value :: from_energy_unit
-    type(kim_charge_unit_type), intent(in), value :: from_charge_unit
-    type(kim_temperature_unit_type), intent(in), value :: from_temperature_unit
-    type(kim_time_unit_type), intent(in), value :: from_time_unit
-    type(kim_length_unit_type), intent(in), value :: to_length_unit
-    type(kim_energy_unit_type), intent(in), value :: to_energy_unit
-    type(kim_charge_unit_type), intent(in), value :: to_charge_unit
-    type(kim_temperature_unit_type), intent(in), value :: to_temperature_unit
-    type(kim_time_unit_type), intent(in), value :: to_time_unit
-    real(c_double), intent(in), value :: length_exponent
-    real(c_double), intent(in), value :: energy_exponent
-    real(c_double), intent(in), value :: charge_exponent
-    real(c_double), intent(in), value :: temperature_exponent
-    real(c_double), intent(in), value :: time_exponent
+    type(kim_length_unit_type), intent(in) :: from_length_unit
+    type(kim_energy_unit_type), intent(in) :: from_energy_unit
+    type(kim_charge_unit_type), intent(in) :: from_charge_unit
+    type(kim_temperature_unit_type), intent(in) :: from_temperature_unit
+    type(kim_time_unit_type), intent(in) :: from_time_unit
+    type(kim_length_unit_type), intent(in) :: to_length_unit
+    type(kim_energy_unit_type), intent(in) :: to_energy_unit
+    type(kim_charge_unit_type), intent(in) :: to_charge_unit
+    type(kim_temperature_unit_type), intent(in) :: to_temperature_unit
+    type(kim_time_unit_type), intent(in) :: to_time_unit
+    real(c_double), intent(in) :: length_exponent
+    real(c_double), intent(in) :: energy_exponent
+    real(c_double), intent(in) :: charge_exponent
+    real(c_double), intent(in) :: temperature_exponent
+    real(c_double), intent(in) :: time_exponent
     real(c_double), intent(out) :: conversion_factor
     integer(c_int), intent(out) :: ierr
 
@@ -779,7 +759,6 @@ contains
 
   subroutine kim_model_driver_create_log_entry(model_driver_create_handle, &
     log_verbosity, message)
-    use, intrinsic :: iso_c_binding
     use kim_log_verbosity_module, only : kim_log_verbosity_type
     use kim_interoperable_types_module, only : kim_model_driver_create_type
     implicit none
@@ -800,7 +779,7 @@ contains
     end interface
     type(kim_model_driver_create_handle_type), intent(in) &
       :: model_driver_create_handle
-    type(kim_log_verbosity_type), intent(in), value :: log_verbosity
+    type(kim_log_verbosity_type), intent(in) :: log_verbosity
     character(len=*, kind=c_char), intent(in) :: message
     type(kim_model_driver_create_type), pointer :: model_driver_create
 
@@ -811,7 +790,6 @@ contains
 
   subroutine kim_model_driver_create_to_string(model_driver_create_handle, &
     string)
-    use, intrinsic :: iso_c_binding
     use kim_convert_string_module, only : kim_convert_string
     use kim_interoperable_types_module, only : kim_model_driver_create_type
     implicit none

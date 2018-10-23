@@ -46,6 +46,5 @@ module kim_simulator_headers_module
   use kim_compute_callback_name_module
   use kim_support_status_module
 
-  implicit none
   public
 end module kim_simulator_headers_module

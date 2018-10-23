@@ -75,4 +75,5 @@ class Log
   LogImplementation * pimpl;
 };  // class Log
 }  // namespace KIM
+
 #endif  // KIM_LOG_HPP_

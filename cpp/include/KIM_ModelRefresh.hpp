@@ -78,4 +78,5 @@ class ModelRefresh
   ModelRefreshImplementation * pimpl;
 };  // class ModelRefresh
 }  // namespace KIM
+
 #endif  // KIM_MODEL_REFRESH_HPP_

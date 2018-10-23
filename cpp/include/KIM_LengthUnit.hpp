@@ -49,7 +49,7 @@ class LengthUnit
   bool operator==(LengthUnit const & rhs) const;
   bool operator!=(LengthUnit const & rhs) const;
   std::string const & String() const;
-};
+};  // class LengthUnit
 
 namespace LENGTH_UNIT
 {
@@ -69,7 +69,8 @@ struct Comparator
   {
     return a.lengthUnitID < b.lengthUnitID;
   }
-};
+};  // struct Comparator
 }  // namespace LENGTH_UNIT
 }  // namespace KIM
+
 #endif  // KIM_LENGTH_UNIT_HPP_

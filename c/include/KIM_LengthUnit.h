@@ -46,9 +46,8 @@ typedef struct KIM_LengthUnit KIM_LengthUnit;
 #endif
 
 KIM_LengthUnit KIM_LengthUnit_FromString(char const * const str);
-
-int KIM_LengthUnit_Equal(KIM_LengthUnit left, KIM_LengthUnit right);
-int KIM_LengthUnit_NotEqual(KIM_LengthUnit left, KIM_LengthUnit right);
+int KIM_LengthUnit_Equal(KIM_LengthUnit const lhs, KIM_LengthUnit const rhs);
+int KIM_LengthUnit_NotEqual(KIM_LengthUnit const lhs, KIM_LengthUnit const rhs);
 char const * KIM_LengthUnit_ToString(KIM_LengthUnit const lengthUnit);
 
 extern KIM_LengthUnit const KIM_LENGTH_UNIT_unused;

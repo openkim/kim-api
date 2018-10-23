@@ -65,14 +65,14 @@ KIM_TimeUnit KIM_TimeUnit_FromString(char const * const str)
   return makeTimeUnitC(KIM::TimeUnit(std::string(str)));
 }
 
-int KIM_TimeUnit_Equal(KIM_TimeUnit const left, KIM_TimeUnit right)
+int KIM_TimeUnit_Equal(KIM_TimeUnit const lhs, KIM_TimeUnit const rhs)
 {
-  return (left.timeUnitID == right.timeUnitID);
+  return (lhs.timeUnitID == rhs.timeUnitID);
 }
 
-int KIM_TimeUnit_NotEqual(KIM_TimeUnit const left, KIM_TimeUnit right)
+int KIM_TimeUnit_NotEqual(KIM_TimeUnit const lhs, KIM_TimeUnit const rhs)
 {
-  return (!KIM_TimeUnit_Equal(left, right));
+  return (!KIM_TimeUnit_Equal(lhs, rhs));
 }
 
 char const * KIM_TimeUnit_ToString(KIM_TimeUnit const tiemUnit)

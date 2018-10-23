@@ -101,27 +101,24 @@ module kim_energy_unit_module
   end interface kim_to_string
 
 contains
-  logical function kim_energy_unit_equal(left, right)
-    use, intrinsic :: iso_c_binding
+  logical function kim_energy_unit_equal(lhs, rhs)
     implicit none
-    type(kim_energy_unit_type), intent(in) :: left
-    type(kim_energy_unit_type), intent(in) :: right
+    type(kim_energy_unit_type), intent(in) :: lhs
+    type(kim_energy_unit_type), intent(in) :: rhs
 
     kim_energy_unit_equal &
-      = (left%energy_unit_id .eq. right%energy_unit_id)
+      = (lhs%energy_unit_id .eq. rhs%energy_unit_id)
   end function kim_energy_unit_equal
 
-  logical function kim_energy_unit_not_equal(left, right)
-    use, intrinsic :: iso_c_binding
+  logical function kim_energy_unit_not_equal(lhs, rhs)
     implicit none
-    type(kim_energy_unit_type), intent(in) :: left
-    type(kim_energy_unit_type), intent(in) :: right
+    type(kim_energy_unit_type), intent(in) :: lhs
+    type(kim_energy_unit_type), intent(in) :: rhs
 
-    kim_energy_unit_not_equal = .not. (left .eq. right)
+    kim_energy_unit_not_equal = .not. (lhs .eq. rhs)
   end function kim_energy_unit_not_equal
 
   subroutine kim_energy_unit_from_string(string, energy_unit)
-    use, intrinsic :: iso_c_binding
     implicit none
     interface
       type(kim_energy_unit_type) function from_string(string) &
@@ -139,7 +136,6 @@ contains
   end subroutine kim_energy_unit_from_string
 
   subroutine kim_energy_unit_to_string(energy_unit, string)
-    use, intrinsic :: iso_c_binding
     use kim_convert_string_module, only : kim_convert_string
     implicit none
     interface
@@ -151,7 +147,7 @@ contains
         type(kim_energy_unit_type), intent(in), value :: energy_unit
       end function get_string
     end interface
-    type(kim_energy_unit_type), intent(in), value :: energy_unit
+    type(kim_energy_unit_type), intent(in) :: energy_unit
     character(len=*, kind=c_char), intent(out) :: string
 
     type(c_ptr) :: p
@@ -165,7 +161,6 @@ contains
   end subroutine kim_energy_unit_to_string
 
   subroutine kim_get_number_of_energy_units(number_of_energy_units)
-    use, intrinsic :: iso_c_binding
     implicit none
     interface
       subroutine get_number_of_energy_units(number_of_energy_units) &
@@ -180,7 +175,6 @@ contains
   end subroutine kim_get_number_of_energy_units
 
   subroutine kim_get_energy_unit(index, energy_unit, ierr)
-    use, intrinsic :: iso_c_binding
     implicit none
     interface
       integer(c_int) function get_energy_unit(index, energy_unit) &
@@ -192,7 +186,7 @@ contains
         type(kim_energy_unit_type), intent(out) :: energy_unit
       end function get_energy_unit
     end interface
-    integer(c_int), intent(in), value :: index
+    integer(c_int), intent(in) :: index
     type(kim_energy_unit_type), intent(out) :: energy_unit
     integer(c_int), intent(out) :: ierr
 

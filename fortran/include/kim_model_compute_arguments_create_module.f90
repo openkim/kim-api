@@ -91,35 +91,32 @@ module kim_model_compute_arguments_create_module
   end interface kim_to_string
 
 contains
-  logical function kim_model_compute_arguments_create_handle_equal(left, right)
-    use, intrinsic :: iso_c_binding
+  logical function kim_model_compute_arguments_create_handle_equal(lhs, rhs)
     implicit none
-    type(kim_model_compute_arguments_create_handle_type), intent(in) :: left
-    type(kim_model_compute_arguments_create_handle_type), intent(in) :: right
+    type(kim_model_compute_arguments_create_handle_type), intent(in) :: lhs
+    type(kim_model_compute_arguments_create_handle_type), intent(in) :: rhs
 
-    if ((.not. c_associated(left%p)) .and. (.not. c_associated(right%p))) then
+    if ((.not. c_associated(lhs%p)) .and. (.not. c_associated(rhs%p))) then
       kim_model_compute_arguments_create_handle_equal = .true.
     else
-      kim_model_compute_arguments_create_handle_equal = c_associated(left%p, &
-        right%p)
+      kim_model_compute_arguments_create_handle_equal = c_associated(lhs%p, &
+        rhs%p)
     end if
   end function kim_model_compute_arguments_create_handle_equal
 
-  logical function kim_model_compute_arguments_create_handle_not_equal(left, &
-    right)
-    use, intrinsic :: iso_c_binding
+  logical function kim_model_compute_arguments_create_handle_not_equal(lhs, &
+    rhs)
     implicit none
-    type(kim_model_compute_arguments_create_handle_type), intent(in) :: left
-    type(kim_model_compute_arguments_create_handle_type), intent(in) :: right
+    type(kim_model_compute_arguments_create_handle_type), intent(in) :: lhs
+    type(kim_model_compute_arguments_create_handle_type), intent(in) :: rhs
 
     kim_model_compute_arguments_create_handle_not_equal = &
-      .not. (left .eq. right)
+      .not. (lhs .eq. rhs)
   end function kim_model_compute_arguments_create_handle_not_equal
 
   subroutine kim_model_compute_arguments_create_set_argument_support_status( &
     model_commpute_arguments_create_handle, compute_argument_name, &
     support_status, ierr)
-    use, intrinsic :: iso_c_binding
     use kim_compute_argument_name_module, only : kim_compute_argument_name_type
     use kim_support_status_module, only : kim_support_status_type
     use kim_interoperable_types_module, only : &
@@ -146,9 +143,9 @@ contains
     end interface
     type(kim_model_compute_arguments_create_handle_type), intent(in) :: &
       model_commpute_arguments_create_handle
-    type(kim_compute_argument_name_type), intent(in), value :: &
+    type(kim_compute_argument_name_type), intent(in) :: &
       compute_argument_name
-    type(kim_support_status_type), intent(in), value :: support_status
+    type(kim_support_status_type), intent(in) :: support_status
     integer(c_int), intent(out) :: ierr
     type(kim_model_compute_arguments_create_type), pointer :: &
       model_commpute_arguments_create
@@ -162,7 +159,6 @@ contains
   subroutine kim_model_compute_arguments_create_set_callback_support_status( &
     model_commpute_arguments_create_handle, compute_callback_name, &
     support_status, ierr)
-    use, intrinsic :: iso_c_binding
     use kim_compute_callback_name_module, only : kim_compute_callback_name_type
     use kim_support_status_module, only : kim_support_status_type
     use kim_interoperable_types_module, only : &
@@ -189,9 +185,9 @@ contains
     end interface
     type(kim_model_compute_arguments_create_handle_type), intent(in) :: &
       model_commpute_arguments_create_handle
-    type(kim_compute_callback_name_type), intent(in), value :: &
+    type(kim_compute_callback_name_type), intent(in) :: &
       compute_callback_name
-    type(kim_support_status_type), intent(in), value :: support_status
+    type(kim_support_status_type), intent(in) :: support_status
     integer(c_int), intent(out) :: ierr
     type(kim_model_compute_arguments_create_type), pointer :: &
       model_commpute_arguments_create
@@ -204,7 +200,6 @@ contains
 
   subroutine kim_model_compute_arguments_create_set_model_buffer_pointer( &
     model_commpute_arguments_create_handle, ptr)
-    use, intrinsic :: iso_c_binding
     use kim_interoperable_types_module, only : &
       kim_model_compute_arguments_create_type
     implicit none
@@ -216,14 +211,14 @@ contains
         use kim_interoperable_types_module, only : &
           kim_model_compute_arguments_create_type
         implicit none
-        type(kim_model_compute_arguments_create_type), intent(inout) :: &
+        type(kim_model_compute_arguments_create_type), intent(in) :: &
           model_commpute_arguments_create
         type(c_ptr), intent(in), value :: ptr
       end subroutine set_model_buffer_pointer
     end interface
     type(kim_model_compute_arguments_create_handle_type), intent(in) :: &
       model_commpute_arguments_create_handle
-    type(c_ptr), intent(in), value :: ptr
+    type(c_ptr), intent(in) :: ptr
     type(kim_model_compute_arguments_create_type), pointer :: &
       model_commpute_arguments_create
 
@@ -234,7 +229,6 @@ contains
 
   subroutine kim_model_compute_arguments_create_log_entry( &
     model_commpute_arguments_create_handle, log_verbosity, message)
-    use, intrinsic :: iso_c_binding
     use kim_log_verbosity_module, only : kim_log_verbosity_type
     use kim_interoperable_types_module, only : &
       kim_model_compute_arguments_create_type
@@ -258,7 +252,7 @@ contains
     end interface
     type(kim_model_compute_arguments_create_handle_type), intent(in) :: &
       model_commpute_arguments_create_handle
-    type(kim_log_verbosity_type), intent(in), value :: log_verbosity
+    type(kim_log_verbosity_type), intent(in) :: log_verbosity
     character(len=*, kind=c_char), intent(in) :: message
     type(kim_model_compute_arguments_create_type), pointer :: &
       model_commpute_arguments_create
@@ -271,7 +265,6 @@ contains
 
   subroutine kim_model_compute_arguments_create_to_string( &
     model_commpute_arguments_create_handle, string)
-    use, intrinsic :: iso_c_binding
     use kim_convert_string_module, only : kim_convert_string
     use kim_interoperable_types_module, only : &
       kim_model_compute_arguments_create_type

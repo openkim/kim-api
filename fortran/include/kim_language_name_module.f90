@@ -85,27 +85,24 @@ module kim_language_name_module
   end interface kim_to_string
 
 contains
-  logical function kim_language_name_equal(left, right)
-    use, intrinsic :: iso_c_binding
+  logical function kim_language_name_equal(lhs, rhs)
     implicit none
-    type(kim_language_name_type), intent(in) :: left
-    type(kim_language_name_type), intent(in) :: right
+    type(kim_language_name_type), intent(in) :: lhs
+    type(kim_language_name_type), intent(in) :: rhs
 
     kim_language_name_equal &
-      = (left%language_name_id .eq. right%language_name_id)
+      = (lhs%language_name_id .eq. rhs%language_name_id)
   end function kim_language_name_equal
 
-  logical function kim_language_name_not_equal(left, right)
-    use, intrinsic :: iso_c_binding
+  logical function kim_language_name_not_equal(lhs, rhs)
     implicit none
-    type(kim_language_name_type), intent(in) :: left
-    type(kim_language_name_type), intent(in) :: right
+    type(kim_language_name_type), intent(in) :: lhs
+    type(kim_language_name_type), intent(in) :: rhs
 
-    kim_language_name_not_equal = .not. (left .eq. right)
+    kim_language_name_not_equal = .not. (lhs .eq. rhs)
   end function kim_language_name_not_equal
 
   subroutine kim_language_name_from_string(string, language_name)
-    use, intrinsic :: iso_c_binding
     implicit none
     interface
       type(kim_language_name_type) function from_string(string) &
@@ -123,7 +120,6 @@ contains
   end subroutine kim_language_name_from_string
 
   subroutine kim_language_name_to_string(language_name, string)
-    use, intrinsic :: iso_c_binding
     use kim_convert_string_module, only : kim_convert_string
     implicit none
     interface
@@ -135,7 +131,7 @@ contains
         type(kim_language_name_type), intent(in), value :: language_name
       end function get_string
     end interface
-    type(kim_language_name_type), intent(in), value :: language_name
+    type(kim_language_name_type), intent(in) :: language_name
     character(len=*, kind=c_char), intent(out) :: string
 
     type(c_ptr) :: p
@@ -150,7 +146,6 @@ contains
 
   subroutine kim_get_number_of_language_names( &
     number_of_language_names)
-    use, intrinsic :: iso_c_binding
     implicit none
     interface
       subroutine get_number_of_language_names(number_of_language_names) &
@@ -165,7 +160,6 @@ contains
   end subroutine kim_get_number_of_language_names
 
   subroutine kim_get_language_name(index, language_name, ierr)
-    use, intrinsic :: iso_c_binding
     implicit none
     interface
       integer(c_int) function get_language_name(index, language_name) &
@@ -176,7 +170,7 @@ contains
         type(kim_language_name_type), intent(out) :: language_name
       end function get_language_name
     end interface
-    integer(c_int), intent(in), value :: index
+    integer(c_int), intent(in) :: index
     type(kim_language_name_type), intent(out) :: language_name
     integer(c_int), intent(out) :: ierr
 

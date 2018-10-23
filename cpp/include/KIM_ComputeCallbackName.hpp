@@ -49,7 +49,7 @@ class ComputeCallbackName
   bool operator==(ComputeCallbackName const & rhs) const;
   bool operator!=(ComputeCallbackName const & rhs) const;
   std::string const & String() const;
-};
+};  // class ComputeCallbackName
 
 namespace COMPUTE_CALLBACK_NAME
 {
@@ -68,7 +68,8 @@ struct Comparator
   {
     return a.computeCallbackNameID < b.computeCallbackNameID;
   }
-};
+};  // struct Comparator
 }  // namespace COMPUTE_CALLBACK_NAME
 }  // namespace KIM
+
 #endif  // KIM_COMPUTE_CALLBACK_NAME_HPP_

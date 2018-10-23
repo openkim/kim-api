@@ -60,16 +60,21 @@ module kim_time_unit_module
     integer(c_int) time_unit_id
   end type kim_time_unit_type
 
-  type(kim_time_unit_type), protected, bind(c, name="KIM_TIME_UNIT_unused") &
-    :: kim_time_unit_unused
-  type(kim_time_unit_type), protected, bind(c, name="KIM_TIME_UNIT_fs") &
-    :: kim_time_unit_fs
-  type(kim_time_unit_type), protected, bind(c, name="KIM_TIME_UNIT_ps") &
-    :: kim_time_unit_ps
-  type(kim_time_unit_type), protected, bind(c, name="KIM_TIME_UNIT_ns") &
-    :: kim_time_unit_ns
-  type(kim_time_unit_type), protected, bind(c, name="KIM_TIME_UNIT_s") &
-    :: kim_time_unit_s
+  type(kim_time_unit_type), protected, &
+    bind(c, name="KIM_TIME_UNIT_unused") &
+    :: KIM_TIME_UNIT_UNUSED
+  type(kim_time_unit_type), protected, &
+    bind(c, name="KIM_TIME_UNIT_fs") &
+    :: KIM_TIME_UNIT_FS
+  type(kim_time_unit_type), protected, &
+    bind(c, name="KIM_TIME_UNIT_ps") &
+    :: KIM_TIME_UNIT_PS
+  type(kim_time_unit_type), protected, &
+    bind(c, name="KIM_TIME_UNIT_ns") &
+    :: KIM_TIME_UNIT_NS
+  type(kim_time_unit_type), protected, &
+    bind(c, name="KIM_TIME_UNIT_s") &
+    :: KIM_TIME_UNIT_S
 
   interface operator (.eq.)
     module procedure kim_time_unit_equal
@@ -88,27 +93,24 @@ module kim_time_unit_module
   end interface kim_to_string
 
   contains
-    logical function kim_time_unit_equal(left, right)
-      use, intrinsic :: iso_c_binding
+    logical function kim_time_unit_equal(lhs, rhs)
       implicit none
-      type(kim_time_unit_type), intent(in) :: left
-      type(kim_time_unit_type), intent(in) :: right
+      type(kim_time_unit_type), intent(in) :: lhs
+      type(kim_time_unit_type), intent(in) :: rhs
 
       kim_time_unit_equal &
-        = (left%time_unit_id .eq. right%time_unit_id)
+        = (lhs%time_unit_id .eq. rhs%time_unit_id)
     end function kim_time_unit_equal
 
-    logical function kim_time_unit_not_equal(left, right)
-      use, intrinsic :: iso_c_binding
+    logical function kim_time_unit_not_equal(lhs, rhs)
       implicit none
-      type(kim_time_unit_type), intent(in) :: left
-      type(kim_time_unit_type), intent(in) :: right
+      type(kim_time_unit_type), intent(in) :: lhs
+      type(kim_time_unit_type), intent(in) :: rhs
 
-      kim_time_unit_not_equal = .not. (left .eq. right)
+      kim_time_unit_not_equal = .not. (lhs .eq. rhs)
     end function kim_time_unit_not_equal
 
     subroutine kim_time_unit_from_string(string, time_unit)
-      use, intrinsic :: iso_c_binding
       implicit none
       interface
         type(kim_time_unit_type) function from_string(string) &
@@ -126,7 +128,6 @@ module kim_time_unit_module
     end subroutine kim_time_unit_from_string
 
     subroutine kim_time_unit_to_string(time_unit, string)
-      use, intrinsic :: iso_c_binding
       use kim_convert_string_module, only : kim_convert_string
       implicit none
       interface
@@ -138,7 +139,7 @@ module kim_time_unit_module
           type(kim_time_unit_type), intent(in), value :: time_unit
         end function get_string
       end interface
-      type(kim_time_unit_type), intent(in), value :: time_unit
+      type(kim_time_unit_type), intent(in) :: time_unit
       character(len=*, kind=c_char), intent(out) :: string
 
       type(c_ptr) :: p
@@ -152,7 +153,6 @@ module kim_time_unit_module
     end subroutine kim_time_unit_to_string
 
     subroutine kim_get_number_of_time_units(number_of_time_units)
-      use, intrinsic :: iso_c_binding
       implicit none
       interface
         subroutine get_number_of_time_units(number_of_time_units) &
@@ -168,7 +168,6 @@ module kim_time_unit_module
     end subroutine kim_get_number_of_time_units
 
     subroutine kim_get_time_unit(index, time_unit, ierr)
-      use, intrinsic :: iso_c_binding
       implicit none
       interface
         integer(c_int) function get_time_unit(index, time_unit) &
@@ -180,7 +179,7 @@ module kim_time_unit_module
           type(kim_time_unit_type), intent(out) :: time_unit
         end function get_time_unit
       end interface
-      integer(c_int), intent(in), value :: index
+      integer(c_int), intent(in) :: index
       type(kim_time_unit_type), intent(out) :: time_unit
       integer(c_int), intent(out) :: ierr
 

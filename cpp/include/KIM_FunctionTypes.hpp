@@ -69,12 +69,13 @@ ModelDriverCreateFunction(ModelDriverCreate * const modelDriverCreate,
                           TemperatureUnit const requestedTemperatureUnit,
                           TimeUnit const requestedTimeUnit);
 
-typedef int
-ModelComputeArgumentsCreateFunction(ModelCompute const * const,
-                                    ModelComputeArgumentsCreate * const);
+typedef int ModelComputeArgumentsCreateFunction(
+    ModelCompute const * const modelCompute,
+    ModelComputeArgumentsCreate * const modelComputeArgumentsCreate);
 
-typedef int ModelComputeFunction(ModelCompute const * const,
-                                 ModelComputeArguments const * const);
+typedef int ModelComputeFunction(
+    ModelCompute const * const modelCompute,
+    ModelComputeArguments const * const modelComputeArgumentsCreate);
 
 typedef int GetNeighborListFunction(void * const dataObject,
                                     int const numberOfNeighborLists,
@@ -98,13 +99,13 @@ typedef int ProcessD2EDr2TermFunction(void * const dataObject,
                                       int const * const i,
                                       int const * const j);
 
-typedef int ModelRefreshFunction(ModelRefresh * const);
+typedef int ModelRefreshFunction(ModelRefresh * const modelRefresh);
 
-typedef int
-ModelComputeArgumentsDestroyFunction(ModelCompute const * const,
-                                     ModelComputeArgumentsDestroy * const);
+typedef int ModelComputeArgumentsDestroyFunction(
+    ModelCompute const * const modelCompute,
+    ModelComputeArgumentsDestroy * const modelComputeArgumentsDestroy);
 
 typedef int ModelDestroyFunction(ModelDestroy * const);
-
 }  // namespace KIM
+
 #endif  // KIM_FUNCTION_TYPES_HPP_

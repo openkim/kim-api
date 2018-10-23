@@ -40,7 +40,7 @@ namespace KIM
 {
 namespace SEM_VER
 {
-void GetSemVer(std::string const ** const version);
+std::string const & GetSemVer();
 int IsLessThan(std::string const & versionA,
                std::string const & versionB,
                int * const isLessThan);
@@ -52,4 +52,5 @@ int ParseSemVer(std::string const & version,
                 std::string * const buildMetadata);
 }  // namespace SEM_VER
 }  // namespace KIM
+
 #endif  // KIM_SEM_VER_HPP_

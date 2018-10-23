@@ -89,27 +89,24 @@ module kim_charge_unit_module
   end interface kim_to_string
 
 contains
-  logical function kim_charge_unit_equal(left, right)
-    use, intrinsic :: iso_c_binding
+  logical function kim_charge_unit_equal(lhs, rhs)
     implicit none
-    type(kim_charge_unit_type), intent(in) :: left
-    type(kim_charge_unit_type), intent(in) :: right
+    type(kim_charge_unit_type), intent(in) :: lhs
+    type(kim_charge_unit_type), intent(in) :: rhs
 
     kim_charge_unit_equal &
-      = (left%charge_unit_id .eq. right%charge_unit_id)
+      = (lhs%charge_unit_id .eq. rhs%charge_unit_id)
   end function kim_charge_unit_equal
 
-  logical function kim_charge_unit_not_equal(left, right)
-    use, intrinsic :: iso_c_binding
+  logical function kim_charge_unit_not_equal(lhs, rhs)
     implicit none
-    type(kim_charge_unit_type), intent(in) :: left
-    type(kim_charge_unit_type), intent(in) :: right
+    type(kim_charge_unit_type), intent(in) :: lhs
+    type(kim_charge_unit_type), intent(in) :: rhs
 
-    kim_charge_unit_not_equal = .not. (left .eq. right)
+    kim_charge_unit_not_equal = .not. (lhs .eq. rhs)
   end function kim_charge_unit_not_equal
 
   subroutine kim_charge_unit_from_string(string, charge_unit)
-    use, intrinsic :: iso_c_binding
     implicit none
     interface
       type(kim_charge_unit_type) function from_string(string) &
@@ -127,7 +124,6 @@ contains
   end subroutine kim_charge_unit_from_string
 
   subroutine kim_charge_unit_to_string(charge_unit, string)
-    use, intrinsic :: iso_c_binding
     use kim_convert_string_module, only : kim_convert_string
     implicit none
     interface
@@ -139,7 +135,7 @@ contains
         type(kim_charge_unit_type), intent(in), value :: charge_unit
       end function get_string
     end interface
-    type(kim_charge_unit_type), intent(in), value :: charge_unit
+    type(kim_charge_unit_type), intent(in) :: charge_unit
     character(len=*, kind=c_char), intent(out) :: string
 
     type(c_ptr) :: p
@@ -153,7 +149,6 @@ contains
   end subroutine kim_charge_unit_to_string
 
   subroutine kim_get_number_of_charge_units(number_of_charge_units)
-    use, intrinsic :: iso_c_binding
     implicit none
     interface
       subroutine get_number_of_charge_units(number_of_charge_units) &
@@ -169,7 +164,6 @@ contains
   end subroutine kim_get_number_of_charge_units
 
   subroutine kim_get_charge_unit(index, charge_unit, ierr)
-    use, intrinsic :: iso_c_binding
     implicit none
     interface
       integer(c_int) function get_charge_unit(index, charge_unit) &
@@ -181,7 +175,7 @@ contains
         type(kim_charge_unit_type), intent(out) :: charge_unit
       end function get_charge_unit
     end interface
-    integer(c_int), intent(in), value :: index
+    integer(c_int), intent(in) :: index
     type(kim_charge_unit_type), intent(out) :: charge_unit
     integer(c_int), intent(out) :: ierr
 

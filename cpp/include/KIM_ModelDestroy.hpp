@@ -71,4 +71,5 @@ class ModelDestroy
   ModelDestroyImplementation * pimpl;
 };  // class ModelDestroy
 }  // namespace KIM
+
 #endif  // KIM_MODEL_DESTROY_HPP_

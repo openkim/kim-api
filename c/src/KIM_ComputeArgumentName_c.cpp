@@ -85,16 +85,16 @@ KIM_ComputeArgumentName_FromString(char const * const str)
   return makeComputeArgumentNameC(KIM::ComputeArgumentName(std::string(str)));
 }
 
-int KIM_ComputeArgumentName_Equal(KIM_ComputeArgumentName const left,
-                                  KIM_ComputeArgumentName const right)
+int KIM_ComputeArgumentName_Equal(KIM_ComputeArgumentName const lhs,
+                                  KIM_ComputeArgumentName const rhs)
 {
-  return (left.computeArgumentNameID == right.computeArgumentNameID);
+  return (lhs.computeArgumentNameID == rhs.computeArgumentNameID);
 }
 
-int KIM_ComputeArgumentName_NotEqual(KIM_ComputeArgumentName const left,
-                                     KIM_ComputeArgumentName const right)
+int KIM_ComputeArgumentName_NotEqual(KIM_ComputeArgumentName const lhs,
+                                     KIM_ComputeArgumentName const rhs)
 {
-  return (!KIM_ComputeArgumentName_Equal(left, right));
+  return (!KIM_ComputeArgumentName_Equal(lhs, rhs));
 }
 
 char const *

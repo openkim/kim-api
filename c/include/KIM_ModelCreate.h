@@ -104,7 +104,8 @@ int KIM_ModelCreate_SetModelNumbering(KIM_ModelCreate * const modelCreate,
                                       KIM_Numbering const numbering);
 
 void KIM_ModelCreate_SetInfluenceDistancePointer(
-    KIM_ModelCreate * const modelCreate, double * const influenceDistance);
+    KIM_ModelCreate * const modelCreate,
+    double const * const influenceDistance);
 
 void KIM_ModelCreate_SetNeighborListPointers(
     KIM_ModelCreate * const modelCreate,

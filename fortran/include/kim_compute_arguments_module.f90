@@ -58,6 +58,7 @@ module kim_compute_arguments_module
     kim_push_log_verbosity, &
     kim_pop_log_verbosity
 
+
   type, bind(c) :: kim_compute_arguments_handle_type
     type(c_ptr) :: p = c_null_ptr
   end type kim_compute_arguments_handle_type
@@ -123,32 +124,29 @@ module kim_compute_arguments_module
   end interface kim_pop_log_verbosity
 
 contains
-  logical function kim_compute_arguments_handle_equal(left, right)
-    use, intrinsic :: iso_c_binding
+  logical function kim_compute_arguments_handle_equal(lhs, rhs)
     implicit none
-    type(kim_compute_arguments_handle_type), intent(in) :: left
-    type(kim_compute_arguments_handle_type), intent(in) :: right
+    type(kim_compute_arguments_handle_type), intent(in) :: lhs
+    type(kim_compute_arguments_handle_type), intent(in) :: rhs
 
-    if ((.not. c_associated(left%p)) .and. (.not. c_associated(right%p))) then
+    if ((.not. c_associated(lhs%p)) .and. (.not. c_associated(rhs%p))) then
       kim_compute_arguments_handle_equal = .true.
     else
-      kim_compute_arguments_handle_equal = c_associated(left%p, right%p)
+      kim_compute_arguments_handle_equal = c_associated(lhs%p, rhs%p)
     end if
   end function kim_compute_arguments_handle_equal
 
-  logical function kim_compute_arguments_handle_not_equal(left, right)
-    use, intrinsic :: iso_c_binding
+  logical function kim_compute_arguments_handle_not_equal(lhs, rhs)
     implicit none
-    type(kim_compute_arguments_handle_type), intent(in) :: left
-    type(kim_compute_arguments_handle_type), intent(in) :: right
+    type(kim_compute_arguments_handle_type), intent(in) :: lhs
+    type(kim_compute_arguments_handle_type), intent(in) :: rhs
 
-    kim_compute_arguments_handle_not_equal = .not. (left .eq. right)
+    kim_compute_arguments_handle_not_equal = .not. (lhs .eq. rhs)
   end function kim_compute_arguments_handle_not_equal
 
   subroutine kim_compute_arguments_get_argument_support_status( &
     compute_arguments_handle, compute_argument_name, &
     support_status, ierr)
-    use, intrinsic :: iso_c_binding
     use kim_compute_argument_name_module, only : kim_compute_argument_name_type
     use kim_support_status_module, only : kim_support_status_type
     use kim_interoperable_types_module, only : kim_compute_arguments_type
@@ -171,7 +169,7 @@ contains
     end interface
     type(kim_compute_arguments_handle_type), intent(in) :: &
       compute_arguments_handle
-    type(kim_compute_argument_name_type), intent(in), value :: &
+    type(kim_compute_argument_name_type), intent(in) :: &
       compute_argument_name
     type(kim_support_status_type), intent(out) :: support_status
     integer(c_int), intent(out) :: ierr
@@ -184,7 +182,6 @@ contains
 
   subroutine kim_compute_arguments_get_callback_support_status( &
     compute_arguments_handle, compute_callback_name, support_status, ierr)
-    use, intrinsic :: iso_c_binding
     use kim_compute_callback_name_module, only : kim_compute_callback_name_type
     use kim_support_status_module, only : kim_support_status_type
     use kim_interoperable_types_module, only : kim_compute_arguments_type
@@ -207,7 +204,7 @@ contains
     end interface
     type(kim_compute_arguments_handle_type), intent(in) :: &
       compute_arguments_handle
-    type(kim_compute_callback_name_type), intent(in), value :: &
+    type(kim_compute_callback_name_type), intent(in) :: &
       compute_callback_name
     type(kim_support_status_type), intent(out) :: support_status
     integer(c_int), intent(out) :: ierr
@@ -220,7 +217,6 @@ contains
 
   subroutine kim_compute_arguments_set_argument_pointer_int0( &
     compute_arguments_handle, compute_argument_name, int0, ierr)
-    use, intrinsic :: iso_c_binding
     use kim_compute_argument_name_module, only : kim_compute_argument_name_type
     use kim_interoperable_types_module, only : kim_compute_arguments_type
     implicit none
@@ -233,7 +229,7 @@ contains
           kim_compute_argument_name_type
         use kim_interoperable_types_module, only : kim_compute_arguments_type
         implicit none
-        type(kim_compute_arguments_type), intent(inout) :: compute_arguments
+        type(kim_compute_arguments_type), intent(in) :: compute_arguments
         type(kim_compute_argument_name_type), intent(in), value :: &
           compute_argument_name
         type(c_ptr), intent(in), value :: ptr
@@ -241,7 +237,7 @@ contains
     end interface
     type(kim_compute_arguments_handle_type), intent(in) :: &
       compute_arguments_handle
-    type(kim_compute_argument_name_type), intent(in), value :: &
+    type(kim_compute_argument_name_type), intent(in) :: &
       compute_argument_name
     integer(c_int), intent(in), target :: int0
     integer(c_int), intent(out) :: ierr
@@ -254,13 +250,12 @@ contains
 
   subroutine kim_compute_arguments_set_argument_pointer_int1( &
     compute_arguments_handle, compute_argument_name, int1, ierr)
-    use, intrinsic :: iso_c_binding
     use kim_compute_argument_name_module, only : kim_compute_argument_name_type
     use kim_interoperable_types_module, only : kim_compute_arguments_type
     implicit none
     type(kim_compute_arguments_handle_type), intent(in) :: &
       compute_arguments_handle
-    type(kim_compute_argument_name_type), intent(in), value :: &
+    type(kim_compute_argument_name_type), intent(in) :: &
       compute_argument_name
     integer(c_int), intent(in), target :: int1(:)
     integer(c_int), intent(out) :: ierr
@@ -274,7 +269,6 @@ contains
   contains
     subroutine set(compute_arguments, compute_argument_name, extent1, int1, &
       ierr)
-      use, intrinsic :: iso_c_binding
       use kim_compute_argument_name_module, only : &
         kim_compute_argument_name_type
       use kim_interoperable_types_module, only : kim_compute_arguments_type
@@ -288,14 +282,14 @@ contains
             kim_compute_argument_name_type
           use kim_interoperable_types_module, only : kim_compute_arguments_type
           implicit none
-          type(kim_compute_arguments_type), intent(inout) :: compute_arguments
+          type(kim_compute_arguments_type), intent(in) :: compute_arguments
           type(kim_compute_argument_name_type), intent(in), value :: &
             compute_argument_name
           type(c_ptr), intent(in), value :: ptr
         end function set_argument_pointer_integer
       end interface
-      type(kim_compute_arguments_type), intent(inout) :: compute_arguments
-      type(kim_compute_argument_name_type), intent(in), value :: &
+      type(kim_compute_arguments_type), intent(in) :: compute_arguments
+      type(kim_compute_argument_name_type), intent(in) :: &
         compute_argument_name
       integer(c_int), intent(in) :: extent1
       integer(c_int), intent(in), target :: int1(extent1)
@@ -308,13 +302,12 @@ contains
 
   subroutine kim_compute_arguments_set_argument_pointer_int2( &
     compute_arguments_handle, compute_argument_name, int2, ierr)
-    use, intrinsic :: iso_c_binding
     use kim_compute_argument_name_module, only : kim_compute_argument_name_type
     use kim_interoperable_types_module, only : kim_compute_arguments_type
     implicit none
     type(kim_compute_arguments_handle_type), intent(in) :: &
       compute_arguments_handle
-    type(kim_compute_argument_name_type), intent(in), value :: &
+    type(kim_compute_argument_name_type), intent(in) :: &
       compute_argument_name
     integer(c_int), intent(in), target :: int2(:,:)
     integer(c_int), intent(out) :: ierr
@@ -328,7 +321,6 @@ contains
   contains
     subroutine set(compute_arguments, compute_argument_name, extent1, extent2, &
       int2, ierr)
-      use, intrinsic :: iso_c_binding
       use kim_compute_argument_name_module, only : &
         kim_compute_argument_name_type
       use kim_interoperable_types_module, only : kim_compute_arguments_type
@@ -342,14 +334,14 @@ contains
             kim_compute_argument_name_type
           use kim_interoperable_types_module, only : kim_compute_arguments_type
           implicit none
-          type(kim_compute_arguments_type), intent(inout) :: compute_arguments
+          type(kim_compute_arguments_type), intent(in) :: compute_arguments
           type(kim_compute_argument_name_type), intent(in), value :: &
             compute_argument_name
           type(c_ptr), intent(in), value :: ptr
         end function set_argument_pointer_integer
       end interface
-      type(kim_compute_arguments_type), intent(inout) :: compute_arguments
-      type(kim_compute_argument_name_type), intent(in), value :: &
+      type(kim_compute_arguments_type), intent(in) :: compute_arguments
+      type(kim_compute_argument_name_type), intent(in) :: &
         compute_argument_name
       integer(c_int), intent(in) :: extent1
       integer(c_int), intent(in) :: extent2
@@ -363,7 +355,6 @@ contains
 
   subroutine kim_compute_arguments_set_argument_pointer_double0( &
     compute_arguments_handle, compute_argument_name, double0, ierr)
-    use, intrinsic :: iso_c_binding
     use kim_compute_argument_name_module, only : kim_compute_argument_name_type
     use kim_interoperable_types_module, only : kim_compute_arguments_type
     implicit none
@@ -376,7 +367,7 @@ contains
           kim_compute_argument_name_type
         use kim_interoperable_types_module, only : kim_compute_arguments_type
         implicit none
-        type(kim_compute_arguments_type), intent(inout) :: compute_arguments
+        type(kim_compute_arguments_type), intent(in) :: compute_arguments
         type(kim_compute_argument_name_type), intent(in), value :: &
           compute_argument_name
         type(c_ptr), intent(in), value :: ptr
@@ -384,7 +375,7 @@ contains
     end interface
     type(kim_compute_arguments_handle_type), intent(in) :: &
       compute_arguments_handle
-    type(kim_compute_argument_name_type), intent(in), value :: &
+    type(kim_compute_argument_name_type), intent(in) :: &
       compute_argument_name
     real(c_double), intent(in), target :: double0
     integer(c_int), intent(out) :: ierr
@@ -397,13 +388,12 @@ contains
 
   subroutine kim_compute_arguments_set_argument_pointer_double1( &
     compute_arguments_handle, compute_argument_name, double1, ierr)
-    use, intrinsic :: iso_c_binding
     use kim_compute_argument_name_module, only : kim_compute_argument_name_type
     use kim_interoperable_types_module, only : kim_compute_arguments_type
     implicit none
     type(kim_compute_arguments_handle_type), intent(in) :: &
       compute_arguments_handle
-    type(kim_compute_argument_name_type), intent(in), value :: &
+    type(kim_compute_argument_name_type), intent(in) :: &
       compute_argument_name
     real(c_double), intent(in), target :: double1(:)
     integer(c_int), intent(out) :: ierr
@@ -417,7 +407,6 @@ contains
   contains
     subroutine set(compute_arguments, compute_argument_name, extent1, &
       double1, ierr)
-      use, intrinsic :: iso_c_binding
       use kim_compute_argument_name_module, only : &
         kim_compute_argument_name_type
       use kim_interoperable_types_module, only : kim_compute_arguments_type
@@ -431,14 +420,14 @@ contains
             kim_compute_argument_name_type
           use kim_interoperable_types_module, only : kim_compute_arguments_type
           implicit none
-          type(kim_compute_arguments_type), intent(inout) :: compute_arguments
+          type(kim_compute_arguments_type), intent(in) :: compute_arguments
           type(kim_compute_argument_name_type), intent(in), value :: &
             compute_argument_name
           type(c_ptr), intent(in), value :: ptr
         end function set_argument_pointer_double
       end interface
-      type(kim_compute_arguments_type), intent(inout) :: compute_arguments
-      type(kim_compute_argument_name_type), intent(in), value :: &
+      type(kim_compute_arguments_type), intent(in) :: compute_arguments
+      type(kim_compute_argument_name_type), intent(in) :: &
         compute_argument_name
       integer(c_int), intent(in) :: extent1
       real(c_double), intent(in), target :: double1(extent1)
@@ -451,13 +440,12 @@ contains
 
   subroutine kim_compute_arguments_set_argument_pointer_double2( &
     compute_arguments_handle, compute_argument_name, double2, ierr)
-    use, intrinsic :: iso_c_binding
     use kim_compute_argument_name_module, only : kim_compute_argument_name_type
     use kim_interoperable_types_module, only : kim_compute_arguments_type
     implicit none
     type(kim_compute_arguments_handle_type), intent(in) :: &
       compute_arguments_handle
-    type(kim_compute_argument_name_type), intent(in), value :: &
+    type(kim_compute_argument_name_type), intent(in) :: &
       compute_argument_name
     real(c_double), intent(in), target :: double2(:,:)
     integer(c_int), intent(out) :: ierr
@@ -471,7 +459,6 @@ contains
   contains
     subroutine set(compute_arguments, compute_argument_name, extent1, &
       extent2, double2, ierr)
-      use, intrinsic :: iso_c_binding
       use kim_compute_argument_name_module, only : &
         kim_compute_argument_name_type
       implicit none
@@ -484,14 +471,14 @@ contains
             kim_compute_argument_name_type
           use kim_interoperable_types_module, only : kim_compute_arguments_type
           implicit none
-          type(kim_compute_arguments_type), intent(inout) :: compute_arguments
+          type(kim_compute_arguments_type), intent(in) :: compute_arguments
           type(kim_compute_argument_name_type), intent(in), value :: &
             compute_argument_name
           type(c_ptr), intent(in), value :: ptr
         end function set_argument_pointer_double
       end interface
-      type(kim_compute_arguments_type), intent(inout) :: compute_arguments
-      type(kim_compute_argument_name_type), intent(in), value :: &
+      type(kim_compute_arguments_type), intent(in) :: compute_arguments
+      type(kim_compute_argument_name_type), intent(in) :: &
         compute_argument_name
       integer(c_int), intent(in) :: extent1
       integer(c_int), intent(in) :: extent2
@@ -506,7 +493,6 @@ contains
   subroutine kim_compute_arguments_set_callback_pointer( &
     compute_arguments_handle, compute_callback_name, language_name, fptr, &
     data_object, ierr)
-    use, intrinsic :: iso_c_binding
     use kim_compute_callback_name_module, only : kim_compute_callback_name_type
     use kim_language_name_module, only : kim_language_name_type
     use kim_interoperable_types_module, only : kim_compute_arguments_type
@@ -521,7 +507,7 @@ contains
           kim_compute_callback_name_type
         use kim_interoperable_types_module, only : kim_compute_arguments_type
         implicit none
-        type(kim_compute_arguments_type), intent(inout) :: compute_arguments
+        type(kim_compute_arguments_type), intent(in) :: compute_arguments
         type(kim_language_name_type), intent(in), value :: language_name
         type(kim_compute_callback_name_type), intent(in), value :: &
           compute_callback_name
@@ -531,11 +517,11 @@ contains
     end interface
     type(kim_compute_arguments_handle_type), intent(in) :: &
       compute_arguments_handle
-    type(kim_compute_callback_name_type), intent(in), value :: &
+    type(kim_compute_callback_name_type), intent(in) :: &
       compute_callback_name
-    type(kim_language_name_type), intent(in), value :: language_name
-    type(c_funptr), intent(in), value :: fptr
-    type(c_ptr), intent(in), value :: data_object
+    type(kim_language_name_type), intent(in) :: language_name
+    type(c_funptr), intent(in), value :: fptr  ! must be left as "value"!?!
+    type(c_ptr), intent(in) :: data_object
     integer(c_int), intent(out) :: ierr
     type(kim_compute_arguments_type), pointer :: compute_arguments
 
@@ -546,7 +532,6 @@ contains
 
   subroutine kim_compute_arguments_are_all_required_present( &
     compute_arguments_handle, result_value, ierr)
-    use, intrinsic :: iso_c_binding
     use kim_interoperable_types_module, only : kim_compute_arguments_type
     implicit none
     interface
@@ -560,166 +545,160 @@ contains
         type(kim_compute_arguments_type), intent(in) :: compute_arguments
         integer(c_int), intent(out) :: result_value
       end function are_all_required_arguments_and_callbacks_present
-        end interface
-      type(kim_compute_arguments_handle_type), intent(in) :: &
-        compute_arguments_handle
-      integer(c_int), intent(out) :: result_value
-      integer(c_int), intent(out) :: ierr
-      type(kim_compute_arguments_type), pointer :: compute_arguments
+    end interface
+    type(kim_compute_arguments_handle_type), intent(in) :: &
+      compute_arguments_handle
+    integer(c_int), intent(out) :: result_value
+    integer(c_int), intent(out) :: ierr
+    type(kim_compute_arguments_type), pointer :: compute_arguments
 
-      call c_f_pointer(compute_arguments_handle%p, compute_arguments)
-      ierr = are_all_required_arguments_and_callbacks_present( &
-        compute_arguments, result_value)
-    end subroutine kim_compute_arguments_are_all_required_present
+    call c_f_pointer(compute_arguments_handle%p, compute_arguments)
+    ierr = are_all_required_arguments_and_callbacks_present( &
+      compute_arguments, result_value)
+  end subroutine kim_compute_arguments_are_all_required_present
 
-    subroutine kim_compute_arguments_set_simulator_buffer_pointer( &
-      compute_arguments_handle, ptr)
-      use, intrinsic :: iso_c_binding
-      use kim_interoperable_types_module, only : kim_compute_arguments_type
-      implicit none
-      interface
-        subroutine set_simulator_buffer_pointer(compute_arguments, ptr) &
-          bind(c, name="KIM_ComputeArguments_SetSimulatorBufferPointer")
-          use, intrinsic :: iso_c_binding
-          use kim_interoperable_types_module, only : kim_compute_arguments_type
-          implicit none
-          type(kim_compute_arguments_type), intent(inout) :: compute_arguments
-          type(c_ptr), intent(in), value :: ptr
-        end subroutine set_simulator_buffer_pointer
-      end interface
-      type(kim_compute_arguments_handle_type), intent(in) :: &
-        compute_arguments_handle
-      type(c_ptr), intent(in), value :: ptr
-      type(kim_compute_arguments_type), pointer :: compute_arguments
+  subroutine kim_compute_arguments_set_simulator_buffer_pointer( &
+    compute_arguments_handle, ptr)
+    use kim_interoperable_types_module, only : kim_compute_arguments_type
+    implicit none
+    interface
+      subroutine set_simulator_buffer_pointer(compute_arguments, ptr) &
+        bind(c, name="KIM_ComputeArguments_SetSimulatorBufferPointer")
+        use, intrinsic :: iso_c_binding
+        use kim_interoperable_types_module, only : kim_compute_arguments_type
+        implicit none
+        type(kim_compute_arguments_type), intent(in) :: compute_arguments
+        type(c_ptr), intent(in), value :: ptr
+      end subroutine set_simulator_buffer_pointer
+    end interface
+    type(kim_compute_arguments_handle_type), intent(in) :: &
+      compute_arguments_handle
+    type(c_ptr), intent(in) :: ptr
+    type(kim_compute_arguments_type), pointer :: compute_arguments
 
-      call c_f_pointer(compute_arguments_handle%p, compute_arguments)
-      call set_simulator_buffer_pointer(compute_arguments, ptr)
-    end subroutine kim_compute_arguments_set_simulator_buffer_pointer
+    call c_f_pointer(compute_arguments_handle%p, compute_arguments)
+    call set_simulator_buffer_pointer(compute_arguments, ptr)
+  end subroutine kim_compute_arguments_set_simulator_buffer_pointer
 
-    subroutine kim_compute_arguments_get_simulator_buffer_pointer( &
-      compute_arguments_handle, ptr)
-      use, intrinsic :: iso_c_binding
-      use kim_interoperable_types_module, only : kim_compute_arguments_type
-      implicit none
-      interface
-        subroutine get_simulator_buffer_pointer(compute_arguments, ptr) &
-          bind(c, name="KIM_ComputeArguments_GetSimulatorBufferPointer")
-          use, intrinsic :: iso_c_binding
-          use kim_interoperable_types_module, only : kim_compute_arguments_type
-          implicit none
-          type(kim_compute_arguments_type), intent(in) :: compute_arguments
-          type(c_ptr), intent(out) :: ptr
-        end subroutine get_simulator_buffer_pointer
-      end interface
-      type(kim_compute_arguments_handle_type), intent(in) :: &
-        compute_arguments_handle
-      type(c_ptr), intent(out) :: ptr
-      type(kim_compute_arguments_type), pointer :: compute_arguments
+  subroutine kim_compute_arguments_get_simulator_buffer_pointer( &
+    compute_arguments_handle, ptr)
+    use kim_interoperable_types_module, only : kim_compute_arguments_type
+    implicit none
+    interface
+      subroutine get_simulator_buffer_pointer(compute_arguments, ptr) &
+        bind(c, name="KIM_ComputeArguments_GetSimulatorBufferPointer")
+        use, intrinsic :: iso_c_binding
+        use kim_interoperable_types_module, only : kim_compute_arguments_type
+        implicit none
+        type(kim_compute_arguments_type), intent(in) :: compute_arguments
+        type(c_ptr), intent(out) :: ptr
+      end subroutine get_simulator_buffer_pointer
+    end interface
+    type(kim_compute_arguments_handle_type), intent(in) :: &
+      compute_arguments_handle
+    type(c_ptr), intent(out) :: ptr
+    type(kim_compute_arguments_type), pointer :: compute_arguments
 
-      call c_f_pointer(compute_arguments_handle%p, compute_arguments)
-      call get_simulator_buffer_pointer(compute_arguments, ptr)
-    end subroutine kim_compute_arguments_get_simulator_buffer_pointer
+    call c_f_pointer(compute_arguments_handle%p, compute_arguments)
+    call get_simulator_buffer_pointer(compute_arguments, ptr)
+  end subroutine kim_compute_arguments_get_simulator_buffer_pointer
 
-    subroutine kim_compute_arguments_to_string(compute_arguments_handle, string)
-      use, intrinsic :: iso_c_binding
-      use kim_convert_string_module, only : kim_convert_string
-      use kim_interoperable_types_module, only : kim_compute_arguments_type
-      implicit none
-      interface
-        type(c_ptr) function compute_arguments_string(compute_arguments) &
-          bind(c, name="KIM_ComputeArguments_ToString")
-          use, intrinsic :: iso_c_binding
-          use kim_interoperable_types_module, only : kim_compute_arguments_type
-          implicit none
-          type(kim_compute_arguments_type), intent(in) :: compute_arguments
-        end function compute_arguments_string
-      end interface
-      type(kim_compute_arguments_handle_type), intent(in) :: &
-        compute_arguments_handle
-      character(len=*, kind=c_char), intent(out) :: string
-      type(kim_compute_arguments_type), pointer :: compute_arguments
+  subroutine kim_compute_arguments_to_string(compute_arguments_handle, string)
+    use kim_convert_string_module, only : kim_convert_string
+    use kim_interoperable_types_module, only : kim_compute_arguments_type
+    implicit none
+    interface
+      type(c_ptr) function compute_arguments_string(compute_arguments) &
+        bind(c, name="KIM_ComputeArguments_ToString")
+        use, intrinsic :: iso_c_binding
+        use kim_interoperable_types_module, only : kim_compute_arguments_type
+        implicit none
+        type(kim_compute_arguments_type), intent(in) :: compute_arguments
+      end function compute_arguments_string
+    end interface
+    type(kim_compute_arguments_handle_type), intent(in) :: &
+      compute_arguments_handle
+    character(len=*, kind=c_char), intent(out) :: string
+    type(kim_compute_arguments_type), pointer :: compute_arguments
 
-      type(c_ptr) :: p
+    type(c_ptr) :: p
 
-      call c_f_pointer(compute_arguments_handle%p, compute_arguments)
-      p = compute_arguments_string(compute_arguments)
-      if (c_associated(p)) then
-        call kim_convert_string(p, string)
-      else
-        string = ""
-      end if
-    end subroutine kim_compute_arguments_to_string
+    call c_f_pointer(compute_arguments_handle%p, compute_arguments)
+    p = compute_arguments_string(compute_arguments)
+    if (c_associated(p)) then
+      call kim_convert_string(p, string)
+    else
+      string = ""
+    end if
+  end subroutine kim_compute_arguments_to_string
 
-    subroutine kim_compute_arguments_set_log_id(compute_arguments_handle, &
-      log_id)
-      use, intrinsic :: iso_c_binding
-      use kim_interoperable_types_module, only : kim_compute_arguments_type
-      implicit none
-      interface
-        subroutine set_log_id(compute_arguments, log_id) &
-          bind(c, name="KIM_ComputeArguments_SetLogID")
-          use, intrinsic :: iso_c_binding
-          use kim_interoperable_types_module, only : kim_compute_arguments_type
-          implicit none
-          type(kim_compute_arguments_type), intent(inout) :: compute_arguments
-          character(c_char), intent(in) :: log_id(*)
-        end subroutine set_log_id
-      end interface
-      type(kim_compute_arguments_handle_type), intent(in) :: &
-        compute_arguments_handle
-      character(len=*, kind=c_char), intent(in) :: log_id
-      type(kim_compute_arguments_type), pointer :: compute_arguments
+  subroutine kim_compute_arguments_set_log_id(compute_arguments_handle, &
+    log_id)
+    use kim_interoperable_types_module, only : kim_compute_arguments_type
+    implicit none
+    interface
+      subroutine set_log_id(compute_arguments, log_id) &
+        bind(c, name="KIM_ComputeArguments_SetLogID")
+        use, intrinsic :: iso_c_binding
+        use kim_interoperable_types_module, only : kim_compute_arguments_type
+        implicit none
+        type(kim_compute_arguments_type), intent(in) :: compute_arguments
+        character(c_char), intent(in) :: log_id(*)
+      end subroutine set_log_id
+    end interface
+    type(kim_compute_arguments_handle_type), intent(in) :: &
+      compute_arguments_handle
+    character(len=*, kind=c_char), intent(in) :: log_id
+    type(kim_compute_arguments_type), pointer :: compute_arguments
 
-      call c_f_pointer(compute_arguments_handle%p, compute_arguments)
-      call set_log_id(compute_arguments, trim(log_id)//c_null_char)
-    end subroutine kim_compute_arguments_set_log_id
+    call c_f_pointer(compute_arguments_handle%p, compute_arguments)
+    call set_log_id(compute_arguments, trim(log_id)//c_null_char)
+  end subroutine kim_compute_arguments_set_log_id
 
-    subroutine kim_compute_arguments_push_log_verbosity( &
-      compute_arguments_handle, log_verbosity)
-      use, intrinsic :: iso_c_binding
-      use kim_log_verbosity_module, only : kim_log_verbosity_type
-      use kim_interoperable_types_module, only : kim_compute_arguments_type
-      implicit none
-      interface
-        subroutine push_log_verbosity(compute_arguments, log_verbosity) &
-          bind(c, name="KIM_ComputeArguments_PushLogVerbosity")
-          use, intrinsic :: iso_c_binding
-          use kim_log_verbosity_module, only : kim_log_verbosity_type
-          use kim_interoperable_types_module, only : kim_compute_arguments_type
-          implicit none
-          type(kim_compute_arguments_type), intent(inout) :: compute_arguments
-          type(kim_log_verbosity_type), intent(in), value :: log_verbosity
-        end subroutine push_log_verbosity
-      end interface
-      type(kim_compute_arguments_handle_type), intent(in) :: &
-        compute_arguments_handle
-      type(kim_log_verbosity_type), intent(in) :: log_verbosity
-      type(kim_compute_arguments_type), pointer :: compute_arguments
+  subroutine kim_compute_arguments_push_log_verbosity( &
+    compute_arguments_handle, log_verbosity)
+    use kim_log_verbosity_module, only : kim_log_verbosity_type
+    use kim_interoperable_types_module, only : kim_compute_arguments_type
+    implicit none
+    interface
+      subroutine push_log_verbosity(compute_arguments, log_verbosity) &
+        bind(c, name="KIM_ComputeArguments_PushLogVerbosity")
+        use, intrinsic :: iso_c_binding
+        use kim_log_verbosity_module, only : kim_log_verbosity_type
+        use kim_interoperable_types_module, only : kim_compute_arguments_type
+        implicit none
+        type(kim_compute_arguments_type), intent(in) :: compute_arguments
+        type(kim_log_verbosity_type), intent(in), value :: log_verbosity
+      end subroutine push_log_verbosity
+    end interface
+    type(kim_compute_arguments_handle_type), intent(in) :: &
+      compute_arguments_handle
+    type(kim_log_verbosity_type), intent(in) :: log_verbosity
+    type(kim_compute_arguments_type), pointer :: compute_arguments
 
-      call c_f_pointer(compute_arguments_handle%p, compute_arguments)
-      call push_log_verbosity(compute_arguments, log_verbosity)
-    end subroutine kim_compute_arguments_push_log_verbosity
+    call c_f_pointer(compute_arguments_handle%p, compute_arguments)
+    call push_log_verbosity(compute_arguments, log_verbosity)
+  end subroutine kim_compute_arguments_push_log_verbosity
 
-    subroutine kim_compute_arguments_pop_log_verbosity(compute_arguments_handle)
-      use, intrinsic :: iso_c_binding
-      use kim_log_verbosity_module, only : kim_log_verbosity_type
-      use kim_interoperable_types_module, only : kim_compute_arguments_type
-      implicit none
-      interface
-        subroutine pop_log_verbosity(compute_arguments) &
-          bind(c, name="KIM_ComputeArguments_PopLogVerbosity")
-          use, intrinsic :: iso_c_binding
-          use kim_log_verbosity_module, only : kim_log_verbosity_type
-          use kim_interoperable_types_module, only : kim_compute_arguments_type
-          implicit none
-          type(kim_compute_arguments_type), intent(inout) :: compute_arguments
-        end subroutine pop_log_verbosity
-      end interface
-      type(kim_compute_arguments_handle_type), intent(in) :: &
-        compute_arguments_handle
-      type(kim_compute_arguments_type), pointer :: compute_arguments
+  subroutine kim_compute_arguments_pop_log_verbosity(compute_arguments_handle)
+    use kim_log_verbosity_module, only : kim_log_verbosity_type
+    use kim_interoperable_types_module, only : kim_compute_arguments_type
+    implicit none
+    interface
+      subroutine pop_log_verbosity(compute_arguments) &
+        bind(c, name="KIM_ComputeArguments_PopLogVerbosity")
+        use, intrinsic :: iso_c_binding
+        use kim_log_verbosity_module, only : kim_log_verbosity_type
+        use kim_interoperable_types_module, only : kim_compute_arguments_type
+        implicit none
+        type(kim_compute_arguments_type), intent(in) :: compute_arguments
+      end subroutine pop_log_verbosity
+    end interface
+    type(kim_compute_arguments_handle_type), intent(in) :: &
+      compute_arguments_handle
+    type(kim_compute_arguments_type), pointer :: compute_arguments
 
-      call c_f_pointer(compute_arguments_handle%p, compute_arguments)
-      call pop_log_verbosity(compute_arguments)
-    end subroutine kim_compute_arguments_pop_log_verbosity
-  end module kim_compute_arguments_module
+    call c_f_pointer(compute_arguments_handle%p, compute_arguments)
+    call pop_log_verbosity(compute_arguments)
+  end subroutine kim_compute_arguments_pop_log_verbosity
+end module kim_compute_arguments_module

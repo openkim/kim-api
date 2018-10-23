@@ -117,67 +117,60 @@ module kim_log_verbosity_module
   end interface kim_to_string
 
 contains
-  logical function kim_log_verbosity_less_than(left, right)
-    use, intrinsic :: iso_c_binding
+  logical function kim_log_verbosity_less_than(lhs, rhs)
     implicit none
-    type(kim_log_verbosity_type), intent(in) :: left
-    type(kim_log_verbosity_type), intent(in) :: right
+    type(kim_log_verbosity_type), intent(in) :: lhs
+    type(kim_log_verbosity_type), intent(in) :: rhs
 
     kim_log_verbosity_less_than &
-      = (left%log_verbosity_id .lt. right%log_verbosity_id)
+      = (lhs%log_verbosity_id .lt. rhs%log_verbosity_id)
   end function kim_log_verbosity_less_than
 
-  logical function kim_log_verbosity_greater_than(left, right)
-    use, intrinsic :: iso_c_binding
+  logical function kim_log_verbosity_greater_than(lhs, rhs)
     implicit none
-    type(kim_log_verbosity_type), intent(in) :: left
-    type(kim_log_verbosity_type), intent(in) :: right
+    type(kim_log_verbosity_type), intent(in) :: lhs
+    type(kim_log_verbosity_type), intent(in) :: rhs
 
     kim_log_verbosity_greater_than &
-      = (left%log_verbosity_id .ge. right%log_verbosity_id)
+      = (lhs%log_verbosity_id .ge. rhs%log_verbosity_id)
   end function kim_log_verbosity_greater_than
 
-  logical function kim_log_verbosity_less_than_equal(left, right)
-    use, intrinsic :: iso_c_binding
+  logical function kim_log_verbosity_less_than_equal(lhs, rhs)
     implicit none
-    type(kim_log_verbosity_type), intent(in) :: left
-    type(kim_log_verbosity_type), intent(in) :: right
+    type(kim_log_verbosity_type), intent(in) :: lhs
+    type(kim_log_verbosity_type), intent(in) :: rhs
 
     kim_log_verbosity_less_than_equal &
-      = (left%log_verbosity_id .le. right%log_verbosity_id)
+      = (lhs%log_verbosity_id .le. rhs%log_verbosity_id)
   end function kim_log_verbosity_less_than_equal
 
-  logical function kim_log_verbosity_greater_than_equal(left, right)
-    use, intrinsic :: iso_c_binding
+  logical function kim_log_verbosity_greater_than_equal(lhs, rhs)
     implicit none
-    type(kim_log_verbosity_type), intent(in) :: left
-    type(kim_log_verbosity_type), intent(in) :: right
+    type(kim_log_verbosity_type), intent(in) :: lhs
+    type(kim_log_verbosity_type), intent(in) :: rhs
 
     kim_log_verbosity_greater_than_equal &
-      = (left%log_verbosity_id .ge. right%log_verbosity_id)
+      = (lhs%log_verbosity_id .ge. rhs%log_verbosity_id)
   end function kim_log_verbosity_greater_than_equal
 
-  logical function kim_log_verbosity_equal(left, right)
-    use, intrinsic :: iso_c_binding
+  logical function kim_log_verbosity_equal(lhs, rhs)
     implicit none
-    type(kim_log_verbosity_type), intent(in) :: left
-    type(kim_log_verbosity_type), intent(in) :: right
+    type(kim_log_verbosity_type), intent(in) :: lhs
+    type(kim_log_verbosity_type), intent(in) :: rhs
 
     kim_log_verbosity_equal &
-      = (left%log_verbosity_id .eq. right%log_verbosity_id)
+      = (lhs%log_verbosity_id .eq. rhs%log_verbosity_id)
   end function kim_log_verbosity_equal
 
-  logical function kim_log_verbosity_not_equal(left, right)
-    use, intrinsic :: iso_c_binding
+  logical function kim_log_verbosity_not_equal(lhs, rhs)
     implicit none
-    type(kim_log_verbosity_type), intent(in) :: left
-    type(kim_log_verbosity_type), intent(in) :: right
+    type(kim_log_verbosity_type), intent(in) :: lhs
+    type(kim_log_verbosity_type), intent(in) :: rhs
 
-    kim_log_verbosity_not_equal = .not. (left .eq. right)
+    kim_log_verbosity_not_equal = .not. (lhs .eq. rhs)
   end function kim_log_verbosity_not_equal
 
   subroutine kim_log_verbosity_from_string(string, log_verbosity)
-    use, intrinsic :: iso_c_binding
     implicit none
     interface
       type(kim_log_verbosity_type) function from_string(string) &
@@ -195,7 +188,6 @@ contains
   end subroutine kim_log_verbosity_from_string
 
   subroutine kim_log_verbosity_to_string(log_verbosity, string)
-    use, intrinsic :: iso_c_binding
     use kim_convert_string_module, only : kim_convert_string
     implicit none
     interface
@@ -207,7 +199,7 @@ contains
         type(kim_log_verbosity_type), intent(in), value :: log_verbosity
       end function get_string
     end interface
-    type(kim_log_verbosity_type), intent(in), value :: log_verbosity
+    type(kim_log_verbosity_type), intent(in) :: log_verbosity
     character(len=*, kind=c_char), intent(out) :: string
 
     type(c_ptr) :: p
@@ -222,7 +214,6 @@ contains
 
   subroutine kim_get_number_of_log_verbosities( &
     number_of_log_verbosities)
-    use, intrinsic :: iso_c_binding
     implicit none
     interface
       subroutine get_number_of_log_verbosities(number_of_log_verbosities) &
@@ -238,7 +229,6 @@ contains
   end subroutine kim_get_number_of_log_verbosities
 
   subroutine kim_get_log_verbosity(index, log_verbosity, ierr)
-    use, intrinsic :: iso_c_binding
     implicit none
     interface
       integer(c_int) function get_log_verbosity(index, log_verbosity) &
@@ -250,7 +240,7 @@ contains
         type(kim_log_verbosity_type), intent(out) :: log_verbosity
       end function get_log_verbosity
     end interface
-    integer(c_int), intent(in), value :: index
+    integer(c_int), intent(in) :: index
     type(kim_log_verbosity_type), intent(out) :: log_verbosity
     integer(c_int), intent(out) :: ierr
 

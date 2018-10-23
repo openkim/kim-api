@@ -36,12 +36,14 @@
 #ifndef KIM_MODEL_REFRESH_H_
 #define KIM_MODEL_REFRESH_H_
 
-struct KIM_ModelRefresh;
-
+/* Forward declarations */
 #ifndef KIM_LOG_VERBOSITY_DEFINED_
 #define KIM_LOG_VERBOSITY_DEFINED_
 typedef struct KIM_LogVerbosity KIM_LogVerbosity;
 #endif
+
+
+struct KIM_ModelRefresh;
 
 #ifndef KIM_MODEL_REFRESH_DEFINED_
 #define KIM_MODEL_REFRESH_DEFINED_
@@ -49,7 +51,8 @@ typedef struct KIM_ModelRefresh KIM_ModelRefresh;
 #endif
 
 void KIM_ModelRefresh_SetInfluenceDistancePointer(
-    KIM_ModelRefresh * const modelRefresh, double * const influenceDistance);
+    KIM_ModelRefresh * const modelRefresh,
+    double const * const influenceDistance);
 
 void KIM_ModelRefresh_SetNeighborListPointers(
     KIM_ModelRefresh * const modelRefresh,

@@ -46,11 +46,10 @@ typedef struct KIM_SupportStatus KIM_SupportStatus;
 #endif
 
 KIM_SupportStatus KIM_SupportStatus_FromString(char const * const str);
-
-int KIM_SupportStatus_Equal(KIM_SupportStatus const left,
-                            KIM_SupportStatus const right);
-int KIM_SupportStatus_NotEqual(KIM_SupportStatus const left,
-                               KIM_SupportStatus const right);
+int KIM_SupportStatus_Equal(KIM_SupportStatus const lhs,
+                            KIM_SupportStatus const rhs);
+int KIM_SupportStatus_NotEqual(KIM_SupportStatus const lhs,
+                               KIM_SupportStatus const rhs);
 char const * KIM_SupportStatus_ToString(KIM_SupportStatus const supportStatus);
 
 extern KIM_SupportStatus const KIM_SUPPORT_STATUS_requiredByAPI;

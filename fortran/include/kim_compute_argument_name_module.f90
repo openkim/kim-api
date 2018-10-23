@@ -110,18 +110,25 @@ module kim_compute_argument_name_module
   end interface kim_to_string
 
 contains
-  logical function kim_compute_argument_name_not_equal(left, right)
-    use, intrinsic :: iso_c_binding
+  logical function kim_compute_argument_name_equal(lhs, rhs)
     implicit none
-    type(kim_compute_argument_name_type), intent(in) :: left
-    type(kim_compute_argument_name_type), intent(in) :: right
+    type(kim_compute_argument_name_type), intent(in) :: lhs
+    type(kim_compute_argument_name_type), intent(in) :: rhs
 
-    kim_compute_argument_name_not_equal = .not. (left .eq. right)
+    kim_compute_argument_name_equal &
+      = (lhs%compute_argument_name_id .eq. rhs%compute_argument_name_id)
+  end function kim_compute_argument_name_equal
+
+  logical function kim_compute_argument_name_not_equal(lhs, rhs)
+    implicit none
+    type(kim_compute_argument_name_type), intent(in) :: lhs
+    type(kim_compute_argument_name_type), intent(in) :: rhs
+
+    kim_compute_argument_name_not_equal = .not. (lhs .eq. rhs)
   end function kim_compute_argument_name_not_equal
 
   subroutine kim_compute_argument_name_from_string(string, &
     compute_argument_name)
-    use, intrinsic :: iso_c_binding
     implicit none
     interface
       type(kim_compute_argument_name_type) function from_string(string) &
@@ -138,18 +145,7 @@ contains
     compute_argument_name = from_string(trim(string)//c_null_char)
   end subroutine kim_compute_argument_name_from_string
 
-  logical function kim_compute_argument_name_equal(left, right)
-    use, intrinsic :: iso_c_binding
-    implicit none
-    type(kim_compute_argument_name_type), intent(in) :: left
-    type(kim_compute_argument_name_type), intent(in) :: right
-
-    kim_compute_argument_name_equal &
-      = (left%compute_argument_name_id .eq. right%compute_argument_name_id)
-  end function kim_compute_argument_name_equal
-
   subroutine kim_compute_argument_name_to_string(compute_argument_name, string)
-    use, intrinsic :: iso_c_binding
     use kim_convert_string_module, only : kim_convert_string
     implicit none
     interface
@@ -162,7 +158,7 @@ contains
           compute_argument_name
       end function get_string
     end interface
-    type(kim_compute_argument_name_type), intent(in), value :: &
+    type(kim_compute_argument_name_type), intent(in) :: &
       compute_argument_name
     character(len=*, kind=c_char), intent(out) :: string
 
@@ -178,7 +174,6 @@ contains
 
   subroutine kim_get_number_of_compute_argument_names( &
     number_of_compute_argument_names)
-    use, intrinsic :: iso_c_binding
     implicit none
     interface
       subroutine get_number_of_compute_argument_names( &
@@ -196,7 +191,6 @@ contains
 
   subroutine kim_get_compute_argument_name(index, &
     compute_argument_name, ierr)
-    use, intrinsic :: iso_c_binding
     implicit none
     interface
       integer(c_int) function get_compute_argument_name(index, &
@@ -210,7 +204,7 @@ contains
           compute_argument_name
       end function get_compute_argument_name
     end interface
-    integer(c_int), intent(in), value :: index
+    integer(c_int), intent(in) :: index
     type(kim_compute_argument_name_type), intent(out) :: compute_argument_name
     integer(c_int), intent(out) :: ierr
 
@@ -220,7 +214,6 @@ contains
   subroutine kim_get_compute_argument_data_type( &
     compute_argument_name, &
     data_type, ierr)
-    use, intrinsic :: iso_c_binding
     use kim_data_type_module, only : kim_data_type_type
     implicit none
     interface
@@ -236,7 +229,7 @@ contains
         type(kim_data_type_type), intent(out) :: data_type
       end function get_compute_argument_data_type
     end interface
-    type(kim_compute_argument_name_type), intent(in), value :: &
+    type(kim_compute_argument_name_type), intent(in) :: &
       compute_argument_name
     type(kim_data_type_type), intent(out) :: data_type
     integer(c_int), intent(out) :: ierr

@@ -42,6 +42,7 @@
 typedef struct KIM_DataType KIM_DataType;
 #endif
 
+
 struct KIM_ComputeArgumentName
 {
   int computeArgumentNameID;
@@ -53,11 +54,10 @@ typedef struct KIM_ComputeArgumentName KIM_ComputeArgumentName;
 
 KIM_ComputeArgumentName
 KIM_ComputeArgumentName_FromString(char const * const str);
-
-int KIM_ComputeArgumentName_Equal(KIM_ComputeArgumentName const left,
-                                  KIM_ComputeArgumentName const right);
-int KIM_ComputeArgumentName_NotEqual(KIM_ComputeArgumentName const left,
-                                     KIM_ComputeArgumentName const right);
+int KIM_ComputeArgumentName_Equal(KIM_ComputeArgumentName const lhs,
+                                  KIM_ComputeArgumentName const rhs);
+int KIM_ComputeArgumentName_NotEqual(KIM_ComputeArgumentName const lhs,
+                                     KIM_ComputeArgumentName const rhs);
 char const * KIM_ComputeArgumentName_ToString(
     KIM_ComputeArgumentName const computeArgumentName);
 
@@ -80,7 +80,6 @@ void KIM_COMPUTE_ARGUMENT_NAME_GetNumberOfComputeArgumentNames(
     int * const numberOfComputeArgumentNames);
 int KIM_COMPUTE_ARGUMENT_NAME_GetComputeArgumentName(
     int const index, KIM_ComputeArgumentName * const computeArgumentName);
-
 int KIM_COMPUTE_ARGUMENT_NAME_GetComputeArgumentDataType(
     KIM_ComputeArgumentName const computeArgumentName,
     KIM_DataType * const dataType);

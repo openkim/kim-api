@@ -64,16 +64,16 @@ KIM_SupportStatus KIM_SupportStatus_FromString(char const * const str)
   return makeSupportStatusC(KIM::SupportStatus(std::string(str)));
 }
 
-int KIM_SupportStatus_Equal(KIM_SupportStatus const left,
-                            KIM_SupportStatus const right)
+int KIM_SupportStatus_Equal(KIM_SupportStatus const lhs,
+                            KIM_SupportStatus const rhs)
 {
-  return (left.supportStatusID == right.supportStatusID);
+  return (lhs.supportStatusID == rhs.supportStatusID);
 }
 
-int KIM_SupportStatus_NotEqual(KIM_SupportStatus const left,
-                               KIM_SupportStatus const right)
+int KIM_SupportStatus_NotEqual(KIM_SupportStatus const lhs,
+                               KIM_SupportStatus const rhs)
 {
-  return (!KIM_SupportStatus_Equal(left, right));
+  return (!KIM_SupportStatus_Equal(lhs, rhs));
 }
 
 char const * KIM_SupportStatus_ToString(KIM_SupportStatus const supportStatus)

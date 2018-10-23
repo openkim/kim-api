@@ -101,11 +101,10 @@ typedef struct KIM_ModelDriverCreate KIM_ModelDriverCreate;
 
 
 void KIM_ModelDriverCreate_GetNumberOfParameterFiles(
-    KIM_ModelDriverCreate * const modelDriverCreate,
+    KIM_ModelDriverCreate const * const modelDriverCreate,
     int * const numberOfParameterFiles);
-
 int KIM_ModelDriverCreate_GetParameterFileName(
-    KIM_ModelDriverCreate * const modelDriverCreate,
+    KIM_ModelDriverCreate const * const modelDriverCreate,
     int const index,
     char const ** const parameterFileName);
 
@@ -201,4 +200,4 @@ void KIM_ModelDriverCreate_LogEntry(
 char const * KIM_ModelDriverCreate_ToString(
     KIM_ModelDriverCreate const * const modelDriverCreate);
 
-#endif /* KIM_MODEL_DRIVE_CREATE_H_ */
+#endif /* KIM_MODEL_DRIVER_CREATE_H_ */

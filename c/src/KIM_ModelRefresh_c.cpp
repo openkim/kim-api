@@ -69,7 +69,8 @@ KIM::LogVerbosity makeLogVerbosityCpp(KIM_LogVerbosity const logVerbosity)
 
 extern "C" {
 void KIM_ModelRefresh_SetInfluenceDistancePointer(
-    KIM_ModelRefresh * const modelRefresh, double * const influenceDistance)
+    KIM_ModelRefresh * const modelRefresh,
+    double const * const influenceDistance)
 {
   CONVERT_POINTER;
 
