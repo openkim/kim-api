@@ -110,14 +110,12 @@ if test x"${files_needing_formatting}" != x""; then
 
   dir_prefix=`printf "${GIT_PREFIX}" | sed -e 's|\([^/][^/]*\)|..|g'`
   for file in ${files_needing_formatting}; do
-    printf "  clang-format -style=file -i ${dir_prefix}${file}"
+    printf "  clang-format -style=file -i ${dir_prefix}${file}\n"
   done
-  printf "\n"
 
   for file in ${files_needing_formatting}; do
-    printf "  git add ${dir_prefix}${file}"
+    printf "  git add ${dir_prefix}${file}\n"
   done
-  printf "\n"
   printf "\n"
 
   exit 1
