@@ -51,7 +51,8 @@ devel_branch="devel-v2"
 
 # check that we're on the right branch
 if test x"${devel_branch}" != x"`git rev-parse --abbrev-ref HEAD`"; then
-  printf "Must be on the 'devel-v2' branch to crate a package. Exiting.\n"
+  printf "Must be on the '${devel_branch}' branch to crate a package. "
+  printf "Exiting.\n"
   exit
 fi
 
@@ -104,17 +105,35 @@ ed cmake/Modules/DefineVersionVariables.cmake > /dev/null 2>&1 <<EOF
 w
 EOF
 
+
+# replace c /* */ comments
+orig_string="kim-api.git repository"
+new_string="${fullpackagename} package"
+num_spaces=`expr ${#new_string} - ${#orig_string}`
+for fl in `grep -l -r -e "kim-api\.git repository. \{${num_spaces}\}" *`; do
+  if test x"${fl}" != x"scripts/create-package"; then  # can't ed current script
+    ed "${fl}" > /dev/null 2>&1 <<EOF
+,s/kim-api\.git repository. \{${num_spaces}\}/$fullpackagename package./g
+w
+q
+EOF
+  fi
+done
+# replace the rest
 for fl in `grep -l -r "kim-api\.git repository" *`; do
-   ed $fl > /dev/null 2>&1 <<EOF
+  if test x"${fl}" != x"scripts/create-package"; then  # can't ed current script
+    ed "${fl}" > /dev/null 2>&1 <<EOF
 ,s/kim-api\.git repository/$fullpackagename package/g
 w
+q
 EOF
+  fi
 done
 
 printf "\n"
 git add -u
 git commit -m"Temporary commit holding ${versionstring} tree"
-# the below command creates a merge commit with master as the *first-parent* containing the release files
+# the below command creates a merge commit with master_branch as the *first-parent* containing the release files
 merge_commit="`git commit-tree -p "${master_branch}" -p "HEAD~" -m "Release commit for ${versionstring}" "HEAD^{tree}"`"
 printf "\n"
 git reset --hard "${merge_commit}"
