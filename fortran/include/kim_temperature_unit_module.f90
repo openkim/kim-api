@@ -27,7 +27,7 @@
 !
 
 !
-! Release: This file is part of the kim-api.git repository.
+! Release: This file is part of the kim-api-v2.0.0-beta.2 package.
 !
 
 
@@ -37,17 +37,20 @@ module kim_temperature_unit_module
   private
 
   public &
+    ! Derived type
     kim_temperature_unit_type, &
-    kim_temperature_unit_from_string, &
+
+    ! Constants
+    KIM_TEMPERATURE_UNIT_UNUSED, &
+    KIM_TEMPERATURE_UNIT_K, &
+
+    ! Routines
     operator (.eq.), &
     operator (.ne.), &
-    kim_temperature_unit_string, &
-
-    kim_temperature_unit_unused, &
-    kim_temperature_unit_k, &
-
-    kim_temperature_unit_get_number_of_temperature_units, &
-    kim_temperature_unit_get_temperature_unit
+    kim_from_string, &
+    kim_to_string, &
+    kim_get_number_of_temperature_units, &
+    kim_get_temperature_unit
 
 
   type, bind(c) :: kim_temperature_unit_type
@@ -56,63 +59,120 @@ module kim_temperature_unit_module
 
   type(kim_temperature_unit_type), protected, &
     bind(c, name="KIM_TEMPERATURE_UNIT_unused") &
-    :: kim_temperature_unit_unused
+    :: KIM_TEMPERATURE_UNIT_UNUSED
   type(kim_temperature_unit_type), protected, &
     bind(c, name="KIM_TEMPERATURE_UNIT_K") &
-    :: kim_temperature_unit_k
+    :: KIM_TEMPERATURE_UNIT_K
 
   interface operator (.eq.)
-    logical function kim_temperature_unit_equal(left, right)
-      use, intrinsic :: iso_c_binding
-      import kim_temperature_unit_type
-      implicit none
-      type(kim_temperature_unit_type), intent(in) :: left
-      type(kim_temperature_unit_type), intent(in) :: right
-    end function kim_temperature_unit_equal
+    module procedure kim_temperature_unit_equal
   end interface operator (.eq.)
 
   interface operator (.ne.)
-    logical function kim_temperature_unit_not_equal(left, right)
-      use, intrinsic :: iso_c_binding
-      import kim_temperature_unit_type
-      implicit none
-      type(kim_temperature_unit_type), intent(in) :: left
-      type(kim_temperature_unit_type), intent(in) :: right
-    end function kim_temperature_unit_not_equal
+    module procedure kim_temperature_unit_not_equal
   end interface operator (.ne.)
 
-  interface
-    subroutine kim_temperature_unit_from_string(string, temperature_unit)
-      use, intrinsic :: iso_c_binding
-      import kim_temperature_unit_type
-      implicit none
-      character(len=*, kind=c_char), intent(in) :: string
-      type(kim_temperature_unit_type), intent(out) :: temperature_unit
-    end subroutine kim_temperature_unit_from_string
+  interface kim_from_string
+    module procedure kim_temperature_unit_from_string
+  end interface kim_from_string
 
-    subroutine kim_temperature_unit_string(temperature_unit, string)
-      use, intrinsic :: iso_c_binding
-      import kim_temperature_unit_type
-      implicit none
-      type(kim_temperature_unit_type), intent(in), value :: temperature_unit
-      character(len=*, kind=c_char), intent(out) :: string
-    end subroutine kim_temperature_unit_string
+  interface kim_to_string
+    module procedure kim_temperature_unit_to_string
+  end interface kim_to_string
 
-    subroutine kim_temperature_unit_get_number_of_temperature_units( &
-      number_of_temperature_units)
-      use, intrinsic :: iso_c_binding
-      implicit none
-      integer(c_int), intent(out) :: number_of_temperature_units
-    end subroutine kim_temperature_unit_get_number_of_temperature_units
+contains
+  logical function kim_temperature_unit_equal(lhs, rhs)
+    implicit none
+    type(kim_temperature_unit_type), intent(in) :: lhs
+    type(kim_temperature_unit_type), intent(in) :: rhs
 
-    subroutine kim_temperature_unit_get_temperature_unit(index, &
-      temperature_unit, ierr)
-      use, intrinsic :: iso_c_binding
-      import kim_temperature_unit_type
-      implicit none
-      integer(c_int), intent(in), value :: index
-      type(kim_temperature_unit_type), intent(out) :: temperature_unit
-      integer(c_int), intent(out) :: ierr
-    end subroutine kim_temperature_unit_get_temperature_unit
-  end interface
+    kim_temperature_unit_equal &
+      = (lhs%temperature_unit_id .eq. rhs%temperature_unit_id)
+  end function kim_temperature_unit_equal
+
+  logical function kim_temperature_unit_not_equal(lhs, rhs)
+    implicit none
+    type(kim_temperature_unit_type), intent(in) :: lhs
+    type(kim_temperature_unit_type), intent(in) :: rhs
+
+    kim_temperature_unit_not_equal = .not. (lhs .eq. rhs)
+  end function kim_temperature_unit_not_equal
+
+  subroutine kim_temperature_unit_from_string(string, temperature_unit)
+    implicit none
+    interface
+      type(kim_temperature_unit_type) function from_string(string) &
+        bind(c, name="KIM_TemperatureUnit_FromString")
+        use, intrinsic :: iso_c_binding
+        import kim_temperature_unit_type
+        implicit none
+        character(c_char), intent(in) :: string(*)
+      end function from_string
+    end interface
+    character(len=*, kind=c_char), intent(in) :: string
+    type(kim_temperature_unit_type), intent(out) :: temperature_unit
+
+    temperature_unit = from_string(trim(string)//c_null_char)
+  end subroutine kim_temperature_unit_from_string
+
+  subroutine kim_temperature_unit_to_string(temperature_unit, string)
+    use kim_convert_string_module, only : kim_convert_string
+    implicit none
+    interface
+      type(c_ptr) function get_string(temperature_unit) &
+        bind(c, name="KIM_TemperatureUnit_ToString")
+        use, intrinsic :: iso_c_binding
+        import kim_temperature_unit_type
+        implicit none
+        type(kim_temperature_unit_type), intent(in), value :: temperature_unit
+      end function get_string
+    end interface
+    type(kim_temperature_unit_type), intent(in) :: temperature_unit
+    character(len=*, kind=c_char), intent(out) :: string
+
+    type(c_ptr) :: p
+
+    p = get_string(temperature_unit)
+    if (c_associated(p)) then
+      call kim_convert_string(p, string)
+    else
+      string = ""
+    end if
+  end subroutine kim_temperature_unit_to_string
+
+  subroutine kim_get_number_of_temperature_units( &
+    number_of_temperature_units)
+    implicit none
+    interface
+      subroutine get_number_of_temperature_units(number_of_temperature_units) &
+        bind(c, name="KIM_TEMPERATURE_UNIT_GetNumberOfTemperatureUnits")
+        use, intrinsic :: iso_c_binding
+        implicit none
+        integer(c_int), intent(out) :: number_of_temperature_units
+      end subroutine get_number_of_temperature_units
+    end interface
+    integer(c_int), intent(out) :: number_of_temperature_units
+
+    call get_number_of_temperature_units(number_of_temperature_units)
+  end subroutine kim_get_number_of_temperature_units
+
+  subroutine kim_get_temperature_unit(index, &
+    temperature_unit, ierr)
+    implicit none
+    interface
+      integer(c_int) function get_temperature_unit(index, temperature_unit) &
+        bind(c, name="KIM_TEMPERATURE_UNIT_GetTemperatureUnit")
+        use, intrinsic :: iso_c_binding
+        import kim_temperature_unit_type
+        implicit none
+        integer(c_int), intent(in), value :: index
+        type(kim_temperature_unit_type), intent(in) :: temperature_unit
+      end function get_temperature_unit
+    end interface
+    integer(c_int), intent(in) :: index
+    type(kim_temperature_unit_type), intent(out) :: temperature_unit
+    integer(c_int), intent(out) :: ierr
+
+    ierr = get_temperature_unit(index-1, temperature_unit)
+  end subroutine kim_get_temperature_unit
 end module kim_temperature_unit_module

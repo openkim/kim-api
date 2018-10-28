@@ -29,7 +29,7 @@
 /*                                                                            */
 
 /*                                                                            */
-/* Release: This file is part of the kim-api.git repository.                  */
+/* Release: This file is part of the kim-api-v2.0.0-beta.2 package.           */
 /*                                                                            */
 
 
@@ -53,12 +53,13 @@ typedef struct KIM_ModelCompute KIM_ModelCompute;
 void KIM_ModelCompute_GetModelBufferPointer(
     KIM_ModelCompute const * const modelCompute, void ** const ptr);
 
-void KIM_ModelCompute_LogEntry(
-    KIM_ModelCompute const * const modelCompute,
-    KIM_LogVerbosity const logVerbosity, char const * const message,
-    int const lineNumber, char const * const fileName);
+void KIM_ModelCompute_LogEntry(KIM_ModelCompute const * const modelCompute,
+                               KIM_LogVerbosity const logVerbosity,
+                               char const * const message,
+                               int const lineNumber,
+                               char const * const fileName);
 
-char const * const KIM_ModelCompute_String(
-    KIM_ModelCompute const * const modelCompute);
+char const *
+KIM_ModelCompute_ToString(KIM_ModelCompute const * const modelCompute);
 
-#endif  /* KIM_MODEL_COMPUTE_H_ */
+#endif /* KIM_MODEL_COMPUTE_H_ */

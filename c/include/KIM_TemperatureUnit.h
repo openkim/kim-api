@@ -29,7 +29,7 @@
 /*                                                                            */
 
 /*                                                                            */
-/* Release: This file is part of the kim-api.git repository.                  */
+/* Release: This file is part of the kim-api-v2.0.0-beta.2 package.           */
 /*                                                                            */
 
 
@@ -46,13 +46,12 @@ typedef struct KIM_TemperatureUnit KIM_TemperatureUnit;
 #endif
 
 KIM_TemperatureUnit KIM_TemperatureUnit_FromString(char const * const str);
-
-int KIM_TemperatureUnit_Equal(KIM_TemperatureUnit const left,
-                              KIM_TemperatureUnit const right);
-int KIM_TemperatureUnit_NotEqual(KIM_TemperatureUnit const left,
-                                 KIM_TemperatureUnit const right);
-char const * const KIM_TemperatureUnit_String(
-    KIM_TemperatureUnit const temperatureUnit);
+int KIM_TemperatureUnit_Equal(KIM_TemperatureUnit const lhs,
+                              KIM_TemperatureUnit const rhs);
+int KIM_TemperatureUnit_NotEqual(KIM_TemperatureUnit const lhs,
+                                 KIM_TemperatureUnit const rhs);
+char const *
+KIM_TemperatureUnit_ToString(KIM_TemperatureUnit const temperatureUnit);
 
 extern KIM_TemperatureUnit const KIM_TEMPERATURE_UNIT_unused;
 extern KIM_TemperatureUnit const KIM_TEMPERATURE_UNIT_K;
@@ -60,7 +59,6 @@ extern KIM_TemperatureUnit const KIM_TEMPERATURE_UNIT_K;
 void KIM_TEMPERATURE_UNIT_GetNumberOfTemperatureUnits(
     int * const numberOfTemperatureUnits);
 int KIM_TEMPERATURE_UNIT_GetTemperatureUnit(
-    int const index,
-    KIM_TemperatureUnit * const temperatureUnit);
+    int const index, KIM_TemperatureUnit * const temperatureUnit);
 
-#endif  /* KIM_TEMPERATURE_UNIT_H_ */
+#endif /* KIM_TEMPERATURE_UNIT_H_ */

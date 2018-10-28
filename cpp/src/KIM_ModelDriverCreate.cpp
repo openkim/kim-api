@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api.git repository.
+// Release: This file is part of the kim-api-v2.0.0-beta.2 package.
 //
 
 
@@ -39,8 +39,8 @@
 #include "KIM_ModelImplementation.hpp"
 #endif
 
-#define CONVERT_POINTER ModelImplementation *pImpl      \
-  = reinterpret_cast<ModelImplementation *>(pimpl)
+#define CONVERT_POINTER \
+  ModelImplementation * pImpl = reinterpret_cast<ModelImplementation *>(pimpl)
 
 
 namespace KIM
@@ -80,27 +80,26 @@ void ModelDriverCreate::SetInfluenceDistancePointer(
 void ModelDriverCreate::SetNeighborListPointers(
     int const numberOfNeighborLists,
     double const * const cutoffs,
-    int const * const paddingNeighborHints,
-    int const * const halfListHints)
+    int const * const modelWillNotRequestNeighborsOfNoncontributingParticles)
 {
   CONVERT_POINTER;
 
-  pImpl->SetNeighborListPointers(numberOfNeighborLists,
-                                 cutoffs,
-                                 paddingNeighborHints,
-                                 halfListHints);
+  pImpl->SetNeighborListPointers(
+      numberOfNeighborLists,
+      cutoffs,
+      modelWillNotRequestNeighborsOfNoncontributingParticles);
 }
 
-int ModelDriverCreate::SetRefreshPointer(
-    LanguageName const languageName, func * const fptr)
+int ModelDriverCreate::SetRefreshPointer(LanguageName const languageName,
+                                         Function * const fptr)
 {
   CONVERT_POINTER;
 
   return pImpl->SetRefreshPointer(languageName, fptr);
 }
 
-int ModelDriverCreate::SetDestroyPointer(
-    LanguageName const languageName, func * const fptr)
+int ModelDriverCreate::SetDestroyPointer(LanguageName const languageName,
+                                         Function * const fptr)
 {
   CONVERT_POINTER;
 
@@ -108,7 +107,7 @@ int ModelDriverCreate::SetDestroyPointer(
 }
 
 int ModelDriverCreate::SetComputeArgumentsCreatePointer(
-    LanguageName const languageName, func * const fptr)
+    LanguageName const languageName, Function * const fptr)
 {
   CONVERT_POINTER;
 
@@ -116,15 +115,15 @@ int ModelDriverCreate::SetComputeArgumentsCreatePointer(
 }
 
 int ModelDriverCreate::SetComputeArgumentsDestroyPointer(
-    LanguageName const languageName, func * const fptr)
+    LanguageName const languageName, Function * const fptr)
 {
   CONVERT_POINTER;
 
   return pImpl->SetComputeArgumentsDestroyPointer(languageName, fptr);
 }
 
-int ModelDriverCreate::SetComputePointer(
-    LanguageName const languageName, func * const fptr)
+int ModelDriverCreate::SetComputePointer(LanguageName const languageName,
+                                         Function * const fptr)
 {
   CONVERT_POINTER;
 
@@ -139,20 +138,24 @@ int ModelDriverCreate::SetSpeciesCode(SpeciesName const speciesName,
   return pImpl->SetSpeciesCode(speciesName, code);
 }
 
-int ModelDriverCreate::SetParameterPointer(
-    int const extent, int * const ptr, std::string const & description)
+int ModelDriverCreate::SetParameterPointer(int const extent,
+                                           int * const ptr,
+                                           std::string const & name,
+                                           std::string const & description)
 {
   CONVERT_POINTER;
 
-  return pImpl->SetParameterPointer(extent, ptr, description);
+  return pImpl->SetParameterPointer(extent, ptr, name, description);
 }
 
-int ModelDriverCreate::SetParameterPointer(
-    int const extent, double * const ptr, std::string const & description)
+int ModelDriverCreate::SetParameterPointer(int const extent,
+                                           double * const ptr,
+                                           std::string const & name,
+                                           std::string const & description)
 {
   CONVERT_POINTER;
 
-  return pImpl->SetParameterPointer(extent, ptr, description);
+  return pImpl->SetParameterPointer(extent, ptr, name, description);
 }
 
 void ModelDriverCreate::SetModelBufferPointer(void * const ptr)
@@ -171,48 +174,44 @@ int ModelDriverCreate::SetUnits(LengthUnit const lengthUnit,
 {
   CONVERT_POINTER;
 
-  return pImpl->SetUnits(lengthUnit, energyUnit, chargeUnit,
-                         temperatureUnit, timeUnit);
+  return pImpl->SetUnits(
+      lengthUnit, energyUnit, chargeUnit, temperatureUnit, timeUnit);
 }
 
 
-int ModelDriverCreate::ConvertUnit(
-    LengthUnit const fromLengthUnit,
-    EnergyUnit const fromEnergyUnit,
-    ChargeUnit const fromChargeUnit,
-    TemperatureUnit const fromTemperatureUnit,
-    TimeUnit const fromTimeUnit,
-    LengthUnit const toLengthUnit,
-    EnergyUnit const toEnergyUnit,
-    ChargeUnit const toChargeUnit,
-    TemperatureUnit const toTemperatureUnit,
-    TimeUnit const toTimeUnit,
-    double const lengthExponent,
-    double const energyExponent,
-    double const chargeExponent,
-    double const temperatureExponent,
-    double const timeExponent,
-    double * const conversionFactor) const
+int ModelDriverCreate::ConvertUnit(LengthUnit const fromLengthUnit,
+                                   EnergyUnit const fromEnergyUnit,
+                                   ChargeUnit const fromChargeUnit,
+                                   TemperatureUnit const fromTemperatureUnit,
+                                   TimeUnit const fromTimeUnit,
+                                   LengthUnit const toLengthUnit,
+                                   EnergyUnit const toEnergyUnit,
+                                   ChargeUnit const toChargeUnit,
+                                   TemperatureUnit const toTemperatureUnit,
+                                   TimeUnit const toTimeUnit,
+                                   double const lengthExponent,
+                                   double const energyExponent,
+                                   double const chargeExponent,
+                                   double const temperatureExponent,
+                                   double const timeExponent,
+                                   double * const conversionFactor)
 {
-  CONVERT_POINTER;
-
-  return pImpl->ConvertUnit(
-      fromLengthUnit,
-      fromEnergyUnit,
-      fromChargeUnit,
-      fromTemperatureUnit,
-      fromTimeUnit,
-      toLengthUnit,
-      toEnergyUnit,
-      toChargeUnit,
-      toTemperatureUnit,
-      toTimeUnit,
-      lengthExponent,
-      energyExponent,
-      chargeExponent,
-      temperatureExponent,
-      timeExponent,
-      conversionFactor);
+  return ModelImplementation::ConvertUnit(fromLengthUnit,
+                                          fromEnergyUnit,
+                                          fromChargeUnit,
+                                          fromTemperatureUnit,
+                                          fromTimeUnit,
+                                          toLengthUnit,
+                                          toEnergyUnit,
+                                          toChargeUnit,
+                                          toTemperatureUnit,
+                                          toTimeUnit,
+                                          lengthExponent,
+                                          energyExponent,
+                                          chargeExponent,
+                                          temperatureExponent,
+                                          timeExponent,
+                                          conversionFactor);
 }
 
 void ModelDriverCreate::LogEntry(LogVerbosity const logVerbosity,
@@ -242,12 +241,8 @@ std::string const & ModelDriverCreate::String() const
   return pImpl->String();
 }
 
-ModelDriverCreate::ModelDriverCreate() : pimpl(NULL)
-{
-}
+ModelDriverCreate::ModelDriverCreate() : pimpl(NULL) {}
 
-ModelDriverCreate::~ModelDriverCreate()
-{
-}
+ModelDriverCreate::~ModelDriverCreate() {}
 
 }  // namespace KIM

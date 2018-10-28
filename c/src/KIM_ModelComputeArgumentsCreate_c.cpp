@@ -29,15 +29,14 @@
 /*                                                                            */
 
 /*                                                                            */
-/* Release: This file is part of the kim-api.git repository.                  */
+/* Release: This file is part of the kim-api-v2.0.0-beta.2 package.           */
 /*                                                                            */
 
 
 #ifndef KIM_LOG_VERBOSITY_HPP_
 #include "KIM_LogVerbosity.hpp"
 #endif
-extern "C"
-{
+extern "C" {
 #ifndef KIM_LOG_VERBOSITY_H_
 #include "KIM_LogVerbosity.h"
 #endif
@@ -46,8 +45,7 @@ extern "C"
 #ifndef KIM_SUPPORT_STATUS_HPP_
 #include "KIM_SupportStatus.hpp"
 #endif
-extern "C"
-{
+extern "C" {
 #ifndef KIM_SUPPORT_STATUS_H_
 #include "KIM_SupportStatus.h"
 #endif
@@ -56,8 +54,7 @@ extern "C"
 #ifndef KIM_COMPUTE_ARGUMENT_NAME_HPP_
 #include "KIM_ComputeArgumentName.hpp"
 #endif
-extern "C"
-{
+extern "C" {
 #ifndef KIM_COMPUTE_ARGUMENT_NAME_H_
 #include "KIM_ComputeArgumentName.h"
 #endif
@@ -66,8 +63,7 @@ extern "C"
 #ifndef KIM_COMPUTE_CALLBACK_NAME_HPP_
 #include "KIM_ComputeCallbackName.hpp"
 #endif
-extern "C"
-{
+extern "C" {
 #ifndef KIM_COMPUTE_CALLBACK_NAME_H_
 #include "KIM_ComputeCallbackName.h"
 #endif
@@ -76,8 +72,7 @@ extern "C"
 #ifndef KIM_MODEL_COMPUTE_ARGUMENTS_CREATE_HPP_
 #include "KIM_ModelComputeArgumentsCreate.hpp"
 #endif
-extern "C"
-{
+extern "C" {
 #ifndef KIM_MODEL_COMPUTE_ARGUMENTS_CREATE_H_
 #include "KIM_ModelComputeArgumentsCreate.h"
 #endif
@@ -89,10 +84,10 @@ struct KIM_ModelComputeArgumentsCreate
   void * p;
 };
 
-#define CONVERT_POINTER KIM::ModelComputeArgumentsCreate *              \
-  pModelComputeArgumentsCreate                                          \
-  = reinterpret_cast<KIM::ModelComputeArgumentsCreate *>                \
-      (modelComputeArgumentsCreate->p)
+#define CONVERT_POINTER                                           \
+  KIM::ModelComputeArgumentsCreate * pModelComputeArgumentsCreate \
+      = reinterpret_cast<KIM::ModelComputeArgumentsCreate *>(     \
+          modelComputeArgumentsCreate->p)
 
 namespace
 {
@@ -106,21 +101,20 @@ KIM::SupportStatus makeSupportStatusCpp(KIM_SupportStatus const supportStatus)
   return KIM::SupportStatus(supportStatus.supportStatusID);
 }
 
-KIM::ComputeArgumentName makeComputeArgumentNameCpp(
-    KIM_ComputeArgumentName const computeArgumentName)
+KIM::ComputeArgumentName
+makeComputeArgumentNameCpp(KIM_ComputeArgumentName const computeArgumentName)
 {
   return KIM::ComputeArgumentName(computeArgumentName.computeArgumentNameID);
 }
 
-KIM::ComputeCallbackName makeComputeCallbackNameCpp(
-    KIM_ComputeCallbackName const computeCallbackName)
+KIM::ComputeCallbackName
+makeComputeCallbackNameCpp(KIM_ComputeCallbackName const computeCallbackName)
 {
   return KIM::ComputeCallbackName(computeCallbackName.computeCallbackNameID);
 }
 }  // namespace
 
-extern "C"
-{
+extern "C" {
 int KIM_ModelComputeArgumentsCreate_SetArgumentSupportStatus(
     KIM_ModelComputeArgumentsCreate * const modelComputeArgumentsCreate,
     KIM_ComputeArgumentName const computeArgumentName,
@@ -157,16 +151,18 @@ void KIM_ModelComputeArgumentsCreate_SetModelBufferPointer(
 
 void KIM_ModelComputeArgumentsCreate_LogEntry(
     KIM_ModelComputeArgumentsCreate const * const modelComputeArgumentsCreate,
-    KIM_LogVerbosity const logVerbosity, char const * const message,
-    int const lineNumber, char const * const fileName)
+    KIM_LogVerbosity const logVerbosity,
+    char const * const message,
+    int const lineNumber,
+    char const * const fileName)
 {
   CONVERT_POINTER;
 
-  pModelComputeArgumentsCreate->LogEntry(makeLogVerbosityCpp(logVerbosity),
-                                         message, lineNumber, fileName);
+  pModelComputeArgumentsCreate->LogEntry(
+      makeLogVerbosityCpp(logVerbosity), message, lineNumber, fileName);
 }
 
-char const * const KIM_ModelComputeArgumentsCreate_String(
+char const * KIM_ModelComputeArgumentsCreate_ToString(
     KIM_ModelComputeArgumentsCreate const * const modelComputeArgumentsCreate)
 {
   CONVERT_POINTER;

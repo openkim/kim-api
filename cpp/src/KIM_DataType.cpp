@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api.git repository.
+// Release: This file is part of the kim-api-v2.0.0-beta.2 package.
 //
 
 #include <map>
@@ -38,7 +38,6 @@
 
 namespace KIM
 {
-
 // Order doesn't matter as long as all values are unique
 namespace DATA_TYPE
 {
@@ -48,8 +47,7 @@ DataType const Double(ID_Double);
 
 namespace
 {
-typedef std::map<DataType const, std::string, DATA_TYPE::Comparator>
-StringMap;
+typedef std::map<DataType const, std::string, DATA_TYPE::Comparator> StringMap;
 
 StringMap const GetStringMap()
 {
@@ -76,7 +74,7 @@ int GetDataType(int const index, DataType * const dataType)
   if ((index < 0) || (index >= numberOfDataTypes)) return true;
 
   StringMap::const_iterator iter = dataTypeToString.begin();
-  for (int i=0; i<index; ++i) ++iter;
+  for (int i = 0; i < index; ++i) ++iter;
   *dataType = iter->first;
   return false;  // no error
 }
@@ -89,7 +87,7 @@ DataType::DataType(std::string const & str)
 {
   dataTypeID = -1;
   for (DATA_TYPE::StringMap::const_iterator iter
-           = DATA_TYPE::dataTypeToString.begin();
+       = DATA_TYPE::dataTypeToString.begin();
        iter != DATA_TYPE::dataTypeToString.end();
        ++iter)
   {
@@ -102,9 +100,13 @@ DataType::DataType(std::string const & str)
 }
 
 bool DataType::operator==(DataType const & rhs) const
-{return dataTypeID==rhs.dataTypeID;}
+{
+  return dataTypeID == rhs.dataTypeID;
+}
 bool DataType::operator!=(DataType const & rhs) const
-{return dataTypeID!=rhs.dataTypeID;}
+{
+  return dataTypeID != rhs.dataTypeID;
+}
 
 std::string const & DataType::String() const
 {

@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api.git repository.
+// Release: This file is part of the kim-api-v2.0.0-beta.2 package.
 //
 
 #include <map>
@@ -38,7 +38,6 @@
 
 namespace KIM
 {
-
 // Order doesn't matter as long as all values are unique
 namespace NUMBERING
 {
@@ -48,8 +47,7 @@ Numbering const oneBased(ID_oneBased);
 
 namespace
 {
-typedef std::map<Numbering const, std::string, NUMBERING::Comparator>
-StringMap;
+typedef std::map<Numbering const, std::string, NUMBERING::Comparator> StringMap;
 
 StringMap const GetStringMap()
 {
@@ -76,7 +74,7 @@ int GetNumbering(int const index, Numbering * const numbering)
   if ((index < 0) || (index >= numberOfNumberings)) return true;
 
   StringMap::const_iterator iter = numberingToString.begin();
-  for (int i=0; i<index; ++i) ++iter;
+  for (int i = 0; i < index; ++i) ++iter;
   *numbering = iter->first;
   return false;  // no error
 }
@@ -89,7 +87,7 @@ Numbering::Numbering(std::string const & str)
 {
   numberingID = -1;
   for (NUMBERING::StringMap::const_iterator iter
-           = NUMBERING::numberingToString.begin();
+       = NUMBERING::numberingToString.begin();
        iter != NUMBERING::numberingToString.end();
        ++iter)
   {
@@ -102,9 +100,13 @@ Numbering::Numbering(std::string const & str)
 }
 
 bool Numbering::operator==(Numbering const & rhs) const
-{return numberingID==rhs.numberingID;}
+{
+  return numberingID == rhs.numberingID;
+}
 bool Numbering::operator!=(Numbering const & rhs) const
-{return numberingID!=rhs.numberingID;}
+{
+  return numberingID != rhs.numberingID;
+}
 
 std::string const & Numbering::String() const
 {

@@ -27,14 +27,13 @@
 //
 
 //
-// Release: This file is part of the kim-api.git repository.
+// Release: This file is part of the kim-api-v2.0.0-beta.2 package.
 //
 
 #ifndef KIM_LOG_VERBOSITY_HPP_
 #include "KIM_LogVerbosity.hpp"
 #endif
-extern "C"
-{
+extern "C" {
 #ifndef KIM_LOG_VERBOSITY_H_
 #include "KIM_LogVerbosity.h"
 #endif
@@ -43,8 +42,7 @@ extern "C"
 #ifndef KIM_MODEL_COMPUTE_HPP_
 #include "KIM_ModelCompute.hpp"
 #endif
-extern "C"
-{
+extern "C" {
 #ifndef KIM_MODEL_COMPUTE_H_
 #include "KIM_ModelCompute.h"
 #endif
@@ -56,8 +54,9 @@ struct KIM_ModelCompute
   void * p;
 };
 
-#define CONVERT_POINTER KIM::ModelCompute * pModelCompute       \
-  = reinterpret_cast<KIM::ModelCompute *>(modelCompute->p)
+#define CONVERT_POINTER             \
+  KIM::ModelCompute * pModelCompute \
+      = reinterpret_cast<KIM::ModelCompute *>(modelCompute->p)
 
 namespace
 {
@@ -68,8 +67,7 @@ KIM::LogVerbosity makeLogVerbosityCpp(KIM_LogVerbosity const logVerbosity)
 }  // namespace
 
 
-extern "C"
-{
+extern "C" {
 void KIM_ModelCompute_GetModelBufferPointer(
     KIM_ModelCompute const * const modelCompute, void ** const ptr)
 {
@@ -78,19 +76,20 @@ void KIM_ModelCompute_GetModelBufferPointer(
   pModelCompute->GetModelBufferPointer(ptr);
 }
 
-void KIM_ModelCompute_LogEntry(
-    KIM_ModelCompute const * const modelCompute,
-    KIM_LogVerbosity const logVerbosity, char const * const message,
-    int const lineNumber, char const * const fileName)
+void KIM_ModelCompute_LogEntry(KIM_ModelCompute const * const modelCompute,
+                               KIM_LogVerbosity const logVerbosity,
+                               char const * const message,
+                               int const lineNumber,
+                               char const * const fileName)
 {
   CONVERT_POINTER;
 
-  pModelCompute->LogEntry(makeLogVerbosityCpp(logVerbosity), message,
-                          lineNumber, fileName);
+  pModelCompute->LogEntry(
+      makeLogVerbosityCpp(logVerbosity), message, lineNumber, fileName);
 }
 
-char const * const KIM_ModelCompute_String(
-    KIM_ModelCompute const * const modelCompute)
+char const *
+KIM_ModelCompute_ToString(KIM_ModelCompute const * const modelCompute)
 {
   CONVERT_POINTER;
 

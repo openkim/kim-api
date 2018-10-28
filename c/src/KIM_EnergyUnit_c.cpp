@@ -29,14 +29,13 @@
 //
 
 //
-// Release: This file is part of the kim-api.git repository.
+// Release: This file is part of the kim-api-v2.0.0-beta.2 package.
 //
 
 #ifndef KIM_ENERGY_UNIT_HPP_
 #include "KIM_EnergyUnit.hpp"
 #endif
-extern "C"
-{
+extern "C" {
 #ifndef KIM_ENERGY_UNIT_H_
 #include "KIM_EnergyUnit.h"
 #endif
@@ -45,40 +44,38 @@ extern "C"
 
 namespace
 {
-KIM::EnergyUnit const makeEnergyUnitCpp(KIM_EnergyUnit const energyUnit)
+KIM::EnergyUnit makeEnergyUnitCpp(KIM_EnergyUnit const energyUnit)
 {
   KIM::EnergyUnit const * const energyUnitCpp
-      = reinterpret_cast <KIM::EnergyUnit const * const>(&energyUnit);
+      = reinterpret_cast<KIM::EnergyUnit const *>(&energyUnit);
   return *energyUnitCpp;
 }
 
-KIM_EnergyUnit const makeEnergyUnitC(KIM::EnergyUnit const energyUnit)
+KIM_EnergyUnit makeEnergyUnitC(KIM::EnergyUnit const energyUnit)
 {
   KIM_EnergyUnit const * const energyUnitC
-      = reinterpret_cast <KIM_EnergyUnit const * const>(&energyUnit);
+      = reinterpret_cast<KIM_EnergyUnit const *>(&energyUnit);
   return *energyUnitC;
 }
 }  // namespace
 
-extern "C"
-{
+extern "C" {
 KIM_EnergyUnit KIM_EnergyUnit_FromString(char const * const str)
 {
   return makeEnergyUnitC(KIM::EnergyUnit(std::string(str)));
 }
 
-int KIM_EnergyUnit_Equal(KIM_EnergyUnit const left, KIM_EnergyUnit const right)
+int KIM_EnergyUnit_Equal(KIM_EnergyUnit const lhs, KIM_EnergyUnit const rhs)
 {
-  return (left.energyUnitID == right.energyUnitID);
+  return (lhs.energyUnitID == rhs.energyUnitID);
 }
 
-int KIM_EnergyUnit_NotEqual(KIM_EnergyUnit const left,
-                            KIM_EnergyUnit const right)
+int KIM_EnergyUnit_NotEqual(KIM_EnergyUnit const lhs, KIM_EnergyUnit const rhs)
 {
-  return (!KIM_EnergyUnit_Equal(left, right));
+  return (!KIM_EnergyUnit_Equal(lhs, rhs));
 }
 
-char const * const KIM_EnergyUnit_String(KIM_EnergyUnit const energyUnit)
+char const * KIM_EnergyUnit_ToString(KIM_EnergyUnit const energyUnit)
 {
   return makeEnergyUnitCpp(energyUnit).String().c_str();
 }

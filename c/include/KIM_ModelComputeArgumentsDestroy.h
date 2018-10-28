@@ -29,7 +29,7 @@
 /*                                                                            */
 
 /*                                                                            */
-/* Release: This file is part of the kim-api.git repository.                  */
+/* Release: This file is part of the kim-api-v2.0.0-beta.2 package.           */
 /*                                                                            */
 
 
@@ -47,8 +47,8 @@ struct KIM_ModelComputeArgumentsDestroy;
 
 #ifndef KIM_MODEL_COMPUTE_ARGUMENTS_DESTROY_DEFINED_
 #define KIM_MODEL_COMPUTE_ARGUMENTS_DESTROY_DEFINED_
-typedef
-struct KIM_ModelComputeArgumentsDestroy KIM_ModelComputeArgumentsDestroy;
+typedef struct KIM_ModelComputeArgumentsDestroy
+    KIM_ModelComputeArgumentsDestroy;
 #endif
 
 void KIM_ModelComputeArgumentsDestroy_GetModelBufferPointer(
@@ -57,11 +57,13 @@ void KIM_ModelComputeArgumentsDestroy_GetModelBufferPointer(
 
 void KIM_ModelComputeArgumentsDestroy_LogEntry(
     KIM_ModelComputeArgumentsDestroy const * const modelComputeArgumentsDestroy,
-    KIM_LogVerbosity const logVerbosity, char const * const message,
-    int const lineNumber, char const * const fileName);
+    KIM_LogVerbosity const logVerbosity,
+    char const * const message,
+    int const lineNumber,
+    char const * const fileName);
 
-char const * const KIM_ModelComputeArgumentsDestroy_String(
+char const * KIM_ModelComputeArgumentsDestroy_ToString(
     KIM_ModelComputeArgumentsDestroy const * const
-    modelComputeArgumentsDestroy);
+        modelComputeArgumentsDestroy);
 
-#endif  /* KIM_MODEL_COMPUTE_ARGUMENTS_DESTROY_H_ */
+#endif /* KIM_MODEL_COMPUTE_ARGUMENTS_DESTROY_H_ */

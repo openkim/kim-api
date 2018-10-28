@@ -29,7 +29,7 @@
 /*                                                                            */
 
 /*                                                                            */
-/* Release: This file is part of the kim-api.git repository.                  */
+/* Release: This file is part of the kim-api-v2.0.0-beta.2 package.           */
 /*                                                                            */
 
 
@@ -56,4 +56,4 @@
 #include "KIM_TimeUnit.h"
 #endif
 
-#endif  /* KIM_UNIT_SYSTEM_H_ */
+#endif /* KIM_UNIT_SYSTEM_H_ */

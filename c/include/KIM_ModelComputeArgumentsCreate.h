@@ -29,16 +29,12 @@
 /*                                                                            */
 
 /*                                                                            */
-/* Release: This file is part of the kim-api.git repository.                  */
+/* Release: This file is part of the kim-api-v2.0.0-beta.2 package.           */
 /*                                                                            */
 
 
 #ifndef KIM_MODEL_COMPUTE_ARGUMENTS_CREATE_H_
 #define KIM_MODEL_COMPUTE_ARGUMENTS_CREATE_H_
-
-#ifndef KIM_FUNC_H_
-#include "KIM_func.h"
-#endif
 
 /* Forward declarations */
 #ifndef KIM_LOG_VERBOSITY_DEFINED_
@@ -86,10 +82,12 @@ void KIM_ModelComputeArgumentsCreate_SetModelBufferPointer(
 
 void KIM_ModelComputeArgumentsCreate_LogEntry(
     KIM_ModelComputeArgumentsCreate const * const modelComputeArgumentsCreate,
-    KIM_LogVerbosity const logVerbosity, char const * const message,
-    int const lineNumber, char const * const fileName);
+    KIM_LogVerbosity const logVerbosity,
+    char const * const message,
+    int const lineNumber,
+    char const * const fileName);
 
-char const * const KIM_ModelComputeArgumentsCreate_String(
+char const * KIM_ModelComputeArgumentsCreate_ToString(
     KIM_ModelComputeArgumentsCreate const * const modelComputeArgumentsCreate);
 
-#endif  /* KIM_MODEL_COMPUTE_ARGUMENTS_CREATE_H_ */
+#endif /* KIM_MODEL_COMPUTE_ARGUMENTS_CREATE_H_ */

@@ -29,7 +29,7 @@
 /*                                                                            */
 
 /*                                                                            */
-/* Release: This file is part of the kim-api.git repository.                  */
+/* Release: This file is part of the kim-api-v2.0.0-beta.2 package.           */
 /*                                                                            */
 
 
@@ -37,6 +37,6 @@
 #define KIM_NUMBERING_INC_
 
 #define ID_zeroBased 0
-#define ID_oneBased  1
+#define ID_oneBased 1
 
-#endif  /* KIM_NUMBERING_INC_ */
+#endif /* KIM_NUMBERING_INC_ */

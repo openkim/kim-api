@@ -29,7 +29,7 @@
 /*                                                                            */
 
 /*                                                                            */
-/* Release: This file is part of the kim-api.git repository.                  */
+/* Release: This file is part of the kim-api-v2.0.0-beta.2 package.           */
 /*                                                                            */
 
 
@@ -46,12 +46,11 @@ typedef struct KIM_LanguageName KIM_LanguageName;
 #endif
 
 KIM_LanguageName KIM_LanguageName_FromString(char const * const str);
-
-int KIM_LanguageName_Equal(KIM_LanguageName const left,
-                           KIM_LanguageName const right);
-int KIM_LanguageName_NotEqual(KIM_LanguageName const left,
-                              KIM_LanguageName const right);
-char const * const KIM_LanguageName_String(KIM_LanguageName const languageName);
+int KIM_LanguageName_Equal(KIM_LanguageName const lhs,
+                           KIM_LanguageName const rhs);
+int KIM_LanguageName_NotEqual(KIM_LanguageName const lhs,
+                              KIM_LanguageName const rhs);
+char const * KIM_LanguageName_ToString(KIM_LanguageName const languageName);
 
 extern KIM_LanguageName const KIM_LANGUAGE_NAME_cpp;
 extern KIM_LanguageName const KIM_LANGUAGE_NAME_c;
@@ -62,4 +61,4 @@ void KIM_LANGUAGE_NAME_GetNumberOfLanguageNames(
 int KIM_LANGUAGE_NAME_GetLanguageName(int const index,
                                       KIM_LanguageName * const languageName);
 
-#endif  /* KIM_LANGUAGE_NAME_H_ */
+#endif /* KIM_LANGUAGE_NAME_H_ */

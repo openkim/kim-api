@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api.git repository.
+// Release: This file is part of the kim-api-v2.0.0-beta.2 package.
 //
 
 #include <map>
@@ -38,7 +38,6 @@
 
 namespace KIM
 {
-
 // Order doesn't matter as long as all values are unique
 namespace LENGTH_UNIT
 {
@@ -53,7 +52,7 @@ LengthUnit const nm(ID_nm);
 namespace
 {
 typedef std::map<LengthUnit const, std::string, LENGTH_UNIT::Comparator>
-StringMap;
+    StringMap;
 
 StringMap const GetStringMap()
 {
@@ -84,20 +83,20 @@ int GetLengthUnit(int const index, LengthUnit * const lengthUnit)
   if ((index < 0) || (index >= numberOfLengthUnits)) return true;
 
   StringMap::const_iterator iter = lengthUnitToString.begin();
-  for (int i=0; i<index; ++i) ++iter;
+  for (int i = 0; i < index; ++i) ++iter;
   *lengthUnit = iter->first;
   return false;  // no error
 }
 }  // namespace LENGTH_UNIT
 
 // implementation of LengthUnit
-LengthUnit::LengthUnit() : lengthUnitID(0){}
-LengthUnit::LengthUnit(int const id) : lengthUnitID(id){}
+LengthUnit::LengthUnit() : lengthUnitID(0) {}
+LengthUnit::LengthUnit(int const id) : lengthUnitID(id) {}
 LengthUnit::LengthUnit(std::string const & str)
 {
   lengthUnitID = -1;
   for (LENGTH_UNIT::StringMap::const_iterator iter
-           = LENGTH_UNIT::lengthUnitToString.begin();
+       = LENGTH_UNIT::lengthUnitToString.begin();
        iter != LENGTH_UNIT::lengthUnitToString.end();
        ++iter)
   {
@@ -110,9 +109,13 @@ LengthUnit::LengthUnit(std::string const & str)
 }
 
 bool LengthUnit::operator==(LengthUnit const & rhs) const
-{return lengthUnitID==rhs.lengthUnitID;}
+{
+  return lengthUnitID == rhs.lengthUnitID;
+}
 bool LengthUnit::operator!=(LengthUnit const & rhs) const
-{return lengthUnitID!=rhs.lengthUnitID;}
+{
+  return lengthUnitID != rhs.lengthUnitID;
+}
 
 std::string const & LengthUnit::String() const
 {

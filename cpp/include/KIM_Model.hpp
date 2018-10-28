@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api.git repository.
+// Release: This file is part of the kim-api-v2.0.0-beta.2 package.
 //
 
 
@@ -35,10 +35,6 @@
 #define KIM_MODEL_HPP_
 
 #include <string>
-
-#ifndef KIM_FUNC_HPP_
-#include "KIM_func.hpp"
-#endif
 
 namespace KIM
 {
@@ -73,10 +69,11 @@ class Model
 
   void GetInfluenceDistance(double * const influenceDistance) const;
 
-  void GetNeighborListPointers(int * const numberOfNeighborLists,
-                               double const ** const cutoffs,
-                               int const ** const paddingNeighborHints,
-                               int const ** const halfListHints) const;
+  void GetNeighborListPointers(
+      int * const numberOfNeighborLists,
+      double const ** const cutoffs,
+      int const ** const modelWillNotRequestNeighborsOfNoncontributingParticles)
+      const;
 
   void GetUnits(LengthUnit * const lengthUnit,
                 EnergyUnit * const energyUnit,
@@ -95,16 +92,22 @@ class Model
                                int * const code) const;
 
   void GetNumberOfParameters(int * const numberOfParameters) const;
-  int GetParameterDataTypeExtentAndDescription(
-      int const index, DataType * const dataType, int * extent,
-      std::string const ** const description) const;
-  int GetParameter(int const parameterIndex, int const arrayIndex,
+  int GetParameterMetadata(int const parameterIndex,
+                           DataType * const dataType,
+                           int * const extent,
+                           std::string const ** const name,
+                           std::string const ** const description) const;
+  int GetParameter(int const parameterIndex,
+                   int const arrayIndex,
                    int * const parameterValue) const;
-  int GetParameter(int const parameterIndex, int const arrayIndex,
+  int GetParameter(int const parameterIndex,
+                   int const arrayIndex,
                    double * const parameterValue) const;
-  int SetParameter(int const parameterIndex, int const arrayIndex,
+  int SetParameter(int const parameterIndex,
+                   int const arrayIndex,
                    int const parameterValue);
-  int SetParameter(int const parameterIndex, int const arrayIndex,
+  int SetParameter(int const parameterIndex,
+                   int const arrayIndex,
                    double const parameterValue);
 
   void SetSimulatorBufferPointer(void * const ptr);
@@ -127,4 +130,5 @@ class Model
   ModelImplementation * pimpl;
 };  // class Model
 }  // namespace KIM
+
 #endif  // KIM_MODEL_HPP_

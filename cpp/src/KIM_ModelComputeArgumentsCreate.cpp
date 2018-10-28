@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api.git repository.
+// Release: This file is part of the kim-api-v2.0.0-beta.2 package.
 //
 
 
@@ -39,8 +39,9 @@
 #include "KIM_ComputeArgumentsImplementation.hpp"
 #endif
 
-#define CONVERT_POINTER ComputeArgumentsImplementation *pImpl   \
-  = reinterpret_cast<ComputeArgumentsImplementation *>(pimpl)
+#define CONVERT_POINTER                  \
+  ComputeArgumentsImplementation * pImpl \
+      = reinterpret_cast<ComputeArgumentsImplementation *>(pimpl)
 
 
 namespace KIM
@@ -97,12 +98,8 @@ std::string const & ModelComputeArgumentsCreate::String() const
   return pImpl->String();
 }
 
-ModelComputeArgumentsCreate::ModelComputeArgumentsCreate() : pimpl(NULL)
-{
-}
+ModelComputeArgumentsCreate::ModelComputeArgumentsCreate() : pimpl(NULL) {}
 
-ModelComputeArgumentsCreate::~ModelComputeArgumentsCreate()
-{
-}
+ModelComputeArgumentsCreate::~ModelComputeArgumentsCreate() {}
 
 }  // namespace KIM

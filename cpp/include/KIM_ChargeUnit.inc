@@ -29,7 +29,7 @@
 /*                                                                            */
 
 /*                                                                            */
-/* Release: This file is part of the kim-api.git repository.                  */
+/* Release: This file is part of the kim-api-v2.0.0-beta.2 package.           */
 /*                                                                            */
 
 
@@ -37,8 +37,8 @@
 #define KIM_CHARGE_UNIT_INC_
 
 #define ID_unused 0
-#define ID_C      1
-#define ID_e      2
-#define ID_statC  3
+#define ID_C 1
+#define ID_e 2
+#define ID_statC 3
 
-#endif  /* KIM_CHARGE_UNIT_INC_ */
+#endif /* KIM_CHARGE_UNIT_INC_ */

@@ -29,14 +29,13 @@
 //
 
 //
-// Release: This file is part of the kim-api.git repository.
+// Release: This file is part of the kim-api-v2.0.0-beta.2 package.
 //
 
 #ifndef KIM_CHARGE_UNIT_HPP_
 #include "KIM_ChargeUnit.hpp"
 #endif
-extern "C"
-{
+extern "C" {
 #ifndef KIM_CHARGE_UNIT_H_
 #include "KIM_ChargeUnit.h"
 #endif
@@ -45,39 +44,38 @@ extern "C"
 
 namespace
 {
-KIM::ChargeUnit const makeChargeUnitCpp(KIM_ChargeUnit const chargeUnit)
+KIM::ChargeUnit makeChargeUnitCpp(KIM_ChargeUnit const chargeUnit)
 {
   KIM::ChargeUnit const * const chargeUnitCpp
-      = reinterpret_cast <KIM::ChargeUnit const * const>(&chargeUnit);
+      = reinterpret_cast<KIM::ChargeUnit const *>(&chargeUnit);
   return *chargeUnitCpp;
 }
 
-KIM_ChargeUnit const makeChargeUnitC(KIM::ChargeUnit const chargeUnit)
+KIM_ChargeUnit makeChargeUnitC(KIM::ChargeUnit const chargeUnit)
 {
   KIM_ChargeUnit const * const chargeUnitC
-      = reinterpret_cast <KIM_ChargeUnit const * const>(&chargeUnit);
+      = reinterpret_cast<KIM_ChargeUnit const *>(&chargeUnit);
   return *chargeUnitC;
 }
 }  // namespace
 
-extern "C"
-{
+extern "C" {
 KIM_ChargeUnit KIM_ChargeUnit_FromString(char const * const str)
 {
   return makeChargeUnitC(KIM::ChargeUnit(std::string(str)));
 }
 
-int KIM_ChargeUnit_Equal(KIM_ChargeUnit const left, KIM_ChargeUnit right)
+int KIM_ChargeUnit_Equal(KIM_ChargeUnit const lhs, KIM_ChargeUnit const rhs)
 {
-  return (left.chargeUnitID == right.chargeUnitID);
+  return (lhs.chargeUnitID == rhs.chargeUnitID);
 }
 
-int KIM_ChargeUnit_NotEqual(KIM_ChargeUnit const left, KIM_ChargeUnit right)
+int KIM_ChargeUnit_NotEqual(KIM_ChargeUnit const lhs, KIM_ChargeUnit const rhs)
 {
-  return (!KIM_ChargeUnit_Equal(left, right));
+  return (!KIM_ChargeUnit_Equal(lhs, rhs));
 }
 
-char const * const KIM_ChargeUnit_String(KIM_ChargeUnit const chargeUnit)
+char const * KIM_ChargeUnit_ToString(KIM_ChargeUnit const chargeUnit)
 {
   return makeChargeUnitCpp(chargeUnit).String().c_str();
 }

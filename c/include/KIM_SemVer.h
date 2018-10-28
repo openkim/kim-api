@@ -29,21 +29,24 @@
 /*                                                                            */
 
 /*                                                                            */
-/* Release: This file is part of the kim-api.git repository.                  */
+/* Release: This file is part of the kim-api-v2.0.0-beta.2 package.           */
 /*                                                                            */
 
 
 #ifndef KIM_SEM_VER_H_
 #define KIM_SEM_VER_H_
 
-void KIM_SEM_VER_GetSemVer(char const ** const version);
+char const * KIM_SEM_VER_GetSemVer();
 int KIM_SEM_VER_IsLessThan(char const * const versionA,
                            char const * const versionB,
                            int * const isLessThan);
 int KIM_SEM_VER_ParseSemVer(char const * const version,
-                            int * const major, int * const minor,
-                            int * const patch, char * const prerelease,
                             int const prereleaseLength,
-                            char * const buildMetadata,
-                            int const buildMetadataLength);
-#endif  /* KIM_SEM_VER_H_ */
+                            int const buildMetadataLength,
+                            int * const major,
+                            int * const minor,
+                            int * const patch,
+                            char * const prerelease,
+                            char * const buildMetadata);
+
+#endif /* KIM_SEM_VER_H_ */

@@ -30,34 +30,34 @@
 //
 
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <iostream>
-#include <iomanip>
-#include <string>
-#include <cmath>
 #include "KIM_SimulatorHeaders.hpp"
+#include <cmath>
+#include <iomanip>
+#include <iostream>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string>
 
-#define NAMESTRLEN    128
+#define NAMESTRLEN 128
 
-#define FCCSPACING    5.260
-#define DIM           3
+#define FCCSPACING 5.260
+#define DIM 3
 #define NCELLSPERSIDE 2
-#define NCLUSTERPARTS (4*(NCELLSPERSIDE*NCELLSPERSIDE*NCELLSPERSIDE) + \
-                       6*(NCELLSPERSIDE*NCELLSPERSIDE)                 \
-                       + 3*(NCELLSPERSIDE) + 1)
+#define NCLUSTERPARTS                                  \
+  (4 * (NCELLSPERSIDE * NCELLSPERSIDE * NCELLSPERSIDE) \
+   + 6 * (NCELLSPERSIDE * NCELLSPERSIDE) + 3 * (NCELLSPERSIDE) + 1)
 
-#define MY_ERROR(message)                                       \
-  {                                                             \
-    std::cout << "* Error : \"" << message << "\" : "           \
-              << __LINE__ << ":" << __FILE__ << std::endl;      \
-    exit(1);                                                    \
+#define MY_ERROR(message)                                                \
+  {                                                                      \
+    std::cout << "* Error : \"" << message << "\" : " << __LINE__ << ":" \
+              << __FILE__ << std::endl;                                  \
+    exit(1);                                                             \
   }
 
-#define MY_WARNING(message)                                             \
-  {                                                                     \
-    std::cout << "* Error : \"" << message << "\" : "                   \
-              << __LINE__ << ":" << __FILE__ << std::endl;              \
+#define MY_WARNING(message)                                              \
+  {                                                                      \
+    std::cout << "* Error : \"" << message << "\" : " << __LINE__ << ":" \
+              << __FILE__ << std::endl;                                  \
   }
 
 
@@ -66,31 +66,35 @@ typedef struct
 {
   double cutoff;
   int numberOfParticles;
-  int* NNeighbors;
-  int* neighborList;
+  int * NNeighbors;
+  int * neighborList;
 } NeighList;
 
 /* Define prototypes */
-void fcc_cluster_neighborlist(int half, int numberOfParticles, double* coords,
-                              double cutoff, NeighList* nl);
+void fcc_cluster_neighborlist(int half,
+                              int numberOfParticles,
+                              double * coords,
+                              double cutoff,
+                              NeighList * nl);
 
-int get_cluster_neigh(void const * const dataObject,
+int get_cluster_neigh(void * const dataObject,
                       int const numberOfNeighborLists,
                       double const * const cutoffs,
-                      int const neighborListIndex, int const particleNumber,
+                      int const neighborListIndex,
+                      int const particleNumber,
                       int * const numberOfNeighbors,
                       int const ** const neighborsOfParticle);
 
-void create_FCC_cluster(double FCCspacing, int nCellsPerSide, double *coords);
+void create_FCC_cluster(double FCCspacing, int nCellsPerSide, double * coords);
 
 
 /* Main program */
 int main()
 {
   /* Local variable declarations */
-  double const MinSpacing = 0.8*FCCSPACING;
-  double const MaxSpacing = 1.2*FCCSPACING;
-  double const SpacingIncr = 0.025*FCCSPACING;
+  double const MinSpacing = 0.8 * FCCSPACING;
+  double const MaxSpacing = 1.2 * FCCSPACING;
+  double const SpacingIncr = 0.025 * FCCSPACING;
   double CurrentSpacing;
   double cutpad = 0.75; /* Angstroms */
   double force_norm;
@@ -109,7 +113,7 @@ int main()
   int number_of_neighbor_lists;
   double const * cutoff_cluster_model;
   double energy_cluster_model;
-  double forces_cluster[NCLUSTERPARTS*DIM];
+  double forces_cluster[NCLUSTERPARTS * DIM];
 
   std::string modelname;
 
@@ -130,16 +134,10 @@ int main()
                              modelname,
                              &requestedUnitsAccepted,
                              &kim_cluster_model);
-  if (error)
-  {
-    MY_ERROR("KIM::Model::Create()");
-  }
+  if (error) { MY_ERROR("KIM::Model::Create()"); }
 
   // Check for compatibility with the model
-  if (!requestedUnitsAccepted)
-  {
-    MY_ERROR("Must Adapt to model units");
-  }
+  if (!requestedUnitsAccepted) { MY_ERROR("Must Adapt to model units"); }
 
   // print model units
   KIM::LengthUnit lengthUnit;
@@ -148,14 +146,14 @@ int main()
   KIM::TemperatureUnit temperatureUnit;
   KIM::TimeUnit timeUnit;
 
-  kim_cluster_model->GetUnits(&lengthUnit, &energyUnit, &chargeUnit,
-                              &temperatureUnit, &timeUnit);
+  kim_cluster_model->GetUnits(
+      &lengthUnit, &energyUnit, &chargeUnit, &temperatureUnit, &timeUnit);
 
   std::cout << "LengthUnit is \"" << lengthUnit.String() << "\"" << std::endl
             << "EnergyUnit is \"" << energyUnit.String() << "\"" << std::endl
             << "ChargeUnit is \"" << chargeUnit.String() << "\"" << std::endl
-            << "TemperatureUnit is \"" << temperatureUnit.String()
-            << "\"" << std::endl
+            << "TemperatureUnit is \"" << temperatureUnit.String() << "\""
+            << std::endl
             << "TimeUnit is \"" << timeUnit.String() << "\"" << std::endl;
 
   // check species
@@ -164,64 +162,49 @@ int main()
   error = kim_cluster_model->GetSpeciesSupportAndCode(
       KIM::SPECIES_NAME::Ar, &speciesIsSupported, &modelArCode);
   if ((error) || (!speciesIsSupported))
-  {
-    MY_ERROR("Species Ar not supported");
-  }
+  { MY_ERROR("Species Ar not supported"); }
 
   KIM::ComputeArguments * computeArguments;
   error = kim_cluster_model->ComputeArgumentsCreate(&computeArguments);
-  if (error)
-  {
-    MY_ERROR("Unable to create a ComputeArguments object.");
-  }
+  if (error) { MY_ERROR("Unable to create a ComputeArguments object."); }
 
   // check compute arguments
   int numberOfComputeArgumentNames;
   KIM::COMPUTE_ARGUMENT_NAME::GetNumberOfComputeArgumentNames(
       &numberOfComputeArgumentNames);
-  for (int i=0; i<numberOfComputeArgumentNames; ++i)
+  for (int i = 0; i < numberOfComputeArgumentNames; ++i)
   {
     KIM::ComputeArgumentName computeArgumentName;
     KIM::SupportStatus supportStatus;
     KIM::COMPUTE_ARGUMENT_NAME::GetComputeArgumentName(i, &computeArgumentName);
     KIM::DataType dataType;
-    KIM::COMPUTE_ARGUMENT_NAME::GetComputeArgumentDataType(
-        computeArgumentName, &dataType);
+    KIM::COMPUTE_ARGUMENT_NAME::GetComputeArgumentDataType(computeArgumentName,
+                                                           &dataType);
     error = computeArguments->GetArgumentSupportStatus(computeArgumentName,
                                                        &supportStatus);
-    if (error)
-      MY_ERROR("unable to get ComputeArgument SupportStatus");
+    if (error) MY_ERROR("unable to get ComputeArgument SupportStatus");
 
-    std::cout << "ComputeArgument Name \""
-              << computeArgumentName.String() << "\""
-              << " is of type \""
-              << dataType.String() << "\""
-              << " and has supportStatus \""
-              << supportStatus.String() << "\""
+    std::cout << "ComputeArgument Name \"" << computeArgumentName.String()
+              << "\""
+              << " is of type \"" << dataType.String() << "\""
+              << " and has supportStatus \"" << supportStatus.String() << "\""
               << std::endl;
 
     // can only handle energy and force as a required arg
     if (supportStatus == KIM::SUPPORT_STATUS::required)
     {
       if ((computeArgumentName != KIM::COMPUTE_ARGUMENT_NAME::partialEnergy)
-          &&
-          (computeArgumentName != KIM::COMPUTE_ARGUMENT_NAME::partialForces))
-      {
-        MY_ERROR("unsupported required ComputeArgument");
-      }
+          && (computeArgumentName != KIM::COMPUTE_ARGUMENT_NAME::partialForces))
+      { MY_ERROR("unsupported required ComputeArgument"); }
     }
 
     // must have energy and forces
     if ((computeArgumentName == KIM::COMPUTE_ARGUMENT_NAME::partialEnergy)
-        ||
-        (computeArgumentName == KIM::COMPUTE_ARGUMENT_NAME::partialForces))
+        || (computeArgumentName == KIM::COMPUTE_ARGUMENT_NAME::partialForces))
     {
-      if (! ((supportStatus == KIM::SUPPORT_STATUS::required)
-             ||
-             (supportStatus == KIM::SUPPORT_STATUS::optional)))
-      {
-        MY_ERROR("energy or forces not available");
-      }
+      if (!((supportStatus == KIM::SUPPORT_STATUS::required)
+            || (supportStatus == KIM::SUPPORT_STATUS::optional)))
+      { MY_ERROR("energy or forces not available"); }
     }
   }
 
@@ -229,7 +212,7 @@ int main()
   int numberOfComputeCallbackNames;
   KIM::COMPUTE_CALLBACK_NAME::GetNumberOfComputeCallbackNames(
       &numberOfComputeCallbackNames);
-  for (int i=0; i<numberOfComputeCallbackNames; ++i)
+  for (int i = 0; i < numberOfComputeCallbackNames; ++i)
   {
     KIM::ComputeCallbackName computeCallbackName;
     KIM::COMPUTE_CALLBACK_NAME::GetComputeCallbackName(i, &computeCallbackName);
@@ -237,76 +220,79 @@ int main()
     computeArguments->GetCallbackSupportStatus(computeCallbackName,
                                                &supportStatus);
 
-    std::cout << "ComputeCallback Name \""
-              << computeCallbackName.String() << "\""
-              << " has supportStatus \""
-              << supportStatus.String() << "\""
+    std::cout << "ComputeCallback Name \"" << computeCallbackName.String()
+              << "\""
+              << " has supportStatus \"" << supportStatus.String() << "\""
               << std::endl;
 
     // cannot handle any "required" callbacks
     if (supportStatus == KIM::SUPPORT_STATUS::required)
-    {
-      MY_ERROR("unsupported required ComputeCallback");
-    }
+    { MY_ERROR("unsupported required ComputeCallback"); }
   }
 
   int numberOfParameters;
   kim_cluster_model->GetNumberOfParameters(&numberOfParameters);
-  for (int i=0; i<numberOfParameters; ++i)
+  for (int i = 0; i < numberOfParameters; ++i)
   {
     KIM::DataType dataType;
-    std::string const * str;
+    std::string const * strName;
+    std::string const * strDesc;
     int extent;
-    kim_cluster_model->GetParameterDataTypeExtentAndDescription(
-        i, &dataType, &extent, &str);
-    std::cout << "Parameter No. " << i
-              << " has data type \"" << dataType.String() << "\""
-              << " with extent " << extent
-              << " and description : " << *str << std::endl;
+    kim_cluster_model->GetParameterMetadata(
+        i, &dataType, &extent, &strName, &strDesc);
+    std::cout << "Parameter No. " << i << " has" << std::endl
+              << " data type   : \"" << dataType.String() << "\"" << std::endl
+              << " extent      : " << extent << std::endl
+              << " name        : " << *strName << std::endl
+              << " description : " << *strDesc << std::endl;
   }
 
   // We're compatible with the model. Let's do it.
 
-  error = computeArguments->SetArgumentPointer(
-      KIM::COMPUTE_ARGUMENT_NAME::numberOfParticles,
-      (int *) &numberOfParticles_cluster)
-      || computeArguments->SetArgumentPointer(
-          KIM::COMPUTE_ARGUMENT_NAME::particleSpeciesCodes,
-          particleSpecies_cluster_model)
-      || computeArguments->SetArgumentPointer(
-          KIM::COMPUTE_ARGUMENT_NAME::particleContributing,
-          particleContributing_cluster_model)
-      || computeArguments->SetArgumentPointer(
-          KIM::COMPUTE_ARGUMENT_NAME::coordinates, (double*) coords_cluster)
-      || computeArguments->SetArgumentPointer(
-          KIM::COMPUTE_ARGUMENT_NAME::partialEnergy, &energy_cluster_model)
-      || computeArguments->SetArgumentPointer(
-          KIM::COMPUTE_ARGUMENT_NAME::partialForces, (double*) forces_cluster);
+  error
+      = computeArguments->SetArgumentPointer(
+            KIM::COMPUTE_ARGUMENT_NAME::numberOfParticles,
+            (int *) &numberOfParticles_cluster)
+        || computeArguments->SetArgumentPointer(
+               KIM::COMPUTE_ARGUMENT_NAME::particleSpeciesCodes,
+               particleSpecies_cluster_model)
+        || computeArguments->SetArgumentPointer(
+               KIM::COMPUTE_ARGUMENT_NAME::particleContributing,
+               particleContributing_cluster_model)
+        || computeArguments->SetArgumentPointer(
+               KIM::COMPUTE_ARGUMENT_NAME::coordinates,
+               (double *) coords_cluster)
+        || computeArguments->SetArgumentPointer(
+               KIM::COMPUTE_ARGUMENT_NAME::partialEnergy, &energy_cluster_model)
+        || computeArguments->SetArgumentPointer(
+               KIM::COMPUTE_ARGUMENT_NAME::partialForces,
+               (double *) forces_cluster);
   if (error) MY_ERROR("KIM_API_set_data");
   error = computeArguments->SetCallbackPointer(
       KIM::COMPUTE_CALLBACK_NAME::GetNeighborList,
       KIM::LANGUAGE_NAME::cpp,
-      (KIM::func *) &get_cluster_neigh,
+      (KIM::Function *) &get_cluster_neigh,
       &nl_cluster_model);
   if (error) MY_ERROR("set_call_back");
 
   kim_cluster_model->GetInfluenceDistance(&influence_distance_cluster_model);
-  int const * paddingNeighborHints;
-  int const * halfListHints;
-  kim_cluster_model->GetNeighborListPointers(&number_of_neighbor_lists,
-                                             &cutoff_cluster_model,
-                                             &paddingNeighborHints,
-                                             &halfListHints);
+  int const * modelWillNotRequestNeighborsOfNoncontributingParticles;
+  kim_cluster_model->GetNeighborListPointers(
+      &number_of_neighbor_lists,
+      &cutoff_cluster_model,
+      &modelWillNotRequestNeighborsOfNoncontributingParticles);
   std::cout << "Model has influence distance of : "
             << influence_distance_cluster_model << std::endl;
   std::cout << "Model has numberOfNeighborLists : " << number_of_neighbor_lists
             << std::endl;
-  for (int i=0; i<number_of_neighbor_lists; ++i)
+  for (int i = 0; i < number_of_neighbor_lists; ++i)
   {
-    std::cout << "\t" << "Neighbor list " << i << " has cutoff "
-              << cutoff_cluster_model[i] << " with paddingNeighborHint "
-              << paddingNeighborHints[i] << " and halfListHint "
-              << halfListHints[i]
+    std::cout << "\t"
+              << "Neighbor list " << i << " has cutoff "
+              << cutoff_cluster_model[i]
+              << " with "
+                 "modelWillNotRequestNeighborsOfNoncontributingParticles "
+              << modelWillNotRequestNeighborsOfNoncontributingParticles[i]
               << std::endl;
   }
   // ignoring hints from here on...
@@ -323,34 +309,37 @@ int main()
     particleSpecies_cluster_model[i] = particleSpecies_cluster_model[0];
   /* setup particleContributing */
   for (i = 0; i < NCLUSTERPARTS; ++i)
-    particleContributing_cluster_model[i] = 1;  /* every particle contributes */
+    particleContributing_cluster_model[i] = 1; /* every particle contributes */
 
   /* setup neighbor lists */
   /* allocate memory for list */
   nl_cluster_model.numberOfParticles = NCLUSTERPARTS;
   nl_cluster_model.NNeighbors = new int[NCLUSTERPARTS];
-  if (NULL==nl_cluster_model.NNeighbors) MY_ERROR("new unsuccessful");
+  if (NULL == nl_cluster_model.NNeighbors) MY_ERROR("new unsuccessful");
 
-  nl_cluster_model.neighborList = new int[NCLUSTERPARTS*NCLUSTERPARTS];
-  if (NULL==nl_cluster_model.neighborList) MY_ERROR("new unsuccessful");
+  nl_cluster_model.neighborList = new int[NCLUSTERPARTS * NCLUSTERPARTS];
+  if (NULL == nl_cluster_model.neighborList) MY_ERROR("new unsuccessful");
 
   /* ready to compute */
   std::cout << std::setiosflags(std::ios::scientific) << std::setprecision(10);
   std::cout << "This is Test : ex_test_Ar_fcc_cluster_cpp\n";
-  std::cout << "--------------------------------------------------------------------------------\n";
+  std::cout << "---------------------------------------------------------------"
+               "-----------------\n";
   std::cout << "Results for KIM Model : " << modelname << std::endl;
 
-  std::cout << std::setw(20) << "Energy"
-            << std::setw(20) << "Force Norm"
-            << std::setw(20) << "Lattice Spacing"
-            << std::endl;
-  for (CurrentSpacing = MinSpacing; CurrentSpacing < MaxSpacing; CurrentSpacing += SpacingIncr)
+  std::cout << std::setw(20) << "Energy" << std::setw(20) << "Force Norm"
+            << std::setw(20) << "Lattice Spacing" << std::endl;
+  for (CurrentSpacing = MinSpacing; CurrentSpacing < MaxSpacing;
+       CurrentSpacing += SpacingIncr)
   {
     /* update coordinates for cluster */
     create_FCC_cluster(CurrentSpacing, NCELLSPERSIDE, &(coords_cluster[0][0]));
     /* compute neighbor lists */
-    fcc_cluster_neighborlist(0, NCLUSTERPARTS, &(coords_cluster[0][0]),
-                             (*cutoff_cluster_model + cutpad), &nl_cluster_model);
+    fcc_cluster_neighborlist(0,
+                             NCLUSTERPARTS,
+                             &(coords_cluster[0][0]),
+                             (*cutoff_cluster_model + cutpad),
+                             &nl_cluster_model);
 
     /* call compute functions */
     error = kim_cluster_model->Compute(computeArguments);
@@ -358,38 +347,31 @@ int main()
 
     /* compute force norm */
     force_norm = 0.0;
-    for (i=0; i < DIM*numberOfParticles_cluster; ++i)
-    {
-      force_norm += forces_cluster[i]*forces_cluster[i];
-    }
+    for (i = 0; i < DIM * numberOfParticles_cluster; ++i)
+    { force_norm += forces_cluster[i] * forces_cluster[i]; }
     force_norm = sqrt(force_norm);
 
     /* print the results */
-    std::cout << std::setw(20) << energy_cluster_model
-              << std::setw(20) << force_norm
-              << std::setw(20) << CurrentSpacing
-              << std::endl;
+    std::cout << std::setw(20) << energy_cluster_model << std::setw(20)
+              << force_norm << std::setw(20) << CurrentSpacing << std::endl;
   }
 
   /* call compute arguments destroy */
   error = kim_cluster_model->ComputeArgumentsDestroy(&computeArguments);
-  if (error)
-  {
-    MY_ERROR("Unable to destroy compute arguments");
-  }
+  if (error) { MY_ERROR("Unable to destroy compute arguments"); }
 
   /* call model destroy */
   KIM::Model::Destroy(&kim_cluster_model);
 
   /* free memory of neighbor lists */
-  delete [] nl_cluster_model.NNeighbors;
-  delete [] nl_cluster_model.neighborList;
+  delete[] nl_cluster_model.NNeighbors;
+  delete[] nl_cluster_model.neighborList;
 
   /* everything is great */
   return 0;
 }
 
-void create_FCC_cluster(double FCCspacing, int nCellsPerSide, double *coords)
+void create_FCC_cluster(double FCCspacing, int nCellsPerSide, double * coords)
 {
   /* local variables */
   double FCCshifts[4][DIM];
@@ -402,113 +384,96 @@ void create_FCC_cluster(double FCCspacing, int nCellsPerSide, double *coords)
   int n;
 
   /* create a cubic FCC cluster of parts */
-  FCCshifts[0][0] = 0.0;            FCCshifts[0][1] = 0.0;            FCCshifts[0][2] = 0.0;
-  FCCshifts[1][0] = 0.5*FCCspacing; FCCshifts[1][1] = 0.5*FCCspacing; FCCshifts[1][2] = 0.0;
-  FCCshifts[2][0] = 0.5*FCCspacing; FCCshifts[2][1] = 0.0;            FCCshifts[2][2] = 0.5*FCCspacing;
-  FCCshifts[3][0] = 0.0;            FCCshifts[3][1] = 0.5*FCCspacing; FCCshifts[3][2] = 0.5*FCCspacing;
+  FCCshifts[0][0] = 0.0;
+  FCCshifts[0][1] = 0.0;
+  FCCshifts[0][2] = 0.0;
+  FCCshifts[1][0] = 0.5 * FCCspacing;
+  FCCshifts[1][1] = 0.5 * FCCspacing;
+  FCCshifts[1][2] = 0.0;
+  FCCshifts[2][0] = 0.5 * FCCspacing;
+  FCCshifts[2][1] = 0.0;
+  FCCshifts[2][2] = 0.5 * FCCspacing;
+  FCCshifts[3][0] = 0.0;
+  FCCshifts[3][1] = 0.5 * FCCspacing;
+  FCCshifts[3][2] = 0.5 * FCCspacing;
 
   a = 0;
   for (i = 0; i < nCellsPerSide; ++i)
   {
-    latVec[0] = ((double) i)*FCCspacing;
+    latVec[0] = ((double) i) * FCCspacing;
     for (j = 0; j < nCellsPerSide; ++j)
     {
-      latVec[1] = ((double) j)*FCCspacing;
+      latVec[1] = ((double) j) * FCCspacing;
       for (k = 0; k < nCellsPerSide; ++k)
       {
-        latVec[2] = ((double) k)*FCCspacing;
+        latVec[2] = ((double) k) * FCCspacing;
         for (m = 0; m < 4; ++m)
         {
           for (n = 0; n < DIM; ++n)
-          {
-            coords[a*DIM + n] = latVec[n] + FCCshifts[m][n];
-          }
+          { coords[a * DIM + n] = latVec[n] + FCCshifts[m][n]; }
           a++;
         }
       }
       /* add in the remaining three faces */
       /* pos-x face */
-      latVec[0] = NCELLSPERSIDE*FCCspacing;
-      latVec[1] = ((double) i)*FCCspacing;
-      latVec[2] = ((double) j)*FCCspacing;
-      for (n = 0; n < DIM; ++n)
-      {
-        coords[a*DIM + n] = latVec[n];
-      }
+      latVec[0] = NCELLSPERSIDE * FCCspacing;
+      latVec[1] = ((double) i) * FCCspacing;
+      latVec[2] = ((double) j) * FCCspacing;
+      for (n = 0; n < DIM; ++n) { coords[a * DIM + n] = latVec[n]; }
       a++;
       for (n = 0; n < DIM; ++n)
-      {
-        coords[a*DIM + n] = latVec[n] + FCCshifts[3][n];
-      }
+      { coords[a * DIM + n] = latVec[n] + FCCshifts[3][n]; }
       a++;
       /* pos-y face */
-      latVec[0] = ((double) i)*FCCspacing;
-      latVec[1] = NCELLSPERSIDE*FCCspacing;
-      latVec[2] = ((double) j)*FCCspacing;
-      for (n = 0; n < DIM; ++n)
-      {
-        coords[a*DIM + n] = latVec[n];
-      }
+      latVec[0] = ((double) i) * FCCspacing;
+      latVec[1] = NCELLSPERSIDE * FCCspacing;
+      latVec[2] = ((double) j) * FCCspacing;
+      for (n = 0; n < DIM; ++n) { coords[a * DIM + n] = latVec[n]; }
       a++;
       for (n = 0; n < DIM; ++n)
-      {
-        coords[a*DIM + n] = latVec[n] + FCCshifts[2][n];
-      }
+      { coords[a * DIM + n] = latVec[n] + FCCshifts[2][n]; }
       a++;
       /* pos-z face */
-      latVec[0] = ((double) i)*FCCspacing;
-      latVec[1] = ((double) j)*FCCspacing;
-      latVec[2] = NCELLSPERSIDE*FCCspacing;
-      for (n = 0; n < DIM; ++n)
-      {
-        coords[a*DIM + n] = latVec[n];
-      }
+      latVec[0] = ((double) i) * FCCspacing;
+      latVec[1] = ((double) j) * FCCspacing;
+      latVec[2] = NCELLSPERSIDE * FCCspacing;
+      for (n = 0; n < DIM; ++n) { coords[a * DIM + n] = latVec[n]; }
       a++;
       for (n = 0; n < DIM; ++n)
-      {
-        coords[a*DIM + n] = latVec[n] + FCCshifts[1][n];
-      }
+      { coords[a * DIM + n] = latVec[n] + FCCshifts[1][n]; }
       a++;
     }
     /* add in the remaining three edges */
-    latVec[0] = ((double) i)*FCCspacing;
-    latVec[1] = NCELLSPERSIDE*FCCspacing;
-    latVec[2] = NCELLSPERSIDE*FCCspacing;
-    for (n = 0; n < DIM; ++n)
-    {
-      coords[a*DIM + n] = latVec[n];
-    }
+    latVec[0] = ((double) i) * FCCspacing;
+    latVec[1] = NCELLSPERSIDE * FCCspacing;
+    latVec[2] = NCELLSPERSIDE * FCCspacing;
+    for (n = 0; n < DIM; ++n) { coords[a * DIM + n] = latVec[n]; }
     a++;
-    latVec[0] = NCELLSPERSIDE*FCCspacing;
-    latVec[1] = ((double) i)*FCCspacing;
-    latVec[2] = NCELLSPERSIDE*FCCspacing;
-    for (n = 0; n < DIM; ++n)
-    {
-      coords[a*DIM + n] = latVec[n];
-    }
+    latVec[0] = NCELLSPERSIDE * FCCspacing;
+    latVec[1] = ((double) i) * FCCspacing;
+    latVec[2] = NCELLSPERSIDE * FCCspacing;
+    for (n = 0; n < DIM; ++n) { coords[a * DIM + n] = latVec[n]; }
     a++;
-    latVec[0] = NCELLSPERSIDE*FCCspacing;
-    latVec[1] = NCELLSPERSIDE*FCCspacing;
-    latVec[2] = ((double) i)*FCCspacing;
-    for (n = 0; n < DIM; ++n)
-    {
-      coords[a*DIM + n] = latVec[n];
-    }
+    latVec[0] = NCELLSPERSIDE * FCCspacing;
+    latVec[1] = NCELLSPERSIDE * FCCspacing;
+    latVec[2] = ((double) i) * FCCspacing;
+    for (n = 0; n < DIM; ++n) { coords[a * DIM + n] = latVec[n]; }
     a++;
   }
   /* add in the remaining corner */
   for (n = 0; n < DIM; ++n)
-  {
-    coords[a*DIM + n] = NCELLSPERSIDE*FCCspacing;
-  }
+  { coords[a * DIM + n] = NCELLSPERSIDE * FCCspacing; }
   a++;
 
   return;
 }
 
 
-void fcc_cluster_neighborlist(int half, int numberOfParticles, double* coords,
-                              double cutoff, NeighList* nl)
+void fcc_cluster_neighborlist(int half,
+                              int numberOfParticles,
+                              double * coords,
+                              double cutoff,
+                              NeighList * nl)
 {
   /* local variables */
   int i;
@@ -522,7 +487,7 @@ void fcc_cluster_neighborlist(int half, int numberOfParticles, double* coords,
 
   nl->cutoff = cutoff;
 
-  cutoff2 = cutoff*cutoff;
+  cutoff2 = cutoff * cutoff;
 
   for (i = 0; i < numberOfParticles; ++i)
   {
@@ -532,8 +497,8 @@ void fcc_cluster_neighborlist(int half, int numberOfParticles, double* coords,
       r2 = 0.0;
       for (k = 0; k < DIM; ++k)
       {
-        dx[k] = coords[j*DIM + k] - coords[i*DIM + k];
-        r2 += dx[k]*dx[k];
+        dx[k] = coords[j * DIM + k] - coords[i * DIM + k];
+        r2 += dx[k] * dx[k];
       }
 
       if (r2 < cutoff2)
@@ -541,7 +506,7 @@ void fcc_cluster_neighborlist(int half, int numberOfParticles, double* coords,
         if ((half && i < j) || (!half && i != j))
         {
           /* part j is a neighbor of part i */
-          (*nl).neighborList[i*NCLUSTERPARTS + a] = j;
+          (*nl).neighborList[i * NCLUSTERPARTS + a] = j;
           a++;
         }
       }
@@ -553,16 +518,17 @@ void fcc_cluster_neighborlist(int half, int numberOfParticles, double* coords,
   return;
 }
 
-int get_cluster_neigh(void const * const dataObject,
+int get_cluster_neigh(void * const dataObject,
                       int const numberOfNeighborLists,
                       double const * const cutoffs,
-                      int const neighborListIndex, int const particleNumber,
+                      int const neighborListIndex,
+                      int const particleNumber,
                       int * const numberOfNeighbors,
                       int const ** const neighborsOfParticle)
 {
   /* local variables */
   int error = true;
-  NeighList* nl = (NeighList*) dataObject;
+  NeighList * nl = (NeighList *) dataObject;
   int numberOfParticles = nl->numberOfParticles;
 
   if ((numberOfNeighborLists != 1) || (cutoffs[0] > nl->cutoff)) return error;
@@ -572,7 +538,8 @@ int get_cluster_neigh(void const * const dataObject,
   /* initialize numNeigh */
   *numberOfNeighbors = 0;
 
-  if ((particleNumber >= numberOfParticles) || (particleNumber < 0)) /* invalid id */
+  if ((particleNumber >= numberOfParticles)
+      || (particleNumber < 0)) /* invalid id */
   {
     MY_WARNING("Invalid part ID in get_cluster_neigh");
     return true;
@@ -582,7 +549,8 @@ int get_cluster_neigh(void const * const dataObject,
   *numberOfNeighbors = (*nl).NNeighbors[particleNumber];
 
   /* set the location for the returned neighbor list */
-  *neighborsOfParticle = &((*nl).neighborList[(particleNumber)*numberOfParticles]);
+  *neighborsOfParticle
+      = &((*nl).neighborList[(particleNumber) *numberOfParticles]);
 
   return false;
 }

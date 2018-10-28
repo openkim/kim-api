@@ -27,15 +27,15 @@
 //
 
 //
-// Release: This file is part of the kim-api.git repository.
+// Release: This file is part of the kim-api-v2.0.0-beta.2 package.
 //
 
 
 #ifndef KIM_MODEL_REFRESH_HPP_
 #define KIM_MODEL_REFRESH_HPP_
 
-#include <string>
 #include <sstream>
+#include <string>
 
 namespace KIM
 {
@@ -44,22 +44,26 @@ class LogVerbosity;
 class ModelRefreshImplementation;
 
 
-class ModelRefresh{
+class ModelRefresh
+{
  public:
   void SetInfluenceDistancePointer(double const * const influenceDistance);
 
-  void SetNeighborListPointers(int const numberOfNeighborLists,
-                               double const * const cutoffs,
-                               int const * const paddingNeighborHints,
-                               int const * const halfListHints);
+  void SetNeighborListPointers(
+      int const numberOfNeighborLists,
+      double const * const cutoffs,
+      int const * const modelWillNotRequestNeighborsOfNoncontributingParticles);
 
   void GetModelBufferPointer(void ** const ptr) const;
 
-  void LogEntry(LogVerbosity const logVerbosity, std::string const & message,
-                int const lineNumber, std::string const & fileName) const;
+  void LogEntry(LogVerbosity const logVerbosity,
+                std::string const & message,
+                int const lineNumber,
+                std::string const & fileName) const;
   void LogEntry(LogVerbosity const logVerbosity,
                 std::stringstream const & message,
-                int const lineNumber, std::string const & fileName) const;
+                int const lineNumber,
+                std::string const & fileName) const;
 
   std::string const & String() const;
 
@@ -74,4 +78,5 @@ class ModelRefresh{
   ModelRefreshImplementation * pimpl;
 };  // class ModelRefresh
 }  // namespace KIM
+
 #endif  // KIM_MODEL_REFRESH_HPP_

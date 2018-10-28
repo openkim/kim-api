@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api.git repository.
+// Release: This file is part of the kim-api-v2.0.0-beta.2 package.
 //
 
 
@@ -38,7 +38,6 @@
 
 namespace KIM
 {
-
 class ChargeUnit
 {
  public:
@@ -50,7 +49,7 @@ class ChargeUnit
   bool operator==(ChargeUnit const & rhs) const;
   bool operator!=(ChargeUnit const & rhs) const;
   std::string const & String() const;
-};
+};  // class ChargeUnit
 
 namespace CHARGE_UNIT
 {
@@ -68,7 +67,8 @@ struct Comparator
   {
     return a.chargeUnitID < b.chargeUnitID;
   }
-};
+};  // struct Comparator
 }  // namespace CHARGE_UNIT
 }  // namespace KIM
+
 #endif  // KIM_CHARGE_UNIT_HPP_

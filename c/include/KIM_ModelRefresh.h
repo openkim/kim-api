@@ -29,19 +29,21 @@
 /*                                                                            */
 
 /*                                                                            */
-/* Release: This file is part of the kim-api.git repository.                  */
+/* Release: This file is part of the kim-api-v2.0.0-beta.2 package.           */
 /*                                                                            */
 
 
 #ifndef KIM_MODEL_REFRESH_H_
 #define KIM_MODEL_REFRESH_H_
 
-struct KIM_ModelRefresh;
-
+/* Forward declarations */
 #ifndef KIM_LOG_VERBOSITY_DEFINED_
 #define KIM_LOG_VERBOSITY_DEFINED_
 typedef struct KIM_LogVerbosity KIM_LogVerbosity;
 #endif
+
+
+struct KIM_ModelRefresh;
 
 #ifndef KIM_MODEL_REFRESH_DEFINED_
 #define KIM_MODEL_REFRESH_DEFINED_
@@ -50,25 +52,24 @@ typedef struct KIM_ModelRefresh KIM_ModelRefresh;
 
 void KIM_ModelRefresh_SetInfluenceDistancePointer(
     KIM_ModelRefresh * const modelRefresh,
-    double * const influenceDistance);
+    double const * const influenceDistance);
 
 void KIM_ModelRefresh_SetNeighborListPointers(
     KIM_ModelRefresh * const modelRefresh,
     int const numberOfNeighborLists,
     double const * const cutoffs,
-    int const * const paddingNeighborHints,
-    int const * const halfListHints);
+    int const * const modelWillNotRequestNeighborsOfNoncontributingParticles);
 
 void KIM_ModelRefresh_GetModelBufferPointer(
-    KIM_ModelRefresh const * const modelRefresh,
-    void ** const ptr);
+    KIM_ModelRefresh const * const modelRefresh, void ** const ptr);
 
-void KIM_ModelRefresh_LogEntry(
-    KIM_ModelRefresh const * const modelRefresh,
-    KIM_LogVerbosity const logVerbosity, char const * const message,
-    int const lineNumber, char const * const fileName);
+void KIM_ModelRefresh_LogEntry(KIM_ModelRefresh const * const modelRefresh,
+                               KIM_LogVerbosity const logVerbosity,
+                               char const * const message,
+                               int const lineNumber,
+                               char const * const fileName);
 
-char const * const KIM_ModelRefresh_String(
-    KIM_ModelRefresh const * const modelRefresh);
+char const *
+KIM_ModelRefresh_ToString(KIM_ModelRefresh const * const modelRefresh);
 
-#endif  /* KIM_MODEL_REFRESH_H_ */
+#endif /* KIM_MODEL_REFRESH_H_ */

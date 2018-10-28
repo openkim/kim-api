@@ -29,14 +29,13 @@
 //
 
 //
-// Release: This file is part of the kim-api.git repository.
+// Release: This file is part of the kim-api-v2.0.0-beta.2 package.
 //
 
 #ifndef KIM_LOG_VERBOSITY_HPP_
 #include "KIM_LogVerbosity.hpp"
 #endif
-extern "C"
-{
+extern "C" {
 #ifndef KIM_LOG_VERBOSITY_H_
 #include "KIM_LogVerbosity.h"
 #endif
@@ -45,79 +44,78 @@ extern "C"
 
 namespace
 {
-KIM::LogVerbosity const makeLogVerbosityCpp(KIM_LogVerbosity const logVerbosity)
+KIM::LogVerbosity makeLogVerbosityCpp(KIM_LogVerbosity const logVerbosity)
 {
   KIM::LogVerbosity const * const logVerbosityCpp
-      = reinterpret_cast <KIM::LogVerbosity const * const>(&logVerbosity);
+      = reinterpret_cast<KIM::LogVerbosity const *>(&logVerbosity);
   return *logVerbosityCpp;
 }
 
-KIM_LogVerbosity const makeLogVerbosityC(KIM::LogVerbosity const logVerbosity)
+KIM_LogVerbosity makeLogVerbosityC(KIM::LogVerbosity const logVerbosity)
 {
   KIM_LogVerbosity const * const logVerbosityC
-      = reinterpret_cast <KIM_LogVerbosity const * const>(&logVerbosity);
+      = reinterpret_cast<KIM_LogVerbosity const *>(&logVerbosity);
   return *logVerbosityC;
 }
 }  // namespace
 
-extern "C"
-{
+extern "C" {
 KIM_LogVerbosity KIM_LogVerbosity_FromString(char const * const str)
 {
   return makeLogVerbosityC(KIM::LogVerbosity(std::string(str)));
 }
 
-int KIM_LogVerbosity_LessThan(KIM_LogVerbosity const left,
-                              KIM_LogVerbosity const right)
+int KIM_LogVerbosity_LessThan(KIM_LogVerbosity const lhs,
+                              KIM_LogVerbosity const rhs)
 {
-  return (left.logVerbosityID < right.logVerbosityID);
+  return (lhs.logVerbosityID < rhs.logVerbosityID);
 }
 
-int KIM_LogVerbosity_GreaterThan(KIM_LogVerbosity const left,
-                                 KIM_LogVerbosity const right)
+int KIM_LogVerbosity_GreaterThan(KIM_LogVerbosity const lhs,
+                                 KIM_LogVerbosity const rhs)
 {
-  return (left.logVerbosityID > right.logVerbosityID);
+  return (lhs.logVerbosityID > rhs.logVerbosityID);
 }
-int KIM_LogVerbosity_LessThanEqual(KIM_LogVerbosity const left,
-                                   KIM_LogVerbosity const right)
+int KIM_LogVerbosity_LessThanEqual(KIM_LogVerbosity const lhs,
+                                   KIM_LogVerbosity const rhs)
 {
-    return (left.logVerbosityID <= right.logVerbosityID);
+  return (lhs.logVerbosityID <= rhs.logVerbosityID);
 }
-int KIM_LogVerbosity_GreaterThanEqual(KIM_LogVerbosity const left,
-                                      KIM_LogVerbosity const right)
+int KIM_LogVerbosity_GreaterThanEqual(KIM_LogVerbosity const lhs,
+                                      KIM_LogVerbosity const rhs)
 {
-  return (left.logVerbosityID >= right.logVerbosityID);
-}
-
-int KIM_LogVerbosity_Equal(KIM_LogVerbosity const left,
-                           KIM_LogVerbosity const right)
-{
-  return (left.logVerbosityID == right.logVerbosityID);
+  return (lhs.logVerbosityID >= rhs.logVerbosityID);
 }
 
-int KIM_LogVerbosity_NotEqual(KIM_LogVerbosity const left,
-                              KIM_LogVerbosity const right)
+int KIM_LogVerbosity_Equal(KIM_LogVerbosity const lhs,
+                           KIM_LogVerbosity const rhs)
 {
-  return (! KIM_LogVerbosity_Equal(left, right));
+  return (lhs.logVerbosityID == rhs.logVerbosityID);
 }
 
-char const * const KIM_LogVerbosity_String(KIM_LogVerbosity const logVerbosity)
+int KIM_LogVerbosity_NotEqual(KIM_LogVerbosity const lhs,
+                              KIM_LogVerbosity const rhs)
+{
+  return (!KIM_LogVerbosity_Equal(lhs, rhs));
+}
+
+char const * KIM_LogVerbosity_ToString(KIM_LogVerbosity const logVerbosity)
 {
   return makeLogVerbosityCpp(logVerbosity).String().c_str();
 }
 
 KIM_LogVerbosity const KIM_LOG_VERBOSITY_silent
-= {KIM::LOG_VERBOSITY::silent.logVerbosityID};
+    = {KIM::LOG_VERBOSITY::silent.logVerbosityID};
 KIM_LogVerbosity const KIM_LOG_VERBOSITY_fatal
-= {KIM::LOG_VERBOSITY::fatal.logVerbosityID};
+    = {KIM::LOG_VERBOSITY::fatal.logVerbosityID};
 KIM_LogVerbosity const KIM_LOG_VERBOSITY_error
-= {KIM::LOG_VERBOSITY::error.logVerbosityID};
+    = {KIM::LOG_VERBOSITY::error.logVerbosityID};
 KIM_LogVerbosity const KIM_LOG_VERBOSITY_warning
-= {KIM::LOG_VERBOSITY::warning.logVerbosityID};
+    = {KIM::LOG_VERBOSITY::warning.logVerbosityID};
 KIM_LogVerbosity const KIM_LOG_VERBOSITY_information
-= {KIM::LOG_VERBOSITY::information.logVerbosityID};
+    = {KIM::LOG_VERBOSITY::information.logVerbosityID};
 KIM_LogVerbosity const KIM_LOG_VERBOSITY_debug
-= {KIM::LOG_VERBOSITY::debug.logVerbosityID};
+    = {KIM::LOG_VERBOSITY::debug.logVerbosityID};
 
 void KIM_LOG_VERBOSITY_GetNumberOfLogVerbosities(
     int * const numberOfLogVerbosities)

@@ -29,15 +29,15 @@
 /*                                                                            */
 
 /*                                                                            */
-/* Release: This file is part of the kim-api.git repository.                  */
+/* Release: This file is part of the kim-api-v2.0.0-beta.2 package.           */
 /*                                                                            */
 
 
 #ifndef KIM_MODEL_DRIVER_CREATE_H_
 #define KIM_MODEL_DRIVER_CREATE_H_
 
-#ifndef KIM_FUNC_H_
-#include "KIM_func.h"
+#ifndef KIM_FUNCTION_TYPES_H_
+#include "KIM_FunctionTypes.h"
 #endif
 
 /* Forward declarations */
@@ -101,12 +101,12 @@ typedef struct KIM_ModelDriverCreate KIM_ModelDriverCreate;
 
 
 void KIM_ModelDriverCreate_GetNumberOfParameterFiles(
-    KIM_ModelDriverCreate * const modelDriverCreate,
+    KIM_ModelDriverCreate const * const modelDriverCreate,
     int * const numberOfParameterFiles);
-
 int KIM_ModelDriverCreate_GetParameterFileName(
-    KIM_ModelDriverCreate * const modelDriverCreate,
-    int const index, char const ** const parameterFileName);
+    KIM_ModelDriverCreate const * const modelDriverCreate,
+    int const index,
+    char const ** const parameterFileName);
 
 int KIM_ModelDriverCreate_SetModelNumbering(
     KIM_ModelDriverCreate * const modelDriverCreate,
@@ -120,39 +120,49 @@ void KIM_ModelDriverCreate_SetNeighborListPointers(
     KIM_ModelDriverCreate * const modelDriverCreate,
     int const numberOfNeighborLists,
     double const * const cutoffs,
-    int const * const paddingNeighborHints,
-    int const * const halfListHints);
+    int const * const modelWillNotRequestNeighborsOfNoncontributingParticles);
 
 int KIM_ModelDriverCreate_SetRefreshPointer(
     KIM_ModelDriverCreate * const modelDriverCreate,
-    KIM_LanguageName const languageName, func * const fptr);
+    KIM_LanguageName const languageName,
+    KIM_Function * const fptr);
 int KIM_ModelDriverCreate_SetDestroyPointer(
     KIM_ModelDriverCreate * const modelDriverCreate,
-    KIM_LanguageName const languageName, func * const fptr);
+    KIM_LanguageName const languageName,
+    KIM_Function * const fptr);
 int KIM_ModelDriverCreate_SetComputeArgumentsCreatePointer(
     KIM_ModelDriverCreate * const modelDriverCreate,
-    KIM_LanguageName const languageName, func * const fptr);
+    KIM_LanguageName const languageName,
+    KIM_Function * const fptr);
 int KIM_ModelDriverCreate_SetComputeArgumentsDestroyPointer(
     KIM_ModelDriverCreate * const modelDriverCreate,
-    KIM_LanguageName const languageName, func * const fptr);
+    KIM_LanguageName const languageName,
+    KIM_Function * const fptr);
 int KIM_ModelDriverCreate_SetComputePointer(
     KIM_ModelDriverCreate * const modelDriverCreate,
-    KIM_LanguageName const languageName, func * const fptr);
+    KIM_LanguageName const languageName,
+    KIM_Function * const fptr);
 
 int KIM_ModelDriverCreate_SetSpeciesCode(
     KIM_ModelDriverCreate * const modelDriverCreate,
-    KIM_SpeciesName const speciesName, int const code);
+    KIM_SpeciesName const speciesName,
+    int const code);
 
 int KIM_ModelDriverCreate_SetParameterPointerInteger(
     KIM_ModelDriverCreate * const modelDriverCreate,
-    int const extent, int * const ptr, char const * const description);
+    int const extent,
+    int * const ptr,
+    char const * const name,
+    char const * const description);
 int KIM_ModelDriverCreate_SetParameterPointerDouble(
     KIM_ModelDriverCreate * const modelDriverCreate,
-    int const extent, double * const ptr, char const * const description);
+    int const extent,
+    double * const ptr,
+    char const * const name,
+    char const * const description);
 
 void KIM_ModelDriverCreate_SetModelBufferPointer(
-    KIM_ModelDriverCreate * const modelDriverCreate,
-    void * const ptr);
+    KIM_ModelDriverCreate * const modelDriverCreate, void * const ptr);
 
 int KIM_ModelDriverCreate_SetUnits(
     KIM_ModelDriverCreate * const modelDriverCreate,
@@ -163,7 +173,6 @@ int KIM_ModelDriverCreate_SetUnits(
     KIM_TimeUnit const timeUnit);
 
 int KIM_ModelDriverCreate_ConvertUnit(
-    KIM_ModelDriverCreate const * const modelDriverCreate,
     KIM_LengthUnit const fromLengthUnit,
     KIM_EnergyUnit const fromEnergyUnit,
     KIM_ChargeUnit const fromChargeUnit,
@@ -183,10 +192,12 @@ int KIM_ModelDriverCreate_ConvertUnit(
 
 void KIM_ModelDriverCreate_LogEntry(
     KIM_ModelDriverCreate const * const modelDriverCreate,
-    KIM_LogVerbosity const logVerbosity, char const * const message,
-    int const lineNumber, char const * const fileName);
+    KIM_LogVerbosity const logVerbosity,
+    char const * const message,
+    int const lineNumber,
+    char const * const fileName);
 
-char const * const KIM_ModelDriverCreate_String(
+char const * KIM_ModelDriverCreate_ToString(
     KIM_ModelDriverCreate const * const modelDriverCreate);
 
-#endif  /* KIM_MODEL_DRIVE_CREATE_H_ */
+#endif /* KIM_MODEL_DRIVER_CREATE_H_ */

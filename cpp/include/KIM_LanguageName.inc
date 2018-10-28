@@ -29,15 +29,15 @@
 /*                                                                            */
 
 /*                                                                            */
-/* Release: This file is part of the kim-api.git repository.                  */
+/* Release: This file is part of the kim-api-v2.0.0-beta.2 package.           */
 /*                                                                            */
 
 
 #ifndef KIM_LANGUAGE_NAME_INC_
 #define KIM_LANGUAGE_NAME_INC_
 
-#define ID_cpp     0
-#define ID_c       1
+#define ID_cpp 0
+#define ID_c 1
 #define ID_fortran 2
 
-#endif  /* KIM_LANGUAGE_NAME_INC_ */
+#endif /* KIM_LANGUAGE_NAME_INC_ */

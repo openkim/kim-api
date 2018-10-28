@@ -29,14 +29,13 @@
 //
 
 //
-// Release: This file is part of the kim-api.git repository.
+// Release: This file is part of the kim-api-v2.0.0-beta.2 package.
 //
 
 #ifndef KIM_DATA_TYPE_HPP_
 #include "KIM_DataType.hpp"
 #endif
-extern "C"
-{
+extern "C" {
 #ifndef KIM_DATA_TYPE_H_
 #include "KIM_DataType.h"
 #endif
@@ -45,39 +44,38 @@ extern "C"
 
 namespace
 {
-KIM::DataType const makeDataTypeCpp(KIM_DataType const dataType)
+KIM::DataType makeDataTypeCpp(KIM_DataType const dataType)
 {
   KIM::DataType const * const dataTypeCpp
-      = reinterpret_cast <KIM::DataType const * const>(&dataType);
+      = reinterpret_cast<KIM::DataType const *>(&dataType);
   return *dataTypeCpp;
 }
 
-KIM_DataType const makeDataTypeC(KIM::DataType const dataType)
+KIM_DataType makeDataTypeC(KIM::DataType const dataType)
 {
   KIM_DataType const * const dataTypeC
-      = reinterpret_cast <KIM_DataType const * const>(&dataType);
+      = reinterpret_cast<KIM_DataType const *>(&dataType);
   return *dataTypeC;
 }
 }  // namespace
 
-extern "C"
-{
+extern "C" {
 KIM_DataType KIM_DataType_FromString(char const * const str)
 {
   return makeDataTypeC(KIM::DataType(std::string(str)));
 }
 
-int KIM_DataType_Equal(KIM_DataType const left, KIM_DataType const right)
+int KIM_DataType_Equal(KIM_DataType const lhs, KIM_DataType const rhs)
 {
-  return (left.dataTypeID == right.dataTypeID);
+  return (lhs.dataTypeID == rhs.dataTypeID);
 }
 
-int KIM_DataType_NotEqual(KIM_DataType const left, KIM_DataType const right)
+int KIM_DataType_NotEqual(KIM_DataType const lhs, KIM_DataType const rhs)
 {
-  return (!KIM_DataType_Equal(left, right));
+  return (!KIM_DataType_Equal(lhs, rhs));
 }
 
-char const * const KIM_DataType_String(KIM_DataType const dataType)
+char const * KIM_DataType_ToString(KIM_DataType const dataType)
 {
   return makeDataTypeCpp(dataType).String().c_str();
 }

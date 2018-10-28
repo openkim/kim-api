@@ -27,7 +27,7 @@
 !
 
 !
-! Release: This file is part of the kim-api.git repository.
+! Release: This file is part of the kim-api-v2.0.0-beta.2 package.
 !
 
 
@@ -37,38 +37,95 @@ module kim_sem_ver_module
   private
 
   public &
-    kim_sem_ver_get_sem_ver, &
-    kim_sem_ver_is_less_than, &
-    kim_sem_ver_parse_sem_ver
+    ! Routines
+    kim_get_sem_ver, &
+    kim_is_less_than, &
+    kim_parse_sem_ver
 
-  interface
-    subroutine kim_sem_ver_get_sem_ver(version)
-      use, intrinsic :: iso_c_binding
-      implicit none
-      character(len=*, kind=c_char), intent(out) :: version
-    end subroutine kim_sem_ver_get_sem_ver
 
-    subroutine kim_sem_ver_is_less_than(version_a, version_b, is_less_than, &
-      ierr)
-      use, intrinsic :: iso_c_binding
-      implicit none
-      character(len=*, kind=c_char), intent(in) :: version_a
-      character(len=*, kind=c_char), intent(in) :: version_b
-      integer(c_int), intent(out) :: is_less_than
-      integer(c_int), intent(out) :: ierr
-    end subroutine kim_sem_ver_is_less_than
+contains
+  subroutine kim_get_sem_ver(version)
+    use kim_convert_string_module, only : kim_convert_string
+    implicit none
+    interface
+      type(c_ptr) function get_sem_ver() &
+        bind(c, name="KIM_SEM_VER_GetSemVer")
+        use, intrinsic :: iso_c_binding
+        implicit none
+      end function get_sem_ver
+    end interface
+    character(len=*, kind=c_char), intent(out) :: version
 
-    subroutine kim_sem_ver_parse_sem_ver(version, major, minor, patch, &
-      prerelease, build_metadata, ierr)
-      use, intrinsic :: iso_c_binding
-      implicit none
-      character(len=*, kind=c_char), intent(in) :: version
-      integer(c_int), intent(out) :: major
-      integer(c_int), intent(out) :: minor
-      integer(c_int), intent(out) :: patch
-      character(len=*, kind=c_char), intent(inout) :: prerelease
-      character(len=*, kind=c_char), intent(inout) :: build_metadata
-      integer(c_int), intent(out) :: ierr
-    end subroutine kim_sem_ver_parse_sem_ver
-  end interface
+    type(c_ptr) :: p
+
+    p = get_sem_ver()
+    call kim_convert_string(p, version)
+  end subroutine kim_get_sem_ver
+
+  subroutine kim_is_less_than(version_a, version_b, is_less_than, ierr)
+    implicit none
+    interface
+      integer(c_int) function is_less_than_func(version_a, version_b, &
+        is_less_than) bind(c, name="KIM_SEM_VER_IsLessThan")
+        use, intrinsic :: iso_c_binding
+        implicit none
+        character(c_char), intent(in) :: version_a(*)
+        character(c_char), intent(in) :: version_b(*)
+        integer(c_int), intent(out) :: is_less_than
+      end function is_less_than_func
+    end interface
+    character(len=*, kind=c_char), intent(in) :: version_a
+    character(len=*, kind=c_char), intent(in) :: version_b
+    integer(c_int), intent(out) :: is_less_than
+    integer(c_int), intent(out) :: ierr
+
+    ierr = is_less_than_func(trim(version_a)//c_null_char, &
+      trim(version_b)//c_null_char, is_less_than)
+  end subroutine kim_is_less_than
+
+  subroutine kim_parse_sem_ver(version, major, minor, patch, &
+    prerelease, build_metadata, ierr)
+    use kim_convert_string_module
+    implicit none
+    interface
+      integer(c_int) function parse_sem_ver(version, prerelease_length, &
+        build_metadata_length, major, minor, patch, prerelease, &
+        build_metadata) bind(c, name="KIM_SEM_VER_ParseSemVer")
+        use, intrinsic :: iso_c_binding
+        implicit none
+        character(c_char), intent(in) :: version(*)
+        integer(c_int), intent(in), value :: prerelease_length
+        integer(c_int), intent(in), value :: build_metadata_length
+        integer(c_int), intent(out) :: major
+        integer(c_int), intent(out) :: minor
+        integer(c_int), intent(out) :: patch
+        type(c_ptr), intent(in), value :: prerelease
+        type(c_ptr), intent(in), value :: build_metadata
+      end function parse_sem_ver
+    end interface
+    character(len=*, kind=c_char), intent(in) :: version
+    integer(c_int), intent(out) :: major
+    integer(c_int), intent(out) :: minor
+    integer(c_int), intent(out) :: patch
+    character(len=*, kind=c_char), intent(out) :: prerelease
+    character(len=*, kind=c_char), intent(out) :: build_metadata
+    integer(c_int), intent(out) :: ierr
+
+    type(c_ptr) :: p_prerelease
+    type(c_ptr) :: p_build_metadata
+
+    ierr = parse_sem_ver(trim(version)//c_null_char, len(prerelease), &
+      len(build_metadata), major, minor, patch, p_prerelease, &
+      p_build_metadata)
+    if (c_associated(p_prerelease)) then
+      call kim_convert_string(p_prerelease, prerelease)
+    else
+      prerelease=""
+    end if
+    if (c_associated(p_build_metadata)) then
+      call kim_convert_string(p_build_metadata, build_metadata)
+    else
+      build_metadata=""
+    end if
+  end subroutine kim_parse_sem_ver
 end module kim_sem_ver_module

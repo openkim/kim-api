@@ -29,7 +29,7 @@
 /*                                                                            */
 
 /*                                                                            */
-/* Release: This file is part of the kim-api.git repository.                  */
+/* Release: This file is part of the kim-api-v2.0.0-beta.2 package.           */
 /*                                                                            */
 
 
@@ -47,12 +47,10 @@ typedef struct KIM_SpeciesName KIM_SpeciesName;
 #endif
 
 KIM_SpeciesName KIM_SpeciesName_FromString(char const * const str);
-
-int KIM_SpeciesName_Equal(KIM_SpeciesName const left,
-                          KIM_SpeciesName const right);
-int KIM_SpeciesName_NotEqual(KIM_SpeciesName const left,
-                             KIM_SpeciesName const right);
-char const * const KIM_SpeciesName_String(KIM_SpeciesName const speciesName);
+int KIM_SpeciesName_Equal(KIM_SpeciesName const lhs, KIM_SpeciesName const rhs);
+int KIM_SpeciesName_NotEqual(KIM_SpeciesName const lhs,
+                             KIM_SpeciesName const rhs);
+char const * KIM_SpeciesName_ToString(KIM_SpeciesName const speciesName);
 
 extern KIM_SpeciesName const KIM_SPECIES_NAME_electron;
 extern KIM_SpeciesName const KIM_SPECIES_NAME_H;
@@ -198,4 +196,4 @@ void KIM_SPECIES_NAME_GetNumberOfSpeciesNames(int * const numberOfSpeciesNames);
 int KIM_SPECIES_NAME_GetSpeciesName(int const index,
                                     KIM_SpeciesName * const speciesName);
 
-#endif  /* KIM_SPECIES_NAME_H_ */
+#endif /* KIM_SPECIES_NAME_H_ */

@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api.git repository.
+// Release: This file is part of the kim-api-v2.0.0-beta.2 package.
 //
 
 #include <map>
@@ -38,7 +38,6 @@
 
 namespace KIM
 {
-
 // Order doesn't matter as long as all values are unique
 namespace SUPPORT_STATUS
 {
@@ -51,7 +50,7 @@ SupportStatus const optional(ID_optional);
 namespace
 {
 typedef std::map<SupportStatus const, std::string, SUPPORT_STATUS::Comparator>
-StringMap;
+    StringMap;
 
 StringMap const GetStringMap()
 {
@@ -80,20 +79,20 @@ int GetSupportStatus(int const index, SupportStatus * const supportStatus)
   if ((index < 0) || (index >= numberOfSupportStatuses)) return true;
 
   StringMap::const_iterator iter = supportStatusToString.begin();
-  for (int i=0; i<index; ++i) ++iter;
+  for (int i = 0; i < index; ++i) ++iter;
   *supportStatus = iter->first;
   return false;  // no error
 }
 }  // namespace SUPPORT_STATUS
 
 // implementation of SupportStatus
-SupportStatus::SupportStatus() : supportStatusID(0){}
-SupportStatus::SupportStatus(int const id) : supportStatusID(id){}
+SupportStatus::SupportStatus() : supportStatusID(0) {}
+SupportStatus::SupportStatus(int const id) : supportStatusID(id) {}
 SupportStatus::SupportStatus(std::string const & str)
 {
   supportStatusID = -1;
   for (SUPPORT_STATUS::StringMap::const_iterator iter
-           = SUPPORT_STATUS::supportStatusToString.begin();
+       = SUPPORT_STATUS::supportStatusToString.begin();
        iter != SUPPORT_STATUS::supportStatusToString.end();
        ++iter)
   {
@@ -106,9 +105,13 @@ SupportStatus::SupportStatus(std::string const & str)
 }
 
 bool SupportStatus::operator==(SupportStatus const & rhs) const
-{return supportStatusID == rhs.supportStatusID;}
+{
+  return supportStatusID == rhs.supportStatusID;
+}
 bool SupportStatus::operator!=(SupportStatus const & rhs) const
-{return supportStatusID != rhs.supportStatusID;}
+{
+  return supportStatusID != rhs.supportStatusID;
+}
 
 std::string const & SupportStatus::String() const
 {

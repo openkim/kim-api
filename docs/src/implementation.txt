@@ -31,7 +31,7 @@
 /*                                                                            */
 
 /*                                                                            */
-/* Release: This file is part of the kim-api.git repository.                  */
+/* Release: This file is part of the kim-api-v2.0.0-beta.2 package.           */
 /*                                                                            */
 
 /**
@@ -41,16 +41,27 @@ Previous Section: \ref theory.
 
 In code, a model (or model driver) consists of six routines which perform
 specific tasks.  The first is the *ModelCreate* (or *ModelDriverCreate*)
-routine, which performs initialization tasks for the model object.  The second
-is the *ModelComputeArgumentsCreate* routine, which performs initialization
-tasks for a compute-arguments object.  The third is the
-* *ModelComputeArgumentsDestroy* routine, which performs finalization tasks for
-a compute-arguments object.  The fourth is the *ModelCompute* routine, which
-uses the configuration information stored in a compute-arguments object to
-perform the model's core computational tasks.  The fifth is the *ModelRefresh*
-routine, which performs updates after a simulator makes changes to the model's
-parameters (if this is supported).  The sixth is the *ModelDestroy* routine,
-which performs finalization tasks for the model object.
+routine (required), which performs initialization tasks for the model object.
+The second is the *ModelComputeArgumentsCreate* routine (required), which
+performs initialization tasks for a compute-arguments object.  The third is the
+\em ModelCompute routine (required), which uses the configuration information
+stored in a compute-arguments object to perform the model's core computational
+tasks.  The fourth is the *ModelRefresh* routine (required if parameter
+pointers are set, otherwise should not be provided), which performs updates
+after a simulator makes changes to the model's parameters (if this is
+supported).  The fifth is the \em ModelComputeArgumentsDestroy routine
+(optional), which performs finalization tasks for a compute-arguments object.
+The sixth is the *ModelDestroy* routine (required), which performs finalization
+tasks for the model object.  These are summarized in the following table.
+
+| Model Routine                       | Required / Optional |
+| ----------------------------------- | ------------------- |
+| *ModelCreate* / *ModelDriverCreate* | required            |
+| *ModelComputeArgumentsCreate*       | required            |
+| *ModelCompute*                      | required            |
+| *ModelRefresh*                      | required if one or more parameter pointers set, otherwise should not be provided |
+| *ModelComputeArgumentsDestroy*      | optional            |
+| *ModelDestroy*                      | required            |
 
 To interact with a model, a simulator creates a model object (which, in part,
 includes execution of the model's *ModelCreate* routine).  Using this object,
@@ -67,8 +78,8 @@ simulator provides for use by the model.
 
 The %KIM API provides a list of all compute-arguments and compute-callbacks
 defined as part of the official API.  Each such argument and callback has a
-"Support Status" which can be one of four values: *requiredByAPI*,
-* *notSupported*, *required*, or *optional*.  A model specifies a support status
+"Support Status" which can be one of four values: *requiredByAPI*, \em
+notSupported, *required*, or *optional*.  A model specifies a support status
 value, as part of its *ModelComputeArgumentsCreate* routine, for every
 compute-argument and compute-callback defined by the %KIM API.  It is the
 responsibility of the simulator to use the compute-arguments object interface
@@ -81,12 +92,12 @@ compute-callback are provided.  To be explicit, below zero-based particle
 numbering is used where necessary.
 
 Input compute-argument table:
-Compute Argument Name | Unit   | Data Type | Extent                | Memory Layout                                                      | Valid Support Statuses (bold -- default) |
---------------------- | ------ | --------- | --------------------- | ------------------------------------------------------------------ | ---------------------------------------- |
-numberOfParticles     | N/A    | integer   | 1                     |                                                                    | **requiredByAPI**                        |
-particleSpeciesCodes  | N/A    | integer   | numberOfParticles     | \f$sc^{(0)}, sc^{(1)}, \dots\f$                                    | **requiredByAPI**                        |
-particleContributing  | N/A    | integer   | numberOfParticles     | \f$c^{(0)}, c^{(1)}, \dots\f$                                      | **requiredByAPI**                        |
-coordinates           | length | double    | numberOfParticles * 3 | \f$r^{(0)}_1, r^{(0)}_2, r^{(0)}_3, r^{(1)}_1, r^{(1)}_2, \dots\f$ | **requiredByAPI**                        |
+| Compute Argument Name | Unit   | Data Type | Extent                | Memory Layout                                                      | Valid Support Statuses (bold -- default) |
+| --------------------- | ------ | --------- | --------------------- | ------------------------------------------------------------------ | ---------------------------------------- |
+| numberOfParticles     | N/A    | integer   | 1                     |                                                                    | **requiredByAPI**                        |
+| particleSpeciesCodes  | N/A    | integer   | numberOfParticles     | \f$sc^{(0)}, sc^{(1)}, \dots\f$                                    | **requiredByAPI**                        |
+| particleContributing  | N/A    | integer   | numberOfParticles     | \f$c^{(0)}, c^{(1)}, \dots\f$                                      | **requiredByAPI**                        |
+| coordinates           | length | double    | numberOfParticles * 3 | \f$r^{(0)}_1, r^{(0)}_2, r^{(0)}_3, r^{(1)}_1, r^{(1)}_2, \dots\f$ | **requiredByAPI**                        |
 
 - numberOfParticles is the number of particles (contributing and
 non-contributing) in the configuration.
@@ -107,13 +118,13 @@ non-contributing if \f$c^{(i)} = 0\f$.
   \mathbf{e}_2 + r^{(i)}_3 \mathbf{e}_3\f$.
 
 Output compute-argument table:
-Compute Argument Name | Unit                       | Data Type | Extent                | Memory Layout                                                           | Valid Support Statuses (bold -- default) |
---------------------- | -------------------------- | --------- | --------------------- | ----------------------------------------------------------------------- | ---------------------------------------- |
-partialEnergy         | energy                     | double    | 1                     |                                                                         | required, optional, **notSupported**     |
-partialForces         | force                      | double    | numberOfParticles * 3 | \f$f^{\mathcal{C}(0)}_1, f^{\mathcal{C}(0)}_2, f^{\mathcal{C}(0)}_3, f^{\mathcal{C}(1)}_1, f^{\mathcal{C}(1)}_2\dots\f$ | required, optional, **notSupported**     |
-partialParticleEnergy | energy                     | double    | numberOfParticles     | \f$E^{\mathcal{C}(0)}, E^{\mathcal{C}(1)}, E^{\mathcal{C}(2)}, \dots\f$ | required, optional, **notSupported**     |
-partialVirial         | energy                     | double    | 6                     | \f$V^{\mathcal{C}}_{11}, V^{\mathcal{C}}_{22}, V^{\mathcal{C}}_{33}, V^{\mathcal{C}}_{23}, V^{\mathcal{C}}_{32}, V^{\mathcal{C}}_{13}\f$ | required, optional, **notSupported**     |
-partialParticleVirial | energy                     | double    | numberOfParticles * 6 | \f$\mathbf{V}^{\mathcal{C}(0)}, \mathbf{V}^{\mathcal{C}(1)}, \mathbf{V}^{\mathcal{C}(2)}, \dots\f$ | required, optional, **notSupported**     |
+| Compute Argument Name                                | Unit                       | Data Type | Extent                | Memory Layout                                                           | Valid Support Statuses (bold -- default) |
+| ---------------------------------------------------- | -------------------------- | --------- | --------------------- | ----------------------------------------------------------------------- | ---------------------------------------- |
+| \ref partial_energy "partialEnergy"                  | energy                     | double    | 1                     |                                                                         | required, optional, **notSupported**     |
+| \ref partial_forces "partialForces"                  | force                      | double    | numberOfParticles * 3 | \f$f^{\mathcal{C}(0)}_1, f^{\mathcal{C}(0)}_2, f^{\mathcal{C}(0)}_3, f^{\mathcal{C}(1)}_1, f^{\mathcal{C}(1)}_2\dots\f$ | required, optional, **notSupported**     |
+| \ref partial_particle_energy "partialParticleEnergy" | energy                     | double    | numberOfParticles     | \f$E^{\mathcal{C}(0)}, E^{\mathcal{C}(1)}, E^{\mathcal{C}(2)}, \dots\f$ | required, optional, **notSupported**     |
+| \ref partial_virial "partialVirial"                  | energy                     | double    | 6                     | \f$V^{\mathcal{C}}_{11}, V^{\mathcal{C}}_{22}, V^{\mathcal{C}}_{33}, V^{\mathcal{C}}_{23}, V^{\mathcal{C}}_{32}, V^{\mathcal{C}}_{13}\f$ | required, optional, **notSupported**     |
+| \ref partial_particle_virial "partialParticleVirial" | energy                     | double    | numberOfParticles * 6 | \f$\mathbf{V}^{\mathcal{C}(0)}, \mathbf{V}^{\mathcal{C}(1)}, \mathbf{V}^{\mathcal{C}(2)}, \dots\f$ | required, optional, **notSupported**     |
 
 - partialEnergy is the configuration's partial energy \f$E^{\mathcal{C}}\f$.
 
@@ -133,11 +144,11 @@ partialParticleVirial | energy                     | double    | numberOfParticl
 
 
 Compute-callback table:
-Compute Callback Name | Valid Support Statuses (bold -- default) |
---------------------- | ---------------------------------------- |
-GetNeighborList       | **requiredByAPI**                        |
-ProcessDEDrTerm       | required, optional, **notSupported**     |
-ProcessD2EDr2Term     | required, optional, **notSupported**     |
+| Compute Callback Name | Valid Support Statuses (bold -- default) |
+| --------------------- | ---------------------------------------- |
+| GetNeighborList       | **requiredByAPI**                        |
+| ProcessDEDrTerm       | required, optional, **notSupported**     |
+| ProcessD2EDr2Term     | required, optional, **notSupported**     |
 
 - GetNeighborList is a callback function that allows a model to obtain the list
   of neighbors of a particle.  The model may request any number (\f$\ge1\f$) of
@@ -164,22 +175,17 @@ ProcessD2EDr2Term     | required, optional, **notSupported**     |
   models that request multiple neighbor lists with a wide range of cutoff
   distances.
 
-  <b>Neighbor List Hints \anchor neighbor_list_hints</b> The above describes
-  the default behavior and all models must work correctly when provided with
-  neighbor lists of this type.  However, based on the neighbor list hints
+  \anchor neighbor_list_hint <b>Neighbor List Hint</b> The above describes the
+  default behavior and all models must work correctly when provided with
+  neighbor lists of this type.  However, based on the neighbor list hint
   provided by the model a simulator may provide the model with a modified
   neighbor list that is more efficient.  If the model sets its
-  "paddingNeighborHint" to 1 (true), it is guaranteeing that it will not need
-  access to the neighbors of non-contributing (padding) particles.  So, the
-  simulator does not need to generate a neighbor list for such particles.  If
-  the model sets its "halfListHint" to 1 (true), it is guaranteeing that it
-  will only use neighbors \f$j\f$ of particle \f$i\f$ if \f$i < j\f$.  So, the
-  simulator can construct a "half list" of neighbors where each pair of
-  neighbors is listed only once in such a way that the list of neighbors for
-  particle \f$i\f$ contains only particles \f$j\f$ numbered greater than
-  \f$i\f$.  The model has no way of known if the simulator is taking advantage
-  of its hints, so it must work correctly for all types of neighbor lists
-  consistent with its provided hints.
+  "modelWillNotRequestNeighborsOfNoncontributingParticles" value to 1 (true),
+  it is guaranteeing that it will not request the neighbors of non-contributing
+  particles.  So, the simulator does not need to generate a neighbor list for
+  such particles.  The model has no way of knowing if the simulator is taking
+  advantage of its hint, so it must work correctly for all types of neighbor
+  lists consistent with its provided hint.
 
 - ProcessDEDrTerm is a callback function that allows for access to the
   derivatives of the configuration's partial energy, \f$E^{\mathcal{C}}\f$,
@@ -198,14 +204,11 @@ ProcessD2EDr2Term     | required, optional, **notSupported**     |
   formula
 
   \f[
-  \mathbf{V}^{\mathcal{C}} = \sum_{i \in C_p} \mathbf{V}^{\mathcal{C}(i)}
-  = \sum_{i \in C_p} \sum_{j \in \mathcal{N}^{(i)}_{r_{\text{infl}}}}
-  \frac{\bar{E}_i}{\partial \mathbf{r}^{(j)}} \otimes \mathbf{r}^{(j)}
+  \mathbf{V}^{\mathcal{C}}
   = \sum_{i \in C_p} \sum_{j \in \mathcal{N}^{(i)}_{r_{\text{infl}}}} \;\;
   \sum_{k \not= j; \; k \in \bar{\mathcal{N}}^{(i)}_{r_{\text{infl}}}}
-  \frac{\partial \tilde{E}_i}{\partial r^{(j,k)}}
-  \frac{\partial r^{(j,k)}}{\partial \mathbf{r}^{(j)}}
-  \otimes \mathbf{r}^{(j)}.
+  \left(\frac{1}{2 r^{(j,k)}} \frac{\partial \tilde{E}_i}{\partial r^{(j,k)}}
+  \right) \mathbf{r}^{(j,k)} \otimes \mathbf{r}^{(j,k)}.
   \f]
 
 - ProcessD2EDr2Term is a callback function that allows for access to the second
@@ -223,5 +226,7 @@ LocalWords:  ModelDriverCreate ModelRefresh ModelDestroy requiredByAPI sc Cu
 LocalWords:  notSupported numberOfParticles particleSpeciesCodes Ni mathbf EDr
 LocalWords:  particleContributing leftrightarrow partialEnergy partialForces
 LocalWords:  mathcal partialParticleEnergy partialVirial partialParticleVirial
-LocalWords:  virial GetNeighborList ProcessDEDrTerm ProcessD ac infl otimes
-LocalWords:  ModelComputeArgumentsCreate ModelComputeArgumentsDestroy
+LocalWords:  virial GetNeighborList ProcessDEDrTerm ProcessD ac infl otimes em
+LocalWords:  ModelComputeArgumentsCreate ModelComputeArgumentsDestroy ge cdot
+LocalWords:  Modelcompureargumentsdestroy
+LocalWords:  modelWillNotRequestNeighborsOfNoncontributingParticles

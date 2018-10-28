@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api.git repository.
+// Release: This file is part of the kim-api-v2.0.0-beta.2 package.
 //
 
 
@@ -86,15 +86,16 @@ void Model::GetInfluenceDistance(double * const influenceDistance) const
   pimpl->GetInfluenceDistance(influenceDistance);
 }
 
-void Model::GetNeighborListPointers(int * const numberOfNeighborLists,
-                                    double const ** const cutoffs,
-                                    int const ** const paddingNeighborHints,
-                                    int const ** const halfListHints) const
+void Model::GetNeighborListPointers(
+    int * const numberOfNeighborLists,
+    double const ** const cutoffs,
+    int const ** const modelWillNotRequestNeighborsOfNoncontributingParticles)
+    const
 {
-  pimpl->GetNeighborListPointers(numberOfNeighborLists,
-                                 cutoffs,
-                                 paddingNeighborHints,
-                                 halfListHints);
+  pimpl->GetNeighborListPointers(
+      numberOfNeighborLists,
+      cutoffs,
+      modelWillNotRequestNeighborsOfNoncontributingParticles);
 }
 
 void Model::GetUnits(LengthUnit * const lengthUnit,
@@ -103,18 +104,18 @@ void Model::GetUnits(LengthUnit * const lengthUnit,
                      TemperatureUnit * const temperatureUnit,
                      TimeUnit * const timeUnit) const
 {
-  pimpl->GetUnits(lengthUnit, energyUnit, chargeUnit,temperatureUnit,
-                  timeUnit);
+  pimpl->GetUnits(
+      lengthUnit, energyUnit, chargeUnit, temperatureUnit, timeUnit);
 }
 
-int Model::ComputeArgumentsCreate(ComputeArguments ** const computeArguments)
-    const
+int Model::ComputeArgumentsCreate(
+    ComputeArguments ** const computeArguments) const
 {
   return pimpl->ComputeArgumentsCreate(computeArguments);
 }
 
-int Model::ComputeArgumentsDestroy(ComputeArguments ** const computeArguments)
-    const
+int Model::ComputeArgumentsDestroy(
+    ComputeArguments ** const computeArguments) const
 {
   return pimpl->ComputeArgumentsDestroy(computeArguments);
 }
@@ -124,10 +125,7 @@ int Model::Compute(ComputeArguments const * const computeArguments) const
   return pimpl->Compute(computeArguments);
 }
 
-int Model::ClearThenRefresh()
-{
-  return pimpl->ClearThenRefresh();
-}
+int Model::ClearThenRefresh() { return pimpl->ClearThenRefresh(); }
 
 int Model::GetSpeciesSupportAndCode(SpeciesName const speciesName,
                                     int * const speciesIsSupported,
@@ -142,38 +140,40 @@ void Model::GetNumberOfParameters(int * const numberOfParameters) const
   pimpl->GetNumberOfParameters(numberOfParameters);
 }
 
-int Model::GetParameterDataTypeExtentAndDescription(
-    int const parameterIndex, DataType * const dataType, int * const extent,
-    std::string const ** const description) const
+int Model::GetParameterMetadata(int const parameterIndex,
+                                DataType * const dataType,
+                                int * const extent,
+                                std::string const ** const name,
+                                std::string const ** const description) const
 {
-  return pimpl->GetParameterDataTypeExtentAndDescription(
-      parameterIndex, dataType, extent, description);
+  return pimpl->GetParameterMetadata(
+      parameterIndex, dataType, extent, name, description);
 }
 
-int Model::GetParameter(
-    int const parameterIndex, int const arrayIndex,
-    int * const parameterValue) const
-{
-  return pimpl->GetParameter(parameterIndex, arrayIndex, parameterValue);
-}
-
-int Model::GetParameter(
-    int const parameterIndex, int const arrayIndex,
-    double * const parameterValue) const
+int Model::GetParameter(int const parameterIndex,
+                        int const arrayIndex,
+                        int * const parameterValue) const
 {
   return pimpl->GetParameter(parameterIndex, arrayIndex, parameterValue);
 }
 
-int Model::SetParameter(
-    int const parameterIndex, int const arrayIndex,
-    int const parameterValue)
+int Model::GetParameter(int const parameterIndex,
+                        int const arrayIndex,
+                        double * const parameterValue) const
+{
+  return pimpl->GetParameter(parameterIndex, arrayIndex, parameterValue);
+}
+
+int Model::SetParameter(int const parameterIndex,
+                        int const arrayIndex,
+                        int const parameterValue)
 {
   return pimpl->SetParameter(parameterIndex, arrayIndex, parameterValue);
 }
 
-int Model::SetParameter(
-    int const parameterIndex, int const arrayIndex,
-    double const parameterValue)
+int Model::SetParameter(int const parameterIndex,
+                        int const arrayIndex,
+                        double const parameterValue)
 {
   return pimpl->SetParameter(parameterIndex, arrayIndex, parameterValue);
 }
@@ -188,32 +188,19 @@ void Model::GetSimulatorBufferPointer(void ** const ptr) const
   pimpl->GetSimulatorBufferPointer(ptr);
 }
 
-std::string const & Model::String() const
-{
-  return pimpl->String();
-}
+std::string const & Model::String() const { return pimpl->String(); }
 
-void Model::SetLogID(std::string const & logID)
-{
-  pimpl->SetLogID(logID);
-}
+void Model::SetLogID(std::string const & logID) { pimpl->SetLogID(logID); }
 
 void Model::PushLogVerbosity(LogVerbosity const logVerbosity)
 {
   pimpl->PushLogVerbosity(logVerbosity);
 }
 
-void Model::PopLogVerbosity()
-{
-  pimpl->PopLogVerbosity();
-}
+void Model::PopLogVerbosity() { pimpl->PopLogVerbosity(); }
 
-Model::Model() : pimpl(NULL)
-{
-}
+Model::Model() : pimpl(NULL) {}
 
-Model::~Model()
-{
-}
+Model::~Model() {}
 
 }  // namespace KIM

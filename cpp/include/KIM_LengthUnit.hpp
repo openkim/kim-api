@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api.git repository.
+// Release: This file is part of the kim-api-v2.0.0-beta.2 package.
 //
 
 
@@ -38,7 +38,6 @@
 
 namespace KIM
 {
-
 class LengthUnit
 {
  public:
@@ -50,7 +49,7 @@ class LengthUnit
   bool operator==(LengthUnit const & rhs) const;
   bool operator!=(LengthUnit const & rhs) const;
   std::string const & String() const;
-};
+};  // class LengthUnit
 
 namespace LENGTH_UNIT
 {
@@ -70,7 +69,8 @@ struct Comparator
   {
     return a.lengthUnitID < b.lengthUnitID;
   }
-};
+};  // struct Comparator
 }  // namespace LENGTH_UNIT
 }  // namespace KIM
+
 #endif  // KIM_LENGTH_UNIT_HPP_

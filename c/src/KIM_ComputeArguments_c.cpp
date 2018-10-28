@@ -27,14 +27,13 @@
 //
 
 //
-// Release: This file is part of the kim-api.git repository.
+// Release: This file is part of the kim-api-v2.0.0-beta.2 package.
 //
 
 #ifndef KIM_LOG_VERBOSITY_HPP_
 #include "KIM_LogVerbosity.hpp"
 #endif
-extern "C"
-{
+extern "C" {
 #ifndef KIM_LOG_VERBOSITY_H_
 #include "KIM_LogVerbosity.h"
 #endif
@@ -43,8 +42,7 @@ extern "C"
 #ifndef KIM_LANGUAGE_NAME_HPP_
 #include "KIM_LanguageName.hpp"
 #endif
-extern "C"
-{
+extern "C" {
 #ifndef KIM_LANGUAGE_NAME_H_
 #include "KIM_LanguageName.h"
 #endif
@@ -53,8 +51,7 @@ extern "C"
 #ifndef KIM_SUPPORT_STATUS_HPP_
 #include "KIM_SupportStatus.hpp"
 #endif
-extern "C"
-{
+extern "C" {
 #ifndef KIM_SUPPORT_STATUS_H_
 #include "KIM_SupportStatus.h"
 #endif
@@ -63,8 +60,7 @@ extern "C"
 #ifndef KIM_COMPUTE_ARGUMENT_NAME_HPP_
 #include "KIM_ComputeArgumentName.hpp"
 #endif
-extern "C"
-{
+extern "C" {
 #ifndef KIM_COMPUTE_ARGUMENT_NAME_H_
 #include "KIM_ComputeArgumentName.h"
 #endif
@@ -73,8 +69,7 @@ extern "C"
 #ifndef KIM_COMPUTE_CALLBACK_NAME_HPP_
 #include "KIM_ComputeCallbackName.hpp"
 #endif
-extern "C"
-{
+extern "C" {
 #ifndef KIM_COMPUTE_CALLBACK_NAME_H_
 #include "KIM_ComputeCallbackName.h"
 #endif
@@ -83,8 +78,7 @@ extern "C"
 #ifndef KIM_COMPUTE_ARGUMENTS_HPP_
 #include "KIM_ComputeArguments.hpp"
 #endif
-extern "C"
-{
+extern "C" {
 #ifndef KIM_COMPUTE_ARGUMENTS_H_
 #include "KIM_ComputeArguments.h"
 #endif
@@ -96,31 +90,31 @@ struct KIM_ComputeArguments
   void * p;
 };
 
-#define CONVERT_POINTER KIM::ComputeArguments * pComputeArguments       \
-  = reinterpret_cast<KIM::ComputeArguments *>(computeArguments->p)
+#define CONVERT_POINTER                     \
+  KIM::ComputeArguments * pComputeArguments \
+      = reinterpret_cast<KIM::ComputeArguments *>(computeArguments->p)
 
 namespace
 {
-KIM::LanguageName
-makeLanguageNameCpp(KIM_LanguageName const languageName)
+KIM::LanguageName makeLanguageNameCpp(KIM_LanguageName const languageName)
 {
   return KIM::LanguageName(languageName.languageNameID);
 }
 
-KIM_SupportStatus const makeSupportStatusC(KIM::SupportStatus supportStatus)
+KIM_SupportStatus makeSupportStatusC(KIM::SupportStatus supportStatus)
 {
   KIM_SupportStatus supportStatusC = {supportStatus.supportStatusID};
   return supportStatusC;
 }
 
-KIM::ComputeArgumentName makeComputeArgumentNameCpp(
-    KIM_ComputeArgumentName const computeArgumentName)
+KIM::ComputeArgumentName
+makeComputeArgumentNameCpp(KIM_ComputeArgumentName const computeArgumentName)
 {
   return KIM::ComputeArgumentName(computeArgumentName.computeArgumentNameID);
 }
 
-KIM::ComputeCallbackName makeComputeCallbackNameCpp(
-    KIM_ComputeCallbackName const computeCallbackName)
+KIM::ComputeCallbackName
+makeComputeCallbackNameCpp(KIM_ComputeCallbackName const computeCallbackName)
 {
   return KIM::ComputeCallbackName(computeCallbackName.computeCallbackNameID);
 }
@@ -132,8 +126,7 @@ KIM::LogVerbosity makeLogVerbosityCpp(KIM_LogVerbosity logVerbosity)
 }  // namespace
 
 
-extern "C"
-{
+extern "C" {
 int KIM_ComputeArguments_GetArgumentSupportStatus(
     KIM_ComputeArguments const * const computeArguments,
     KIM_ComputeArgumentName const computeArgumentName,
@@ -143,8 +136,7 @@ int KIM_ComputeArguments_GetArgumentSupportStatus(
   KIM::SupportStatus supportStatusCpp;
 
   int error = pComputeArguments->GetArgumentSupportStatus(
-      makeComputeArgumentNameCpp(computeArgumentName),
-      &supportStatusCpp);
+      makeComputeArgumentNameCpp(computeArgumentName), &supportStatusCpp);
   if (error)
     return true;
   else
@@ -163,8 +155,7 @@ int KIM_ComputeArguments_GetCallbackSupportStatus(
   KIM::SupportStatus supportStatusCpp;
 
   int error = pComputeArguments->GetCallbackSupportStatus(
-      makeComputeCallbackNameCpp(computeCallbackName),
-      &supportStatusCpp);
+      makeComputeCallbackNameCpp(computeCallbackName), &supportStatusCpp);
   if (error)
     return true;
   else
@@ -180,8 +171,8 @@ int KIM_ComputeArguments_SetArgumentPointerInteger(
     int const * const ptr)
 {
   CONVERT_POINTER;
-  KIM::ComputeArgumentName argN = makeComputeArgumentNameCpp(
-      computeArgumentName);
+  KIM::ComputeArgumentName argN
+      = makeComputeArgumentNameCpp(computeArgumentName);
 
   return pComputeArguments->SetArgumentPointer(argN, ptr);
 }
@@ -192,8 +183,8 @@ int KIM_ComputeArguments_SetArgumentPointerDouble(
     double const * const ptr)
 {
   CONVERT_POINTER;
-  KIM::ComputeArgumentName argN = makeComputeArgumentNameCpp(
-      computeArgumentName);
+  KIM::ComputeArgumentName argN
+      = makeComputeArgumentNameCpp(computeArgumentName);
 
   return pComputeArguments->SetArgumentPointer(argN, ptr);
 }
@@ -202,21 +193,20 @@ int KIM_ComputeArguments_SetCallbackPointer(
     KIM_ComputeArguments * const computeArguments,
     KIM_ComputeCallbackName const computeCallbackName,
     KIM_LanguageName const languageName,
-    func * const fptr,
-    void const * const dataObject)
+    KIM_Function * const fptr,
+    void * const dataObject)
 {
   CONVERT_POINTER;
   KIM::ComputeCallbackName computeCallbackNameCpp
       = makeComputeCallbackNameCpp(computeCallbackName);
   KIM::LanguageName langN = makeLanguageNameCpp(languageName);
 
-  return pComputeArguments->SetCallbackPointer(computeCallbackNameCpp, langN,
-                                               fptr, dataObject);
+  return pComputeArguments->SetCallbackPointer(
+      computeCallbackNameCpp, langN, fptr, dataObject);
 }
 
 void KIM_ComputeArguments_AreAllRequiredArgumentsAndCallbacksPresent(
-    KIM_ComputeArguments const * const computeArguments,
-    int * const result)
+    KIM_ComputeArguments const * const computeArguments, int * const result)
 {
   CONVERT_POINTER;
 
@@ -224,8 +214,7 @@ void KIM_ComputeArguments_AreAllRequiredArgumentsAndCallbacksPresent(
 }
 
 void KIM_ComputeArguments_SetSimulatorBufferPointer(
-    KIM_ComputeArguments * const computeArguments,
-    void * const ptr)
+    KIM_ComputeArguments * const computeArguments, void * const ptr)
 {
   CONVERT_POINTER;
 
@@ -233,15 +222,14 @@ void KIM_ComputeArguments_SetSimulatorBufferPointer(
 }
 
 void KIM_ComputeArguments_GetSimulatorBufferPointer(
-    KIM_ComputeArguments const * const computeArguments,
-    void ** const ptr)
+    KIM_ComputeArguments const * const computeArguments, void ** const ptr)
 {
   CONVERT_POINTER;
 
   pComputeArguments->GetSimulatorBufferPointer(ptr);
 }
 
-char const * const KIM_ComputeArguments_String(
+char const * KIM_ComputeArguments_ToString(
     KIM_ComputeArguments const * const computeArguments)
 {
   CONVERT_POINTER;
@@ -250,8 +238,7 @@ char const * const KIM_ComputeArguments_String(
 }
 
 void KIM_ComputeArguments_SetLogID(
-    KIM_ComputeArguments * const computeArguments,
-    char const * const logID)
+    KIM_ComputeArguments * const computeArguments, char const * const logID)
 {
   CONVERT_POINTER;
 

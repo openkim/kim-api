@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api.git repository.
+// Release: This file is part of the kim-api-v2.0.0-beta.2 package.
 //
 
 
@@ -50,38 +50,30 @@ namespace
 {
 std::string const version(KIM_VERSION_STRING);
 
-enum SERIES_TYPE {PRERELEASE, BUILD_METADATA};
-enum IDENTIFIER_TYPE {NUMERIC, ALPHANUMERIC, INVALID};
+enum SERIES_TYPE { PRERELEASE, BUILD_METADATA };
+enum IDENTIFIER_TYPE { NUMERIC, ALPHANUMERIC, INVALID };
 char const numeric[] = "0123456789";
 char const alphaNumeric[] = "abcdefghijklmnopqrstuvwxyz"
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    "0123456789-";
+                            "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                            "0123456789-";
 
 IDENTIFIER_TYPE IdentifierType(std::string const & identifier)
 {
   size_t found;
   found = identifier.find_first_not_of(numeric);
-  if (found == std::string::npos)
-  {
-    return NUMERIC;
-  }
+  if (found == std::string::npos) { return NUMERIC; }
 
   found = identifier.find_first_not_of(alphaNumeric);
-  if (found == std::string::npos)
-  {
-    return ALPHANUMERIC;
-  }
+  if (found == std::string::npos) { return ALPHANUMERIC; }
 
   return INVALID;
 }
 
-int ParseIdentifiers(SERIES_TYPE type, std::string const & series,
+int ParseIdentifiers(SERIES_TYPE type,
+                     std::string const & series,
                      std::vector<std::string> * const identifiers)
 {
-  if (identifiers != NULL)
-  {
-    identifiers->clear();
-  }
+  if (identifiers != NULL) { identifiers->clear(); }
 
   size_t found;
   std::string subStr;
@@ -105,11 +97,9 @@ int ParseIdentifiers(SERIES_TYPE type, std::string const & series,
               return true;  // Has leading zero
             }
           }
+          break;
         case ALPHANUMERIC:
-          if (identifiers != NULL)
-          {
-            identifiers->push_back(remainderStr);
-          }
+          if (identifiers != NULL) { identifiers->push_back(remainderStr); }
           break;
       }
       remainderStr = "";
@@ -117,7 +107,7 @@ int ParseIdentifiers(SERIES_TYPE type, std::string const & series,
     else
     {
       subStr = remainderStr.substr(0, found);
-      remainderStr = remainderStr.substr(found+1);
+      remainderStr = remainderStr.substr(found + 1);
 
       if (remainderStr.length() == 0)
       {
@@ -142,11 +132,9 @@ int ParseIdentifiers(SERIES_TYPE type, std::string const & series,
               return true;  // Has leading zero
             }
           }
+          break;
         case ALPHANUMERIC:
-          if (identifiers != NULL)
-          {
-            identifiers->push_back(subStr);
-          }
+          if (identifiers != NULL) { identifiers->push_back(subStr); }
           break;
       }
     }
@@ -166,20 +154,18 @@ bool IsPrereleaseLessThan(std::string const & prereleaseA,
   ParseIdentifiers(PRERELEASE, prereleaseB, &identifiersB);
 
   // use smaller size
-  int size = ((identifiersA.size() > identifiersB.size()) ?
-              identifiersB.size() : identifiersA.size());
+  int size
+      = ((identifiersA.size() > identifiersB.size()) ? identifiersB.size()
+                                                     : identifiersA.size());
 
-  for (int i=0; i<size; ++i)
+  for (int i = 0; i < size; ++i)
   {
     std::string const & idA = identifiersA[i];
     std::string const & idB = identifiersB[i];
     IDENTIFIER_TYPE typeA = IdentifierType(idA);
     IDENTIFIER_TYPE typeB = IdentifierType(idB);
 
-    if ((typeA == ALPHANUMERIC) && (typeB == NUMERIC))
-    {
-      return false;
-    }
+    if ((typeA == ALPHANUMERIC) && (typeB == NUMERIC)) { return false; }
     else if ((typeA == NUMERIC) && (typeB == ALPHANUMERIC))
     {
       return true;
@@ -190,29 +176,17 @@ bool IsPrereleaseLessThan(std::string const & prereleaseA,
       int numberA = strtol(idA.c_str(), &end, 10);
       int numberB = strtol(idB.c_str(), &end, 10);
 
-      if (numberA > numberB)
-      {
-        return false;
-      }
+      if (numberA > numberB) { return false; }
 
-      if (numberA < numberB)
-      {
-        return true;
-      }
+      if (numberA < numberB) { return true; }
 
       // numeric identifers are equal
     }
     else if ((typeA == ALPHANUMERIC) && (typeB == ALPHANUMERIC))
     {
-      if (idA > idB)
-      {
-        return false;
-      }
+      if (idA > idB) { return false; }
 
-      if (idA < idB)
-      {
-        return true;
-      }
+      if (idA < idB) { return true; }
 
       // alphanumeric identifiers are equal
     }
@@ -220,30 +194,26 @@ bool IsPrereleaseLessThan(std::string const & prereleaseA,
     // move on to the next identifier
   }
 
-  if (identifiersA.size() > identifiersB.size())
-  {
-    return false;
-  }
+  if (identifiersA.size() > identifiersB.size()) { return false; }
 
-  if (identifiersA.size() < identifiersB.size())
-  {
-    return true;
-  }
+  if (identifiersA.size() < identifiersB.size()) { return true; }
 
   return false;  // Prerelease A and B are identical
 }
 
-enum HAS_ANCILLARY
-{HAS_NONE, HAS_PRERELEASE_ONLY, HAS_BUILD_METADATA_ONLY, HAS_BOTH};
+enum HAS_ANCILLARY {
+  HAS_NONE,
+  HAS_PRERELEASE_ONLY,
+  HAS_BUILD_METADATA_ONLY,
+  HAS_BOTH
+};
 }  // namespace
 
 
-void GetSemVer(std::string const ** const version)
-{
-  *version = &(SEM_VER::version);
-}
+std::string const & GetSemVer() { return SEM_VER::version; }
 
-int IsLessThan(std::string const & versionA, std::string const & versionB,
+int IsLessThan(std::string const & versionA,
+               std::string const & versionB,
                int * const isLessThan)
 {
   int majorA;
@@ -257,13 +227,15 @@ int IsLessThan(std::string const & versionA, std::string const & versionB,
   std::string prereleaseB;
   std::string buildMetadataB;
 
-  if ((ParseSemVer(versionA, &majorA, &minorA, &patchA, &prereleaseA,
-                   &buildMetadataA)
-       || ParseSemVer(versionB, &majorB, &minorB, &patchB, &prereleaseB,
+  if ((ParseSemVer(
+           versionA, &majorA, &minorA, &patchA, &prereleaseA, &buildMetadataA)
+       || ParseSemVer(versionB,
+                      &majorB,
+                      &minorB,
+                      &patchB,
+                      &prereleaseB,
                       &buildMetadataB)))
-  {
-    return true;
-  }
+  { return true; }
 
   if (majorA > majorB)
   {
@@ -331,8 +303,10 @@ int IsLessThan(std::string const & versionA, std::string const & versionB,
   return false;  // should not get here
 }
 
-int ParseSemVer(std::string const & version, int * const major,
-                int * const minor, int * const patch,
+int ParseSemVer(std::string const & version,
+                int * const major,
+                int * const minor,
+                int * const patch,
                 std::string * const prerelease,
                 std::string * const buildMetadata)
 {
@@ -345,10 +319,7 @@ int ParseSemVer(std::string const & version, int * const major,
 
   size_t found;
   found = version.find_first_of('+');
-  if (found != std::string::npos)
-  {
-    hasAncillary = HAS_BUILD_METADATA_ONLY;
-  }
+  if (found != std::string::npos) { hasAncillary = HAS_BUILD_METADATA_ONLY; }
   size_t pre = version.find_first_of('-');
   if ((pre != std::string::npos) && (pre < found))
   {
@@ -367,7 +338,7 @@ int ParseSemVer(std::string const & version, int * const major,
     return true;  // Missing Minor and Patch
   }
   majorStr = version.substr(0, found);
-  remainderStr = version.substr(found+1);
+  remainderStr = version.substr(found + 1);
   // Find Minor
   found = remainderStr.find_first_of('.');
   if (found == std::string::npos)
@@ -375,30 +346,28 @@ int ParseSemVer(std::string const & version, int * const major,
     return true;  // Missing Patch
   }
   minorStr = remainderStr.substr(0, found);
-  remainderStr = remainderStr.substr(found+1);
+  remainderStr = remainderStr.substr(found + 1);
   // Find Patch
   switch (hasAncillary)
   {
-    case HAS_NONE:
-      patchStr = remainderStr;
-      break;
+    case HAS_NONE: patchStr = remainderStr; break;
     case HAS_PRERELEASE_ONLY:
       found = remainderStr.find_first_of('-');  // Will succeed
       patchStr = remainderStr.substr(0, found);
-      prereleaseStr = remainderStr.substr(found+1);
+      prereleaseStr = remainderStr.substr(found + 1);
       break;
     case HAS_BUILD_METADATA_ONLY:
       found = remainderStr.find_first_of('+');  // Will succeed
       patchStr = remainderStr.substr(0, found);
-      buildMetadataStr = remainderStr.substr(found+1);
+      buildMetadataStr = remainderStr.substr(found + 1);
       break;
     case HAS_BOTH:
       found = remainderStr.find_first_of('-');  // Will succeed
       patchStr = remainderStr.substr(0, found);
-      remainderStr = remainderStr.substr(found+1);
+      remainderStr = remainderStr.substr(found + 1);
       found = remainderStr.find_first_of('+');  // Will succeed
       prereleaseStr = remainderStr.substr(0, found);
-      buildMetadataStr = remainderStr.substr(found+1);
+      buildMetadataStr = remainderStr.substr(found + 1);
       break;
   }
   remainderStr = "";
@@ -414,10 +383,7 @@ int ParseSemVer(std::string const & version, int * const major,
   {
     return true;  // Not a valid integer
   }
-  if (major != NULL)
-  {
-    *major = verNumber;
-  }
+  if (major != NULL) { *major = verNumber; }
 
   // validate minor
   if ((minorStr[0] == '0') && (minorStr.length() > 1))
@@ -429,10 +395,7 @@ int ParseSemVer(std::string const & version, int * const major,
   {
     return true;  // Not a valid integer
   }
-  if (minor != NULL)
-  {
-    *minor = verNumber;
-  }
+  if (minor != NULL) { *minor = verNumber; }
 
   // validate patch
   if ((patchStr[0] == '0') && (patchStr.length() > 1))
@@ -444,38 +407,27 @@ int ParseSemVer(std::string const & version, int * const major,
   {
     return true;  // Not a valid integer
   }
-  if (patch != NULL)
-  {
-    *patch = verNumber;
-  }
+  if (patch != NULL) { *patch = verNumber; }
 
   // validate prerelease
-  if ((hasAncillary == HAS_PRERELEASE_ONLY) ||
-      (hasAncillary == HAS_BOTH))
+  if ((hasAncillary == HAS_PRERELEASE_ONLY) || (hasAncillary == HAS_BOTH))
   {
     if (ParseIdentifiers(PRERELEASE, prereleaseStr, NULL))
     {
       return true;  // Prerelease is invalid
     }
   }
-  if (prerelease != NULL)
-  {
-    *prerelease = prereleaseStr;
-  }
+  if (prerelease != NULL) { *prerelease = prereleaseStr; }
 
   // validate buildMetadata
-  if ((hasAncillary == HAS_BUILD_METADATA_ONLY) ||
-      (hasAncillary == HAS_BOTH))
+  if ((hasAncillary == HAS_BUILD_METADATA_ONLY) || (hasAncillary == HAS_BOTH))
   {
     if (ParseIdentifiers(BUILD_METADATA, buildMetadataStr, NULL))
     {
       return true;  // Build Metadata is invalid
     }
   }
-  if (buildMetadata != NULL)
-  {
-    *buildMetadata = buildMetadataStr;
-  }
+  if (buildMetadata != NULL) { *buildMetadata = buildMetadataStr; }
 
   return false;
 }

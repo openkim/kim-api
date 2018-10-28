@@ -29,14 +29,13 @@
 //
 
 //
-// Release: This file is part of the kim-api.git repository.
+// Release: This file is part of the kim-api-v2.0.0-beta.2 package.
 //
 
 #ifndef KIM_LENGTH_UNIT_HPP_
 #include "KIM_LengthUnit.hpp"
 #endif
-extern "C"
-{
+extern "C" {
 #ifndef KIM_LENGTH_UNIT_H_
 #include "KIM_LengthUnit.h"
 #endif
@@ -45,39 +44,38 @@ extern "C"
 
 namespace
 {
-KIM::LengthUnit const makeLengthUnitCpp(KIM_LengthUnit const lengthUnit)
+KIM::LengthUnit makeLengthUnitCpp(KIM_LengthUnit const lengthUnit)
 {
   KIM::LengthUnit const * const lengthUnitCpp
-      = reinterpret_cast <KIM::LengthUnit const * const>(&lengthUnit);
+      = reinterpret_cast<KIM::LengthUnit const *>(&lengthUnit);
   return *lengthUnitCpp;
 }
 
-KIM_LengthUnit const makeLengthUnitC(KIM::LengthUnit const lengthUnit)
+KIM_LengthUnit makeLengthUnitC(KIM::LengthUnit const lengthUnit)
 {
   KIM_LengthUnit const * const lengthUnitC
-      = reinterpret_cast <KIM_LengthUnit const * const>(&lengthUnit);
+      = reinterpret_cast<KIM_LengthUnit const *>(&lengthUnit);
   return *lengthUnitC;
 }
 }  // namespace
 
-extern "C"
-{
+extern "C" {
 KIM_LengthUnit KIM_LengthUnit_FromString(char const * const str)
 {
   return makeLengthUnitC(KIM::LengthUnit(std::string(str)));
 }
 
-int KIM_LengthUnit_Equal(KIM_LengthUnit left, KIM_LengthUnit right)
+int KIM_LengthUnit_Equal(KIM_LengthUnit const lhs, KIM_LengthUnit const rhs)
 {
-  return (left.lengthUnitID == right.lengthUnitID);
+  return (lhs.lengthUnitID == rhs.lengthUnitID);
 }
 
-int KIM_LengthUnit_NotEqual(KIM_LengthUnit left, KIM_LengthUnit right)
+int KIM_LengthUnit_NotEqual(KIM_LengthUnit const lhs, KIM_LengthUnit const rhs)
 {
-  return (!KIM_LengthUnit_Equal(left, right));
+  return (!KIM_LengthUnit_Equal(lhs, rhs));
 }
 
-char const * const KIM_LengthUnit_String(KIM_LengthUnit const lengthUnit)
+char const * KIM_LengthUnit_ToString(KIM_LengthUnit const lengthUnit)
 {
   return makeLengthUnitCpp(lengthUnit).String().c_str();
 }

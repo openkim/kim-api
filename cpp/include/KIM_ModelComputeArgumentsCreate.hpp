@@ -27,20 +27,15 @@
 //
 
 //
-// Release: This file is part of the kim-api.git repository.
+// Release: This file is part of the kim-api-v2.0.0-beta.2 package.
 //
 
 
 #ifndef KIM_MODEL_COMPUTE_ARGUMENTS_CREATE_HPP_
 #define KIM_MODEL_COMPUTE_ARGUMENTS_CREATE_HPP_
 
-#include <string>
 #include <sstream>
-
-#ifndef KIM_FUNC_HPP_
-#include "KIM_func.hpp"
-#endif
-
+#include <string>
 
 namespace KIM
 {
@@ -63,11 +58,14 @@ class ModelComputeArgumentsCreate
 
   void SetModelBufferPointer(void * const ptr);
 
-  void LogEntry(LogVerbosity const logVerbosity, std::string const & message,
-                int const lineNumber, std::string const & fileName) const;
+  void LogEntry(LogVerbosity const logVerbosity,
+                std::string const & message,
+                int const lineNumber,
+                std::string const & fileName) const;
   void LogEntry(LogVerbosity const logVerbosity,
                 std::stringstream const & message,
-                int const lineNumber, std::string const & fileName) const;
+                int const lineNumber,
+                std::string const & fileName) const;
 
   std::string const & String() const;
 
@@ -82,4 +80,5 @@ class ModelComputeArgumentsCreate
   ModelComputeArgumentsCreateImplementation * pimpl;
 };  // class ModelComputeArgumentsCreate
 }  // namespace KIM
+
 #endif  // KIM_MODEL_COMPUTE_ARGUMENTS_CREATE_HPP_

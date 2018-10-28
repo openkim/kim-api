@@ -27,7 +27,7 @@
 !
 
 !
-! Release: This file is part of the kim-api.git repository.
+! Release: This file is part of the kim-api-v2.0.0-beta.2 package.
 !
 
 
@@ -37,19 +37,22 @@ module kim_support_status_module
   private
 
   public &
+    ! Derived types
     kim_support_status_type, &
-    kim_support_status_from_string, &
+
+    ! Constants
+    KIM_SUPPORT_STATUS_REQUIRED_BY_API, &
+    KIM_SUPPORT_STATUS_NOT_SUPPORTED, &
+    KIM_SUPPORT_STATUS_REQUIRED, &
+    KIM_SUPPORT_STATUS_OPTIONAL, &
+
+    ! Routines
     operator (.eq.), &
     operator (.ne.), &
-    kim_support_status_string, &
-
-    kim_support_status_required_by_api, &
-    kim_support_status_not_supported, &
-    kim_support_status_required, &
-    kim_support_status_optional, &
-
-    kim_support_status_get_number_of_support_statuses, &
-    kim_support_status_get_support_status
+    kim_from_string, &
+    kim_to_string, &
+    kim_get_number_of_support_statuses, &
+    kim_get_support_status
 
 
   type, bind(c) :: kim_support_status_type
@@ -58,69 +61,124 @@ module kim_support_status_module
 
   type(kim_support_status_type), protected, &
     bind(c, name="KIM_SUPPORT_STATUS_requiredByAPI") &
-    :: kim_support_status_required_by_api
+    :: KIM_SUPPORT_STATUS_REQUIRED_BY_API
   type(kim_support_status_type), protected, &
     bind(c, name="KIM_SUPPORT_STATUS_notSupported") &
-    :: kim_support_status_not_supported
+    :: KIM_SUPPORT_STATUS_NOT_SUPPORTED
   type(kim_support_status_type), protected, &
     bind(c, name="KIM_SUPPORT_STATUS_required") &
-    :: kim_support_status_required
+    :: KIM_SUPPORT_STATUS_REQUIRED
   type(kim_support_status_type), protected, &
     bind(c, name="KIM_SUPPORT_STATUS_optional") &
-    :: kim_support_status_optional
+    :: KIM_SUPPORT_STATUS_OPTIONAL
 
   interface operator (.eq.)
-    logical function kim_support_status_equal(left, right)
-      use, intrinsic :: iso_c_binding
-      import kim_support_status_type
-      implicit none
-      type(kim_support_status_type), intent(in) :: left
-      type(kim_support_status_type), intent(in) :: right
-    end function kim_support_status_equal
+    module procedure kim_support_status_equal
   end interface operator (.eq.)
 
   interface operator (.ne.)
-    logical function kim_support_status_not_equal(left, right)
-      use, intrinsic :: iso_c_binding
-      import kim_support_status_type
-      implicit none
-      type(kim_support_status_type), intent(in) :: left
-      type(kim_support_status_type), intent(in) :: right
-    end function kim_support_status_not_equal
+    module procedure kim_support_status_not_equal
   end interface operator (.ne.)
 
-  interface
-    subroutine kim_support_status_from_string(string, support_status)
-      use, intrinsic :: iso_c_binding
-      import kim_support_status_type
-      implicit none
-      character(len=*, kind=c_char), intent(in) :: string
-      type(kim_support_status_type), intent(out) :: support_status
-    end subroutine kim_support_status_from_string
+  interface kim_from_string
+    module procedure kim_support_status_from_string
+  end interface kim_from_string
 
-    subroutine kim_support_status_string(support_status, string)
-      use, intrinsic :: iso_c_binding
-      import kim_support_status_type
-      implicit none
-      type(kim_support_status_type), intent(in), value :: support_status
-      character(len=*, kind=c_char), intent(out) :: string
-    end subroutine kim_support_status_string
+  interface kim_to_string
+    module procedure kim_support_status_to_string
+  end interface kim_to_string
 
-    subroutine kim_support_status_get_number_of_support_statuses( &
-      number_of_support_statuses)
-      use, intrinsic :: iso_c_binding
-      implicit none
-      integer(c_int), intent(out) :: number_of_support_statuses
-    end subroutine kim_support_status_get_number_of_support_statuses
+contains
+  logical function kim_support_status_equal(lhs, rhs)
+    implicit none
+    type(kim_support_status_type), intent(in) :: lhs
+    type(kim_support_status_type), intent(in) :: rhs
 
-    subroutine kim_support_status_get_support_status(index, support_status, &
-      ierr)
-      use, intrinsic :: iso_c_binding
-      import kim_support_status_type
-      implicit none
-      integer(c_int), intent(in), value :: index
-      type(kim_support_status_type), intent(out) :: support_status
-      integer(c_int), intent(out) :: ierr
-    end subroutine kim_support_status_get_support_status
-  end interface
+    kim_support_status_equal &
+      = (lhs%support_status_id .eq. rhs%support_status_id)
+  end function kim_support_status_equal
+
+  logical function kim_support_status_not_equal(lhs, rhs)
+    implicit none
+    type(kim_support_status_type), intent(in) :: lhs
+    type(kim_support_status_type), intent(in) :: rhs
+
+    kim_support_status_not_equal = .not. (lhs .eq. rhs)
+  end function kim_support_status_not_equal
+
+  subroutine kim_support_status_from_string(string, support_status)
+    implicit none
+    interface
+      type(kim_support_status_type) function from_string(string) &
+        bind(c, name="KIM_SupportStatus_FromString")
+        use, intrinsic :: iso_c_binding
+        import kim_support_status_type
+        implicit none
+        character(c_char), intent(in) :: string(*)
+      end function from_string
+    end interface
+    character(len=*, kind=c_char), intent(in) :: string
+    type(kim_support_status_type), intent(out) :: support_status
+
+    support_status = from_string(trim(string)//c_null_char)
+  end subroutine kim_support_status_from_string
+
+  subroutine kim_support_status_to_string(support_status, string)
+    use kim_convert_string_module, only : kim_convert_string
+    implicit none
+    interface
+      type(c_ptr) function get_string(support_status) &
+        bind(c, name="KIM_SupportStatus_ToString")
+        use, intrinsic :: iso_c_binding
+        import kim_support_status_type
+        implicit none
+        type(kim_support_status_type), intent(in), value :: support_status
+      end function get_string
+    end interface
+    type(kim_support_status_type), intent(in) :: support_status
+    character(len=*, kind=c_char), intent(out) :: string
+
+    type(c_ptr) :: p
+
+    p = get_string(support_status)
+    if (c_associated(p)) then
+      call kim_convert_string(p, string)
+    else
+      string = ""
+    end if
+  end subroutine kim_support_status_to_string
+
+  subroutine kim_get_number_of_support_statuses(number_of_support_statuses)
+    implicit none
+    interface
+      subroutine get_number_of_support_statuses(number_of_support_statuses) &
+        bind(c, name="KIM_SUPPORT_STATUS_GetNumberOfSupportStatuses")
+        use, intrinsic :: iso_c_binding
+        implicit none
+        integer(c_int), intent(out) :: number_of_support_statuses
+      end subroutine get_number_of_support_statuses
+    end interface
+    integer(c_int), intent(out) :: number_of_support_statuses
+
+    call get_number_of_support_statuses(number_of_support_statuses)
+  end subroutine kim_get_number_of_support_statuses
+
+  subroutine kim_get_support_status(index, support_status, ierr)
+    implicit none
+    interface
+      integer(c_int) function get_support_status(index, support_status) &
+        bind(c, name="KIM_SUPPORT_STATUS_GetSupportStatus")
+        use, intrinsic :: iso_c_binding
+        import kim_support_status_type
+        implicit none
+        integer(c_int), intent(in), value :: index
+        type(kim_support_status_type), intent(out) :: support_status
+      end function get_support_status
+    end interface
+    integer(c_int), intent(in) :: index
+    type(kim_support_status_type), intent(out) :: support_status
+    integer(c_int), intent(out) :: ierr
+
+    ierr = get_support_status(index-1, support_status)
+  end subroutine kim_get_support_status
 end module kim_support_status_module

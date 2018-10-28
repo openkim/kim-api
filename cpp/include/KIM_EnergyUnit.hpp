@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api.git repository.
+// Release: This file is part of the kim-api-v2.0.0-beta.2 package.
 //
 
 
@@ -38,7 +38,6 @@
 
 namespace KIM
 {
-
 class EnergyUnit
 {
  public:
@@ -50,7 +49,7 @@ class EnergyUnit
   bool operator==(EnergyUnit const & rhs) const;
   bool operator!=(EnergyUnit const & rhs) const;
   std::string const & String() const;
-};
+};  // class EnergyUnit
 
 namespace ENERGY_UNIT
 {
@@ -71,7 +70,8 @@ struct Comparator
   {
     return a.energyUnitID < b.energyUnitID;
   }
-};
+};  // struct Comparator
 }  // namespace ENERGY_UNIT
 }  // namespace KIM
+
 #endif  // KIM_ENERGY_UNIT_HPP_

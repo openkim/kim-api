@@ -29,7 +29,7 @@
 /*                                                                            */
 
 /*                                                                            */
-/* Release: This file is part of the kim-api.git repository.                  */
+/* Release: This file is part of the kim-api-v2.0.0-beta.2 package.           */
 /*                                                                            */
 
 
@@ -46,10 +46,9 @@ typedef struct KIM_LengthUnit KIM_LengthUnit;
 #endif
 
 KIM_LengthUnit KIM_LengthUnit_FromString(char const * const str);
-
-int KIM_LengthUnit_Equal(KIM_LengthUnit left, KIM_LengthUnit right);
-int KIM_LengthUnit_NotEqual(KIM_LengthUnit left, KIM_LengthUnit right);
-char const* const KIM_LengthUnit_String(KIM_LengthUnit const lengthUnit);
+int KIM_LengthUnit_Equal(KIM_LengthUnit const lhs, KIM_LengthUnit const rhs);
+int KIM_LengthUnit_NotEqual(KIM_LengthUnit const lhs, KIM_LengthUnit const rhs);
+char const * KIM_LengthUnit_ToString(KIM_LengthUnit const lengthUnit);
 
 extern KIM_LengthUnit const KIM_LENGTH_UNIT_unused;
 extern KIM_LengthUnit const KIM_LENGTH_UNIT_A;
@@ -62,4 +61,4 @@ void KIM_LENGTH_UNIT_GetNumberOfLengthUnits(int * const numberOfLengthUnits);
 int KIM_LENGTH_UNIT_GetLengthUnit(int const index,
                                   KIM_LengthUnit * const lengthUnit);
 
-#endif  /* KIM_LENGTH_UNIT_H_ */
+#endif /* KIM_LENGTH_UNIT_H_ */

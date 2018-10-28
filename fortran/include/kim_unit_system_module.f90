@@ -27,17 +27,18 @@
 !
 
 !
-! Release: This file is part of the kim-api.git repository.
+! Release: This file is part of the kim-api-v2.0.0-beta.2 package.
 !
 
 
 module kim_unit_system_module
   use, intrinsic :: iso_c_binding
+
   use kim_length_unit_module
   use kim_energy_unit_module
   use kim_charge_unit_module
   use kim_temperature_unit_module
   use kim_time_unit_module
-  implicit none
+
   public
 end module kim_unit_system_module

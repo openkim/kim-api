@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api.git repository.
+// Release: This file is part of the kim-api-v2.0.0-beta.2 package.
 //
 
 
@@ -49,7 +49,7 @@ class LanguageName
   bool operator==(LanguageName const & rhs) const;
   bool operator!=(LanguageName const & rhs) const;
   std::string const & String() const;
-};
+};  // class LanguageName
 
 namespace LANGUAGE_NAME
 {
@@ -66,7 +66,8 @@ struct Comparator
   {
     return a.languageNameID < b.languageNameID;
   }
-};
+};  // struct Comparator
 }  // namespace LANGUAGE_NAME
 }  // namespace KIM
+
 #endif  // KIM_LANGUAGE_NAME_HPP_

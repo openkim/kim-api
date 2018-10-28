@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api.git repository.
+// Release: This file is part of the kim-api-v2.0.0-beta.2 package.
 //
 
 #include <map>
@@ -38,11 +38,9 @@
 
 namespace KIM
 {
-
 // Order doesn't matter as long as all values are unique
 namespace CHARGE_UNIT
 {
-
 #include "KIM_ChargeUnit.inc"
 ChargeUnit const unused(ID_unused);
 ChargeUnit const C(ID_C);
@@ -52,7 +50,7 @@ ChargeUnit const statC(ID_statC);
 namespace
 {
 typedef std::map<ChargeUnit const, std::string, CHARGE_UNIT::Comparator>
-StringMap;
+    StringMap;
 
 StringMap const GetStringMap()
 {
@@ -81,20 +79,20 @@ int GetChargeUnit(int const index, ChargeUnit * const chargeUnit)
   if ((index < 0) || (index >= numberOfChargeUnits)) return true;
 
   StringMap::const_iterator iter = chargeUnitToString.begin();
-  for (int i=0; i<index; ++i) ++iter;
+  for (int i = 0; i < index; ++i) ++iter;
   *chargeUnit = iter->first;
   return false;  // no error
 }
 }  // namespace CHARGE_UNIT
 
 // implementation of ChargeUnit
-ChargeUnit::ChargeUnit() : chargeUnitID(0){}
-ChargeUnit::ChargeUnit(int const id) : chargeUnitID(id){}
+ChargeUnit::ChargeUnit() : chargeUnitID(0) {}
+ChargeUnit::ChargeUnit(int const id) : chargeUnitID(id) {}
 ChargeUnit::ChargeUnit(std::string const & str)
 {
   chargeUnitID = -1;
   for (CHARGE_UNIT::StringMap::const_iterator iter
-           = CHARGE_UNIT::chargeUnitToString.begin();
+       = CHARGE_UNIT::chargeUnitToString.begin();
        iter != CHARGE_UNIT::chargeUnitToString.end();
        ++iter)
   {
@@ -107,9 +105,13 @@ ChargeUnit::ChargeUnit(std::string const & str)
 }
 
 bool ChargeUnit::operator==(ChargeUnit const & rhs) const
-{return chargeUnitID==rhs.chargeUnitID;}
+{
+  return chargeUnitID == rhs.chargeUnitID;
+}
 bool ChargeUnit::operator!=(ChargeUnit const & rhs) const
-{return chargeUnitID!=rhs.chargeUnitID;}
+{
+  return chargeUnitID != rhs.chargeUnitID;
+}
 
 std::string const & ChargeUnit::String() const
 {

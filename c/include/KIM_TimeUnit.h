@@ -29,7 +29,7 @@
 /*                                                                            */
 
 /*                                                                            */
-/* Release: This file is part of the kim-api.git repository.                  */
+/* Release: This file is part of the kim-api-v2.0.0-beta.2 package.           */
 /*                                                                            */
 
 
@@ -46,10 +46,9 @@ typedef struct KIM_TimeUnit KIM_TimeUnit;
 #endif
 
 KIM_TimeUnit KIM_TimeUnit_FromString(char const * const str);
-
-int KIM_TimeUnit_Equal(KIM_TimeUnit const left, KIM_TimeUnit right);
-int KIM_TimeUnit_NotEqual(KIM_TimeUnit const left, KIM_TimeUnit right);
-char const * const KIM_TimeUnit_String(KIM_TimeUnit const timeUnit);
+int KIM_TimeUnit_Equal(KIM_TimeUnit const lhs, KIM_TimeUnit const rhs);
+int KIM_TimeUnit_NotEqual(KIM_TimeUnit const lhs, KIM_TimeUnit const rhs);
+char const * KIM_TimeUnit_ToString(KIM_TimeUnit const timeUnit);
 
 extern KIM_TimeUnit const KIM_TIME_UNIT_unused;
 extern KIM_TimeUnit const KIM_TIME_UNIT_fs;
@@ -60,4 +59,4 @@ extern KIM_TimeUnit const KIM_TIME_UNIT_s;
 void KIM_TIME_UNIT_GetNumberOfTimeUnits(int * const numberOfTimeUnits);
 int KIM_TIME_UNIT_GetTimeUnit(int const index, KIM_TimeUnit * const timeUnit);
 
-#endif  /* KIM_TIME_UNIT_H_ */
+#endif /* KIM_TIME_UNIT_H_ */

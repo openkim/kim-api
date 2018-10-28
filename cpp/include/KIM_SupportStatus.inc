@@ -29,7 +29,7 @@
 /*                                                                            */
 
 /*                                                                            */
-/* Release: This file is part of the kim-api.git repository.                  */
+/* Release: This file is part of the kim-api-v2.0.0-beta.2 package.           */
 /*                                                                            */
 
 
@@ -37,8 +37,8 @@
 #define KIM_SUPPORT_STATUS_INC_
 
 #define ID_requiredByAPI 0
-#define ID_notSupported  1
-#define ID_required      2
-#define ID_optional      3
+#define ID_notSupported 1
+#define ID_required 2
+#define ID_optional 3
 
-#endif  /* KIM_SUPPORT_STATUS_INC_ */
+#endif /* KIM_SUPPORT_STATUS_INC_ */

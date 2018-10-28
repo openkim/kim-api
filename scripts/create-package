@@ -1,0 +1,159 @@
+#!/bin/sh
+
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the Common Development
+# and Distribution License Version 1.0 (the "License").
+#
+# You can obtain a copy of the license at
+# http://www.opensource.org/licenses/CDDL-1.0.  See the License for the
+# specific language governing permissions and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each file and
+# include the License file in a prominent location with the name LICENSE.CDDL.
+# If applicable, add the following below this CDDL HEADER, with the fields
+# enclosed by brackets "[]" replaced with your own identifying information:
+#
+# Portions Copyright (c) [yyyy] [name of copyright owner]. All rights reserved.
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2013--2018, Regents of the University of Minnesota.
+# All rights reserved.
+#
+# Contributors:
+#    Ryan S. Elliott
+#
+
+#
+# Release: This file is part of the kim-api.git repository.
+#
+
+
+# check for errors
+
+if test $# -lt 4; then
+  printf "usage: %s packagename major minor patch [prerelease]\n" $0
+  exit
+fi
+
+# DO IT
+
+# goto the top level repo directory
+cd "`git rev-parse --show-toplevel`"
+
+
+master_branch="master-v2"
+devel_branch="devel-v2"
+
+# check that we're on the right branch
+if test x"${devel_branch}" != x"`git rev-parse --abbrev-ref HEAD`"; then
+  printf "Must be on the '${devel_branch}' branch to crate a package. "
+  printf "Exiting.\n"
+  exit
+fi
+
+# check that we're on a clean branch
+if test ! x"" == x"`git diff-index --name-only HEAD`"; then
+  printf "Local changes exist.  Must be on a clean commit. Exiting.\n"
+  exit
+fi
+
+packagename=$1
+major=$2
+minor=$3
+patch=$4
+versionstring=v${major}.${minor}.${patch}
+if test $# -ge 5; then
+  prerelease=$5
+  versionstring=${versionstring}-${prerelease}
+else
+  prerelease=""
+fi
+fullpackagename=${packagename}-${versionstring}
+
+# grab cmake project version string
+cmake_project_version="`grep -E "^project\(" CMakeLists.txt | sed -e 's/.*VERSION *\([0-9.]*\).*/\1/'`"
+cmake_major="`printf "${cmake_project_version}" | sed -e 's/\([0-9]*\)\..*/\1/'`"
+cmake_minor="`printf "${cmake_project_version}" | sed -e 's/[^.]*\.\([0-9]*\)\..*/\1/'`"
+cmake_patch="`printf "${cmake_project_version}" | sed -e 's/.*\.\([0-9]*\).*/\1/'`"
+
+if test $major -ne ${cmake_major}; then
+  printf "Major version mismatch with CMakeLists.txt\n";
+  printf "exiting...\n";
+  exit
+fi
+if test $minor -ne ${cmake_minor}; then
+  printf "Minor version mismatch with CMakeLists.tst\n";
+  printf "exiting...\n";
+  exit
+fi
+if test $patch -ne ${cmake_patch}; then
+  printf "Patch version mismatch with CMakeLists.txt\n";
+  printf "exiting...\n";
+  exit
+fi
+
+
+git checkout -b "b-${versionstring}" HEAD
+
+ed cmake/Modules/DefineVersionVariables.cmake > /dev/null 2>&1 <<EOF
+,s/^set(PROJECT_VERSION_PRERELEASE *"\([^"]*\)"/set(PROJECT_VERSION_PRERELEASE "${prerelease}"/
+w
+EOF
+
+
+# replace c /* */ comments
+orig_string="kim-api.git repository"
+new_string="${fullpackagename} package"
+num_spaces=`expr ${#new_string} - ${#orig_string}`
+for fl in `grep -l -r -e "kim-api\.git repository. \{${num_spaces}\}" *`; do
+  if test x"${fl}" != x"scripts/create-package"; then  # can't ed current script
+    ed "${fl}" > /dev/null 2>&1 <<EOF
+,s/kim-api\.git repository. \{${num_spaces}\}/$fullpackagename package./g
+w
+q
+EOF
+  fi
+done
+# replace the rest
+for fl in `grep -l -r "kim-api\.git repository" *`; do
+  if test x"${fl}" != x"scripts/create-package"; then  # can't ed current script
+    ed "${fl}" > /dev/null 2>&1 <<EOF
+,s/kim-api\.git repository/$fullpackagename package/g
+w
+q
+EOF
+  fi
+done
+
+printf "\n"
+git add -u
+git commit -m"Temporary commit holding ${versionstring} tree"
+# the below command creates a merge commit with master_branch as the *first-parent* containing the release files
+merge_commit="`git commit-tree -p "${master_branch}" -p "HEAD~" -m "Release commit for ${versionstring}" "HEAD^{tree}"`"
+printf "\n"
+git reset --hard "${merge_commit}"
+
+git tag -a -m"Release version for ${versionstring}" "${versionstring}"
+git archive --format=tar --prefix="${fullpackagename}/" "${versionstring}" \
+  | xz > "${fullpackagename}.txz"
+
+printf "\n"
+git checkout "${devel_branch}"
+
+printf "\n"
+printf "\n"
+printf "Created release commit, tag, and archive for ${versionstring}.\n"
+printf "To complete the release process perform the following.\n"
+printf "\n"
+printf "  git checkout '${master_branch}'\n"
+printf "  git merge 'b-${versionstring}'\n"
+printf "  git branch -d 'b-${versionstring}'\n"
+printf "  git push origin --tags '${master_branch}'\n"
+printf "  git push github --tags '${master_branch}'\n"
+printf "  git checkout '${devel_branch}'\n"
+printf "\n"

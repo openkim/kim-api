@@ -29,14 +29,13 @@
 //
 
 //
-// Release: This file is part of the kim-api.git repository.
+// Release: This file is part of the kim-api-v2.0.0-beta.2 package.
 //
 
 #ifndef KIM_TIME_UNIT_HPP_
 #include "KIM_TimeUnit.hpp"
 #endif
-extern "C"
-{
+extern "C" {
 #ifndef KIM_TIME_UNIT_H_
 #include "KIM_TimeUnit.h"
 #endif
@@ -45,39 +44,38 @@ extern "C"
 
 namespace
 {
-KIM::TimeUnit const makeTimeUnitCpp(KIM_TimeUnit const timeUnit)
+KIM::TimeUnit makeTimeUnitCpp(KIM_TimeUnit const timeUnit)
 {
   KIM::TimeUnit const * const timeUnitCpp
-      = reinterpret_cast <KIM::TimeUnit const * const>(&timeUnit);
+      = reinterpret_cast<KIM::TimeUnit const *>(&timeUnit);
   return *timeUnitCpp;
 }
 
-KIM_TimeUnit const makeTimeUnitC(KIM::TimeUnit const timeUnit)
+KIM_TimeUnit makeTimeUnitC(KIM::TimeUnit const timeUnit)
 {
   KIM_TimeUnit const * const timeUnitC
-      = reinterpret_cast <KIM_TimeUnit const * const>(&timeUnit);
+      = reinterpret_cast<KIM_TimeUnit const *>(&timeUnit);
   return *timeUnitC;
 }
 }  // namespace
 
-extern "C"
-{
+extern "C" {
 KIM_TimeUnit KIM_TimeUnit_FromString(char const * const str)
 {
   return makeTimeUnitC(KIM::TimeUnit(std::string(str)));
 }
 
-int KIM_TimeUnit_Equal(KIM_TimeUnit const left, KIM_TimeUnit right)
+int KIM_TimeUnit_Equal(KIM_TimeUnit const lhs, KIM_TimeUnit const rhs)
 {
-  return (left.timeUnitID == right.timeUnitID);
+  return (lhs.timeUnitID == rhs.timeUnitID);
 }
 
-int KIM_TimeUnit_NotEqual(KIM_TimeUnit const left, KIM_TimeUnit right)
+int KIM_TimeUnit_NotEqual(KIM_TimeUnit const lhs, KIM_TimeUnit const rhs)
 {
-  return (!KIM_TimeUnit_Equal(left, right));
+  return (!KIM_TimeUnit_Equal(lhs, rhs));
 }
 
-char const * const KIM_TimeUnit_String(KIM_TimeUnit const tiemUnit)
+char const * KIM_TimeUnit_ToString(KIM_TimeUnit const tiemUnit)
 {
   return makeTimeUnitCpp(tiemUnit).String().c_str();
 }

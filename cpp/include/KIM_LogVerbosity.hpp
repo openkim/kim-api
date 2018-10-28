@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api.git repository.
+// Release: This file is part of the kim-api-v2.0.0-beta.2 package.
 //
 
 
@@ -42,7 +42,6 @@
 
 namespace KIM
 {
-
 class LogVerbosity
 {
  public:
@@ -58,7 +57,7 @@ class LogVerbosity
   bool operator==(LogVerbosity const & rhs) const;
   bool operator!=(LogVerbosity const & rhs) const;
   std::string const & String() const;
-};
+};  // class LogVerbosity
 
 namespace LOG_VERBOSITY
 {
@@ -78,7 +77,8 @@ struct Comparator
   {
     return a.logVerbosityID < b.logVerbosityID;
   }
-};
+};  // struct Comparator
 }  // namespace LOG_VERBOSITY
 }  // namespace KIM
+
 #endif  // KIM_LOG_VERBOSITY_HPP_

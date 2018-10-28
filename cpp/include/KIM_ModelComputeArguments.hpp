@@ -27,15 +27,15 @@
 //
 
 //
-// Release: This file is part of the kim-api.git repository.
+// Release: This file is part of the kim-api-v2.0.0-beta.2 package.
 //
 
 
 #ifndef KIM_MODEL_COMPUTE_ARGUMENTS_HPP_
 #define KIM_MODEL_COMPUTE_ARGUMENTS_HPP_
 
-#include <string>
 #include <sstream>
+#include <string>
 
 namespace KIM
 {
@@ -46,17 +46,22 @@ class ComputeCallbackName;
 class ModelComputeArgumentsImplementation;
 
 
-class ModelComputeArguments{
+class ModelComputeArguments
+{
  public:
-  int GetNeighborList(int const neighborListIndex, int const particleNumber,
+  int GetNeighborList(int const neighborListIndex,
+                      int const particleNumber,
                       int * const numberOfNeighbors,
                       int const ** const neighborsOfParticle) const;
-
-  int ProcessDEDrTerm(double const de, double const r, double const * const dx,
-                      int const i, int const j) const;
-
-  int ProcessD2EDr2Term(double const de, double const * const r,
-                        double const * const dx, int const * const i,
+  int ProcessDEDrTerm(double const de,
+                      double const r,
+                      double const * const dx,
+                      int const i,
+                      int const j) const;
+  int ProcessD2EDr2Term(double const de,
+                        double const * const r,
+                        double const * const dx,
+                        int const * const i,
                         int const * const j) const;
 
   int GetArgumentPointer(ComputeArgumentName const computeArgumentName,
@@ -74,11 +79,14 @@ class ModelComputeArguments{
   void SetModelBufferPointer(void * const ptr);
   void GetModelBufferPointer(void ** const ptr) const;
 
-  void LogEntry(LogVerbosity const logVerbosity, std::string const & message,
-                int const lineNumber, std::string const & fileName) const;
+  void LogEntry(LogVerbosity const logVerbosity,
+                std::string const & message,
+                int const lineNumber,
+                std::string const & fileName) const;
   void LogEntry(LogVerbosity const logVerbosity,
                 std::stringstream const & message,
-                int const lineNumber, std::string const & fileName) const;
+                int const lineNumber,
+                std::string const & fileName) const;
 
   std::string const & String() const;
 
@@ -93,4 +101,5 @@ class ModelComputeArguments{
   ModelComputeArgumentsImplementation * pimpl;
 };  // class ModelCompute
 }  // namespace KIM
-#endif  // KIM_MODEL_COMPUTE_HPP_
+
+#endif  // KIM_MODEL_COMPUTE_ARGUMENTS_HPP_

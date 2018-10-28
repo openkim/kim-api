@@ -29,14 +29,13 @@
 //
 
 //
-// Release: This file is part of the kim-api.git repository.
+// Release: This file is part of the kim-api-v2.0.0-beta.2 package.
 //
 
 #ifndef KIM_LANGUAGE_NAME_HPP_
 #include "KIM_LanguageName.hpp"
 #endif
-extern "C"
-{
+extern "C" {
 #ifndef KIM_LANGUAGE_NAME_H_
 #include "KIM_LanguageName.h"
 #endif
@@ -45,41 +44,40 @@ extern "C"
 
 namespace
 {
-KIM::LanguageName const makeLanguageNameCpp(KIM_LanguageName languageName)
+KIM::LanguageName makeLanguageNameCpp(KIM_LanguageName languageName)
 {
   KIM::LanguageName const * const languageNameCpp
-      = reinterpret_cast <KIM::LanguageName const * const>(&languageName);
+      = reinterpret_cast<KIM::LanguageName const *>(&languageName);
   return *languageNameCpp;
 }
 
-KIM_LanguageName const makeLanguageNameC(KIM::LanguageName languageName)
+KIM_LanguageName makeLanguageNameC(KIM::LanguageName languageName)
 {
   KIM_LanguageName const * const languageNameC
-      = reinterpret_cast <KIM_LanguageName const * const>(&languageName);
+      = reinterpret_cast<KIM_LanguageName const *>(&languageName);
   return *languageNameC;
 }
 }  // namespace
 
-extern "C"
-{
+extern "C" {
 KIM_LanguageName KIM_LanguageName_FromString(char const * const str)
 {
   return makeLanguageNameC(KIM::LanguageName(std::string(str)));
 }
 
-int KIM_LanguageName_Equal(KIM_LanguageName const left,
-                           KIM_LanguageName const right)
+int KIM_LanguageName_Equal(KIM_LanguageName const lhs,
+                           KIM_LanguageName const rhs)
 {
-  return (left.languageNameID == right.languageNameID);
+  return (lhs.languageNameID == rhs.languageNameID);
 }
 
-int KIM_LanguageName_NotEqual(KIM_LanguageName const left,
-                              KIM_LanguageName const right)
+int KIM_LanguageName_NotEqual(KIM_LanguageName const lhs,
+                              KIM_LanguageName const rhs)
 {
-  return (!KIM_LanguageName_Equal(left, right));
+  return (!KIM_LanguageName_Equal(lhs, rhs));
 }
 
-char const * const KIM_LanguageName_String(KIM_LanguageName languageName)
+char const * KIM_LanguageName_ToString(KIM_LanguageName languageName)
 {
   return makeLanguageNameCpp(languageName).String().c_str();
 }

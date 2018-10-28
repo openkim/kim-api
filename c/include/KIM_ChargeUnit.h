@@ -29,7 +29,7 @@
 /*                                                                            */
 
 /*                                                                            */
-/* Release: This file is part of the kim-api.git repository.                  */
+/* Release: This file is part of the kim-api-v2.0.0-beta.2 package.           */
 /*                                                                            */
 
 
@@ -46,10 +46,9 @@ typedef struct KIM_ChargeUnit KIM_ChargeUnit;
 #endif
 
 KIM_ChargeUnit KIM_ChargeUnit_FromString(char const * const str);
-
-int KIM_ChargeUnit_Equal(KIM_ChargeUnit const left, KIM_ChargeUnit right);
-int KIM_ChargeUnit_NotEqual(KIM_ChargeUnit const left, KIM_ChargeUnit right);
-char const * const KIM_ChargeUnit_String(KIM_ChargeUnit const chargeUnit);
+int KIM_ChargeUnit_Equal(KIM_ChargeUnit const lhs, KIM_ChargeUnit const rhs);
+int KIM_ChargeUnit_NotEqual(KIM_ChargeUnit const lhs, KIM_ChargeUnit const rhs);
+char const * KIM_ChargeUnit_ToString(KIM_ChargeUnit const chargeUnit);
 
 extern KIM_ChargeUnit const KIM_CHARGE_UNIT_unused;
 extern KIM_ChargeUnit const KIM_CHARGE_UNIT_C;
@@ -60,4 +59,4 @@ void KIM_CHARGE_UNIT_GetNumberOfChargeUnits(int * const numberOfChargeUnits);
 int KIM_CHARGE_UNIT_GetChargeUnit(int const index,
                                   KIM_ChargeUnit * const chargeUnit);
 
-#endif  /* KIM_CHARGE_UNIT_H_ */
+#endif /* KIM_CHARGE_UNIT_H_ */

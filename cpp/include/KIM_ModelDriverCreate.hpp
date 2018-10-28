@@ -27,20 +27,19 @@
 //
 
 //
-// Release: This file is part of the kim-api.git repository.
+// Release: This file is part of the kim-api-v2.0.0-beta.2 package.
 //
 
 
 #ifndef KIM_MODEL_DRIVER_CREATE_HPP_
 #define KIM_MODEL_DRIVER_CREATE_HPP_
 
-#include <string>
 #include <sstream>
+#include <string>
 
-#ifndef KIM_FUNC_HPP_
-#include "KIM_func.hpp"
+#ifndef KIM_FUNCTION_TYPES_HPP_
+#include "KIM_FunctionTypes.hpp"
 #endif
-
 
 namespace KIM
 {
@@ -69,24 +68,28 @@ class ModelDriverCreate
 
   void SetInfluenceDistancePointer(double const * const influenceDistance);
 
-  void SetNeighborListPointers(int const numberOfNeighborLists,
-                               double const * const cutoffs,
-                               int const * const paddingNeighborHints,
-                               int const * const halfListHints);
+  void SetNeighborListPointers(
+      int const numberOfNeighborLists,
+      double const * const cutoffs,
+      int const * const modelWillNotRequestNeighborsOfNoncontributingParticles);
 
-  int SetRefreshPointer(LanguageName const languageName, func * const fptr);
-  int SetDestroyPointer(LanguageName const languageName, func * const fptr);
+  int SetRefreshPointer(LanguageName const languageName, Function * const fptr);
+  int SetDestroyPointer(LanguageName const languageName, Function * const fptr);
   int SetComputeArgumentsCreatePointer(LanguageName const languageName,
-                                       func * const fptr);
+                                       Function * const fptr);
   int SetComputeArgumentsDestroyPointer(LanguageName const languageName,
-                                        func * const fptr);
-  int SetComputePointer(LanguageName const languageName, func * const fptr);
+                                        Function * const fptr);
+  int SetComputePointer(LanguageName const languageName, Function * const fptr);
 
   int SetSpeciesCode(SpeciesName const speciesName, int const code);
 
-  int SetParameterPointer(int const extent, int * const ptr,
+  int SetParameterPointer(int const extent,
+                          int * const ptr,
+                          std::string const & name,
                           std::string const & description);
-  int SetParameterPointer(int const extent, double * const ptr,
+  int SetParameterPointer(int const extent,
+                          double * const ptr,
+                          std::string const & name,
                           std::string const & description);
 
   void SetModelBufferPointer(void * const ptr);
@@ -97,29 +100,31 @@ class ModelDriverCreate
                TemperatureUnit const temperatureUnit,
                TimeUnit const timeUnit);
 
-  int ConvertUnit(
-      LengthUnit const fromLengthUnit,
-      EnergyUnit const fromEnergyUnit,
-      ChargeUnit const fromChargeUnit,
-      TemperatureUnit const fromTemperatureUnit,
-      TimeUnit const fromTimeUnit,
-      LengthUnit const toLengthUnit,
-      EnergyUnit const toEnergyUnit,
-      ChargeUnit const toChargeUnit,
-      TemperatureUnit const toTemperatureUnit,
-      TimeUnit const toTimeUnit,
-      double const lengthExponent,
-      double const energyExponent,
-      double const chargeExponent,
-      double const temperatureExponent,
-      double const timeExponent,
-      double * const conversionFactor) const;
+  static int ConvertUnit(LengthUnit const fromLengthUnit,
+                         EnergyUnit const fromEnergyUnit,
+                         ChargeUnit const fromChargeUnit,
+                         TemperatureUnit const fromTemperatureUnit,
+                         TimeUnit const fromTimeUnit,
+                         LengthUnit const toLengthUnit,
+                         EnergyUnit const toEnergyUnit,
+                         ChargeUnit const toChargeUnit,
+                         TemperatureUnit const toTemperatureUnit,
+                         TimeUnit const toTimeUnit,
+                         double const lengthExponent,
+                         double const energyExponent,
+                         double const chargeExponent,
+                         double const temperatureExponent,
+                         double const timeExponent,
+                         double * const conversionFactor);
 
-  void LogEntry(LogVerbosity const logVerbosity, std::string const & message,
-                int const lineNumber, std::string const & fileName) const;
+  void LogEntry(LogVerbosity const logVerbosity,
+                std::string const & message,
+                int const lineNumber,
+                std::string const & fileName) const;
   void LogEntry(LogVerbosity const logVerbosity,
                 std::stringstream const & message,
-                int const lineNumber, std::string const & fileName) const;
+                int const lineNumber,
+                std::string const & fileName) const;
 
   std::string const & String() const;
 
@@ -134,4 +139,5 @@ class ModelDriverCreate
   ModelDriverCreateImplementation * pimpl;
 };  // class ModelDriverCreate
 }  // namespace KIM
+
 #endif  // KIM_MODEL_DRIVER_CREATE_HPP_

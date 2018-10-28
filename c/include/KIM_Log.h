@@ -29,7 +29,7 @@
 /*                                                                            */
 
 /*                                                                            */
-/* Release: This file is part of the kim-api.git repository.                  */
+/* Release: This file is part of the kim-api-v2.0.0-beta.2 package.           */
 /*                                                                            */
 
 
@@ -52,17 +52,17 @@ typedef struct KIM_Log KIM_Log;
 int KIM_Log_Create(KIM_Log ** const log);
 void KIM_Log_Destroy(KIM_Log ** const log);
 
-char const * const KIM_Log_GetID(KIM_Log const * const log);
+char const * KIM_Log_GetID(KIM_Log const * const log);
 void KIM_Log_SetID(KIM_Log * const log, char const * const id);
 
 void KIM_Log_PushVerbosity(KIM_Log * const log,
                            KIM_LogVerbosity const logVerbosity);
-void KIM_Log_PopVerboisty(KIM_Log * const log);
+void KIM_Log_PopVerbosity(KIM_Log * const log);
 
 void KIM_Log_LogEntry(KIM_Log const * const log,
                       KIM_LogVerbosity const logVerbosity,
                       char const * const message,
-                      int const lineNumber, char const * const fileName);
+                      int const lineNumber,
+                      char const * const fileName);
 
-
-#endif  /* KIM_LOG_H_ */
+#endif /* KIM_LOG_H_ */

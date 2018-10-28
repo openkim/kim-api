@@ -29,7 +29,7 @@
 /*                                                                            */
 
 /*                                                                            */
-/* Release: This file is part of the kim-api.git repository.                  */
+/* Release: This file is part of the kim-api-v2.0.0-beta.2 package.           */
 /*                                                                            */
 
 
@@ -37,6 +37,6 @@
 #define KIM_DATA_TYPE_INC_
 
 #define ID_Integer 0
-#define ID_Double  1
+#define ID_Double 1
 
-#endif  /* KIM_DATA_TYPE_INC_ */
+#endif /* KIM_DATA_TYPE_INC_ */

@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api.git repository.
+// Release: This file is part of the kim-api-v2.0.0-beta.2 package.
 //
 
 #include <string>
@@ -35,8 +35,7 @@
 #ifndef KIM_LOG_VERBOSITY_HPP_
 #include "KIM_LogVerbosity.hpp"
 #endif
-extern "C"
-{
+extern "C" {
 #ifndef KIM_LOG_VERBOSITY_H_
 #include "KIM_LogVerbosity.h"
 #endif
@@ -45,8 +44,7 @@ extern "C"
 #ifndef KIM_MODEL_DESTROY_HPP_
 #include "KIM_ModelDestroy.hpp"
 #endif
-extern "C"
-{
+extern "C" {
 #ifndef KIM_MODEL_DESTROY_H_
 #include "KIM_ModelDestroy.h"
 #endif
@@ -58,8 +56,9 @@ struct KIM_ModelDestroy
   void * p;
 };
 
-#define CONVERT_POINTER KIM::ModelDestroy * pModelDestroy       \
-  = reinterpret_cast<KIM::ModelDestroy *>(modelDestroy->p)
+#define CONVERT_POINTER             \
+  KIM::ModelDestroy * pModelDestroy \
+      = reinterpret_cast<KIM::ModelDestroy *>(modelDestroy->p)
 
 namespace
 {
@@ -69,8 +68,7 @@ KIM::LogVerbosity makeLogVerbosityCpp(KIM_LogVerbosity const logVerbosity)
 }
 }  // namespace
 
-extern "C"
-{
+extern "C" {
 void KIM_ModelDestroy_GetModelBufferPointer(
     KIM_ModelDestroy const * const modelDestroy, void ** const ptr)
 {
@@ -79,19 +77,20 @@ void KIM_ModelDestroy_GetModelBufferPointer(
   pModelDestroy->GetModelBufferPointer(ptr);
 }
 
-void KIM_ModelDestroy_LogEntry(
-    KIM_ModelDestroy const * const modelDestroy,
-    KIM_LogVerbosity const logVerbosity, char const * const message,
-    int const lineNumber, char const * const fileName)
+void KIM_ModelDestroy_LogEntry(KIM_ModelDestroy const * const modelDestroy,
+                               KIM_LogVerbosity const logVerbosity,
+                               char const * const message,
+                               int const lineNumber,
+                               char const * const fileName)
 {
   CONVERT_POINTER;
 
-  pModelDestroy->LogEntry(makeLogVerbosityCpp(logVerbosity), message,
-                          lineNumber, fileName);
+  pModelDestroy->LogEntry(
+      makeLogVerbosityCpp(logVerbosity), message, lineNumber, fileName);
 }
 
-char const * const KIM_ModelDestroy_String(
-    KIM_ModelDestroy const * const modelDestroy)
+char const *
+KIM_ModelDestroy_ToString(KIM_ModelDestroy const * const modelDestroy)
 {
   CONVERT_POINTER;
 

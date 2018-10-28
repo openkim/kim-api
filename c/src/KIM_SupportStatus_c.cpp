@@ -29,14 +29,13 @@
 //
 
 //
-// Release: This file is part of the kim-api.git repository.
+// Release: This file is part of the kim-api-v2.0.0-beta.2 package.
 //
 
 #ifndef KIM_SUPPORT_STATUS_HPP_
 #include "KIM_SupportStatus.hpp"
 #endif
-extern "C"
-{
+extern "C" {
 #ifndef KIM_SUPPORT_STATUS_H_
 #include "KIM_SupportStatus.h"
 #endif
@@ -44,44 +43,40 @@ extern "C"
 
 namespace
 {
-KIM::SupportStatus const makeSupportStatusCpp(
-    KIM_SupportStatus const supportStatus)
+KIM::SupportStatus makeSupportStatusCpp(KIM_SupportStatus const supportStatus)
 {
   KIM::SupportStatus const * const supportStatusCpp
-      = reinterpret_cast <KIM::SupportStatus const * const>(&supportStatus);
+      = reinterpret_cast<KIM::SupportStatus const *>(&supportStatus);
   return *supportStatusCpp;
 }
 
-KIM_SupportStatus const makeSupportStatusC(
-    KIM::SupportStatus const supportStatus)
+KIM_SupportStatus makeSupportStatusC(KIM::SupportStatus const supportStatus)
 {
   KIM_SupportStatus const * const supportStatusC
-      = reinterpret_cast <KIM_SupportStatus const * const>(&supportStatus);
+      = reinterpret_cast<KIM_SupportStatus const *>(&supportStatus);
   return *supportStatusC;
 }
 }  // namespace
 
-extern "C"
-{
+extern "C" {
 KIM_SupportStatus KIM_SupportStatus_FromString(char const * const str)
 {
   return makeSupportStatusC(KIM::SupportStatus(std::string(str)));
 }
 
-int KIM_SupportStatus_Equal(KIM_SupportStatus const left,
-                            KIM_SupportStatus const right)
+int KIM_SupportStatus_Equal(KIM_SupportStatus const lhs,
+                            KIM_SupportStatus const rhs)
 {
-  return (left.supportStatusID == right.supportStatusID);
+  return (lhs.supportStatusID == rhs.supportStatusID);
 }
 
-int KIM_SupportStatus_NotEqual(KIM_SupportStatus const left,
-                               KIM_SupportStatus const right)
+int KIM_SupportStatus_NotEqual(KIM_SupportStatus const lhs,
+                               KIM_SupportStatus const rhs)
 {
-  return (!KIM_SupportStatus_Equal(left, right));
+  return (!KIM_SupportStatus_Equal(lhs, rhs));
 }
 
-char const * const KIM_SupportStatus_String(
-    KIM_SupportStatus const supportStatus)
+char const * KIM_SupportStatus_ToString(KIM_SupportStatus const supportStatus)
 {
   return makeSupportStatusCpp(supportStatus).String().c_str();
 }
@@ -98,9 +93,8 @@ void KIM_SUPPORT_STATUS_GetNumberOfSupportStatuses(
   KIM::SUPPORT_STATUS::GetNumberOfSupportStatuses(numberOfSupportStatuses);
 }
 
-int KIM_SUPPORT_STATUS_GetSupportStatus(
-    int const index,
-    KIM_SupportStatus * const supportStatus)
+int KIM_SUPPORT_STATUS_GetSupportStatus(int const index,
+                                        KIM_SupportStatus * const supportStatus)
 {
   KIM::SupportStatus supportStatusCpp;
   int error = KIM::SUPPORT_STATUS::GetSupportStatus(index, &supportStatusCpp);

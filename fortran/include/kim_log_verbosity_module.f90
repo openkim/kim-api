@@ -27,7 +27,7 @@
 !
 
 !
-! Release: This file is part of the kim-api.git repository.
+! Release: This file is part of the kim-api-v2.0.0-beta.2 package.
 !
 
 
@@ -37,28 +37,28 @@ module kim_log_verbosity_module
   private
 
   public &
+    ! Derived types
     kim_log_verbosity_type, &
-    kim_log_verbosity_from_string, &
+
+    ! Constants
+    KIM_LOG_VERBOSITY_SILENT, &
+    KIM_LOG_VERBOSITY_FATAL, &
+    KIM_LOG_VERBOSITY_ERROR, &
+    KIM_LOG_VERBOSITY_WARNING, &
+    KIM_LOG_VERBOSITY_INFORMATION, &
+    KIM_LOG_VERBOSITY_DEBUG, &
+
+    ! Routines
     operator (.lt.), &
     operator (.gt.), &
     operator (.le.), &
     operator (.ge.), &
     operator (.eq.), &
     operator (.ne.), &
-    kim_log_verbosity_string, &
-
-    kim_log_verbosity_silent, &
-    kim_log_verbosity_fatal, &
-    kim_log_verbosity_error, &
-    kim_log_verbosity_warning, &
-    kim_log_verbosity_information, &
-    kim_log_verbosity_debug, &
-
-    kim_log_verbosity_get_number_of_log_verbosities, &
-    kim_log_verbosity_get_log_verbosity, &
-
-    kim_log_file, &
-    kim_log_message
+    kim_from_string, &
+    kim_to_string, &
+    kim_get_number_of_log_verbosities, &
+    kim_get_log_verbosity
 
 
   type, bind(c) :: kim_log_verbosity_type
@@ -67,117 +67,183 @@ module kim_log_verbosity_module
 
   type(kim_log_verbosity_type), protected, &
     bind(c, name="KIM_LOG_VERBOSITY_silent") &
-    :: kim_log_verbosity_silent
+    :: KIM_LOG_VERBOSITY_SILENT
   type(kim_log_verbosity_type), protected, &
     bind(c, name="KIM_LOG_VERBOSITY_fatal") &
-    :: kim_log_verbosity_fatal
+    :: KIM_LOG_VERBOSITY_FATAL
   type(kim_log_verbosity_type), protected, &
     bind(c, name="KIM_LOG_VERBOSITY_error") &
-    :: kim_log_verbosity_error
+    :: KIM_LOG_VERBOSITY_ERROR
   type(kim_log_verbosity_type), protected, &
     bind(c, name="KIM_LOG_VERBOSITY_warning") &
-    :: kim_log_verbosity_warning
+    :: KIM_LOG_VERBOSITY_WARNING
   type(kim_log_verbosity_type), protected, &
     bind(c, name="KIM_LOG_VERBOSITY_information") &
-    :: kim_log_verbosity_information
+    :: KIM_LOG_VERBOSITY_INFORMATION
   type(kim_log_verbosity_type), protected, &
     bind(c, name="KIM_LOG_VERBOSITY_debug") &
-    :: kim_log_verbosity_debug
+    :: KIM_LOG_VERBOSITY_DEBUG
 
   interface operator (.lt.)
-    logical function kim_log_verbosity_less_than(left, right)
-      use, intrinsic :: iso_c_binding
-      import kim_log_verbosity_type
-      implicit none
-      type(kim_log_verbosity_type), intent(in) :: left
-      type(kim_log_verbosity_type), intent(in) :: right
-    end function kim_log_verbosity_less_than
+    module procedure kim_log_verbosity_less_than
   end interface operator (.lt.)
 
   interface operator (.gt.)
-    logical function kim_log_verbosity_greater_than(left, right)
-      use, intrinsic :: iso_c_binding
-      import kim_log_verbosity_type
-      implicit none
-      type(kim_log_verbosity_type), intent(in) :: left
-      type(kim_log_verbosity_type), intent(in) :: right
-    end function kim_log_verbosity_greater_than
+    module procedure kim_log_verbosity_greater_than
   end interface operator (.gt.)
 
   interface operator (.le.)
-    logical function kim_log_verbosity_less_than_equal(left, right)
-      use, intrinsic :: iso_c_binding
-      import kim_log_verbosity_type
-      implicit none
-      type(kim_log_verbosity_type), intent(in) :: left
-      type(kim_log_verbosity_type), intent(in) :: right
-    end function kim_log_verbosity_less_than_equal
+    module procedure kim_log_verbosity_less_than_equal
   end interface operator (.le.)
 
   interface operator (.ge.)
-    logical function kim_log_verbosity_greater_than_equal(left, right)
-      use, intrinsic :: iso_c_binding
-      import kim_log_verbosity_type
-      implicit none
-      type(kim_log_verbosity_type), intent(in) :: left
-      type(kim_log_verbosity_type), intent(in) :: right
-    end function kim_log_verbosity_greater_than_equal
+    module procedure kim_log_verbosity_greater_than_equal
   end interface operator (.ge.)
 
   interface operator (.eq.)
-    logical function kim_log_verbosity_equal(left, right)
-      use, intrinsic :: iso_c_binding
-      import kim_log_verbosity_type
-      implicit none
-      type(kim_log_verbosity_type), intent(in) :: left
-      type(kim_log_verbosity_type), intent(in) :: right
-    end function kim_log_verbosity_equal
+    module procedure kim_log_verbosity_equal
   end interface operator (.eq.)
 
   interface operator (.ne.)
-    logical function kim_log_verbosity_not_equal(left, right)
-      use, intrinsic :: iso_c_binding
-      import kim_log_verbosity_type
-      implicit none
-      type(kim_log_verbosity_type), intent(in) :: left
-      type(kim_log_verbosity_type), intent(in) :: right
-    end function kim_log_verbosity_not_equal
+    module procedure kim_log_verbosity_not_equal
   end interface operator (.ne.)
 
-  interface
-    subroutine kim_log_verbosity_from_string(string, log_verbosity)
-      use, intrinsic :: iso_c_binding
-      import kim_log_verbosity_type
-      implicit none
-      character(len=*, kind=c_char), intent(in) :: string
-      type(kim_log_verbosity_type), intent(out) :: log_verbosity
-    end subroutine kim_log_verbosity_from_string
+  interface kim_from_string
+    module procedure kim_log_verbosity_from_string
+  end interface kim_from_string
 
-    subroutine kim_log_verbosity_string(log_verbosity, string)
-      use, intrinsic :: iso_c_binding
-      import kim_log_verbosity_type
-      implicit none
-      type(kim_log_verbosity_type), intent(in), value :: log_verbosity
-      character(len=*, kind=c_char), intent(out) :: string
-    end subroutine kim_log_verbosity_string
+  interface kim_to_string
+    module procedure kim_log_verbosity_to_string
+  end interface kim_to_string
 
-    subroutine kim_log_verbosity_get_number_of_log_verbosities( &
-      number_of_log_verbosities)
-      use, intrinsic :: iso_c_binding
-      implicit none
-      integer(c_int), intent(out) :: number_of_log_verbosities
-    end subroutine kim_log_verbosity_get_number_of_log_verbosities
+contains
+  logical function kim_log_verbosity_less_than(lhs, rhs)
+    implicit none
+    type(kim_log_verbosity_type), intent(in) :: lhs
+    type(kim_log_verbosity_type), intent(in) :: rhs
 
-    subroutine kim_log_verbosity_get_log_verbosity(index, log_verbosity, ierr)
-      use, intrinsic :: iso_c_binding
-      import kim_log_verbosity_type
-      implicit none
-      integer(c_int), intent(in), value :: index
-      type(kim_log_verbosity_type), intent(out) :: log_verbosity
-      integer(c_int), intent(out) :: ierr
-    end subroutine kim_log_verbosity_get_log_verbosity
-  end interface
+    kim_log_verbosity_less_than &
+      = (lhs%log_verbosity_id .lt. rhs%log_verbosity_id)
+  end function kim_log_verbosity_less_than
 
-  character(len=4096, kind=c_char) :: kim_log_file
-  character(len=65536, kind=c_char) :: kim_log_message
+  logical function kim_log_verbosity_greater_than(lhs, rhs)
+    implicit none
+    type(kim_log_verbosity_type), intent(in) :: lhs
+    type(kim_log_verbosity_type), intent(in) :: rhs
+
+    kim_log_verbosity_greater_than &
+      = (lhs%log_verbosity_id .ge. rhs%log_verbosity_id)
+  end function kim_log_verbosity_greater_than
+
+  logical function kim_log_verbosity_less_than_equal(lhs, rhs)
+    implicit none
+    type(kim_log_verbosity_type), intent(in) :: lhs
+    type(kim_log_verbosity_type), intent(in) :: rhs
+
+    kim_log_verbosity_less_than_equal &
+      = (lhs%log_verbosity_id .le. rhs%log_verbosity_id)
+  end function kim_log_verbosity_less_than_equal
+
+  logical function kim_log_verbosity_greater_than_equal(lhs, rhs)
+    implicit none
+    type(kim_log_verbosity_type), intent(in) :: lhs
+    type(kim_log_verbosity_type), intent(in) :: rhs
+
+    kim_log_verbosity_greater_than_equal &
+      = (lhs%log_verbosity_id .ge. rhs%log_verbosity_id)
+  end function kim_log_verbosity_greater_than_equal
+
+  logical function kim_log_verbosity_equal(lhs, rhs)
+    implicit none
+    type(kim_log_verbosity_type), intent(in) :: lhs
+    type(kim_log_verbosity_type), intent(in) :: rhs
+
+    kim_log_verbosity_equal &
+      = (lhs%log_verbosity_id .eq. rhs%log_verbosity_id)
+  end function kim_log_verbosity_equal
+
+  logical function kim_log_verbosity_not_equal(lhs, rhs)
+    implicit none
+    type(kim_log_verbosity_type), intent(in) :: lhs
+    type(kim_log_verbosity_type), intent(in) :: rhs
+
+    kim_log_verbosity_not_equal = .not. (lhs .eq. rhs)
+  end function kim_log_verbosity_not_equal
+
+  subroutine kim_log_verbosity_from_string(string, log_verbosity)
+    implicit none
+    interface
+      type(kim_log_verbosity_type) function from_string(string) &
+        bind(c, name="KIM_LogVerbosity_FromString")
+        use, intrinsic :: iso_c_binding
+        import kim_log_verbosity_type
+        implicit none
+        character(c_char), intent(in) :: string(*)
+      end function from_string
+    end interface
+    character(len=*, kind=c_char), intent(in) :: string
+    type(kim_log_verbosity_type), intent(out) :: log_verbosity
+
+    log_verbosity = from_string(trim(string)//c_null_char)
+  end subroutine kim_log_verbosity_from_string
+
+  subroutine kim_log_verbosity_to_string(log_verbosity, string)
+    use kim_convert_string_module, only : kim_convert_string
+    implicit none
+    interface
+      type(c_ptr) function get_string(log_verbosity) &
+        bind(c, name="KIM_LogVerbosity_ToString")
+        use, intrinsic :: iso_c_binding
+        import kim_log_verbosity_type
+        implicit none
+        type(kim_log_verbosity_type), intent(in), value :: log_verbosity
+      end function get_string
+    end interface
+    type(kim_log_verbosity_type), intent(in) :: log_verbosity
+    character(len=*, kind=c_char), intent(out) :: string
+
+    type(c_ptr) :: p
+
+    p = get_string(log_verbosity)
+    if (c_associated(p)) then
+      call kim_convert_string(p, string)
+    else
+      string = ""
+    end if
+  end subroutine kim_log_verbosity_to_string
+
+  subroutine kim_get_number_of_log_verbosities( &
+    number_of_log_verbosities)
+    implicit none
+    interface
+      subroutine get_number_of_log_verbosities(number_of_log_verbosities) &
+        bind(c, name="KIM_LOG_VERBOSITY_GetNumberOfLogVerbosities")
+        use, intrinsic :: iso_c_binding
+        implicit none
+        integer(c_int), intent(out) :: number_of_log_verbosities
+      end subroutine get_number_of_log_verbosities
+    end interface
+    integer(c_int), intent(out) :: number_of_log_verbosities
+
+    call get_number_of_log_verbosities(number_of_log_verbosities)
+  end subroutine kim_get_number_of_log_verbosities
+
+  subroutine kim_get_log_verbosity(index, log_verbosity, ierr)
+    implicit none
+    interface
+      integer(c_int) function get_log_verbosity(index, log_verbosity) &
+        bind(c, name="KIM_LOG_VERBOSITY_GetLogVerbosity")
+        use, intrinsic :: iso_c_binding
+        import kim_log_verbosity_type
+        implicit none
+        integer(c_int), intent(in), value :: index
+        type(kim_log_verbosity_type), intent(out) :: log_verbosity
+      end function get_log_verbosity
+    end interface
+    integer(c_int), intent(in) :: index
+    type(kim_log_verbosity_type), intent(out) :: log_verbosity
+    integer(c_int), intent(out) :: ierr
+
+    ierr = get_log_verbosity(index-1, log_verbosity)
+  end subroutine kim_get_log_verbosity
 end module kim_log_verbosity_module

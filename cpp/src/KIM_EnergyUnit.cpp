@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api.git repository.
+// Release: This file is part of the kim-api-v2.0.0-beta.2 package.
 //
 
 #include <map>
@@ -38,7 +38,6 @@
 
 namespace KIM
 {
-
 // Order doesn't matter as long as all values are unique
 namespace ENERGY_UNIT
 {
@@ -54,7 +53,7 @@ EnergyUnit const kcal_mol(ID_kcal_mol);
 namespace
 {
 typedef std::map<EnergyUnit const, std::string, ENERGY_UNIT::Comparator>
-StringMap;
+    StringMap;
 
 StringMap const GetStringMap()
 {
@@ -87,20 +86,20 @@ int GetEnergyUnit(int const index, EnergyUnit * const energyUnit)
 
   StringMap::const_iterator iter = energyUnitToString.begin();
   int i = 0;
-  for  (; i<index; ++i) ++iter;
+  for (; i < index; ++i) ++iter;
   *energyUnit = iter->first;
   return false;  // no error
 }
 }  // namespace ENERGY_UNIT
 
 // implementation of EnergyUnit
-EnergyUnit::EnergyUnit() : energyUnitID(0){}
-EnergyUnit::EnergyUnit(int const id) : energyUnitID(id){}
+EnergyUnit::EnergyUnit() : energyUnitID(0) {}
+EnergyUnit::EnergyUnit(int const id) : energyUnitID(id) {}
 EnergyUnit::EnergyUnit(std::string const & str)
 {
   energyUnitID = -1;
   for (ENERGY_UNIT::StringMap::const_iterator iter
-           = ENERGY_UNIT::energyUnitToString.begin();
+       = ENERGY_UNIT::energyUnitToString.begin();
        iter != ENERGY_UNIT::energyUnitToString.end();
        ++iter)
   {
@@ -113,9 +112,13 @@ EnergyUnit::EnergyUnit(std::string const & str)
 }
 
 bool EnergyUnit::operator==(EnergyUnit const & rhs) const
-{return energyUnitID==rhs.energyUnitID;}
+{
+  return energyUnitID == rhs.energyUnitID;
+}
 bool EnergyUnit::operator!=(EnergyUnit const & rhs) const
-{return energyUnitID!=rhs.energyUnitID;}
+{
+  return energyUnitID != rhs.energyUnitID;
+}
 
 std::string const & EnergyUnit::String() const
 {

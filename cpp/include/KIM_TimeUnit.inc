@@ -29,7 +29,7 @@
 /*                                                                            */
 
 /*                                                                            */
-/* Release: This file is part of the kim-api.git repository.                  */
+/* Release: This file is part of the kim-api-v2.0.0-beta.2 package.           */
 /*                                                                            */
 
 
@@ -37,9 +37,9 @@
 #define KIM_TIME_UNIT_INC_
 
 #define ID_unused 0
-#define ID_fs     1
-#define ID_ps     2
-#define ID_ns     3
-#define ID_s      4
+#define ID_fs 1
+#define ID_ps 2
+#define ID_ns 3
+#define ID_s 4
 
-#endif  /* KIM_TIME_UNIT_INC_ */
+#endif /* KIM_TIME_UNIT_INC_ */

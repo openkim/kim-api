@@ -29,7 +29,7 @@
 /*                                                                            */
 
 /*                                                                            */
-/* Release: This file is part of the kim-api.git repository.                  */
+/* Release: This file is part of the kim-api-v2.0.0-beta.2 package.           */
 /*                                                                            */
 
 
@@ -106,4 +106,4 @@
 #include "KIM_ModelDestroy.h"
 #endif
 
-#endif  /* KIM_MODEL_HEADERS_H_ */
+#endif /* KIM_MODEL_HEADERS_H_ */

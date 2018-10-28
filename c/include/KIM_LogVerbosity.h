@@ -29,15 +29,16 @@
 /*                                                                            */
 
 /*                                                                            */
-/* Release: This file is part of the kim-api.git repository.                  */
+/* Release: This file is part of the kim-api-v2.0.0-beta.2 package.           */
 /*                                                                            */
 
 
 #ifndef KIM_LOG_VERBOSITY_H_
 #define KIM_LOG_VERBOSITY_H_
 
+#ifndef KIM_LOG_DEFINES_INC_
 #include "KIM_LOG_DEFINES.inc"
-
+#endif
 
 struct KIM_LogVerbosity
 {
@@ -49,20 +50,19 @@ typedef struct KIM_LogVerbosity KIM_LogVerbosity;
 #endif
 
 KIM_LogVerbosity KIM_LogVerbosity_FromString(char const * const str);
-
-int KIM_LogVerbosity_LessThan(KIM_LogVerbosity const left,
-                              KIM_LogVerbosity const right);
-int KIM_LogVerbosity_GreaterThan(KIM_LogVerbosity const left,
-                                 KIM_LogVerbosity const right);
-int KIM_LogVerbosity_LessThanEqual(KIM_LogVerbosity const left,
-                                   KIM_LogVerbosity const right);
-int KIM_LogVerbosity_GreaterThanEqual(KIM_LogVerbosity const left,
-                                      KIM_LogVerbosity const right);
-int KIM_LogVerbosity_Equal(KIM_LogVerbosity const left,
-                           KIM_LogVerbosity const right);
-int KIM_LogVerbosity_NotEqual(KIM_LogVerbosity const left,
-                              KIM_LogVerbosity const right);
-char const * const KIM_LogVerbosity_String(KIM_LogVerbosity const logVerbosity);
+int KIM_LogVerbosity_LessThan(KIM_LogVerbosity const lhs,
+                              KIM_LogVerbosity const rhs);
+int KIM_LogVerbosity_GreaterThan(KIM_LogVerbosity const lhs,
+                                 KIM_LogVerbosity const rhs);
+int KIM_LogVerbosity_LessThanEqual(KIM_LogVerbosity const lhs,
+                                   KIM_LogVerbosity const rhs);
+int KIM_LogVerbosity_GreaterThanEqual(KIM_LogVerbosity const lhs,
+                                      KIM_LogVerbosity const rhs);
+int KIM_LogVerbosity_Equal(KIM_LogVerbosity const lhs,
+                           KIM_LogVerbosity const rhs);
+int KIM_LogVerbosity_NotEqual(KIM_LogVerbosity const lhs,
+                              KIM_LogVerbosity const rhs);
+char const * KIM_LogVerbosity_ToString(KIM_LogVerbosity const logVerbosity);
 
 extern KIM_LogVerbosity const KIM_LOG_VERBOSITY_silent;
 extern KIM_LogVerbosity const KIM_LOG_VERBOSITY_fatal;
@@ -76,4 +76,4 @@ void KIM_LOG_VERBOSITY_GetNumberOfLogVerbosities(
 int KIM_LOG_VERBOSITY_GetLogVerbosity(int const index,
                                       KIM_LogVerbosity * const logVerbosity);
 
-#endif  /* KIM_LOG_VERBOSITY_H_ */
+#endif /* KIM_LOG_VERBOSITY_H_ */

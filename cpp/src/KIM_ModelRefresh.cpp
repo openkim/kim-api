@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api.git repository.
+// Release: This file is part of the kim-api-v2.0.0-beta.2 package.
 //
 
 
@@ -39,13 +39,12 @@
 #include "KIM_ModelImplementation.hpp"
 #endif
 
-#define CONVERT_POINTER ModelImplementation *pImpl      \
-  = reinterpret_cast<ModelImplementation *>(pimpl)
+#define CONVERT_POINTER \
+  ModelImplementation * pImpl = reinterpret_cast<ModelImplementation *>(pimpl)
 
 
 namespace KIM
 {
-
 void ModelRefresh::SetInfluenceDistancePointer(
     double const * const influenceDistance)
 {
@@ -57,15 +56,14 @@ void ModelRefresh::SetInfluenceDistancePointer(
 void ModelRefresh::SetNeighborListPointers(
     int const numberOfNeighborLists,
     double const * const cutoffs,
-    int const * const paddingNeighborHints,
-    int const * const halfListHints)
+    int const * const modelWillNotRequestNeighborsOfNoncontributingParticles)
 {
   CONVERT_POINTER;
 
-  pImpl->SetNeighborListPointers(numberOfNeighborLists,
-                                 cutoffs,
-                                 paddingNeighborHints,
-                                 halfListHints);
+  pImpl->SetNeighborListPointers(
+      numberOfNeighborLists,
+      cutoffs,
+      modelWillNotRequestNeighborsOfNoncontributingParticles);
 }
 
 void ModelRefresh::GetModelBufferPointer(void ** const ptr) const
@@ -102,12 +100,8 @@ std::string const & ModelRefresh::String() const
   return pImpl->String();
 }
 
-ModelRefresh::ModelRefresh() : pimpl(NULL)
-{
-}
+ModelRefresh::ModelRefresh() : pimpl(NULL) {}
 
-ModelRefresh::~ModelRefresh()
-{
-}
+ModelRefresh::~ModelRefresh() {}
 
 }  // namespace KIM

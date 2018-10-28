@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api.git repository.
+// Release: This file is part of the kim-api-v2.0.0-beta.2 package.
 //
 
 
@@ -36,8 +36,8 @@
 
 #include <string>
 
-#ifndef KIM_FUNC_HPP_
-#include "KIM_func.hpp"
+#ifndef KIM_FUNCTION_TYPES_HPP_
+#include "KIM_FunctionTypes.hpp"
 #endif
 
 #ifndef KIM_LOG_HPP_
@@ -56,15 +56,18 @@ class ModelLibrary
   ModelLibrary(Log * const log);
   ~ModelLibrary();
 
-  enum ITEM_TYPE {STAND_ALONE_MODEL, PARAMETERIZED_MODEL, SIMULATOR_MODEL,
-                  MODEL_DRIVER};
+  enum ITEM_TYPE {
+    STAND_ALONE_MODEL,
+    PARAMETERIZED_MODEL,
+    SIMULATOR_MODEL,
+    MODEL_DRIVER
+  };
 
   int Open(bool const typeIsModel, std::string const & modelName);
   int Close();
   int GetModelType(ITEM_TYPE * const modelType) const;
   int GetModelCreateFunctionPointer(LanguageName * const languageName,
-                                    func ** const functionPointer)
-      const;
+                                    Function ** const functionPointer) const;
   int GetNumberOfParameterFiles(int * const numberOfParameterFiles) const;
   int GetParameterFileString(
       int const index,
@@ -73,8 +76,10 @@ class ModelLibrary
   int GetModelDriverName(std::string * const modelDriverName) const;
   int GetModelCompiledWithVersion(std::string * const versionString) const;
 
-  void LogEntry(LogVerbosity const logVerbosity, std::string const & message,
-                int const lineNumber, std::string const & fileName) const;
+  void LogEntry(LogVerbosity const logVerbosity,
+                std::string const & message,
+                int const lineNumber,
+                std::string const & fileName) const;
 
  private:
   std::string modelName_;

@@ -28,7 +28,7 @@
 #
 
 #
-# Release: This file is part of the kim-api.git repository.
+# Release: This file is part of the kim-api-v2.0.0-beta.2 package.
 #
 
 
@@ -42,10 +42,8 @@ the codes are written.  It is part of the larger KIM project
 (https://openkim.org).
 
 
-See the docs/README file for instructions on generating html documentation
-for the kim-api package.
-
-See the INSTALL file for instructions on how to build and install the package.
+See the INSTAL file for instructions on how to build and install the package
+and its documentation.
 
 *******************************************************************************
 

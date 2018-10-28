@@ -27,20 +27,20 @@
 //
 
 //
-// Release: This file is part of the kim-api.git repository.
+// Release: This file is part of the kim-api-v2.0.0-beta.2 package.
 //
 
 
 #ifndef KIM_MODEL_IMPLEMENTATION_HPP_
 #define KIM_MODEL_IMPLEMENTATION_HPP_
 
-#include <string>
-#include <sstream>
 #include <map>
+#include <sstream>
+#include <string>
 #include <vector>
 
-#ifndef KIM_FUNC_HPP_
-#include "KIM_func.hpp"
+#ifndef KIM_FUNCTION_TYPES_HPP_
+#include "KIM_FunctionTypes.hpp"
 #endif
 
 #ifndef KIM_LOG_VERBOSITY_HPP_
@@ -106,23 +106,24 @@ class ModelImplementation
   void GetInfluenceDistance(double * const influenceDistance) const;
 
 
-  void SetNeighborListPointers(int const numberOfNeighborLists,
-                               double const * const cutoffs,
-                               int const * const paddingNeighborHints,
-                               int const * const halfListHints);
-  void GetNeighborListPointers(int * const numberOfNeighborLists,
-                               double const ** const cutoffs,
-                               int const ** const paddingNeighborHints,
-                               int const ** const halfListHints) const;
+  void SetNeighborListPointers(
+      int const numberOfNeighborLists,
+      double const * const cutoffs,
+      int const * const modelWillNotRequestNeighborsOfNoncontributingParticles);
+  void GetNeighborListPointers(
+      int * const numberOfNeighborLists,
+      double const ** const cutoffs,
+      int const ** const modelWillNotRequestNeighborsOfNoncontributingParticles)
+      const;
 
 
-  int SetRefreshPointer(LanguageName const languageName, func * const fptr);
-  int SetDestroyPointer(LanguageName const languageName, func * const fptr);
+  int SetRefreshPointer(LanguageName const languageName, Function * const fptr);
+  int SetDestroyPointer(LanguageName const languageName, Function * const fptr);
   int SetComputeArgumentsCreatePointer(LanguageName const languageName,
-                                       func * const fptr);
+                                       Function * const fptr);
   int SetComputeArgumentsDestroyPointer(LanguageName const languageName,
-                                        func * const fptr);
-  int SetComputePointer(LanguageName const languageName, func * const fptr);
+                                        Function * const fptr);
+  int SetComputePointer(LanguageName const languageName, Function * const fptr);
 
 
   int SetSpeciesCode(SpeciesName const speciesName, int const code);
@@ -132,10 +133,11 @@ class ModelImplementation
 
 
   int SetModelNumbering(Numbering const numbering);
+
  private:
   int SetSimulatorNumbering(Numbering const numbering);
- public:
 
+ public:
   int SetUnits(LengthUnit const lengthUnit,
                EnergyUnit const energyUnit,
                ChargeUnit const chargeUnit,
@@ -152,21 +154,31 @@ class ModelImplementation
   int GetParameterFileName(int const index,
                            std::string const ** const parameterFileName) const;
 
-  int SetParameterPointer(int const extent, int * const ptr,
+  int SetParameterPointer(int const extent,
+                          int * const ptr,
+                          std::string const & name,
                           std::string const & description);
-  int SetParameterPointer(int const extent, double * const ptr,
+  int SetParameterPointer(int const extent,
+                          double * const ptr,
+                          std::string const & name,
                           std::string const & description);
   void GetNumberOfParameters(int * const numberOfParameters) const;
-  int GetParameterDataTypeExtentAndDescription(
-      int const parameterIndex, DataType * const dataType, int * const extent,
-      std::string const ** const description) const;
-  int GetParameter(int const parameterIndex, int const arrayIndex,
+  int GetParameterMetadata(int const parameterIndex,
+                           DataType * const dataType,
+                           int * const extent,
+                           std::string const ** const name,
+                           std::string const ** const description) const;
+  int GetParameter(int const parameterIndex,
+                   int const arrayIndex,
                    int * const parameterValue) const;
-  int GetParameter(int const parameterIndex, int const arrayIndex,
+  int GetParameter(int const parameterIndex,
+                   int const arrayIndex,
                    double * const parameterValue) const;
-  int SetParameter(int const parameterIndex, int const arrayIndex,
+  int SetParameter(int const parameterIndex,
+                   int const arrayIndex,
                    int const parameterValue);
-  int SetParameter(int const parameterIndex, int const arrayIndex,
+  int SetParameter(int const parameterIndex,
+                   int const arrayIndex,
                    double const parameterValue);
 
 
@@ -181,33 +193,35 @@ class ModelImplementation
   void SetSimulatorBufferPointer(void * const ptr);
   void GetSimulatorBufferPointer(void ** const ptr) const;
 
-  int ConvertUnit(
-      LengthUnit const fromLengthUnit,
-      EnergyUnit const fromEnergyUnit,
-      ChargeUnit const fromChargeUnit,
-      TemperatureUnit const fromTemperatureUnit,
-      TimeUnit const fromTimeUnit,
-      LengthUnit const toLengthUnit,
-      EnergyUnit const toEnergyUnit,
-      ChargeUnit const toChargeUnit,
-      TemperatureUnit const toTemperatureUnit,
-      TimeUnit const toTimeUnit,
-      double const lengthExponent,
-      double const energyExponent,
-      double const chargeExponent,
-      double const temperatureExponent,
-      double const timeExponent,
-      double * const conversionFactor) const;
+  static int ConvertUnit(LengthUnit const fromLengthUnit,
+                         EnergyUnit const fromEnergyUnit,
+                         ChargeUnit const fromChargeUnit,
+                         TemperatureUnit const fromTemperatureUnit,
+                         TimeUnit const fromTimeUnit,
+                         LengthUnit const toLengthUnit,
+                         EnergyUnit const toEnergyUnit,
+                         ChargeUnit const toChargeUnit,
+                         TemperatureUnit const toTemperatureUnit,
+                         TimeUnit const toTimeUnit,
+                         double const lengthExponent,
+                         double const energyExponent,
+                         double const chargeExponent,
+                         double const temperatureExponent,
+                         double const timeExponent,
+                         double * const conversionFactor);
 
 
   void SetLogID(std::string const & logID);
   void PushLogVerbosity(LogVerbosity const logVerbosity);
   void PopLogVerbosity();
-  void LogEntry(LogVerbosity const logVerbosity, std::string const & message,
-                int const lineNumber, std::string const & fileName) const;
+  void LogEntry(LogVerbosity const logVerbosity,
+                std::string const & message,
+                int const lineNumber,
+                std::string const & fileName) const;
   void LogEntry(LogVerbosity const logVerbosity,
                 std::stringstream const & message,
-                int const lineNumber, std::string const & fileName) const;
+                int const lineNumber,
+                std::string const & fileName) const;
   std::string const & String() const;
 
  private:
@@ -227,22 +241,24 @@ class ModelImplementation
                   std::string const & modelName);
   int ModelDestroy();
 
-  int ModelComputeArgumentsCreate(ComputeArguments * const computeArguments)
-      const;
-  int ModelComputeArgumentsDestroy(ComputeArguments * const computeArguments)
-      const;
+  int ModelComputeArgumentsCreate(
+      ComputeArguments * const computeArguments) const;
+  int ModelComputeArgumentsDestroy(
+      ComputeArguments * const computeArguments) const;
 
 
-  int Validate(ChargeUnit const chargeUnit) const;
-  int Validate(DataType const dataType) const;
-  int Validate(EnergyUnit const energyUnit) const;
-  int Validate(LanguageName const languageName) const;
-  int Validate(LengthUnit const lengthUnit) const;
-  int Validate(Numbering const numbering) const;
-  int Validate(SpeciesName const speciesName) const;
-  int Validate(SupportStatus const supportStatus) const;
-  int Validate(TemperatureUnit const temperatureUnit) const;
-  int Validate(TimeUnit const timeUnit) const;
+  static int Validate(ChargeUnit const chargeUnit);
+  static int Validate(DataType const dataType);
+  static int Validate(EnergyUnit const energyUnit);
+  static int Validate(LanguageName const languageName);
+  static int Validate(LengthUnit const lengthUnit);
+  static int Validate(Numbering const numbering);
+  static int Validate(SpeciesName const speciesName);
+  static int Validate(SupportStatus const supportStatus);
+  static int Validate(TemperatureUnit const temperatureUnit);
+  static int Validate(TimeUnit const timeUnit);
+
+  int IsCIdentifier(std::string const & id) const;
 
   ModelLibrary::ITEM_TYPE modelType_;
   std::string modelName_;
@@ -254,12 +270,11 @@ class ModelImplementation
 
   Log * log_;
 
-  int InitializeStandAloneModel(
-      LengthUnit const requestedLengthUnit,
-      EnergyUnit const requestedEnergyUnit,
-      ChargeUnit const requestedChargeUnit,
-      TemperatureUnit const requestedTemperatureUnit,
-      TimeUnit const requestedTimeUnit);
+  int InitializeStandAloneModel(LengthUnit const requestedLengthUnit,
+                                EnergyUnit const requestedEnergyUnit,
+                                ChargeUnit const requestedChargeUnit,
+                                TemperatureUnit const requestedTemperatureUnit,
+                                TimeUnit const requestedTimeUnit);
 
   int InitializeParameterizedModel(
       LengthUnit const requestedLengthUnit,
@@ -288,25 +303,25 @@ class ModelImplementation
 
   int numberOfNeighborLists_;
   double const * cutoffs_;
-  int const * paddingNeighborHints_;
-  int const * halfListHints_;
+  int const * modelWillNotRequestNeighborsOfNoncontributingParticles_;
 
 
   LanguageName refreshLanguage_;
-  func * refreshFunction_;
+  Function * refreshFunction_;
   LanguageName destroyLanguage_;
-  func * destroyFunction_;
+  Function * destroyFunction_;
   LanguageName computeArgumentsCreateLanguage_;
-  func * computeArgumentsCreateFunction_;
+  Function * computeArgumentsCreateFunction_;
   LanguageName computeArgumentsDestroyLanguage_;
-  func * computeArgumentsDestroyFunction_;
+  Function * computeArgumentsDestroyFunction_;
   LanguageName computeLanguage_;
-  func * computeFunction_;
+  Function * computeFunction_;
 
 
   std::map<SpeciesName const, int, SPECIES_NAME::Comparator> supportedSpecies_;
 
 
+  std::vector<std::string> parameterName_;
   std::vector<std::string> parameterDescription_;
   std::vector<DataType> parameterDataType_;
   std::vector<int> parameterExtent_;

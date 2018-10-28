@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api.git repository.
+// Release: This file is part of the kim-api-v2.0.0-beta.2 package.
 //
 
 
@@ -38,7 +38,6 @@
 
 namespace KIM
 {
-
 class Numbering
 {
  public:
@@ -50,7 +49,7 @@ class Numbering
   bool operator==(Numbering const & rhs) const;
   bool operator!=(Numbering const & rhs) const;
   std::string const & String() const;
-};
+};  // class Numbering
 
 namespace NUMBERING
 {
@@ -66,7 +65,8 @@ struct Comparator
   {
     return a.numberingID < b.numberingID;
   }
-};
+};  // struct Comparator
 }  // namespace NUMBERING
 }  // namespace KIM
+
 #endif  // KIM_NUMBERING_HPP_

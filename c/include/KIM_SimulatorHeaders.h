@@ -29,7 +29,7 @@
 /*                                                                            */
 
 /*                                                                            */
-/* Release: This file is part of the kim-api.git repository.                  */
+/* Release: This file is part of the kim-api-v2.0.0-beta.2 package.           */
 /*                                                                            */
 
 
@@ -80,4 +80,4 @@
 #include "KIM_SupportStatus.h"
 #endif
 
-#endif  /* KIM_SIMULATOR_HEADERS_H_ */
+#endif /* KIM_SIMULATOR_HEADERS_H_ */

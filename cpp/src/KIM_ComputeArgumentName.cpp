@@ -27,11 +27,11 @@
 //
 
 //
-// Release: This file is part of the kim-api.git repository.
+// Release: This file is part of the kim-api-v2.0.0-beta.2 package.
 //
 
-#include <vector>
 #include <map>
+#include <vector>
 
 #ifndef KIM_DATA_TYPE_HPP_
 #include "KIM_DataType.hpp"
@@ -43,7 +43,6 @@
 
 namespace KIM
 {
-
 // Order doesn't matter as long as all values are unique
 namespace COMPUTE_ARGUMENT_NAME
 {
@@ -60,9 +59,10 @@ ComputeArgumentName const partialParticleVirial(ID_partialParticleVirial);
 
 namespace
 {
-typedef std::map<ComputeArgumentName const, std::string,
+typedef std::map<ComputeArgumentName const,
+                 std::string,
                  COMPUTE_ARGUMENT_NAME::Comparator>
-StringMap;
+    StringMap;
 
 StringMap const GetStringMap()
 {
@@ -86,12 +86,12 @@ std::string const computeArgumentNameUnknown("unknown");
 
 namespace
 {
-typedef std::map<ComputeArgumentName const, DataType,
-                 COMPUTE_ARGUMENT_NAME::Comparator>
-DataTypeMap;
+typedef std::
+    map<ComputeArgumentName const, DataType, COMPUTE_ARGUMENT_NAME::Comparator>
+        DataTypeMap;
 
 DataTypeMap const GetDataTypeMap()
-{ // Here we must assume that the DATA_TYPE:: constants are not initialized.
+{  // Here we must assume that the DATA_TYPE:: constants are not initialized.
   int const Integer = 0;
   int const Double = 1;
 
@@ -128,7 +128,7 @@ ComputeArgumentVector const GetComputeArgumentVector()
 }  // namespace
 // used by KIM::ModelImplementation
 extern ComputeArgumentVector const requiredByAPI_ComputeArguments
-= GetComputeArgumentVector();
+    = GetComputeArgumentVector();
 
 void GetNumberOfComputeArgumentNames(int * const numberOfComputeArgumentNames)
 {
@@ -143,7 +143,7 @@ int GetComputeArgumentName(int const index,
   if ((index < 0) || (index >= numberOfComputeArgumentNames)) return true;
 
   StringMap::const_iterator iter = computeArgumentNameToString.begin();
-  for (int i=0; i<index; ++i) ++iter;
+  for (int i = 0; i < index; ++i) ++iter;
   *computeArgumentName = iter->first;
   return false;  // no error
 }
@@ -167,8 +167,8 @@ int GetComputeArgumentDataType(ComputeArgumentName const computeArgumentName,
 
 // implementation of ComputeArgumentName
 ComputeArgumentName::ComputeArgumentName() : computeArgumentNameID(0) {}
-ComputeArgumentName::ComputeArgumentName(int const id)
-    : computeArgumentNameID(id)
+ComputeArgumentName::ComputeArgumentName(int const id) :
+    computeArgumentNameID(id)
 {
 }
 
@@ -176,7 +176,7 @@ ComputeArgumentName::ComputeArgumentName(std::string const & str)
 {
   computeArgumentNameID = -1;
   for (COMPUTE_ARGUMENT_NAME::StringMap::const_iterator iter
-           = COMPUTE_ARGUMENT_NAME::computeArgumentNameToString.begin();
+       = COMPUTE_ARGUMENT_NAME::computeArgumentNameToString.begin();
        iter != COMPUTE_ARGUMENT_NAME::computeArgumentNameToString.end();
        ++iter)
   {
@@ -189,9 +189,13 @@ ComputeArgumentName::ComputeArgumentName(std::string const & str)
 }
 
 bool ComputeArgumentName::operator==(ComputeArgumentName const & rhs) const
-{return computeArgumentNameID == rhs.computeArgumentNameID;}
+{
+  return computeArgumentNameID == rhs.computeArgumentNameID;
+}
 bool ComputeArgumentName::operator!=(ComputeArgumentName const & rhs) const
-{return computeArgumentNameID != rhs.computeArgumentNameID;}
+{
+  return computeArgumentNameID != rhs.computeArgumentNameID;
+}
 
 std::string const & ComputeArgumentName::String() const
 {

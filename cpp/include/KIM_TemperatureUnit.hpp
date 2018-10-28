@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api.git repository.
+// Release: This file is part of the kim-api-v2.0.0-beta.2 package.
 //
 
 
@@ -38,7 +38,6 @@
 
 namespace KIM
 {
-
 class TemperatureUnit
 {
  public:
@@ -50,7 +49,7 @@ class TemperatureUnit
   bool operator==(TemperatureUnit const & rhs) const;
   bool operator!=(TemperatureUnit const & rhs) const;
   std::string const & String() const;
-};
+};  // class TemperatureUnit
 
 namespace TEMPERATURE_UNIT
 {
@@ -67,7 +66,8 @@ struct Comparator
   {
     return a.temperatureUnitID < b.temperatureUnitID;
   }
-};
+};  // struct Comparator
 }  // namespace TEMPERATURE_UNIT
 }  // namespace KIM
+
 #endif  // KIM_TEMPERATURE_UNIT_HPP_

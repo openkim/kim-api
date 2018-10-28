@@ -29,16 +29,12 @@
 /*                                                                            */
 
 /*                                                                            */
-/* Release: This file is part of the kim-api.git repository.                  */
+/* Release: This file is part of the kim-api-v2.0.0-beta.2 package.           */
 /*                                                                            */
 
 
 #ifndef KIM_MODEL_H_
 #define KIM_MODEL_H_
-
-#ifndef KIM_FUNC_H_
-#include "KIM_func.h"
-#endif
 
 /* Forward declarations */
 #ifndef KIM_LOG_VERBOSITY_DEFINED_
@@ -46,14 +42,19 @@
 typedef struct KIM_LogVerbosity KIM_LogVerbosity;
 #endif
 
-#ifndef KIM_SPECIES_NAME_DEFINED_
-#define KIM_SPECIES_NAME_DEFINED_
-typedef struct KIM_SpeciesName KIM_SpeciesName;
+#ifndef KIM_DATA_TYPE_DEFINED_
+#define KIM_DATA_TYPE_DEFINED_
+typedef struct KIM_DataType KIM_DataType;
 #endif
 
 #ifndef KIM_LANGUAGE_NAME_DEFINED_
 #define KIM_LANGUAGE_NAME_DEFINED_
 typedef struct KIM_LanguageName KIM_LanguageName;
+#endif
+
+#ifndef KIM_SPECIES_NAME_DEFINED_
+#define KIM_SPECIES_NAME_DEFINED_
+typedef struct KIM_SpeciesName KIM_SpeciesName;
 #endif
 
 #ifndef KIM_NUMBERING_DEFINED_
@@ -64,11 +65,6 @@ typedef struct KIM_Numbering KIM_Numbering;
 #ifndef KIM_LENGTH_UNIT_DEFINED_
 #define KIM_LENGTH_UNIT_DEFINED_
 typedef struct KIM_LengthUnit KIM_LengthUnit;
-#endif
-
-#ifndef KIM_DATA_TYPE_DEFINED_
-#define KIM_DATA_TYPE_DEFINED_
-typedef struct KIM_DataType KIM_DataType;
 #endif
 
 #ifndef KIM_ENERGY_UNIT_DEFINED_
@@ -118,11 +114,12 @@ void KIM_Model_Destroy(KIM_Model ** const model);
 void KIM_Model_GetInfluenceDistance(KIM_Model const * const model,
                                     double * const influenceDistance);
 
-void KIM_Model_GetNeighborListPointers(KIM_Model const * const model,
-                                       int * const numberOfNeighborLists,
-                                       double const ** const cutoffs,
-                                       int const ** const paddingNeighborHints,
-                                       int const ** const halfListHints);
+void KIM_Model_GetNeighborListPointers(
+    KIM_Model const * const model,
+    int * const numberOfNeighborLists,
+    double const ** const cutoffs,
+    int const ** const modelWillNotRequestNeighborsOfNoncontributingParticles);
+
 
 void KIM_Model_GetUnits(KIM_Model const * const model,
                         KIM_LengthUnit * const lengthUnit,
@@ -149,10 +146,12 @@ int KIM_Model_GetSpeciesSupportAndCode(KIM_Model const * const model,
 
 void KIM_Model_GetNumberOfParameters(KIM_Model const * const model,
                                      int * const numberOfParameters);
-int KIM_Model_GetParameterDataTypeExtentAndDescription(
-    KIM_Model const * const model, int const parameterIndex,
-    KIM_DataType * const dataType, int * const extent,
-    char const ** const description);
+int KIM_Model_GetParameterMetadata(KIM_Model const * const model,
+                                   int const parameterIndex,
+                                   KIM_DataType * const dataType,
+                                   int * const extent,
+                                   char const ** const name,
+                                   char const ** const description);
 int KIM_Model_GetParameterInteger(KIM_Model const * const model,
                                   int const parameterIndex,
                                   int const arrayIndex,
@@ -175,11 +174,11 @@ void KIM_Model_SetSimulatorBufferPointer(KIM_Model * const model,
 void KIM_Model_GetSimulatorBufferPointer(KIM_Model const * const model,
                                          void ** const ptr);
 
-char const * const KIM_Model_String(KIM_Model const * const model);
+char const * KIM_Model_ToString(KIM_Model const * const model);
 
 void KIM_Model_SetLogID(KIM_Model * const model, char const * const logID);
 void KIM_Model_PushLogVerbosity(KIM_Model * const model,
                                 KIM_LogVerbosity const logVerbosity);
 void KIM_Model_PopLogVerbosity(KIM_Model * const model);
 
-#endif  /* KIM_MODEL_H_ */
+#endif /* KIM_MODEL_H_ */

@@ -30,35 +30,33 @@
  */
 
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <math.h>
 #include "KIM_SimulatorHeaders.h"
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 #define TRUE 1
 #define FALSE 0
 
-#define NAMESTRLEN    128
+#define NAMESTRLEN 128
 
-#define FCCSPACING    5.260
-#define DIM           3
+#define FCCSPACING 5.260
+#define DIM 3
 #define NCELLSPERSIDE 2
-#define NCLUSTERPARTS (4*(NCELLSPERSIDE*NCELLSPERSIDE*NCELLSPERSIDE) + \
-                       6*(NCELLSPERSIDE*NCELLSPERSIDE)                 \
-                       + 3*(NCELLSPERSIDE) + 1)
+#define NCLUSTERPARTS                                  \
+  (4 * (NCELLSPERSIDE * NCELLSPERSIDE * NCELLSPERSIDE) \
+   + 6 * (NCELLSPERSIDE * NCELLSPERSIDE) + 3 * (NCELLSPERSIDE) + 1)
 
 
-#define MY_ERROR(message)                                       \
-  {                                                             \
-    printf("* Error : \"%s\" %d:%s\n", message,                 \
-           __LINE__, __FILE__);                                 \
-    exit(1);                                                    \
+#define MY_ERROR(message)                                            \
+  {                                                                  \
+    printf("* Error : \"%s\" %d:%s\n", message, __LINE__, __FILE__); \
+    exit(1);                                                         \
   }
 
-#define MY_WARNING(message)                                             \
-  {                                                                     \
-    printf("* Error : \"%s\" %d:%s\n", message,                         \
-           __LINE__, __FILE__);                                         \
+#define MY_WARNING(message)                                          \
+  {                                                                  \
+    printf("* Error : \"%s\" %d:%s\n", message, __LINE__, __FILE__); \
   }
 
 /* Define neighborlist structure */
@@ -66,31 +64,35 @@ typedef struct
 {
   double cutoff;
   int numberOfParticles;
-  int* NNeighbors;
-  int* neighborList;
+  int * NNeighbors;
+  int * neighborList;
 } NeighList;
 
 /* Define prototypes */
-void fcc_cluster_neighborlist(int half, int numberOfParticles, double* coords,
-                              double cutoff, NeighList* nl);
+void fcc_cluster_neighborlist(int half,
+                              int numberOfParticles,
+                              double * coords,
+                              double cutoff,
+                              NeighList * nl);
 
-int get_cluster_neigh(
-    void const * const dataObject,
-    int const numberOfNeighborLists, double const * const cutoffs,
-    int const neighborListIndex,
-    int const particleNumber, int * const numberOfNeighbors,
-    int const ** const neighborsOfParticle);
+int get_cluster_neigh(void * const dataObject,
+                      int const numberOfNeighborLists,
+                      double const * const cutoffs,
+                      int const neighborListIndex,
+                      int const particleNumber,
+                      int * const numberOfNeighbors,
+                      int const ** const neighborsOfParticle);
 
-void create_FCC_cluster(double FCCspacing, int nCellsPerSide, double *coords);
+void create_FCC_cluster(double FCCspacing, int nCellsPerSide, double * coords);
 
 
 /* Main program */
 int main()
 {
   /* Local variable declarations */
-  double const MinSpacing = 0.8*FCCSPACING;
-  double const MaxSpacing = 1.2*FCCSPACING;
-  double const SpacingIncr = 0.025*FCCSPACING;
+  double const MinSpacing = 0.8 * FCCSPACING;
+  double const MaxSpacing = 1.2 * FCCSPACING;
+  double const SpacingIncr = 0.025 * FCCSPACING;
   double CurrentSpacing;
   double cutpad = 0.75; /* Angstroms */
   double force_norm;
@@ -112,7 +114,7 @@ int main()
   double influence_distance_cluster_model;
   double const * cutoff_cluster_model;
   double energy_cluster_model;
-  double forces_cluster[NCLUSTERPARTS*DIM];
+  double forces_cluster[NCLUSTERPARTS * DIM];
 
   char modelname[NAMESTRLEN];
   int requestedUnitsAccepted;
@@ -127,10 +129,7 @@ int main()
   /* Get KIM Model names */
   printf("Please enter valid KIM Model name: \n");
   error = scanf("%s", modelname);
-  if (1 != error)
-  {
-    MY_ERROR("Unable to read model name");
-  }
+  if (1 != error) { MY_ERROR("Unable to read model name"); }
 
   /* initialize the model */
   error = KIM_Model_Create(KIM_NUMBERING_zeroBased,
@@ -151,135 +150,112 @@ int main()
   error = KIM_Model_GetSpeciesSupportAndCode(
       model, KIM_SPECIES_NAME_Ar, &speciesIsSupported, &modelArCode);
   if ((error) || (!speciesIsSupported))
-  {
-    MY_ERROR("Species Ar not supported");
-  }
+  { MY_ERROR("Species Ar not supported"); }
 
   error = KIM_Model_ComputeArgumentsCreate(model, &computeArguments);
-  if (error)
-  {
-    MY_ERROR("KIM_Model_ComputeArgumentsCreate");
-  }
+  if (error) { MY_ERROR("KIM_Model_ComputeArgumentsCreate"); }
 
   /* check arguments */
   KIM_COMPUTE_ARGUMENT_NAME_GetNumberOfComputeArgumentNames(
       &numberOfComputeArgumentNames);
-  for (i=0; i<numberOfComputeArgumentNames; ++i)
+  for (i = 0; i < numberOfComputeArgumentNames; ++i)
   {
     error = KIM_COMPUTE_ARGUMENT_NAME_GetComputeArgumentName(
         i, &computeArgumentName);
     if (error) MY_ERROR("can't get argument name");
-    error = KIM_ComputeArguments_GetArgumentSupportStatus(computeArguments,
-                                                          computeArgumentName,
-                                                          &supportStatus);
+    error = KIM_ComputeArguments_GetArgumentSupportStatus(
+        computeArguments, computeArgumentName, &supportStatus);
     if (error) MY_ERROR("can't get argument supportStatus");
 
     /* can only handle energy and force as a required arg */
     if (KIM_SupportStatus_Equal(supportStatus, KIM_SUPPORT_STATUS_required))
     {
       if ((KIM_ComputeArgumentName_NotEqual(
-              computeArgumentName,
-              KIM_COMPUTE_ARGUMENT_NAME_partialEnergy)) &&
-          (KIM_ComputeArgumentName_NotEqual(
-              computeArgumentName,
-              KIM_COMPUTE_ARGUMENT_NAME_partialForces)))
-      {
-        MY_ERROR("unsupported required argument");
-      }
+              computeArgumentName, KIM_COMPUTE_ARGUMENT_NAME_partialEnergy))
+          && (KIM_ComputeArgumentName_NotEqual(
+                 computeArgumentName, KIM_COMPUTE_ARGUMENT_NAME_partialForces)))
+      { MY_ERROR("unsupported required argument"); }
     }
 
     /* must have energy and forces */
-    if ((KIM_ComputeArgumentName_Equal(
-            computeArgumentName,
-            KIM_COMPUTE_ARGUMENT_NAME_partialEnergy))
-        ||
-        (KIM_ComputeArgumentName_Equal(
-            computeArgumentName,
-            KIM_COMPUTE_ARGUMENT_NAME_partialForces)))
+    if ((KIM_ComputeArgumentName_Equal(computeArgumentName,
+                                       KIM_COMPUTE_ARGUMENT_NAME_partialEnergy))
+        || (KIM_ComputeArgumentName_Equal(
+               computeArgumentName, KIM_COMPUTE_ARGUMENT_NAME_partialForces)))
     {
-      if (! ((KIM_SupportStatus_Equal(supportStatus,
-                                      KIM_SUPPORT_STATUS_required))
-             ||
-             (KIM_SupportStatus_Equal(supportStatus,
-                                      KIM_SUPPORT_STATUS_optional))))
-      {
-        MY_ERROR("energy or forces not available");
-      }
+      if (!((KIM_SupportStatus_Equal(supportStatus,
+                                     KIM_SUPPORT_STATUS_required))
+            || (KIM_SupportStatus_Equal(supportStatus,
+                                        KIM_SUPPORT_STATUS_optional))))
+      { MY_ERROR("energy or forces not available"); }
     }
   }
 
   /* check call backs */
   KIM_COMPUTE_CALLBACK_NAME_GetNumberOfComputeCallbackNames(
       &numberOfComputeCallbackNames);
-  for (i=0; i<numberOfComputeCallbackNames; ++i)
+  for (i = 0; i < numberOfComputeCallbackNames; ++i)
   {
     error = KIM_COMPUTE_CALLBACK_NAME_GetComputeCallbackName(
         i, &computeCallbackName);
     if (error) MY_ERROR("can't get call back name");
-    error = KIM_ComputeArguments_GetCallbackSupportStatus(computeArguments,
-                                                          computeCallbackName,
-                                                          &supportStatus);
+    error = KIM_ComputeArguments_GetCallbackSupportStatus(
+        computeArguments, computeCallbackName, &supportStatus);
     if (error) MY_ERROR("can't get call back supportStatus");
 
     /* cannot handle any "required" call backs */
     if (KIM_SupportStatus_Equal(supportStatus, KIM_SUPPORT_STATUS_required))
-    {
-      MY_ERROR("unsupported required call back");
-    }
+    { MY_ERROR("unsupported required call back"); }
   }
 
   /* We're compatible with the model.  Let's do it. */
 
-  error =
-      KIM_ComputeArguments_SetArgumentPointerInteger(
-          computeArguments,
-          KIM_COMPUTE_ARGUMENT_NAME_numberOfParticles,
-          &numberOfParticles_cluster)
-      ||
-      KIM_ComputeArguments_SetArgumentPointerInteger(
-          computeArguments,
-          KIM_COMPUTE_ARGUMENT_NAME_particleSpeciesCodes,
-          particleSpecies_cluster_model)
-      ||
-      KIM_ComputeArguments_SetArgumentPointerInteger(
-          computeArguments,
-          KIM_COMPUTE_ARGUMENT_NAME_particleContributing,
-          particleContributing_cluster_model)
-      ||
-      KIM_ComputeArguments_SetArgumentPointerDouble(
-          computeArguments, KIM_COMPUTE_ARGUMENT_NAME_coordinates,
-          (double*) &coords_cluster)
-      ||
-      KIM_ComputeArguments_SetArgumentPointerDouble(
-          computeArguments, KIM_COMPUTE_ARGUMENT_NAME_partialEnergy,
-          &energy_cluster_model)
-      ||
-      KIM_ComputeArguments_SetArgumentPointerDouble(
-          computeArguments, KIM_COMPUTE_ARGUMENT_NAME_partialForces,
-          (double*) &forces_cluster);
+  error = KIM_ComputeArguments_SetArgumentPointerInteger(
+              computeArguments,
+              KIM_COMPUTE_ARGUMENT_NAME_numberOfParticles,
+              &numberOfParticles_cluster)
+          || KIM_ComputeArguments_SetArgumentPointerInteger(
+                 computeArguments,
+                 KIM_COMPUTE_ARGUMENT_NAME_particleSpeciesCodes,
+                 particleSpecies_cluster_model)
+          || KIM_ComputeArguments_SetArgumentPointerInteger(
+                 computeArguments,
+                 KIM_COMPUTE_ARGUMENT_NAME_particleContributing,
+                 particleContributing_cluster_model)
+          || KIM_ComputeArguments_SetArgumentPointerDouble(
+                 computeArguments,
+                 KIM_COMPUTE_ARGUMENT_NAME_coordinates,
+                 (double *) &coords_cluster)
+          || KIM_ComputeArguments_SetArgumentPointerDouble(
+                 computeArguments,
+                 KIM_COMPUTE_ARGUMENT_NAME_partialEnergy,
+                 &energy_cluster_model)
+          || KIM_ComputeArguments_SetArgumentPointerDouble(
+                 computeArguments,
+                 KIM_COMPUTE_ARGUMENT_NAME_partialForces,
+                 (double *) &forces_cluster);
   if (error) MY_ERROR("KIM_setm_data");
   KIM_ComputeArguments_SetCallbackPointer(
       computeArguments,
       KIM_COMPUTE_CALLBACK_NAME_GetNeighborList,
       KIM_LANGUAGE_NAME_c,
-      (func *) &get_cluster_neigh,
+      (KIM_Function *) &get_cluster_neigh,
       &nl_cluster_model);
 
   KIM_Model_GetInfluenceDistance(model, &influence_distance_cluster_model);
   KIM_Model_GetNeighborListPointers(model,
                                     &number_of_neighbor_lists_cluster_model,
                                     &cutoff_cluster_model,
-                                    NULL,  /* ignoring hints */
-                                    NULL);  /* ignoring hints */
+                                    NULL); /* ignoring hint */
   if (number_of_neighbor_lists_cluster_model != 1)
     MY_ERROR("too many neighbor lists");
 
   /* setup particleSpecies */
-  error = KIM_Model_GetSpeciesSupportAndCode(
-      model,
-      KIM_SPECIES_NAME_Ar,
-      &speciesIsSupported,
-      &(particleSpecies_cluster_model[0]));
+  error
+      = KIM_Model_GetSpeciesSupportAndCode(model,
+                                           KIM_SPECIES_NAME_Ar,
+                                           &speciesIsSupported,
+                                           &(particleSpecies_cluster_model[0]));
   if (error) MY_ERROR("KIM_get_species_code");
   for (i = 1; i < NCLUSTERPARTS; ++i)
     particleSpecies_cluster_model[i] = particleSpecies_cluster_model[0];
@@ -287,31 +263,37 @@ int main()
   /* setup particleContributing */
   for (i = 0; i < NCLUSTERPARTS; ++i)
   {
-    particleContributing_cluster_model[i] = 1;  /* all particles contribute */
+    particleContributing_cluster_model[i] = 1; /* all particles contribute */
   }
 
   /* setup neighbor lists */
   /* allocate memory for list */
   nl_cluster_model.numberOfParticles = NCLUSTERPARTS;
-  nl_cluster_model.NNeighbors = (int*) malloc(NCLUSTERPARTS*sizeof(int));
-  if (NULL==nl_cluster_model.NNeighbors) MY_ERROR("malloc unsuccessful");
+  nl_cluster_model.NNeighbors = (int *) malloc(NCLUSTERPARTS * sizeof(int));
+  if (NULL == nl_cluster_model.NNeighbors) MY_ERROR("malloc unsuccessful");
 
-  nl_cluster_model.neighborList = (int*) malloc(NCLUSTERPARTS*NCLUSTERPARTS*sizeof(int));
-  if (NULL==nl_cluster_model.neighborList) MY_ERROR("malloc unsuccessful");
+  nl_cluster_model.neighborList
+      = (int *) malloc(NCLUSTERPARTS * NCLUSTERPARTS * sizeof(int));
+  if (NULL == nl_cluster_model.neighborList) MY_ERROR("malloc unsuccessful");
 
   /* ready to compute */
   printf("This is Test  : ex_test_Ar_fcc_cluster\n");
-  printf("--------------------------------------------------------------------------------\n");
-  printf("Results for KIM Model : %s\n",   modelname);
+  printf("---------------------------------------------------------------------"
+         "-----------\n");
+  printf("Results for KIM Model : %s\n", modelname);
 
   printf("%20s, %20s, %20s\n", "Energy", "Force Norm", "Lattice Spacing");
-  for (CurrentSpacing = MinSpacing; CurrentSpacing < MaxSpacing; CurrentSpacing += SpacingIncr)
+  for (CurrentSpacing = MinSpacing; CurrentSpacing < MaxSpacing;
+       CurrentSpacing += SpacingIncr)
   {
     /* update coordinates for cluster */
     create_FCC_cluster(CurrentSpacing, NCELLSPERSIDE, &(coords_cluster[0][0]));
     /* compute neighbor lists */
-    fcc_cluster_neighborlist(0, NCLUSTERPARTS, &(coords_cluster[0][0]),
-                             (*cutoff_cluster_model + cutpad), &nl_cluster_model);
+    fcc_cluster_neighborlist(0,
+                             NCLUSTERPARTS,
+                             &(coords_cluster[0][0]),
+                             (*cutoff_cluster_model + cutpad),
+                             &nl_cluster_model);
 
     /* call compute functions */
     error = KIM_Model_Compute(model, computeArguments);
@@ -319,10 +301,8 @@ int main()
 
     /* compute force norm */
     force_norm = 0.0;
-    for (i=0; i < DIM*numberOfParticles_cluster; ++i)
-    {
-      force_norm += forces_cluster[i]*forces_cluster[i];
-    }
+    for (i = 0; i < DIM * numberOfParticles_cluster; ++i)
+    { force_norm += forces_cluster[i] * forces_cluster[i]; }
     force_norm = sqrt(force_norm);
 
     /* print the results */
@@ -333,10 +313,7 @@ int main()
   }
 
   error = KIM_Model_ComputeArgumentsDestroy(model, &computeArguments);
-  if (error)
-  {
-    MY_ERROR("Unable to destroy compute arguments");
-  }
+  if (error) { MY_ERROR("Unable to destroy compute arguments"); }
 
   /* free memory of neighbor lists */
   free(nl_cluster_model.NNeighbors);
@@ -349,7 +326,7 @@ int main()
   return 0;
 }
 
-void create_FCC_cluster(double FCCspacing, int nCellsPerSide, double *coords)
+void create_FCC_cluster(double FCCspacing, int nCellsPerSide, double * coords)
 {
   /* local variables */
   double FCCshifts[4][DIM];
@@ -362,113 +339,96 @@ void create_FCC_cluster(double FCCspacing, int nCellsPerSide, double *coords)
   int n;
 
   /* create a cubic FCC cluster of parts */
-  FCCshifts[0][0] = 0.0;            FCCshifts[0][1] = 0.0;            FCCshifts[0][2] = 0.0;
-  FCCshifts[1][0] = 0.5*FCCspacing; FCCshifts[1][1] = 0.5*FCCspacing; FCCshifts[1][2] = 0.0;
-  FCCshifts[2][0] = 0.5*FCCspacing; FCCshifts[2][1] = 0.0;            FCCshifts[2][2] = 0.5*FCCspacing;
-  FCCshifts[3][0] = 0.0;            FCCshifts[3][1] = 0.5*FCCspacing; FCCshifts[3][2] = 0.5*FCCspacing;
+  FCCshifts[0][0] = 0.0;
+  FCCshifts[0][1] = 0.0;
+  FCCshifts[0][2] = 0.0;
+  FCCshifts[1][0] = 0.5 * FCCspacing;
+  FCCshifts[1][1] = 0.5 * FCCspacing;
+  FCCshifts[1][2] = 0.0;
+  FCCshifts[2][0] = 0.5 * FCCspacing;
+  FCCshifts[2][1] = 0.0;
+  FCCshifts[2][2] = 0.5 * FCCspacing;
+  FCCshifts[3][0] = 0.0;
+  FCCshifts[3][1] = 0.5 * FCCspacing;
+  FCCshifts[3][2] = 0.5 * FCCspacing;
 
   a = 0;
   for (i = 0; i < nCellsPerSide; ++i)
   {
-    latVec[0] = ((double) i)*FCCspacing;
+    latVec[0] = ((double) i) * FCCspacing;
     for (j = 0; j < nCellsPerSide; ++j)
     {
-      latVec[1] = ((double) j)*FCCspacing;
+      latVec[1] = ((double) j) * FCCspacing;
       for (k = 0; k < nCellsPerSide; ++k)
       {
-        latVec[2] = ((double) k)*FCCspacing;
+        latVec[2] = ((double) k) * FCCspacing;
         for (m = 0; m < 4; ++m)
         {
           for (n = 0; n < DIM; ++n)
-          {
-            coords[a*DIM + n] = latVec[n] + FCCshifts[m][n];
-          }
+          { coords[a * DIM + n] = latVec[n] + FCCshifts[m][n]; }
           a++;
         }
       }
       /* add in the remaining three faces */
       /* pos-x face */
-      latVec[0] = NCELLSPERSIDE*FCCspacing;
-      latVec[1] = ((double) i)*FCCspacing;
-      latVec[2] = ((double) j)*FCCspacing;
-      for (n = 0; n < DIM; ++n)
-      {
-        coords[a*DIM + n] = latVec[n];
-      }
+      latVec[0] = NCELLSPERSIDE * FCCspacing;
+      latVec[1] = ((double) i) * FCCspacing;
+      latVec[2] = ((double) j) * FCCspacing;
+      for (n = 0; n < DIM; ++n) { coords[a * DIM + n] = latVec[n]; }
       a++;
       for (n = 0; n < DIM; ++n)
-      {
-        coords[a*DIM + n] = latVec[n] + FCCshifts[3][n];
-      }
+      { coords[a * DIM + n] = latVec[n] + FCCshifts[3][n]; }
       a++;
       /* pos-y face */
-      latVec[0] = ((double) i)*FCCspacing;
-      latVec[1] = NCELLSPERSIDE*FCCspacing;
-      latVec[2] = ((double) j)*FCCspacing;
-      for (n = 0; n < DIM; ++n)
-      {
-        coords[a*DIM + n] = latVec[n];
-      }
+      latVec[0] = ((double) i) * FCCspacing;
+      latVec[1] = NCELLSPERSIDE * FCCspacing;
+      latVec[2] = ((double) j) * FCCspacing;
+      for (n = 0; n < DIM; ++n) { coords[a * DIM + n] = latVec[n]; }
       a++;
       for (n = 0; n < DIM; ++n)
-      {
-        coords[a*DIM + n] = latVec[n] + FCCshifts[2][n];
-      }
+      { coords[a * DIM + n] = latVec[n] + FCCshifts[2][n]; }
       a++;
       /* pos-z face */
-      latVec[0] = ((double) i)*FCCspacing;
-      latVec[1] = ((double) j)*FCCspacing;
-      latVec[2] = NCELLSPERSIDE*FCCspacing;
-      for (n = 0; n < DIM; ++n)
-      {
-        coords[a*DIM + n] = latVec[n];
-      }
+      latVec[0] = ((double) i) * FCCspacing;
+      latVec[1] = ((double) j) * FCCspacing;
+      latVec[2] = NCELLSPERSIDE * FCCspacing;
+      for (n = 0; n < DIM; ++n) { coords[a * DIM + n] = latVec[n]; }
       a++;
       for (n = 0; n < DIM; ++n)
-      {
-        coords[a*DIM + n] = latVec[n] + FCCshifts[1][n];
-      }
+      { coords[a * DIM + n] = latVec[n] + FCCshifts[1][n]; }
       a++;
     }
     /* add in the remaining three edges */
-    latVec[0] = ((double) i)*FCCspacing;
-    latVec[1] = NCELLSPERSIDE*FCCspacing;
-    latVec[2] = NCELLSPERSIDE*FCCspacing;
-    for (n = 0; n < DIM; ++n)
-    {
-      coords[a*DIM + n] = latVec[n];
-    }
+    latVec[0] = ((double) i) * FCCspacing;
+    latVec[1] = NCELLSPERSIDE * FCCspacing;
+    latVec[2] = NCELLSPERSIDE * FCCspacing;
+    for (n = 0; n < DIM; ++n) { coords[a * DIM + n] = latVec[n]; }
     a++;
-    latVec[0] = NCELLSPERSIDE*FCCspacing;
-    latVec[1] = ((double) i)*FCCspacing;
-    latVec[2] = NCELLSPERSIDE*FCCspacing;
-    for (n = 0; n < DIM; ++n)
-    {
-      coords[a*DIM + n] = latVec[n];
-    }
+    latVec[0] = NCELLSPERSIDE * FCCspacing;
+    latVec[1] = ((double) i) * FCCspacing;
+    latVec[2] = NCELLSPERSIDE * FCCspacing;
+    for (n = 0; n < DIM; ++n) { coords[a * DIM + n] = latVec[n]; }
     a++;
-    latVec[0] = NCELLSPERSIDE*FCCspacing;
-    latVec[1] = NCELLSPERSIDE*FCCspacing;
-    latVec[2] = ((double) i)*FCCspacing;
-    for (n = 0; n < DIM; ++n)
-    {
-      coords[a*DIM + n] = latVec[n];
-    }
+    latVec[0] = NCELLSPERSIDE * FCCspacing;
+    latVec[1] = NCELLSPERSIDE * FCCspacing;
+    latVec[2] = ((double) i) * FCCspacing;
+    for (n = 0; n < DIM; ++n) { coords[a * DIM + n] = latVec[n]; }
     a++;
   }
   /* add in the remaining corner */
   for (n = 0; n < DIM; ++n)
-  {
-    coords[a*DIM + n] = NCELLSPERSIDE*FCCspacing;
-  }
+  { coords[a * DIM + n] = NCELLSPERSIDE * FCCspacing; }
   a++;
 
   return;
 }
 
 
-void fcc_cluster_neighborlist(int half, int numberOfParticles, double* coords,
-                              double cutoff, NeighList* nl)
+void fcc_cluster_neighborlist(int half,
+                              int numberOfParticles,
+                              double * coords,
+                              double cutoff,
+                              NeighList * nl)
 {
   /* local variables */
   int i;
@@ -482,7 +442,7 @@ void fcc_cluster_neighborlist(int half, int numberOfParticles, double* coords,
 
   nl->cutoff = cutoff;
 
-  cutoff2 = cutoff*cutoff;
+  cutoff2 = cutoff * cutoff;
 
   for (i = 0; i < numberOfParticles; ++i)
   {
@@ -492,8 +452,8 @@ void fcc_cluster_neighborlist(int half, int numberOfParticles, double* coords,
       r2 = 0.0;
       for (k = 0; k < DIM; ++k)
       {
-        dx[k] = coords[j*DIM + k] - coords[i*DIM + k];
-        r2 += dx[k]*dx[k];
+        dx[k] = coords[j * DIM + k] - coords[i * DIM + k];
+        r2 += dx[k] * dx[k];
       }
 
       if (r2 < cutoff2)
@@ -501,7 +461,7 @@ void fcc_cluster_neighborlist(int half, int numberOfParticles, double* coords,
         if ((half && i < j) || (!half && i != j))
         {
           /* part j is a neighbor of part i */
-          (*nl).neighborList[i*NCLUSTERPARTS + a] = j;
+          (*nl).neighborList[i * NCLUSTERPARTS + a] = j;
           a++;
         }
       }
@@ -513,16 +473,17 @@ void fcc_cluster_neighborlist(int half, int numberOfParticles, double* coords,
   return;
 }
 
-int get_cluster_neigh(void const * const dataObject,
+int get_cluster_neigh(void * const dataObject,
                       int const numberOfNeighborLists,
                       double const * const cutoffs,
                       int const neighborListIndex,
-                      int const particleNumber, int * const numberOfNeighbors,
+                      int const particleNumber,
+                      int * const numberOfNeighbors,
                       int const ** const neighborsOfParticle)
 {
   /* local variables */
   int error = TRUE;
-  NeighList* nl = (NeighList*) dataObject;
+  NeighList * nl = (NeighList *) dataObject;
   int numberOfParticles = nl->numberOfParticles;
 
   if ((numberOfNeighborLists != 1) || (cutoffs[0] > nl->cutoff)) return error;
@@ -532,7 +493,8 @@ int get_cluster_neigh(void const * const dataObject,
   /* initialize numNeigh */
   *numberOfNeighbors = 0;
 
-  if ((particleNumber >= numberOfParticles) || (particleNumber < 0)) /* invalid id */
+  if ((particleNumber >= numberOfParticles)
+      || (particleNumber < 0)) /* invalid id */
   {
     MY_WARNING("Invalid part ID in get_cluster_neigh");
     return TRUE;
@@ -542,7 +504,8 @@ int get_cluster_neigh(void const * const dataObject,
   *numberOfNeighbors = (*nl).NNeighbors[particleNumber];
 
   /* set the location for the returned neighbor list */
-  *neighborsOfParticle = &((*nl).neighborList[(particleNumber)*numberOfParticles]);
+  *neighborsOfParticle
+      = &((*nl).neighborList[(particleNumber) *numberOfParticles]);
 
   return FALSE;
 }

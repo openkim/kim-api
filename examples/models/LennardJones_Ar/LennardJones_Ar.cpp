@@ -26,34 +26,32 @@
 //    Ryan S. Elliott
 //
 
-#include <math.h>
+#include "KIM_LogMacros.hpp"
 #include "KIM_ModelHeaders.hpp"
+#include <math.h>
 
 #define DIMENSION 3
 
 
 namespace
 {
-
 class LennardJones_Ar
 {
  public:
   //****************************************************************************
-  LennardJones_Ar(
-      KIM::ModelCreate * const modelCreate,
-      KIM::LengthUnit const requestedLengthUnit,
-      KIM::EnergyUnit const requestedEnergyUnit,
-      KIM::ChargeUnit const requestedChargeUnit,
-      KIM::TemperatureUnit const requestedTemperatureUnit,
-      KIM::TimeUnit const requestedTimeUnit,
-      int * const error) :
+  LennardJones_Ar(KIM::ModelCreate * const modelCreate,
+                  KIM::LengthUnit const requestedLengthUnit,
+                  KIM::EnergyUnit const requestedEnergyUnit,
+                  KIM::ChargeUnit const requestedChargeUnit,
+                  KIM::TemperatureUnit const requestedTemperatureUnit,
+                  KIM::TimeUnit const requestedTimeUnit,
+                  int * const error) :
       epsilon_(0.0104),
       sigma_(3.4000),
       influenceDistance_(8.1500),
       cutoff_(influenceDistance_),
-      cutoffSq_(cutoff_*cutoff_),
-      paddingNeighborHints_(1),
-      halfListHints_(1)
+      cutoffSq_(cutoff_ * cutoff_),
+      modelWillNotRequestNeighborsOfNoncontributingParticles_(1)
   {
     *error = ConvertUnits(modelCreate,
                           requestedLengthUnit,
@@ -66,30 +64,28 @@ class LennardJones_Ar
     modelCreate->SetModelNumbering(KIM::NUMBERING::zeroBased);
 
     modelCreate->SetInfluenceDistancePointer(&influenceDistance_);
-    modelCreate->SetNeighborListPointers(1,
-                                         &cutoff_,
-                                         &paddingNeighborHints_,
-                                         &halfListHints_);
+    modelCreate->SetNeighborListPointers(
+        1, &cutoff_, &modelWillNotRequestNeighborsOfNoncontributingParticles_);
 
     modelCreate->SetSpeciesCode(KIM::SPECIES_NAME::Ar, 0);
 
-    *error = *error || modelCreate->SetDestroyPointer(
-        KIM::LANGUAGE_NAME::cpp,
-        reinterpret_cast<KIM::func *>(&(LennardJones_Ar::Destroy)));
-    *error = *error || modelCreate->SetRefreshPointer(
-        KIM::LANGUAGE_NAME::cpp,
-        reinterpret_cast<KIM::func *>(&(LennardJones_Ar::Refresh)));
-    *error = *error || modelCreate->SetComputePointer(
-        KIM::LANGUAGE_NAME::cpp,
-        reinterpret_cast<KIM::func *>(&(LennardJones_Ar::Compute)));
-    *error = *error || modelCreate->SetComputeArgumentsCreatePointer(
-        KIM::LANGUAGE_NAME::cpp,
-        reinterpret_cast<KIM::func *>
-        (&(LennardJones_Ar::ComputeArgumentsCreate)));
-    *error = *error || modelCreate->SetComputeArgumentsDestroyPointer(
-        KIM::LANGUAGE_NAME::cpp,
-        reinterpret_cast<KIM::func *>
-        (&(LennardJones_Ar::ComputeArgumentsDestroy)));
+    // use function pointer declarations to verify prototypes
+    KIM::ModelDestroyFunction * destroy = LennardJones_Ar::Destroy;
+    *error = *error
+             || modelCreate->SetDestroyPointer(
+                    KIM::LANGUAGE_NAME::cpp,
+                    reinterpret_cast<KIM::Function *>(destroy));
+    KIM::ModelComputeFunction * compute = LennardJones_Ar::Compute;
+    *error = *error
+             || modelCreate->SetComputePointer(
+                    KIM::LANGUAGE_NAME::cpp,
+                    reinterpret_cast<KIM::Function *>(compute));
+    KIM::ModelComputeArgumentsCreateFunction * CACreate
+        = LennardJones_Ar::ComputeArgumentsCreate;
+    *error = *error
+             || modelCreate->SetComputeArgumentsCreatePointer(
+                    KIM::LANGUAGE_NAME::cpp,
+                    reinterpret_cast<KIM::Function *>(CACreate));
     if (*error) return;
 
     // everything is good
@@ -98,7 +94,7 @@ class LennardJones_Ar
   };
 
   //****************************************************************************
-  ~LennardJones_Ar(){};
+  ~LennardJones_Ar() {};
 
   //****************************************************************************
   // no need to make these "extern" since KIM will only access them
@@ -120,28 +116,12 @@ class LennardJones_Ar
   }
 
   //****************************************************************************
-  static int Refresh(KIM::ModelRefresh * const modelRefresh)
-  {
-    LennardJones_Ar * model;
-    modelRefresh->GetModelBufferPointer(reinterpret_cast<void **>(&model));
-
-    // nothing to do
-
-    modelRefresh->SetInfluenceDistancePointer(&(model->influenceDistance_));
-    modelRefresh->SetNeighborListPointers(1,
-                                          &(model->cutoff_),
-                                          &(model->paddingNeighborHints_),
-                                          &(model->halfListHints_));
-
-    // everything is good
-    return false;
-  };
-
-  //****************************************************************************
-#include "KIM_ModelComputeLogMacros.hpp"
-  static int Compute(
-      KIM::ModelCompute const * const modelCompute,
-      KIM::ModelComputeArguments const * const modelComputeArguments)
+#undef KIM_LOGGER_OBJECT_NAME
+#define KIM_LOGGER_OBJECT_NAME modelCompute
+  //
+  static int
+  Compute(KIM::ModelCompute const * const modelCompute,
+          KIM::ModelComputeArguments const * const modelComputeArguments)
   {
     int const * numberOfParticlesPointer;
     int const * particleSpeciesCodes;
@@ -156,25 +136,24 @@ class LennardJones_Ar
     double const sigma = lj->sigma_;
     double const cutoffSq = lj->cutoffSq_;
 
-    int error =
-        modelComputeArguments->GetArgumentPointer(
-            KIM::COMPUTE_ARGUMENT_NAME::numberOfParticles,
-            &numberOfParticlesPointer)
-        || modelComputeArguments->GetArgumentPointer(
-            KIM::COMPUTE_ARGUMENT_NAME::particleSpeciesCodes,
-            &particleSpeciesCodes)
-        || modelComputeArguments->GetArgumentPointer(
-            KIM::COMPUTE_ARGUMENT_NAME::particleContributing,
-            &particleContributing)
-        || modelComputeArguments->GetArgumentPointer(
-            KIM::COMPUTE_ARGUMENT_NAME::coordinates,
-            (double const ** const) &coordinates)
-        || modelComputeArguments->GetArgumentPointer(
-            KIM::COMPUTE_ARGUMENT_NAME::partialEnergy,
-            &partialEnergy)
-        || modelComputeArguments->GetArgumentPointer(
-            KIM::COMPUTE_ARGUMENT_NAME::partialForces,
-            (double const ** const) &partialForces);
+    int error
+        = modelComputeArguments->GetArgumentPointer(
+              KIM::COMPUTE_ARGUMENT_NAME::numberOfParticles,
+              &numberOfParticlesPointer)
+          || modelComputeArguments->GetArgumentPointer(
+                 KIM::COMPUTE_ARGUMENT_NAME::particleSpeciesCodes,
+                 &particleSpeciesCodes)
+          || modelComputeArguments->GetArgumentPointer(
+                 KIM::COMPUTE_ARGUMENT_NAME::particleContributing,
+                 &particleContributing)
+          || modelComputeArguments->GetArgumentPointer(
+                 KIM::COMPUTE_ARGUMENT_NAME::coordinates,
+                 (double const **) &coordinates)
+          || modelComputeArguments->GetArgumentPointer(
+                 KIM::COMPUTE_ARGUMENT_NAME::partialEnergy, &partialEnergy)
+          || modelComputeArguments->GetArgumentPointer(
+                 KIM::COMPUTE_ARGUMENT_NAME::partialForces,
+                 (double const **) &partialForces);
     if (error)
     {
       LOG_ERROR("Unable to get argument pointers");
@@ -185,11 +164,8 @@ class LennardJones_Ar
 
     // initialize energy and forces
     *partialEnergy = 0.0;
-    int const extent = numberOfParticles*DIMENSION;
-    for (int i = 0; i < extent; ++i)
-    {
-      partialForces[i] = 0.0;
-    }
+    int const extent = numberOfParticles * DIMENSION;
+    for (int i = 0; i < extent; ++i) { partialForces[i] = 0.0; }
 
     int jContributing;
     int i, j, jj, numberOfNeighbors;
@@ -208,9 +184,9 @@ class LennardJones_Ar
     {
       if (particleContributing[i])
       {
-        xcoord = coordinates[i*DIMENSION + 0];
-        ycoord = coordinates[i*DIMENSION + 1];
-        zcoord = coordinates[i*DIMENSION + 2];
+        xcoord = coordinates[i * DIMENSION + 0];
+        ycoord = coordinates[i * DIMENSION + 1];
+        zcoord = coordinates[i * DIMENSION + 2];
 
         modelComputeArguments->GetNeighborList(
             0, i, &numberOfNeighbors, &neighbors);
@@ -220,20 +196,20 @@ class LennardJones_Ar
           j = neighbors[jj];
           jContributing = particleContributing[j];
 
-          if (i < j)
+          if (!(jContributing && (j < i)))
           {
-            xrij = coordinates[j*DIMENSION + 0] - xcoord;
-            yrij = coordinates[j*DIMENSION + 1] - ycoord;
-            zrij = coordinates[j*DIMENSION + 2] - zcoord;
+            xrij = coordinates[j * DIMENSION + 0] - xcoord;
+            yrij = coordinates[j * DIMENSION + 1] - ycoord;
+            zrij = coordinates[j * DIMENSION + 2] - zcoord;
 
-            rij2 = xrij*xrij + yrij*yrij + zrij*zrij;
+            rij2 = xrij * xrij + yrij * yrij + zrij * zrij;
 
             if (rij2 < cutoffSq)
             {
-              r2inv = 1.0/rij2;
-              r6inv = r2inv*r2inv*r2inv;
-              phi = 0.5 * r6inv * (four12*r6inv - four6);
-              dphiByR = r6inv * (twentyFour - fortyEight*r6inv) * r2inv;
+              r2inv = 1.0 / rij2;
+              r6inv = r2inv * r2inv * r2inv;
+              phi = 0.5 * r6inv * (four12 * r6inv - four6);
+              dphiByR = r6inv * (twentyFour - fortyEight * r6inv) * r2inv;
 
               *partialEnergy += phi;
               if (jContributing)
@@ -243,18 +219,18 @@ class LennardJones_Ar
               }
               else
               {
-                dEidrByR = 0.5*dphiByR;
+                dEidrByR = 0.5 * dphiByR;
               }
 
               xdf = dEidrByR * xrij;
               ydf = dEidrByR * yrij;
               zdf = dEidrByR * zrij;
-              partialForces[i*DIMENSION + 0] += xdf;
-              partialForces[i*DIMENSION + 1] += ydf;
-              partialForces[i*DIMENSION + 2] += zdf;
-              partialForces[j*DIMENSION + 0] -= xdf;
-              partialForces[j*DIMENSION + 1] -= ydf;
-              partialForces[j*DIMENSION + 2] -= zdf;
+              partialForces[i * DIMENSION + 0] += xdf;
+              partialForces[i * DIMENSION + 1] += ydf;
+              partialForces[i * DIMENSION + 2] += zdf;
+              partialForces[j * DIMENSION + 0] -= xdf;
+              partialForces[j * DIMENSION + 1] -= ydf;
+              partialForces[j * DIMENSION + 2] -= zdf;
             }  // if (rij2 < cutoffSq_)
           }  // if (i < j)
         }  // for jj
@@ -271,13 +247,14 @@ class LennardJones_Ar
       KIM::ModelComputeArgumentsCreate * const modelComputeArgumentsCreate)
   {
     // register arguments
-    int error =
-        modelComputeArgumentsCreate->SetArgumentSupportStatus(
-            KIM::COMPUTE_ARGUMENT_NAME::partialEnergy,
-            KIM::SUPPORT_STATUS::required)
-        || modelComputeArgumentsCreate->SetArgumentSupportStatus(
-            KIM::COMPUTE_ARGUMENT_NAME::partialForces,
-            KIM::SUPPORT_STATUS::required);
+    int error = modelComputeArgumentsCreate->SetArgumentSupportStatus(
+                    KIM::COMPUTE_ARGUMENT_NAME::partialEnergy,
+                    KIM::SUPPORT_STATUS::required)
+                || modelComputeArgumentsCreate->SetArgumentSupportStatus(
+                       KIM::COMPUTE_ARGUMENT_NAME::partialForces,
+                       KIM::SUPPORT_STATUS::required);
+
+    (void) modelCompute;  // avoid unused parameter warning
 
     // register callbacks
     //
@@ -285,16 +262,6 @@ class LennardJones_Ar
 
     return error;
   }
-  //****************************************************************************
-  static int ComputeArgumentsDestroy(
-      KIM::ModelCompute const * const modelCompute,
-      KIM::ModelComputeArgumentsDestroy * const modelComputeArgumentsDestroy)
-  {
-    // noting to do
-
-    // everything is good
-    return false;
-  };
 
  private:
   //****************************************************************************
@@ -304,18 +271,18 @@ class LennardJones_Ar
   double influenceDistance_;
   double cutoff_;
   double cutoffSq_;
-  int const paddingNeighborHints_;
-  int const halfListHints_;
+  int const modelWillNotRequestNeighborsOfNoncontributingParticles_;
 
   //****************************************************************************
-#include "KIM_ModelCreateLogMacros.hpp"
-  int ConvertUnits(
-      KIM::ModelCreate * const modelCreate,
-      KIM::LengthUnit const requestedLengthUnit,
-      KIM::EnergyUnit const requestedEnergyUnit,
-      KIM::ChargeUnit const requestedChargeUnit,
-      KIM::TemperatureUnit const requestedTemperatureUnit,
-      KIM::TimeUnit const requestedTimeUnit)
+#undef KIM_LOGGER_OBJECT_NAME
+#define KIM_LOGGER_OBJECT_NAME modelCreate
+  //
+  int ConvertUnits(KIM::ModelCreate * const modelCreate,
+                   KIM::LengthUnit const requestedLengthUnit,
+                   KIM::EnergyUnit const requestedEnergyUnit,
+                   KIM::ChargeUnit const requestedChargeUnit,
+                   KIM::TemperatureUnit const requestedTemperatureUnit,
+                   KIM::TimeUnit const requestedTimeUnit)
   {
     int ier;
 
@@ -328,12 +295,22 @@ class LennardJones_Ar
 
     // changing units of cutoffs and sigmas
     double convertLength = 1.0;
-    ier = modelCreate->ConvertUnit(
-        fromLength, fromEnergy, fromCharge, fromTemperature, fromTime,
-        requestedLengthUnit, requestedEnergyUnit, requestedChargeUnit,
-        requestedTemperatureUnit, requestedTimeUnit,
-        1.0, 0.0, 0.0, 0.0, 0.0,
-        &convertLength);
+    ier = KIM::ModelCreate::ConvertUnit(fromLength,
+                                        fromEnergy,
+                                        fromCharge,
+                                        fromTemperature,
+                                        fromTime,
+                                        requestedLengthUnit,
+                                        requestedEnergyUnit,
+                                        requestedChargeUnit,
+                                        requestedTemperatureUnit,
+                                        requestedTimeUnit,
+                                        1.0,
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        &convertLength);
     if (ier)
     {
       LOG_ERROR("Unable to convert length unit");
@@ -341,17 +318,27 @@ class LennardJones_Ar
     }
     influenceDistance_ *= convertLength;  // convert to active units
     cutoff_ = influenceDistance_;
-    cutoffSq_ = cutoff_*cutoff_;
+    cutoffSq_ = cutoff_ * cutoff_;
     sigma_ *= convertLength;  // convert to active units
 
     // changing units of epsilons
     double convertEnergy = 1.0;
-    ier = modelCreate->ConvertUnit(
-        fromLength, fromEnergy, fromCharge, fromTemperature, fromTime,
-        requestedLengthUnit, requestedEnergyUnit, requestedChargeUnit,
-        requestedTemperatureUnit, requestedTimeUnit,
-        0.0, 1.0, 0.0, 0.0, 0.0,
-        &convertEnergy);
+    ier = KIM::ModelCreate::ConvertUnit(fromLength,
+                                        fromEnergy,
+                                        fromCharge,
+                                        fromTemperature,
+                                        fromTime,
+                                        requestedLengthUnit,
+                                        requestedEnergyUnit,
+                                        requestedChargeUnit,
+                                        requestedTemperatureUnit,
+                                        requestedTimeUnit,
+                                        0.0,
+                                        1.0,
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        &convertEnergy);
     if (ier)
     {
       LOG_ERROR("Unable to convert energy unit");
@@ -360,12 +347,11 @@ class LennardJones_Ar
     epsilon_ *= convertEnergy;  // convert to active units
 
     // register units
-    ier = modelCreate->SetUnits(
-        requestedLengthUnit,
-        requestedEnergyUnit,
-        KIM::CHARGE_UNIT::unused,
-        KIM::TEMPERATURE_UNIT::unused,
-        KIM::TIME_UNIT::unused);
+    ier = modelCreate->SetUnits(requestedLengthUnit,
+                                requestedEnergyUnit,
+                                KIM::CHARGE_UNIT::unused,
+                                KIM::TEMPERATURE_UNIT::unused,
+                                KIM::TIME_UNIT::unused);
     if (ier)
     {
       LOG_ERROR("Unable to set units to requested values");
@@ -380,16 +366,14 @@ class LennardJones_Ar
 
 }  // namespace
 
-extern "C"
-{
+extern "C" {
 //******************************************************************************
-int model_create(
-    KIM::ModelCreate * const modelCreate,
-    KIM::LengthUnit const requestedLengthUnit,
-    KIM::EnergyUnit const requestedEnergyUnit,
-    KIM::ChargeUnit const requestedChargeUnit,
-    KIM::TemperatureUnit const requestedTemperatureUnit,
-    KIM::TimeUnit const requestedTimeUnit)
+int model_create(KIM::ModelCreate * const modelCreate,
+                 KIM::LengthUnit const requestedLengthUnit,
+                 KIM::EnergyUnit const requestedEnergyUnit,
+                 KIM::ChargeUnit const requestedChargeUnit,
+                 KIM::TemperatureUnit const requestedTemperatureUnit,
+                 KIM::TimeUnit const requestedTimeUnit)
 {
   int error;
 

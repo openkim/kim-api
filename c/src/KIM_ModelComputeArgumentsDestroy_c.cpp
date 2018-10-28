@@ -29,15 +29,14 @@
 /*                                                                            */
 
 /*                                                                            */
-/* Release: This file is part of the kim-api.git repository.                  */
+/* Release: This file is part of the kim-api-v2.0.0-beta.2 package.           */
 /*                                                                            */
 
 
 #ifndef KIM_LOG_VERBOSITY_HPP_
 #include "KIM_LogVerbosity.hpp"
 #endif
-extern "C"
-{
+extern "C" {
 #ifndef KIM_LOG_VERBOSITY_H_
 #include "KIM_LogVerbosity.h"
 #endif
@@ -46,8 +45,7 @@ extern "C"
 #ifndef KIM_MODEL_COMPUTE_ARGUMENTS_DESTROY_HPP_
 #include "KIM_ModelComputeArgumentsDestroy.hpp"
 #endif
-extern "C"
-{
+extern "C" {
 #ifndef KIM_MODEL_COMPUTE_ARGUMENTS_DESTROY_H_
 #include "KIM_ModelComputeArgumentsDestroy.h"
 #endif
@@ -59,10 +57,10 @@ struct KIM_ModelComputeArgumentsDestroy
   void * p;
 };
 
-#define CONVERT_POINTER KIM::ModelComputeArgumentsDestroy *             \
-  pModelComputeArgumentsDestroy                                         \
-  = reinterpret_cast<KIM::ModelComputeArgumentsDestroy *>               \
-      (modelComputeArgumentsDestroy->p)
+#define CONVERT_POINTER                                             \
+  KIM::ModelComputeArgumentsDestroy * pModelComputeArgumentsDestroy \
+      = reinterpret_cast<KIM::ModelComputeArgumentsDestroy *>(      \
+          modelComputeArgumentsDestroy->p)
 
 namespace
 {
@@ -72,8 +70,7 @@ KIM::LogVerbosity makeLogVerbosityCpp(KIM_LogVerbosity const logVerbosity)
 }
 }  // namespace
 
-extern "C"
-{
+extern "C" {
 void KIM_ModelComputeArgumentsDestroy_GetModelBufferPointer(
     KIM_ModelComputeArgumentsDestroy const * const modelComputeArgumentsDestroy,
     void ** const ptr)
@@ -86,16 +83,18 @@ void KIM_ModelComputeArgumentsDestroy_GetModelBufferPointer(
 
 void KIM_ModelComputeArgumentsDestroy_LogEntry(
     KIM_ModelComputeArgumentsDestroy const * const modelComputeArgumentsDestroy,
-    KIM_LogVerbosity const logVerbosity, char const * const message,
-    int const lineNumber, char const * const fileName)
+    KIM_LogVerbosity const logVerbosity,
+    char const * const message,
+    int const lineNumber,
+    char const * const fileName)
 {
   CONVERT_POINTER;
 
-  pModelComputeArgumentsDestroy->LogEntry(makeLogVerbosityCpp(logVerbosity),
-                                          message, lineNumber, fileName);
+  pModelComputeArgumentsDestroy->LogEntry(
+      makeLogVerbosityCpp(logVerbosity), message, lineNumber, fileName);
 }
 
-char const * const KIM_ModelComputeArgumentsDestroy_String(
+char const * KIM_ModelComputeArgumentsDestroy_ToString(
     KIM_ModelComputeArgumentsDestroy const * const modelComputeArgumentsDestroy)
 {
   CONVERT_POINTER;

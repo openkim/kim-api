@@ -29,7 +29,7 @@
 /*                                                                            */
 
 /*                                                                            */
-/* Release: This file is part of the kim-api.git repository.                  */
+/* Release: This file is part of the kim-api-v2.0.0-beta.2 package.           */
 /*                                                                            */
 
 
@@ -37,10 +37,10 @@
 #define KIM_LENGTH_UNIT_INC_
 
 #define ID_unused 0
-#define ID_A      1
-#define ID_Bohr   2
-#define ID_cm     3
-#define ID_m      4
-#define ID_nm     5
+#define ID_A 1
+#define ID_Bohr 2
+#define ID_cm 3
+#define ID_m 4
+#define ID_nm 5
 
-#endif  /* KIM_LENGTH_UNIT_INC_ */
+#endif /* KIM_LENGTH_UNIT_INC_ */

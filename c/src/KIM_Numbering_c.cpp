@@ -29,14 +29,13 @@
 //
 
 //
-// Release: This file is part of the kim-api.git repository.
+// Release: This file is part of the kim-api-v2.0.0-beta.2 package.
 //
 
 #ifndef KIM_NUMBERING_HPP_
 #include "KIM_Numbering.hpp"
 #endif
-extern "C"
-{
+extern "C" {
 #ifndef KIM_NUMBERING_H_
 #include "KIM_Numbering.h"
 #endif
@@ -47,37 +46,35 @@ namespace
 KIM::Numbering makeNumberingCpp(KIM_Numbering const numbering)
 {
   KIM::Numbering const * const numberingCpp
-      = reinterpret_cast <KIM::Numbering const * const>(&numbering);
+      = reinterpret_cast<KIM::Numbering const *>(&numbering);
   return *numberingCpp;
 }
 
 KIM_Numbering makeNumberingC(KIM::Numbering const numbering)
 {
   KIM_Numbering const * const numberingC
-      = reinterpret_cast <KIM_Numbering const * const>(&numbering);
+      = reinterpret_cast<KIM_Numbering const *>(&numbering);
   return *numberingC;
 }
 }  // namespace
 
-extern "C"
-{
+extern "C" {
 KIM_Numbering KIM_Numbering_FromString(char const * const str)
 {
   return makeNumberingC(KIM::Numbering(std::string(str)));
 }
 
-int KIM_Numbering_Equal(KIM_Numbering const left, KIM_Numbering const right)
+int KIM_Numbering_Equal(KIM_Numbering const lhs, KIM_Numbering const rhs)
 {
-  return (left.numberingID == right.numberingID);
+  return (lhs.numberingID == rhs.numberingID);
 }
 
-int KIM_Numbering_NotEqual(KIM_Numbering const left, KIM_Numbering const right)
+int KIM_Numbering_NotEqual(KIM_Numbering const lhs, KIM_Numbering const rhs)
 {
-  return (!KIM_Numbering_Equal(left, right));
+  return (!KIM_Numbering_Equal(lhs, rhs));
 }
 
-char const * const KIM_Numbering_String(
-    KIM_Numbering const numbering)
+char const * KIM_Numbering_ToString(KIM_Numbering const numbering)
 {
   return makeNumberingCpp(numbering).String().c_str();
 }

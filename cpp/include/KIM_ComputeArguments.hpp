@@ -2,7 +2,7 @@
 // CDDL HEADER START
 //
 // The contents of this file are subject to the terms of the Common Development
-// and Distribution License Version 1.0 (the "License").
+// and Distribution License Version 3.0 (the "License").
 //
 // You can obtain a copy of the license at
 // http://www.opensource.org/licenses/CDDL-1.0.  See the License for the
@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api.git repository.
+// Release: This file is part of the kim-api-v2.0.0-beta.2 package.
 //
 
 
@@ -36,8 +36,8 @@
 
 #include <string>
 
-#ifndef KIM_FUNC_HPP_
-#include "KIM_func.hpp"
+#ifndef KIM_FUNCTION_TYPES_HPP_
+#include "KIM_FunctionTypes.hpp"
 #endif
 
 namespace KIM
@@ -60,7 +60,6 @@ class ComputeArguments
   int GetCallbackSupportStatus(ComputeCallbackName const computeCallbackName,
                                SupportStatus * const supportStatus) const;
 
-
   int SetArgumentPointer(ComputeArgumentName const computeArgumentName,
                          int const * const ptr);
   int SetArgumentPointer(ComputeArgumentName const computeArgumentName,
@@ -72,8 +71,8 @@ class ComputeArguments
 
   int SetCallbackPointer(ComputeCallbackName const computeCallbackName,
                          LanguageName const languageName,
-                         func * const fptr,
-                         void const * const dataObject);
+                         Function * const fptr,
+                         void * const dataObject);
 
   void AreAllRequiredArgumentsAndCallbacksPresent(int * const result) const;
 
@@ -87,6 +86,7 @@ class ComputeArguments
   void PopLogVerbosity();
 
   friend class ModelImplementation;
+
  private:
   // do not allow copy constructor or operator=
   ComputeArguments(ComputeArguments const &);
@@ -98,4 +98,5 @@ class ComputeArguments
   ComputeArgumentsImplementation * pimpl;
 };  // class ComputeArguments
 }  // namespace KIM
+
 #endif  // KIM_COMPUTE_ARGUMENTS_HPP_

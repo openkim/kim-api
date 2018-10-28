@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api.git repository.
+// Release: This file is part of the kim-api-v2.0.0-beta.2 package.
 //
 
 
@@ -38,7 +38,6 @@
 
 namespace KIM
 {
-
 class SpeciesName
 {
  public:
@@ -50,7 +49,7 @@ class SpeciesName
   bool operator==(SpeciesName const & rhs) const;
   bool operator!=(SpeciesName const & rhs) const;
   std::string const & String() const;
-};
+};  // class SpeciesName
 
 namespace SPECIES_NAME
 {
@@ -203,7 +202,8 @@ struct Comparator
   {
     return a.speciesNameID < b.speciesNameID;
   }
-};
+};  // struct Comparator
 }  // namespace SPECIES_NAME
 }  // namespace KIM
+
 #endif  // KIM_SPECIES_NAME_HPP_

@@ -27,12 +27,13 @@
 !
 
 !
-! Release: This file is part of the kim-api.git repository.
+! Release: This file is part of the kim-api-v2.0.0-beta.2 package.
 !
 
 
 module kim_model_headers_module
   use, intrinsic :: iso_c_binding
+
   use kim_model_create_module
   use kim_log_verbosity_module
   use kim_language_name_module
@@ -49,6 +50,6 @@ module kim_model_headers_module
   use kim_model_compute_module
   use kim_model_refresh_module
   use kim_model_destroy_module
-  implicit none
+
   public
 end module kim_model_headers_module

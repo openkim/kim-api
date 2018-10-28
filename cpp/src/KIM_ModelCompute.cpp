@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api.git repository.
+// Release: This file is part of the kim-api-v2.0.0-beta.2 package.
 //
 
 #ifndef KIM_MODEL_COMPUTE_HPP_
@@ -38,12 +38,11 @@
 #include "KIM_ModelImplementation.hpp"
 #endif
 
-#define CONVERT_POINTER ModelImplementation *pImpl      \
-  = reinterpret_cast<ModelImplementation *>(pimpl)
+#define CONVERT_POINTER \
+  ModelImplementation * pImpl = reinterpret_cast<ModelImplementation *>(pimpl)
 
 namespace KIM
 {
-
 void ModelCompute::GetModelBufferPointer(void ** const ptr) const
 {
   CONVERT_POINTER;
@@ -78,12 +77,8 @@ std::string const & ModelCompute::String() const
   return pImpl->String();
 }
 
-ModelCompute::ModelCompute() : pimpl(NULL)
-{
-}
+ModelCompute::ModelCompute() : pimpl(NULL) {}
 
-ModelCompute::~ModelCompute()
-{
-}
+ModelCompute::~ModelCompute() {}
 
 }  // namespace KIM

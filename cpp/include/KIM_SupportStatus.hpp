@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api.git repository.
+// Release: This file is part of the kim-api-v2.0.0-beta.2 package.
 //
 
 
@@ -38,7 +38,6 @@
 
 namespace KIM
 {
-
 class SupportStatus
 {
  public:
@@ -50,7 +49,7 @@ class SupportStatus
   bool operator==(SupportStatus const & rhs) const;
   bool operator!=(SupportStatus const & rhs) const;
   std::string const & String() const;
-};
+};  // class SupportStatus
 
 namespace SUPPORT_STATUS
 {
@@ -68,7 +67,8 @@ struct Comparator
   {
     return a.supportStatusID < b.supportStatusID;
   }
-};
+};  // struct Comparator
 }  // namespace SUPPORT_STATUS
 }  // namespace KIM
+
 #endif  // KIM_SUPPORT_STATUS_HPP_

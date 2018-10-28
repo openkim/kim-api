@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api.git repository.
+// Release: This file is part of the kim-api-v2.0.0-beta.2 package.
 //
 
 #include <map>
@@ -38,7 +38,6 @@
 
 namespace KIM
 {
-
 // Order doesn't matter as long as all values are unique
 namespace LANGUAGE_NAME
 {
@@ -50,7 +49,7 @@ LanguageName const fortran(ID_fortran);
 namespace
 {
 typedef std::map<LanguageName const, std::string, LANGUAGE_NAME::Comparator>
-StringMap;
+    StringMap;
 
 StringMap const GetStringMap()
 {
@@ -78,20 +77,20 @@ int GetLanguageName(int const index, LanguageName * const languageName)
   if ((index < 0) || (index >= numberOfLanguageNames)) return true;
 
   StringMap::const_iterator iter = languageNameToString.begin();
-  for (int i=0; i<index; ++i) ++iter;
+  for (int i = 0; i < index; ++i) ++iter;
   *languageName = iter->first;
   return false;  // no error
 }
 }  // namespace LANGUAGE_NAME
 
 // implementation of LanguageName
-LanguageName::LanguageName(): languageNameID(0){}
-LanguageName::LanguageName(int const id): languageNameID(id){}
+LanguageName::LanguageName() : languageNameID(0) {}
+LanguageName::LanguageName(int const id) : languageNameID(id) {}
 LanguageName::LanguageName(std::string const str)
 {
   languageNameID = -1;
   for (LANGUAGE_NAME::StringMap::const_iterator iter
-           = LANGUAGE_NAME::languageNameToString.begin();
+       = LANGUAGE_NAME::languageNameToString.begin();
        iter != LANGUAGE_NAME::languageNameToString.end();
        ++iter)
   {
@@ -104,9 +103,13 @@ LanguageName::LanguageName(std::string const str)
 }
 
 bool LanguageName::operator==(LanguageName const & rhs) const
-{return languageNameID == rhs.languageNameID;}
+{
+  return languageNameID == rhs.languageNameID;
+}
 bool LanguageName::operator!=(LanguageName const & rhs) const
-{return languageNameID != rhs.languageNameID;}
+{
+  return languageNameID != rhs.languageNameID;
+}
 
 std::string const & LanguageName::String() const
 {

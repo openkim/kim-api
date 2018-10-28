@@ -29,14 +29,13 @@
 //
 
 //
-// Release: This file is part of the kim-api.git repository.
+// Release: This file is part of the kim-api-v2.0.0-beta.2 package.
 //
 
 #ifndef KIM_DATA_TYPE_HPP_
 #include "KIM_DataType.hpp"
 #endif
-extern "C"
-{
+extern "C" {
 #ifndef KIM_DATA_TYPE_H_
 #include "KIM_DataType.h"
 #endif
@@ -45,8 +44,7 @@ extern "C"
 #ifndef KIM_COMPUTE_ARGUMENT_NAME_HPP_
 #include "KIM_ComputeArgumentName.hpp"
 #endif
-extern "C"
-{
+extern "C" {
 #ifndef KIM_COMPUTE_ARGUMENT_NAME_H_
 #include "KIM_ComputeArgumentName.h"
 #endif
@@ -55,54 +53,52 @@ extern "C"
 
 namespace
 {
-KIM::ComputeArgumentName makeComputeArgumentNameCpp(
-    KIM_ComputeArgumentName const computeArgumentName)
+KIM::ComputeArgumentName
+makeComputeArgumentNameCpp(KIM_ComputeArgumentName const computeArgumentName)
 {
   KIM::ComputeArgumentName const * const computeArgumentNameCpp
-      = reinterpret_cast <KIM::ComputeArgumentName const * const>
-      (&computeArgumentName);
+      = reinterpret_cast<KIM::ComputeArgumentName const *>(
+          &computeArgumentName);
   return *computeArgumentNameCpp;
 }
 
-KIM_ComputeArgumentName makeComputeArgumentNameC(
-    KIM::ComputeArgumentName const computeArgumentName)
+KIM_ComputeArgumentName
+makeComputeArgumentNameC(KIM::ComputeArgumentName const computeArgumentName)
 {
   KIM_ComputeArgumentName const * const computeArgumentNameC
-      = reinterpret_cast <KIM_ComputeArgumentName const * const>
-      (&computeArgumentName);
+      = reinterpret_cast<KIM_ComputeArgumentName const *>(&computeArgumentName);
   return *computeArgumentNameC;
 }
 
 KIM_DataType makeDataTypeC(KIM::DataType const dataType)
 {
   KIM_DataType const * const dataTypeC
-      = reinterpret_cast<KIM_DataType const * const>(&dataType);
+      = reinterpret_cast<KIM_DataType const *>(&dataType);
   return *dataTypeC;
 }
 }  // namespace
 
-extern "C"
-{
-KIM_ComputeArgumentName KIM_ComputeArgumentName_FromString(
-    char const * const str)
+extern "C" {
+KIM_ComputeArgumentName
+KIM_ComputeArgumentName_FromString(char const * const str)
 {
   return makeComputeArgumentNameC(KIM::ComputeArgumentName(std::string(str)));
 }
 
-int KIM_ComputeArgumentName_Equal(KIM_ComputeArgumentName const left,
-                                  KIM_ComputeArgumentName const right)
+int KIM_ComputeArgumentName_Equal(KIM_ComputeArgumentName const lhs,
+                                  KIM_ComputeArgumentName const rhs)
 {
-  return (left.computeArgumentNameID == right.computeArgumentNameID);
+  return (lhs.computeArgumentNameID == rhs.computeArgumentNameID);
 }
 
-int KIM_ComputeArgumentName_NotEqual(KIM_ComputeArgumentName const left,
-                                     KIM_ComputeArgumentName const right)
+int KIM_ComputeArgumentName_NotEqual(KIM_ComputeArgumentName const lhs,
+                                     KIM_ComputeArgumentName const rhs)
 {
-  return (!KIM_ComputeArgumentName_Equal(left, right));
+  return (!KIM_ComputeArgumentName_Equal(lhs, rhs));
 }
 
-char const * const KIM_ComputeArgumentName_String(
-    KIM_ComputeArgumentName computeArgumentName)
+char const *
+KIM_ComputeArgumentName_ToString(KIM_ComputeArgumentName computeArgumentName)
 {
   return makeComputeArgumentNameCpp(computeArgumentName).String().c_str();
 }
@@ -110,23 +106,23 @@ char const * const KIM_ComputeArgumentName_String(
 // Order doesn't matter as long as all values are unique
 #include "KIM_ComputeArgumentName.inc"
 KIM_ComputeArgumentName const KIM_COMPUTE_ARGUMENT_NAME_numberOfParticles
-= {ID_numberOfParticles};
+    = {ID_numberOfParticles};
 KIM_ComputeArgumentName const KIM_COMPUTE_ARGUMENT_NAME_particleSpeciesCodes
-= {ID_particleSpeciesCodes};
+    = {ID_particleSpeciesCodes};
 KIM_ComputeArgumentName const KIM_COMPUTE_ARGUMENT_NAME_particleContributing
-= {ID_particleContributing};
+    = {ID_particleContributing};
 KIM_ComputeArgumentName const KIM_COMPUTE_ARGUMENT_NAME_coordinates
-= {ID_coordinates};
+    = {ID_coordinates};
 KIM_ComputeArgumentName const KIM_COMPUTE_ARGUMENT_NAME_partialEnergy
-= {ID_partialEnergy};
+    = {ID_partialEnergy};
 KIM_ComputeArgumentName const KIM_COMPUTE_ARGUMENT_NAME_partialForces
-= {ID_partialForces};
+    = {ID_partialForces};
 KIM_ComputeArgumentName const KIM_COMPUTE_ARGUMENT_NAME_partialParticleEnergy
-= {ID_partialParticleEnergy};
+    = {ID_partialParticleEnergy};
 KIM_ComputeArgumentName const KIM_COMPUTE_ARGUMENT_NAME_partialVirial
-= {ID_partialVirial};
+    = {ID_partialVirial};
 KIM_ComputeArgumentName const KIM_COMPUTE_ARGUMENT_NAME_partialParticleVirial
-= {ID_partialParticleVirial};
+    = {ID_partialParticleVirial};
 
 void KIM_COMPUTE_ARGUMENT_NAME_GetNumberOfComputeArgumentNames(
     int * const numberOfComputeArgumentNames)
@@ -136,8 +132,7 @@ void KIM_COMPUTE_ARGUMENT_NAME_GetNumberOfComputeArgumentNames(
 }
 
 int KIM_COMPUTE_ARGUMENT_NAME_GetComputeArgumentName(
-    int const index,
-    KIM_ComputeArgumentName * const computeArgumentName)
+    int const index, KIM_ComputeArgumentName * const computeArgumentName)
 {
   KIM::ComputeArgumentName computeArgumentNameCpp;
   int error = KIM::COMPUTE_ARGUMENT_NAME::GetComputeArgumentName(
@@ -154,8 +149,8 @@ int KIM_COMPUTE_ARGUMENT_NAME_GetComputeArgumentDataType(
   KIM::ComputeArgumentName computeArgumentNameCpp
       = makeComputeArgumentNameCpp(computeArgumentName);
   KIM::DataType dataTypeCpp;
-  int error = KIM::COMPUTE_ARGUMENT_NAME::
-      GetComputeArgumentDataType(computeArgumentNameCpp, &dataTypeCpp);
+  int error = KIM::COMPUTE_ARGUMENT_NAME::GetComputeArgumentDataType(
+      computeArgumentNameCpp, &dataTypeCpp);
   if (error) return error;
   *dataType = makeDataTypeC(dataTypeCpp);
   return false;

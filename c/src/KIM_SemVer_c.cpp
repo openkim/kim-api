@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api.git repository.
+// Release: This file is part of the kim-api-v2.0.0-beta.2 package.
 //
 
 #include "string.h"
@@ -35,37 +35,34 @@
 #ifndef KIM_SEM_VER_HPP_
 #include "KIM_SemVer.hpp"
 #endif
-extern "C"
-{
+extern "C" {
 #ifndef KIM_SEM_VER_H_
 #include "KIM_SemVer.h"
 #endif
 }  // extern "C"
 
-extern "C"
+extern "C" {
+char const * KIM_SEM_VER_GetSemVer()
 {
-void KIM_SEM_VER_GetSemVer(char const ** const version)
-{
-  std::string const * pStr;
-  KIM::SEM_VER::GetSemVer(&pStr);
-  *version = pStr->c_str();
+  return KIM::SEM_VER::GetSemVer().c_str();
 }
 
 int KIM_SEM_VER_IsLessThan(char const * const versionA,
                            char const * const versionB,
                            int * const isLessThan)
 {
-  return KIM::SEM_VER::IsLessThan(std::string(versionA), std::string(versionB),
-                                  isLessThan);
+  return KIM::SEM_VER::IsLessThan(
+      std::string(versionA), std::string(versionB), isLessThan);
 }
 
 int KIM_SEM_VER_ParseSemVer(char const * const version,
-                            int * const major, int * const minor,
+                            int const prereleaseLength,
+                            int const buildMetadataLength,
+                            int * const major,
+                            int * const minor,
                             int * const patch,
                             char * const prerelease,
-                            int const prereleaseLength,
-                            char * const buildMetadata,
-                            int const buildMetadataLength)
+                            char * const buildMetadata)
 {
   std::string prereleaseLocal;
   std::string buildMetadataLocal;
@@ -80,9 +77,8 @@ int KIM_SEM_VER_ParseSemVer(char const * const version,
   else
     build = &buildMetadataLocal;
 
-  int error = KIM::SEM_VER::ParseSemVer(std::string(version),
-                                        major, minor, patch,
-                                        prerel, build);
+  int error = KIM::SEM_VER::ParseSemVer(
+      std::string(version), major, minor, patch, prerel, build);
 
   if (!error)
   {
@@ -94,9 +90,8 @@ int KIM_SEM_VER_ParseSemVer(char const * const version,
     }
     if (buildMetadata != NULL)
     {
-      char * copyReturn
-          = strncpy(buildMetadata, buildMetadataLocal.c_str(),
-                    buildMetadataLength);
+      char * copyReturn = strncpy(
+          buildMetadata, buildMetadataLocal.c_str(), buildMetadataLength);
       if (copyReturn != buildMetadata) error = 1;
     }
   }

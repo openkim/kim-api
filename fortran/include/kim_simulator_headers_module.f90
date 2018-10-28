@@ -27,12 +27,13 @@
 !
 
 !
-! Release: This file is part of the kim-api.git repository.
+! Release: This file is part of the kim-api-v2.0.0-beta.2 package.
 !
 
 
 module kim_simulator_headers_module
   use, intrinsic :: iso_c_binding
+
   use kim_model_module
   use kim_log_verbosity_module
   use kim_data_type_module
@@ -44,6 +45,6 @@ module kim_simulator_headers_module
   use kim_compute_argument_name_module
   use kim_compute_callback_name_module
   use kim_support_status_module
-  implicit none
+
   public
 end module kim_simulator_headers_module

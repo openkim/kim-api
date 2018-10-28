@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api.git repository.
+// Release: This file is part of the kim-api-v2.0.0-beta.2 package.
 //
 
 
@@ -40,13 +40,17 @@ namespace KIM
 {
 namespace SEM_VER
 {
-void GetSemVer(std::string const ** const version);
-int IsLessThan(std::string const & versionA, std::string const & versionB,
+std::string const & GetSemVer();
+int IsLessThan(std::string const & versionA,
+               std::string const & versionB,
                int * const isLessThan);
-int ParseSemVer(std::string const & version, int * const major,
-                int * const minor, int * const patch,
+int ParseSemVer(std::string const & version,
+                int * const major,
+                int * const minor,
+                int * const patch,
                 std::string * const prerelease,
                 std::string * const buildMetadata);
 }  // namespace SEM_VER
 }  // namespace KIM
+
 #endif  // KIM_SEM_VER_HPP_

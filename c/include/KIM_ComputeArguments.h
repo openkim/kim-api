@@ -29,15 +29,15 @@
 /*                                                                            */
 
 /*                                                                            */
-/* Release: This file is part of the kim-api.git repository.                  */
+/* Release: This file is part of the kim-api-v2.0.0-beta.2 package.           */
 /*                                                                            */
 
 
 #ifndef KIM_COMPUTE_ARGUMENTS_H_
 #define KIM_COMPUTE_ARGUMENTS_H_
 
-#ifndef KIM_FUNC_H_
-#include "KIM_func.h"
+#ifndef KIM_FUNCTION_TYPES_H_
+#include "KIM_FunctionTypes.h"
 #endif
 
 /* Forward declarations */
@@ -96,30 +96,26 @@ int KIM_ComputeArguments_SetCallbackPointer(
     KIM_ComputeArguments * const computeArguments,
     KIM_ComputeCallbackName const computeCallbackName,
     KIM_LanguageName const languageName,
-    func * const fptr,
-    void const * const dataObject);
+    KIM_Function * const fptr,
+    void * const dataObject);
 
 void KIM_ComputeArguments_AreAllRequiredArgumentsAndCallbacksPresent(
-    KIM_ComputeArguments const * const computeArguments,
-    int * const result);
+    KIM_ComputeArguments const * const computeArguments, int * const result);
 
 void KIM_ComputeArguments_SetSimulatorBufferPointer(
-    KIM_ComputeArguments * const computeArguments,
-    void * const ptr);
+    KIM_ComputeArguments * const computeArguments, void * const ptr);
 void KIM_ComputeArguments_GetSimulatorBufferPointer(
-    KIM_ComputeArguments const * const computeArguments,
-    void ** const ptr);
+    KIM_ComputeArguments const * const computeArguments, void ** const ptr);
 
-char const * const KIM_ComputeArguments_String(
+char const * KIM_ComputeArguments_ToString(
     KIM_ComputeArguments const * const computeArguments);
 
 void KIM_ComputeArguments_SetLogID(
-    KIM_ComputeArguments * const computeArguments,
-    char const * const logID);
+    KIM_ComputeArguments * const computeArguments, char const * const logID);
 void KIM_ComputeArguments_PushLogVerbosity(
     KIM_ComputeArguments * const computeArguments,
     KIM_LogVerbosity const logVerbosity);
 void KIM_ComputeArguments_PopLogVerbosity(
     KIM_ComputeArguments * const computeArguments);
 
-#endif  /* KIM_COMPUTE_ARGUMENTS_H_ */
+#endif /* KIM_COMPUTE_ARGUMENTS_H_ */

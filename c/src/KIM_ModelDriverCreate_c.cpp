@@ -27,15 +27,14 @@
 //
 
 //
-// Release: This file is part of the kim-api.git repository.
+// Release: This file is part of the kim-api-v2.0.0-beta.2 package.
 //
 
 
 #ifndef KIM_LOG_VERBOSITY_HPP_
 #include "KIM_LogVerbosity.hpp"
 #endif
-extern "C"
-{
+extern "C" {
 #ifndef KIM_LOG_VERBOSITY_H_
 #include "KIM_LogVerbosity.h"
 #endif
@@ -44,8 +43,7 @@ extern "C"
 #ifndef KIM_LANGUAGE_NAME_HPP_
 #include "KIM_LanguageName.hpp"
 #endif
-extern "C"
-{
+extern "C" {
 #ifndef KIM_LANGUAGE_NAME_H_
 #include "KIM_LanguageName.h"
 #endif
@@ -54,8 +52,7 @@ extern "C"
 #ifndef KIM_NUMBERING_HPP_
 #include "KIM_Numbering.hpp"
 #endif
-extern "C"
-{
+extern "C" {
 #ifndef KIM_NUMBERING_H_
 #include "KIM_Numbering.h"
 #endif
@@ -64,8 +61,7 @@ extern "C"
 #ifndef KIM_SPECIES_NAME_HPP_
 #include "KIM_SpeciesName.hpp"
 #endif
-extern "C"
-{
+extern "C" {
 #ifndef KIM_SPECIES_NAME_H_
 #include "KIM_SpeciesName.h"
 #endif
@@ -74,8 +70,7 @@ extern "C"
 #ifndef KIM_UNIT_SYSTEM_HPP_
 #include "KIM_UnitSystem.hpp"
 #endif
-extern "C"
-{
+extern "C" {
 #ifndef KIM_UNIT_SYSTEM_H_
 #include "KIM_UnitSystem.h"
 #endif
@@ -84,8 +79,7 @@ extern "C"
 #ifndef KIM_MODEL_DRIVER_CREATE_HPP_
 #include "KIM_ModelDriverCreate.hpp"
 #endif
-extern "C"
-{
+extern "C" {
 #ifndef KIM_MODEL_DRIVER_CREATE_H_
 #include "KIM_ModelDriverCreate.h"
 #endif
@@ -97,9 +91,9 @@ struct KIM_ModelDriverCreate
   void * p;
 };
 
-#define CONVERT_POINTER                                         \
-  KIM::ModelDriverCreate * pModelDriverCreate                   \
-  = reinterpret_cast<KIM::ModelDriverCreate *>(modelDriverCreate->p)
+#define CONVERT_POINTER                       \
+  KIM::ModelDriverCreate * pModelDriverCreate \
+      = reinterpret_cast<KIM::ModelDriverCreate *>(modelDriverCreate->p)
 
 namespace
 {
@@ -128,8 +122,8 @@ KIM::ChargeUnit makeChargeUnitCpp(KIM_ChargeUnit const chargeUnit)
   return KIM::ChargeUnit(chargeUnit.chargeUnitID);
 }
 
-KIM::TemperatureUnit makeTemperatureUnitCpp(
-    KIM_TemperatureUnit const temperatureUnit)
+KIM::TemperatureUnit
+makeTemperatureUnitCpp(KIM_TemperatureUnit const temperatureUnit)
 {
   return KIM::TemperatureUnit(temperatureUnit.temperatureUnitID);
 }
@@ -139,8 +133,7 @@ KIM::TimeUnit makeTimeUnitCpp(KIM_TimeUnit const timeUnit)
   return KIM::TimeUnit(timeUnit.timeUnitID);
 }
 
-KIM::LanguageName
-makeLanguageNameCpp(KIM_LanguageName const languageName)
+KIM::LanguageName makeLanguageNameCpp(KIM_LanguageName const languageName)
 {
   return KIM::LanguageName(languageName.languageNameID);
 }
@@ -151,20 +144,18 @@ KIM::SpeciesName makeSpeciesNameCpp(KIM_SpeciesName const speciesName)
 }
 }  // namespace
 
-extern "C"
-{
+extern "C" {
 void KIM_ModelDriverCreate_GetNumberOfParameterFiles(
-    KIM_ModelDriverCreate * const modelDriverCreate,
+    KIM_ModelDriverCreate const * const modelDriverCreate,
     int * const numberOfParameterFiles)
 {
   CONVERT_POINTER;
 
-  pModelDriverCreate->GetNumberOfParameterFiles(
-      numberOfParameterFiles);
+  pModelDriverCreate->GetNumberOfParameterFiles(numberOfParameterFiles);
 }
 
 int KIM_ModelDriverCreate_GetParameterFileName(
-    KIM_ModelDriverCreate * const modelDriverCreate,
+    KIM_ModelDriverCreate const * const modelDriverCreate,
     int const index,
     char const ** const parameterFileName)
 {
@@ -177,8 +168,7 @@ int KIM_ModelDriverCreate_GetParameterFileName(
   else
     ppStr = &pStr;
 
-  int error
-      = pModelDriverCreate->GetParameterFileName(index, ppStr);
+  int error = pModelDriverCreate->GetParameterFileName(index, ppStr);
 
   if (error)
     return true;
@@ -195,8 +185,7 @@ int KIM_ModelDriverCreate_SetModelNumbering(
 {
   CONVERT_POINTER;
 
-  return pModelDriverCreate
-      ->SetModelNumbering(makeNumberingCpp(numbering));
+  return pModelDriverCreate->SetModelNumbering(makeNumberingCpp(numbering));
 }
 
 void KIM_ModelDriverCreate_SetInfluenceDistancePointer(
@@ -212,95 +201,111 @@ void KIM_ModelDriverCreate_SetNeighborListPointers(
     KIM_ModelDriverCreate * const modelDriverCreate,
     int const numberOfNeighborLists,
     double const * const cutoffs,
-    int const * const paddingNeighborHints,
-    int const * const halfListHints)
+    int const * const modelWillNotRequestNeighborsOfNoncontributingParticles)
 {
   CONVERT_POINTER;
 
-  pModelDriverCreate->SetNeighborListPointers(numberOfNeighborLists,
-                                              cutoffs,
-                                              paddingNeighborHints,
-                                              halfListHints);
+  pModelDriverCreate->SetNeighborListPointers(
+      numberOfNeighborLists,
+      cutoffs,
+      modelWillNotRequestNeighborsOfNoncontributingParticles);
 }
 
 int KIM_ModelDriverCreate_SetRefreshPointer(
     KIM_ModelDriverCreate * const modelDriverCreate,
-    KIM_LanguageName const languageName, func * const fptr)
+    KIM_LanguageName const languageName,
+    KIM_Function * const fptr)
 {
   CONVERT_POINTER;
 
   KIM::LanguageName langN = makeLanguageNameCpp(languageName);
-  return pModelDriverCreate->SetRefreshPointer(langN, fptr);
+  return pModelDriverCreate->SetRefreshPointer(
+      langN, reinterpret_cast<KIM::Function *>(fptr));
 }
 
 int KIM_ModelDriverCreate_SetDestroyPointer(
     KIM_ModelDriverCreate * const modelDriverCreate,
-    KIM_LanguageName const languageName, func * const fptr)
+    KIM_LanguageName const languageName,
+    KIM_Function * const fptr)
 {
   CONVERT_POINTER;
 
   KIM::LanguageName langN = makeLanguageNameCpp(languageName);
-  return pModelDriverCreate->SetDestroyPointer(langN, fptr);
+  return pModelDriverCreate->SetDestroyPointer(
+      langN, reinterpret_cast<KIM::Function *>(fptr));
 }
 
 int KIM_ModelDriverCreate_SetComputeArgumentsCreatePointer(
     KIM_ModelDriverCreate * const modelDriverCreate,
-    KIM_LanguageName const languageName, func * const fptr)
+    KIM_LanguageName const languageName,
+    KIM_Function * const fptr)
 {
   CONVERT_POINTER;
 
   KIM::LanguageName langN = makeLanguageNameCpp(languageName);
-  return pModelDriverCreate->SetComputeArgumentsCreatePointer(langN, fptr);
+  return pModelDriverCreate->SetComputeArgumentsCreatePointer(
+      langN, reinterpret_cast<KIM::Function *>(fptr));
 }
 
 int KIM_ModelDriverCreate_SetComputeArgumentsDestroyPointer(
     KIM_ModelDriverCreate * const modelDriverCreate,
-    KIM_LanguageName const languageName, func * const fptr)
+    KIM_LanguageName const languageName,
+    KIM_Function * const fptr)
 {
   CONVERT_POINTER;
 
   KIM::LanguageName langN = makeLanguageNameCpp(languageName);
-  return pModelDriverCreate->SetComputeArgumentsDestroyPointer(langN, fptr);
+  return pModelDriverCreate->SetComputeArgumentsDestroyPointer(
+      langN, reinterpret_cast<KIM::Function *>(fptr));
 }
 
 int KIM_ModelDriverCreate_SetComputePointer(
     KIM_ModelDriverCreate * const modelDriverCreate,
-    KIM_LanguageName const languageName, func * const fptr)
+    KIM_LanguageName const languageName,
+    KIM_Function * const fptr)
 {
   CONVERT_POINTER;
 
   KIM::LanguageName langN = makeLanguageNameCpp(languageName);
-  return pModelDriverCreate->SetComputePointer(langN, fptr);
+  return pModelDriverCreate->SetComputePointer(
+      langN, reinterpret_cast<KIM::Function *>(fptr));
 }
 
 int KIM_ModelDriverCreate_SetSpeciesCode(
     KIM_ModelDriverCreate * const modelDriverCreate,
-    KIM_SpeciesName const speciesName, int const code)
+    KIM_SpeciesName const speciesName,
+    int const code)
 {
   CONVERT_POINTER;
 
-  return pModelDriverCreate
-      ->SetSpeciesCode(makeSpeciesNameCpp(speciesName), code);
+  return pModelDriverCreate->SetSpeciesCode(makeSpeciesNameCpp(speciesName),
+                                            code);
 }
 
 int KIM_ModelDriverCreate_SetParameterPointerInteger(
     KIM_ModelDriverCreate * const modelDriverCreate,
-    int const extent, int * const ptr, char const * const description)
+    int const extent,
+    int * const ptr,
+    char const * const name,
+    char const * const description)
 {
   CONVERT_POINTER;
 
   return pModelDriverCreate->SetParameterPointer(
-      extent, ptr, description);
+      extent, ptr, name, description);
 }
 
 int KIM_ModelDriverCreate_SetParameterPointerDouble(
     KIM_ModelDriverCreate * const modelDriverCreate,
-    int const extent, double * const ptr, char const * const description)
+    int const extent,
+    double * const ptr,
+    char const * const name,
+    char const * const description)
 {
   CONVERT_POINTER;
 
   return pModelDriverCreate->SetParameterPointer(
-      extent, ptr, description);
+      extent, ptr, name, description);
 }
 
 void KIM_ModelDriverCreate_SetModelBufferPointer(
@@ -327,12 +332,11 @@ int KIM_ModelDriverCreate_SetUnits(
   KIM::TemperatureUnit temperatureU = makeTemperatureUnitCpp(temperatureUnit);
   KIM::TimeUnit timeU = makeTimeUnitCpp(timeUnit);
 
-  return pModelDriverCreate->SetUnits(lengthU, energyU, chargeU,
-                                      temperatureU, timeU);
+  return pModelDriverCreate->SetUnits(
+      lengthU, energyU, chargeU, temperatureU, timeU);
 }
 
 int KIM_ModelDriverCreate_ConvertUnit(
-    KIM_ModelDriverCreate const * const modelDriverCreate,
     KIM_LengthUnit const fromLengthUnit,
     KIM_EnergyUnit const fromEnergyUnit,
     KIM_ChargeUnit const fromChargeUnit,
@@ -350,9 +354,7 @@ int KIM_ModelDriverCreate_ConvertUnit(
     double const timeExponent,
     double * const conversionFactor)
 {
-  CONVERT_POINTER;
-
-  return pModelDriverCreate->ConvertUnit(
+  return KIM::ModelDriverCreate::ConvertUnit(
       makeLengthUnitCpp(fromLengthUnit),
       makeEnergyUnitCpp(fromEnergyUnit),
       makeChargeUnitCpp(fromChargeUnit),
@@ -373,16 +375,18 @@ int KIM_ModelDriverCreate_ConvertUnit(
 
 void KIM_ModelDriverCreate_LogEntry(
     KIM_ModelDriverCreate const * const modelDriverCreate,
-    KIM_LogVerbosity const logVerbosity, char const * const message,
-    int const lineNumber, char const * const fileName)
+    KIM_LogVerbosity const logVerbosity,
+    char const * const message,
+    int const lineNumber,
+    char const * const fileName)
 {
   CONVERT_POINTER;
 
-  pModelDriverCreate->LogEntry(makeLogVerbosityCpp(logVerbosity), message,
-                               lineNumber, fileName);
+  pModelDriverCreate->LogEntry(
+      makeLogVerbosityCpp(logVerbosity), message, lineNumber, fileName);
 }
 
-char const * const KIM_ModelDriverCreate_String(
+char const * KIM_ModelDriverCreate_ToString(
     KIM_ModelDriverCreate const * const modelDriverCreate)
 {
   CONVERT_POINTER;
