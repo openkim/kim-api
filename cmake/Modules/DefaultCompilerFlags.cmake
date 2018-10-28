@@ -53,7 +53,7 @@ set(CMAKE_EXE_LINKER_FLAGS "${KIM_API_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS
 # Set global compiler options
 #
 include(EnableCXXCompilerFlagIfSupported)
-enable_cxx_compiler_flag_if_supported("-std=c++${CMAKE_CXX_STANDARD}")
+#enable_cxx_compiler_flag_if_supported("-std=c++${CMAKE_CXX_STANDARD}")
 enable_cxx_compiler_flag_if_supported("-Wall")
 enable_cxx_compiler_flag_if_supported("-Wextra")
 enable_cxx_compiler_flag_if_supported("-pedantic")
@@ -67,7 +67,7 @@ endif()
 set(KIM_API_CXX_FLAGS "${KIM_API_CXX_FLAGS}" CACHE STRING "KIM API C++ compiler flags")
 #
 include(EnableCCompilerFlagIfSupported)
-enable_c_compiler_flag_if_supported("-std=c${CMAKE_C_STANDARD}")
+#enable_c_compiler_flag_if_supported("-std=c${CMAKE_C_STANDARD}")
 enable_c_compiler_flag_if_supported("-Wall")
 enable_c_compiler_flag_if_supported("-Wextra")
 enable_c_compiler_flag_if_supported("-pedantic")
