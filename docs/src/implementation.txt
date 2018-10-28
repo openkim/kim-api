@@ -60,7 +60,7 @@ tasks for the model object.  These are summarized in the following table.
 | *ModelComputeArgumentsCreate*       | required            |
 | *ModelCompute*                      | required            |
 | *ModelRefresh*                      | required if one or more parameter pointers set, otherwise should not be provided |
-| *ModelCompureArgumentsDestroy*      | optional            |
+| *ModelComputeArgumentsDestroy*      | optional            |
 | *ModelDestroy*                      | required            |
 
 To interact with a model, a simulator creates a model object (which, in part,
