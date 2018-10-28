@@ -66,6 +66,7 @@ E. Adding Models and/or Model Drivers to the collections
    E.2 Adding Models and/or Model Drivers to the user-collection
    E.3 Adding Models and/or Model Drivers to the environment-variable-collection
    E.4 Adding Models and/or Model Drivers to the CWD-collection
+   E.5 Manually adding Models and/or Model Drivers
 
 
 -------------------------------------------------------------------------------
@@ -474,6 +475,20 @@ $ kim-api-vX-collections-management install CWD Pair_Exp6_Hogervorst_Mixing_Kong
 $ kim-api-vX-collections-management list
 $ cd "${HOME}/utility_forces_numer_deriv/build"  # we'll assume this is already built
 $ printf "Pair_Exp6_Hogervorst_Mixing_Kong_Chakrabarty_ArNe__MO_946046425752_001" | ./utility_forces_numer_deriv
+
+E.5 Manually adding Models and/or Model Drivers
+
+If necessary a model and/or model driver may be manually built and installed.
+We'll assume the item's source code is in the current directory
+
+$ mkdir build
+$ cd build
+$ cmake .. -DKIM_API_INSTALL_COLLECTION=SYSTEM
+$ make
+$ sudo make install
+
+The KIM_API_INSTALL_COLLECTION variable can also take values USER and
+ENVIRONMENT.
 
 *******************************************************************************
 
