@@ -121,7 +121,7 @@ programmers the ability to write atomistic or molecular simulation programs
 (Simulators) that can seamlessly interface with implementations of interatomic
 potential (Models), regardless of the programming language in which the codes
 are written.  Models can be "stand-alone", corresponding to code and parameters
-all in one.  Or, Models can be "paramaterized", corresponding to just a set of
+all in one.  Or, Models can be "parameterized", corresponding to just a set of
 parameters that must be connected to a Model Driver which contains the code
 that can be used with any set of parameters.  In addition to the main KIM API
 library, a small number of associated helper utilities are provided.
