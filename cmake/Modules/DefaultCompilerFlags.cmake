@@ -35,6 +35,9 @@
 
 # Set global linker flags
 #
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+#
+#
 if(KIM_API_ENABLE_SANITIZE)
   set(KIM_API_EXE_LINKER_FLAGS "${KIM_API_EXE_LINKER_FLAGS} -fsanitize=address")
 endif()
@@ -94,7 +97,6 @@ set(KIM_API_Fortran_FLAGS "${KIM_API_Fortran_FLAGS}" CACHE STRING "KIM API Fortr
 #
 
 # Update CMAKE variables
-set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_CXX_FLAGS "${KIM_API_CXX_FLAGS} ${CMAKE_CXX_FLAGS}")
 set(CMAKE_C_FLAGS "${KIM_API_C_FLAGS} ${CMAKE_C_FLAGS}")
 set(CMAKE_Fortran_FLAGS "${KIM_API_Fortran_FLAGS} ${CMAKE_Fortran_FLAGS}")
