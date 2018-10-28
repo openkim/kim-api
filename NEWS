@@ -32,6 +32,50 @@
 #
 
 
+=== kim-api-v2.0.0-beta.2 ======= 28Oct2018 ====================================
+
+* CMake build and test replaces custom Makefiles; added travis, gitlab CI
+  A big thank you to Richard Berger and Christoph Junghans for their major
+  contribution in getting the KIM API package converted to CMake.
+
+* Using standard pkg-config setup instead of custom kim-api-v2-build-config
+
+* Major restructuring of the Fortran bindings.
+
+* Make ModelRefresh and ModelComputeArgumentsDestroy functions optional
+
+* Add Model routine and callback prototypes in KIM_Functions header
+
+* Add a required unique name field for parameters.
+
+* Refactoring of neighbor list hints.  The half-list hint had a fatal flaw
+  which required its removal.
+
+* Significant refactoring of the logging macros in C and C++.  Complete removal
+  of all preprocessing for Fortran.
+
+* Redesign of release and packaging script and process.
+
+* Added a couple of new models that illustrate various features of the api.
+
+* Removed v1 to v2 porting guide.
+
+* "Summary of Differences Between kim-api-v1 and kim-api-v2" docs page now
+  contains tables with a complete listing of all kim-api identifiers in all
+  languages and their mappings between one-another.
+
+* Complete update of documentation.  Rework and correct definition of
+  partialVirial and partialParticleVirial.
+
+* Added emacs cc-mode settings
+
+* Added clang-format settings, scripts, and git-hooks for C/C++
+
+* Complete review of C++, C, and Fortran bindings for consistency
+
+* Many other small and not-so-small changes.
+
+
 === kim-api-v2.0.0-beta.1 ======= 07Jul2018 ====================================
 
 * Fix memory leak and uninitialized variables id'ed by coverity scan.
