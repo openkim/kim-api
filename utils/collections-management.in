@@ -347,7 +347,7 @@ get_build_install_item () {
     else
       if test x"" = x"${local_build_path}"; then
         if check_item_compatibility "${item_name}"; then
-          printf "Downloading..............@%s\n" "${item_name}" | sed -e 's/ /./g' -e 's/@/ /g'
+          printf "Downloading..............#%s\n" "${item_name}" | sed -e 's/ /./g' -e 's/#/ /g'
           if wget -q --content-disposition "https://openkim.org/download/${item_name}.txz"; then
             tar Jxf "${item_name}.txz" 2>&1 | sed -e 's/^/                /' &&
               rm -f "${item_name}.txz"
@@ -370,7 +370,7 @@ get_build_install_item () {
       if test x"parameterized-model" = x"${item_type}"; then
         dvr="`grep "driver-name:" model-info.txt | sed -e 's/driver-name://'`"
         if test x"" != x"`${collections_info} model_drivers find "${dvr}"`"; then
-          printf "Using@installed@driver...@%s\n" "${dvr}" | sed -e 's/ /./g' -e 's/@/ /g' || return 1
+          printf "Using#installed#driver...#%s\n" "${dvr}" | sed -e 's/ /./g' -e 's/#/ /g' || return 1
         else
           printf "This model needs its driver '${dvr}', trying to find it at openkim.org.\n"
           # try openkim.org first
