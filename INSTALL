@@ -104,7 +104,7 @@ B. QUICK START: For those who don't like to read and are a bit audacious.
 Try the following:
 
 $ mkdir build && cd build
-$ cmake .. -DCMAKE_INSTALL_TYPE=Release
+$ cmake .. -DCMAKE_BUILD_TYPE=Release
 $ make
 $ sudo make install
 $ sudo ldconfig
