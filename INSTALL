@@ -354,7 +354,7 @@ The KIM API defines two additional regular build options and four advanced
 options.
 
 * KIM_API_LOG_MAXIMUM_LEVEL (="DEBUG" if CMAKE_BUILD_TYPE is "Debug", otherwise
-  ="ERROR") This option takes one of the following six values "SILENT",
+  ="INFORMATION") This option takes one of the following six values "SILENT",
   "FATAL", "ERROR", "WARNING", "INFORMATION", "DEBUG".  This value controls, at
   compile-time, which type of log messages can be printed to the "kim.log"
   file.
