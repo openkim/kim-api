@@ -75,7 +75,8 @@ extern std::vector<ComputeCallbackName> const requiredByAPI_ComputeCallbacks;
       .str()
 
 
-#include "KIM_ComputeArgumentsImplementationLogMacros.hpp"
+#include "KIM_LogMacros.hpp"
+#define KIM_LOGGER_OBJECT_NAME this
 namespace KIM
 {
 int ComputeArgumentsImplementation::Create(

@@ -66,7 +66,8 @@ namespace KIM
       .str()
 #define SBOOL(x) std::string((x ? "true" : "false"))
 
-#include "KIM_ModelLibraryLogMacros.hpp"
+#include "KIM_LogMacros.hpp"
+#define KIM_LOGGER_OBJECT_NAME this
 ModelLibrary::ModelLibrary(Log * const log) : libraryHandle_(NULL), log_(log)
 {
 #if DEBUG_VERBOSITY
