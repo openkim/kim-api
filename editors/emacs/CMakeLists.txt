@@ -36,5 +36,5 @@
 
 install(
   FILES kim-api-c-style.el
-  DESTINATION ${CMAKE_INSTALL_DATADIR}/emacs/site-lisp
+  DESTINATION ${CMAKE_INSTALL_DATADIR}/emacs/site-lisp/${PROJECT_NAME}
   )
