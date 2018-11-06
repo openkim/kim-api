@@ -52,6 +52,10 @@
 #include "KIM_Numbering.h"
 #endif
 
+#ifndef KIM_MODEL_ROUTINE_NAME_H_
+#include "KIM_ModelRoutineName.h"
+#endif
+
 #ifndef KIM_SPECIES_NAME_H_
 #include "KIM_SpeciesName.h"
 #endif

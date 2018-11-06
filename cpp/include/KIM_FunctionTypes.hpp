@@ -45,9 +45,11 @@ class TimeUnit;
 class ModelCreate;
 class ModelDriverCreate;
 class ModelCompute;
+class ModelExtension;
 class ModelComputeArgumentsCreate;
 class ModelComputeArguments;
 class ModelRefresh;
+class ModelWriteParameterizedModel;
 class ModelComputeArgumentsDestroy;
 class ModelDestroy;
 
@@ -99,7 +101,16 @@ typedef int ProcessD2EDr2TermFunction(void * const dataObject,
                                       int const * const i,
                                       int const * const j);
 
+typedef int ModelExtensionFunction(ModelExtension const * const modelExtension,
+                                   std::string const & extensionID,
+                                   void * const extensionStructure);
+
 typedef int ModelRefreshFunction(ModelRefresh * const modelRefresh);
+
+typedef int ModelWriteParameterizedModelFunction(
+    ModelWriteParameterizedModel const * const modelWriteParameterizedModel,
+    std::string const & path,
+    std::string const & modelName) const;
 
 typedef int ModelComputeArgumentsDestroyFunction(
     ModelCompute const * const modelCompute,

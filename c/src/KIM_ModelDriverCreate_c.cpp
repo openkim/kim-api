@@ -58,6 +58,15 @@ extern "C" {
 #endif
 }  // extern "C"
 
+#ifndef KIM_MODEL_ROUTINE_NAME_HPP_
+#include "KIM_ModelRoutineName.hpp"
+#endif
+extern "C" {
+#ifndef KIM_MODEL_ROUTINE_NAME_H_
+#include "KIM_ModelRoutineName.h"
+#endif
+}  // extern "C"
+
 #ifndef KIM_SPECIES_NAME_HPP_
 #include "KIM_SpeciesName.hpp"
 #endif
@@ -138,6 +147,12 @@ KIM::LanguageName makeLanguageNameCpp(KIM_LanguageName const languageName)
   return KIM::LanguageName(languageName.languageNameID);
 }
 
+KIM::ModelRoutineName
+makeRoutineNameCpp(KIM_ModelRoutineName const modelRoutineName)
+{
+  return KIM::ModelRoutineName(modelRoutineName.modelRoutineNameID);
+}
+
 KIM::SpeciesName makeSpeciesNameCpp(KIM_SpeciesName const speciesName)
 {
   return KIM::SpeciesName(speciesName.speciesNameID);
@@ -211,64 +226,19 @@ void KIM_ModelDriverCreate_SetNeighborListPointers(
       modelWillNotRequestNeighborsOfNoncontributingParticles);
 }
 
-int KIM_ModelDriverCreate_SetRefreshPointer(
+int KIM_ModelDriverCreate_SetRoutinePointer(
     KIM_ModelDriverCreate * const modelDriverCreate,
+    KIM_ModelRoutineName const modelRoutineName,
     KIM_LanguageName const languageName,
+    int const required,
     KIM_Function * const fptr)
 {
   CONVERT_POINTER;
 
+  KIM::ModelRoutineName routN = makeRoutineNameCpp(modelRoutineName);
   KIM::LanguageName langN = makeLanguageNameCpp(languageName);
-  return pModelDriverCreate->SetRefreshPointer(
-      langN, reinterpret_cast<KIM::Function *>(fptr));
-}
-
-int KIM_ModelDriverCreate_SetDestroyPointer(
-    KIM_ModelDriverCreate * const modelDriverCreate,
-    KIM_LanguageName const languageName,
-    KIM_Function * const fptr)
-{
-  CONVERT_POINTER;
-
-  KIM::LanguageName langN = makeLanguageNameCpp(languageName);
-  return pModelDriverCreate->SetDestroyPointer(
-      langN, reinterpret_cast<KIM::Function *>(fptr));
-}
-
-int KIM_ModelDriverCreate_SetComputeArgumentsCreatePointer(
-    KIM_ModelDriverCreate * const modelDriverCreate,
-    KIM_LanguageName const languageName,
-    KIM_Function * const fptr)
-{
-  CONVERT_POINTER;
-
-  KIM::LanguageName langN = makeLanguageNameCpp(languageName);
-  return pModelDriverCreate->SetComputeArgumentsCreatePointer(
-      langN, reinterpret_cast<KIM::Function *>(fptr));
-}
-
-int KIM_ModelDriverCreate_SetComputeArgumentsDestroyPointer(
-    KIM_ModelDriverCreate * const modelDriverCreate,
-    KIM_LanguageName const languageName,
-    KIM_Function * const fptr)
-{
-  CONVERT_POINTER;
-
-  KIM::LanguageName langN = makeLanguageNameCpp(languageName);
-  return pModelDriverCreate->SetComputeArgumentsDestroyPointer(
-      langN, reinterpret_cast<KIM::Function *>(fptr));
-}
-
-int KIM_ModelDriverCreate_SetComputePointer(
-    KIM_ModelDriverCreate * const modelDriverCreate,
-    KIM_LanguageName const languageName,
-    KIM_Function * const fptr)
-{
-  CONVERT_POINTER;
-
-  KIM::LanguageName langN = makeLanguageNameCpp(languageName);
-  return pModelDriverCreate->SetComputePointer(
-      langN, reinterpret_cast<KIM::Function *>(fptr));
+  return pModelDriverCreate->SetRoutinePointer(
+      routN, langN, required, reinterpret_cast<KIM::Function *>(fptr));
 }
 
 int KIM_ModelDriverCreate_SetSpeciesCode(

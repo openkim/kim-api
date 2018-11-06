@@ -33,55 +33,16 @@
 /*                                                                            */
 
 
-#ifndef KIM_SIMULATOR_HEADERS_H_
-#define KIM_SIMULATOR_HEADERS_H_
+#ifndef KIM_MODEL_ROUTINE_NAME_INC_
+#define KIM_MODEL_ROUTINE_NAME_INC_
 
-#ifndef KIM_MODEL_H_
-#include "KIM_Model.h"
-#endif
+#define ID_Create 0
+#define ID_ComputeArgumentsCreate 1
+#define ID_Compute 2
+#define ID_Extension 3
+#define ID_Refresh 4
+#define ID_WriteParameterizedModel 5
+#define ID_ComputeArgumentsDestroy 6
+#define ID_Destroy 7
 
-#ifndef KIM_LOG_VERBOSITY_H_
-#include "KIM_LogVerbosity.h"
-#endif
-
-#ifndef KIM_DATA_TYPE_H_
-#include "KIM_DataType.h"
-#endif
-
-#ifndef KIM_LANGUAGE_NAME_H_
-#include "KIM_LanguageName.h"
-#endif
-
-#ifndef KIM_MODEL_ROUTINE_NAME_H_
-#include "KIM_ModelRoutineName.h"
-#endif
-
-#ifndef KIM_SPECIES_NAME_H_
-#include "KIM_SpeciesName.h"
-#endif
-
-#ifndef KIM_NUMBERING_H_
-#include "KIM_Numbering.h"
-#endif
-
-#ifndef KIM_UNIT_SYSTEM_H_
-#include "KIM_UnitSystem.h"
-#endif
-
-#ifndef KIM_COMPUTE_ARGUMENTS_H_
-#include "KIM_ComputeArguments.h"
-#endif
-
-#ifndef KIM_COMPUTE_ARGUMENT_NAME_H_
-#include "KIM_ComputeArgumentName.h"
-#endif
-
-#ifndef KIM_COMPUTE_CALLBACK_NAME_H_
-#include "KIM_ComputeCallbackName.h"
-#endif
-
-#ifndef KIM_SUPPORT_STATUS_H_
-#include "KIM_SupportStatus.h"
-#endif
-
-#endif /* KIM_SIMULATOR_HEADERS_H_ */
+#endif /* KIM_MODEL_ROUTINE_NAME_INC_ */

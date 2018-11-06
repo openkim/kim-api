@@ -61,6 +61,7 @@ set(C_HEADERS
     KIM_ModelHeaders.h
     KIM_Model.h
     KIM_ModelRefresh.h
+    KIM_ModelRoutineName.h
     KIM_Numbering.h
     KIM_SemVer.h
     KIM_SimulatorHeaders.h

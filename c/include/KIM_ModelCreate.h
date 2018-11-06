@@ -56,6 +56,11 @@ typedef struct KIM_LanguageName KIM_LanguageName;
 typedef struct KIM_Numbering KIM_Numbering;
 #endif
 
+#ifndef KIM_MODEL_ROUTINE_NAME_DEFINED_
+#define KIM_MODEL_ROUTINE_NAME_DEFINED_
+typedef struct KIM_ModelRoutineName KIM_ModelRoutineName;
+#endif
+
 #ifndef KIM_SPECIES_NAME_DEFINED_
 #define KIM_SPECIES_NAME_DEFINED_
 typedef struct KIM_SpeciesName KIM_SpeciesName;
@@ -113,23 +118,12 @@ void KIM_ModelCreate_SetNeighborListPointers(
     double const * const cutoffs,
     int const * const modelWillNotRequestNeighborsOfNoncontributingParticles);
 
-int KIM_ModelCreate_SetRefreshPointer(KIM_ModelCreate * const modelCreate,
-                                      KIM_LanguageName const languageName,
-                                      KIM_Function * const fptr);
-int KIM_ModelCreate_SetDestroyPointer(KIM_ModelCreate * const modelCreate,
-                                      KIM_LanguageName const languageName,
-                                      KIM_Function * const fptr);
-int KIM_ModelCreate_SetComputeArgumentsCreatePointer(
+int KIM_ModelCreate_SetRoutinePointer(
     KIM_ModelCreate * const modelCreate,
+    KIM_ModelRoutineName const modelRoutineName,
     KIM_LanguageName const languageName,
+    int const required,
     KIM_Function * const fptr);
-int KIM_ModelCreate_SetComputeArgumentsDestroyPointer(
-    KIM_ModelCreate * const modelCreate,
-    KIM_LanguageName const languageName,
-    KIM_Function * const fptr);
-int KIM_ModelCreate_SetComputePointer(KIM_ModelCreate * const modelCreate,
-                                      KIM_LanguageName const languageName,
-                                      KIM_Function * const fptr);
 
 int KIM_ModelCreate_SetSpeciesCode(KIM_ModelCreate * const modelCreate,
                                    KIM_SpeciesName const speciesName,

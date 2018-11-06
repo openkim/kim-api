@@ -48,6 +48,15 @@ extern "C" {
 #endif
 }  // extern "C"
 
+#ifndef KIM_MODEL_ROUTINE_NAME_HPP_
+#include "KIM_ModelRoutineName.hpp"
+#endif
+extern "C" {
+#ifndef KIM_MODEL_ROUTINE_NAME_H_
+#include "KIM_ModelRoutineName.h"
+#endif
+}  // extern "C"
+
 #ifndef KIM_SPECIES_NAME_HPP_
 #include "KIM_SpeciesName.hpp"
 #endif
@@ -115,6 +124,12 @@ KIM_DataType makeDataTypeC(KIM::DataType const dataType)
   KIM_DataType * pTyp = (KIM_DataType *) &dataType;
   typ.dataTypeID = pTyp->dataTypeID;
   return typ;
+}
+
+KIM::ModelRoutineName
+makeRoutineNameCpp(KIM_ModelRoutineName const modelRoutineName)
+{
+  return KIM::ModelRoutineName(modelRoutineName.modelRoutineNameID);
 }
 
 KIM::SpeciesName makeSpecNameCpp(KIM_SpeciesName const speciesName)
@@ -197,6 +212,17 @@ void KIM_Model_Destroy(KIM_Model ** const model)
   KIM::Model::Destroy(&pModel);
   delete (*model);
   *model = NULL;
+}
+
+int KIM_Model_IsRoutinePresent(KIM_Model const * const model,
+                               KIM_ModelRoutineName const modelRoutineName,
+                               int * const present,
+                               int * const required)
+{
+  CONVERT_POINTER;
+
+  return pModel->IsRoutinePresent(
+      makeRoutineNameCpp(modelRoutineName), present, required);
 }
 
 void KIM_Model_GetInfluenceDistance(KIM_Model const * const model,

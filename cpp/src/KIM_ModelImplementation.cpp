@@ -150,6 +150,14 @@ extern "C" {
 }
 #endif
 
+namespace KIM
+{
+namespace MODEL_ROUTINE_NAME
+{
+extern std::vector<ModelRoutineName> const requiredByAPI_ModelRoutines;
+}  // namespace MODEL_ROUTINE_NAME
+}  // namespace KIM
+
 
 namespace
 {
@@ -333,6 +341,49 @@ void ModelImplementation::Destroy(
   *modelImplementation = NULL;
 }
 
+int ModelImplementation::IsRoutinePresent(
+    ModelRoutineName const modelRoutineName,
+    int * const present,
+    int * const required) const
+{
+#if DEBUG_VERBOSITY
+  std::string const callString = "IsRoutinePresent(" + modelRoutineName.String()
+                                 + ", " + SNUM(present) + ", " + SNUM(required)
+                                 + ").";
+#endif
+  LOG_DEBUG("Enter  " + callString);
+
+#if ERROR_VERBOSITY
+  int error = Validate(modelRoutineName);
+  if (error)
+  {
+    LOG_ERROR("Invalid arguments.");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
+#endif
+
+  std::map<ModelRoutineName const, Function *, MODEL_ROUTINE_NAME::Comparator>::
+      const_iterator result
+      = routineFunction_.find(modelRoutineName);
+  if (result->second == NULL)
+  {
+    *present = false;
+    *required = false;
+  }
+  else
+  {
+    *present = true;
+    std::map<ModelRoutineName const, int, MODEL_ROUTINE_NAME::Comparator>::
+        const_iterator requiredResult
+        = routineRequired_.find(modelRoutineName);
+    *required = requiredResult->second;
+  }
+
+  LOG_DEBUG("Exit 0=" + callString);
+  return false;
+}
+
 int ModelImplementation::ComputeArgumentsCreate(
     ComputeArguments ** const computeArguments) const
 {
@@ -502,133 +553,46 @@ void ModelImplementation::GetNeighborListPointers(
   LOG_DEBUG("Exit   " + callString);
 }
 
-int ModelImplementation::SetRefreshPointer(LanguageName const languageName,
-                                           Function * const fptr)
+int ModelImplementation::SetRoutinePointer(
+    ModelRoutineName const modelRoutineName,
+    LanguageName const languageName,
+    int const required,
+    Function * const fptr)
 {
 #if DEBUG_VERBOSITY
-  std::string const callString = "SetRefreshPointer(" + languageName.String()
-                                 + ", " + SFUNC(fptr) + ").";
-#endif
-  LOG_DEBUG("Enter  " + callString);
-
-#if ERROR_VERBOSITY
-  int error = Validate(languageName);
-  if (error)
-  {
-    LOG_ERROR("Invalid arguments.");
-    LOG_DEBUG("Exit 1=" + callString);
-    return true;
-  }
-#endif
-
-  refreshLanguage_ = languageName;
-  refreshFunction_ = fptr;
-
-  LOG_DEBUG("Exit 0=" + callString);
-  return false;
-}
-
-int ModelImplementation::SetDestroyPointer(LanguageName const languageName,
-                                           Function * const fptr)
-{
-#if DEBUG_VERBOSITY
-  std::string const callString = "SetDestroyPointer(" + languageName.String()
-                                 + ", " + SFUNC(fptr) + ").";
-#endif
-  LOG_DEBUG("Enter  " + callString);
-
-#if ERROR_VERBOSITY
-  int error = Validate(languageName);
-  if (error)
-  {
-    LOG_ERROR("Invalid arguments.");
-    LOG_DEBUG("Exit 1=" + callString);
-    return true;
-  }
-#endif
-
-  destroyLanguage_ = languageName;
-  destroyFunction_ = fptr;
-
-  LOG_DEBUG("Exit 0=" + callString);
-  return false;
-}
-
-int ModelImplementation::SetComputeArgumentsCreatePointer(
-    LanguageName const languageName, Function * const fptr)
-{
-#if DEBUG_VERBOSITY
-  std::string const callString = "SetComputeArgumentsCreatePointer("
-                                 + languageName.String() + ", " + SFUNC(fptr)
+  std::string const callString = "SetRoutinePointer(" + languageName.String()
+                                 + ", " + SNUM(required) + ", " + SFUNC(fptr)
                                  + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
 #if ERROR_VERBOSITY
-  int error = Validate(languageName);
+  int error = Validate(modelRoutineName) || Validate(languageName);
   if (error)
   {
     LOG_ERROR("Invalid arguments.");
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
-#endif
 
-  computeArgumentsCreateLanguage_ = languageName;
-  computeArgumentsCreateFunction_ = fptr;
-
-  LOG_DEBUG("Exit 0=" + callString);
-  return false;
-}
-
-int ModelImplementation::SetComputeArgumentsDestroyPointer(
-    LanguageName const languageName, Function * const fptr)
-{
-#if DEBUG_VERBOSITY
-  std::string const callString = "SetComputeArgumentsDestroyPointer("
-                                 + languageName.String() + ", " + SFUNC(fptr)
-                                 + ").";
-#endif
-  LOG_DEBUG("Enter  " + callString);
-
-#if ERROR_VERBOSITY
-  int error = Validate(languageName);
-  if (error)
+  if (!required)
   {
-    LOG_ERROR("Invalid arguments.");
-    LOG_DEBUG("Exit 1=" + callString);
-    return true;
+    using namespace KIM::MODEL_ROUTINE_NAME;
+    for (unsigned int i = 0; i < requiredByAPI_ModelRoutines.size(); ++i)
+    {
+      if (requiredByAPI_ModelRoutines.at(i) == modelRoutineName)
+      {
+        LOG_ERROR(modelRoutineName.String() + " routine must be required.");
+        LOG_DEBUG("Exit 1=" + callString);
+        return true;
+      }
+    }
   }
 #endif
 
-  computeArgumentsDestroyLanguage_ = languageName;
-  computeArgumentsDestroyFunction_ = fptr;
-
-  LOG_DEBUG("Exit 0=" + callString);
-  return false;
-}
-
-int ModelImplementation::SetComputePointer(LanguageName const languageName,
-                                           Function * const fptr)
-{
-#if DEBUG_VERBOSITY
-  std::string const callString = "SetComputePointer(" + languageName.String()
-                                 + ", " + SFUNC(fptr) + ").";
-#endif
-  LOG_DEBUG("Enter  " + callString);
-
-#if ERROR_VERBOSITY
-  int error = Validate(languageName);
-  if (error)
-  {
-    LOG_ERROR("Invalid arguments.");
-    LOG_DEBUG("Exit 1=" + callString);
-    return true;
-  }
-#endif
-
-  computeLanguage_ = languageName;
-  computeFunction_ = fptr;
+  routineLanguage_[modelRoutineName] = languageName;
+  routineRequired_[modelRoutineName] = bool(required);
+  routineFunction_[modelRoutineName] = fptr;
 
   LOG_DEBUG("Exit 0=" + callString);
   return false;
@@ -1254,6 +1218,29 @@ int ModelImplementation::Compute(
   }
 }
 
+int ModelImplementation::Extension(std::string const & extensionID,
+                                   void * const extensionStructure)
+{
+#if DEBUG_VERBOSITY
+  std::string const callString
+      = "Extension(\"" + extensionID + "\", " + SPTR(extensionStructure) + ").";
+#endif
+  LOG_DEBUG("Enter  " + callString);
+
+  int error = ModelExtension(extensionID, extensionStructure);
+
+  if (error)
+  {
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
+  else
+  {
+    LOG_DEBUG("Exit 0=" + callString);
+    return false;
+  }
+}
+
 int ModelImplementation::ClearThenRefresh()
 {
 #if DEBUG_VERBOSITY
@@ -1326,6 +1313,29 @@ int ModelImplementation::ClearThenRefresh()
       return true;
     }
 #endif
+    LOG_DEBUG("Exit 0=" + callString);
+    return false;
+  }
+}
+
+int ModelImplementation::WriteParameterizedModel(
+    std::string const & path, std::string const & modelName) const
+{
+#if DEBUG_VERBOSITY
+  std::string const callString
+      = "WriteParameterizedModel(\"" + path + "\", \"" + modelName + "\").";
+#endif
+  LOG_DEBUG("Enter  " + callString);
+
+  int error = ModelWriteParameterizedModel(path, modelName);
+
+  if (error)
+  {
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
+  else
+  {
     LOG_DEBUG("Exit 0=" + callString);
     return false;
   }
@@ -1657,28 +1667,39 @@ std::string const & ModelImplementation::String() const
   ss << "Log ID : " << log_->GetID() << "\n";
   ss << "\n";
 
-  ss << "Model Supplied Functions :\n"
-     << "\t" << std::setw(25) << "Function Name" << std::setw(10) << "Language"
-     << std::setw(25) << "Pointer (1-set / 0-unset)"
+  ss << "Model Supplied Routines :\n"
+     << "\t" << std::setw(25) << "Routine Name" << std::setw(10) << "Language"
+     << std::setw(10) << "Required" << std::setw(25)
+     << "Pointer (1-set / 0-unset)"
      << "\n"
      << "\t" << std::setw(25) << "-------------------------" << std::setw(10)
-     << "----------" << std::setw(25) << "-------------------------"
-     << "\n\n"
-     << "\t" << std::setw(25) << "Refresh" << std::setw(10)
-     << refreshLanguage_.String() << std::setw(25) << SFUNC(refreshFunction_)
-     << "\n"
-     << "\t" << std::setw(25) << "Destroy" << std::setw(10)
-     << destroyLanguage_.String() << std::setw(25) << SFUNC(destroyFunction_)
-     << "\n"
-     << "\t" << std::setw(25) << "ComputeArgumentsCreate" << std::setw(10)
-     << computeArgumentsCreateLanguage_.String() << std::setw(25)
-     << SFUNC(computeArgumentsCreateFunction_) << "\n"
-     << "\t" << std::setw(25) << "ComputeArgumentsDestroy" << std::setw(10)
-     << computeArgumentsDestroyLanguage_.String() << std::setw(25)
-     << SFUNC(computeArgumentsDestroyFunction_) << "\n"
-     << "\t" << std::setw(25) << "Compute" << std::setw(10)
-     << computeLanguage_.String() << std::setw(25) << SFUNC(computeFunction_)
+     << "----------" << std::setw(10) << "----------" << std::setw(25)
+     << "-------------------------"
      << "\n\n";
+  int numberOfModelRoutineNames;
+  MODEL_ROUTINE_NAME::GetNumberOfModelRoutineNames(&numberOfModelRoutineNames);
+  for (int i = 0; i < numberOfModelRoutineNames; ++i)
+  {
+    ModelRoutineName modelRoutineName;
+    MODEL_ROUTINE_NAME::GetModelRoutineName(i, &modelRoutineName);
+
+    std::map<ModelRoutineName const,
+             LanguageName,
+             MODEL_ROUTINE_NAME::Comparator>::const_iterator langResult
+        = routineLanguage_.find(modelRoutineName);
+    std::map<ModelRoutineName const, int, MODEL_ROUTINE_NAME::Comparator>::
+        const_iterator requiredResult
+        = routineRequired_.find(modelRoutineName);
+    std::map<ModelRoutineName const,
+             Function *,
+             MODEL_ROUTINE_NAME::Comparator>::const_iterator fptrResult
+        = routineFunction_.find(modelRoutineName);
+
+    ss << "\t" << std::setw(25) << modelRoutineName.String() << std::setw(10)
+       << langResult->second.String() << std::setw(10) << requiredResult->second
+       << std::setw(25) << SFUNC(fptrResult->second) << "\n";
+  }
+  ss << "\n";
 
   ss << "Numbering : " << modelNumbering_.String() << "\n\n";
 
@@ -1698,7 +1719,12 @@ std::string const & ModelImplementation::String() const
         "\tTime Unit        : "
      << timeUnit_.String() << "\n\n";
 
-  ss << "Influence Distance : " << *influenceDistance_ << "\n\n";
+  if (influenceDistance_ == NULL)
+    ss << "Influence Distance : "
+       << "NULL"
+       << "\n\n";
+  else
+    ss << "Influence Distance : " << *influenceDistance_ << "\n\n";
 
   ss << "Number Of Neighbor Lists : " << numberOfNeighborLists_ << "\n";
   ss << "Neighbor List Cutoffs :\n";
@@ -1711,7 +1737,7 @@ std::string const & ModelImplementation::String() const
      << "-----"
      << "---" << std::setw(20) << "--------------------" << std::setw(40)
      << "----------------------------------------"
-     << "\n";
+     << "\n\n";
   for (int i = 0; i < numberOfNeighborLists_; ++i)
   {
     ss << "\t" << std::setw(5) << i << " : " << std::setw(20) << cutoffs_[i]
@@ -1770,8 +1796,8 @@ std::string const & ModelImplementation::String() const
      << "\t" << std::setw(15) << "Simulator" << std::setw(15)
      << SPTR(simulatorBuffer_) << "\n\n";
 
-  ss << "====================================================================="
-        "===========\n";
+  ss << "===================================================================="
+        "============\n";
 
   string_ = ss.str();
   LOG_DEBUG("Exit   " + callString);
@@ -1801,16 +1827,6 @@ ModelImplementation::ModelImplementation(ModelLibrary * const modelLibrary,
     numberOfNeighborLists_(0),
     cutoffs_(NULL),
     modelWillNotRequestNeighborsOfNoncontributingParticles_(NULL),
-    refreshLanguage_(LANGUAGE_NAME::cpp),
-    refreshFunction_(NULL),
-    destroyLanguage_(LANGUAGE_NAME::cpp),
-    destroyFunction_(NULL),
-    computeArgumentsCreateLanguage_(LANGUAGE_NAME::cpp),
-    computeArgumentsCreateFunction_(NULL),
-    computeArgumentsDestroyLanguage_(LANGUAGE_NAME::cpp),
-    computeArgumentsDestroyFunction_(NULL),
-    computeLanguage_(LANGUAGE_NAME::cpp),
-    computeFunction_(NULL),
     modelBuffer_(NULL),
     simulatorBuffer_(NULL),
     string_("")
@@ -1821,6 +1837,19 @@ ModelImplementation::ModelImplementation(ModelLibrary * const modelLibrary,
 #endif
   LOG_DEBUG("Enter  " + callString);
 
+  // populate default values for
+  // routineLanguage, routineRequired, routineFunction
+  int numberOfModelRoutineNames;
+  MODEL_ROUTINE_NAME::GetNumberOfModelRoutineNames(&numberOfModelRoutineNames);
+  for (int i = 0; i < numberOfModelRoutineNames; ++i)
+  {
+    ModelRoutineName modelRoutineName;
+    MODEL_ROUTINE_NAME::GetModelRoutineName(i, &modelRoutineName);
+
+    routineLanguage_[modelRoutineName] = LANGUAGE_NAME::cpp;
+    routineRequired_[modelRoutineName] = false;
+    routineFunction_[modelRoutineName] = NULL;
+  }
 
   LOG_DEBUG("Exit   " + callString);
 }
@@ -1997,59 +2026,49 @@ int ModelImplementation::ModelCreate(
     return true;
   }
 
-  if (computeArgumentsCreateFunction_ == NULL)
   {
-    LOG_ERROR("Model supplied Create() routine did not set "
-              "ComputeArgumentsCreatePointer.");
-    LOG_DEBUG("Exit 1=" + callString);
-    return true;
-  }
+    using namespace KIM::MODEL_ROUTINE_NAME;
+    for (unsigned int i = 0; i < requiredByAPI_ModelRoutines.size(); ++i)
+    {
+      ModelRoutineName const modelRoutineName
+          = requiredByAPI_ModelRoutines.at(i);
 
-  if (computeFunction_ == NULL)
-  {
-    LOG_ERROR("Model supplied Create() routine did not set "
-              "ComputePointer.");
-    LOG_DEBUG("Exit 1=" + callString);
-    return true;
+      std::map<ModelRoutineName const,
+               Function *,
+               MODEL_ROUTINE_NAME::Comparator>::const_iterator funcResult
+          = routineFunction_.find(modelRoutineName);
+
+      if (funcResult->second == NULL)
+      {
+        LOG_ERROR("Model supplied Create() routine did not set pointer for "
+                  + modelRoutineName.String() + ".");
+        LOG_DEBUG("Exit 1=" + callString);
+        return true;
+      }
+    }
   }
 
   if (parameterPointer_.size() > 0)
   {
-    if (refreshFunction_ == NULL)  // Must be provided if parameter pointers set
-    {
-      LOG_ERROR("Model supplied Create() routine set parameter pointer(s) but "
-                "did not set RefreshPointer.");
+    if (routineFunction_[MODEL_ROUTINE_NAME::Refresh] == NULL)
+    {  // Must be provided if parameter pointers set
+      LOG_ERROR("Model supplied Create() routine did not set pointer for "
+                + MODEL_ROUTINE_NAME::Refresh.String() + ".");
       LOG_DEBUG("Exit 1=" + callString);
       return true;
     }
   }
   else
   {
-    if (refreshFunction_ != NULL)  // May not be provided if no parameters set
-    {
-      LOG_ERROR("Model supplied Create() routine set RefreshPointer but "
-                "did not set parameter pointer(s).");
+    if (routineFunction_[MODEL_ROUTINE_NAME::Refresh] != NULL)
+    {  // May not be provided if no parameters set
+      LOG_ERROR("Model supplied Create() routine set pointer for "
+                + MODEL_ROUTINE_NAME::Refresh.String()
+                + " but did not "
+                  "set parameter pointer(s).");
       LOG_DEBUG("Exit 1=" + callString);
       return true;
     }
-  }
-
-  // computeArgumentsDestroyFunction is optional
-  //
-  // if (computeArgumentsDestroyFunction_ == NULL)
-  // {
-  //   LOG_ERROR("Model supplied Create() routine did not set "
-  //             "ComputeArgumentsDestroyPointer.");
-  //   LOG_DEBUG("Exit 1=" + callString);
-  //   return true;
-  // }
-
-  if (destroyFunction_ == NULL)
-  {
-    LOG_ERROR("Model supplied Create() routine did not set "
-              "DestroyPointer.");
-    LOG_DEBUG("Exit 1=" + callString);
-    return true;
   }
 
   if (supportedSpecies_.empty())
@@ -2079,13 +2098,21 @@ int ModelImplementation::ModelDestroy()
 #endif
   LOG_DEBUG("Enter  " + callString);
 
+  std::map<ModelRoutineName const, Function *, MODEL_ROUTINE_NAME::Comparator>::
+      const_iterator funcResult
+      = routineFunction_.find(MODEL_ROUTINE_NAME::Destroy);
+  std::map<ModelRoutineName const,
+           LanguageName,
+           MODEL_ROUTINE_NAME::Comparator>::const_iterator langResult
+      = routineLanguage_.find(MODEL_ROUTINE_NAME::Destroy);
+
   ModelDestroyFunction * CppDestroy
-      = reinterpret_cast<ModelDestroyFunction *>(destroyFunction_);
+      = reinterpret_cast<ModelDestroyFunction *>(funcResult->second);
   KIM_ModelDestroyFunction * CDestroy
-      = reinterpret_cast<KIM_ModelDestroyFunction *>(destroyFunction_);
+      = reinterpret_cast<KIM_ModelDestroyFunction *>(funcResult->second);
   typedef void ModelDestroyF(KIM_ModelDestroy * const, int * const);
   ModelDestroyF * FDestroy
-      = reinterpret_cast<ModelDestroyF *>(destroyFunction_);
+      = reinterpret_cast<ModelDestroyF *>(funcResult->second);
 
   int error;
   struct Mdl
@@ -2094,15 +2121,15 @@ int ModelImplementation::ModelDestroy()
   };
   Mdl M;
   M.p = this;
-  if (destroyLanguage_ == LANGUAGE_NAME::cpp)
+  if (langResult->second == LANGUAGE_NAME::cpp)
   { error = CppDestroy(reinterpret_cast<KIM::ModelDestroy *>(&M)); }
-  else if (destroyLanguage_ == LANGUAGE_NAME::c)
+  else if (langResult->second == LANGUAGE_NAME::c)
   {
     KIM_ModelDestroy cM;
     cM.p = &M;
     error = CDestroy(&cM);
   }
-  else if (destroyLanguage_ == LANGUAGE_NAME::fortran)
+  else if (langResult->second == LANGUAGE_NAME::fortran)
   {
     KIM_ModelDestroy cM;
     cM.p = &M;
@@ -2138,19 +2165,26 @@ int ModelImplementation::ModelComputeArgumentsCreate(
 #endif
   LOG_DEBUG("Enter  " + callString);
 
+  std::map<ModelRoutineName const, Function *, MODEL_ROUTINE_NAME::Comparator>::
+      const_iterator funcResult
+      = routineFunction_.find(MODEL_ROUTINE_NAME::ComputeArgumentsCreate);
+  std::map<ModelRoutineName const,
+           LanguageName,
+           MODEL_ROUTINE_NAME::Comparator>::const_iterator langResult
+      = routineLanguage_.find(MODEL_ROUTINE_NAME::ComputeArgumentsCreate);
+
   ModelComputeArgumentsCreateFunction * CppComputeArgumentsCreate
       = reinterpret_cast<ModelComputeArgumentsCreateFunction *>(
-          computeArgumentsCreateFunction_);
+          funcResult->second);
   KIM_ModelComputeArgumentsCreateFunction * CComputeArgumentsCreate
       = reinterpret_cast<KIM_ModelComputeArgumentsCreateFunction *>(
-          computeArgumentsCreateFunction_);
+          funcResult->second);
   typedef void ModelComputeArgumentsCreateF(
       KIM_ModelCompute const * const,
       KIM_ModelComputeArgumentsCreate * const,
       int * const);
   ModelComputeArgumentsCreateF * FComputeArgumentsCreate
-      = reinterpret_cast<ModelComputeArgumentsCreateF *>(
-          computeArgumentsCreateFunction_);
+      = reinterpret_cast<ModelComputeArgumentsCreateF *>(funcResult->second);
 
   int error;
   struct Mdl
@@ -2159,13 +2193,13 @@ int ModelImplementation::ModelComputeArgumentsCreate(
   };
   Mdl M;
   M.p = this;
-  if (computeArgumentsCreateLanguage_ == LANGUAGE_NAME::cpp)
+  if (langResult->second == LANGUAGE_NAME::cpp)
   {
     error = CppComputeArgumentsCreate(
         reinterpret_cast<KIM::ModelCompute const *>(&M),
         reinterpret_cast<KIM::ModelComputeArgumentsCreate *>(computeArguments));
   }
-  else if (computeArgumentsCreateLanguage_ == LANGUAGE_NAME::c)
+  else if (langResult->second == LANGUAGE_NAME::c)
   {
     KIM_ModelCompute cM;
     cM.p = &M;
@@ -2173,7 +2207,7 @@ int ModelImplementation::ModelComputeArgumentsCreate(
     cMcac.p = computeArguments;
     error = CComputeArgumentsCreate(&cM, &cMcac);
   }
-  else if (computeArgumentsCreateLanguage_ == LANGUAGE_NAME::fortran)
+  else if (langResult->second == LANGUAGE_NAME::fortran)
   {
     KIM_ModelCompute cM;
     cM.p = &M;
@@ -2214,25 +2248,26 @@ int ModelImplementation::ModelComputeArgumentsDestroy(
 #endif
   LOG_DEBUG("Enter  " + callString);
 
-  if (computeArgumentsDestroyFunction_ == NULL)
-  {
-    LOG_DEBUG("Exit 0=" + callString);
-    return false;
-  }
+  std::map<ModelRoutineName const, Function *, MODEL_ROUTINE_NAME::Comparator>::
+      const_iterator funcResult
+      = routineFunction_.find(MODEL_ROUTINE_NAME::ComputeArgumentsDestroy);
+  std::map<ModelRoutineName const,
+           LanguageName,
+           MODEL_ROUTINE_NAME::Comparator>::const_iterator langResult
+      = routineLanguage_.find(MODEL_ROUTINE_NAME::ComputeArgumentsDestroy);
 
   ModelComputeArgumentsDestroyFunction * CppComputeArgumentsDestroy
       = reinterpret_cast<ModelComputeArgumentsDestroyFunction *>(
-          computeArgumentsDestroyFunction_);
+          funcResult->second);
   KIM_ModelComputeArgumentsDestroyFunction * CComputeArgumentsDestroy
       = reinterpret_cast<KIM_ModelComputeArgumentsDestroyFunction *>(
-          computeArgumentsDestroyFunction_);
+          funcResult->second);
   typedef void ModelComputeArgumentsDestroyF(
       KIM_ModelCompute const * const,
       KIM_ModelComputeArgumentsDestroy * const,
       int * const);
   ModelComputeArgumentsDestroyF * FComputeArgumentsDestroy
-      = reinterpret_cast<ModelComputeArgumentsDestroyF *>(
-          computeArgumentsDestroyFunction_);
+      = reinterpret_cast<ModelComputeArgumentsDestroyF *>(funcResult->second);
 
   int error;
   struct Mdl
@@ -2241,14 +2276,14 @@ int ModelImplementation::ModelComputeArgumentsDestroy(
   };
   Mdl M;
   M.p = this;
-  if (computeArgumentsDestroyLanguage_ == LANGUAGE_NAME::cpp)
+  if (langResult->second == LANGUAGE_NAME::cpp)
   {
     error = CppComputeArgumentsDestroy(
         reinterpret_cast<KIM::ModelCompute const *>(&M),
         reinterpret_cast<KIM::ModelComputeArgumentsDestroy *>(
             computeArguments));
   }
-  else if (computeArgumentsDestroyLanguage_ == LANGUAGE_NAME::c)
+  else if (langResult->second == LANGUAGE_NAME::c)
   {
     KIM_ModelCompute cM;
     cM.p = &M;
@@ -2256,7 +2291,7 @@ int ModelImplementation::ModelComputeArgumentsDestroy(
     cMcad.p = computeArguments;
     error = CComputeArgumentsDestroy(&cM, &cMcad);
   }
-  else if (computeArgumentsDestroyLanguage_ == LANGUAGE_NAME::fortran)
+  else if (langResult->second == LANGUAGE_NAME::fortran)
   {
     KIM_ModelCompute cM;
     cM.p = &M;
@@ -2371,12 +2406,48 @@ int ModelImplementation::ModelCompute(
   }
 }
 
+int ModelImplementation::ModelExtension(std::string const & extensionID,
+                                        void * const extensionStructure)
+{
+#if DEBUG_VERBOSITY
+  std::string const callString = "ModelExtension(" + extensionID + ", "
+                                 + SPTR(extensionStructure) + ").";
+#endif
+  LOG_DEBUG("Enter  " + callString);
+
+  // @@@@@  also check to see if provided
+  (void) extensionID;
+  (void) extensionStructure;
+
+  int error = true;
+
+  if (error)
+  {
+    LOG_ERROR("Model supplied Extension() routine returned error.");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
+  else
+  {
+    LOG_DEBUG("Exit 0=" + callString);
+    return false;
+  }
+}
+
 int ModelImplementation::ModelRefresh()
 {
 #if DEBUG_VERBOSITY
   std::string const callString = "ModelRefresh().";
 #endif
   LOG_DEBUG("Enter  " + callString);
+
+  if (parameterPointer_.size() == 0)
+  {
+    LOG_ERROR("Model does not have any adjustable parameters. "
+              "No Refresh() function available.");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
 
   std::map<ModelRoutineName const, Function *, MODEL_ROUTINE_NAME::Comparator>::
       const_iterator funcResult
@@ -2437,6 +2508,34 @@ int ModelImplementation::ModelRefresh()
   }
 }
 
+int ModelImplementation::ModelWriteParameterizedModel(
+    std::string const & path, std::string const & modelName) const
+{
+#if DEBUG_VERBOSITY
+  std::string const callString = "ModelWriteParameterizedModel(\"" + path
+                                 + "\", \"" + modelName + "\").";
+#endif
+  LOG_DEBUG("Enter  " + callString);
+
+  // @@@@@  also check to see if provided
+  (void) path;
+  (void) modelName;
+
+  int error = true;
+
+  if (error)
+  {
+    LOG_ERROR(
+        "Model supplied WriteParameterizedModel() routine returned error.");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
+  else
+  {
+    LOG_DEBUG("Exit 0=" + callString);
+    return false;
+  }
+}
 
 int ModelImplementation::InitializeStandAloneModel(
     LengthUnit const requestedLengthUnit,
@@ -2477,6 +2576,10 @@ int ModelImplementation::InitializeStandAloneModel(
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
+
+  routineLanguage_[MODEL_ROUTINE_NAME::Create] = languageName;
+  routineRequired_[MODEL_ROUTINE_NAME::Create] = true;
+  routineFunction_[MODEL_ROUTINE_NAME::Create] = functionPointer;
 
   ModelCreateFunction * CppCreate
       = reinterpret_cast<ModelCreateFunction *>(functionPointer);
@@ -2638,6 +2741,10 @@ int ModelImplementation::InitializeParameterizedModel(
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
+
+  routineLanguage_[MODEL_ROUTINE_NAME::Create] = languageName;
+  routineRequired_[MODEL_ROUTINE_NAME::Create] = true;
+  routineFunction_[MODEL_ROUTINE_NAME::Create] = functionPointer;
 
   ModelDriverCreateFunction * CppCreate
       = reinterpret_cast<ModelDriverCreateFunction *>(functionPointer);
@@ -2954,6 +3061,36 @@ int ModelImplementation::Validate(Numbering const numbering)
   }
 
   // LOG_ERROR("Invalid Numbering encountered.");
+  // LOG_DEBUG("Exit 1=" + callString);
+  return true;
+}
+
+int ModelImplementation::Validate(ModelRoutineName const modelRoutineName)
+{
+  // No logging for Validate: no log object available
+  //
+  // #if DEBUG_VERBOSITY
+  //   std::string const callString = "Validate(" + modelRoutineName.String()
+  //       + ").";
+  // #endif
+  //   LOG_DEBUG("Enter  " + callString);
+
+  int numberOfModelRoutineNames;
+  MODEL_ROUTINE_NAME::GetNumberOfModelRoutineNames(&numberOfModelRoutineNames);
+
+  for (int i = 0; i < numberOfModelRoutineNames; ++i)
+  {
+    ModelRoutineName routine;
+    MODEL_ROUTINE_NAME::GetModelRoutineName(i, &routine);
+
+    if (modelRoutineName == routine)
+    {
+      // LOG_DEBUG("Exit 0=" + callString);
+      return false;
+    }
+  }
+
+  // LOG_ERROR("Invalid ModelRoutineName encountered.");
   // LOG_DEBUG("Exit 1=" + callString);
   return true;
 }

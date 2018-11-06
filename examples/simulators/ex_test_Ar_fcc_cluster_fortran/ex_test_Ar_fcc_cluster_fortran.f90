@@ -47,7 +47,7 @@ contains
     implicit none
     character(len=*, kind=c_char), intent(in) :: message
 
-    print *,"* Error : ", trim(message)
+    print *,"* Warning : ", trim(message)
   end subroutine my_warning
 end module error
 
@@ -380,6 +380,10 @@ program ex_test_ar_fcc_cluster_fortran
   integer(c_int) species_is_supported
   integer(c_int) species_code
   integer(c_int) requested_units_accepted
+  integer(c_int) number_of_model_routine_names
+  type(kim_model_routine_name_type) model_routine_name
+  integer(c_int) present
+  integer(c_int) required
 
   integer :: middledum
 
@@ -417,6 +421,34 @@ program ex_test_ar_fcc_cluster_fortran
   if (requested_units_accepted == 0) then
     call my_error("Must adapt to model units")
   end if
+
+  ! check that we know about all required routines
+  call kim_get_number_of_model_routine_names(number_of_model_routine_names)
+  do i=1,number_of_model_routine_names
+    call kim_get_model_routine_name(i, model_routine_name, ierr)
+    if (ierr /= 0) then
+      call my_error("kim_get_model_routine_name")
+    endif
+    call kim_is_routine_present(model_handle, model_routine_name, present, &
+      required, ierr)
+    if (ierr /= 0) then
+      call my_error("kim_is_routine_present")
+    endif
+
+    if ((present == 1) .and. (required == 1)) then
+      if (.not. ((model_routine_name == KIM_MODEL_ROUTINE_NAME_CREATE) &
+        .or. (model_routine_name == &
+        KIM_MODEL_ROUTINE_NAME_COMPUTE_ARGUMENTS_CREATE) &
+        .or. (model_routine_name == KIM_MODEL_ROUTINE_NAME_COMPUTE) &
+        .or. (model_routine_name == KIM_MODEL_ROUTINE_NAME_REFRESH) &
+        .or. (model_routine_name == &
+        KIM_MODEL_ROUTINE_NAME_COMPUTE_ARGUMENTS_DESTROY) &
+        .or. (model_routine_name == KIM_MODEL_ROUTINE_NAME_DESTROY))) then
+
+        call my_error("Unknown required ModelRoutineName found.")
+      endif
+    endif
+  enddo
 
   ! check that model supports Ar
   !

@@ -243,6 +243,19 @@ a guiding principle.
   <td>
     N/A
   </td><td>
+    KIM::Model::IsRoutinePresent()
+  </td><td>
+    KIM_Model_IsRoutinePresent()
+  </td><td>
+    kim_is_routine_present() -- overloaded
+    <br>
+    kim_model_module::kim_model_is_routine_present()
+  </td>
+</tr>
+<tr>
+  <td>
+    N/A
+  </td><td>
     KIM::Model::ComputeArgumentsCreate()
   </td><td>
     KIM_Model_ComputeArgumentsCreate()
@@ -453,6 +466,32 @@ a guiding principle.
     kim_compute() -- overloaded
     <br>
     kim_model_module::kim_model_compute()
+  </td>
+</tr>
+<tr>
+  <td>
+    N/A
+  </td><td>
+    KIM::Model::Extension()
+  </td><td>
+    KIM_Model_Extension()
+  </td><td>
+    kim_extension() -- overloaded
+    <br>
+    kim_model_module::kim_model_extension()
+  </td>
+</tr>
+<tr>
+  <td>
+    N/A
+  </td><td>
+    KIM::Model::WriteParameterizedModel()
+  </td><td>
+    KIM_Model_WriteParameterizedModel()
+  </td><td>
+    kim_write_parameterized_model() -- overloaded
+    <br>
+    kim_model_module::kim_model_write_parameterized_model()
   </td>
 </tr>
 <tr>
@@ -890,95 +929,19 @@ a guiding principle.
   <td>
     N/A
   </td><td>
-    KIM::ModelCreate::SetRefreshPointer()
+    KIM::ModelCreate::SetRoutinePointer()
     <br>
-    KIM::ModelDriverCreate::SetRefreshPointer()
+    KIM::ModelDriverCreate::SetRoutinePointer()
   </td><td>
-    KIM_ModelCreate_SetRefreshPointer()
+    KIM_ModelCreate_SetRoutinePointer()
     <br>
-    KIM_ModelDriverCreate_SetRefreshPointer()
+    KIM_ModelDriverCreate_SetRoutinePointer()
   </td><td>
-    kim_set_refresh_pointer() -- overloaded
+    kim_set_routine_pointer() -- overloaded
     <br>
-    kim_model_create_module::kim_model_create_set_refresh_pointer()
+    kim_model_create_module::kim_model_create_set_routine_pointer()
     <br>
-    kim_model_driver_create_module::kim_model_driver_create_set_refresh_pointer()
-  </td>
-</tr>
-<tr>
-  <td>
-    N/A
-  </td><td>
-    KIM::ModelCreate::SetDestroyPointer()
-    <br>
-    KIM::ModelDriverCreate::SetDestroyPointer()
-  </td><td>
-    KIM_ModelCreate_SetDestroyPointer()
-    <br>
-    KIM_ModelDriverCreate_SetDestroyPointer()
-  </td><td>
-    kim_set_destroy_pointer() -- overloaded
-    <br>
-    kim_model_create_module::kim_model_create_set_destroy_pointer()
-    <br>
-    kim_model_driver_create_module::kim_model_driver_create_set_destroy_pointer()
-  </td>
-</tr>
-<tr>
-  <td>
-    N/A
-  </td><td>
-    KIM::ModelCreate::SetComputeArgumentsCreatePointer()
-    <br>
-    KIM::ModelDriverCreate::SetComputeArgumentsCreatePointer()
-  </td><td>
-    KIM_ModelCreate_SetComputeArgumentsCreatePointer()
-    <br>
-    KIM_ModelDriverCreate_SetComputeArgumentsCreatePointer()
-  </td><td>
-    kim_set_compute_arguments_create_pointer()  -- overloaded
-    <br>
-    kim_model_create_module::kim_model_create_set_compute_arguments_create_pointer()
-    <br>
-    kim_model_driver_create_module::kim_model_driver_create_set_compute_arguments_create_pointer()
-  </td>
-</tr>
-<tr>
-  <td>
-    N/A
-  </td><td>
-    KIM::ModelCreate::SetComputeArgumentsDestroyPointer()
-    <br>
-    KIM::ModelDriverCreate::SetComputeArgumentsDestroyPointer()
-  </td><td>
-    KIM_ModelCreate_SetComputeArgumentsDestroyPointer()
-    <br>
-    KIM_ModelDriverCreate_SetComputeArgumentsDestroyPointer()
-  </td><td>
-    kim_set_compute_arguments_destroy_pointer() -- overloaded
-    <br>
-    kim_model_create_module::kim_model_create_set_compute_arguments_destroy_pointer()
-    <br>
-    kim_model_driver_create_module::kim_model_driver_create_set_compute_arguments_destroy_pointer()
-  </td>
-</tr>
-<tr>
-  <td>
-    N/A
-  </td><td>
-    KIM::ModelCreate::SetComputePointer()
-    <br>
-    KIM::ModelDriverCreate::SetComputePointer()
-  </td><td>
-    KIM_ModelCreate_SetComputePointer()
-    <br>
-    KIM_ModelDriverCreate_SetComputePointer()
-  </td><td>
-    kim_set_compute_pointer() -- overloaded
-    <br>
-    kim_model_create_module::kim_model_create_set_compute_pointer()
-    <br>
-    kim_model_driver_create_module::kim_model_driver_create_set_compute_pointer()
+    kim_model_driver_create_module::kim_model_driver_create_set_routine_pointer()
   </td>
 </tr>
 <tr>
@@ -2818,6 +2781,94 @@ a guiding principle.
   <td>
     N/A
   </td><td>
+    KIM::MODEL_ROUTINE_NAME::Create
+  </td><td>
+    \ref KIM_MODEL_ROUTINE_NAME_Create
+  </td><td>
+    kim_model_routine_name_module::kim_model_routine_name_create
+  </td>
+</tr>
+<tr>
+  <td>
+    N/A
+  </td><td>
+    KIM::MODEL_ROUTINE_NAME::ComputeArgumentsCreate
+  </td><td>
+    \ref KIM_MODEL_ROUTINE_NAME_ComputeArgumentsCreate
+  </td><td>
+    kim_model_routine_name_module::kim_model_routine_name_compute_arguments_create
+  </td>
+</tr>
+<tr>
+  <td>
+    N/A
+  </td><td>
+    KIM::MODEL_ROUTINE_NAME::Compute
+  </td><td>
+    \ref KIM_MODEL_ROUTINE_NAME_Compute
+  </td><td>
+    kim_model_routine_name_module::kim_model_routine_name_compute
+  </td>
+</tr>
+<tr>
+  <td>
+    N/A
+  </td><td>
+    KIM::MODEL_ROUTINE_NAME::Extension
+  </td><td>
+    \ref KIM_MODEL_ROUTINE_NAME_Extension
+  </td><td>
+    kim_model_routine_name_module::kim_model_routine_name_extension
+  </td>
+</tr>
+<tr>
+  <td>
+    N/A
+  </td><td>
+    KIM::MODEL_ROUTINE_NAME::Refresh
+  </td><td>
+    \ref KIM_MODEL_ROUTINE_NAME_Refresh
+  </td><td>
+    kim_model_routine_name_module::kim_model_routine_name_refresh
+  </td>
+</tr>
+<tr>
+  <td>
+    N/A
+  </td><td>
+    KIM::MODEL_ROUTINE_NAME::WriteParameterizedModel
+  </td><td>
+    \ref KIM_MODEL_ROUTINE_NAME_WriteParameterizedModel
+  </td><td>
+    kim_model_routine_name_module::kim_model_routine_name_write_parameterized_model
+  </td>
+</tr>
+<tr>
+  <td>
+    N/A
+  </td><td>
+    KIM::MODEL_ROUTINE_NAME::ComputeArgumentsDestroy
+  </td><td>
+    \ref KIM_MODEL_ROUTINE_NAME_ComputeArgumentsDestroy
+  </td><td>
+    kim_model_routine_name_module::kim_model_routine_name_compute_arguments_destroy
+  </td>
+</tr>
+<tr>
+  <td>
+    N/A
+  </td><td>
+    KIM::MODEL_ROUTINE_NAME::Destroy
+  </td><td>
+    \ref KIM_MODEL_ROUTINE_NAME_Destroy
+  </td><td>
+    kim_model_routine_name_module::kim_model_routine_name_destroy
+  </td>
+</tr>
+<tr>
+  <td>
+    N/A
+  </td><td>
     KIM::Function()
   </td><td>
     KIM_Function()
@@ -2865,6 +2916,28 @@ a guiding principle.
     KIM::ModelComputeFunction()
   </td><td>
     KIM_ModelComputeFunction()
+  </td><td>
+    N/A
+  </td>
+</tr>
+<tr>
+  <td>
+    N/A
+  </td><td>
+    KIM::ModelExtensionFunction()
+  </td><td>
+    KIM_ModelExtensionFunction()
+  </td><td>
+    N/A
+  </td>
+</tr>
+<tr>
+  <td>
+    N/A
+  </td><td>
+    KIM::ModelWriteParameterizedModelFunction()
+  </td><td>
+    KIM_ModelWriteParameterizedModelFunction()
   </td><td>
     N/A
   </td>
@@ -3033,6 +3106,82 @@ and comparison routines are listed in the table below.
 </tr>
 <tr>
   <td>
+    KIM::ModelRoutineName::ModelRoutineName()
+    <br>
+    KIM::ModelRoutineName::ModelRoutineName() -- int
+    <br>
+    KIM::ModelRoutineName::ModelRoutineName() -- std::string
+  </td><td>
+    <br>
+    <br>
+    KIM_ModelRoutineName_FromString()
+  </td><td>
+    <br>
+    <br>
+    kim_from_string() -- overloaded
+    <br>
+    kim_model_routine_name_module::kim_model_routine_name_from_string()
+  </td>
+</tr>
+<tr>
+  <td>
+    KIM::ModelRoutineName::operator==()
+  </td><td>
+    \ref KIM_ModelRoutineName_Equal()
+  </td><td>
+    operator(.eq.) -- overloaded
+    <br>
+    kim_model_routine_name_module::kim_model_routine_name_equal()
+  </td>
+</tr>
+<tr>
+  <td>
+    KIM::ModelRoutineName::operator!=()
+  </td><td>
+    \ref KIM_ModelRoutineName_NotEqual()
+  </td><td>
+    operator(.ne.) -- overloaded
+    <br>
+    kim_model_routine_name_module::kim_model_routine_name_not_equal()
+  </td>
+</tr>
+<tr>
+  <td>
+    KIM::ModelRoutineName::String()
+  </td><td>
+    KIM_ModelRoutineName_ToString()
+  </td><td>
+    kim_to_string() -- overloaded
+    <br>
+    kim_model_routine_name_module::kim_model_routine_name_to_string()
+  </td>
+</tr>
+<tr>
+  <td>
+    KIM::MODEL_ROUTINE_NAME::GetNumberOfModelRoutineNames()
+  </td><td>
+    KIM_MODEL_ROUTINE_NAME_GetNumberOfModelRoutineNames()
+  </td><td>
+    kim_model_routein_name_module::kim_get_number_of_model_routine_names()
+  </td>
+</tr>
+<tr>
+  <td>
+    KIM::MODEL_ROUTINE_NAME::GetModelRoutineName()
+  </td><td>
+    KIM_MODEL_ROUTINE_NAME_GetModelRoutineName()
+  </td><td>
+    kim_model_routine_name_module::kim_get_compute_argument_name()
+  </td>
+</tr>
+<tr>
+  <td>
+  </td><td>
+  </td><td>
+  </td>
+</tr>
+<tr>
+  <td>
     KIM::ComputeArgumentName::ComputeArgumentName()
     <br>
     KIM::ComputeArgumentName::ComputeArgumentName() -- int
@@ -3058,7 +3207,7 @@ and comparison routines are listed in the table below.
   </td><td>
     operator(.eq.) -- overloaded
     <br>
-    kim_charge_unit_module::kim_charge_unit_equal()
+    kim_compute_argument_name_module::kim_compute_argument_name_equal()
   </td>
 </tr>
 <tr>
@@ -3069,7 +3218,7 @@ and comparison routines are listed in the table below.
   </td><td>
     operator(.ne.) -- overloaded
     <br>
-    kim_charge_unit_module::kim_charge_unit_not_equal()
+    kim_compute_argument_name_module::kim_compute_argument_name_not_equal()
   </td>
 </tr>
 <tr>
@@ -3080,7 +3229,7 @@ and comparison routines are listed in the table below.
   </td><td>
     kim_to_string() -- overloaded
     <br>
-    kim_charge_unit_module::kim_charge_unit_to_string()
+    kim_compute_argument_name_module::kim_compute_argument_name_to_string()
   </td>
 </tr>
 <tr>
@@ -3089,7 +3238,7 @@ and comparison routines are listed in the table below.
   </td><td>
     KIM_COMPUTE_ARGUMENT_NAME_GetNumberOfComputeArgumentNames()
   </td><td>
-    kim_charge_unit_module::kim_get_number_of_compute_argument_names()
+    kim_compute_argument_name_module::kim_get_number_of_compute_argument_names()
   </td>
 </tr>
 <tr>
@@ -3098,7 +3247,7 @@ and comparison routines are listed in the table below.
   </td><td>
     KIM_COMPUTE_ARGUMENT_NAME_GetComputeArgumentName()
   </td><td>
-    kim_charge_unit_module::kim_get_compute_argument_name()
+    kim_compute_argument_name_module::kim_get_compute_argument_name()
   </td>
 </tr>
 <tr>
@@ -3107,7 +3256,7 @@ and comparison routines are listed in the table below.
   </td><td>
     KIM_COMPUTE_ARGUMENT_NAME_GetComputeArgumentDataType()
   </td><td>
-    kim_charge_unit_module::kim_get_compute_argument_data_type()
+    kim_compute_argument_name_module::kim_get_compute_argument_data_type()
   </td>
 </tr>
 <tr>
@@ -3143,7 +3292,7 @@ and comparison routines are listed in the table below.
   </td><td>
     operator(.eq.) -- overloaded
     <br>
-    kim_charge_unit_module::kim_charge_unit_equal()
+    kim_compute_callback_name_module::kim_compute_callback_name_equal()
   </td>
 </tr>
 <tr>
@@ -3154,7 +3303,7 @@ and comparison routines are listed in the table below.
   </td><td>
     operator(.ne.) -- overloaded
     <br>
-    kim_charge_unit_module::kim_charge_unit_not_equal()
+    kim_compute_callback_name_module::kim_compute_callback_name_not_equal()
   </td>
 </tr>
 <tr>
@@ -3165,7 +3314,7 @@ and comparison routines are listed in the table below.
   </td><td>
     kim_to_string() -- overloaded
     <br>
-    kim_charge_unit_module::kim_charge_unit_to_string()
+    kim_compute_callback_name_module::kim_compute_callback_name_to_string()
   </td>
 </tr>
 <tr>
@@ -3174,7 +3323,7 @@ and comparison routines are listed in the table below.
   </td><td>
     KIM_COMPUTE_CALLBACK_NAME_GetNumberOfComputeCallbackNames()
   </td><td>
-    kim_charge_unit_module::kim_get_number_of_compute_callback_names()
+    kim_compute_callback_name_module::kim_get_number_of_compute_callback_names()
   </td>
 </tr>
 <tr>
@@ -3183,7 +3332,7 @@ and comparison routines are listed in the table below.
   </td><td>
     KIM_COMPUTE_CALLBACK_NAME_GetComputeCallbackName()
   </td><td>
-    kim_charge_unit_module::kim_get_compute_callback_name()
+    kim_compute_callback_name_module::kim_get_compute_callback_name()
   </td>
 </tr>
 <tr>

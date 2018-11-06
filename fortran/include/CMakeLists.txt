@@ -58,6 +58,7 @@ set(FORTRAN_INCLUDES
   ${F_MOD_DIR}/kim_model_headers_module.mod
   ${F_MOD_DIR}/kim_model_module.mod
   ${F_MOD_DIR}/kim_model_refresh_module.mod
+  ${F_MOD_DIR}/kim_model_routine_name_module.mod
   ${F_MOD_DIR}/kim_numbering_module.mod
   ${F_MOD_DIR}/kim_sem_ver_module.mod
   ${F_MOD_DIR}/kim_simulator_headers_module.mod
@@ -92,6 +93,7 @@ set(F_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/kim_model_headers_module.f90
   ${CMAKE_CURRENT_SOURCE_DIR}/kim_model_module.f90
   ${CMAKE_CURRENT_SOURCE_DIR}/kim_model_refresh_module.f90
+  ${CMAKE_CURRENT_SOURCE_DIR}/kim_model_routine_name_module.f90
   ${CMAKE_CURRENT_SOURCE_DIR}/kim_numbering_module.f90
   ${CMAKE_CURRENT_SOURCE_DIR}/kim_sem_ver_module.f90
   ${CMAKE_CURRENT_SOURCE_DIR}/kim_simulator_headers_module.f90

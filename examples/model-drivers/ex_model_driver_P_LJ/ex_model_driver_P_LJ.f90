@@ -52,6 +52,7 @@ private
 public BUFFER_TYPE,               &
        Compute_Energy_Forces,     &
        compute_arguments_create,  &
+       compute_arguments_destroy, &
        refresh,                   &
        destroy,                   &
        calc_phi,                  &
@@ -595,6 +596,30 @@ return
 
 end subroutine compute_arguments_create
 
+!-------------------------------------------------------------------------------
+!
+! Model driver compute arguments destroy routine
+!
+!-------------------------------------------------------------------------------
+subroutine compute_arguments_destroy(model_compute_handle, &
+  model_compute_arguments_destroy_handle, ierr) bind(c)
+implicit none
+
+!-- Transferred variables
+type(kim_model_compute_handle_type), intent(in) :: model_compute_handle
+type(kim_model_compute_arguments_destroy_handle_type), intent(inout) :: &
+  model_compute_arguments_destroy_handle
+integer(c_int), intent(out) :: ierr
+
+! avoid unsed dummy argument warnings
+if (model_compute_handle .eq. KIM_MODEL_COMPUTE_NULL_HANDLE) continue
+if (model_compute_arguments_destroy_handle .eq. &
+  KIM_MODEL_COMPUTE_ARGUMENTS_DESTROY_NULL_HANDLE) continue
+
+ierr = 0
+return
+end subroutine compute_arguments_destroy
+
 end module ex_model_driver_p_lj
 
 !-------------------------------------------------------------------------------
@@ -662,20 +687,25 @@ end if
 
 
 ! store callback pointers in KIM object
-call kim_set_compute_pointer( &
-  model_driver_create_handle, KIM_LANGUAGE_NAME_FORTRAN, &
-  c_funloc(Compute_Energy_Forces), ierr)
-call kim_set_compute_arguments_create_pointer( &
-  model_driver_create_handle, KIM_LANGUAGE_NAME_FORTRAN, &
-  c_funloc(compute_arguments_create), ierr2)
+call kim_set_routine_pointer( &
+  model_driver_create_handle, KIM_MODEL_ROUTINE_NAME_COMPUTE, &
+  KIM_LANGUAGE_NAME_FORTRAN, 1, c_funloc(Compute_Energy_Forces), ierr)
+call kim_set_routine_pointer( &
+  model_driver_create_handle, KIM_MODEL_ROUTINE_NAME_COMPUTE_ARGUMENTS_CREATE, &
+  KIM_LANGUAGE_NAME_FORTRAN, 1, c_funloc(compute_arguments_create), ierr2)
 ierr = ierr + ierr2
-call kim_set_refresh_pointer( &
-  model_driver_create_handle, KIM_LANGUAGE_NAME_FORTRAN, &
-  c_funloc(refresh), ierr2)
+call kim_set_routine_pointer( &
+  model_driver_create_handle, KIM_MODEL_ROUTINE_NAME_REFRESH, &
+  KIM_LANGUAGE_NAME_FORTRAN, 1, c_funloc(refresh), ierr2)
 ierr = ierr + ierr2
-call kim_set_destroy_pointer( &
-  model_driver_create_handle, KIM_LANGUAGE_NAME_FORTRAN, &
-  c_funloc(destroy), ierr2)
+call kim_set_routine_pointer( &
+  model_driver_create_handle, &
+  KIM_MODEL_ROUTINE_NAME_COMPUTE_ARGUMENTS_DESTROY, &
+  KIM_LANGUAGE_NAME_FORTRAN, 1, c_funloc(compute_arguments_destroy), ierr2)
+ierr = ierr + ierr2
+call kim_set_routine_pointer( &
+  model_driver_create_handle, KIM_MODEL_ROUTINE_NAME_DESTROY, &
+  KIM_LANGUAGE_NAME_FORTRAN, 1, c_funloc(destroy), ierr2)
 ierr = ierr + ierr2
 if (ierr /= 0) then
   call kim_log_entry(model_driver_create_handle, &

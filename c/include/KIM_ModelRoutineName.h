@@ -33,55 +33,40 @@
 /*                                                                            */
 
 
-#ifndef KIM_SIMULATOR_HEADERS_H_
-#define KIM_SIMULATOR_HEADERS_H_
-
-#ifndef KIM_MODEL_H_
-#include "KIM_Model.h"
-#endif
-
-#ifndef KIM_LOG_VERBOSITY_H_
-#include "KIM_LogVerbosity.h"
-#endif
-
-#ifndef KIM_DATA_TYPE_H_
-#include "KIM_DataType.h"
-#endif
-
-#ifndef KIM_LANGUAGE_NAME_H_
-#include "KIM_LanguageName.h"
-#endif
-
 #ifndef KIM_MODEL_ROUTINE_NAME_H_
-#include "KIM_ModelRoutineName.h"
+#define KIM_MODEL_ROUTINE_NAME_H_
+
+struct KIM_ModelRoutineName
+{
+  int modelRoutineNameID;
+};
+#ifndef KIM_MODEL_ROUTINE_NAME_DEFINED_
+#define KIM_MODEL_ROUTINE_NAME_DEFINED_
+typedef struct KIM_ModelRoutineName KIM_ModelRoutineName;
 #endif
 
-#ifndef KIM_SPECIES_NAME_H_
-#include "KIM_SpeciesName.h"
-#endif
+KIM_ModelRoutineName KIM_ModelRoutineName_FromString(char const * const str);
+int KIM_ModelRoutineName_Equal(KIM_ModelRoutineName const lhs,
+                               KIM_ModelRoutineName const rhs);
+int KIM_ModelRoutineName_NotEqual(KIM_ModelRoutineName const lhs,
+                                  KIM_ModelRoutineName const rhs);
+char const *
+KIM_ModelRoutineName_ToString(KIM_ModelRoutineName const modelRoutineName);
 
-#ifndef KIM_NUMBERING_H_
-#include "KIM_Numbering.h"
-#endif
+extern KIM_ModelRoutineName const KIM_MODEL_ROUTINE_NAME_Create;
+extern KIM_ModelRoutineName const KIM_MODEL_ROUTINE_NAME_ComputeArgumentsCreate;
+extern KIM_ModelRoutineName const KIM_MODEL_ROUTINE_NAME_Compute;
+extern KIM_ModelRoutineName const KIM_MODEL_ROUTINE_NAME_Extension;
+extern KIM_ModelRoutineName const KIM_MODEL_ROUTINE_NAME_Refresh;
+extern KIM_ModelRoutineName const
+    KIM_MODEL_ROUTINE_NAME_WriteParameterizedModel;
+extern KIM_ModelRoutineName const
+    KIM_MODEL_ROUTINE_NAME_ComputeArgumentsDestroy;
+extern KIM_ModelRoutineName const KIM_MODEL_ROUTINE_NAME_Destroy;
 
-#ifndef KIM_UNIT_SYSTEM_H_
-#include "KIM_UnitSystem.h"
-#endif
+void KIM_MODEL_ROUTINE_NAME_GetNumberOfModelRoutineNames(
+    int * const numberOfModelRoutineNames);
+int KIM_MODEL_ROUTINE_NAME_GetModelRoutineName(
+    int const index, KIM_ModelRoutineName * const modelRoutineName);
 
-#ifndef KIM_COMPUTE_ARGUMENTS_H_
-#include "KIM_ComputeArguments.h"
-#endif
-
-#ifndef KIM_COMPUTE_ARGUMENT_NAME_H_
-#include "KIM_ComputeArgumentName.h"
-#endif
-
-#ifndef KIM_COMPUTE_CALLBACK_NAME_H_
-#include "KIM_ComputeCallbackName.h"
-#endif
-
-#ifndef KIM_SUPPORT_STATUS_H_
-#include "KIM_SupportStatus.h"
-#endif
-
-#endif /* KIM_SIMULATOR_HEADERS_H_ */
+#endif /* KIM_MODEL_ROUTINE_NAME_H_ */

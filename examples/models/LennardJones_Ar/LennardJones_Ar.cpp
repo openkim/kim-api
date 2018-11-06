@@ -70,22 +70,33 @@ class LennardJones_Ar
     modelCreate->SetSpeciesCode(KIM::SPECIES_NAME::Ar, 0);
 
     // use function pointer declarations to verify prototypes
-    KIM::ModelDestroyFunction * destroy = LennardJones_Ar::Destroy;
-    *error = *error
-             || modelCreate->SetDestroyPointer(
-                    KIM::LANGUAGE_NAME::cpp,
-                    reinterpret_cast<KIM::Function *>(destroy));
-    KIM::ModelComputeFunction * compute = LennardJones_Ar::Compute;
-    *error = *error
-             || modelCreate->SetComputePointer(
-                    KIM::LANGUAGE_NAME::cpp,
-                    reinterpret_cast<KIM::Function *>(compute));
     KIM::ModelComputeArgumentsCreateFunction * CACreate
         = LennardJones_Ar::ComputeArgumentsCreate;
-    *error = *error
-             || modelCreate->SetComputeArgumentsCreatePointer(
+    KIM::ModelComputeFunction * compute = LennardJones_Ar::Compute;
+    KIM::ModelComputeArgumentsDestroyFunction * CADestroy
+        = LennardJones_Ar::ComputeArgumentsDestroy;
+    KIM::ModelDestroyFunction * destroy = LennardJones_Ar::Destroy;
+
+    *error = modelCreate->SetRoutinePointer(
+                 KIM::MODEL_ROUTINE_NAME::ComputeArgumentsCreate,
+                 KIM::LANGUAGE_NAME::cpp,
+                 true,
+                 reinterpret_cast<KIM::Function *>(CACreate))
+             || modelCreate->SetRoutinePointer(
+                    KIM::MODEL_ROUTINE_NAME::Compute,
                     KIM::LANGUAGE_NAME::cpp,
-                    reinterpret_cast<KIM::Function *>(CACreate));
+                    true,
+                    reinterpret_cast<KIM::Function *>(compute))
+             || modelCreate->SetRoutinePointer(
+                    KIM::MODEL_ROUTINE_NAME::ComputeArgumentsDestroy,
+                    KIM::LANGUAGE_NAME::cpp,
+                    true,
+                    reinterpret_cast<KIM::Function *>(CADestroy))
+             || modelCreate->SetRoutinePointer(
+                    KIM::MODEL_ROUTINE_NAME::Destroy,
+                    KIM::LANGUAGE_NAME::cpp,
+                    true,
+                    reinterpret_cast<KIM::Function *>(destroy));
     if (*error) return;
 
     // everything is good
@@ -261,6 +272,19 @@ class LennardJones_Ar
     // none
 
     return error;
+  }
+
+  //****************************************************************************
+  static int ComputeArgumentsDestroy(
+      KIM::ModelCompute const * const modelCompute,
+      KIM::ModelComputeArgumentsDestroy * const modelComputeArgumentsDestroy)
+  {
+    (void) modelCompute;  // avoid unused parameter warning
+    (void) modelComputeArgumentsDestroy;  // avoid unused parameter warning
+
+    // nothing further to do
+
+    return false;
   }
 
  private:

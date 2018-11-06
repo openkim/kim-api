@@ -52,6 +52,11 @@ typedef struct KIM_DataType KIM_DataType;
 typedef struct KIM_LanguageName KIM_LanguageName;
 #endif
 
+#ifndef KIM_MODEL_ROUTINE_NAME_DEFINED_
+#define KIM_MODEL_ROUTINE_NAME_DEFINED_
+typedef struct KIM_ModelRoutineName KIM_ModelRoutineName;
+#endif
+
 #ifndef KIM_SPECIES_NAME_DEFINED_
 #define KIM_SPECIES_NAME_DEFINED_
 typedef struct KIM_SpeciesName KIM_SpeciesName;
@@ -111,6 +116,11 @@ int KIM_Model_Create(KIM_Numbering const numbering,
                      KIM_Model ** const model);
 void KIM_Model_Destroy(KIM_Model ** const model);
 
+int KIM_Model_IsRoutinePresent(KIM_Model const * const model,
+                               KIM_ModelRoutineName const modelRoutineName,
+                               int * const present,
+                               int * const required);
+
 void KIM_Model_GetInfluenceDistance(KIM_Model const * const model,
                                     double * const influenceDistance);
 
@@ -136,8 +146,13 @@ int KIM_Model_ComputeArgumentsDestroy(
     KIM_ComputeArguments ** const computeArguments);
 int KIM_Model_Compute(KIM_Model const * const model,
                       KIM_ComputeArguments const * const computeArguments);
-
+int KIM_Model_Extension(KIM_Model const * const model,
+                        char const * const extensionID,
+                        void * const extensionStructure);
 int KIM_Model_ClearThenRefresh(KIM_Model * const model);
+int KIM_Model_WriteParameterizedModel(KIM_Model const * const model,
+                                      char const * const path,
+                                      char const * const modelName);
 
 int KIM_Model_GetSpeciesSupportAndCode(KIM_Model const * const model,
                                        KIM_SpeciesName const speciesName,

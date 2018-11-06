@@ -38,6 +38,7 @@ module kim_model_driver_headers_module
   use kim_log_verbosity_module
   use kim_language_name_module
   use kim_numbering_module
+  use kim_model_routine_name_module
   use kim_species_name_module
   use kim_support_status_module
   use kim_unit_system_module

@@ -67,6 +67,9 @@ class LennardJones612
   static int ComputeArgumentsCreate(
       KIM::ModelCompute const * const modelCompute,
       KIM::ModelComputeArgumentsCreate * const modelComputeArgumentsCreate);
+  static int ComputeArgumentsDestroy(
+      KIM::ModelCompute const * const modelCompute,
+      KIM::ModelComputeArgumentsDestroy * const modelComputeArgumentsDestroy);
 
  private:
   LennardJones612Implementation * implementation_;

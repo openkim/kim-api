@@ -58,6 +58,15 @@ extern "C" {
 #endif
 }  // extern "C"
 
+#ifndef KIM_MODEL_ROUTINE_NAME_HPP_
+#include "KIM_ModelRoutineName.hpp"
+#endif
+extern "C" {
+#ifndef KIM_MODEL_ROUTINE_NAME_H_
+#include "KIM_ModelRoutineName.h"
+#endif
+}  // extern "C"
+
 #ifndef KIM_SPECIES_NAME_HPP_
 #include "KIM_SpeciesName.hpp"
 #endif
@@ -138,6 +147,12 @@ KIM::LanguageName makeLanguageNameCpp(KIM_LanguageName const languageName)
   return KIM::LanguageName(languageName.languageNameID);
 }
 
+KIM::ModelRoutineName
+makeRoutineNameCpp(KIM_ModelRoutineName const modelRoutineName)
+{
+  return KIM::ModelRoutineName(modelRoutineName.modelRoutineNameID);
+}
+
 KIM::SpeciesName makeSpecNameCpp(KIM_SpeciesName const speciesName)
 {
   return KIM::SpeciesName(speciesName.speciesNameID);
@@ -175,61 +190,19 @@ void KIM_ModelCreate_SetNeighborListPointers(
       modelWillNotRequestNeighborsOfNoncontributingParticles);
 }
 
-int KIM_ModelCreate_SetRefreshPointer(KIM_ModelCreate * const modelCreate,
-                                      KIM_LanguageName const languageName,
-                                      KIM_Function * const fptr)
-{
-  CONVERT_POINTER;
-
-  KIM::LanguageName langN = makeLanguageNameCpp(languageName);
-  return pModelCreate->SetRefreshPointer(
-      langN, reinterpret_cast<KIM::Function *>(fptr));
-}
-
-int KIM_ModelCreate_SetDestroyPointer(KIM_ModelCreate * const modelCreate,
-                                      KIM_LanguageName const languageName,
-                                      KIM_Function * const fptr)
-{
-  CONVERT_POINTER;
-
-  KIM::LanguageName langN = makeLanguageNameCpp(languageName);
-  return pModelCreate->SetDestroyPointer(
-      langN, reinterpret_cast<KIM::Function *>(fptr));
-}
-
-int KIM_ModelCreate_SetComputeArgumentsCreatePointer(
+int KIM_ModelCreate_SetRoutinePointer(
     KIM_ModelCreate * const modelCreate,
+    KIM_ModelRoutineName const modelRoutineName,
     KIM_LanguageName const languageName,
+    int const required,
     KIM_Function * const fptr)
 {
   CONVERT_POINTER;
 
+  KIM::ModelRoutineName routN = makeRoutineNameCpp(modelRoutineName);
   KIM::LanguageName langN = makeLanguageNameCpp(languageName);
-  return pModelCreate->SetComputeArgumentsCreatePointer(
-      langN, reinterpret_cast<KIM::Function *>(fptr));
-}
-
-int KIM_ModelCreate_SetComputeArgumentsDestroyPointer(
-    KIM_ModelCreate * const modelCreate,
-    KIM_LanguageName const languageName,
-    KIM_Function * const fptr)
-{
-  CONVERT_POINTER;
-
-  KIM::LanguageName langN = makeLanguageNameCpp(languageName);
-  return pModelCreate->SetComputeArgumentsDestroyPointer(
-      langN, reinterpret_cast<KIM::Function *>(fptr));
-}
-
-int KIM_ModelCreate_SetComputePointer(KIM_ModelCreate * const modelCreate,
-                                      KIM_LanguageName const languageName,
-                                      KIM_Function * const fptr)
-{
-  CONVERT_POINTER;
-
-  KIM::LanguageName langN = makeLanguageNameCpp(languageName);
-  return pModelCreate->SetComputePointer(
-      langN, reinterpret_cast<KIM::Function *>(fptr));
+  return pModelCreate->SetRoutinePointer(
+      routN, langN, required, reinterpret_cast<KIM::Function *>(fptr));
 }
 
 int KIM_ModelCreate_SetSpeciesCode(KIM_ModelCreate * const modelCreate,

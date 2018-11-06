@@ -48,6 +48,7 @@ module kim_model_module
     operator (.ne.), &
     kim_model_create, &
     kim_model_destroy, &
+    kim_is_routine_present, &
     kim_get_influence_distance, &
     kim_get_number_of_neighbor_lists, &
     kim_get_neighbor_list_values, &
@@ -83,6 +84,10 @@ module kim_model_module
   interface operator (.ne.)
     module procedure kim_model_handle_not_equal
   end interface operator (.ne.)
+
+  interface kim_is_routine_present
+    module procedure kim_model_is_routine_present
+  end interface kim_is_routine_present
 
   interface kim_get_influence_distance
     module procedure kim_model_get_influence_distance
@@ -251,6 +256,36 @@ contains
     call destroy(pmodel)
     model_handle%p = c_null_ptr
   end subroutine kim_model_destroy
+
+  subroutine kim_model_is_routine_present(model_handle, model_routine_name, &
+    present, required, ierr)
+    use kim_interoperable_types_module, only : kim_model_type
+    use kim_model_routine_name_module, only : kim_model_routine_name_type
+    implicit none
+    interface
+      integer(c_int) function is_routine_present(model, model_routine_name, &
+        present, required) bind(c, name="KIM_Model_IsRoutinePresent")
+        use, intrinsic :: iso_c_binding
+        use kim_interoperable_types_module, only : kim_model_type
+        use kim_model_routine_name_module, only : kim_model_routine_name_type
+        implicit none
+        type(kim_model_type), intent(in) :: model
+        type(kim_model_routine_name_type), intent(in), value &
+          :: model_routine_name
+        integer(c_int), intent(out) :: present
+        integer(c_int), intent(out) :: required
+      end function is_routine_present
+    end interface
+    type(kim_model_handle_type), intent(in) :: model_handle
+    type(kim_model_routine_name_type), intent(in) :: model_routine_name
+    integer(c_int), intent(out) :: present
+    integer(c_int), intent(out) :: required
+    integer(c_int), intent(out) :: ierr
+    type(kim_model_type), pointer :: model
+
+    call c_f_pointer(model_handle%p, model)
+    ierr = is_routine_present(model, model_routine_name, present, required)
+  end subroutine kim_model_is_routine_present
 
   subroutine kim_model_get_influence_distance(model_handle, influence_distance)
     use kim_interoperable_types_module, only : kim_model_type

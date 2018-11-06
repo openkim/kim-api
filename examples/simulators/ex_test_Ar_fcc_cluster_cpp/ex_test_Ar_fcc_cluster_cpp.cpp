@@ -54,10 +54,10 @@
     exit(1);                                                             \
   }
 
-#define MY_WARNING(message)                                              \
-  {                                                                      \
-    std::cout << "* Error : \"" << message << "\" : " << __LINE__ << ":" \
-              << __FILE__ << std::endl;                                  \
+#define MY_WARNING(message)                                                \
+  {                                                                        \
+    std::cout << "* Warning : \"" << message << "\" : " << __LINE__ << ":" \
+              << __FILE__ << std::endl;                                    \
   }
 
 
@@ -138,6 +138,37 @@ int main()
 
   // Check for compatibility with the model
   if (!requestedUnitsAccepted) { MY_ERROR("Must Adapt to model units"); }
+
+  // Check that we know about all required routines
+  int numberOfModelRoutineNames;
+  KIM::MODEL_ROUTINE_NAME::GetNumberOfModelRoutineNames(
+      &numberOfModelRoutineNames);
+  for (int i = 0; i < numberOfModelRoutineNames; ++i)
+  {
+    KIM::ModelRoutineName modelRoutineName;
+    int error
+        = KIM::MODEL_ROUTINE_NAME::GetModelRoutineName(i, &modelRoutineName);
+    if (error) { MY_ERROR("Unable to get ModelRoutineName."); }
+    int present;
+    int required;
+    error = kim_cluster_model->IsRoutinePresent(
+        modelRoutineName, &present, &required);
+    if (error) { MY_ERROR("Unable to get ModelRoutineName."); }
+
+    if ((present == true) && (required == true))
+    {
+      using namespace KIM::MODEL_ROUTINE_NAME;
+      if (!((modelRoutineName == Create)
+            || (modelRoutineName == ComputeArgumentsCreate)
+            || (modelRoutineName == Compute) || (modelRoutineName == Refresh)
+            || (modelRoutineName == ComputeArgumentsDestroy)
+            || (modelRoutineName == Destroy)))
+      {
+        MY_ERROR("Unknown Routine \"" + modelRoutineName.String()
+                 + "\" is required by model.");
+      }
+    }
+  }
 
   // print model units
   KIM::LengthUnit lengthUnit;

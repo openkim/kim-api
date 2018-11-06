@@ -69,13 +69,16 @@ int model_driver_create(KIM_ModelDriverCreate * const modelDriverCreate,
 /* defined as static to avoid namespace clashes with other codes */
 static int destroy_routine(KIM_ModelDestroy * const modelDestroy);
 
-/* Define prototype for compute routine */
+/* Define prototype for routines */
 static int
 compute_routine(KIM_ModelCompute const * const modelCompute,
                 KIM_ModelComputeArguments const * const modelComputeArguments);
 static int compute_arguments_create(
     KIM_ModelCompute const * const modelCompute,
     KIM_ModelComputeArgumentsCreate * const modelComputeArgumentsCreate);
+static int compute_arguments_destroy(
+    KIM_ModelCompute const * const modelCompute,
+    KIM_ModelComputeArgumentsDestroy * const modelComputeArgumentsDestroy);
 
 /* Define prototypes for pair potential calculations */
 static void calc_phi(double const * epsilon,
@@ -397,12 +400,16 @@ int model_driver_create(KIM_ModelDriverCreate * const modelDriverCreate,
   struct model_buffer * buffer;
 
   /* Use function pointer definitions to verify prototypes */
-  KIM_ModelDestroyFunction * destroy = destroy_routine;
+  KIM_ModelDriverCreateFunction * create = model_driver_create;
   KIM_ModelComputeArgumentsCreateFunction * CACreate = compute_arguments_create;
   KIM_ModelComputeFunction * compute = compute_routine;
+  KIM_ModelComputeArgumentsDestroyFunction * CADestroy
+      = compute_arguments_destroy;
+  KIM_ModelDestroyFunction * destroy = destroy_routine;
 
 
-  (void) requestedLengthUnit; /* avoid unused parameter warnings */
+  (void) create; /* avoid unused parameter warnings */
+  (void) requestedLengthUnit;
   (void) requestedEnergyUnit;
   (void) requestedChargeUnit;
   (void) requestedTemperatureUnit;
@@ -431,12 +438,28 @@ int model_driver_create(KIM_ModelDriverCreate * const modelDriverCreate,
   }
 
   /* store pointer to functions in KIM object */
-  KIM_ModelDriverCreate_SetDestroyPointer(
-      modelDriverCreate, KIM_LANGUAGE_NAME_c, (KIM_Function *) destroy);
-  KIM_ModelDriverCreate_SetComputeArgumentsCreatePointer(
-      modelDriverCreate, KIM_LANGUAGE_NAME_c, (KIM_Function *) CACreate);
-  KIM_ModelDriverCreate_SetComputePointer(
-      modelDriverCreate, KIM_LANGUAGE_NAME_c, (KIM_Function *) compute);
+  KIM_ModelDriverCreate_SetRoutinePointer(
+      modelDriverCreate,
+      KIM_MODEL_ROUTINE_NAME_ComputeArgumentsCreate,
+      KIM_LANGUAGE_NAME_c,
+      TRUE,
+      (KIM_Function *) CACreate);
+  KIM_ModelDriverCreate_SetRoutinePointer(modelDriverCreate,
+                                          KIM_MODEL_ROUTINE_NAME_Compute,
+                                          KIM_LANGUAGE_NAME_c,
+                                          TRUE,
+                                          (KIM_Function *) compute);
+  KIM_ModelDriverCreate_SetRoutinePointer(
+      modelDriverCreate,
+      KIM_MODEL_ROUTINE_NAME_ComputeArgumentsDestroy,
+      KIM_LANGUAGE_NAME_c,
+      TRUE,
+      (KIM_Function *) CADestroy);
+  KIM_ModelDriverCreate_SetRoutinePointer(modelDriverCreate,
+                                          KIM_MODEL_ROUTINE_NAME_Destroy,
+                                          KIM_LANGUAGE_NAME_c,
+                                          TRUE,
+                                          (KIM_Function *) destroy);
 
   /* get number of parameter files */
   KIM_ModelDriverCreate_GetNumberOfParameterFiles(modelDriverCreate,
@@ -595,4 +618,17 @@ static int compute_arguments_create(
   {
     return FALSE;
   }
+}
+
+/* compute arguments destroy routine */
+static int compute_arguments_destroy(
+    KIM_ModelCompute const * const modelCompute,
+    KIM_ModelComputeArgumentsDestroy * const modelComputeArgumentsDestroy)
+{
+  (void) modelCompute; /* avoid unused parameter warning */
+  (void) modelComputeArgumentsDestroy;
+
+  /* Nothing further to do */
+
+  return FALSE;
 }

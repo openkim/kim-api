@@ -69,6 +69,8 @@ set(CPP_HEADERS
   KIM_ModelHeaders.hpp
   KIM_Model.hpp
   KIM_ModelRefresh.hpp
+  KIM_ModelRoutineName.hpp
+  KIM_ModelRoutineName.inc
   KIM_Numbering.hpp
   KIM_Numbering.inc
   KIM_SemVer.hpp
