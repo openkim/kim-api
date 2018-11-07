@@ -90,6 +90,13 @@ void KIM_Log_Destroy(KIM_Log ** const log)
   *log = NULL;
 }
 
+void KIM_Log_PushDefaultVerbosity(KIM_LogVerbosity const logVerbosity)
+{
+  KIM::Log::PushDefaultVerbosity(makeLogVerbosityCpp(logVerbosity));
+}
+
+void KIM_Log_PopDefaultVerbosity() { KIM::Log::PopDefaultVerbosity(); }
+
 char const * KIM_Log_GetID(KIM_Log const * const log)
 {
   CONVERT_POINTER;

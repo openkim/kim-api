@@ -49,6 +49,9 @@ class Log
   static int Create(Log ** const log);
   static void Destroy(Log ** const log);
 
+  static void PushDefaultVerbosity(LogVerbosity const logVerbosity);
+  static void PopDefaultVerbosity();
+
   std::string const & GetID() const;
   void SetID(std::string const & id);
 

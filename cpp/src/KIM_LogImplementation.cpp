@@ -60,7 +60,13 @@ namespace KIM
 {
 namespace
 {
-LogVerbosity const defaultLogVerbosity(KIM_LOG_MAXIMUM_LEVEL);
+std::stack<LogVerbosity> GetDefaultVerbosityStack()
+{
+  std::stack<LogVerbosity> s;
+  s.push(KIM_LOG_MAXIMUM_LEVEL);
+  return s;
+}
+std::stack<LogVerbosity> defaultLogVerbosity = GetDefaultVerbosityStack();
 
 int Validate(LogVerbosity const logVerbosity)
 {
@@ -85,7 +91,7 @@ int LogImplementation::Create(LogImplementation ** const logImplementation)
 
   std::stringstream ss;
   ss << "Log object created.  Default verbosity level is '"
-     << defaultLogVerbosity.String() << "'.";
+     << defaultLogVerbosity.top().String() << "'.";
   (*logImplementation)
       ->LogEntry(LOG_VERBOSITY::information, ss.str(), __LINE__, __FILE__);
 
@@ -101,6 +107,21 @@ void LogImplementation::Destroy(LogImplementation ** const logImplementation)
                  __FILE__);
   delete (*logImplementation);
   *logImplementation = NULL;
+}
+
+void LogImplementation::PushDefaultVerbosity(LogVerbosity const logVerbosity)
+{
+  LogVerbosity logVerb(logVerbosity);
+  if (!Validate(logVerbosity)) logVerb = defaultLogVerbosity.top();
+
+  defaultLogVerbosity.push(logVerb);
+}
+
+void LogImplementation::PopDefaultVerbosity()
+{
+  defaultLogVerbosity.pop();
+  if (defaultLogVerbosity.empty())
+  { defaultLogVerbosity.push(KIM_LOG_MAXIMUM_LEVEL); }
 }
 
 std::string const & LogImplementation::GetID() const { return idString_; }
@@ -159,7 +180,7 @@ void LogImplementation::PopVerbosity()
      << "' popped, revealing '";
 
   verbosity_.pop();
-  if (verbosity_.empty()) { verbosity_.push(defaultLogVerbosity); }
+  if (verbosity_.empty()) { verbosity_.push(defaultLogVerbosity.top()); }
 
   ss << verbosity_.top().String() << "'.";
   LogEntry(LOG_VERBOSITY::information, ss.str(), __LINE__, __FILE__);
@@ -204,7 +225,7 @@ LogImplementation::LogImplementation() :
     latestTimeStamp_(""),
     sequence_(0)
 {
-  verbosity_.push(defaultLogVerbosity);
+  verbosity_.push(defaultLogVerbosity.top());
 }
 
 LogImplementation::~LogImplementation() {}

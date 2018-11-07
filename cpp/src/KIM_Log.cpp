@@ -58,6 +58,13 @@ void Log::Destroy(Log ** const log)
   *log = NULL;
 }
 
+void Log::PushDefaultVerbosity(LogVerbosity const logVerbosity)
+{
+  LogImplementation::PushDefaultVerbosity(logVerbosity);
+}
+
+void Log::PopDefaultVerbosity() { LogImplementation::PopDefaultVerbosity(); }
+
 std::string const & Log::GetID() const { return pimpl->GetID(); }
 
 void Log::SetID(std::string const & id) { pimpl->SetID(id); }

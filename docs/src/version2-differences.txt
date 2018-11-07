@@ -1432,6 +1432,32 @@ a guiding principle.
   <td>
     N/A
   </td><td>
+    KIM::Log::PushDefaultVerbosity()
+  </td><td>
+    KIM_Log_PushDefaultVerbosity()
+  </td><td>
+    kim_push_default_verbosity() -- overloaded
+    <br>
+    kim_log_module::kim_log_push_default_verbosity()
+  </td>
+</tr>
+<tr>
+  <td>
+    N/A
+  </td><td>
+    KIM::Log::PopDefaultVerbosity()
+  </td><td>
+    KIM_Log_PopDefaultVerbosity()
+  </td><td>
+    kim_pop_default_verbosity() -- overloaded
+    <br>
+    kim_log_module::kim_log_pop_default_verbosity()
+  </td>
+</tr>
+<tr>
+  <td>
+    N/A
+  </td><td>
     KIM::Log::GetID()
   </td><td>
     KIM_Log_GetID()

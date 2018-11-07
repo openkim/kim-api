@@ -48,6 +48,8 @@ module kim_log_module
     operator (.ne.), &
     kim_log_create, &
     kim_log_destroy, &
+    kim_push_default_verbosity, &
+    kim_pop_default_verbosity, &
     kim_get_id, &
     kim_set_id, &
     kim_push_verbosity, &
@@ -69,6 +71,14 @@ module kim_log_module
   interface operator (.ne.)
     module procedure kim_log_handle_not_equal
   end interface operator (.ne.)
+
+  interface kim_push_default_verbosity
+    module procedure kim_log_push_default_verbosity
+  end interface kim_push_default_verbosity
+
+  interface kim_pop_default_verbosity
+    module procedure kim_log_pop_default_verbosity
+  end interface kim_pop_default_verbosity
 
   interface kim_get_id
     module procedure kim_log_get_id
@@ -145,6 +155,36 @@ contains
     call destroy(plog)
     log_handle%p = c_null_ptr
   end subroutine kim_log_destroy
+
+  subroutine kim_log_push_default_verbosity(log_verbosity)
+    use kim_log_verbosity_module, only : kim_log_verbosity_type
+    implicit none
+    interface
+      subroutine push_default_verbosity(log_verbosity) &
+        bind(c, name="KIM_Log_PushDefaultVerbosity")
+        use, intrinsic :: iso_c_binding
+        use kim_log_verbosity_module, only : kim_log_verbosity_type
+        implicit none
+        type(kim_log_verbosity_type), intent(in), value :: log_verbosity
+      end subroutine push_default_verbosity
+    end interface
+    type(kim_log_verbosity_type), intent(in) :: log_verbosity
+
+    call push_default_verbosity(log_verbosity)
+  end subroutine kim_log_push_default_verbosity
+
+  subroutine kim_log_pop_default_verbosity()
+    implicit none
+    interface
+      subroutine pop_default_verbosity() &
+        bind(c, name="KIM_Log_PopDefaultVerbosity")
+        use, intrinsic :: iso_c_binding
+        implicit none
+      end subroutine pop_default_verbosity
+    end interface
+
+    call pop_default_verbosity()
+  end subroutine kim_log_pop_default_verbosity
 
   subroutine kim_log_get_id(log_handle, id_string)
     use kim_convert_string_module, only : kim_convert_string
