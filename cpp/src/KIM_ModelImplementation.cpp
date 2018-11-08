@@ -1234,58 +1234,8 @@ int ModelImplementation::Compute(
         numberOfNeighborLists_);
   }
 
-
-  ModelComputeFunction * CppCompute
-      = reinterpret_cast<ModelComputeFunction *>(computeFunction_);
-  KIM_ModelComputeFunction * CCompute
-      = reinterpret_cast<KIM_ModelComputeFunction *>(computeFunction_);
-  typedef void ModelComputeF(KIM_ModelCompute * const,
-                             KIM_ModelComputeArguments const * const,
-                             int * const);
-  ModelComputeF * FCompute
-      = reinterpret_cast<ModelComputeF *>(computeFunction_);
-
-  int error;
-  struct Mdl
-  {
-    void const * p;
-  };
-  Mdl M;
-  M.p = this;
-  if (computeLanguage_ == LANGUAGE_NAME::cpp)
-  {
-    error = CppCompute(
-        reinterpret_cast<KIM::ModelCompute const *>(&M),
-        reinterpret_cast<KIM::ModelComputeArguments const *>(computeArguments));
-  }
-  else if (computeLanguage_ == LANGUAGE_NAME::c)
-  {
-    KIM_ModelCompute cM;
-    cM.p = &M;
-    KIM_ModelComputeArguments cMca;
-    cMca.p = reinterpret_cast<void *>(
-        const_cast<KIM::ComputeArguments *>(computeArguments));
-    error = CCompute(&cM, &cMca);
-  }
-  else if (computeLanguage_ == LANGUAGE_NAME::fortran)
-  {
-    KIM_ModelCompute cM;
-    cM.p = &M;
-    KIM_ModelCompute cM_Handle;
-    cM_Handle.p = &cM;
-    KIM_ModelComputeArguments cMca;
-    cMca.p = reinterpret_cast<void *>(
-        const_cast<KIM::ComputeArguments *>(computeArguments));
-    KIM_ModelComputeArguments cMca_Handle;
-    cMca_Handle.p = &cMca;
-    FCompute(&cM_Handle, &cMca_Handle, &error);
-  }
-  else
-  {
-    LOG_ERROR("Unknown LanguageName.  SHOULD NEVER GET HERE.");
-    LOG_DEBUG("Exit 1=" + callString);
-    return true;
-  }
+  // Call the Model supplied compute routine
+  int error = ModelCompute(computeArguments);
 
   // Unset cutoffs data within computeArguments
   computeArguments->pimpl->inModelComputeRoutine_ = false;
@@ -1294,7 +1244,6 @@ int ModelImplementation::Compute(
 
   if (error)
   {
-    LOG_ERROR("Model supplied Compute() routine returned error.");
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
@@ -1325,47 +1274,11 @@ int ModelImplementation::ClearThenRefresh()
   cutoffs_ = NULL;
   modelWillNotRequestNeighborsOfNoncontributingParticles_ = NULL;
 
-  ModelRefreshFunction * CppRefresh
-      = reinterpret_cast<ModelRefreshFunction *>(refreshFunction_);
-  KIM_ModelRefreshFunction * CRefresh
-      = reinterpret_cast<KIM_ModelRefreshFunction *>(refreshFunction_);
-  typedef void ModelRefreshF(KIM_ModelRefresh * const, int * const);
-  ModelRefreshF * FRefresh
-      = reinterpret_cast<ModelRefreshF *>(refreshFunction_);
-
-  int error;
-  struct Mdl
-  {
-    void * p;
-  };
-  Mdl M;
-  M.p = this;
-  if (refreshLanguage_ == LANGUAGE_NAME::cpp)
-  { error = CppRefresh(reinterpret_cast<KIM::ModelRefresh *>(&M)); }
-  else if (refreshLanguage_ == LANGUAGE_NAME::c)
-  {
-    KIM_ModelRefresh cM;
-    cM.p = &M;
-    error = CRefresh(&cM);
-  }
-  else if (refreshLanguage_ == LANGUAGE_NAME::fortran)
-  {
-    KIM_ModelRefresh cM;
-    cM.p = &M;
-    KIM_ModelRefresh cM_Handle;
-    cM_Handle.p = &cM;
-    FRefresh(&cM_Handle, &error);
-  }
-  else
-  {
-    LOG_ERROR("Unknown LanguageName.  SHOULD NEVER GET HERE.");
-    LOG_DEBUG("Exit 1=" + callString);
-    return true;
-  }
+  // Call Model supplied Refresh routine
+  int error = ModelRefresh();
 
   if (error)
   {
-    LOG_ERROR("Model supplied Refresh() routine returned error.");
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
@@ -2366,6 +2279,154 @@ int ModelImplementation::ModelComputeArgumentsDestroy(
   {
     LOG_ERROR("Model supplied ComputeArgumentsDestroy() routine "
               "returned error.");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
+  else
+  {
+    LOG_DEBUG("Exit 0=" + callString);
+    return false;
+  }
+}
+
+int ModelImplementation::ModelCompute(
+    ComputeArguments const * const computeArguments) const
+{
+#if DEBUG_VERBOSITY
+  std::string const callString
+      = "ModelCompute(" + SPTR(computeArguments) + ").";
+#endif
+  LOG_DEBUG("Enter  " + callString);
+
+  std::map<ModelRoutineName const, Function *, MODEL_ROUTINE_NAME::Comparator>::
+      const_iterator funcResult
+      = routineFunction_.find(MODEL_ROUTINE_NAME::Compute);
+  std::map<ModelRoutineName const,
+           LanguageName,
+           MODEL_ROUTINE_NAME::Comparator>::const_iterator langResult
+      = routineLanguage_.find(MODEL_ROUTINE_NAME::Compute);
+
+  ModelComputeFunction * CppCompute
+      = reinterpret_cast<ModelComputeFunction *>(funcResult->second);
+  KIM_ModelComputeFunction * CCompute
+      = reinterpret_cast<KIM_ModelComputeFunction *>(funcResult->second);
+  typedef void ModelComputeF(KIM_ModelCompute * const,
+                             KIM_ModelComputeArguments const * const,
+                             int * const);
+  ModelComputeF * FCompute
+      = reinterpret_cast<ModelComputeF *>(funcResult->second);
+
+  int error;
+  struct Mdl
+  {
+    void const * p;
+  };
+  Mdl M;
+  M.p = this;
+  if (langResult->second == LANGUAGE_NAME::cpp)
+  {
+    error = CppCompute(
+        reinterpret_cast<KIM::ModelCompute const *>(&M),
+        reinterpret_cast<KIM::ModelComputeArguments const *>(computeArguments));
+  }
+  else if (langResult->second == LANGUAGE_NAME::c)
+  {
+    KIM_ModelCompute cM;
+    cM.p = &M;
+    KIM_ModelComputeArguments cMca;
+    cMca.p = reinterpret_cast<void *>(
+        const_cast<KIM::ComputeArguments *>(computeArguments));
+    error = CCompute(&cM, &cMca);
+  }
+  else if (langResult->second == LANGUAGE_NAME::fortran)
+  {
+    KIM_ModelCompute cM;
+    cM.p = &M;
+    KIM_ModelCompute cM_Handle;
+    cM_Handle.p = &cM;
+    KIM_ModelComputeArguments cMca;
+    cMca.p = reinterpret_cast<void *>(
+        const_cast<KIM::ComputeArguments *>(computeArguments));
+    KIM_ModelComputeArguments cMca_Handle;
+    cMca_Handle.p = &cMca;
+    FCompute(&cM_Handle, &cMca_Handle, &error);
+  }
+  else
+  {
+    LOG_ERROR("Unknown LanguageName.  SHOULD NEVER GET HERE.");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
+
+  if (error)
+  {
+    LOG_ERROR("Model supplied Compute() routine returned error.");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
+  else
+  {
+    LOG_DEBUG("Exit 0=" + callString);
+    return false;
+  }
+}
+
+int ModelImplementation::ModelRefresh()
+{
+#if DEBUG_VERBOSITY
+  std::string const callString = "ModelRefresh().";
+#endif
+  LOG_DEBUG("Enter  " + callString);
+
+  std::map<ModelRoutineName const, Function *, MODEL_ROUTINE_NAME::Comparator>::
+      const_iterator funcResult
+      = routineFunction_.find(MODEL_ROUTINE_NAME::Refresh);
+  std::map<ModelRoutineName const,
+           LanguageName,
+           MODEL_ROUTINE_NAME::Comparator>::const_iterator langResult
+      = routineLanguage_.find(MODEL_ROUTINE_NAME::Refresh);
+
+  ModelRefreshFunction * CppRefresh
+      = reinterpret_cast<ModelRefreshFunction *>(funcResult->second);
+  KIM_ModelRefreshFunction * CRefresh
+      = reinterpret_cast<KIM_ModelRefreshFunction *>(funcResult->second);
+  typedef void ModelRefreshF(KIM_ModelRefresh * const, int * const);
+  ModelRefreshF * FRefresh
+      = reinterpret_cast<ModelRefreshF *>(funcResult->second);
+
+  int error;
+  struct Mdl
+  {
+    void * p;
+  };
+  Mdl M;
+  M.p = this;
+  if (langResult->second == LANGUAGE_NAME::cpp)
+  { error = CppRefresh(reinterpret_cast<KIM::ModelRefresh *>(&M)); }
+  else if (langResult->second == LANGUAGE_NAME::c)
+  {
+    KIM_ModelRefresh cM;
+    cM.p = &M;
+    error = CRefresh(&cM);
+  }
+  else if (langResult->second == LANGUAGE_NAME::fortran)
+  {
+    KIM_ModelRefresh cM;
+    cM.p = &M;
+    KIM_ModelRefresh cM_Handle;
+    cM_Handle.p = &cM;
+    FRefresh(&cM_Handle, &error);
+  }
+  else
+  {
+    LOG_ERROR("Unknown LanguageName.  SHOULD NEVER GET HERE.");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
+
+  if (error)
+  {
+    LOG_ERROR("Model supplied Refresh() routine returned error.");
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }

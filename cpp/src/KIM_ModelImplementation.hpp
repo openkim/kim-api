@@ -246,6 +246,9 @@ class ModelImplementation
   int ModelComputeArgumentsDestroy(
       ComputeArguments * const computeArguments) const;
 
+  int ModelCompute(ComputeArguments const * const computeArguments) const;
+  int ModelRefresh();
+
 
   static int Validate(ChargeUnit const chargeUnit);
   static int Validate(DataType const dataType);
