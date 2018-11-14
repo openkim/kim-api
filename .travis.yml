@@ -19,7 +19,6 @@ env:
 before_script:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
       brew update &> /dev/null &&
-      rm /usr/local/include/c++ &&
       brew install gcc@6 &&
       export CC=gcc-6 &&
       export CXX=g++-6 &&
