@@ -171,9 +171,7 @@ KIM_ModelExtensionFunction(KIM_ModelExtension * const modelExtension,
 typedef int KIM_ModelRefreshFunction(KIM_ModelRefresh * const modelRefresh);
 
 typedef int KIM_ModelWriteParameterizedModelFunction(
-    KIM_ModelWriteParameterizedModel const * modelWriteParameterizedModel,
-    char const * const path,
-    char const * const modelName);
+    KIM_ModelWriteParameterizedModel const * modelWriteParameterizedModel);
 
 typedef int KIM_ModelComputeArgumentsDestroyFunction(
     KIM_ModelCompute const * const modelCompute,

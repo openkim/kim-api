@@ -159,6 +159,8 @@ class ModelImplementation
   int GetParameterFileName(int const index,
                            std::string const ** const parameterFileName) const;
 
+  void SetParameterFileName(std::string const & filename) const;
+
   int SetParameterPointer(int const extent,
                           int * const ptr,
                           std::string const & name,
@@ -191,6 +193,9 @@ class ModelImplementation
   int Extension(std::string const & extensionID,
                 void * const extensionStructure);
   int ClearThenRefresh();
+
+  void GetPath(std::string const ** const path) const;
+  void GetModelName(std::string const ** const modelName) const;
   int WriteParameterizedModel(std::string const & path,
                               std::string const & modelName) const;
 
@@ -259,8 +264,7 @@ class ModelImplementation
   int ModelExtension(std::string const & extensionID,
                      void * const extensionStructure);
   int ModelRefresh();
-  int ModelWriteParameterizedModel(std::string const & path,
-                                   std::string const & modelName) const;
+  int ModelWriteParameterizedModel() const;
 
 
   static int Validate(ChargeUnit const chargeUnit);
@@ -337,6 +341,10 @@ class ModelImplementation
   std::vector<DataType> parameterDataType_;
   std::vector<int> parameterExtent_;
   std::vector<void *> parameterPointer_;
+
+  mutable std::string writePath_;
+  mutable std::string writeModelName_;
+  mutable std::stringstream cmakelists_;
 
   void * modelBuffer_;
   void * simulatorBuffer_;

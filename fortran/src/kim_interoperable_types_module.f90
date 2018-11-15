@@ -48,7 +48,8 @@ module kim_interoperable_types_module
     kim_model_destroy_type, &
     kim_model_driver_create_type, &
     kim_model_type, &
-    kim_model_refresh_type
+    kim_model_refresh_type, &
+    kim_model_write_parameterized_model_type
 
 
   type, bind(c) :: kim_compute_arguments_type
@@ -105,4 +106,9 @@ module kim_interoperable_types_module
     private
     type(c_ptr) :: p
   end type kim_model_refresh_type
+
+  type, bind(c) :: kim_model_write_parameterized_model_type
+    private
+    type(c_ptr) :: p
+  end type kim_model_write_parameterized_model_type
 end module kim_interoperable_types_module

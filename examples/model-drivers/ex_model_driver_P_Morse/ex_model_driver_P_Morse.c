@@ -55,6 +55,7 @@
 /******************************************************************************/
 #define DIM 3 /* dimensionality of space */
 #define SPECCODE 1 /* internal species code */
+#define SPEC_NAME_LEN 64 /* max length of species name string */
 
 
 /* Define prototype for Model Driver init */
@@ -79,6 +80,10 @@ static int compute_arguments_create(
 static int compute_arguments_destroy(
     KIM_ModelCompute const * const modelCompute,
     KIM_ModelComputeArgumentsDestroy * const modelComputeArgumentsDestroy);
+static int refresh_routine(KIM_ModelRefresh * const modelRefresh);
+static int
+write_parameterized_model(KIM_ModelWriteParameterizedModel const * const
+                              modelWriteParameterizedModel);
 
 /* Define prototypes for pair potential calculations */
 static void calc_phi(double const * epsilon,
@@ -105,6 +110,7 @@ struct model_buffer
   double cutoff;
   double cutsq;
   int modelWillNotRequestNeighborsOfNoncontributingParticles;
+  char speciesName[SPEC_NAME_LEN];
   double epsilon;
   double C;
   double Rzero;
@@ -389,7 +395,7 @@ int model_driver_create(KIM_ModelDriverCreate * const modelDriverCreate,
 
   /* Local variables */
   FILE * fid;
-  char speciesNameString[100];
+  char speciesNameString[SPEC_NAME_LEN];
   KIM_SpeciesName speciesName;
   double cutoff;
   double epsilon;
@@ -403,6 +409,9 @@ int model_driver_create(KIM_ModelDriverCreate * const modelDriverCreate,
   KIM_ModelDriverCreateFunction * create = model_driver_create;
   KIM_ModelComputeArgumentsCreateFunction * CACreate = compute_arguments_create;
   KIM_ModelComputeFunction * compute = compute_routine;
+  KIM_ModelRefreshFunction * refresh = refresh_routine;
+  KIM_ModelWriteParameterizedModelFunction * writeModel
+      = write_parameterized_model;
   KIM_ModelComputeArgumentsDestroyFunction * CADestroy
       = compute_arguments_destroy;
   KIM_ModelDestroyFunction * destroy = destroy_routine;
@@ -438,28 +447,42 @@ int model_driver_create(KIM_ModelDriverCreate * const modelDriverCreate,
   }
 
   /* store pointer to functions in KIM object */
-  KIM_ModelDriverCreate_SetRoutinePointer(
-      modelDriverCreate,
-      KIM_MODEL_ROUTINE_NAME_ComputeArgumentsCreate,
-      KIM_LANGUAGE_NAME_c,
-      TRUE,
-      (KIM_Function *) CACreate);
-  KIM_ModelDriverCreate_SetRoutinePointer(modelDriverCreate,
-                                          KIM_MODEL_ROUTINE_NAME_Compute,
-                                          KIM_LANGUAGE_NAME_c,
-                                          TRUE,
-                                          (KIM_Function *) compute);
-  KIM_ModelDriverCreate_SetRoutinePointer(
-      modelDriverCreate,
-      KIM_MODEL_ROUTINE_NAME_ComputeArgumentsDestroy,
-      KIM_LANGUAGE_NAME_c,
-      TRUE,
-      (KIM_Function *) CADestroy);
-  KIM_ModelDriverCreate_SetRoutinePointer(modelDriverCreate,
-                                          KIM_MODEL_ROUTINE_NAME_Destroy,
-                                          KIM_LANGUAGE_NAME_c,
-                                          TRUE,
-                                          (KIM_Function *) destroy);
+  ier = KIM_ModelDriverCreate_SetRoutinePointer(
+            modelDriverCreate,
+            KIM_MODEL_ROUTINE_NAME_ComputeArgumentsCreate,
+            KIM_LANGUAGE_NAME_c,
+            TRUE,
+            (KIM_Function *) CACreate)
+        || KIM_ModelDriverCreate_SetRoutinePointer(
+               modelDriverCreate,
+               KIM_MODEL_ROUTINE_NAME_Compute,
+               KIM_LANGUAGE_NAME_c,
+               TRUE,
+               (KIM_Function *) compute)
+        || KIM_ModelDriverCreate_SetRoutinePointer(
+               modelDriverCreate,
+               KIM_MODEL_ROUTINE_NAME_Refresh,
+               KIM_LANGUAGE_NAME_c,
+               TRUE,
+               (KIM_Function *) refresh)
+        || KIM_ModelDriverCreate_SetRoutinePointer(
+               modelDriverCreate,
+               KIM_MODEL_ROUTINE_NAME_WriteParameterizedModel,
+               KIM_LANGUAGE_NAME_c,
+               FALSE,
+               (KIM_Function *) writeModel)
+        || KIM_ModelDriverCreate_SetRoutinePointer(
+               modelDriverCreate,
+               KIM_MODEL_ROUTINE_NAME_ComputeArgumentsDestroy,
+               KIM_LANGUAGE_NAME_c,
+               TRUE,
+               (KIM_Function *) CADestroy)
+        || KIM_ModelDriverCreate_SetRoutinePointer(
+               modelDriverCreate,
+               KIM_MODEL_ROUTINE_NAME_Destroy,
+               KIM_LANGUAGE_NAME_c,
+               TRUE,
+               (KIM_Function *) destroy);
 
   /* get number of parameter files */
   KIM_ModelDriverCreate_GetNumberOfParameterFiles(modelDriverCreate,
@@ -532,6 +555,7 @@ int model_driver_create(KIM_ModelDriverCreate * const modelDriverCreate,
   buffer->cutoff = cutoff;
   buffer->cutsq = (cutoff) * (cutoff);
   buffer->modelWillNotRequestNeighborsOfNoncontributingParticles = 1;
+  sprintf(buffer->speciesName, "%s", speciesNameString);
   buffer->epsilon = epsilon;
   buffer->C = C;
   buffer->Rzero = Rzero;
@@ -554,6 +578,27 @@ int model_driver_create(KIM_ModelDriverCreate * const modelDriverCreate,
   KIM_ModelDriverCreate_SetModelBufferPointer(modelDriverCreate,
                                               (void *) buffer);
 
+  /* publish model parameters */
+  ier = KIM_ModelDriverCreate_SetParameterPointerDouble(modelDriverCreate,
+                                                        1,
+                                                        &(buffer->cutoff),
+                                                        "cutoff",
+                                                        "pair cutoff distance")
+        || KIM_ModelDriverCreate_SetParameterPointerDouble(modelDriverCreate,
+                                                           1,
+                                                           &(buffer->epsilon),
+                                                           "epsilon",
+                                                           "Morse epsilon")
+        || KIM_ModelDriverCreate_SetParameterPointerDouble(
+               modelDriverCreate, 1, &(buffer->C), "C", "Morse C")
+        || KIM_ModelDriverCreate_SetParameterPointerDouble(
+               modelDriverCreate, 1, &(buffer->Rzero), "Rzero", "Morse Rzero");
+  if (ier == TRUE)
+  {
+    LOG_ERROR("Unable to set parameter pointer(s).");
+    return TRUE;
+  }
+
   /* store model cutoff in KIM object */
   KIM_ModelDriverCreate_SetInfluenceDistancePointer(
       modelDriverCreate, &(buffer->influenceDistance));
@@ -565,6 +610,46 @@ int model_driver_create(KIM_ModelDriverCreate * const modelDriverCreate,
 
   return FALSE;
 }
+
+/* Refresh function */
+#undef KIM_LOGGER_FUNCTION_NAME
+#define KIM_LOGGER_FUNCTION_NAME KIM_ModelRefresh_LogEntry
+#undef KIM_LOGGER_OBJECT_NAME
+#define KIM_LOGGER_OBJECT_NAME modelRefresh
+int refresh_routine(KIM_ModelRefresh * const modelRefresh)
+{
+  double dummy;
+  struct model_buffer * buffer;
+
+  /* get model buffer from KIM object */
+  KIM_ModelRefresh_GetModelBufferPointer(modelRefresh, (void **) &buffer);
+
+  /* set value of parameter shift */
+  dummy = 0.0;
+  /* call calc_phi with r=cutoff and shift=0.0 */
+  calc_phi(&(buffer->epsilon),
+           &(buffer->C),
+           &(buffer->Rzero),
+           &dummy,
+           buffer->cutoff,
+           buffer->cutoff,
+           &(buffer->shift));
+  /* set shift to -shift */
+  buffer->shift = -buffer->shift;
+
+
+  /* store model cutoff in KIM object */
+  KIM_ModelRefresh_SetInfluenceDistancePointer(modelRefresh,
+                                               &(buffer->influenceDistance));
+  KIM_ModelRefresh_SetNeighborListPointers(
+      modelRefresh,
+      1,
+      &(buffer->cutoff),
+      &(buffer->modelWillNotRequestNeighborsOfNoncontributingParticles));
+
+  return FALSE;
+}
+
 
 /* destroy function */
 static int destroy_routine(KIM_ModelDestroy * const modelDestroy)
@@ -629,6 +714,50 @@ static int compute_arguments_destroy(
   (void) modelComputeArgumentsDestroy;
 
   /* Nothing further to do */
+
+  return FALSE;
+}
+
+/* write parameterized model routine */
+#undef KIM_LOGGER_FUNCTION_NAME
+#define KIM_LOGGER_FUNCTION_NAME KIM_ModelWriteParameterizedModel_LogEntry
+#undef KIM_LOGGER_OBJECT_NAME
+#define KIM_LOGGER_OBJECT_NAME modelWriteParameterizedModel
+static int write_parameterized_model(
+    KIM_ModelWriteParameterizedModel const * const modelWriteParameterizedModel)
+{
+  FILE * fp;
+  char stringBuffer[2048];
+  struct model_buffer const * buffer;
+
+  /* get buffer from KIM object */
+  KIM_ModelWriteParameterizedModel_GetModelBufferPointer(
+      modelWriteParameterizedModel, (void **) &buffer);
+
+  char const * path;
+  char const * modelName;
+
+  KIM_ModelWriteParameterizedModel_GetPath(modelWriteParameterizedModel, &path);
+  KIM_ModelWriteParameterizedModel_GetModelName(modelWriteParameterizedModel,
+                                                &modelName);
+
+  sprintf(stringBuffer, "%s.params", modelName);
+  KIM_ModelWriteParameterizedModel_SetParameterFileName(
+      modelWriteParameterizedModel, stringBuffer);
+  sprintf(stringBuffer, "%s/%s.params", path, modelName);
+  fp = fopen(stringBuffer, "w");
+  if (NULL == fp)
+  {
+    LOG_ERROR("Unable to open parameter file for writing.");
+    return TRUE;
+  }
+
+  fprintf(fp, "%s\n", buffer->speciesName);
+  fprintf(fp, "%20.10f\n", buffer->cutoff);
+  fprintf(fp, "%20.10f\n", buffer->epsilon);
+  fprintf(fp, "%20.10f\n", buffer->C);
+  fprintf(fp, "%20.10f\n", buffer->Rzero);
+  fclose(fp);
 
   return FALSE;
 }

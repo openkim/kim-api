@@ -108,9 +108,7 @@ typedef int ModelExtensionFunction(ModelExtension const * const modelExtension,
 typedef int ModelRefreshFunction(ModelRefresh * const modelRefresh);
 
 typedef int ModelWriteParameterizedModelFunction(
-    ModelWriteParameterizedModel const * const modelWriteParameterizedModel,
-    std::string const & path,
-    std::string const & modelName) const;
+    ModelWriteParameterizedModel const * const modelWriteParameterizedModel);
 
 typedef int ModelComputeArgumentsDestroyFunction(
     ModelCompute const * const modelCompute,

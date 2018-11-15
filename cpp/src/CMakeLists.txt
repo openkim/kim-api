@@ -58,6 +58,7 @@ set(CPP_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ModelDriverCreate.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ModelRefresh.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ModelRoutineName.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ModelWriteParameterizedModel.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_Numbering.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_SemVer.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_SpeciesName.cpp

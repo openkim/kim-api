@@ -87,6 +87,18 @@ int get_cluster_neigh(void * const dataObject,
 
 void create_FCC_cluster(double FCCspacing, int nCellsPerSide, double * coords);
 
+void compute_loop(double const MinSpacing,
+                  double const MaxSpacing,
+                  double const SpacingIncr,
+                  int const numberOfParticles_cluster,
+                  double * const coords_cluster,
+                  double const cutoff,
+                  NeighList * nl,
+                  KIM::Model const * const kim_cluster_model,
+                  KIM::ComputeArguments const * const computeArguments,
+                  double * const forces_cluster,
+                  double * const energy_cluster_model);
+
 
 /* Main program */
 int main()
@@ -95,9 +107,6 @@ int main()
   double const MinSpacing = 0.8 * FCCSPACING;
   double const MaxSpacing = 1.2 * FCCSPACING;
   double const SpacingIncr = 0.025 * FCCSPACING;
-  double CurrentSpacing;
-  double cutpad = 0.75; /* Angstroms */
-  double force_norm;
   int i;
   int error;
 
@@ -154,6 +163,10 @@ int main()
     error = kim_cluster_model->IsRoutinePresent(
         modelRoutineName, &present, &required);
     if (error) { MY_ERROR("Unable to get ModelRoutineName."); }
+
+    std::cout << "Model routine name \"" << modelRoutineName.String()
+              << "\" has present = " << present
+              << " and required = " << required << "." << std::endl;
 
     if ((present == true) && (required == true))
     {
@@ -358,33 +371,72 @@ int main()
                "-----------------\n";
   std::cout << "Results for KIM Model : " << modelname << std::endl;
 
-  std::cout << std::setw(20) << "Energy" << std::setw(20) << "Force Norm"
-            << std::setw(20) << "Lattice Spacing" << std::endl;
-  for (CurrentSpacing = MinSpacing; CurrentSpacing < MaxSpacing;
-       CurrentSpacing += SpacingIncr)
+  compute_loop(MinSpacing,
+               MaxSpacing,
+               SpacingIncr,
+               numberOfParticles_cluster,
+               &(coords_cluster[0][0]),
+               *cutoff_cluster_model,
+               &nl_cluster_model,
+               kim_cluster_model,
+               computeArguments,
+               forces_cluster,
+               &energy_cluster_model);
+
+  if (numberOfParameters > 0)
   {
-    /* update coordinates for cluster */
-    create_FCC_cluster(CurrentSpacing, NCELLSPERSIDE, &(coords_cluster[0][0]));
-    /* compute neighbor lists */
-    fcc_cluster_neighborlist(0,
-                             NCLUSTERPARTS,
-                             &(coords_cluster[0][0]),
-                             (*cutoff_cluster_model + cutpad),
-                             &nl_cluster_model);
+    int index = numberOfParameters / 2;
+    KIM::DataType dataType;
+    std::string const * name;
+    double value;
+    error = kim_cluster_model->GetParameterMetadata(
+        index, &dataType, NULL, &name, NULL);
+    if (error) { MY_ERROR("Cannot get parameter metadata."); }
+    if (dataType != KIM::DATA_TYPE::Double)
+    { MY_WARNING("Can't change an integer."); }
+    else
+    {
+      error = kim_cluster_model->GetParameter(index, 0, &value);
+      if (error) { MY_ERROR("Cannot get parameter value."); }
+      value *= 1.5;
+      error = kim_cluster_model->SetParameter(index, 0, value);
+      if (error) { MY_ERROR("Cannot set parameter value."); }
+      error = kim_cluster_model->ClearThenRefresh();
+      if (error) { MY_ERROR("Model ClearThenRefresh returned error."); }
 
-    /* call compute functions */
-    error = kim_cluster_model->Compute(computeArguments);
-    if (error) MY_ERROR("compute");
+      std::cout << std::endl
+                << "Updated parameter \"" << *name << "\" to value " << value
+                << "." << std::endl;
 
-    /* compute force norm */
-    force_norm = 0.0;
-    for (i = 0; i < DIM * numberOfParticles_cluster; ++i)
-    { force_norm += forces_cluster[i] * forces_cluster[i]; }
-    force_norm = sqrt(force_norm);
+      kim_cluster_model->GetInfluenceDistance(
+          &influence_distance_cluster_model);
+      kim_cluster_model->GetNeighborListPointers(
+          &number_of_neighbor_lists,
+          &cutoff_cluster_model,
+          &modelWillNotRequestNeighborsOfNoncontributingParticles);
 
-    /* print the results */
-    std::cout << std::setw(20) << energy_cluster_model << std::setw(20)
-              << force_norm << std::setw(20) << CurrentSpacing << std::endl;
+      compute_loop(MinSpacing,
+                   MaxSpacing,
+                   SpacingIncr,
+                   numberOfParticles_cluster,
+                   &(coords_cluster[0][0]),
+                   *cutoff_cluster_model,
+                   &nl_cluster_model,
+                   kim_cluster_model,
+                   computeArguments,
+                   forces_cluster,
+                   &energy_cluster_model);
+    }
+
+    int present;
+    kim_cluster_model->IsRoutinePresent(
+        KIM::MODEL_ROUTINE_NAME::WriteParameterizedModel, &present, NULL);
+    if (present == true)
+    {
+      error = kim_cluster_model->WriteParameterizedModel(
+          ".", "This_IsTheNewModelName");
+      if (error) { MY_ERROR("WriteParameterizedModel returned an error."); }
+    }
   }
 
   /* call compute arguments destroy */
@@ -400,6 +452,47 @@ int main()
 
   /* everything is great */
   return 0;
+}
+
+void compute_loop(double const MinSpacing,
+                  double const MaxSpacing,
+                  double const SpacingIncr,
+                  int const numberOfParticles_cluster,
+                  double * const coords_cluster,
+                  double const cutoff,
+                  NeighList * nl,
+                  KIM::Model const * const kim_cluster_model,
+                  KIM::ComputeArguments const * const computeArguments,
+                  double * const forces_cluster,
+                  double * const energy_cluster_model)
+{
+  double const cutpad = 0.75; /* Angstroms */
+
+  std::cout << std::setw(20) << "Energy" << std::setw(20) << "Force Norm"
+            << std::setw(20) << "Lattice Spacing" << std::endl;
+  for (double CurrentSpacing = MinSpacing; CurrentSpacing < MaxSpacing;
+       CurrentSpacing += SpacingIncr)
+  {
+    /* update coordinates for cluster */
+    create_FCC_cluster(CurrentSpacing, NCELLSPERSIDE, coords_cluster);
+    /* compute neighbor lists */
+    fcc_cluster_neighborlist(
+        0, NCLUSTERPARTS, coords_cluster, (cutoff + cutpad), nl);
+
+    /* call compute functions */
+    int error = kim_cluster_model->Compute(computeArguments);
+    if (error) MY_ERROR("compute");
+
+    /* compute force norm */
+    double force_norm = 0.0;
+    for (int i = 0; i < DIM * numberOfParticles_cluster; ++i)
+    { force_norm += forces_cluster[i] * forces_cluster[i]; }
+    force_norm = sqrt(force_norm);
+
+    /* print the results */
+    std::cout << std::setw(20) << *energy_cluster_model << std::setw(20)
+              << force_norm << std::setw(20) << CurrentSpacing << std::endl;
+  }
 }
 
 void create_FCC_cluster(double FCCspacing, int nCellsPerSide, double * coords)

@@ -33,86 +33,49 @@
 /*                                                                            */
 
 
-#ifndef KIM_MODEL_HEADERS_H_
-#define KIM_MODEL_HEADERS_H_
-
-#ifndef KIM_MODEL_CREATE_H_
-#include "KIM_ModelCreate.h"
-#endif
-
-#ifndef KIM_LOG_VERBOSITY_H_
-#include "KIM_LogVerbosity.h"
-#endif
-
-#ifndef KIM_LANGUAGE_NAME_H_
-#include "KIM_LanguageName.h"
-#endif
-
-#ifndef KIM_NUMBERING_H_
-#include "KIM_Numbering.h"
-#endif
-
-#ifndef KIM_MODEL_ROUTINE_NAME_H_
-#include "KIM_ModelRoutineName.h"
-#endif
-
-#ifndef KIM_SPECIES_NAME_H_
-#include "KIM_SpeciesName.h"
-#endif
-
-#ifndef KIM_SUPPORT_STATUS_H_
-#include "KIM_SupportStatus.h"
-#endif
-
-#ifndef KIM_UNIT_SYSTEM_H_
-#include "KIM_UnitSystem.h"
-#endif
-
-
-#ifndef KIM_MODEL_COMPUTE_ARGUMENTS_CREATE_H_
-#include "KIM_ModelComputeArgumentsCreate.h"
-#endif
-
-#ifndef KIM_COMPUTE_ARGUMENT_NAME_H_
-#include "KIM_ComputeArgumentName.h"
-#endif
-
-#ifndef KIM_DATA_TYPE_H_
-#include "KIM_DataType.h"
-#endif
-
-#ifndef KIM_COMPUTE_CALLBACK_NAME_H_
-#include "KIM_ComputeCallbackName.h"
-#endif
-
-
-#ifndef KIM_MODEL_COMPUTE_ARGUMENTS_H_
-#include "KIM_ModelComputeArguments.h"
-#endif
-
-
-#ifndef KIM_MODEL_COMPUTE_ARGUMENTS_DESTROY_H_
-#include "KIM_ModelComputeArgumentsDestroy.h"
-#endif
-
-
-#ifndef KIM_MODEL_COMPUTE_H_
-#include "KIM_ModelCompute.h"
-#endif
-
-
-#ifndef KIM_MODEL_REFRESH_H_
-#include "KIM_ModelRefresh.h"
-#endif
-
-
 #ifndef KIM_MODEL_WRITE_PARAMETERIZED_MODEL_H_
-#include "KIM_ModelWriteParameterizedModel.h"
+#define KIM_MODEL_WRITE_PARAMETERIZED_MODEL_H_
+
+/* Forward declarations */
+#ifndef KIM_LOG_VERBOSITY_DEFINED_
+#define KIM_LOG_VERBOSITY_DEFINED_
+typedef struct KIM_LogVerbosity KIM_LogVerbosity;
 #endif
 
 
-#ifndef KIM_MODEL_DESTROY_H_
-#include "KIM_ModelDestroy.h"
+struct KIM_ModelWriteParameterizedModel;
+
+#ifndef KIM_MODEL_WRITE_PARAMETERIZED_MODEL_DEFINED_
+#define KIM_MODEL_WRITE_PARAMETERIZED_MODEL_DEFINED_
+typedef struct KIM_ModelWriteParameterizedModel
+    KIM_ModelWriteParameterizedModel;
 #endif
 
-#endif /* KIM_MODEL_HEADERS_H_ */
+void KIM_ModelWriteParameterizedModel_GetPath(
+    KIM_ModelWriteParameterizedModel const * const modelWriteParameterizedModel,
+    char const ** const path);
+
+void KIM_ModelWriteParameterizedModel_GetModelName(
+    KIM_ModelWriteParameterizedModel const * const modelWriteParameterizedModel,
+    char const ** const modelName);
+
+void KIM_ModelWriteParameterizedModel_SetParameterFileName(
+    KIM_ModelWriteParameterizedModel const * const modelWriteParameterizedModel,
+    char const * const fileName);
+
+void KIM_ModelWriteParameterizedModel_GetModelBufferPointer(
+    KIM_ModelWriteParameterizedModel const * const modelWriteParameterizedModel,
+    void ** const ptr);
+
+void KIM_ModelWriteParameterizedModel_LogEntry(
+    KIM_ModelWriteParameterizedModel const * const modelWriteParameterizedModel,
+    KIM_LogVerbosity const logVerbosity,
+    char const * const message,
+    int const lineNumber,
+    char const * const fileName);
+
+char const * KIM_ModelWriteParameterizedModel_ToString(
+    KIM_ModelWriteParameterizedModel const * const
+        modelWriteParameterizedModel);
+
+#endif /* KIM_MODEL_WRITE_PARAMETERIZED_MODEL_H_ */

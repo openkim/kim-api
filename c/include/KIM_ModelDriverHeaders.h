@@ -106,6 +106,11 @@
 #endif
 
 
+#ifndef KIM_MODEL_WRITE_PARAMETERIZED_MODEL_H_
+#include "KIM_ModelWriteParameterizedModel.h"
+#endif
+
+
 #ifndef KIM_MODEL_DESTROY_H_
 #include "KIM_ModelDestroy.h"
 #endif

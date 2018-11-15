@@ -453,6 +453,8 @@ a guiding principle.
     kim_model_driver_create_module::kim_model_driver_create_to_string()
     <br>
     kim_model_refresh_module::kim_model_refresh_to_string()
+    <br>
+    kim_model_write_parameterized_model_module::kim_model_write_parameterized_model_to_string()
   </td>
 </tr>
 <tr>
@@ -596,6 +598,8 @@ a guiding principle.
     kim_model_compute_arguments_module::kim_model_compute_arguments_get_model_buffer_pointer()
     <br>
     kim_model_compute_arguments_destroy_module::kim_model_compute_arguments_destroy_get_model_buffer_pointer()
+    <br>
+    kim_model_write_parameterized_model_module::kim_model_write_parameterized_model_get_model_buffer_pointer()
   </td>
 </tr>
 <tr>
@@ -1367,6 +1371,8 @@ a guiding principle.
     kim_model_compute_arguments_destroy_module::kim_model_compute_arguments_destroy_log_entry()
     <br>
     kim_model_driver_create_module::kim_model_driver_create_log_entry()
+    <br>
+    kim_model_write_parameterized_model_module::kim_model_write_parameterized_model_log_entry()
   </td>
 </tr>
 <tr>
@@ -1889,6 +1895,58 @@ a guiding principle.
     N/A
   </td><td>
     N/A
+  </td>
+</tr>
+<tr>
+  <td>
+    N/A
+  </td><td>
+    KIM::ModelWriteParameterizedModel::GetPath()
+  </td><td>
+    \ref KIM_ModelWriteParameterizedModel_GetPath()
+  </td><td>
+    kim_get_path() -- overloaded
+    <br>
+    kim_model_write_parameterized_model_module::kim_model_write_parameterized_model_get_path()
+  </td>
+</tr>
+<tr>
+  <td>
+    N/A
+  </td><td>
+    KIM::ModelWriteParameterizedModel::GetModelName()
+  </td><td>
+    \ref KIM_ModelWriteParameterizedModel_GetModelName()
+  </td><td>
+    kim_get_model_name() -- overloaded
+    <br>
+    kim_model_write_parameterized_model_module::kim_model_write_parameterized_model_get_model_name()
+  </td>
+</tr>
+<tr>
+  <td>
+    N/A
+  </td><td>
+    KIM::ModelWriteParameterizedModel::SetParameterFileName()
+  </td><td>
+    \ref KIM_ModelWriteParameterizedModel_SetParameterFileName()
+  </td><td>
+    kim_set_parameter_file_name() -- overloaded
+    <br>
+    kim_model_write_parameterized_model_module::kim_model_write_parameterized_model_set_parameter_file_name()
+  </td>
+</tr>
+<tr>
+  <td>
+    N/A
+  </td><td>
+    KIM::ModelWriteParameterizedModel::GetPath()
+  </td><td>
+    \ref KIM_ModelWriteParameterizedModel_GetPath()
+  </td><td>
+    kim_get_path() -- overloaded
+    <br>
+    kim_model_write_parameterized_model_module::kim_model_write_parameterized_model_get_path()
   </td>
 </tr>
 </table>

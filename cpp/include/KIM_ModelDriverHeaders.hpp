@@ -104,6 +104,11 @@
 #endif
 
 
+#ifndef KIM_MODEL_WRITE_PARAMETERIZED_MODEL_HPP_
+#include "KIM_ModelWriteParameterizedModel.hpp"
+#endif
+
+
 #ifndef KIM_MODEL_DESTROY_HPP_
 #include "KIM_ModelDestroy.hpp"
 #endif

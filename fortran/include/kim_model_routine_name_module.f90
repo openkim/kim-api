@@ -46,6 +46,7 @@ module kim_model_routine_name_module
     KIM_MODEL_ROUTINE_NAME_COMPUTE, &
     KIM_MODEL_ROUTINE_NAME_EXTENSION, &
     KIM_MODEL_ROUTINE_NAME_REFRESH, &
+    KIM_MODEL_ROUTINE_NAME_WRITE_PARAMETERIZED_MODEL, &
     KIM_MODEL_ROUTINE_NAME_COMPUTE_ARGUMENTS_DESTROY, &
     KIM_MODEL_ROUTINE_NAME_DESTROY, &
 
@@ -77,6 +78,9 @@ module kim_model_routine_name_module
   type(kim_model_routine_name_type), protected, &
     bind(c, name="KIM_MODEL_ROUTINE_NAME_Refresh") &
     :: KIM_MODEL_ROUTINE_NAME_REFRESH
+  type(kim_model_routine_name_type), protected, &
+    bind(c, name="KIM_MODEL_ROUTINE_NAME_WriteParameterizedModel") &
+    :: KIM_MODEL_ROUTINE_NAME_WRITE_PARAMETERIZED_MODEL
   type(kim_model_routine_name_type), protected, &
     bind(c, name="KIM_MODEL_ROUTINE_NAME_ComputeArgumentsDestroy") &
     :: KIM_MODEL_ROUTINE_NAME_COMPUTE_ARGUMENTS_DESTROY

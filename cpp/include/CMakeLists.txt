@@ -71,6 +71,7 @@ set(CPP_HEADERS
   KIM_ModelRefresh.hpp
   KIM_ModelRoutineName.hpp
   KIM_ModelRoutineName.inc
+  KIM_ModelWriteParameterizedModel.hpp
   KIM_Numbering.hpp
   KIM_Numbering.inc
   KIM_SemVer.hpp
