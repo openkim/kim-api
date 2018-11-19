@@ -112,6 +112,17 @@ struct KIM_ModelCompute
 }  // extern "C"
 #endif
 
+#ifndef KIM_MODEL_EXTENSION_H_
+extern "C" {
+#include "KIM_ModelExtension.h"
+
+struct KIM_ModelExtension
+{
+  void * p;
+};
+}  // extern "C"
+#endif
+
 #ifndef KIM_MODEL_WRITE_PARAMETERIZED_MODEL_H_
 extern "C" {
 #include "KIM_ModelWriteParameterizedModel.h"
@@ -1239,6 +1250,12 @@ int ModelImplementation::Compute(
   }
 }
 
+void ModelImplementation::GetExtensionID(
+    std::string const ** const extensionID) const
+{
+  *extensionID = &extensionID_;
+}
+
 int ModelImplementation::Extension(std::string const & extensionID,
                                    void * const extensionStructure)
 {
@@ -1248,7 +1265,9 @@ int ModelImplementation::Extension(std::string const & extensionID,
 #endif
   LOG_DEBUG("Enter  " + callString);
 
-  int error = ModelExtension(extensionID, extensionStructure);
+  extensionID_ = extensionID;
+  int error = ModelExtension(extensionStructure);
+  extensionID_ = "";
 
   if (error)
   {
@@ -2505,20 +2524,63 @@ int ModelImplementation::ModelCompute(
   }
 }
 
-int ModelImplementation::ModelExtension(std::string const & extensionID,
-                                        void * const extensionStructure)
+int ModelImplementation::ModelExtension(void * const extensionStructure)
 {
 #if DEBUG_VERBOSITY
-  std::string const callString = "ModelExtension(" + extensionID + ", "
-                                 + SPTR(extensionStructure) + ").";
+  std::string const callString
+      = "ModelExtension(" + SPTR(extensionStructure) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
-  // @@@@@  also check to see if provided
-  (void) extensionID;
-  (void) extensionStructure;
+  std::map<ModelRoutineName const, Function *, MODEL_ROUTINE_NAME::Comparator>::
+      const_iterator funcResult
+      = routineFunction_.find(MODEL_ROUTINE_NAME::Extension);
+  std::map<ModelRoutineName const,
+           LanguageName,
+           MODEL_ROUTINE_NAME::Comparator>::const_iterator langResult
+      = routineLanguage_.find(MODEL_ROUTINE_NAME::Extension);
 
-  int error = true;
+  ModelExtensionFunction * CppExtension
+      = reinterpret_cast<ModelExtensionFunction *>(funcResult->second);
+  KIM_ModelExtensionFunction * CExtension
+      = reinterpret_cast<KIM_ModelExtensionFunction *>(funcResult->second);
+  typedef void ModelExtensionF(
+      KIM_ModelExtension * const, void * const, int * const);
+  ModelExtensionF * FExtension
+      = reinterpret_cast<ModelExtensionF *>(funcResult->second);
+
+  int error;
+  struct Mdl
+  {
+    void * p;
+  };
+  Mdl M;
+  M.p = this;
+  if (langResult->second == LANGUAGE_NAME::cpp)
+  {
+    error = CppExtension(reinterpret_cast<KIM::ModelExtension *>(&M),
+                         extensionStructure);
+  }
+  else if (langResult->second == LANGUAGE_NAME::c)
+  {
+    KIM_ModelExtension cM;
+    cM.p = &M;
+    error = CExtension(&cM, extensionStructure);
+  }
+  else if (langResult->second == LANGUAGE_NAME::fortran)
+  {
+    KIM_ModelExtension cM;
+    cM.p = &M;
+    KIM_ModelExtension cM_Handle;
+    cM_Handle.p = &cM;
+    FExtension(&cM_Handle, extensionStructure, &error);
+  }
+  else
+  {
+    LOG_ERROR("Unknown LanguageName.  SHOULD NEVER GET HERE.");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
 
   if (error)
   {

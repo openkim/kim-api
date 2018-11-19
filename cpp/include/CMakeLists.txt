@@ -63,6 +63,7 @@ set(CPP_HEADERS
   KIM_ModelComputeArguments.hpp
   KIM_ModelCompute.hpp
   KIM_ModelCreate.hpp
+  KIM_ModelExtension.hpp
   KIM_ModelDestroy.hpp
   KIM_ModelDriverCreate.hpp
   KIM_ModelDriverHeaders.hpp
@@ -78,6 +79,7 @@ set(CPP_HEADERS
   KIM_SimulatorHeaders.hpp
   KIM_SpeciesName.hpp
   KIM_SpeciesName.inc
+  KIM_SupportedExtensions.hpp
   KIM_SupportStatus.hpp
   KIM_SupportStatus.inc
   KIM_TemperatureUnit.hpp

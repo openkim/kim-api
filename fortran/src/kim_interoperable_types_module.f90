@@ -45,6 +45,7 @@ module kim_interoperable_types_module
     kim_model_compute_arguments_type, &
     kim_model_compute_type, &
     kim_model_create_type, &
+    kim_model_extension_type, &
     kim_model_destroy_type, &
     kim_model_driver_create_type, &
     kim_model_type, &
@@ -86,6 +87,11 @@ module kim_interoperable_types_module
     private
     type(c_ptr) :: p
   end type kim_model_create_type
+
+  type, bind(c) :: kim_model_extension_type
+    private
+    type(c_ptr) :: p
+  end type kim_model_extension_type
 
   type, bind(c) :: kim_model_destroy_type
     private

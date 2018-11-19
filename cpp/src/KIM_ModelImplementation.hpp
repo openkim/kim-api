@@ -190,6 +190,8 @@ class ModelImplementation
 
 
   int Compute(ComputeArguments const * const computeArguments) const;
+
+  void GetExtensionID(std::string const ** const extensionID) const;
   int Extension(std::string const & extensionID,
                 void * const extensionStructure);
   int ClearThenRefresh();
@@ -261,8 +263,7 @@ class ModelImplementation
       ComputeArguments * const computeArguments) const;
 
   int ModelCompute(ComputeArguments const * const computeArguments) const;
-  int ModelExtension(std::string const & extensionID,
-                     void * const extensionStructure);
+  int ModelExtension(void * const extensionStructure);
   int ModelRefresh();
   int ModelWriteParameterizedModel() const;
 
@@ -341,6 +342,8 @@ class ModelImplementation
   std::vector<DataType> parameterDataType_;
   std::vector<int> parameterExtent_;
   std::vector<void *> parameterPointer_;
+
+  std::string extensionID_;
 
   mutable std::string writePath_;
   mutable std::string writeModelName_;

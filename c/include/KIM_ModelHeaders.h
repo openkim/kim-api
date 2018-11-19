@@ -101,6 +101,11 @@
 #endif
 
 
+#ifndef KIM_MODEL_EXTENSION_H_
+#include "KIM_ModelExtension.h"
+#endif
+
+
 #ifndef KIM_MODEL_REFRESH_H_
 #include "KIM_ModelRefresh.h"
 #endif

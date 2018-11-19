@@ -408,7 +408,7 @@ subroutine model_compute_arguments_create(model_compute_handle, &
 
   integer(c_int) :: ierr2
 
-  ! avoid unsed dummy argument warnings
+  ! avoid unused dummy argument warnings
   if (model_compute_handle .eq. KIM_MODEL_COMPUTE_NULL_HANDLE) continue
 
   ierr = 0
@@ -466,7 +466,7 @@ subroutine model_compute_arguments_destroy(model_compute_handle, &
     model_compute_arguments_destroy_handle
   integer(c_int), intent(out) :: ierr
 
-  ! avoid unsed dummy argument warnings
+  ! avoid unused dummy argument warnings
   if (model_compute_handle .eq. KIM_MODEL_COMPUTE_NULL_HANDLE) continue
   if (model_compute_arguments_destroy_handle .eq. &
     KIM_MODEL_COMPUTE_ARGUMENTS_DESTROY_NULL_HANDLE) continue

@@ -50,6 +50,7 @@ set(C_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ModelComputeArgumentsCreate_c.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ModelComputeArgumentsDestroy_c.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ModelCreate_c.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ModelExtension_c.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ModelDestroy_c.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ModelDriverCreate_c.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ModelRefresh_c.cpp

@@ -56,6 +56,7 @@ set(CPP_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ModelCreate.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ModelDestroy.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ModelDriverCreate.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ModelExtension.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ModelRefresh.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ModelRoutineName.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ModelWriteParameterizedModel.cpp

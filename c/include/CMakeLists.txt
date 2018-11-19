@@ -56,6 +56,7 @@ set(C_HEADERS
     KIM_ModelComputeArgumentsDestroy.h
     KIM_ModelComputeArguments.h
     KIM_ModelCreate.h
+    KIM_ModelExtension.h
     KIM_ModelDestroy.h
     KIM_ModelDriverCreate.h
     KIM_ModelDriverHeaders.h
@@ -68,6 +69,7 @@ set(C_HEADERS
     KIM_SimulatorHeaders.h
     KIM_SpeciesName.h
     KIM_SupportStatus.h
+    KIM_SupportedExtensions.h
     KIM_TemperatureUnit.h
     KIM_TimeUnit.h
     KIM_UnitSystem.h

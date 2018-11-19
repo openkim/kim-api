@@ -23,31 +23,14 @@
 # All rights reserved.
 #
 # Contributors:
-#    Richard Berger
-#    Christoph Junghans
 #    Ryan S. Elliott
 #
 
-#
-# Release: This file is part of the kim-api.git repository.
-#
 
+This directory (ex_model_Ar_P_Morse_07C_w_Extensions) contains a shifted Morse
+pair potential Model written in C.
 
-cmake_minimum_required(VERSION 3.4)
+   phi(r) = epsilon * ( - exp[ -2*C*(r - Rzero) ] + 2*exp[ -C*(r - Rzero) ] )
+            + shift
 
-set(TEST_MODELS
-  LennardJones612_UniversalShifted__MO_959249795837_003
-  LennardJones_Ar
-  ex_model_Ar_P_LJ
-  ex_model_Ar_P_MLJ_Fortran
-  ex_model_Ar_P_Morse
-  ex_model_Ar_P_Morse_07C
-  ex_model_Ar_P_Morse_07C_w_Extensions
-  ex_model_Ar_P_Morse_MultiCutoff
-  ex_model_Ar_SLJ_MultiCutoff
-  )
-
-add_subdirectory(ex_test_Ar_fcc_cluster)
-add_subdirectory(ex_test_Ar_fcc_cluster_cpp)
-add_subdirectory(ex_test_Ar_fcc_cluster_fortran)
-add_subdirectory(utility_forces_numer_deriv)
+where shift is computed so that phi(rcut) = 0.0

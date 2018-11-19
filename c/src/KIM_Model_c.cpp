@@ -311,6 +311,16 @@ int KIM_Model_Compute(KIM_Model const * const model,
   return pModel->Compute(pComputeArguments);
 }
 
+int KIM_Model_Extension(KIM_Model const * const model,
+                        char const * const extensionID,
+                        void * const extensionStructure)
+
+{
+  CONVERT_POINTER;
+
+  return pModel->Extension(extensionID, extensionStructure);
+}
+
 int KIM_Model_ClearThenRefresh(KIM_Model * const model)
 {
   CONVERT_POINTER;

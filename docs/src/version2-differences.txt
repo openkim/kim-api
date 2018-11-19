@@ -406,6 +406,8 @@ a guiding principle.
     <br>
     KIM::ModelCreate::String()
     <br>
+    KIM::ModelExtension::String()
+    <br>
     KIM::ModelDestroy::String()
     <br>
     KIM::ModelDriverCreate::String()
@@ -425,6 +427,8 @@ a guiding principle.
     KIM_ModelComputeArgumentsDestroy_ToString()
     <br>
     KIM_ModelCreate_ToString()
+    <br>
+    KIM_ModelExtension_ToString()
     <br>
     KIM_ModelDestroy_ToString()
     <br>
@@ -447,6 +451,8 @@ a guiding principle.
     kim_model_compute_arguments_destroy_module::kim_model_compute_arguments_destroy_to_string()
     <br>
     kim_model_create_module::kim_model_create_to_string()
+    <br>
+    kim_model_extension_module::kim_model_extension_to_string()
     <br>
     kim_model_destroy_module::kim_model_destroy_to_string()
     <br>
@@ -563,6 +569,8 @@ a guiding principle.
   </td><td>
     KIM::ModelCompute::GetModelBufferPointer()
     <br>
+    KIM::ModelExtension::GetModelBufferPointer()
+    <br>
     KIM::ModelComputeArguments::GetModelBufferPointer()
     <br>
     KIM::ModelDestroy::GetModelBufferPointer()
@@ -574,6 +582,8 @@ a guiding principle.
     KIM::ModelComputeArgumentsDestroy::GetModelBufferPointer()
   </td><td>
     KIM_ModelCompute_GetModelBufferPointer()
+    <br>
+    KIM_ModelExtension_GetModelBufferPointer()
     <br>
     KIM_ModelComputeArguments_GetModelBufferPointer()
     <br>
@@ -588,6 +598,8 @@ a guiding principle.
     kim_get_model_buffer_pointer() -- overloaded
     <br>
     kim_model_compute_module::kim_model_compute_get_model_buffer_pointer()
+    <br>
+    kim_model_extension_module::kim_model_extension_get_model_buffer_pointer()
     <br>
     kim_model_compute_arguments_module::kim_model_compute_arguments_get_model_buffer_pointer()
     <br>
@@ -1322,6 +1334,8 @@ a guiding principle.
     <br>
     KIM::ModelCompute::LogEntry()
     <br>
+    KIM::ModelExtension::LogEntry()
+    <br>
     KIM::ModelRefresh::LogEntry()
     <br>
     KIM::ModelDestroy::LogEntry()
@@ -1339,6 +1353,8 @@ a guiding principle.
     KIM_ModelCreate_LogEntry()
     <br>
     KIM_ModelCompute_LogEntry()
+    <br>
+    KIM_ModelExtension_LogEntry()
     <br>
     KIM_ModelRefresh_LogEntry()
     <br>
@@ -1359,6 +1375,8 @@ a guiding principle.
     kim_model_create_module::kim_model_create_log_entry()
     <br>
     kim_model_compute_module::kim_model_compute_log_entry()
+    <br>
+    kim_model_extension_module::kim_model_extension_log_entry()
     <br>
     kim_model_refresh_module::kim_model_refresh_log_entry()
     <br>
@@ -1895,6 +1913,149 @@ a guiding principle.
     N/A
   </td><td>
     N/A
+  </td>
+</tr>
+<tr>
+  <td>
+    N/A
+  </td><td>
+    KIM::ModelExtension::GetExtensionID()
+  </td><td>
+    \ref KIM_ModelExtension_GetExtensionID()
+  </td><td>
+    kim_get_extension_id() -- overloaded
+    <br>
+    kim_model_extension_module::kim_model_extension_get_extension_id()
+  </td>
+</tr>
+<tr>
+  <td>
+    N/A
+  </td><td>
+    KIM::ModelExtension::Model()
+  </td><td>
+    \ref KIM_ModelExtension_ToModel()
+  </td><td>
+    kim_to_model() -- overloaded
+    <br>
+    kim_model_extension_module::kim_model_extension_to_model()
+  </td>
+</tr>
+<tr>
+  <td>
+    N/A
+  </td><td>
+    KIM::ModelExtension::ModelCompute()
+  </td><td>
+    \ref KIM_ModelExtension_ToModelCompute()
+  </td><td>
+    kim_to_model_compute() -- overloaded
+    <br>
+    kim_model_extension_module::kim_model_extension_to_model_compute()
+  </td>
+</tr>
+<tr>
+  <td>
+    N/A
+  </td><td>
+    KIM::ModelExtension::ModelCreate()
+  </td><td>
+    \ref KIM_ModelExtension_ToModelCreate()
+  </td><td>
+    kim_to_model_create() -- overloaded
+    <br>
+    kim_model_extension_module::kim_model_extension_to_model_create()
+  </td>
+</tr>
+<tr>
+  <td>
+    N/A
+  </td><td>
+    KIM::ModelExtension::ModelDestroy()
+  </td><td>
+    \ref KIM_ModelExtension_ToModelDestroy()
+  </td><td>
+    kim_to_model_destroy() -- overloaded
+    <br>
+    kim_model_extension_module::kim_model_extension_to_model_destroy()
+  </td>
+</tr>
+<tr>
+  <td>
+    N/A
+  </td><td>
+    KIM::ModelExtension::ModelDriverCreate()
+  </td><td>
+    \ref KIM_ModelExtension_ToModelDriverCreate()
+  </td><td>
+    kim_to_model_driver_create() -- overloaded
+    <br>
+    kim_model_extension_module::kim_model_extension_to_model_driver_create()
+  </td>
+</tr>
+<tr>
+  <td>
+    N/A
+  </td><td>
+    KIM::ModelExtension::ModelRefresh()
+  </td><td>
+    \ref KIM_ModelExtension_ToModelRefresh()
+  </td><td>
+    kim_to_model_refresh() -- overloaded
+    <br>
+    kim_model_extension_module::kim_model_extension_to_model_refresh()
+  </td>
+</tr>
+<tr>
+  <td>
+    N/A
+  </td><td>
+    KIM::ModelExtension::ModelWriteParameterizedModel()
+  </td><td>
+    \ref KIM_ModelExtension_ToModelWriteParameterizedModel()
+  </td><td>
+    kim_to_model_write_parameterized_model() -- overloaded
+    <br>
+    kim_model_extension_module::kim_model_extension_to_model_write_parameterized_model()
+  </td>
+</tr>
+<tr>
+  <td>
+    N/A
+  </td><td>
+    KIM::ModelExtension::ModelComputeArguments()
+  </td><td>
+    \ref KIM_ModelExtension_ToModelComputeArguments()
+  </td><td>
+    kim_to_model_compute_arguments() -- overloaded
+    <br>
+    kim_model_extension_module::kim_model_extension_to_model_compute_arguments()
+  </td>
+</tr>
+<tr>
+  <td>
+    N/A
+  </td><td>
+    KIM::ModelExtension::ModelComputeArgumentsCreate()
+  </td><td>
+    \ref KIM_ModelExtension_ToModelComputeArgumentsCreate()
+  </td><td>
+    kim_to_model_compute_arguments_create() -- overloaded
+    <br>
+    kim_model_extension_module::kim_model_extension_to_model_compute_arguments_create()
+  </td>
+</tr>
+<tr>
+  <td>
+    N/A
+  </td><td>
+    KIM::ModelExtension::ModelComputeArgumentsDestroy()
+  </td><td>
+    \ref KIM_ModelExtension_ToModelComputeArgumentsDestroy()
+  </td><td>
+    kim_to_model_compute_arguments_destroy() -- overloaded
+    <br>
+    kim_model_extension_module::kim_model_extension_to_model_compute_arguments_destroy()
   </td>
 </tr>
 <tr>

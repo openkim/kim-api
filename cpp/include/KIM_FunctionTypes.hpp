@@ -101,8 +101,7 @@ typedef int ProcessD2EDr2TermFunction(void * const dataObject,
                                       int const * const i,
                                       int const * const j);
 
-typedef int ModelExtensionFunction(ModelExtension const * const modelExtension,
-                                   std::string const & extensionID,
+typedef int ModelExtensionFunction(ModelExtension * const modelExtension,
                                    void * const extensionStructure);
 
 typedef int ModelRefreshFunction(ModelRefresh * const modelRefresh);

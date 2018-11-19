@@ -165,7 +165,6 @@ typedef int KIM_ProcessD2EDr2TermFunction(void * const dataObject,
 
 typedef int
 KIM_ModelExtensionFunction(KIM_ModelExtension * const modelExtension,
-                           char const * const extensionID,
                            void * const extensionStructure);
 
 typedef int KIM_ModelRefreshFunction(KIM_ModelRefresh * const modelRefresh);

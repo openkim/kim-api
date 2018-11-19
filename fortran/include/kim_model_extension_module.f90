@@ -57,6 +57,8 @@ module kim_model_extension_module
     kim_to_model_compute_arguments, &
     kim_to_model_compute_arguments_create, &
     kim_to_model_compute_arguments_destroy, &
+    kim_c_char_array_to_string, &
+    kim_c_char_ptr_to_string, &
     kim_get_model_buffer_pointer, &
     kim_log_entry, &
     kim_to_string
@@ -120,6 +122,14 @@ module kim_model_extension_module
   interface kim_to_model_compute_arguments_destroy
     module procedure kim_model_extension_to_model_compute_arguments_destroy
   end interface kim_to_model_compute_arguments_destroy
+
+  interface kim_c_char_array_to_string
+    module procedure kim_model_extension_convert_c_char_array_to_string
+  end interface kim_c_char_array_to_string
+
+  interface kim_c_char_ptr_to_string
+    module procedure kim_model_extension_convert_c_char_ptr_to_string
+  end interface kim_c_char_ptr_to_string
 
   interface kim_get_model_buffer_pointer
     module procedure kim_model_extension_get_model_buffer_pointer
@@ -298,6 +308,26 @@ contains
 
     model_compute_arguments_destroy_handle%p = compute_arguments_c_ptr
   end subroutine kim_model_extension_to_model_compute_arguments_destroy
+
+  subroutine kim_model_extension_convert_c_char_array_to_string( &
+    c_char_array, string)
+    use kim_convert_string_module, only : kim_convert_c_char_array_to_string
+    implicit none
+    character(len=1, kind=c_char), intent(in) :: c_char_array(:)
+    character(len=*, kind=c_char), intent(out) :: string
+
+    call kim_convert_c_char_array_to_string(c_char_array, string)
+  end subroutine kim_model_extension_convert_c_char_array_to_string
+
+  subroutine kim_model_extension_convert_c_char_ptr_to_string( &
+    c_char_ptr, string)
+    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
+    implicit none
+    type(c_ptr), intent(in) :: c_char_ptr
+    character(len=*, kind=c_char), intent(out) :: string
+
+    call kim_convert_c_char_ptr_to_string(c_char_ptr, string)
+  end subroutine kim_model_extension_convert_c_char_ptr_to_string
 
   subroutine kim_model_extension_get_model_buffer_pointer( &
     model_extension_handle, ptr)

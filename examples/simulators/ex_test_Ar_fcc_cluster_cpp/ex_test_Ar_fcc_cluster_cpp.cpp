@@ -31,6 +31,7 @@
 
 
 #include "KIM_SimulatorHeaders.hpp"
+#include "KIM_SupportedExtensions.hpp"
 #include <cmath>
 #include <iomanip>
 #include <iostream>
@@ -162,7 +163,7 @@ int main()
     int required;
     error = kim_cluster_model->IsRoutinePresent(
         modelRoutineName, &present, &required);
-    if (error) { MY_ERROR("Unable to get ModelRoutineName."); }
+    if (error) { MY_ERROR("Unable to get routine present/required."); }
 
     std::cout << "Model routine name \"" << modelRoutineName.String()
               << "\" has present = " << present
@@ -289,6 +290,30 @@ int main()
               << " extent      : " << extent << std::endl
               << " name        : " << *strName << std::endl
               << " description : " << *strDesc << std::endl;
+  }
+
+  // Check supported extensions, if any
+  int present;
+  error = kim_cluster_model->IsRoutinePresent(
+      KIM::MODEL_ROUTINE_NAME::Extension, &present, NULL);
+  if (error) { MY_ERROR("Unable to get Extension present/required."); }
+  if (present)
+  {
+    KIM::SupportedExtensions supportedExtensions;
+    error = kim_cluster_model->Extension(KIM_SUPPORTED_EXTENSIONS_ID,
+                                         &supportedExtensions);
+    if (error) { MY_ERROR("Error returned from KIM::Model::Extension()."); }
+    std::cout << "Model Supports "
+              << supportedExtensions.numberOfSupportedExtensions
+              << " Extensions:" << std::endl;
+    for (int i = 0; i < supportedExtensions.numberOfSupportedExtensions; ++i)
+    {
+      std::cout << " spportedExtensionID[" << std::setw(2) << i << "] = \""
+                << supportedExtensions.supportedExtensionID[i] << "\" "
+                << "which has required = "
+                << supportedExtensions.supportedExtensionRequired[i] << "."
+                << std::endl;
+    }
   }
 
   // We're compatible with the model. Let's do it.

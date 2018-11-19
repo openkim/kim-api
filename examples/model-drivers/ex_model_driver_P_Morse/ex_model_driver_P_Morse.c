@@ -729,13 +729,12 @@ static int write_parameterized_model(
   FILE * fp;
   char stringBuffer[2048];
   struct model_buffer const * buffer;
+  char const * path;
+  char const * modelName;
 
   /* get buffer from KIM object */
   KIM_ModelWriteParameterizedModel_GetModelBufferPointer(
       modelWriteParameterizedModel, (void **) &buffer);
-
-  char const * path;
-  char const * modelName;
 
   KIM_ModelWriteParameterizedModel_GetPath(modelWriteParameterizedModel, &path);
   KIM_ModelWriteParameterizedModel_GetModelName(modelWriteParameterizedModel,

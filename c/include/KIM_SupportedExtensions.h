@@ -33,91 +33,24 @@
 /*                                                                            */
 
 
-#ifndef KIM_MODEL_DRIVER_HEADERS_H_
-#define KIM_MODEL_DRIVER_HEADERS_H_
+#ifndef KIM_SUPPORTED_EXTENSIONS_H_
+#define KIM_SUPPORTED_EXTENSIONS_H_
 
-#ifndef KIM_MODEL_DRIVER_CREATE_H_
-#include "KIM_ModelDriverCreate.h"
+#define KIM_SUPPORTED_EXTENSIONS_ID "KIM_SupportedExtensions"
+#define KIM_MAX_EXTENSION_ID_LENGTH 128
+#define KIM_MAX_NUMBER_OF_EXTENSIONS 64
+
+struct KIM_SupportedExtensions
+{
+  int numberOfSupportedExtensions;
+  char supportedExtensionID[KIM_MAX_NUMBER_OF_EXTENSIONS]
+                           [KIM_MAX_EXTENSION_ID_LENGTH];
+  int supportedExtensionRequired[KIM_MAX_NUMBER_OF_EXTENSIONS];
+};
+
+#ifndef KIM_SUPPORTED_EXTENSIONS_DEFINED_
+#define KIM_SUPPORTED_EXTENSIONS_DEFINED_
+typedef struct KIM_SupportedExtensions KIM_SupportedExtensions;
 #endif
 
-#ifndef KIM_LOG_VERBOSITY_H_
-#include "KIM_LogVerbosity.h"
-#endif
-
-#ifndef KIM_LANGUAGE_NAME_H_
-#include "KIM_LanguageName.h"
-#endif
-
-#ifndef KIM_NUMBERING_H_
-#include "KIM_Numbering.h"
-#endif
-
-#ifndef KIM_MODEL_ROUTINE_NAME_H_
-#include "KIM_ModelRoutineName.h"
-#endif
-
-#ifndef KIM_SPECIES_NAME_H_
-#include "KIM_SpeciesName.h"
-#endif
-
-#ifndef KIM_SUPPORT_STATUS_H_
-#include "KIM_SupportStatus.h"
-#endif
-
-#ifndef KIM_UNIT_SYSTEM_H_
-#include "KIM_UnitSystem.h"
-#endif
-
-
-#ifndef KIM_MODEL_COMPUTE_ARGUMENTS_CREATE_H_
-#include "KIM_ModelComputeArgumentsCreate.h"
-#endif
-
-#ifndef KIM_COMPUTE_ARGUMENT_NAME_H_
-#include "KIM_ComputeArgumentName.h"
-#endif
-
-#ifndef KIM_DATA_TYPE_H_
-#include "KIM_DataType.h"
-#endif
-
-#ifndef KIM_COMPUTE_CALLBACK_NAME_H_
-#include "KIM_ComputeCallbackName.h"
-#endif
-
-
-#ifndef KIM_MODEL_COMPUTE_ARGUMENTS_H_
-#include "KIM_ModelComputeArguments.h"
-#endif
-
-
-#ifndef KIM_MODEL_COMPUTE_ARGUMENTS_DESTROY_H_
-#include "KIM_ModelComputeArgumentsDestroy.h"
-#endif
-
-
-#ifndef KIM_MODEL_COMPUTE_H_
-#include "KIM_ModelCompute.h"
-#endif
-
-
-#ifndef KIM_MODEL_EXTENSION_H_
-#include "KIM_ModelExtension.h"
-#endif
-
-
-#ifndef KIM_MODEL_REFRESH_H_
-#include "KIM_ModelRefresh.h"
-#endif
-
-
-#ifndef KIM_MODEL_WRITE_PARAMETERIZED_MODEL_H_
-#include "KIM_ModelWriteParameterizedModel.h"
-#endif
-
-
-#ifndef KIM_MODEL_DESTROY_H_
-#include "KIM_ModelDestroy.h"
-#endif
-
-#endif /* KIM_MODEL_DRIVER_HEADERS_H_ */
+#endif /* KIM_SUPPORTED_EXTENSIONS_H_ */

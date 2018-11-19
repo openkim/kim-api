@@ -50,6 +50,7 @@ module kim_model_headers_module
   use kim_model_write_parameterized_model_module
   use kim_model_compute_arguments_destroy_module
   use kim_model_compute_module
+  use kim_model_extension_module
   use kim_model_refresh_module
   use kim_model_destroy_module
 

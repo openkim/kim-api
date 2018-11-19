@@ -338,6 +338,7 @@ program ex_test_ar_fcc_cluster_fortran
   use, intrinsic :: iso_c_binding
   use error
   use kim_simulator_headers_module
+  use kim_supported_extensions_module
   use mod_neighborlist
   use mod_utility
   implicit none
@@ -384,6 +385,8 @@ program ex_test_ar_fcc_cluster_fortran
   type(kim_model_routine_name_type) model_routine_name
   integer(c_int) present
   integer(c_int) required
+  type(kim_supported_extensions_type), target :: supported_extensions
+  character(len=KIM_MAX_EXTENSION_ID_LENGTH, kind=c_char) :: id_string
 
   integer :: middledum
 
@@ -393,14 +396,6 @@ program ex_test_ar_fcc_cluster_fortran
   ! Get KIM Model name to use
   print '("Please enter a valid KIM model name: ")'
   read(*,*) modelname
-
-  ! Print output header
-  !
-  print *
-  print *,'This is Test : ex_test_Ar_fcc_cluster_fortran'
-  print *
-  print '(80(''-''))'
-  print '("Results for KIM Model : ",A)', trim(modelname)
 
   ! Create empty KIM object
   !
@@ -456,6 +451,31 @@ program ex_test_ar_fcc_cluster_fortran
     KIM_SPECIES_NAME_AR, species_is_supported, species_code, ierr)
   if ((ierr /= 0) .or. (species_is_supported /= 1)) then
     call my_error("Model does not support Ar")
+  endif
+
+  ! Check supported extensions, if any
+  call kim_is_routine_present(model_handle, &
+    KIM_MODEL_ROUTINE_NAME_EXTENSION, present, required, ierr)
+  if (ierr /= 0) then
+    call my_error("Unable to get Extension present/required.")
+  endif
+  if (present /= 0) then
+    call kim_extension(model_handle, KIM_SUPPORTED_EXTENSIONS_ID, &
+      c_loc(supported_extensions), ierr)
+    if (ierr /= 0) then
+      call my_error("Error returned from kim_model_extension().")
+    endif
+    write (*,'(A,I2,A)') "Model Supports ", &
+      supported_extensions%number_of_supported_extensions, &
+      " Extensions:"
+    do i = 1, supported_extensions%number_of_supported_extensions
+      call kim_c_char_array_to_string(&
+        supported_extensions%supported_extension_id(:,i), id_string)
+      write (*,'(A,I2,A,A,A,A,I2)') " supportedExtensionID[", i, '] = "', &
+        trim(id_string), '" ', &
+        "which has required = ", &
+        supported_extensions%supported_extension_required(i)
+    end do
   endif
 
   ! Best-practice is to check that the model is compatible
@@ -532,6 +552,14 @@ program ex_test_ar_fcc_cluster_fortran
   do i=1,N
     particle_contributing(i) = 1  ! every particle contributes
   enddo
+
+  ! Print output header
+  !
+  print *
+  print *,'This is Test : ex_test_Ar_fcc_cluster_fortran'
+  print *
+  print '(80(''-''))'
+  print '("Results for KIM Model : ",A)', trim(modelname)
 
   ! print header
   print '(3A20)', "Energy", "Force Norm", "Lattice Spacing"

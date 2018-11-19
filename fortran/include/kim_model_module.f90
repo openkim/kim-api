@@ -56,6 +56,7 @@ module kim_model_module
     kim_compute_arguments_create, &
     kim_compute_arguments_destroy, &
     kim_compute, &
+    kim_extension, &
     kim_clear_then_refresh, &
     kim_get_species_support_and_code, &
     kim_get_number_of_parameters, &
@@ -116,6 +117,10 @@ module kim_model_module
   interface kim_compute
     module procedure kim_model_compute
   end interface kim_compute
+
+  interface kim_extension
+    module procedure kim_model_extension
+  end interface kim_extension
 
   interface kim_clear_then_refresh
     module procedure kim_model_clear_then_refresh
@@ -535,6 +540,32 @@ contains
     call c_f_pointer(compute_arguments_handle%p, compute_arguments)
     ierr = compute(model, compute_arguments)
   end subroutine kim_model_compute
+
+  subroutine kim_model_extension(model_handle, extension_id, &
+    extension_structure, ierr)
+    use kim_interoperable_types_module, only : kim_model_type
+    implicit none
+    interface
+      integer(c_int) function extension(model, extension_id, &
+        extension_structure) bind(c, name="KIM_Model_Extension")
+        use, intrinsic :: iso_c_binding
+        use kim_interoperable_types_module, only : kim_model_type
+        implicit none
+        type(kim_model_type), intent(in) :: model
+        character(c_char), intent(in) :: extension_id(*)
+        type(c_ptr), intent(in), value :: extension_structure
+      end function extension
+    end interface
+    type(kim_model_handle_type), intent(in) :: model_handle
+    character(len=*, kind=c_char), intent(in) :: extension_id
+    type(c_ptr), intent(in) :: extension_structure
+    integer(c_int), intent(out) :: ierr
+    type(kim_model_type), pointer :: model
+
+    call c_f_pointer(model_handle%p, model)
+    ierr = extension(model, trim(extension_id)//c_null_char, &
+      extension_structure)
+  end subroutine kim_model_extension
 
   subroutine kim_model_clear_then_refresh(model_handle, ierr)
     use kim_interoperable_types_module, only : kim_model_type

@@ -104,13 +104,13 @@ target_link_libraries(kim-api ${CMAKE_DL_LIBS})
 #
 add_subdirectory(cpp/include)
 add_subdirectory(c/include)
-add_subdirectory(fortran/src)
+add_subdirectory(fortran/include)
 
 # Add src subdirectories
 #
 add_subdirectory(cpp/src)
 add_subdirectory(c/src)
-add_subdirectory(fortran/include)
+add_subdirectory(fortran/src)
 
 # Add other subdirectories
 #

@@ -63,7 +63,7 @@ module kim_energy_unit_module
   end type kim_energy_unit_type
 
   type(kim_energy_unit_type), protected, &
-    bind(c, name="KIM_ENERGY_UNIT_unsued") &
+    bind(c, name="KIM_ENERGY_UNIT_unused") &
     :: KIM_ENERGY_UNIT_UNUSED
   type(kim_energy_unit_type), protected, &
     bind(c, name="KIM_ENERGY_UNIT_amu_A2_per_ps2") &
