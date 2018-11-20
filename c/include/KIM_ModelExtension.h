@@ -108,7 +108,8 @@ typedef struct KIM_ModelExtension KIM_ModelExtension;
 #endif
 
 void KIM_ModelExtension_GetExtensionID(
-    KIM_ModelExtension * const modelExtension, char const ** const extensionID);
+    KIM_ModelExtension const * const modelExtension,
+    char const ** const extensionID);
 
 KIM_Model *
 KIM_ModelExtension_ToModel(KIM_ModelExtension * const modelExtension);
@@ -127,15 +128,15 @@ KIM_ModelExtension_ToModelWriteParameterizedModel(
     KIM_ModelExtension * const modelExtension);
 
 KIM_ModelComputeArguments * KIM_ModelExtension_ToModelComputeArguments(
-    KIM_ModelExtension * const modelExtension,
+    KIM_ModelExtension const * const modelExtension,
     KIM_ComputeArguments * const computeArguments);
 KIM_ModelComputeArgumentsCreate *
 KIM_ModelExtension_ToModelComputeArgumentsCreate(
-    KIM_ModelExtension * const modelExtension,
+    KIM_ModelExtension const * const modelExtension,
     KIM_ComputeArguments * const computeArguments);
 KIM_ModelComputeArgumentsDestroy *
 KIM_ModelExtension_ToModelComputeArgumentsDestroy(
-    KIM_ModelExtension * const modelExtension,
+    KIM_ModelExtension const * const modelExtension,
     KIM_ComputeArguments * const computeArguments);
 
 

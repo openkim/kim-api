@@ -311,7 +311,7 @@ int KIM_Model_Compute(KIM_Model const * const model,
   return pModel->Compute(pComputeArguments);
 }
 
-int KIM_Model_Extension(KIM_Model const * const model,
+int KIM_Model_Extension(KIM_Model * const model,
                         char const * const extensionID,
                         void * const extensionStructure)
 

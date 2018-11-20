@@ -69,7 +69,8 @@ KIM::LogVerbosity makeLogVerbosityCpp(KIM_LogVerbosity const logVerbosity)
 
 extern "C" {
 void KIM_ModelExtension_GetExtensionID(
-    KIM_ModelExtension * const modelExtension, char const ** const extensionID)
+    KIM_ModelExtension const * const modelExtension,
+    char const ** const extensionID)
 {
   CONVERT_POINTER;
 
@@ -122,7 +123,7 @@ KIM_ModelExtension_ToModelWriteParameterizedModel(
 }
 
 KIM_ModelComputeArguments * KIM_ModelExtension_ToModelComputeArguments(
-    KIM_ModelExtension * const modelExtension,
+    KIM_ModelExtension const * const modelExtension,
     KIM_ComputeArguments * const computeArguments)
 {
   (void) modelExtension;  // Avoid unused parameter warning
@@ -131,7 +132,7 @@ KIM_ModelComputeArguments * KIM_ModelExtension_ToModelComputeArguments(
 
 KIM_ModelComputeArgumentsCreate *
 KIM_ModelExtension_ToModelComputeArgumentsCreate(
-    KIM_ModelExtension * const modelExtension,
+    KIM_ModelExtension const * const modelExtension,
     KIM_ComputeArguments * const computeArguments)
 {
   (void) modelExtension;  // Avoid unused parameter warning
@@ -140,7 +141,7 @@ KIM_ModelExtension_ToModelComputeArgumentsCreate(
 
 KIM_ModelComputeArgumentsDestroy *
 KIM_ModelExtension_ToModelComputeArgumentsDestroy(
-    KIM_ModelExtension * const modelExtension,
+    KIM_ModelExtension const * const modelExtension,
     KIM_ComputeArguments * const computeArguments)
 {
   (void) modelExtension;  // Avoid unused parameter warning

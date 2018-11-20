@@ -146,7 +146,7 @@ int KIM_Model_ComputeArgumentsDestroy(
     KIM_ComputeArguments ** const computeArguments);
 int KIM_Model_Compute(KIM_Model const * const model,
                       KIM_ComputeArguments const * const computeArguments);
-int KIM_Model_Extension(KIM_Model const * const model,
+int KIM_Model_Extension(KIM_Model * const model,
                         char const * const extensionID,
                         void * const extensionStructure);
 int KIM_Model_ClearThenRefresh(KIM_Model * const model);

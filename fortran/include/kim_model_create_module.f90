@@ -250,7 +250,7 @@ contains
     type(kim_model_create_handle_type), intent(in) :: model_create_handle
     type(kim_model_routine_name_type), intent(in) :: model_routine_name
     type(kim_language_name_type), intent(in) :: language_name
-    integer(c_int), intent(in), value :: required
+    integer(c_int), intent(in) :: required
     type(c_funptr), intent(in), value :: fptr  ! must be left as "value"!?!
     integer(c_int), intent(out) :: ierr
     type(kim_model_create_type), pointer :: model_create

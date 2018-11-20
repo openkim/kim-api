@@ -99,6 +99,11 @@
 #endif
 
 
+#ifndef KIM_MODEL_EXTENSION_HPP_
+#include "KIM_ModelExtension.hpp"
+#endif
+
+
 #ifndef KIM_MODEL_REFRESH_HPP_
 #include "KIM_ModelRefresh.hpp"
 #endif
