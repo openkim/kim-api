@@ -187,7 +187,7 @@ contains
   end subroutine kim_log_pop_default_verbosity
 
   subroutine kim_log_get_id(log_handle, id_string)
-    use kim_convert_string_module, only : kim_convert_string
+    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
     use kim_interoperable_types_module, only : kim_log_type
     implicit none
     interface
@@ -206,11 +206,7 @@ contains
 
     call c_f_pointer(log_handle%p, log)
     p = get_id(log)
-    if (c_associated(p)) then
-      call kim_convert_string(p, id_string)
-    else
-      id_string = ""
-    end if
+    call kim_convert_c_char_ptr_to_string(p, id_string)
   end subroutine kim_log_get_id
 
   subroutine kim_log_set_id(log_handle, id_string)

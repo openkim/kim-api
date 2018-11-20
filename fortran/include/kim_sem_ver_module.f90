@@ -45,7 +45,7 @@ module kim_sem_ver_module
 
 contains
   subroutine kim_get_sem_ver(version)
-    use kim_convert_string_module, only : kim_convert_string
+    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
     implicit none
     interface
       type(c_ptr) function get_sem_ver() &
@@ -59,7 +59,7 @@ contains
     type(c_ptr) :: p
 
     p = get_sem_ver()
-    call kim_convert_string(p, version)
+    call kim_convert_c_char_ptr_to_string(p, version)
   end subroutine kim_get_sem_ver
 
   subroutine kim_is_less_than(version_a, version_b, is_less_than, ierr)
@@ -85,7 +85,7 @@ contains
 
   subroutine kim_parse_sem_ver(version, major, minor, patch, &
     prerelease, build_metadata, ierr)
-    use kim_convert_string_module
+    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
     implicit none
     interface
       integer(c_int) function parse_sem_ver(version, prerelease_length, &
@@ -117,15 +117,7 @@ contains
     ierr = parse_sem_ver(trim(version)//c_null_char, len(prerelease), &
       len(build_metadata), major, minor, patch, p_prerelease, &
       p_build_metadata)
-    if (c_associated(p_prerelease)) then
-      call kim_convert_string(p_prerelease, prerelease)
-    else
-      prerelease=""
-    end if
-    if (c_associated(p_build_metadata)) then
-      call kim_convert_string(p_build_metadata, build_metadata)
-    else
-      build_metadata=""
-    end if
+    call kim_convert_c_char_ptr_to_string(p_prerelease, prerelease)
+    call kim_convert_c_char_ptr_to_string(p_build_metadata, build_metadata)
   end subroutine kim_parse_sem_ver
 end module kim_sem_ver_module

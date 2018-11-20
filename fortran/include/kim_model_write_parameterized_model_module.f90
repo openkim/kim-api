@@ -119,7 +119,7 @@ contains
 
   subroutine kim_model_write_parameterized_model_get_path( &
     model_write_parameterized_model_handle, path)
-    use kim_convert_string_module, only : kim_convert_string
+    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
     use kim_interoperable_types_module, only : &
       kim_model_write_parameterized_model_type
     implicit none
@@ -146,16 +146,12 @@ contains
     call c_f_pointer(model_write_parameterized_model_handle%p, &
       model_write_parameterized_model)
     call get_path(model_write_parameterized_model, ppath)
-    if (c_associated(ppath)) then
-      call kim_convert_string(ppath, path)
-    else
-      path = ""
-    end if
+    call kim_convert_c_char_ptr_to_string(ppath, path)
   end subroutine kim_model_write_parameterized_model_get_path
 
   subroutine kim_model_write_parameterized_model_get_model_name( &
     model_write_parameterized_model_handle, model_name)
-    use kim_convert_string_module, only : kim_convert_string
+    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
     use kim_interoperable_types_module, only : &
       kim_model_write_parameterized_model_type
     implicit none
@@ -182,11 +178,7 @@ contains
     call c_f_pointer(model_write_parameterized_model_handle%p, &
       model_write_parameterized_model)
     call get_model_name(model_write_parameterized_model, pmodel_name)
-    if (c_associated(pmodel_name)) then
-      call kim_convert_string(pmodel_name, model_name)
-    else
-      model_name = ""
-    end if
+    call kim_convert_c_char_ptr_to_string(pmodel_name, model_name)
   end subroutine kim_model_write_parameterized_model_get_model_name
 
   subroutine kim_model_write_parameterized_model_set_parameter_file_name( &
@@ -285,7 +277,7 @@ contains
 
   subroutine kim_model_write_parameterized_model_to_string( &
     model_write_parameterized_model_handle, string)
-    use kim_convert_string_module, only : kim_convert_string
+    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
     use kim_interoperable_types_module, only : &
       kim_model_write_parameterized_model_type
     implicit none
@@ -312,10 +304,6 @@ contains
     call c_f_pointer(model_write_parameterized_model_handle%p, &
       model_write_parameterized_model)
     p = model_write_parameterized_model_string(model_write_parameterized_model)
-    if (c_associated(p)) then
-      call kim_convert_string(p, string)
-    else
-      string = ""
-    end if
+    call kim_convert_c_char_ptr_to_string(p, string)
   end subroutine kim_model_write_parameterized_model_to_string
 end module kim_model_write_parameterized_model_module

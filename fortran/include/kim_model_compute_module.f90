@@ -151,7 +151,7 @@ contains
   end subroutine kim_model_compute_log_entry
 
   subroutine kim_model_compute_to_string(model_compute_handle, string)
-    use kim_convert_string_module, only : kim_convert_string
+    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
     use kim_interoperable_types_module, only : kim_model_compute_type
     implicit none
     interface
@@ -171,10 +171,6 @@ contains
 
     call c_f_pointer(model_compute_handle%p, model_compute)
     p = model_compute_string(model_compute)
-    if (c_associated(p)) then
-      call kim_convert_string(p, string)
-    else
-      string = ""
-    end if
+    call kim_convert_c_char_ptr_to_string(p, string)
   end subroutine kim_model_compute_to_string
 end module kim_model_compute_module

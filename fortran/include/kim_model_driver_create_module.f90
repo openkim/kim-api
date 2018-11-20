@@ -178,7 +178,7 @@ contains
 
   subroutine kim_model_driver_create_get_parameter_file_name( &
     model_driver_create_handle, index, parameter_file_name, ierr)
-    use kim_convert_string_module, only : kim_convert_string
+    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
     use kim_interoperable_types_module, only : kim_model_driver_create_type
     implicit none
     interface
@@ -206,11 +206,7 @@ contains
     call c_f_pointer(model_driver_create_handle%p, model_driver_create)
     ierr = get_parameter_file_name(model_driver_create, &
       index-1, p)
-    if (c_associated(p)) then
-      call kim_convert_string(p, parameter_file_name)
-    else
-      parameter_file_name = ""
-    end if
+    call kim_convert_c_char_ptr_to_string(p, parameter_file_name)
   end subroutine kim_model_driver_create_get_parameter_file_name
 
   subroutine kim_model_driver_create_set_model_numbering( &
@@ -654,7 +650,7 @@ contains
 
   subroutine kim_model_driver_create_to_string(model_driver_create_handle, &
     string)
-    use kim_convert_string_module, only : kim_convert_string
+    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
     use kim_interoperable_types_module, only : kim_model_driver_create_type
     implicit none
     interface
@@ -677,10 +673,6 @@ contains
 
     call c_f_pointer(model_driver_create_handle%p, model_driver_create)
     p = model_driver_create_string(model_driver_create)
-    if (c_associated(p)) then
-      call kim_convert_string(p, string)
-    else
-      string = ""
-    end if
+    call kim_convert_c_char_ptr_to_string(p, string)
   end subroutine kim_model_driver_create_to_string
 end module kim_model_driver_create_module

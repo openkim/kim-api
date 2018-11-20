@@ -121,7 +121,7 @@ contains
   end subroutine kim_compute_callback_name_from_string
 
   subroutine kim_compute_callback_name_to_string(compute_callback_name, string)
-    use kim_convert_string_module, only : kim_convert_string
+    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
     implicit none
     interface
       type(c_ptr) function get_string(compute_callback_name) &
@@ -140,11 +140,7 @@ contains
     type(c_ptr) :: p
 
     p = get_string(compute_callback_name)
-    if (c_associated(p)) then
-      call kim_convert_string(p, string)
-    else
-      string = ""
-    end if
+    call kim_convert_c_char_ptr_to_string(p, string)
   end subroutine kim_compute_callback_name_to_string
 
   subroutine kim_get_number_of_compute_callback_names( &

@@ -612,7 +612,7 @@ contains
   subroutine kim_model_get_parameter_metadata(model_handle, parameter_index, &
     data_type, extent, name, description, ierr)
     use kim_data_type_module, only : kim_data_type_type
-    use kim_convert_string_module, only : kim_convert_string
+    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
     use kim_interoperable_types_module, only : kim_model_type
     implicit none
     interface
@@ -645,16 +645,8 @@ contains
     call c_f_pointer(model_handle%p, model)
     ierr = get_parameter_metadata(model, parameter_index-1, data_type, extent, &
       pname, pdesc)
-    if (c_associated(pname)) then
-      call kim_convert_string(pname, name)
-    else
-      name = ""
-    end if
-    if (c_associated(pdesc)) then
-      call kim_convert_string(pdesc, description)
-    else
-      description = ""
-    end if
+    call kim_convert_c_char_ptr_to_string(pname, name)
+    call kim_convert_c_char_ptr_to_string(pdesc, description)
   end subroutine kim_model_get_parameter_metadata
 
   subroutine kim_model_get_parameter_integer(model_handle, parameter_index, &
@@ -816,7 +808,7 @@ contains
   end subroutine kim_model_get_simulator_buffer_pointer
 
   subroutine kim_model_to_string(model_handle, string)
-    use kim_convert_string_module, only : kim_convert_string
+    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
     use kim_interoperable_types_module, only : kim_model_type
     implicit none
     interface
@@ -836,11 +828,7 @@ contains
 
     call c_f_pointer(model_handle%p, model)
     p = model_string(model)
-    if (c_associated(p)) then
-      call kim_convert_string(p, string)
-    else
-      string = ""
-    end if
+    call kim_convert_c_char_ptr_to_string(p, string)
   end subroutine kim_model_to_string
 
   subroutine kim_model_set_log_id(model_handle, log_id)

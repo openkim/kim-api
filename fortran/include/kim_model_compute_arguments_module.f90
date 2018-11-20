@@ -630,7 +630,7 @@ contains
 
   subroutine kim_model_compute_arguments_to_string( &
     model_compute_arguments_handle, string)
-    use kim_convert_string_module, only : kim_convert_string
+    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
     use kim_interoperable_types_module, only : kim_model_compute_arguments_type
     implicit none
     interface
@@ -653,10 +653,6 @@ contains
 
     call c_f_pointer(model_compute_arguments_handle%p, model_compute_arguments)
     p = model_compute_string(model_compute_arguments)
-    if (c_associated(p)) then
-      call kim_convert_string(p, string)
-    else
-      string = ""
-    end if
+    call kim_convert_c_char_ptr_to_string(p, string)
   end subroutine kim_model_compute_arguments_to_string
 end module kim_model_compute_arguments_module
