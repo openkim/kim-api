@@ -58,6 +58,7 @@ module kim_model_module
     kim_compute, &
     kim_extension, &
     kim_clear_then_refresh, &
+    kim_write_parameterized_model, &
     kim_get_species_support_and_code, &
     kim_get_number_of_parameters, &
     kim_get_parameter_metadata, &
@@ -125,6 +126,10 @@ module kim_model_module
   interface kim_clear_then_refresh
     module procedure kim_model_clear_then_refresh
   end interface kim_clear_then_refresh
+
+  interface kim_write_parameterized_model
+    module procedure kim_model_write_parameterized_model
+  end interface kim_write_parameterized_model
 
   interface kim_get_species_support_and_code
     module procedure kim_model_get_species_support_and_code
@@ -586,6 +591,32 @@ contains
     call c_f_pointer(model_handle%p, model)
     ierr = clear_then_refresh(model)
   end subroutine kim_model_clear_then_refresh
+
+  subroutine kim_model_write_parameterized_model(model_handle, &
+    path, model_name, ierr)
+    use kim_interoperable_types_module, only : kim_model_type
+    implicit none
+    interface
+      integer(c_int) function write_parameterized_model(model, &
+        path, model_name) bind(c, name="KIM_Model_WriteParameterizedModel")
+        use, intrinsic :: iso_c_binding
+        use kim_interoperable_types_module, only : kim_model_type
+        implicit none
+        type(kim_model_type), intent(in) :: model
+        character(c_char), intent(in) :: path(*)
+        character(c_char), intent(in) :: model_name(*)
+      end function write_parameterized_model
+    end interface
+    type(kim_model_handle_type), intent(in) :: model_handle
+    character(len=*, kind=c_char), intent(in) :: path
+    character(len=*, kind=c_char), intent(in) :: model_name
+    integer(c_int), intent(out) :: ierr
+    type(kim_model_type), pointer :: model
+
+    call c_f_pointer(model_handle%p, model)
+    ierr = write_parameterized_model(model, trim(path)//c_null_char, &
+      trim(model_name)//c_null_char)
+  end subroutine kim_model_write_parameterized_model
 
   subroutine kim_model_get_species_support_and_code(model_handle, &
     species_name, species_is_supported, code, ierr)

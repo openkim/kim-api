@@ -328,6 +328,15 @@ int KIM_Model_ClearThenRefresh(KIM_Model * const model)
   return pModel->ClearThenRefresh();
 }
 
+int KIM_Model_WriteParameterizedModel(KIM_Model const * const model,
+                                      char const * const path,
+                                      char const * const modelName)
+{
+  CONVERT_POINTER;
+
+  return pModel->WriteParameterizedModel(path, modelName);
+}
+
 int KIM_Model_GetSpeciesSupportAndCode(KIM_Model const * const model,
                                        KIM_SpeciesName const speciesName,
                                        int * const speciesIsSupported,

@@ -37,7 +37,8 @@ module kim_convert_string_module
 
   public &
     kim_convert_c_char_array_to_string, &
-    kim_convert_c_char_ptr_to_string
+    kim_convert_c_char_ptr_to_string, &
+    kim_convert_string_to_c_char_array
 
 contains
   subroutine kim_convert_c_char_array_to_string(c_char_array, string)
@@ -82,4 +83,13 @@ contains
       string = ""
     end if
   end subroutine kim_convert_c_char_ptr_to_string
+
+  subroutine kim_convert_string_to_c_char_array(string, c_char_array)
+    use, intrinsic :: iso_c_binding
+    implicit none
+    character(len=*, kind=c_char), intent(in) :: string
+    character(len=1, kind=c_char), intent(out) :: c_char_array(:)
+
+    c_char_array(:) = trim(string)//c_null_char
+  end subroutine kim_convert_string_to_c_char_array
 end module kim_convert_string_module

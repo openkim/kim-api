@@ -48,6 +48,7 @@ module kim_simulator_headers_module
   use kim_support_status_module
   use kim_model_extension_module, only : kim_c_char_array_to_string
   use kim_model_extension_module, only : kim_c_char_ptr_to_string
+  use kim_model_extension_module, only : kim_string_to_c_char_array
 
   public
 end module kim_simulator_headers_module

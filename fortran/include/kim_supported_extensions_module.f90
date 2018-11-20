@@ -56,5 +56,4 @@ module kim_supported_extensions_module
       KIM_MAX_NUMBER_OF_EXTENSIONS)
     integer(c_int) supported_extension_required(KIM_MAX_NUMBER_OF_EXTENSIONS)
   end type kim_supported_extensions_type
-
 end module kim_supported_extensions_module

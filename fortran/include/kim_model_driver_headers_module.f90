@@ -47,11 +47,11 @@ module kim_model_driver_headers_module
   use kim_data_type_module
   use kim_compute_callback_name_module
   use kim_model_compute_arguments_module
-  use kim_model_write_parameterized_model_module
   use kim_model_compute_arguments_destroy_module
   use kim_model_compute_module
   use kim_model_extension_module
   use kim_model_refresh_module
+  use kim_model_write_parameterized_model_module
   use kim_model_destroy_module
 
   public

@@ -119,7 +119,7 @@ int KIM_ModelDriverCreate_SetModelNumbering(
 
 void KIM_ModelDriverCreate_SetInfluenceDistancePointer(
     KIM_ModelDriverCreate * const modelDriverCreate,
-    double * const influenceDistance);
+    double const * const influenceDistance);
 
 void KIM_ModelDriverCreate_SetNeighborListPointers(
     KIM_ModelDriverCreate * const modelDriverCreate,

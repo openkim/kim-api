@@ -59,6 +59,7 @@ module kim_model_extension_module
     kim_to_model_compute_arguments_destroy, &
     kim_c_char_array_to_string, &
     kim_c_char_ptr_to_string, &
+    kim_string_to_c_char_array, &
     kim_get_model_buffer_pointer, &
     kim_log_entry, &
     kim_to_string
@@ -130,6 +131,10 @@ module kim_model_extension_module
   interface kim_c_char_ptr_to_string
     module procedure kim_model_extension_convert_c_char_ptr_to_string
   end interface kim_c_char_ptr_to_string
+
+  interface kim_string_to_c_char_array
+    module procedure kim_model_extension_convert_string_to_c_char_array
+  end interface kim_string_to_c_char_array
 
   interface kim_get_model_buffer_pointer
     module procedure kim_model_extension_get_model_buffer_pointer
@@ -328,6 +333,16 @@ contains
 
     call kim_convert_c_char_ptr_to_string(c_char_ptr, string)
   end subroutine kim_model_extension_convert_c_char_ptr_to_string
+
+  subroutine kim_model_extension_convert_string_to_c_char_array( &
+    string, c_char_array)
+    use kim_convert_string_module, only : kim_convert_string_to_c_char_array
+    implicit none
+    character(len=*, kind=c_char), intent(in) :: string
+    character(len=1, kind=c_char), intent(out) :: c_char_array(:)
+
+    call kim_convert_string_to_c_char_array(string, c_char_array)
+  end subroutine kim_model_extension_convert_string_to_c_char_array
 
   subroutine kim_model_extension_get_model_buffer_pointer( &
     model_extension_handle, ptr)

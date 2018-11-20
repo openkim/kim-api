@@ -113,7 +113,7 @@ typedef int ModelComputeArgumentsDestroyFunction(
     ModelCompute const * const modelCompute,
     ModelComputeArgumentsDestroy * const modelComputeArgumentsDestroy);
 
-typedef int ModelDestroyFunction(ModelDestroy * const);
+typedef int ModelDestroyFunction(ModelDestroy * const modelDestroy);
 }  // namespace KIM
 
 #endif  // KIM_FUNCTION_TYPES_HPP_
