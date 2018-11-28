@@ -149,12 +149,12 @@
 #define ID_Ds 110
 #define ID_Rg 111
 #define ID_Cn 112
-#define ID_Uut 113
+#define ID_Nh 113
 #define ID_Fl 114
-#define ID_Uup 115
+#define ID_Mc 115
 #define ID_Lv 116
-#define ID_Uus 117
-#define ID_Uuo 118
+#define ID_Ts 117
+#define ID_Og 118
 #define ID_user01 201
 #define ID_user02 202
 #define ID_user03 203

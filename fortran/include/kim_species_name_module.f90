@@ -154,12 +154,12 @@ module kim_species_name_module
     KIM_SPECIES_NAME_DS, &
     KIM_SPECIES_NAME_RG, &
     KIM_SPECIES_NAME_CN, &
-    KIM_SPECIES_NAME_UUT, &
+    KIM_SPECIES_NAME_NH, &
     KIM_SPECIES_NAME_FL, &
-    KIM_SPECIES_NAME_UUP, &
+    KIM_SPECIES_NAME_MC, &
     KIM_SPECIES_NAME_LV, &
-    KIM_SPECIES_NAME_UUS, &
-    KIM_SPECIES_NAME_UUO, &
+    KIM_SPECIES_NAME_TS, &
+    KIM_SPECIES_NAME_OG, &
     KIM_SPECIES_NAME_USER01, &
     KIM_SPECIES_NAME_USER02, &
     KIM_SPECIES_NAME_USER03, &
@@ -534,23 +534,23 @@ module kim_species_name_module
     bind(c, name="KIM_SPECIES_NAME_Cn") &
     :: KIM_SPECIES_NAME_CN
   type(kim_species_name_type), protected, &
-    bind(c, name="KIM_SPECIES_NAME_Uut") &
-    :: KIM_SPECIES_NAME_UUT
+    bind(c, name="KIM_SPECIES_NAME_Nh") &
+    :: KIM_SPECIES_NAME_NH
   type(kim_species_name_type), protected, &
     bind(c, name="KIM_SPECIES_NAME_Fl") &
     :: KIM_SPECIES_NAME_FL
   type(kim_species_name_type), protected, &
-    bind(c, name="KIM_SPECIES_NAME_Uup") &
-    :: KIM_SPECIES_NAME_UUP
+    bind(c, name="KIM_SPECIES_NAME_Mc") &
+    :: KIM_SPECIES_NAME_MC
   type(kim_species_name_type), protected, &
     bind(c, name="KIM_SPECIES_NAME_Lv") &
     :: KIM_SPECIES_NAME_LV
   type(kim_species_name_type), protected, &
-    bind(c, name="KIM_SPECIES_NAME_Uus") &
-    :: KIM_SPECIES_NAME_UUS
+    bind(c, name="KIM_SPECIES_NAME_Ts") &
+    :: KIM_SPECIES_NAME_TS
   type(kim_species_name_type), protected, &
-    bind(c, name="KIM_SPECIES_NAME_Uuo") &
-    :: KIM_SPECIES_NAME_UUO
+    bind(c, name="KIM_SPECIES_NAME_Og") &
+    :: KIM_SPECIES_NAME_OG
   type(kim_species_name_type), protected, &
     bind(c, name="KIM_SPECIES_NAME_User01") &
     :: KIM_SPECIES_NAME_USER01
