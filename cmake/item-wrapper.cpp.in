@@ -31,16 +31,35 @@
 //
 
 
-#include <cstddef>
+#ifndef KIM_LANGUAGE_NAME_HPP_
+#include "KIM_LanguageName.hpp"
+#endif
+
+#ifndef KIM_SHARED_LIBRARY_SCHEMA_HPP_
+#include "KIM_SharedLibrarySchema.hpp"
+#endif
+
+using namespace KIM::SHARED_LIBRARY_SCHEMA;
 
 extern "C" {
-char kim_item_type[] = "@KIM_API_SIMULATOR_MODEL_IDENTIFIER@";
-char metadata_file_name[] = "@MODEL_METADATA_FILE@";
 // clang-format off
-int number_of_parameter_files = @NUMBER_OF_PARAMETER_FILES@;
-@PARAM_FILE_NAMES@ int (*@MODEL_NAME@_create_pointer)() = NULL;
-char @MODEL_NAME@_compiled_with_version[] = "@PROJECT_VERSION_STRING@";
-char @MODEL_NAME@_language[] = "cpp";
-char @MODEL_NAME@_driver_name[] = "@MODEL_DRIVER_NAME@";
-// clang-format on
+int kim_shared_library_schema_version = 1;
+
+@CREATE_ROUTINE_DECLARATION@
+@EMBEDDED_METADATA_FILE@
+@PARAMETER_FILE_DECLARATIONS@
+@EMBEDDED_PARAMETER_FILES@
+
+SharedLibrarySchemaV1 kim_shared_library_schema = {
+    "@PROJECT_VERSION_STRING@",  // KIM API Version
+    SharedLibrarySchemaV1::@ITEM_TYPE@,  // Item Type
+    @ITEM_NAME@,  // Item Name
+    KIM::LANGUAGE_NAME::@CREATE_ROUTINE_LANGUAGE@,  // Create Routine Language
+    @CREATE_ROUTINE_NAME@,  // Create Routine Name
+    @ITEM_DRIVER_NAME@,  // Item Driver Name
+    @NUMBER_OF_PARAMETER_FILES@,  // Number of Parameter Files
+    @EMBEDDED_PARAMETER_FILES_IDENTIFIER@,  // Embedded Parameter Files
+    @EMBEDDED_METADATA_FILE_IDENTIFIER@  // Embedded Metadata File
+};
 }
+// clang-format on

@@ -50,22 +50,16 @@ install(
   ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME}/${KIM_API_CMAKE_DIR_IDENTIFIER}
   )
 
-set(WRAPPER_SOURCES
-  model-driver-wrapper.cpp.in
-  parameterized-model-wrapper.cpp.in
-  simulator-model-wrapper.cpp.in
-  stand-alone-model-wrapper.cpp.in
-  )
+target_include_directories(kim-api PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
-set(INFORMATION_FILES
-  model-driver-info.txt.in
-  parameterized-model-info.txt.in
-  simulator-model-info.txt.in
-  stand-alone-model-info.txt.in
+set(ITEM_BUILD_SOURCES
+  KIM_SharedLibrarySchema.hpp
+  item-wrapper.cpp.in
+  item-info.txt.in
   )
 
 install(
-  FILES ${WRAPPER_SOURCES} ${INFORMATION_FILES}
+  FILES ${ITEM_BUILD_SOURCES}
   DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME}/${KIM_API_CMAKE_DIR_IDENTIFIER}
   )
 

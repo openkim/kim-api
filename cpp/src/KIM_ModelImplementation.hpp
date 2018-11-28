@@ -79,8 +79,8 @@
 #include "KIM_ComputeArguments.hpp"
 #endif
 
-#ifndef KIM_MODEL_LIBRARY_HPP_
-#include "KIM_ModelLibrary.hpp"
+#ifndef KIM_SHARED_LIBRARY_HPP_
+#include "KIM_SharedLibrary.hpp"
 #endif
 
 
@@ -245,7 +245,7 @@ class ModelImplementation
   ModelImplementation(ModelImplementation const &);
   void operator=(ModelImplementation const &);
 
-  ModelImplementation(ModelLibrary * const modelLibrary, Log * const log);
+  ModelImplementation(SharedLibrary * const sharedLibrary, Log * const log);
   ~ModelImplementation();
 
   int ModelCreate(Numbering const numbering,
@@ -282,11 +282,11 @@ class ModelImplementation
 
   int IsCIdentifier(std::string const & id) const;
 
-  ModelLibrary::ITEM_TYPE modelType_;
+  SharedLibrary::ITEM_TYPE itemType_;
   std::string modelName_;
   std::string modelDriverName_;
 
-  ModelLibrary * modelLibrary_;
+  SharedLibrary * sharedLibrary_;
   int numberOfParameterFiles_;
   std::vector<std::string> parameterFileNames_;
 

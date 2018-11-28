@@ -31,10 +31,11 @@
 //
 
 #include "KIM_Configuration.hpp"
+#include "KIM_SharedLibrary.hpp"
 #include "old_KIM_API_DIRS.h"
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
-#include <dlfcn.h>
 #include <iostream>
 #include <list>
 #include <string>
@@ -71,21 +72,84 @@ int main(int argc, char * argv[])
 
   char const * modelname = argv[1];
 
-  std::string symbol;
-  int argFlag;
-  int nameFlag;
+  int error;
+  KIM::SharedLibrary sharedLib(NULL);
 
-  if (2 == argc)
+  // get item shared library file name
+  std::vector<std::string> item;
+  bool accessible = findItem(KIM_MODELS_DIR, modelname, &item, NULL);
+  if (accessible)
   {
-    argFlag = 0;
-    nameFlag = 0;
-    symbol = "";
+    error = sharedLib.Open(item[OLD_KIM::IE_FULLPATH]);
+    if (error)
+    {
+      std::cout << "* Error: A problem occurred with the Model shared library "
+                   "file for Model name: '"
+                << modelname << "'" << std::endl;
+      return 1;
+    }
+  }
+  else
+  {
+    std::cout << "* Error: The Model shared library file is not readable for "
+                 "Model name: '"
+              << modelname << "'" << std::endl;
+    return 2;
+  }
+
+  if (2 == argc)  // Is item a simulator model
+  {
+    KIM::SharedLibrary::ITEM_TYPE itemType;
+    error = sharedLib.GetType(&itemType);
+    if (error)
+    {
+      std::cout << "* Error getting itemType" << std::endl;
+      sharedLib.Close();
+      return 3;
+    }
+
+    std::cout << "Item is a ";
+    switch (itemType)
+    {
+      case KIM::SharedLibrary::STAND_ALONE_MODEL:
+        std::cout << "STAND_ALONE_MODEL";
+        break;
+      case KIM::SharedLibrary::PARAMETERIZED_MODEL:
+        std::cout << "PARAMETERIZED_MODEL";
+        break;
+      case KIM::SharedLibrary::SIMULATOR_MODEL:
+        std::cout << "SIMULATOR_MODEL";
+        break;
+      case KIM::SharedLibrary::MODEL_DRIVER: std::cout << "MODEL_DRIVER"; break;
+    };
+    std::cout << std::endl;
+
+    int returnCode;
+    if (itemType != KIM::SharedLibrary::SIMULATOR_MODEL)
+      returnCode = 4;
+    else
+      returnCode = 0;
+
+    sharedLib.Close();
+    return returnCode;
   }
   else if (std::string(argv[2]) == "number-of-parameter-files")
   {
-    argFlag = 0;
-    nameFlag = 0;
-    symbol = "number_of_parameter_files";
+    int number;
+    error = sharedLib.GetNumberOfParameterFiles(&number);
+    if (error)
+    {
+      std::cout << "* Error: cannot get number of parameter files."
+                << std::endl;
+      sharedLib.Close();
+      return 5;
+    }
+    else
+    {
+      std::cout << number << std::endl;
+      sharedLib.Close();
+      return 0;
+    }
   }
   else if (argc < 4)
   {
@@ -94,158 +158,49 @@ int main(int argc, char * argv[])
   }
   else
   {
+    std::string name;
+    unsigned int len;
+    unsigned char const * data;
     if (std::string(argv[2]) == "metadata-file")
     {
-      argFlag = 1;
-      symbol = "metadata_file";
-    }
-    else
-    {
-      argFlag = 1;
-      symbol = "parameter_file_" + std::string(argv[2]);
-    }
-
-    if (std::string(argv[3]) == "name")
-    {
-      nameFlag = 1;
-      symbol.append("_name");
-    }
-    else if (std::string(argv[3]) == "data")
-    {
-      nameFlag = 0;
-    }
-    else
-    {
-      usage(argv[0]);
-      return -3;
-    }
-  }
-
-
-  std::vector<std::string> item;
-  bool accessible = findItem(KIM_MODELS_DIR, modelname, &item, NULL);
-  void * model_lib_handle;
-  if (accessible)
-  {
-    std::string libFileName
-        = item[IE_DIR] + "/" + item[IE_NAME]
-          + "/" KIM_SHARED_MODULE_PREFIX KIM_PROJECT_NAME
-            "-" KIM_MODEL_IDENTIFIER KIM_SHARED_MODULE_SUFFIX;
-    model_lib_handle = dlopen(libFileName.c_str(), RTLD_NOW);
-  }
-  if (!accessible)
-  {
-    std::cout << "* Error: The Model shared library file is not readable for "
-                 "Model name: '"
-              << modelname << "'" << std::endl;
-    std::cout << dlerror() << std::endl;
-    return 1;
-  }
-  else if (NULL == model_lib_handle)
-  {
-    std::cout << "* Error: A problem occurred with the Model shared library "
-                 "file for Model name: '"
-              << modelname << "'" << std::endl;
-    std::cout << dlerror() << std::endl;
-    return 2;
-  }
-
-  char const * itemType
-      = (char const *) dlsym(model_lib_handle, "kim_item_type");
-  const char * dlsym_error = dlerror();
-  if (dlsym_error)
-  {
-    std::cout << "* Error: Cannot load symbol: " << dlsym_error << std::endl;
-    dlclose(model_lib_handle);
-    return 3;
-  }
-
-  if (2 == argc)
-  {
-    std::cout << "Item is a " << itemType << std::endl;
-
-    int returnCode;
-    if (std::string(itemType) != "simulator-model")
-      returnCode = 4;
-    else
-      returnCode = 0;
-
-    dlclose(model_lib_handle);
-    return returnCode;
-  }
-
-  if (std::string(itemType) != "simulator-model")
-  {
-    std::cout << "* Error: not an simulator model" << std::endl;
-    dlclose(model_lib_handle);
-    return 4;
-  }
-
-  if (argFlag)
-  {
-    if (nameFlag)
-    {
-      char const * const namePointer
-          = (char const *) dlsym(model_lib_handle, symbol.c_str());
-      dlsym_error = dlerror();
-      if (dlsym_error)
+      error = sharedLib.GetMetadataFile(&name, &len, &data);
+      if (error)
       {
-        std::cout << "* Error: Cannot load symbol: " << dlsym_error
-                  << std::endl;
-        dlclose(model_lib_handle);
-        return 5;
-      }
-      else
-      {
-        std::cout << namePointer << std::endl;
-      }
-    }
-    else
-    {
-      unsigned char const * const filePointer
-          = (unsigned char const *) dlsym(model_lib_handle, symbol.c_str());
-      dlsym_error = dlerror();
-      if (dlsym_error)
-      {
-        std::cout << "* Error: Cannot load symbol: " << dlsym_error
-                  << std::endl;
-        dlclose(model_lib_handle);
+        std::cout << "* Error: unable to get metadata file." << std::endl;
         return 6;
       }
+    }
+    else  // parameter file index provided
+    {
+      int number;
+      error = sharedLib.GetNumberOfParameterFiles(&number);
+      int index = atol(argv[2]);
+      if ((index < 0) || (index >= number))
+      {
+        std::cout << "* Error: invalid index provided." << std::endl;
+        return 7;
+      }
       else
       {
-        symbol.append("_len");
-        unsigned int const * fileLength
-            = (unsigned int const *) dlsym(model_lib_handle, symbol.c_str());
-        dlsym_error = dlerror();
-        if (dlsym_error)
+        error = sharedLib.GetParameterFile(index, &name, &len, &data);
+        if (error)
         {
-          std::cout << "* Error: Cannot load symbol: " << dlsym_error
-                    << std::endl;
-          dlclose(model_lib_handle);
-          return 7;
-        }
-        else
-        {
-          fwrite(filePointer, sizeof(unsigned char), *fileLength, stdout);
+          std::cout << "* Error: unable to get parameter file." << std::endl;
+          return 8;
         }
       }
     }
-  }
-  else
-  {
-    int const * number = (int const *) dlsym(model_lib_handle, symbol.c_str());
-    dlsym_error = dlerror();
-    if (dlsym_error)
+
+    if (std::string(argv[3]) == "name") { std::cout << name << std::endl; }
+    else if (std::string(argv[3]) == "data")
     {
-      std::cout << "* Error: Cannot load symbol: " << dlsym_error << std::endl;
-      dlclose(model_lib_handle);
-      return 8;
+      fwrite(data, sizeof(unsigned char), len, stdout);
     }
-    else
-      std::cout << *number << std::endl;
+
+    sharedLib.Close();
+    return 0;
   }
 
-  dlclose(model_lib_handle);
-  return 0;
+  // something is wrong...
+  return 9;
 }

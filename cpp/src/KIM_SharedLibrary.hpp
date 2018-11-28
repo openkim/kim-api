@@ -31,8 +31,8 @@
 //
 
 
-#ifndef KIM_MODEL_LIBRARY_HPP_
-#define KIM_MODEL_LIBRARY_HPP_
+#ifndef KIM_SHARED_LIBRARY_HPP_
+#define KIM_SHARED_LIBRARY_HPP_
 
 #include <string>
 
@@ -48,13 +48,17 @@ namespace KIM
 {
 // Forward declarations
 class LanguageName;
+namespace SHARED_LIBRARY_SCHEMA
+{
+class SharedLibrarySchemaV1;
+}  // namespace SHARED_LIBRARY_SCHEMA
 
 
-class ModelLibrary
+class SharedLibrary
 {
  public:
-  ModelLibrary(Log * const log);
-  ~ModelLibrary();
+  SharedLibrary(Log * const log);
+  ~SharedLibrary();
 
   enum ITEM_TYPE {
     STAND_ALONE_MODEL,
@@ -63,18 +67,22 @@ class ModelLibrary
     MODEL_DRIVER
   };
 
-  int Open(bool const typeIsModel, std::string const & modelName);
+  int Open(std::string const & sharedLibraryName);
   int Close();
-  int GetModelType(ITEM_TYPE * const modelType) const;
-  int GetModelCreateFunctionPointer(LanguageName * const languageName,
-                                    Function ** const functionPointer) const;
+  int GetName(std::string * const name) const;
+  int GetType(ITEM_TYPE * const type) const;
+  int GetCreateFunctionPointer(LanguageName * const languageName,
+                               Function ** const functionPointer) const;
   int GetNumberOfParameterFiles(int * const numberOfParameterFiles) const;
-  int GetParameterFileString(
-      int const index,
-      unsigned int * const parameterFileStringLength,
-      unsigned char const ** const parameterFileString) const;
-  int GetModelDriverName(std::string * const modelDriverName) const;
-  int GetModelCompiledWithVersion(std::string * const versionString) const;
+  int GetParameterFile(int const index,
+                       std::string * const parameterFileName,
+                       unsigned int * const parameterFileLength,
+                       unsigned char const ** const parameterFileData) const;
+  int GetMetadataFile(std::string * const metadataFileName,
+                      unsigned int * const metadataFileLength,
+                      unsigned char const ** const metadataFileData) const;
+  int GetDriverName(std::string * const driverName) const;
+  int GetCompiledWithVersion(std::string * const versionString) const;
 
   void LogEntry(LogVerbosity const logVerbosity,
                 std::string const & message,
@@ -82,10 +90,11 @@ class ModelLibrary
                 std::string const & fileName) const;
 
  private:
-  std::string modelName_;
-  std::string libraryPath_;
-  void * libraryHandle_;
+  std::string sharedLibraryName_;
+  void * sharedLibraryHandle_;
+  int const * sharedLibrarySchemaVersion_;
+  SHARED_LIBRARY_SCHEMA::SharedLibrarySchemaV1 const * sharedLibrarySchema_;
   Log * log_;
-};
+};  // class SharedLibrary
 }  // namespace KIM
-#endif  // KIM_MODEL_LIBRARY_HPP_
+#endif  // KIM_SHARED_LIBRARY_HPP_

@@ -69,7 +69,7 @@ set(CPP_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ComputeArgumentsImplementation.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_LogImplementation.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ModelImplementation.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ModelLibrary.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/KIM_SharedLibrary.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/old_KIM_API_DIRS.cpp
   )
 
@@ -80,11 +80,13 @@ add_library(kim-loader STATIC
   KIM_LogVerbosity.cpp
   KIM_Log.cpp
   KIM_LogImplementation.cpp
+  KIM_SharedLibrary.cpp
   old_KIM_API_DIRS.cpp
   )
 target_include_directories(kim-loader PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}
   ../include
+  ../../cmake
   ${CMAKE_BINARY_DIR}
   )
 target_link_libraries(kim-loader ${CMAKE_DL_LIBS})

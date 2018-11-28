@@ -205,66 +205,57 @@ function(add_kim_api_model_library)
   if(NOT XXD_FOUND)
     message(FATAL_ERROR "The xxd utility is required to build models and drivers.")
   endif()
+
   if(MODEL_METADATA_FILE)
     if("${MODEL_PARAMETER_FILES}" STREQUAL "")
       message(FATAL_ERROR "No Simulator Model parameter file(s) provided")
     endif()
 
+    set(ITEM_NAME "\"${MODEL_NAME}\"")
+    set(ITEM_DRIVER_NAME "NULL")
+    set(ITEM_METADATA_FILE "\"${MODEL_METADATA_FILE}\"")
+    set(CREATE_ROUTINE_DECLARATION "")
+    set(CREATE_ROUTINE_NAME "NULL")
+    set(CREATE_ROUTINE_LANGUAGE "cpp")
+    set(ITEM_TYPE "SIMULATOR_MODEL")
+
+    string(MAKE_C_IDENTIFIER ${MODEL_METADATA_FILE} CFNAME)
+    if (${CFNAME} MATCHES "^_[0-9].*")  # Fixup difference between MAKE_C_IDENTIFER and xxd
+      set(CFNAME "_${CFNAME}")
+    endif()
+    set(EMBEDDED_METADATA_FILE "extern unsigned int const ${CFNAME}_len;\n")
+    set(EMBEDDED_METADATA_FILE "${EMBEDDED_METADATA_FILE}extern unsigned char const ${CFNAME}[];\n")
+    set(EMBEDDED_METADATA_FILE "${EMBEDDED_METADATA_FILE}static SharedLibrarySchemaV1::EmbeddedFile const metadataFile =\n")
+    set(EMBEDDED_METADATA_FILE "${EMBEDDED_METADATA_FILE}  {\"${MODEL_METADATA_FILE}\", ${CFNAME}_len, ${CFNAME}};\n")
+    set(EMBEDDED_METADATA_FILE_IDENTIFIER "&metadataFile")
     set(METADATA_FILE_IN "${CMAKE_CURRENT_SOURCE_DIR}/${MODEL_METADATA_FILE}")
-    set(METADATA_FILE_XXD_IN "${CMAKE_CURRENT_BINARY_DIR}/metadata_file")
-    set(METADATA_FILE "${METADATA_FILE_XXD_IN}.c")
+    set(METADATA_FILE "${CMAKE_CURRENT_BINARY_DIR}/${MODEL_METADATA_FILE}.c")
     list(APPEND MODEL_SOURCES ${METADATA_FILE})
     add_custom_command(OUTPUT ${METADATA_FILE}
-      COMMAND ${CMAKE_COMMAND} -E copy_if_different "${METADATA_FILE_IN}" "${METADATA_FILE_XXD_IN}"
-      COMMAND ${XXD_EXECUTABLE} -i "metadata_file" "${METADATA_FILE}"
+      COMMAND ${XXD_EXECUTABLE} -i "${MODEL_METADATA_FILE}" "${METADATA_FILE}"
       DEPENDS ${METADATA_FILE_IN}
-      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
       )
-
-    set(PARAM_FILE_NAMES "")
-    set(IDX 1)
-    foreach(FNAME ${MODEL_PARAMETER_FILES})
-      set(PARAM_FILE_NAMES "${PARAM_FILE_NAMES}\nchar parameter_file_${IDX}_name[] = \"${FNAME}\";")
-      set(PARAM_FILE_IN "${CMAKE_CURRENT_SOURCE_DIR}/${FNAME}")
-      set(PARAM_FILE_XXD_IN "${CMAKE_CURRENT_BINARY_DIR}/parameter_file_${IDX}")
-      set(PARAM_FILE "${PARAM_FILE_XXD_IN}.c")
-      list(APPEND MODEL_SOURCES ${PARAM_FILE})
-      add_custom_command(OUTPUT ${PARAM_FILE}
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different "${PARAM_FILE_IN}" "${PARAM_FILE_XXD_IN}"
-        COMMAND ${XXD_EXECUTABLE} -i "parameter_file_${IDX}" "${PARAM_FILE}"
-        DEPENDS ${PARAM_FILE_IN}
-        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-        )
-      MATH(EXPR IDX "${IDX}+1")
-    endforeach()
-
-    list(LENGTH MODEL_PARAMETER_FILES NUMBER_OF_PARAMETER_FILES)
-    set(WRAPPER_FILE "${KIM_API_CMAKE_DIR}/simulator-model-wrapper.cpp.in")
-    set(INFORMATION_FILE "${KIM_API_CMAKE_DIR}/simulator-model-info.txt.in")
   elseif(MODEL_PARAMETER_FILES)
     if("${MODEL_DRIVER_NAME}" STREQUAL "")
       message(FATAL_ERROR "No Parameterized Model driver name provided")
     endif()
 
-    set(IDX 1)
-    foreach(FNAME ${MODEL_PARAMETER_FILES})
-      set(PARAM_FILE_IN "${CMAKE_CURRENT_SOURCE_DIR}/${FNAME}")
-      set(PARAM_FILE_XXD_IN "${CMAKE_CURRENT_BINARY_DIR}/parameter_file_${IDX}")
-      set(PARAM_FILE "${PARAM_FILE_XXD_IN}.c")
-      list(APPEND MODEL_SOURCES ${PARAM_FILE})
-      add_custom_command(OUTPUT ${PARAM_FILE}
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different "${PARAM_FILE_IN}" "${PARAM_FILE_XXD_IN}"
-        COMMAND ${XXD_EXECUTABLE} -i "parameter_file_${IDX}" "${PARAM_FILE}"
-        DEPENDS ${PARAM_FILE_IN}
-        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-        )
-      MATH(EXPR IDX "${IDX}+1")
-    endforeach()
-
-    list(LENGTH MODEL_PARAMETER_FILES NUMBER_OF_PARAMETER_FILES)
-    set(WRAPPER_FILE "${KIM_API_CMAKE_DIR}/parameterized-model-wrapper.cpp.in")
-    set(INFORMATION_FILE "${KIM_API_CMAKE_DIR}/parameterized-model-info.txt.in")
+    set(ITEM_NAME "\"${MODEL_NAME}\"")
+    set(ITEM_DRIVER_NAME "\"${MODEL_DRIVER_NAME}\"")
+    set(ITEM_METADATA_FILE "NULL")
+    set(CREATE_ROUTINE_DECLARATION "")
+    set(CREATE_ROUTINE_NAME "NULL")
+    set(CREATE_ROUTINE_LANGUAGE "cpp")
+    set(ITEM_TYPE "PARAMETERIZED_MODEL")
+    set(EMBEDDED_METADATA_FILE_IDENTIFIER "NULL")
   else()
+    if(MODEL_DRIVER_NAME)
+      message(FATAL_ERROR "Stand-Alone Model may not have a Model Driver")
+    endif()
+    if(MODEL_PARAMETER_FILES)
+      message(FATAL_ERROR "Stand-Alone Model may not include parameter files")
+    endif()
     if("${MODEL_CREATE_ROUTINE_NAME}" STREQUAL "")
       message(FATAL_ERROR "No Stand-Alone Model create routine name provided")
     endif()
@@ -272,17 +263,58 @@ function(add_kim_api_model_library)
       message(FATAL_ERROR "No Stand-Alone Model create routine language provided")
     endif()
 
-    set(WRAPPER_FILE "${KIM_API_CMAKE_DIR}/stand-alone-model-wrapper.cpp.in")
-    set(INFORMATION_FILE "${KIM_API_CMAKE_DIR}/stand-alone-model-info.txt.in")
+    set(ITEM_NAME "\"${MODEL_NAME}\"")
+    set(ITEM_DRIVER_NAME "NULL")
+    set(ITEM_METADATA_FILE "NULL")
+    set(CREATE_ROUTINE_DECLARATION "void ${MODEL_CREATE_ROUTINE_NAME}();")
+    set(CREATE_ROUTINE_NAME ${MODEL_CREATE_ROUTINE_NAME})
+    set(CREATE_ROUTINE_LANGUAGE ${MODEL_CREATE_ROUTINE_LANGUAGE})
+    set(ITEM_TYPE "STAND_ALONE_MODEL")
+    set(EMBEDDED_METADATA_FILE_IDENTIFIER "NULL")
   endif()
 
-  configure_file(${INFORMATION_FILE} ${CMAKE_CURRENT_BINARY_DIR}/model-info.txt @ONLY)
-  configure_file(${WRAPPER_FILE} ${CMAKE_CURRENT_BINARY_DIR}/wrapper.cpp @ONLY)
-  list(APPEND MODEL_SOURCES ${CMAKE_CURRENT_BINARY_DIR}/wrapper.cpp)
+  # process parameter files
+  set(PARAMETER_FILE_DECLARATIONS "")
+  set(EMBEDDED_PARAMETER_FILES "")
+  set(EMBEDDED_PARAMETER_FILES_IDENTIFIER "NULL")
+  foreach(FNAME ${MODEL_PARAMETER_FILES})
+    string(MAKE_C_IDENTIFIER ${FNAME} CFNAME)
+    if (${CFNAME} MATCHES "^_[0-9].*")  # Fixup difference between MAKE_C_IDENTIFER and xxd
+      set(CFNAME "_${CFNAME}")
+    endif()
+    if("${PARAMETER_FILE_DECLARATIONS}" STREQUAL "")
+      set(PARAMETER_FILE_DECLARATIONS "extern unsigned int const ${CFNAME}_len;\n")
+      set(PARAMETER_FILE_DECLARATIONS "${PARAMETER_FILE_DECLARATIONS}extern unsigned char const ${CFNAME}[];")
+      set(EMBEDDED_PARAMETER_FILES "static SharedLibrarySchemaV1::EmbeddedFile const parameterFiles[] = {\n")
+      set(EMBEDDED_PARAMETER_FILES "${EMBEDDED_PARAMETER_FILES}  {\"${FNAME}\", ${CFNAME}_len, ${CFNAME}}")
+      set(EMBEDDED_PARAMETER_FILES_IDENTIFIER "parameterFiles")
+    else()
+      set(PARAMETER_FILE_DECLARATIONS "${PARAMETER_FILE_DECLARATIONS}\nextern unsigned int const ${CFNAME}_len;\n")
+      set(PARAMETER_FILE_DECLARATIONS "${PARAMETER_FILE_DECLARATIONS}extern unsigned char const ${CFNAME}[];")
+      set(EMBEDDED_PARAMETER_FILES "${EMBEDDED_PARAMETER_FILES},\n  {\"${FNAME}\", ${CFNAME}_len, ${CFNAME}}")
+    endif()
+    set(PARAM_FILE_IN "${CMAKE_CURRENT_SOURCE_DIR}/${FNAME}")
+    set(PARAM_FILE "${CMAKE_CURRENT_BINARY_DIR}/${FNAME}.c")
+    list(APPEND MODEL_SOURCES ${PARAM_FILE})
+    add_custom_command(OUTPUT ${PARAM_FILE}
+      COMMAND ${XXD_EXECUTABLE} -i "${FNAME}" "${PARAM_FILE}"
+      DEPENDS ${PARAM_FILE_IN}
+      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+      )
+  endforeach()
+  list(LENGTH MODEL_PARAMETER_FILES NUMBER_OF_PARAMETER_FILES)
+  if(NUMBER_OF_PARAMETER_FILES GREATER 0)
+    set(EMBEDDED_PARAMETER_FILES "${EMBEDDED_PARAMETER_FILES} };")
+  endif()
+
+  configure_file(${KIM_API_CMAKE_DIR}/item-info.txt.in ${CMAKE_CURRENT_BINARY_DIR}/item-info.txt @ONLY)
+  configure_file(${KIM_API_CMAKE_DIR}/item-wrapper.cpp.in ${CMAKE_CURRENT_BINARY_DIR}/item-wrapper.cpp @ONLY)
+  list(APPEND MODEL_SOURCES ${CMAKE_CURRENT_BINARY_DIR}/item-wrapper.cpp)
 
   add_library(${MODEL_NAME} MODULE ${MODEL_SOURCES})
   set_target_properties(${MODEL_NAME} PROPERTIES OUTPUT_NAME "${PROJECT_NAME}-${KIM_API_MODEL_IDENTIFIER}"
     LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${MODEL_NAME})
+  target_include_directories(${MODEL_NAME} PRIVATE ${KIM_API_CMAKE_DIR})
   target_link_libraries(${MODEL_NAME} kim-api)
 
   install(TARGETS ${MODEL_NAME} LIBRARY DESTINATION "${KIM_API_MODEL_INSTALL_PREFIX}/${MODEL_NAME}")
@@ -309,16 +341,29 @@ function(add_kim_api_model_driver_library)
     add_kim_api_imported_library()
   endif()
 
-  configure_file(${KIM_API_CMAKE_DIR}/model-driver-info.txt.in
-    ${CMAKE_CURRENT_BINARY_DIR}/model-info.txt @ONLY)
-  configure_file(${KIM_API_CMAKE_DIR}/model-driver-wrapper.cpp.in
-    ${CMAKE_CURRENT_BINARY_DIR}/wrapper.cpp @ONLY)
+  set(CREATE_ROUTINE_DECLARATION "void ${MODEL_DRIVER_CREATE_ROUTINE_NAME}();")
+  set(CREATE_ROUTINE_NAME "${MODEL_DRIVER_CREATE_ROUTINE_NAME}")
+  set(CREATE_ROUTINE_LANGUAGE ${MODEL_DRIVER_CREATE_ROUTINE_LANGUAGE})
 
-  set(MODEL_DRIVER_SOURCES ${CMAKE_CURRENT_BINARY_DIR}/wrapper.cpp)
+  set(ITEM_TYPE "MODEL_DRIVER")
+  set(ITEM_NAME "\"${MODEL_DRIVER_NAME}\"")
+  set(ITEM_DRIVER_NAME "NULL")
+  set(PARAMETER_FILE_DECLARATIONS "")
+  set(NUMBER_OF_PARAMETER_FILES 0)
+  set(EMBEDDED_PARAMETER_FILES "")
+  set(EMBEDDED_PARAMETER_FILES_IDENTIFIER "NULL")
+  set(EMBEDDED_METADATA_FILE "")
+  set(EMBEDDED_METADATA_FILE_IDENTIFIER "NULL")
+
+  configure_file(${KIM_API_CMAKE_DIR}/item-info.txt.in ${CMAKE_CURRENT_BINARY_DIR}/item-info.txt @ONLY)
+  configure_file(${KIM_API_CMAKE_DIR}/item-wrapper.cpp.in ${CMAKE_CURRENT_BINARY_DIR}/item-wrapper.cpp @ONLY)
+
+  set(MODEL_DRIVER_SOURCES ${CMAKE_CURRENT_BINARY_DIR}/item-wrapper.cpp)
 
   add_library(${MODEL_DRIVER_NAME} MODULE ${MODEL_DRIVER_SOURCES})
   set_target_properties(${MODEL_DRIVER_NAME} PROPERTIES OUTPUT_NAME "${PROJECT_NAME}-${KIM_API_MODEL_DRIVER_IDENTIFIER}"
     LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${MODEL_DRIVER_NAME})
+  target_include_directories(${MODEL_DRIVER_NAME} PRIVATE ${KIM_API_CMAKE_DIR})
   target_link_libraries(${MODEL_DRIVER_NAME} kim-api)
 
   install(TARGETS ${MODEL_DRIVER_NAME} LIBRARY DESTINATION "${KIM_API_MODEL_DRIVER_INSTALL_PREFIX}/${MODEL_DRIVER_NAME}")

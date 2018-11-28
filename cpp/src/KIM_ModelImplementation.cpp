@@ -43,6 +43,10 @@
 #include "KIM_Log.hpp"
 #endif
 
+#ifndef KIMHDR_OLD_KIM_API_DIRS_H
+#include "old_KIM_API_DIRS.h"
+#endif
+
 #ifndef KIM_MODEL_IMPLEMENTATION_HPP_
 #include "KIM_ModelImplementation.hpp"
 #endif
@@ -261,7 +265,7 @@ int ModelImplementation::Create(
   if (error) { return true; }
 
   ModelImplementation * pModelImplementation;
-  pModelImplementation = new ModelImplementation(new ModelLibrary(pLog), pLog);
+  pModelImplementation = new ModelImplementation(new SharedLibrary(pLog), pLog);
 #if DEBUG_VERBOSITY
   std::string const callString
       = "Create(" + numbering.String() + ", " + requestedLengthUnit.String()
@@ -824,7 +828,7 @@ int ModelImplementation::GetNumberOfParameterFiles(
   LOG_DEBUG("Enter  " + callString);
 
 #if ERROR_VERBOSITY
-  if (modelType_ != ModelLibrary::PARAMETERIZED_MODEL)
+  if (itemType_ != SharedLibrary::PARAMETERIZED_MODEL)
   {
     LOG_ERROR("Only parameterized models have parameter files.");
     LOG_DEBUG("Exit 1=" + callString);
@@ -848,7 +852,7 @@ int ModelImplementation::GetParameterFileName(
   LOG_DEBUG("Enter  " + callString);
 
 #if ERROR_VERBOSITY
-  if (modelType_ != ModelLibrary::PARAMETERIZED_MODEL)
+  if (itemType_ != SharedLibrary::PARAMETERIZED_MODEL)
   {
     LOG_ERROR("Only parameterized models have parameter files.");
     LOG_DEBUG("Exit 1=" + callString);
@@ -1379,7 +1383,7 @@ int ModelImplementation::WriteParameterizedModel(
   LOG_DEBUG("Enter  " + callString);
 
 #if ERROR_VERBOSITY
-  if (modelType_ != ModelLibrary::PARAMETERIZED_MODEL)
+  if (itemType_ != SharedLibrary::PARAMETERIZED_MODEL)
   {
     LOG_ERROR("Only parameterized models can implement the "
               "WritePrameterizedModel() routine.");
@@ -1771,7 +1775,7 @@ std::string const & ModelImplementation::String() const
   ss << "Model object\n"
      << "------------\n\n";
   ss << "Model Name : " << modelName_ << "\n";
-  if (modelType_ == ModelLibrary::PARAMETERIZED_MODEL)
+  if (itemType_ == SharedLibrary::PARAMETERIZED_MODEL)
   { ss << "Model Driver Name : " << modelDriverName_ << "\n"; }
   ss << "Log ID : " << log_->GetID() << "\n";
   ss << "\n";
@@ -1914,12 +1918,12 @@ std::string const & ModelImplementation::String() const
 }
 
 
-ModelImplementation::ModelImplementation(ModelLibrary * const modelLibrary,
+ModelImplementation::ModelImplementation(SharedLibrary * const sharedLibrary,
                                          Log * const log) :
-    modelType_(ModelLibrary::STAND_ALONE_MODEL),
+    itemType_(SharedLibrary::STAND_ALONE_MODEL),
     modelName_(""),
     modelDriverName_(""),
-    modelLibrary_(modelLibrary),
+    sharedLibrary_(sharedLibrary),
     numberOfParameterFiles_(0),
     log_(log),
     numberingHasBeenSet_(false),
@@ -1942,7 +1946,7 @@ ModelImplementation::ModelImplementation(ModelLibrary * const modelLibrary,
 {
 #if DEBUG_VERBOSITY
   std::string const callString
-      = "ModelImplementation(" + SPTR(modelLibrary) + ", " + SPTR(log) + ").";
+      = "ModelImplementation(" + SPTR(sharedLibrary) + ", " + SPTR(log) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -1970,7 +1974,7 @@ ModelImplementation::~ModelImplementation()
 #endif
   LOG_DEBUG("Enter  " + callString);
 
-  delete modelLibrary_;
+  delete sharedLibrary_;
 
   LOG_DEBUG("Destroying Log object and exit " + callString);
   Log::Destroy(&log_);
@@ -2018,7 +2022,15 @@ int ModelImplementation::ModelCreate(
     return true;
   }
 
-  error = modelLibrary_->Open(true, modelName);
+  std::vector<std::string> sharedLibraryList;
+  if (!findItem(OLD_KIM::KIM_MODELS_DIR, modelName, &sharedLibraryList, NULL))
+  {
+    LOG_ERROR("Could not find model shared library.");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
+
+  error = sharedLibrary_->Open(sharedLibraryList[OLD_KIM::IE_FULLPATH]);
   if (error)
   {
     LOG_ERROR("Could not open model shared library.");
@@ -2026,10 +2038,10 @@ int ModelImplementation::ModelCreate(
     return true;
   }
 
-  error = modelLibrary_->GetModelType(&modelType_);
-  switch (modelType_)
+  error = sharedLibrary_->GetType(&itemType_);
+  switch (itemType_)
   {
-    case ModelLibrary::STAND_ALONE_MODEL:
+    case SharedLibrary::STAND_ALONE_MODEL:
       LOG_DEBUG("Initializing a stand alone model.");
       error = InitializeStandAloneModel(requestedLengthUnit,
                                         requestedEnergyUnit,
@@ -2043,7 +2055,7 @@ int ModelImplementation::ModelCreate(
         return true;
       }
       break;
-    case ModelLibrary::PARAMETERIZED_MODEL:
+    case SharedLibrary::PARAMETERIZED_MODEL:
       LOG_DEBUG("Initializing a parameterized model.");
       error = InitializeParameterizedModel(requestedLengthUnit,
                                            requestedEnergyUnit,
@@ -2057,12 +2069,12 @@ int ModelImplementation::ModelCreate(
         return true;
       }
       break;
-    case ModelLibrary::MODEL_DRIVER:
+    case SharedLibrary::MODEL_DRIVER:
       LOG_ERROR("Creation of a model driver is not allowed.");
       LOG_DEBUG("Exit 1=" + callString);
       return true;
       break;
-    case ModelLibrary::SIMULATOR_MODEL:
+    case SharedLibrary::SIMULATOR_MODEL:
       LOG_ERROR("Creation of a simulator model is not allowed.");
       LOG_DEBUG("Exit 1=" + callString);
       return true;
@@ -2773,8 +2785,8 @@ int ModelImplementation::InitializeStandAloneModel(
 
   LanguageName languageName;
   Function * functionPointer = NULL;
-  error = modelLibrary_->GetModelCreateFunctionPointer(&languageName,
-                                                       &functionPointer);
+  error = sharedLibrary_->GetCreateFunctionPointer(&languageName,
+                                                   &functionPointer);
   if (error)
   {
     LOG_ERROR("Could not get ModelCreateFunctionPointer.");
@@ -2894,7 +2906,7 @@ int ModelImplementation::InitializeParameterizedModel(
 #endif
 
   // get driver name
-  error = modelLibrary_->GetModelDriverName(&modelDriverName_);
+  error = sharedLibrary_->GetDriverName(&modelDriverName_);
   if (error)
   {
     LOG_ERROR("Could not get Model Driver name.");
@@ -2912,24 +2924,37 @@ int ModelImplementation::InitializeParameterizedModel(
   }
 
   // close model and open driver
-  error = modelLibrary_->Close();
+  error = sharedLibrary_->Close();
   if (error)
   {
     LOG_ERROR("Could not close model shared library.");
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
-  error = modelLibrary_->Open(false, modelDriverName_);
+
+  std::vector<std::string> sharedLibraryList;
+  if (!findItem(OLD_KIM::KIM_MODEL_DRIVERS_DIR,
+                modelDriverName_,
+                &sharedLibraryList,
+                NULL))
+  {
+    LOG_ERROR("Could not find model driver shared library.");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
+
+  error = sharedLibrary_->Open(sharedLibraryList[OLD_KIM::IE_FULLPATH]);
   if (error)
   {
     LOG_ERROR("Could not open model driver shared library.");
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
+
   // check that it is a driver
-  ModelLibrary::ITEM_TYPE itemType;
-  error = modelLibrary_->GetModelType(&itemType);
-  if ((error) || (itemType != ModelLibrary::MODEL_DRIVER))
+  SharedLibrary::ITEM_TYPE itemType;
+  error = sharedLibrary_->GetType(&itemType);
+  if ((error) || (itemType != SharedLibrary::MODEL_DRIVER))
   {
     LOG_ERROR("Invalid model driver shared library.");
     LOG_DEBUG("Exit 1=" + callString);
@@ -2938,8 +2963,8 @@ int ModelImplementation::InitializeParameterizedModel(
 
   LanguageName languageName;
   Function * functionPointer = NULL;
-  error = modelLibrary_->GetModelCreateFunctionPointer(&languageName,
-                                                       &functionPointer);
+  error = sharedLibrary_->GetCreateFunctionPointer(&languageName,
+                                                   &functionPointer);
   if (error)
   {
     LOG_ERROR("Could not get ModelCreateFunctionPointer.");
@@ -3044,14 +3069,14 @@ int ModelImplementation::WriteParameterFiles()
 #endif
   LOG_DEBUG("Enter  " + callString);
 
-  modelLibrary_->GetNumberOfParameterFiles(&numberOfParameterFiles_);
+  sharedLibrary_->GetNumberOfParameterFiles(&numberOfParameterFiles_);
   std::vector<unsigned char const *> parameterFileStrings;
   std::vector<unsigned int> parameterFileStringLengths;
   for (int i = 0; i < numberOfParameterFiles_; ++i)
   {
     unsigned char const * strPtr;
     unsigned int length;
-    int error = modelLibrary_->GetParameterFileString(i, &length, &strPtr);
+    int error = sharedLibrary_->GetParameterFile(i, NULL, &length, &strPtr);
     if (error)
     {
       LOG_ERROR("Could not get parameter file data.");
