@@ -51,7 +51,7 @@ int kim_shared_library_schema_version = 1;
 @EMBEDDED_PARAMETER_FILES@
 
 SharedLibrarySchemaV1 kim_shared_library_schema = {
-    "@PROJECT_VERSION_STRING@",  // KIM API Version
+    "@KIM_API_VERSION_STRING@",  // KIM API Version
     SharedLibrarySchemaV1::@ITEM_TYPE@,  // Item Type
     @ITEM_NAME@,  // Item Name
     KIM::LANGUAGE_NAME::@CREATE_ROUTINE_LANGUAGE@,  // Create Routine Language
