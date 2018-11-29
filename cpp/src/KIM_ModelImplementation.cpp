@@ -2182,7 +2182,7 @@ int ModelImplementation::ModelCreate(
   else
   {
     if (routineFunction_[MODEL_ROUTINE_NAME::Refresh] != NULL)
-    {  // May not be provided if no parameters set
+    {  // Must not be provided if no parameters set
       LOG_ERROR("Model supplied Create() routine set pointer for "
                 + MODEL_ROUTINE_NAME::Refresh.String()
                 + " but did not "
@@ -2191,7 +2191,7 @@ int ModelImplementation::ModelCreate(
       return true;
     }
     if (routineFunction_[MODEL_ROUTINE_NAME::WriteParameterizedModel] != NULL)
-    {  // May not be provided if no parameters set
+    {  // Must not be provided if no parameters set
       LOG_ERROR("Model supplied Create() routine set pointer for "
                 + MODEL_ROUTINE_NAME::WriteParameterizedModel.String()
                 + " but did not "
