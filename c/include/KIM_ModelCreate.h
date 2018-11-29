@@ -66,11 +66,6 @@ typedef struct KIM_ModelRoutineName KIM_ModelRoutineName;
 typedef struct KIM_SpeciesName KIM_SpeciesName;
 #endif
 
-#ifndef KIM_SUPPORT_STATUS_DEFINED_
-#define KIM_SUPPORT_STATUS_DEFINED_
-typedef struct KIM_SupportStatus KIM_SupportStatus;
-#endif
-
 #ifndef KIM_LENGTH_UNIT_DEFINED_
 #define KIM_LENGTH_UNIT_DEFINED_
 typedef struct KIM_LengthUnit KIM_LengthUnit;

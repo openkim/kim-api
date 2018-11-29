@@ -47,11 +47,6 @@ typedef struct KIM_LogVerbosity KIM_LogVerbosity;
 typedef struct KIM_DataType KIM_DataType;
 #endif
 
-#ifndef KIM_LANGUAGE_NAME_DEFINED_
-#define KIM_LANGUAGE_NAME_DEFINED_
-typedef struct KIM_LanguageName KIM_LanguageName;
-#endif
-
 #ifndef KIM_MODEL_ROUTINE_NAME_DEFINED_
 #define KIM_MODEL_ROUTINE_NAME_DEFINED_
 typedef struct KIM_ModelRoutineName KIM_ModelRoutineName;

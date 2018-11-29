@@ -49,7 +49,6 @@ class LanguageName;
 class Numbering;
 class ModelRoutineName;
 class SpeciesName;
-class SupportStatus;
 class LengthUnit;
 class EnergyUnit;
 class ChargeUnit;

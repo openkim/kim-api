@@ -41,7 +41,6 @@ namespace KIM
 // Forward declarations
 class LogVerbosity;
 class DataType;
-class LanguageName;
 class ModelRoutineName;
 class SpeciesName;
 class Numbering;
