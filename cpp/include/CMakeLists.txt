@@ -40,21 +40,14 @@ configure_file(KIM_Version.hpp.in ${CMAKE_BINARY_DIR}/KIM_Version.hpp)
 
 set(CPP_HEADERS
   KIM_ChargeUnit.hpp
-  KIM_ChargeUnit.inc
   KIM_ComputeArgumentName.hpp
-  KIM_ComputeArgumentName.inc
   KIM_ComputeArguments.hpp
   KIM_ComputeCallbackName.hpp
-  KIM_ComputeCallbackName.inc
   KIM_DataType.hpp
-  KIM_DataType.inc
   KIM_EnergyUnit.hpp
-  KIM_EnergyUnit.inc
   KIM_FunctionTypes.hpp
   KIM_LanguageName.hpp
-  KIM_LanguageName.inc
   KIM_LengthUnit.hpp
-  KIM_LengthUnit.inc
   KIM_Log.hpp
   KIM_LogMacros.hpp
   KIM_LogVerbosity.hpp
@@ -71,21 +64,15 @@ set(CPP_HEADERS
   KIM_Model.hpp
   KIM_ModelRefresh.hpp
   KIM_ModelRoutineName.hpp
-  KIM_ModelRoutineName.inc
   KIM_ModelWriteParameterizedModel.hpp
   KIM_Numbering.hpp
-  KIM_Numbering.inc
   KIM_SemVer.hpp
   KIM_SimulatorHeaders.hpp
   KIM_SpeciesName.hpp
-  KIM_SpeciesName.inc
   KIM_SupportedExtensions.hpp
   KIM_SupportStatus.hpp
-  KIM_SupportStatus.inc
   KIM_TemperatureUnit.hpp
-  KIM_TemperatureUnit.inc
   KIM_TimeUnit.hpp
-  KIM_TimeUnit.inc
   KIM_UnitSystem.hpp
   ${CMAKE_BINARY_DIR}/KIM_LOG_DEFINES.inc
   ${CMAKE_BINARY_DIR}/KIM_Version.hpp
