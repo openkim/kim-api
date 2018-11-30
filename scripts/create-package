@@ -158,3 +158,7 @@ printf "  git push origin --tags '${master_branch}'\n"
 printf "  git push github --tags '${master_branch}'\n"
 printf "  git checkout '${devel_branch}'\n"
 printf "\n"
+internal_notes="/Users/relliott/unison-sync/KIM/kim-release-process-notes/kim-api-internal-release-process-notes"
+if test -f "${internal_notes}"; then
+  source "${internal_notes}"
+fi
