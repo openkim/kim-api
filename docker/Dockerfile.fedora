@@ -82,12 +82,15 @@ RUN cmake -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} \
 RUN make -j2
 RUN ccache -s
 RUN make test
-RUN make install DESTDIR=${PWD}/install && rm -rf ${PWD}/install/usr && rm -rf ${PWD}/install/etc && rmdir ${PWD}/install
+RUN make install DESTDIR=${PWD}/install && \
+    rm -rf ${PWD}/install/usr && \
+    rm -rf ${PWD}/install/etc && \
+    rmdir ${PWD}/install
 RUN if [ ${COVERAGE} ]; then \
   if [ ${CC} = clang ]; then \
-    codecov -R ${PWD}/../${TRAVIS_REPO_SLUG#*/} -F "${CC}" -x "llvm-cov gcov" 2>&1 | grep -v "arcs.*block"; \
+    codecov -R ${PWD}/../${TRAVIS_REPO_SLUG#*/} -F "${CC}" -x "llvm-cov gcov"; \
   else \
-    codecov -R ${PWD}/../${TRAVIS_REPO_SLUG#*/} -F "${CC}" 2>&1 | grep -v "arcs.*block"; \
+    codecov -R ${PWD}/../${TRAVIS_REPO_SLUG#*/} -F "${CC}"; \
   fi; \
 fi
 USER root

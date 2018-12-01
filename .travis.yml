@@ -23,7 +23,8 @@ before_script:
   - if [[ "${COVERITY_SCAN_BRANCH}" != 1 && "${COVERITY}" == false ]]; then
         if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
           brew update &> /dev/null &&
-          brew install gcc@6 &&
+          brew install gcc@6 ccache&&
+          export PATH="/usr/local/opt/ccache/libexec:$PATH" &&
           export CC=gcc-6 &&
           export CXX=g++-6 &&
           export FC=gfortran-6;
@@ -39,19 +40,35 @@ before_script:
 script:
   - if [[ "${COVERITY_SCAN_BRANCH}" != 1 && "$COVERITY" == false ]]; then
       if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
-        mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DKIM_API_ENABLE_SANITIZE=ON -DKIM_API_ENABLE_COVERAGE=ON .. && make &&
-        make test && bash <(curl -s https://codecov.io/bash) -x gcov-6 &&
-        make install DESTDIR=$PWD && rm -rf ./usr/local/* && rmdir ./usr/local;
+        mkdir build &&
+        cd build &&
+        ccache -z &&
+        cmake -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DKIM_API_ENABLE_SANITIZE=ON -DKIM_API_ENABLE_COVERAGE=ON .. &&
+        make -j2 &&
+        ccache -s
+        make test &&
+        bash <(curl -s https://codecov.io/bash) -x gcov-6 &&
+        make install DESTDIR=$PWD &&
+        rm -rf ./usr/local/* &&
+        rmdir ./usr/local;
       else
          travis_retry docker build -t ${TRAVIS_REPO_SLUG}:${DISTRO}
-                   --build-arg CC=${CC} --build-arg CXX=${CXX} --build-arg FC=${FC}
-                   --build-arg CXXFLAGS="${CXXFLAGS}" --build-arg CMAKE_BUILD_TYPE="${CMAKE_BUILD_TYPE}"
+                   --build-arg CC=${CC}
+                   --build-arg CXX=${CXX}
+                   --build-arg FC=${FC}
+                   --build-arg CXXFLAGS="${CXXFLAGS}"
+                   --build-arg CMAKE_BUILD_TYPE="${CMAKE_BUILD_TYPE}"
                    --build-arg COVERAGE="${COVERAGE}"
                    --build-arg SANITIZE="${SANITIZE}"
-                   --build-arg CI=${CI} --build-arg TRAVIS=${TRAVIS} --build-arg TRAVIS_OS_NAME=${DISTRO:-fedora}
-                   --build-arg TRAVIS_BRANCH=${TRAVIS_BRANCH} --build-arg TRAVIS_JOB_NUMBER=${TRAVIS_JOB_NUMBER}
-                   --build-arg TRAVIS_PULL_REQUEST=${TRAVIS_PULL_REQUEST} --build-arg TRAVIS_JOB_ID=${TRAVIS_JOB_ID}
-                   --build-arg TRAVIS_TAG=${TRAVIS_TAG} --build-arg TRAVIS_REPO_SLUG=${TRAVIS_REPO_SLUG}
+                   --build-arg CI=${CI}
+                   --build-arg TRAVIS=${TRAVIS}
+                   --build-arg TRAVIS_OS_NAME=${DISTRO:-fedora}
+                   --build-arg TRAVIS_BRANCH=${TRAVIS_BRANCH}
+                   --build-arg TRAVIS_JOB_NUMBER=${TRAVIS_JOB_NUMBER}
+                   --build-arg TRAVIS_PULL_REQUEST=${TRAVIS_PULL_REQUEST}
+                   --build-arg TRAVIS_JOB_ID=${TRAVIS_JOB_ID}
+                   --build-arg TRAVIS_TAG=${TRAVIS_TAG}
+                   --build-arg TRAVIS_REPO_SLUG=${TRAVIS_REPO_SLUG}
                    --build-arg TRAVIS_COMMIT=${TRAVIS_COMMIT}
                    ${HOME}/docker/ &&
         rm -rf $HOME/.ccache &&
