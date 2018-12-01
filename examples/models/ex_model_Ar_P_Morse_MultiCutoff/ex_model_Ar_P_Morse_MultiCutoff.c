@@ -623,7 +623,7 @@ int model_create(KIM_ModelCreate * const modelCreate,
   buffer * bufferPointer;
   int error;
 
-  /* use function pointer definitints to verify prototypes */
+  /* use function pointer definitions to verify prototypes */
   KIM_ModelCreateFunction * create = model_create;
   KIM_ModelComputeArgumentsCreateFunction * CACreate = compute_arguments_create;
   KIM_ModelComputeFunction * compute = model_compute;
