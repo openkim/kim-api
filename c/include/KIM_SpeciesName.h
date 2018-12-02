@@ -169,7 +169,7 @@ extern KIM_SpeciesName const KIM_SPECIES_NAME_Nh;
 extern KIM_SpeciesName const KIM_SPECIES_NAME_Fl;
 extern KIM_SpeciesName const KIM_SPECIES_NAME_Mc;
 extern KIM_SpeciesName const KIM_SPECIES_NAME_Lv;
-extern KIM_SpeciesName const KIM_SPECIES_NAME_Tss;
+extern KIM_SpeciesName const KIM_SPECIES_NAME_Ts;
 extern KIM_SpeciesName const KIM_SPECIES_NAME_Og;
 extern KIM_SpeciesName const KIM_SPECIES_NAME_user01;
 extern KIM_SpeciesName const KIM_SPECIES_NAME_user02;
