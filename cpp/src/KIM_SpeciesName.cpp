@@ -304,12 +304,12 @@ StringMap const GetStringMap()
   m[Ds] = "Ds";
   m[Rg] = "Rg";
   m[Cn] = "Cn";
-  m[Uut] = "Uut";
+  m[Nh] = "Nh";
   m[Fl] = "Fl";
-  m[Uup] = "Uup";
+  m[Mc] = "Mc";
   m[Lv] = "Lv";
-  m[Uus] = "Uus";
-  m[Uuo] = "Uuo";
+  m[Ts] = "Ts";
+  m[Og] = "Og";
   m[user01] = "user01";
   m[user02] = "user02";
   m[user03] = "user03";
