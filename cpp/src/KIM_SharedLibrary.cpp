@@ -112,6 +112,7 @@ int SharedLibrary::Open(std::string const & sharedLibraryName)
   if (sharedLibraryHandle_ == NULL)
   {
     LOG_ERROR("Unable to open '" + sharedLibraryName_ + "'.");
+    LOG_ERROR(dlerror());
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
