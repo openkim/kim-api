@@ -383,7 +383,7 @@ get_build_install_item () {
             fi
           fi
         fi
-        if ! ((${make_command} clean && ${make_command}) > ./make-log.txt 2>&1 && \
+        if ! ((${make_command} clean && ${make_command} && ${make_command} CTEST_OUTPUT_ON_FAILURE=1 test) > ./make-log.txt 2>&1 && \
                 if test x"sudo-yes" = x"${use_sudo}"; then
                   printf -- "${PASSWORD}\n" | sudo -k -S ${make_command} install 2> /dev/null
                 else
@@ -395,7 +395,7 @@ get_build_install_item () {
       elif test x"STAND_ALONE_MODEL" = x"${item_type}" -o \
                 x"MODEL_DRIVER"      = x"${item_type}" -o \
                 x"SIMULATOR_MODEL"   = x"${item_type}"; then
-        if ! ((${make_command} clean && ${make_command}) > ./make-log.txt 2>&1 && \
+        if ! ((${make_command} clean && ${make_command} && ${make_command} CTEST_OUTPUT_ON_FAILURE=1 test) > ./make-log.txt 2>&1 && \
                 if test x"sudo-yes" = x"${use_sudo}"; then
                   printf -- "${PASSWORD}\n" | sudo -k -S ${make_command} install 2> /dev/null
                 else

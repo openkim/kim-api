@@ -1410,6 +1410,7 @@ int ModelImplementation::WriteParameterizedModel(
          "list(APPEND CMAKE_PREFIX_PATH $ENV{KIM_API_V2_CMAKE_PREFIX_DIR})\n"
          "find_package(KIM-API-V2 2.0 REQUIRED CONFIG)\n"
          "if(NOT TARGET kim-api)\n"
+         "  enable_testing()\n"
          "  project(\"${KIM_API_PROJECT_NAME}\" VERSION "
          "\"${KIM_API_VERSION}\"\n"
          "    LANGUAGES CXX C Fortran)\n"
