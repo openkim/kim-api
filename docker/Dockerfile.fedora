@@ -54,7 +54,8 @@ ARG TRAVIS_REPO_SLUG
 ARG TRAVIS_COMMIT
 ARG TRAVIS_OS_NAME
 
-RUN dnf -y install make cmake git gcc-c++ gcc-gfortran ccache wget vim-common
+RUN dnf -y install make cmake git gcc-c++ gcc-gfortran ccache wget vim-common \
+                   ${SANITIZE:+libasan} ${COVERAGE:+findutils}
 RUN wget -O /usr/bin/codecov https://codecov.io/bash
 RUN chmod +x /usr/bin/codecov
 
@@ -82,15 +83,16 @@ RUN cmake -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} \
 RUN make -j2
 RUN ccache -s
 RUN make test
-RUN make install DESTDIR=${PWD}/install && \
-    rm -rf ${PWD}/install/usr && \
-    rm -rf ${PWD}/install/etc && \
-    rmdir ${PWD}/install
+RUN make install DESTDIR=${PWD}/destdir && \
+    rm -rf ${PWD}/destdir/usr/{bin,include,lib64,libexec,share} && \
+    rm -rf ${PWD}/destdir/etc && \
+    rmdir ${PWD}/destdir/usr && \
+    rmdir ${PWD}/destdir
 RUN if [ ${COVERAGE} ]; then \
   if [ ${CC} = clang ]; then \
-    codecov -R ${PWD}/../${TRAVIS_REPO_SLUG#*/} -F "${CC}" -x "llvm-cov gcov"; \
+    codecov -R ${PWD}/../../${TRAVIS_REPO_SLUG#*/} -F "${CC}" -x "llvm-cov gcov" 2>&1 | grep -v "arcs.*block"; \
   else \
-    codecov -R ${PWD}/../${TRAVIS_REPO_SLUG#*/} -F "${CC}"; \
+    codecov -R ${PWD}/../../${TRAVIS_REPO_SLUG#*/} -F "${CC}" 2>&1 | grep -v "arcs.*block"; \
   fi; \
 fi
 USER root

@@ -5,37 +5,49 @@ sudo: required
 osx_image:
  - xcode9.2
 
-os:
- - linux
- - osx
-
 services:
  - docker
 
 env:
   global:
     - secure: "knFkRceVfuvlc7j9u5OUDHCMlPu531f/HR6TV4zboPc8UtbJ/Hiz7ooRO2VZheoMhdWJjaWQLYEJ1CGLyszziCbETeBj6cbNmzXVcgE2p2JWI76L7RLIMZrAjDeg0X+p9l7HcFvEBMIz87jqirwuyZZVBdYPxOL8ECiPJIyS2Ec5cwTyj4TBYomNfrL8lksj10ui6HOPQ63jsF8B68ZzsmPf2CSZPZgLqDZAyBxc+jGdOB7TF6O5dJALWzMW0AdWdpsOxRkBCZHQdUEqeYMBF0Ypq1Xj/Tol5Qsh0UMYTHZ4E72XwSLL+wyUKpCR96iWqI8jYnYY+/h/eNcVKABPMX2nE0xaqhNPbdEVJPMaayVdxJMzDWxt2eIXTxLRPjcoqCiLGF9G860dxfvTwz7RSQZtnJmTClO/5jHdoDltof372E0MJOh7W2lR22jNDAHT6tmPevZGyTsMN+vKJ/u46P1v5DbdeRAgdjikVYCqqaqUvWzqj5Urs4gZI/dyPyEAZy0mwOgKdpEQhcNCDquq03jCU/V9SlqLgkyZPcTA9PVFtFTgZhEm6rA+hK/vtqo6BZxewyoFGDgVXOylA4f90kPZqOgO83ufeYi+s8RGLxAxLddcsxh4wtGhgnEwQJlznjxfWCKiirRZ4ZXSikoa28R/RbmK27syhYFbjs27D3g="
-  matrix:
-    - CMAKE_BUILD_TYPE=Debug DISTRO=fedora DOCKERHUB=true COVERITY=false
-    - COVERITY=true
+
+matrix:
+  include:
+    - name: "osX Debug, Sanitize, Coverage"
+      os: osx
+      env: CMAKE_BUILD_TYPE=Debug SANITIZE=true COVERAGE=true COVERITY=false
+    - name: "linux fedora, Debug, Sanitize, Dockehub"
+      os: linux
+      env: CMAKE_BUILD_TYPE=Debug DISTRO=fedora DOCKERHUB=true COVERITY=false
+    - name: "Coverity Scan"
+      if: branch = coverity_scan
+      os: linux
+      env: COVERITY=true
 
 before_script:
   - if [[ "${COVERITY_SCAN_BRANCH}" != 1 && "${COVERITY}" == false ]]; then
         if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
           brew update &> /dev/null &&
           brew install gcc@6 ccache&&
+          export SANITIZE=true &&
+          export COVERAGE=true &&
           export PATH="/usr/local/opt/ccache/libexec:$PATH" &&
           export CC=gcc-6 &&
           export CXX=g++-6 &&
           export FC=gfortran-6;
         else
+           COVERAGE=true &&
+           SANITIZE=true &&
            mkdir ${HOME}/docker &&
            cp -v docker/Dockerfile.${DISTRO} ${HOME}/docker/Dockerfile &&
            cd ../../ &&
            mv -v ${TRAVIS_REPO_SLUG} $HOME/docker &&
            cp -r $HOME/.ccache ${HOME}/docker/ccache;
-        fi
+        fi;
     fi
+  - env
+
 
 script:
   - if [[ "${COVERITY_SCAN_BRANCH}" != 1 && "$COVERITY" == false ]]; then
@@ -43,14 +55,17 @@ script:
         mkdir build &&
         cd build &&
         ccache -z &&
-        cmake -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DKIM_API_ENABLE_SANITIZE=ON -DKIM_API_ENABLE_COVERAGE=ON .. &&
+        cmake -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} ${SANITIZE:+-DKIM_API_ENABLE_SANITIZE=ON} ${COVERAGE:+-DKIM_API_ENABLE_COVERAGE=ON} .. &&
         make -j2 &&
         ccache -s
         make test &&
-        bash <(curl -s https://codecov.io/bash) -x gcov-6 &&
-        make install DESTDIR=$PWD &&
-        rm -rf ./usr/local/* &&
-        rmdir ./usr/local;
+        if test x"${COVERAGE}" != x""; then bash <(curl -s https://codecov.io/bash) -x gcov-6; fi &&
+        mkdir ./destdir &&
+        make install DESTDIR=${PWD}/destdir &&
+        rm -rf ./destdir/usr/local/{bin,etc,include,lib,libexec,share} &&
+        rmdir ./destdir/usr/local &&
+        rmdir ./destdir/usr &&
+        rmdir ./destdir;
       else
          travis_retry docker build -t ${TRAVIS_REPO_SLUG}:${DISTRO}
                    --build-arg CC=${CC}
