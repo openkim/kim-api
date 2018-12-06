@@ -370,18 +370,14 @@ get_build_install_item () {
       if test x"PARAMETERIZED_MODEL" = x"${item_type}"; then
         dvr="`grep "item-driver-name:" item-info.txt | sed -e 's/item-driver-name:"\(.*\)"/\1/'`"
         if test x"" != x"`${collections_info} model_drivers find "${dvr}"`"; then
-          printf "Using#installed#driver...#%s\n" "${dvr}" | sed -e 's/ /./g' -e 's/#/ /g' || return 1
+          printf "Found#installed#driver...#%s\n" "${dvr}" | sed -e 's/ /./g' -e 's/#/ /g' || return 1
         else
-          printf "This model needs its driver '${dvr}', trying to find it at openkim.org.\n"
-          # try openkim.org first
-          if ! get_build_install_item "${install_collection}" "${dvr}" "${force}" "${use_sudo}" "${PASSWORD}"; then
-            if test x"" != x"${local_build}"; then
-              # now try local
-              printf "Now trying to find '${dvr}' locally.\n"
-              dvr="`printf "${local_build}" | sed "s|^\(.*/\)${item_name}\$|\1${dvr}|"`"
-              get_build_install_item "${install_collection}" "${dvr}" "${force}" "${use_sudo}" "${PASSWORD}" || return 1
-            fi
-          fi
+          printf "This item needs its driver '${dvr}', but it is not currently installed.\n"
+          printf "Trying to find it at openkim.org.\n"
+          # try openkim.org
+          get_build_install_item "${install_collection}" "${dvr}" "${force}" "${use_sudo}" "${PASSWORD}" || \
+            printf "*** WARNING *** Model Driver for this item not currently installed in any of the KIM API collections.\n%s\n\n" \
+                   "                Continuing with installation of the item anyway."
         fi
         if ! ((${make_command} clean && ${make_command} && ${make_command} CTEST_OUTPUT_ON_FAILURE=1 test) > ./make-log.txt 2>&1 && \
                 if test x"sudo-yes" = x"${use_sudo}"; then
