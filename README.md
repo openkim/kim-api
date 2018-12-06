@@ -1,3 +1,4 @@
+<!---
 #
 # CDDL HEADER START
 #
@@ -30,7 +31,9 @@
 #
 # Release: This file is part of the kim-api.git repository.
 #
+-->
 
+[![Build Status](https://travis-ci.org/openkim/kim-api.svg?branch=master-v2)](https://travis-ci.org/openkim/kim-api)
 
 ============================= The KIM API package =============================
 
