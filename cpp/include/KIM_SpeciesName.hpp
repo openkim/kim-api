@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-v2.0.0-beta.2 package.
+// Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
 //
 
 
@@ -166,12 +166,12 @@ extern SpeciesName const Mt;
 extern SpeciesName const Ds;
 extern SpeciesName const Rg;
 extern SpeciesName const Cn;
-extern SpeciesName const Uut;
+extern SpeciesName const Nh;
 extern SpeciesName const Fl;
-extern SpeciesName const Uup;
+extern SpeciesName const Mc;
 extern SpeciesName const Lv;
-extern SpeciesName const Uus;
-extern SpeciesName const Uuo;
+extern SpeciesName const Ts;
+extern SpeciesName const Og;
 extern SpeciesName const user01;
 extern SpeciesName const user02;
 extern SpeciesName const user03;

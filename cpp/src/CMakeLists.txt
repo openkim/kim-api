@@ -29,7 +29,7 @@
 #
 
 #
-# Release: This file is part of the kim-api-v2.0.0-beta.2 package.
+# Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
 #
 
 
@@ -56,7 +56,10 @@ set(CPP_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ModelCreate.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ModelDestroy.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ModelDriverCreate.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ModelExtension.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ModelRefresh.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ModelRoutineName.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ModelWriteParameterizedModel.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_Numbering.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_SemVer.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_SpeciesName.cpp
@@ -66,7 +69,7 @@ set(CPP_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ComputeArgumentsImplementation.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_LogImplementation.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ModelImplementation.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ModelLibrary.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/KIM_SharedLibrary.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/old_KIM_API_DIRS.cpp
   )
 
@@ -77,11 +80,13 @@ add_library(kim-loader STATIC
   KIM_LogVerbosity.cpp
   KIM_Log.cpp
   KIM_LogImplementation.cpp
+  KIM_SharedLibrary.cpp
   old_KIM_API_DIRS.cpp
   )
 target_include_directories(kim-loader PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}
   ../include
+  ../../cmake
   ${CMAKE_BINARY_DIR}
   )
 target_link_libraries(kim-loader ${CMAKE_DL_LIBS})

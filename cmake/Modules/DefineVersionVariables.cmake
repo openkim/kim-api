@@ -29,11 +29,11 @@
 #
 
 #
-# Release: This file is part of the kim-api-v2.0.0-beta.2 package.
+# Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
 #
 
 
-set(PROJECT_VERSION_PRERELEASE "beta.2" CACHE STRING "Version prerelease value")
+set(PROJECT_VERSION_PRERELEASE "beta.3" CACHE STRING "Version prerelease value")
 
 find_package(Git)
 if((${GIT_FOUND}) AND (EXISTS "${CMAKE_SOURCE_DIR}/.git"))

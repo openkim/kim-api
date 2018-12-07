@@ -29,7 +29,7 @@
 #
 
 #
-# Release: This file is part of the kim-api-v2.0.0-beta.2 package.
+# Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
 #
 
 
@@ -42,6 +42,7 @@ set(TEST_MODELS
   ex_model_Ar_P_MLJ_Fortran
   ex_model_Ar_P_Morse
   ex_model_Ar_P_Morse_07C
+  ex_model_Ar_P_Morse_07C_w_Extensions
   ex_model_Ar_P_Morse_MultiCutoff
   ex_model_Ar_SLJ_MultiCutoff
   )

@@ -30,11 +30,11 @@
 #
 
 #
-# Release: This file is part of the kim-api-v2.0.0-beta.2 package.
+# Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
 #
 
 
 install(
   FILES kim-api-c-style.el
-  DESTINATION ${CMAKE_INSTALL_DATADIR}/emacs/site-lisp
+  DESTINATION ${CMAKE_INSTALL_DATADIR}/emacs/site-lisp/${PROJECT_NAME}
   )

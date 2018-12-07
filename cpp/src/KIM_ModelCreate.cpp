@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-v2.0.0-beta.2 package.
+// Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
 //
 
 
@@ -73,44 +73,15 @@ void ModelCreate::SetNeighborListPointers(
       modelWillNotRequestNeighborsOfNoncontributingParticles);
 }
 
-int ModelCreate::SetRefreshPointer(LanguageName const languageName,
+int ModelCreate::SetRoutinePointer(ModelRoutineName const modelRoutineName,
+                                   LanguageName const languageName,
+                                   int const required,
                                    Function * const fptr)
 {
   CONVERT_POINTER;
 
-  return pImpl->SetRefreshPointer(languageName, fptr);
-}
-
-int ModelCreate::SetDestroyPointer(LanguageName const languageName,
-                                   Function * const fptr)
-{
-  CONVERT_POINTER;
-
-  return pImpl->SetDestroyPointer(languageName, fptr);
-}
-
-int ModelCreate::SetComputeArgumentsCreatePointer(
-    LanguageName const languageName, Function * const fptr)
-{
-  CONVERT_POINTER;
-
-  return pImpl->SetComputeArgumentsCreatePointer(languageName, fptr);
-}
-
-int ModelCreate::SetComputeArgumentsDestroyPointer(
-    LanguageName const languageName, Function * const fptr)
-{
-  CONVERT_POINTER;
-
-  return pImpl->SetComputeArgumentsDestroyPointer(languageName, fptr);
-}
-
-int ModelCreate::SetComputePointer(LanguageName const languageName,
-                                   Function * const fptr)
-{
-  CONVERT_POINTER;
-
-  return pImpl->SetComputePointer(languageName, fptr);
+  return pImpl->SetRoutinePointer(
+      modelRoutineName, languageName, required, fptr);
 }
 
 int ModelCreate::SetSpeciesCode(SpeciesName const speciesName, int const code)

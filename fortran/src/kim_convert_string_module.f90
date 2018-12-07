@@ -27,7 +27,7 @@
 !
 
 !
-! Release: This file is part of the kim-api-v2.0.0-beta.2 package.
+! Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
 !
 
 
@@ -36,31 +36,60 @@ module kim_convert_string_module
   private
 
   public &
-    kim_convert_string
+    kim_convert_c_char_array_to_string, &
+    kim_convert_c_char_ptr_to_string, &
+    kim_convert_string_to_c_char_array
 
 contains
-  subroutine kim_convert_string(p, string)
+  subroutine kim_convert_c_char_array_to_string(c_char_array, string)
     use, intrinsic :: iso_c_binding
     implicit none
-    type(c_ptr), intent(in) :: p
+    character(len=1, kind=c_char), intent(in) :: c_char_array(:)
     character(len=*, kind=c_char), intent(out) :: string
 
-    character(len=1, kind=c_char), pointer :: fp(:)
     integer(c_int) :: i
     integer(c_int) :: null_index
+    integer(c_int) :: length
 
-    call c_f_pointer(p, fp, [len(string)+1])
-    do null_index=1,(len(string)+1)
-      if (fp(null_index) .eq. char(0)) exit
+    length = len(string)+1
+    do null_index=1,length
+      if (c_char_array(null_index) .eq. c_null_char) exit
     end do
-    if (null_index .eq. len(string)+1) then
+    if (null_index .eq. length) then
       null_index = len(string)
     else
       null_index = null_index - 1
     end if
     string = ""
     do i=1,null_index
-      string(i:i) = fp(i)
+      string(i:i) = c_char_array(i)
     end do
-  end subroutine kim_convert_string
+  end subroutine kim_convert_c_char_array_to_string
+
+  subroutine kim_convert_c_char_ptr_to_string(c_char_ptr, string)
+    use, intrinsic :: iso_c_binding
+    implicit none
+    type(c_ptr), intent(in) :: c_char_ptr
+    character(len=*, kind=c_char), intent(out) :: string
+
+    character(len=1, kind=c_char), pointer :: fp(:)
+    integer(c_int) :: length
+
+    if (c_associated(c_char_ptr)) then
+      length = len(string) + 1
+      call c_f_pointer(c_char_ptr, fp, [length])
+      call kim_convert_c_char_array_to_string(fp, string)
+    else
+      string = ""
+    end if
+  end subroutine kim_convert_c_char_ptr_to_string
+
+  subroutine kim_convert_string_to_c_char_array(string, c_char_array)
+    use, intrinsic :: iso_c_binding
+    implicit none
+    character(len=*, kind=c_char), intent(in) :: string
+    character(len=1, kind=c_char), intent(out) :: c_char_array(:)
+
+    c_char_array(:) = trim(string)//c_null_char
+  end subroutine kim_convert_string_to_c_char_array
 end module kim_convert_string_module

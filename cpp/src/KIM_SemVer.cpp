@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-v2.0.0-beta.2 package.
+// Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
 //
 
 
@@ -229,12 +229,8 @@ int IsLessThan(std::string const & versionA,
 
   if ((ParseSemVer(
            versionA, &majorA, &minorA, &patchA, &prereleaseA, &buildMetadataA)
-       || ParseSemVer(versionB,
-                      &majorB,
-                      &minorB,
-                      &patchB,
-                      &prereleaseB,
-                      &buildMetadataB)))
+       || ParseSemVer(
+           versionB, &majorB, &minorB, &patchB, &prereleaseB, &buildMetadataB)))
   { return true; }
 
   if (majorA > majorB)

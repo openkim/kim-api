@@ -29,7 +29,7 @@
 #
 
 #
-# Release: This file is part of the kim-api-v2.0.0-beta.2 package.
+# Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
 #
 
 
@@ -50,22 +50,26 @@ set(C_HEADERS
     KIM_Log.h
     KIM_LogMacros.h
     KIM_LogVerbosity.h
+    KIM_Model.h
+    KIM_ModelCompute.h
     KIM_ModelComputeArgumentsCreate.h
     KIM_ModelComputeArgumentsDestroy.h
     KIM_ModelComputeArguments.h
-    KIM_ModelCompute.h
     KIM_ModelCreate.h
+    KIM_ModelExtension.h
     KIM_ModelDestroy.h
     KIM_ModelDriverCreate.h
     KIM_ModelDriverHeaders.h
     KIM_ModelHeaders.h
-    KIM_Model.h
     KIM_ModelRefresh.h
+    KIM_ModelRoutineName.h
+    KIM_ModelWriteParameterizedModel.h
     KIM_Numbering.h
     KIM_SemVer.h
     KIM_SimulatorHeaders.h
     KIM_SpeciesName.h
     KIM_SupportStatus.h
+    KIM_SupportedExtensions.h
     KIM_TemperatureUnit.h
     KIM_TimeUnit.h
     KIM_UnitSystem.h

@@ -2,63 +2,125 @@ language: cpp
 
 sudo: required
 
-osx_image:
- - xcode9.2
-
-os:
- - linux
- - osx
-
-services:
- - docker
-
 env:
-  matrix:
-    - DISTRO=fedora DOCKERHUB=true
+  global:
+    - secure: "knFkRceVfuvlc7j9u5OUDHCMlPu531f/HR6TV4zboPc8UtbJ/Hiz7ooRO2VZheoMhdWJjaWQLYEJ1CGLyszziCbETeBj6cbNmzXVcgE2p2JWI76L7RLIMZrAjDeg0X+p9l7HcFvEBMIz87jqirwuyZZVBdYPxOL8ECiPJIyS2Ec5cwTyj4TBYomNfrL8lksj10ui6HOPQ63jsF8B68ZzsmPf2CSZPZgLqDZAyBxc+jGdOB7TF6O5dJALWzMW0AdWdpsOxRkBCZHQdUEqeYMBF0Ypq1Xj/Tol5Qsh0UMYTHZ4E72XwSLL+wyUKpCR96iWqI8jYnYY+/h/eNcVKABPMX2nE0xaqhNPbdEVJPMaayVdxJMzDWxt2eIXTxLRPjcoqCiLGF9G860dxfvTwz7RSQZtnJmTClO/5jHdoDltof372E0MJOh7W2lR22jNDAHT6tmPevZGyTsMN+vKJ/u46P1v5DbdeRAgdjikVYCqqaqUvWzqj5Urs4gZI/dyPyEAZy0mwOgKdpEQhcNCDquq03jCU/V9SlqLgkyZPcTA9PVFtFTgZhEm6rA+hK/vtqo6BZxewyoFGDgVXOylA4f90kPZqOgO83ufeYi+s8RGLxAxLddcsxh4wtGhgnEwQJlznjxfWCKiirRZ4ZXSikoa28R/RbmK27syhYFbjs27D3g="
+
+matrix:
+  include:
+    - name: "osX Debug, Sanitize, Coverage"
+      os: osx
+      osx_image: xcode9.2
+      env: CMAKE_BUILD_TYPE=Debug SANITIZE=true COVERAGE=true COVERITY=false
+    - name: "linux fedora, Debug, Sanitize, Dockehub"
+      os: linux
+      services: docker
+      env: DISTRO=fedora CMAKE_BUILD_TYPE=Debug SANITIZE=true COVERITY=false DOCKERHUB=true
+    - name: "Coverity Scan"
+      if: branch = coverity_scan
+      os: linux
+      services: docker
+      env: COVERITY=true
 
 before_script:
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
-      brew update &> /dev/null &&
-      rm /usr/local/include/c++ &&
-      brew install gcc@6 &&
-      export CC=gcc-6 &&
-      export CXX=g++-6 &&
-      export FC=gfortran-6;
-    else
-       mkdir ${HOME}/docker &&
-       cp -v docker/Dockerfile.${DISTRO} ${HOME}/docker/Dockerfile &&
-       cd ../../ &&
-       mv -v ${TRAVIS_REPO_SLUG} $HOME/docker &&
-       cp -r $HOME/.ccache ${HOME}/docker/ccache;
+  - if [[ "${COVERITY_SCAN_BRANCH}" != 1 && "${COVERITY}" == false ]]; then
+        if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+          brew update &> /dev/null &&
+          brew install gcc@6 ccache&&
+          export PATH="/usr/local/opt/ccache/libexec:$PATH" &&
+          export CC=gcc-6 &&
+          export CXX=g++-6 &&
+          export FC=gfortran-6;
+        else
+           mkdir ${HOME}/docker &&
+           cp -v docker/Dockerfile.${DISTRO} ${HOME}/docker/Dockerfile &&
+           cd ../../ &&
+           mv -v ${TRAVIS_REPO_SLUG} $HOME/docker &&
+           cp -r $HOME/.ccache ${HOME}/docker/ccache;
+        fi;
     fi
+  - env
 
 script:
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
-      mkdir build && cd build && cmake -DKIM_API_ENABLE_SANITIZE=ON -DKIM_API_ENABLE_COVERAGE=ON .. && make &&
-      make test && bash <(curl -s https://codecov.io/bash) -x gcov-6 &&
-      make install DESTDIR=$PWD && rm -rf ./usr/local/* && rmdir ./usr/local;
-    else
-       travis_retry docker build -t ${TRAVIS_REPO_SLUG}:${DISTRO}
-                 --build-arg CC=${CC} --build-arg CXX=${CXX} --build-arg FC=${FC}
-                 --build-arg CXXFLAGS="${CXXFLAGS}" --build-arg CMAKE_BUILD_TYPE="${CMAKE_BUILD_TYPE}"
-                 --build-arg COVERAGE="${COVERAGE}"
-                 --build-arg SANITIZE="${SANITIZE}"
-                 --build-arg CI=${CI} --build-arg TRAVIS=${TRAVIS} --build-arg TRAVIS_OS_NAME=${DISTRO:-fedora}
-                 --build-arg TRAVIS_BRANCH=${TRAVIS_BRANCH} --build-arg TRAVIS_JOB_NUMBER=${TRAVIS_JOB_NUMBER}
-                 --build-arg TRAVIS_PULL_REQUEST=${TRAVIS_PULL_REQUEST} --build-arg TRAVIS_JOB_ID=${TRAVIS_JOB_ID}
-                 --build-arg TRAVIS_TAG=${TRAVIS_TAG} --build-arg TRAVIS_REPO_SLUG=${TRAVIS_REPO_SLUG}
-                 --build-arg TRAVIS_COMMIT=${TRAVIS_COMMIT}
-                 ${HOME}/docker/ &&
-      rm -rf $HOME/.ccache &&
-      CON=$(docker run -d ${TRAVIS_REPO_SLUG}:${DISTRO} /bin/bash) &&
-      docker cp ${CON}:/home/kim/.ccache ${HOME}/;
+  - if [[ "${COVERITY_SCAN_BRANCH}" != 1 && "$COVERITY" == false ]]; then
+      if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+        mkdir build &&
+        cd build &&
+        ccache -z &&
+        cmake -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} ${SANITIZE:+-DKIM_API_ENABLE_SANITIZE=ON} ${COVERAGE:+-DKIM_API_ENABLE_COVERAGE=ON} .. &&
+        make -j2 &&
+        ccache -s &&
+        make test &&
+        if test x"${COVERAGE}" != x""; then bash <(curl -s https://codecov.io/bash) -x gcov-6; fi &&
+        mkdir ./destdir &&
+        make install DESTDIR=${PWD}/destdir &&
+        rm -rf ./destdir/usr/local/{bin,etc,include,lib,libexec,share} &&
+        rmdir ./destdir/usr/local &&
+        rmdir ./destdir/usr &&
+        rmdir ./destdir &&
+        cd ../ &&
+        rm -rf build &&
+        mkdir build &&
+        cd build &&
+        ccache -z &&
+        cmake -DCMAKE_INSTALL_PREFIX=${PWD}/test-install -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DKIM_API_BUILD_EXAMPLES=OFF ${SANITIZE:+-DKIM_API_ENABLE_SANITIZE=ON} ${COVERAGE:+-DKIM_API_ENABLE_COVERAGE=ON} .. &&
+        make -j2 install &&
+        ccache -s &&
+        source ./test-install/bin/kim-api-v2-activate &&
+        kim-api-v2-collections-management install system `find ../examples/model-drivers -type d -mindepth 1 -maxdepth 1` &&
+        kim-api-v2-collections-management install system `find ../examples/models -type d -mindepth 1 -maxdepth 1` &&
+        kim-api-v2-collections-management list;
+      else
+         travis_retry docker build -t ${TRAVIS_REPO_SLUG}:${DISTRO}
+                   --build-arg CC=${CC}
+                   --build-arg CXX=${CXX}
+                   --build-arg FC=${FC}
+                   --build-arg CXXFLAGS="${CXXFLAGS}"
+                   --build-arg CMAKE_BUILD_TYPE="${CMAKE_BUILD_TYPE}"
+                   --build-arg COVERAGE="${COVERAGE}"
+                   --build-arg SANITIZE="${SANITIZE}"
+                   --build-arg CI=${CI}
+                   --build-arg TRAVIS=${TRAVIS}
+                   --build-arg TRAVIS_OS_NAME=${DISTRO:-fedora}
+                   --build-arg TRAVIS_BRANCH=${TRAVIS_BRANCH}
+                   --build-arg TRAVIS_JOB_NUMBER=${TRAVIS_JOB_NUMBER}
+                   --build-arg TRAVIS_PULL_REQUEST=${TRAVIS_PULL_REQUEST}
+                   --build-arg TRAVIS_JOB_ID=${TRAVIS_JOB_ID}
+                   --build-arg TRAVIS_TAG=${TRAVIS_TAG}
+                   --build-arg TRAVIS_REPO_SLUG=${TRAVIS_REPO_SLUG}
+                   --build-arg TRAVIS_COMMIT=${TRAVIS_COMMIT}
+                   ${HOME}/docker/ &&
+        rm -rf $HOME/.ccache &&
+        CON=$(docker run -d ${TRAVIS_REPO_SLUG}:${DISTRO} /bin/bash) &&
+        docker cp ${CON}:/home/kim/.ccache ${HOME}/;
+      fi;
     fi
 
 after_success:
-  - if [[ ${DOCKERHUB} && ${DOCKER_USERNAME} && ${DOCKER_PASSWORD} && ${TRAVIS_BRANCH} == cmake && ${TRAVIS_PULL_REQUEST} == false && ${TRAVIS_OS_NAME} = "linux" ]]; then
+  - if [[ "$COVERITY" == false && ${DOCKERHUB} && ${DOCKER_USERNAME} && ${DOCKER_PASSWORD} && ${TRAVIS_BRANCH} == master-v2 && ${TRAVIS_PULL_REQUEST} == false && ${TRAVIS_OS_NAME} = "linux" ]]; then
       docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
       docker push "${TRAVIS_REPO_SLUG}:${DISTRO}";
     fi
 
 cache:
   - ccache
+
+addons:
+  apt:
+    packages:
+      - make
+      - cmake
+      - git
+      - g++
+      - gfortran
+      - ccache
+      - wget
+      - vim-common
+  coverity_scan:
+    project:
+      name: "openkim/kim-api"
+      description: "OpenKIM is an online framework for making molecular simulations reliable, reproducible, and portable. Computer implementations of interatomic models are archived in OpenKIM, verified for coding integrity, and tested by computing their predictions for a variety of material properties. Models conforming to the KIM application programming interface (API) work seamlessly with major simulation codes that have adopted the KIM API standard."
+    notification_email: relliott@umn.edu
+    build_command_prepend: "cmake ."
+    build_command: "make"
+    branch_pattern: coverity_scan

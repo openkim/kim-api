@@ -29,7 +29,7 @@
 /*                                                                            */
 
 /*                                                                            */
-/* Release: This file is part of the kim-api-v2.0.0-beta.2 package.           */
+/* Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.         */
 /*                                                                            */
 
 
@@ -165,12 +165,12 @@ extern KIM_SpeciesName const KIM_SPECIES_NAME_Mt;
 extern KIM_SpeciesName const KIM_SPECIES_NAME_Ds;
 extern KIM_SpeciesName const KIM_SPECIES_NAME_Rg;
 extern KIM_SpeciesName const KIM_SPECIES_NAME_Cn;
-extern KIM_SpeciesName const KIM_SPECIES_NAME_Uut;
+extern KIM_SpeciesName const KIM_SPECIES_NAME_Nh;
 extern KIM_SpeciesName const KIM_SPECIES_NAME_Fl;
-extern KIM_SpeciesName const KIM_SPECIES_NAME_Uup;
+extern KIM_SpeciesName const KIM_SPECIES_NAME_Mc;
 extern KIM_SpeciesName const KIM_SPECIES_NAME_Lv;
-extern KIM_SpeciesName const KIM_SPECIES_NAME_Uus;
-extern KIM_SpeciesName const KIM_SPECIES_NAME_Uuo;
+extern KIM_SpeciesName const KIM_SPECIES_NAME_Ts;
+extern KIM_SpeciesName const KIM_SPECIES_NAME_Og;
 extern KIM_SpeciesName const KIM_SPECIES_NAME_user01;
 extern KIM_SpeciesName const KIM_SPECIES_NAME_user02;
 extern KIM_SpeciesName const KIM_SPECIES_NAME_user03;

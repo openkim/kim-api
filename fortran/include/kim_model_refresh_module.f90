@@ -27,7 +27,7 @@
 !
 
 !
-! Release: This file is part of the kim-api-v2.0.0-beta.2 package.
+! Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
 !
 
 
@@ -223,7 +223,7 @@ contains
   end subroutine kim_model_refresh_log_entry
 
   subroutine kim_model_refresh_to_string(model_refresh_handle, string)
-    use kim_convert_string_module, only : kim_convert_string
+    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
     use kim_interoperable_types_module, only : kim_model_refresh_type
     implicit none
     interface
@@ -244,10 +244,6 @@ contains
 
     call c_f_pointer(model_refresh_handle%p, model_refresh)
     p = model_refresh_string(model_refresh)
-    if (c_associated(p)) then
-      call kim_convert_string(p, string)
-    else
-      string = ""
-    end if
+    call kim_convert_c_char_ptr_to_string(p, string)
   end subroutine kim_model_refresh_to_string
 end module kim_model_refresh_module

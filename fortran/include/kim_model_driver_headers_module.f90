@@ -27,7 +27,7 @@
 !
 
 !
-! Release: This file is part of the kim-api-v2.0.0-beta.2 package.
+! Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
 !
 
 
@@ -38,6 +38,7 @@ module kim_model_driver_headers_module
   use kim_log_verbosity_module
   use kim_language_name_module
   use kim_numbering_module
+  use kim_model_routine_name_module
   use kim_species_name_module
   use kim_support_status_module
   use kim_unit_system_module
@@ -48,7 +49,9 @@ module kim_model_driver_headers_module
   use kim_model_compute_arguments_module
   use kim_model_compute_arguments_destroy_module
   use kim_model_compute_module
+  use kim_model_extension_module
   use kim_model_refresh_module
+  use kim_model_write_parameterized_model_module
   use kim_model_destroy_module
 
   public

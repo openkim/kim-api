@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-v2.0.0-beta.2 package.
+// Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
 //
 
 
@@ -41,7 +41,7 @@ namespace KIM
 // Forward declarations
 class LogVerbosity;
 class DataType;
-class LanguageName;
+class ModelRoutineName;
 class SpeciesName;
 class Numbering;
 class LengthUnit;
@@ -67,6 +67,10 @@ class Model
                     Model ** const model);
   static void Destroy(Model ** const model);
 
+  int IsRoutinePresent(ModelRoutineName const modelRoutineName,
+                       int * const present,
+                       int * const required) const;
+
   void GetInfluenceDistance(double * const influenceDistance) const;
 
   void GetNeighborListPointers(
@@ -84,8 +88,11 @@ class Model
   int ComputeArgumentsCreate(ComputeArguments ** const computeArguments) const;
   int ComputeArgumentsDestroy(ComputeArguments ** const computeArguments) const;
   int Compute(ComputeArguments const * const computeArguments) const;
-
+  int Extension(std::string const & extensionID,
+                void * const extensionStructure);
   int ClearThenRefresh();
+  int WriteParameterizedModel(std::string const & path,
+                              std::string const & modelName) const;
 
   int GetSpeciesSupportAndCode(SpeciesName const speciesName,
                                int * const speciesIsSupported,

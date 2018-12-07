@@ -54,9 +54,9 @@
     exit(1);                                                         \
   }
 
-#define MY_WARNING(message)                                          \
-  {                                                                  \
-    printf("* Error : \"%s\" %d:%s\n", message, __LINE__, __FILE__); \
+#define MY_WARNING(message)                                            \
+  {                                                                    \
+    printf("* WARNING : \"%s\" %d:%s\n", message, __LINE__, __FILE__); \
   }
 
 /* Define neighborlist structure */
@@ -118,6 +118,10 @@ int main()
 
   char modelname[NAMESTRLEN];
   int requestedUnitsAccepted;
+  int numberOfModelRoutineNames;
+  KIM_ModelRoutineName modelRoutineName;
+  int present;
+  int required;
   int modelArCode;
   int numberOfComputeArgumentNames;
   KIM_ComputeArguments * computeArguments;
@@ -145,6 +149,37 @@ int main()
 
   /* Check for compatibility with the model */
   if (!requestedUnitsAccepted) MY_ERROR("Must adapt to model units");
+
+  /* Check that we know about all required routines */
+  KIM_MODEL_ROUTINE_NAME_GetNumberOfModelRoutineNames(
+      &numberOfModelRoutineNames);
+  for (i = 0; i < numberOfModelRoutineNames; ++i)
+  {
+    KIM_MODEL_ROUTINE_NAME_GetModelRoutineName(i, &modelRoutineName);
+
+    error = KIM_Model_IsRoutinePresent(
+        model, modelRoutineName, &present, &required);
+    if (error) { MY_ERROR("Unable to get ModelRoutineName."); }
+
+    if ((present == TRUE) && (required == TRUE))
+    {
+      if (!(KIM_ModelRoutineName_Equal(modelRoutineName,
+                                       KIM_MODEL_ROUTINE_NAME_Create)
+            || KIM_ModelRoutineName_Equal(
+                   modelRoutineName,
+                   KIM_MODEL_ROUTINE_NAME_ComputeArgumentsCreate)
+            || KIM_ModelRoutineName_Equal(modelRoutineName,
+                                          KIM_MODEL_ROUTINE_NAME_Compute)
+            || KIM_ModelRoutineName_Equal(modelRoutineName,
+                                          KIM_MODEL_ROUTINE_NAME_Refresh)
+            || KIM_ModelRoutineName_Equal(
+                   modelRoutineName,
+                   KIM_MODEL_ROUTINE_NAME_ComputeArgumentsDestroy)
+            || KIM_ModelRoutineName_Equal(modelRoutineName,
+                                          KIM_MODEL_ROUTINE_NAME_Destroy)))
+      { MY_ERROR("Unknown required ModelRoutineName found."); }
+    }
+  }
 
   /* check species */
   error = KIM_Model_GetSpeciesSupportAndCode(

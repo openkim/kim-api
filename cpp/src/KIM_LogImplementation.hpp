@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-v2.0.0-beta.2 package.
+// Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
 //
 
 
@@ -51,6 +51,9 @@ class LogImplementation
  public:
   static int Create(LogImplementation ** const logImplementation);
   static void Destroy(LogImplementation ** const logImplementation);
+
+  static void PushDefaultVerbosity(LogVerbosity const logVerbosity);
+  static void PopDefaultVerbosity();
 
   std::string const & GetID() const;
   void SetID(std::string const & id);

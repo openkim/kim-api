@@ -94,6 +94,8 @@ class LennardJones612Implementation
               KIM::ModelComputeArguments const * const modelComputeArguments);
   int ComputeArgumentsCreate(KIM::ModelComputeArgumentsCreate * const
                                  modelComputeArgumentsCreate) const;
+  int ComputeArgumentsDestroy(KIM::ModelComputeArgumentsDestroy * const
+                                  modelComputeArgumentsDestroy) const;
 
 
  private:

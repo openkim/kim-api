@@ -29,7 +29,7 @@
 /*                                                                            */
 
 /*                                                                            */
-/* Release: This file is part of the kim-api-v2.0.0-beta.2 package.           */
+/* Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.         */
 /*                                                                            */
 
 
@@ -50,6 +50,10 @@
 
 #ifndef KIM_NUMBERING_H_
 #include "KIM_Numbering.h"
+#endif
+
+#ifndef KIM_MODEL_ROUTINE_NAME_H_
+#include "KIM_ModelRoutineName.h"
 #endif
 
 #ifndef KIM_SPECIES_NAME_H_
@@ -97,8 +101,18 @@
 #endif
 
 
+#ifndef KIM_MODEL_EXTENSION_H_
+#include "KIM_ModelExtension.h"
+#endif
+
+
 #ifndef KIM_MODEL_REFRESH_H_
 #include "KIM_ModelRefresh.h"
+#endif
+
+
+#ifndef KIM_MODEL_WRITE_PARAMETERIZED_MODEL_H_
+#include "KIM_ModelWriteParameterizedModel.h"
 #endif
 
 

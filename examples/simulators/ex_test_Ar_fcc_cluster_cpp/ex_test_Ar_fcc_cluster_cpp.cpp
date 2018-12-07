@@ -31,6 +31,7 @@
 
 
 #include "KIM_SimulatorHeaders.hpp"
+#include "KIM_SupportedExtensions.hpp"
 #include <cmath>
 #include <iomanip>
 #include <iostream>
@@ -54,10 +55,10 @@
     exit(1);                                                             \
   }
 
-#define MY_WARNING(message)                                              \
-  {                                                                      \
-    std::cout << "* Error : \"" << message << "\" : " << __LINE__ << ":" \
-              << __FILE__ << std::endl;                                  \
+#define MY_WARNING(message)                                                \
+  {                                                                        \
+    std::cout << "* Warning : \"" << message << "\" : " << __LINE__ << ":" \
+              << __FILE__ << std::endl;                                    \
   }
 
 
@@ -87,6 +88,18 @@ int get_cluster_neigh(void * const dataObject,
 
 void create_FCC_cluster(double FCCspacing, int nCellsPerSide, double * coords);
 
+void compute_loop(double const MinSpacing,
+                  double const MaxSpacing,
+                  double const SpacingIncr,
+                  int const numberOfParticles_cluster,
+                  double * const coords_cluster,
+                  double const cutoff,
+                  NeighList * nl,
+                  KIM::Model const * const kim_cluster_model,
+                  KIM::ComputeArguments const * const computeArguments,
+                  double * const forces_cluster,
+                  double * const energy_cluster_model);
+
 
 /* Main program */
 int main()
@@ -95,9 +108,6 @@ int main()
   double const MinSpacing = 0.8 * FCCSPACING;
   double const MaxSpacing = 1.2 * FCCSPACING;
   double const SpacingIncr = 0.025 * FCCSPACING;
-  double CurrentSpacing;
-  double cutpad = 0.75; /* Angstroms */
-  double force_norm;
   int i;
   int error;
 
@@ -138,6 +148,41 @@ int main()
 
   // Check for compatibility with the model
   if (!requestedUnitsAccepted) { MY_ERROR("Must Adapt to model units"); }
+
+  // Check that we know about all required routines
+  int numberOfModelRoutineNames;
+  KIM::MODEL_ROUTINE_NAME::GetNumberOfModelRoutineNames(
+      &numberOfModelRoutineNames);
+  for (int i = 0; i < numberOfModelRoutineNames; ++i)
+  {
+    KIM::ModelRoutineName modelRoutineName;
+    int error
+        = KIM::MODEL_ROUTINE_NAME::GetModelRoutineName(i, &modelRoutineName);
+    if (error) { MY_ERROR("Unable to get ModelRoutineName."); }
+    int present;
+    int required;
+    error = kim_cluster_model->IsRoutinePresent(
+        modelRoutineName, &present, &required);
+    if (error) { MY_ERROR("Unable to get routine present/required."); }
+
+    std::cout << "Model routine name \"" << modelRoutineName.String()
+              << "\" has present = " << present
+              << " and required = " << required << "." << std::endl;
+
+    if ((present == true) && (required == true))
+    {
+      using namespace KIM::MODEL_ROUTINE_NAME;
+      if (!((modelRoutineName == Create)
+            || (modelRoutineName == ComputeArgumentsCreate)
+            || (modelRoutineName == Compute) || (modelRoutineName == Refresh)
+            || (modelRoutineName == ComputeArgumentsDestroy)
+            || (modelRoutineName == Destroy)))
+      {
+        MY_ERROR("Unknown Routine \"" + modelRoutineName.String()
+                 + "\" is required by model.");
+      }
+    }
+  }
 
   // print model units
   KIM::LengthUnit lengthUnit;
@@ -247,6 +292,30 @@ int main()
               << " description : " << *strDesc << std::endl;
   }
 
+  // Check supported extensions, if any
+  int present;
+  error = kim_cluster_model->IsRoutinePresent(
+      KIM::MODEL_ROUTINE_NAME::Extension, &present, NULL);
+  if (error) { MY_ERROR("Unable to get Extension present/required."); }
+  if (present)
+  {
+    KIM::SupportedExtensions supportedExtensions;
+    error = kim_cluster_model->Extension(KIM_SUPPORTED_EXTENSIONS_ID,
+                                         &supportedExtensions);
+    if (error) { MY_ERROR("Error returned from KIM::Model::Extension()."); }
+    std::cout << "Model Supports "
+              << supportedExtensions.numberOfSupportedExtensions
+              << " Extensions:" << std::endl;
+    for (int i = 0; i < supportedExtensions.numberOfSupportedExtensions; ++i)
+    {
+      std::cout << " spportedExtensionID[" << std::setw(2) << i << "] = \""
+                << supportedExtensions.supportedExtensionID[i] << "\" "
+                << "which has required = "
+                << supportedExtensions.supportedExtensionRequired[i] << "."
+                << std::endl;
+    }
+  }
+
   // We're compatible with the model. Let's do it.
 
   error
@@ -327,33 +396,72 @@ int main()
                "-----------------\n";
   std::cout << "Results for KIM Model : " << modelname << std::endl;
 
-  std::cout << std::setw(20) << "Energy" << std::setw(20) << "Force Norm"
-            << std::setw(20) << "Lattice Spacing" << std::endl;
-  for (CurrentSpacing = MinSpacing; CurrentSpacing < MaxSpacing;
-       CurrentSpacing += SpacingIncr)
+  compute_loop(MinSpacing,
+               MaxSpacing,
+               SpacingIncr,
+               numberOfParticles_cluster,
+               &(coords_cluster[0][0]),
+               *cutoff_cluster_model,
+               &nl_cluster_model,
+               kim_cluster_model,
+               computeArguments,
+               forces_cluster,
+               &energy_cluster_model);
+
+  if (numberOfParameters > 0)
   {
-    /* update coordinates for cluster */
-    create_FCC_cluster(CurrentSpacing, NCELLSPERSIDE, &(coords_cluster[0][0]));
-    /* compute neighbor lists */
-    fcc_cluster_neighborlist(0,
-                             NCLUSTERPARTS,
-                             &(coords_cluster[0][0]),
-                             (*cutoff_cluster_model + cutpad),
-                             &nl_cluster_model);
+    int index = numberOfParameters / 2;
+    KIM::DataType dataType;
+    std::string const * name;
+    double value;
+    error = kim_cluster_model->GetParameterMetadata(
+        index, &dataType, NULL, &name, NULL);
+    if (error) { MY_ERROR("Cannot get parameter metadata."); }
+    if (dataType != KIM::DATA_TYPE::Double)
+    { MY_WARNING("Can't change an integer."); }
+    else
+    {
+      error = kim_cluster_model->GetParameter(index, 0, &value);
+      if (error) { MY_ERROR("Cannot get parameter value."); }
+      value *= 1.5;
+      error = kim_cluster_model->SetParameter(index, 0, value);
+      if (error) { MY_ERROR("Cannot set parameter value."); }
+      error = kim_cluster_model->ClearThenRefresh();
+      if (error) { MY_ERROR("Model ClearThenRefresh returned error."); }
 
-    /* call compute functions */
-    error = kim_cluster_model->Compute(computeArguments);
-    if (error) MY_ERROR("compute");
+      std::cout << std::endl
+                << "Updated parameter \"" << *name << "\" to value " << value
+                << "." << std::endl;
 
-    /* compute force norm */
-    force_norm = 0.0;
-    for (i = 0; i < DIM * numberOfParticles_cluster; ++i)
-    { force_norm += forces_cluster[i] * forces_cluster[i]; }
-    force_norm = sqrt(force_norm);
+      kim_cluster_model->GetInfluenceDistance(
+          &influence_distance_cluster_model);
+      kim_cluster_model->GetNeighborListPointers(
+          &number_of_neighbor_lists,
+          &cutoff_cluster_model,
+          &modelWillNotRequestNeighborsOfNoncontributingParticles);
 
-    /* print the results */
-    std::cout << std::setw(20) << energy_cluster_model << std::setw(20)
-              << force_norm << std::setw(20) << CurrentSpacing << std::endl;
+      compute_loop(MinSpacing,
+                   MaxSpacing,
+                   SpacingIncr,
+                   numberOfParticles_cluster,
+                   &(coords_cluster[0][0]),
+                   *cutoff_cluster_model,
+                   &nl_cluster_model,
+                   kim_cluster_model,
+                   computeArguments,
+                   forces_cluster,
+                   &energy_cluster_model);
+    }
+
+    int present;
+    kim_cluster_model->IsRoutinePresent(
+        KIM::MODEL_ROUTINE_NAME::WriteParameterizedModel, &present, NULL);
+    if (present == true)
+    {
+      error = kim_cluster_model->WriteParameterizedModel(
+          ".", "This_IsTheNewModelName");
+      if (error) { MY_ERROR("WriteParameterizedModel returned an error."); }
+    }
   }
 
   /* call compute arguments destroy */
@@ -369,6 +477,47 @@ int main()
 
   /* everything is great */
   return 0;
+}
+
+void compute_loop(double const MinSpacing,
+                  double const MaxSpacing,
+                  double const SpacingIncr,
+                  int const numberOfParticles_cluster,
+                  double * const coords_cluster,
+                  double const cutoff,
+                  NeighList * nl,
+                  KIM::Model const * const kim_cluster_model,
+                  KIM::ComputeArguments const * const computeArguments,
+                  double * const forces_cluster,
+                  double * const energy_cluster_model)
+{
+  double const cutpad = 0.75; /* Angstroms */
+
+  std::cout << std::setw(20) << "Energy" << std::setw(20) << "Force Norm"
+            << std::setw(20) << "Lattice Spacing" << std::endl;
+  for (double CurrentSpacing = MinSpacing; CurrentSpacing < MaxSpacing;
+       CurrentSpacing += SpacingIncr)
+  {
+    /* update coordinates for cluster */
+    create_FCC_cluster(CurrentSpacing, NCELLSPERSIDE, coords_cluster);
+    /* compute neighbor lists */
+    fcc_cluster_neighborlist(
+        0, NCLUSTERPARTS, coords_cluster, (cutoff + cutpad), nl);
+
+    /* call compute functions */
+    int error = kim_cluster_model->Compute(computeArguments);
+    if (error) MY_ERROR("compute");
+
+    /* compute force norm */
+    double force_norm = 0.0;
+    for (int i = 0; i < DIM * numberOfParticles_cluster; ++i)
+    { force_norm += forces_cluster[i] * forces_cluster[i]; }
+    force_norm = sqrt(force_norm);
+
+    /* print the results */
+    std::cout << std::setw(20) << *energy_cluster_model << std::setw(20)
+              << force_norm << std::setw(20) << CurrentSpacing << std::endl;
+  }
 }
 
 void create_FCC_cluster(double FCCspacing, int nCellsPerSide, double * coords)

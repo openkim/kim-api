@@ -27,7 +27,7 @@
 !
 
 !
-! Release: This file is part of the kim-api-v2.0.0-beta.2 package.
+! Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
 !
 
 
@@ -45,10 +45,12 @@ module kim_interoperable_types_module
     kim_model_compute_arguments_type, &
     kim_model_compute_type, &
     kim_model_create_type, &
+    kim_model_extension_type, &
     kim_model_destroy_type, &
     kim_model_driver_create_type, &
     kim_model_type, &
-    kim_model_refresh_type
+    kim_model_refresh_type, &
+    kim_model_write_parameterized_model_type
 
 
   type, bind(c) :: kim_compute_arguments_type
@@ -86,6 +88,11 @@ module kim_interoperable_types_module
     type(c_ptr) :: p
   end type kim_model_create_type
 
+  type, bind(c) :: kim_model_extension_type
+    private
+    type(c_ptr) :: p
+  end type kim_model_extension_type
+
   type, bind(c) :: kim_model_destroy_type
     private
     type(c_ptr) :: p
@@ -105,4 +112,9 @@ module kim_interoperable_types_module
     private
     type(c_ptr) :: p
   end type kim_model_refresh_type
+
+  type, bind(c) :: kim_model_write_parameterized_model_type
+    private
+    type(c_ptr) :: p
+  end type kim_model_write_parameterized_model_type
 end module kim_interoperable_types_module

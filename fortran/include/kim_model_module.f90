@@ -27,7 +27,7 @@
 !
 
 !
-! Release: This file is part of the kim-api-v2.0.0-beta.2 package.
+! Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
 !
 
 
@@ -48,6 +48,7 @@ module kim_model_module
     operator (.ne.), &
     kim_model_create, &
     kim_model_destroy, &
+    kim_is_routine_present, &
     kim_get_influence_distance, &
     kim_get_number_of_neighbor_lists, &
     kim_get_neighbor_list_values, &
@@ -55,7 +56,9 @@ module kim_model_module
     kim_compute_arguments_create, &
     kim_compute_arguments_destroy, &
     kim_compute, &
+    kim_extension, &
     kim_clear_then_refresh, &
+    kim_write_parameterized_model, &
     kim_get_species_support_and_code, &
     kim_get_number_of_parameters, &
     kim_get_parameter_metadata, &
@@ -83,6 +86,10 @@ module kim_model_module
   interface operator (.ne.)
     module procedure kim_model_handle_not_equal
   end interface operator (.ne.)
+
+  interface kim_is_routine_present
+    module procedure kim_model_is_routine_present
+  end interface kim_is_routine_present
 
   interface kim_get_influence_distance
     module procedure kim_model_get_influence_distance
@@ -112,9 +119,17 @@ module kim_model_module
     module procedure kim_model_compute
   end interface kim_compute
 
+  interface kim_extension
+    module procedure kim_model_extension
+  end interface kim_extension
+
   interface kim_clear_then_refresh
     module procedure kim_model_clear_then_refresh
   end interface kim_clear_then_refresh
+
+  interface kim_write_parameterized_model
+    module procedure kim_model_write_parameterized_model
+  end interface kim_write_parameterized_model
 
   interface kim_get_species_support_and_code
     module procedure kim_model_get_species_support_and_code
@@ -251,6 +266,36 @@ contains
     call destroy(pmodel)
     model_handle%p = c_null_ptr
   end subroutine kim_model_destroy
+
+  subroutine kim_model_is_routine_present(model_handle, model_routine_name, &
+    present, required, ierr)
+    use kim_interoperable_types_module, only : kim_model_type
+    use kim_model_routine_name_module, only : kim_model_routine_name_type
+    implicit none
+    interface
+      integer(c_int) function is_routine_present(model, model_routine_name, &
+        present, required) bind(c, name="KIM_Model_IsRoutinePresent")
+        use, intrinsic :: iso_c_binding
+        use kim_interoperable_types_module, only : kim_model_type
+        use kim_model_routine_name_module, only : kim_model_routine_name_type
+        implicit none
+        type(kim_model_type), intent(in) :: model
+        type(kim_model_routine_name_type), intent(in), value &
+          :: model_routine_name
+        integer(c_int), intent(out) :: present
+        integer(c_int), intent(out) :: required
+      end function is_routine_present
+    end interface
+    type(kim_model_handle_type), intent(in) :: model_handle
+    type(kim_model_routine_name_type), intent(in) :: model_routine_name
+    integer(c_int), intent(out) :: present
+    integer(c_int), intent(out) :: required
+    integer(c_int), intent(out) :: ierr
+    type(kim_model_type), pointer :: model
+
+    call c_f_pointer(model_handle%p, model)
+    ierr = is_routine_present(model, model_routine_name, present, required)
+  end subroutine kim_model_is_routine_present
 
   subroutine kim_model_get_influence_distance(model_handle, influence_distance)
     use kim_interoperable_types_module, only : kim_model_type
@@ -501,6 +546,32 @@ contains
     ierr = compute(model, compute_arguments)
   end subroutine kim_model_compute
 
+  subroutine kim_model_extension(model_handle, extension_id, &
+    extension_structure, ierr)
+    use kim_interoperable_types_module, only : kim_model_type
+    implicit none
+    interface
+      integer(c_int) function extension(model, extension_id, &
+        extension_structure) bind(c, name="KIM_Model_Extension")
+        use, intrinsic :: iso_c_binding
+        use kim_interoperable_types_module, only : kim_model_type
+        implicit none
+        type(kim_model_type), intent(in) :: model
+        character(c_char), intent(in) :: extension_id(*)
+        type(c_ptr), intent(in), value :: extension_structure
+      end function extension
+    end interface
+    type(kim_model_handle_type), intent(in) :: model_handle
+    character(len=*, kind=c_char), intent(in) :: extension_id
+    type(c_ptr), intent(in) :: extension_structure
+    integer(c_int), intent(out) :: ierr
+    type(kim_model_type), pointer :: model
+
+    call c_f_pointer(model_handle%p, model)
+    ierr = extension(model, trim(extension_id)//c_null_char, &
+      extension_structure)
+  end subroutine kim_model_extension
+
   subroutine kim_model_clear_then_refresh(model_handle, ierr)
     use kim_interoperable_types_module, only : kim_model_type
     implicit none
@@ -520,6 +591,32 @@ contains
     call c_f_pointer(model_handle%p, model)
     ierr = clear_then_refresh(model)
   end subroutine kim_model_clear_then_refresh
+
+  subroutine kim_model_write_parameterized_model(model_handle, &
+    path, model_name, ierr)
+    use kim_interoperable_types_module, only : kim_model_type
+    implicit none
+    interface
+      integer(c_int) function write_parameterized_model(model, &
+        path, model_name) bind(c, name="KIM_Model_WriteParameterizedModel")
+        use, intrinsic :: iso_c_binding
+        use kim_interoperable_types_module, only : kim_model_type
+        implicit none
+        type(kim_model_type), intent(in) :: model
+        character(c_char), intent(in) :: path(*)
+        character(c_char), intent(in) :: model_name(*)
+      end function write_parameterized_model
+    end interface
+    type(kim_model_handle_type), intent(in) :: model_handle
+    character(len=*, kind=c_char), intent(in) :: path
+    character(len=*, kind=c_char), intent(in) :: model_name
+    integer(c_int), intent(out) :: ierr
+    type(kim_model_type), pointer :: model
+
+    call c_f_pointer(model_handle%p, model)
+    ierr = write_parameterized_model(model, trim(path)//c_null_char, &
+      trim(model_name)//c_null_char)
+  end subroutine kim_model_write_parameterized_model
 
   subroutine kim_model_get_species_support_and_code(model_handle, &
     species_name, species_is_supported, code, ierr)
@@ -577,7 +674,7 @@ contains
   subroutine kim_model_get_parameter_metadata(model_handle, parameter_index, &
     data_type, extent, name, description, ierr)
     use kim_data_type_module, only : kim_data_type_type
-    use kim_convert_string_module, only : kim_convert_string
+    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
     use kim_interoperable_types_module, only : kim_model_type
     implicit none
     interface
@@ -610,16 +707,8 @@ contains
     call c_f_pointer(model_handle%p, model)
     ierr = get_parameter_metadata(model, parameter_index-1, data_type, extent, &
       pname, pdesc)
-    if (c_associated(pname)) then
-      call kim_convert_string(pname, name)
-    else
-      name = ""
-    end if
-    if (c_associated(pdesc)) then
-      call kim_convert_string(pdesc, description)
-    else
-      description = ""
-    end if
+    call kim_convert_c_char_ptr_to_string(pname, name)
+    call kim_convert_c_char_ptr_to_string(pdesc, description)
   end subroutine kim_model_get_parameter_metadata
 
   subroutine kim_model_get_parameter_integer(model_handle, parameter_index, &
@@ -781,7 +870,7 @@ contains
   end subroutine kim_model_get_simulator_buffer_pointer
 
   subroutine kim_model_to_string(model_handle, string)
-    use kim_convert_string_module, only : kim_convert_string
+    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
     use kim_interoperable_types_module, only : kim_model_type
     implicit none
     interface
@@ -801,11 +890,7 @@ contains
 
     call c_f_pointer(model_handle%p, model)
     p = model_string(model)
-    if (c_associated(p)) then
-      call kim_convert_string(p, string)
-    else
-      string = ""
-    end if
+    call kim_convert_c_char_ptr_to_string(p, string)
   end subroutine kim_model_to_string
 
   subroutine kim_model_set_log_id(model_handle, log_id)

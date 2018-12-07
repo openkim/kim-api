@@ -27,7 +27,7 @@
 !
 
 !
-! Release: This file is part of the kim-api-v2.0.0-beta.2 package.
+! Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
 !
 
 
@@ -38,6 +38,7 @@ module kim_simulator_headers_module
   use kim_log_verbosity_module
   use kim_data_type_module
   use kim_language_name_module
+  use kim_model_routine_name_module
   use kim_species_name_module
   use kim_numbering_module
   use kim_unit_system_module
@@ -45,6 +46,9 @@ module kim_simulator_headers_module
   use kim_compute_argument_name_module
   use kim_compute_callback_name_module
   use kim_support_status_module
+  use kim_model_extension_module, only : kim_c_char_array_to_string
+  use kim_model_extension_module, only : kim_c_char_ptr_to_string
+  use kim_model_extension_module, only : kim_string_to_c_char_array
 
   public
 end module kim_simulator_headers_module

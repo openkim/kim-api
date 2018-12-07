@@ -52,7 +52,9 @@ private
 public BUFFER_TYPE,               &
        Compute_Energy_Forces,     &
        compute_arguments_create,  &
+       compute_arguments_destroy, &
        refresh,                   &
+       write_model,               &
        destroy,                   &
        calc_phi,                  &
        calc_phi_dphi,             &
@@ -70,6 +72,7 @@ integer(c_int), parameter          :: speccode = 1   ! internal species code
 !
 !-------------------------------------------------------------------------------
 type, bind(c) :: BUFFER_TYPE
+  character(c_char) :: species_name(100)
   real(c_double) :: influence_distance(1)
   real(c_double) :: Pcutoff(1)
   real(c_double) :: cutsq(1)
@@ -465,7 +468,7 @@ subroutine refresh(model_refresh_handle, ierr) bind(c)
 implicit none
 
 !-- transferred variables
-type(kim_model_refresh_handle_type), intent(inout) :: model_refresh_handle
+type(kim_model_refresh_handle_type), intent(in) :: model_refresh_handle
 integer(c_int), intent(out) :: ierr
 
 !-- Local variables
@@ -501,6 +504,61 @@ end subroutine refresh
 
 !-------------------------------------------------------------------------------
 !
+! Model driver write_model routine
+!
+!-------------------------------------------------------------------------------
+subroutine write_model(model_write_parameterized_model_handle, ierr) bind(c)
+implicit none
+
+!-- transferred variables
+type(kim_model_write_parameterized_model_handle_type), intent(in) &
+  :: model_write_parameterized_model_handle
+integer(c_int), intent(out) :: ierr
+
+!-- Local variables
+integer i
+type(BUFFER_TYPE), pointer :: buf; type(c_ptr) :: pbuf
+character(len=512, kind=c_char) :: path
+character(len=512, kind=c_char) :: model_name
+character(len=512, kind=c_char) :: string_buffer
+character(len=100, kind=c_char) :: species_name
+
+! get model buffer from KIM object
+call kim_get_model_buffer_pointer(model_write_parameterized_model_handle, pbuf)
+call c_f_pointer(pbuf, buf)
+
+call kim_get_path(model_write_parameterized_model_handle, path)
+call kim_get_model_name(model_write_parameterized_model_handle, model_name)
+
+write(string_buffer, '(A)') trim(model_name)//".params"
+call kim_set_parameter_file_name(model_write_parameterized_model_handle, &
+  string_buffer)
+write(string_buffer, '(A)') trim(path)//"/"//trim(string_buffer)
+
+open(42,FILE=trim(string_buffer), STATUS="REPLACE", ACTION="WRITE", iostat=ierr)
+if (ierr /= 0) then
+  call kim_log_entry(model_write_parameterized_model_handle, &
+    KIM_LOG_VERBOSITY_ERROR, "Unable to open parameter file for writing.")
+  return
+end if
+
+do i=1,100
+  species_name(i:i) = buf%species_name(i)
+end do
+write(42, '(A)') trim(species_name)
+write(42, '(ES20.10)') buf%Pcutoff(1)
+write(42, '(ES20.10)') buf%epsilon(1)
+write(42, '(ES20.10)') buf%sigma(1)
+
+
+
+ierr = 0
+return
+
+end subroutine write_model
+
+!-------------------------------------------------------------------------------
+!
 ! Model driver destroy routine
 !
 !-------------------------------------------------------------------------------
@@ -508,7 +566,7 @@ subroutine destroy(model_destroy_handle, ierr) bind(c)
 implicit none
 
 !-- Transferred variables
-type(kim_model_destroy_handle_type), intent(inout) :: model_destroy_handle
+type(kim_model_destroy_handle_type), intent(in) :: model_destroy_handle
 integer(c_int), intent(out) :: ierr
 
 !-- Local variables
@@ -536,7 +594,7 @@ implicit none
 
 !-- Transferred variables
 type(kim_model_compute_handle_type), intent(in) :: model_compute_handle
-type(kim_model_compute_arguments_create_handle_type), intent(inout) :: &
+type(kim_model_compute_arguments_create_handle_type), intent(in) :: &
   model_compute_arguments_create_handle
 integer(c_int), intent(out) :: ierr
 
@@ -595,6 +653,30 @@ return
 
 end subroutine compute_arguments_create
 
+!-------------------------------------------------------------------------------
+!
+! Model driver compute arguments destroy routine
+!
+!-------------------------------------------------------------------------------
+subroutine compute_arguments_destroy(model_compute_handle, &
+  model_compute_arguments_destroy_handle, ierr) bind(c)
+implicit none
+
+!-- Transferred variables
+type(kim_model_compute_handle_type), intent(in) :: model_compute_handle
+type(kim_model_compute_arguments_destroy_handle_type), intent(in) :: &
+  model_compute_arguments_destroy_handle
+integer(c_int), intent(out) :: ierr
+
+! avoid unsed dummy argument warnings
+if (model_compute_handle .eq. KIM_MODEL_COMPUTE_NULL_HANDLE) continue
+if (model_compute_arguments_destroy_handle .eq. &
+  KIM_MODEL_COMPUTE_ARGUMENTS_DESTROY_NULL_HANDLE) continue
+
+ierr = 0
+return
+end subroutine compute_arguments_destroy
+
 end module ex_model_driver_p_lj
 
 !-------------------------------------------------------------------------------
@@ -612,7 +694,7 @@ implicit none
 integer(c_int), parameter :: cd = c_double ! used for literal constants
 
 !-- Transferred variables
-type(kim_model_driver_create_handle_type), intent(inout) &
+type(kim_model_driver_create_handle_type), intent(in) &
   :: model_driver_create_handle
 type(kim_length_unit_type), intent(in), value :: requested_length_unit
 type(kim_energy_unit_type), intent(in), value :: requested_energy_unit
@@ -622,6 +704,7 @@ type(kim_time_unit_type), intent(in), value :: requested_time_unit
 integer(c_int), intent(out) :: ierr
 
 !-- Local variables
+integer i
 integer(c_int) :: number_of_parameter_files
 character(len=1024, kind=c_char) :: parameter_file_name
 integer(c_int) :: ierr2
@@ -662,20 +745,30 @@ end if
 
 
 ! store callback pointers in KIM object
-call kim_set_compute_pointer( &
-  model_driver_create_handle, KIM_LANGUAGE_NAME_FORTRAN, &
-  c_funloc(Compute_Energy_Forces), ierr)
-call kim_set_compute_arguments_create_pointer( &
-  model_driver_create_handle, KIM_LANGUAGE_NAME_FORTRAN, &
-  c_funloc(compute_arguments_create), ierr2)
+call kim_set_routine_pointer( &
+  model_driver_create_handle, KIM_MODEL_ROUTINE_NAME_COMPUTE, &
+  KIM_LANGUAGE_NAME_FORTRAN, 1, c_funloc(Compute_Energy_Forces), ierr)
+call kim_set_routine_pointer( &
+  model_driver_create_handle, KIM_MODEL_ROUTINE_NAME_COMPUTE_ARGUMENTS_CREATE, &
+  KIM_LANGUAGE_NAME_FORTRAN, 1, c_funloc(compute_arguments_create), ierr2)
 ierr = ierr + ierr2
-call kim_set_refresh_pointer( &
-  model_driver_create_handle, KIM_LANGUAGE_NAME_FORTRAN, &
-  c_funloc(refresh), ierr2)
+call kim_set_routine_pointer( &
+  model_driver_create_handle, KIM_MODEL_ROUTINE_NAME_REFRESH, &
+  KIM_LANGUAGE_NAME_FORTRAN, 1, c_funloc(refresh), ierr2)
 ierr = ierr + ierr2
-call kim_set_destroy_pointer( &
-  model_driver_create_handle, KIM_LANGUAGE_NAME_FORTRAN, &
-  c_funloc(destroy), ierr2)
+call kim_set_routine_pointer( &
+  model_driver_create_handle, &
+  KIM_MODEL_ROUTINE_NAME_WRITE_PARAMETERIZED_MODEL, &
+  KIM_LANGUAGE_NAME_FORTRAN, 0, c_funloc(write_model), ierr2)
+ierr = ierr + ierr2
+call kim_set_routine_pointer( &
+  model_driver_create_handle, &
+  KIM_MODEL_ROUTINE_NAME_COMPUTE_ARGUMENTS_DESTROY, &
+  KIM_LANGUAGE_NAME_FORTRAN, 1, c_funloc(compute_arguments_destroy), ierr2)
+ierr = ierr + ierr2
+call kim_set_routine_pointer( &
+  model_driver_create_handle, KIM_MODEL_ROUTINE_NAME_DESTROY, &
+  KIM_LANGUAGE_NAME_FORTRAN, 1, c_funloc(destroy), ierr2)
 ierr = ierr + ierr2
 if (ierr /= 0) then
   call kim_log_entry(model_driver_create_handle, &
@@ -806,6 +899,9 @@ allocate( buf )
 
 ! setup buffer
 ! set value of parameters
+do i=1,100
+  buf%species_name(i) = in_species(i:i)
+end do
 buf%influence_distance(1) = in_cutoff
 buf%Pcutoff(1) = in_cutoff
 buf%cutsq(1)   = in_cutoff**2

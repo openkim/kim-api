@@ -27,7 +27,7 @@
 !
 
 !
-! Release: This file is part of the kim-api-v2.0.0-beta.2 package.
+! Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
 !
 
 
@@ -124,7 +124,7 @@ contains
   end subroutine kim_support_status_from_string
 
   subroutine kim_support_status_to_string(support_status, string)
-    use kim_convert_string_module, only : kim_convert_string
+    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
     implicit none
     interface
       type(c_ptr) function get_string(support_status) &
@@ -141,11 +141,7 @@ contains
     type(c_ptr) :: p
 
     p = get_string(support_status)
-    if (c_associated(p)) then
-      call kim_convert_string(p, string)
-    else
-      string = ""
-    end if
+    call kim_convert_c_char_ptr_to_string(p, string)
   end subroutine kim_support_status_to_string
 
   subroutine kim_get_number_of_support_statuses(number_of_support_statuses)

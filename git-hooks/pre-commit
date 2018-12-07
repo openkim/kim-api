@@ -30,7 +30,7 @@
 #
 
 #
-# Release: This file is part of the kim-api-v2.0.0-beta.2 package.
+# Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
 #
 
 
@@ -69,7 +69,7 @@ else
   against=4b825dc642cb6eb9a060e54bf8d69288fbee4904
 fi
 
-file_list=`git diff-index --cached --name-only $against`
+file_list=`git diff-index --cached --name-only --diff-filter=d $against`
 files_to_check_format=""
 filter_file_list "${file_list}"
 

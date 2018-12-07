@@ -31,7 +31,7 @@
 /*                                                                            */
 
 /*                                                                            */
-/* Release: This file is part of the kim-api-v2.0.0-beta.2 package.           */
+/* Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.         */
 /*                                                                            */
 
 /**
@@ -39,42 +39,58 @@
 
 Previous Section: \ref theory.
 
-In code, a model (or model driver) consists of six routines which perform
-specific tasks.  The first is the *ModelCreate* (or *ModelDriverCreate*)
-routine (required), which performs initialization tasks for the model object.
-The second is the *ModelComputeArgumentsCreate* routine (required), which
-performs initialization tasks for a compute-arguments object.  The third is the
-\em ModelCompute routine (required), which uses the configuration information
-stored in a compute-arguments object to perform the model's core computational
-tasks.  The fourth is the *ModelRefresh* routine (required if parameter
-pointers are set, otherwise should not be provided), which performs updates
-after a simulator makes changes to the model's parameters (if this is
-supported).  The fifth is the \em ModelComputeArgumentsDestroy routine
-(optional), which performs finalization tasks for a compute-arguments object.
-The sixth is the *ModelDestroy* routine (required), which performs finalization
+In code, a model (or model driver) consists of up to eight routines which
+perform specific tasks.  The first is the *ModelCreate* (or \em
+ModelDriverCreate ) routine (required), which performs initialization tasks for
+the model object.  The second is the *ModelComputeArgumentsCreate* routine
+(required), which performs initialization tasks for a compute-arguments object.
+The third is the \em ModelCompute routine (required), which uses the
+configuration information stored in a compute-arguments object to perform the
+model's core computational tasks.  The fourth is the *ModelExtension* routine
+(optional) which provides a mechanism for creating and using non-standard
+extensions to the %KIM API.  The fifth is the *ModelRefresh* routine (required
+if parameter pointers are set, otherwise should not be provided), which
+performs updates after a simulator makes changes to the model's parameters (if
+this is supported).  The sixth is the *ModelWriteParameterizedModel* (optional)
+routine which can be used to wirte the parameter files and CMake file necessary
+to create a new parameterized model from the current set of in-memory
+parameters.  The seventh is the \em ModelComputeArgumentsDestroy routine
+(required), which performs finalization tasks for a compute-arguments object.
+The eigth is the *ModelDestroy* routine (required), which performs finalization
 tasks for the model object.  These are summarized in the following table.
 
-| Model Routine                       | Required / Optional |
-| ----------------------------------- | ------------------- |
-| *ModelCreate* / *ModelDriverCreate* | required            |
-| *ModelComputeArgumentsCreate*       | required            |
-| *ModelCompute*                      | required            |
-| *ModelRefresh*                      | required if one or more parameter pointers set, otherwise should not be provided |
-| *ModelComputeArgumentsDestroy*      | optional            |
-| *ModelDestroy*                      | required            |
+| Model Routine                                    | Required / Optional |
+| ------------------------------------------------ | ------------------- |
+| KIM::MODEL_ROUTINE_NAME::Create                  | required            |
+| KIM::MODEL_ROUTINE_NAME::ComputeArgumentsCreate  | required            |
+| KIM::MODEL_ROUTINE_NAME::Compute                 | required            |
+| KIM::MODEL_ROUTINE_NAME::Extension               | optional            |
+| KIM::MODEL_ROUTINE_NAME::Refresh                 | required if one or more parameter pointers set, otherwise should not be provided |
+| KIM::MODEL_ROUTINE_NAME::WriteParameterizedModel | optional            |
+| KIM::MODEL_ROUTINE_NAME::ComputeArgumentsDestroy | required            |
+| KIM::MODEL_ROUTINE_NAME::Destroy                 | required            |
+
+The above table indicates which routines must be provided by a Model.  For
+optional routines, each Model must indicate that the routine is required or
+optional for use by the Simulator, as described below.
 
 To interact with a model, a simulator creates a model object (which, in part,
-includes execution of the model's *ModelCreate* routine).  Using this object,
-the simulator creates a compute-arguments object (which, in part, includes
-execution of the model's *ModelComputeArgumentsCreate* routine).  Then, the
-simulator provides a compute-arguments object to the model's *ModelCompute*
-function.  There are input compute-arguments that include the various
-components that make up a configuration (number of particles, particle position
-vectors, etc.).  And, there are output compute-arguments that include the
-quantities (like partial energy and partial forces), defined in Section \ref
-theory, associated with the configuration.  There are also compute-callback
-functions (such as a function to get a particle's neighbor list) that the
-simulator provides for use by the model.
+includes execution of the model's *ModelCreate* routine).  Once a model object
+is obtained, the Simulator should use KIM::Model::IsRoutinePresent() to
+determine which routines the model has provided and if they are required or
+optional.  From this infromation the simulator should determine if it can
+proceed to work with the model, or if the model requires the use of routines
+that are not supported by the simulator it should exit.  Next, the simulator
+creates a compute-arguments object (which, in part, includes execution of the
+model's *ModelComputeArgumentsCreate* routine).  Then, the simulator provides a
+compute-arguments object to the model's *ModelCompute* function.  There are
+input compute-arguments that include the various components that make up a
+configuration (number of particles, particle position vectors, etc.).  And,
+there are output compute-arguments that include the quantities (like partial
+energy and partial forces), defined in Section \ref theory, associated with the
+configuration.  There are also compute-callback functions (such as a function
+to get a particle's neighbor list) that the simulator provides for use by the
+model.
 
 The %KIM API provides a list of all compute-arguments and compute-callbacks
 defined as part of the official API.  Each such argument and callback has a

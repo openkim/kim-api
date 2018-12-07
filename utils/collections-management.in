@@ -31,7 +31,7 @@
 #
 
 #
-# Release: This file is part of the kim-api-v2.0.0-beta.2 package.
+# Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
 #
 
 collections_info=@CMAKE_INSTALL_FULL_LIBEXECDIR@/@PROJECT_NAME@/@PROJECT_NAME@-collections-info
@@ -172,14 +172,14 @@ get_local_build_item_name () {
       return 1
     fi
 
-    local item_type="`grep -- "model-type:" model-info.txt | sed -e 's/^model-type://'`"
+    local item_type="`grep -- "item-type:" item-info.txt | sed -e 's/^item-type://'`"
     case "${item_type}" in
-      stand-alone-model|parameterized-model|simulator-model)
-        printf -- "`grep -- "model-name:" model-info.txt | sed -e 's/^model-name://'`" \
+      STAND_ALONE_MODEL|PARAMETERIZED_MODEL|SIMULATOR_MODEL)
+        printf -- "`grep -- "item-name:" item-info.txt | sed -e 's/^item-name:"\(.*\)"/\1/'`" \
                > "${build_dir}/item_name"
         ;;
-      model-driver)
-        printf -- "`grep -- "driver-name:" model-info.txt | sed -e 's/^driver-name://'`" \
+      MODEL_DRIVER)
+        printf -- "`grep -- "item-name:" item-info.txt | sed -e 's/^item-name:"\(.*\)"/\1/'`" \
                > "${build_dir}/item_name"
         ;;
       *)
@@ -366,24 +366,20 @@ get_build_install_item () {
         cat ./cmake-log.txt
         return 1
       fi
-      item_type="`grep "model-type:" model-info.txt | sed -e 's/model-type://'`"
-      if test x"parameterized-model" = x"${item_type}"; then
-        dvr="`grep "driver-name:" model-info.txt | sed -e 's/driver-name://'`"
+      item_type="`grep "item-type:" item-info.txt | sed -e 's/item-type://'`"
+      if test x"PARAMETERIZED_MODEL" = x"${item_type}"; then
+        dvr="`grep "item-driver-name:" item-info.txt | sed -e 's/item-driver-name:"\(.*\)"/\1/'`"
         if test x"" != x"`${collections_info} model_drivers find "${dvr}"`"; then
-          printf "Using#installed#driver...#%s\n" "${dvr}" | sed -e 's/ /./g' -e 's/#/ /g' || return 1
+          printf "Found#installed#driver...#%s\n" "${dvr}" | sed -e 's/ /./g' -e 's/#/ /g' || return 1
         else
-          printf "This model needs its driver '${dvr}', trying to find it at openkim.org.\n"
-          # try openkim.org first
-          if ! get_build_install_item "${install_collection}" "${dvr}" "${force}" "${use_sudo}" "${PASSWORD}"; then
-            if test x"" != x"${local_build}"; then
-              # now try local
-              printf "Now trying to find '${dvr}' locally.\n"
-              dvr="`printf "${local_build}" | sed "s|^\(.*/\)${item_name}\$|\1${dvr}|"`"
-              get_build_install_item "${install_collection}" "${dvr}" "${force}" "${use_sudo}" "${PASSWORD}" || return 1
-            fi
-          fi
+          printf "This item needs its driver '${dvr}', but it is not currently installed.\n"
+          printf "Trying to find it at openkim.org.\n"
+          # try openkim.org
+          get_build_install_item "${install_collection}" "${dvr}" "${force}" "${use_sudo}" "${PASSWORD}" || \
+            printf "*** WARNING *** Model Driver for this item not currently installed in any of the KIM API collections.\n%s\n\n" \
+                   "                Continuing with installation of the item anyway."
         fi
-        if ! ((${make_command} clean && ${make_command}) > ./make-log.txt 2>&1 && \
+        if ! ((${make_command} clean && ${make_command} && ${make_command} CTEST_OUTPUT_ON_FAILURE=1 test) > ./make-log.txt 2>&1 && \
                 if test x"sudo-yes" = x"${use_sudo}"; then
                   printf -- "${PASSWORD}\n" | sudo -k -S ${make_command} install 2> /dev/null
                 else
@@ -392,10 +388,10 @@ get_build_install_item () {
           cat ./make-log.txt
           return 1
         fi
-      elif test x"stand-alone-model" = x"${item_type}" -o \
-                x"model-driver"      = x"${item_type}" -o \
-                x"simulator-model"   = x"${item_type}"; then
-        if ! ((${make_command} clean && ${make_command}) > ./make-log.txt 2>&1 && \
+      elif test x"STAND_ALONE_MODEL" = x"${item_type}" -o \
+                x"MODEL_DRIVER"      = x"${item_type}" -o \
+                x"SIMULATOR_MODEL"   = x"${item_type}"; then
+        if ! ((${make_command} clean && ${make_command} && ${make_command} CTEST_OUTPUT_ON_FAILURE=1 test) > ./make-log.txt 2>&1 && \
                 if test x"sudo-yes" = x"${use_sudo}"; then
                   printf -- "${PASSWORD}\n" | sudo -k -S ${make_command} install 2> /dev/null
                 else

@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-v2.0.0-beta.2 package.
+// Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
 //
 
 
@@ -48,6 +48,10 @@
 
 #ifndef KIM_NUMBERING_HPP_
 #include "KIM_Numbering.hpp"
+#endif
+
+#ifndef KIM_MODEL_ROUTINE_NAME_HPP_
+#include "KIM_ModelRoutineName.hpp"
 #endif
 
 #ifndef KIM_SPECIES_NAME_HPP_
@@ -95,8 +99,18 @@
 #endif
 
 
+#ifndef KIM_MODEL_EXTENSION_HPP_
+#include "KIM_ModelExtension.hpp"
+#endif
+
+
 #ifndef KIM_MODEL_REFRESH_HPP_
 #include "KIM_ModelRefresh.hpp"
+#endif
+
+
+#ifndef KIM_MODEL_WRITE_PARAMETERIZED_MODEL_HPP_
+#include "KIM_ModelWriteParameterizedModel.hpp"
 #endif
 
 

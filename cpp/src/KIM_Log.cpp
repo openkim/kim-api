@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-v2.0.0-beta.2 package.
+// Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
 //
 
 #ifndef KIM_LOG_HPP_
@@ -57,6 +57,13 @@ void Log::Destroy(Log ** const log)
   delete *log;
   *log = NULL;
 }
+
+void Log::PushDefaultVerbosity(LogVerbosity const logVerbosity)
+{
+  LogImplementation::PushDefaultVerbosity(logVerbosity);
+}
+
+void Log::PopDefaultVerbosity() { LogImplementation::PopDefaultVerbosity(); }
 
 std::string const & Log::GetID() const { return pimpl->GetID(); }
 

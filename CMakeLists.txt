@@ -29,7 +29,7 @@
 #
 
 #
-# Release: This file is part of the kim-api-v2.0.0-beta.2 package.
+# Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
 #
 
 
@@ -49,7 +49,7 @@ mark_as_advanced(KIM_API_PROJECT_PREFIX)
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   set(LOG_MAX "DEBUG")
 else()
-  set(LOG_MAX "ERROR")
+  set(LOG_MAX "INFORMATION")
 endif()
 set(KIM_API_LOG_MAXIMUM_LEVEL "${LOG_MAX}" CACHE STRING "Maximum log verbosity")
 set_property(CACHE KIM_API_LOG_MAXIMUM_LEVEL PROPERTY STRINGS SILENT FATAL ERROR WARNING INFORMATION DEBUG)
@@ -104,13 +104,13 @@ target_link_libraries(kim-api ${CMAKE_DL_LIBS})
 #
 add_subdirectory(cpp/include)
 add_subdirectory(c/include)
-add_subdirectory(fortran/src)
+add_subdirectory(fortran/include)
 
 # Add src subdirectories
 #
 add_subdirectory(cpp/src)
 add_subdirectory(c/src)
-add_subdirectory(fortran/include)
+add_subdirectory(fortran/src)
 
 # Add other subdirectories
 #

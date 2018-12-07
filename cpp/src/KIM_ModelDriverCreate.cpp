@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-v2.0.0-beta.2 package.
+// Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
 //
 
 
@@ -90,44 +90,16 @@ void ModelDriverCreate::SetNeighborListPointers(
       modelWillNotRequestNeighborsOfNoncontributingParticles);
 }
 
-int ModelDriverCreate::SetRefreshPointer(LanguageName const languageName,
-                                         Function * const fptr)
+int ModelDriverCreate::SetRoutinePointer(
+    ModelRoutineName const modelRoutineName,
+    LanguageName const languageName,
+    int const required,
+    Function * const fptr)
 {
   CONVERT_POINTER;
 
-  return pImpl->SetRefreshPointer(languageName, fptr);
-}
-
-int ModelDriverCreate::SetDestroyPointer(LanguageName const languageName,
-                                         Function * const fptr)
-{
-  CONVERT_POINTER;
-
-  return pImpl->SetDestroyPointer(languageName, fptr);
-}
-
-int ModelDriverCreate::SetComputeArgumentsCreatePointer(
-    LanguageName const languageName, Function * const fptr)
-{
-  CONVERT_POINTER;
-
-  return pImpl->SetComputeArgumentsCreatePointer(languageName, fptr);
-}
-
-int ModelDriverCreate::SetComputeArgumentsDestroyPointer(
-    LanguageName const languageName, Function * const fptr)
-{
-  CONVERT_POINTER;
-
-  return pImpl->SetComputeArgumentsDestroyPointer(languageName, fptr);
-}
-
-int ModelDriverCreate::SetComputePointer(LanguageName const languageName,
-                                         Function * const fptr)
-{
-  CONVERT_POINTER;
-
-  return pImpl->SetComputePointer(languageName, fptr);
+  return pImpl->SetRoutinePointer(
+      modelRoutineName, languageName, required, fptr);
 }
 
 int ModelDriverCreate::SetSpeciesCode(SpeciesName const speciesName,

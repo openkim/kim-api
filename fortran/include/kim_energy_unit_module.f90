@@ -27,7 +27,7 @@
 !
 
 !
-! Release: This file is part of the kim-api-v2.0.0-beta.2 package.
+! Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
 !
 
 
@@ -63,7 +63,7 @@ module kim_energy_unit_module
   end type kim_energy_unit_type
 
   type(kim_energy_unit_type), protected, &
-    bind(c, name="KIM_ENERGY_UNIT_unsued") &
+    bind(c, name="KIM_ENERGY_UNIT_unused") &
     :: KIM_ENERGY_UNIT_UNUSED
   type(kim_energy_unit_type), protected, &
     bind(c, name="KIM_ENERGY_UNIT_amu_A2_per_ps2") &
@@ -136,7 +136,7 @@ contains
   end subroutine kim_energy_unit_from_string
 
   subroutine kim_energy_unit_to_string(energy_unit, string)
-    use kim_convert_string_module, only : kim_convert_string
+    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
     implicit none
     interface
       type(c_ptr) function get_string(energy_unit) &
@@ -153,11 +153,7 @@ contains
     type(c_ptr) :: p
 
     p = get_string(energy_unit)
-    if (c_associated(p)) then
-      call kim_convert_string(p, string)
-    else
-      string = ""
-    end if
+    call kim_convert_c_char_ptr_to_string(p, string)
   end subroutine kim_energy_unit_to_string
 
   subroutine kim_get_number_of_energy_units(number_of_energy_units)

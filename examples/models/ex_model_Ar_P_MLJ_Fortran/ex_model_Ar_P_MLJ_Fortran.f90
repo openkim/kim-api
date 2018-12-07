@@ -53,6 +53,7 @@ private
 public Compute_Energy_Forces, &
        model_destroy_func, &
        model_compute_arguments_create, &
+       model_compute_arguments_destroy, &
        model_cutoff, &
        speccode, &
        buffer_type
@@ -407,7 +408,7 @@ subroutine model_compute_arguments_create(model_compute_handle, &
 
   integer(c_int) :: ierr2
 
-  ! avoid unsed dummy argument warnings
+  ! avoid unused dummy argument warnings
   if (model_compute_handle .eq. KIM_MODEL_COMPUTE_NULL_HANDLE) continue
 
   ierr = 0
@@ -448,6 +449,31 @@ subroutine model_compute_arguments_create(model_compute_handle, &
   ierr = 0
   return
 end subroutine model_compute_arguments_create
+
+!-------------------------------------------------------------------------------
+!
+! Model compute arguments destroy routine (REQUIRED)
+!
+!-------------------------------------------------------------------------------
+subroutine model_compute_arguments_destroy(model_compute_handle, &
+  model_compute_arguments_destroy_handle, ierr) bind(c)
+  use, intrinsic :: iso_c_binding
+  implicit none
+
+  !-- Transferred variables
+  type(kim_model_compute_handle_type), intent(in) :: model_compute_handle
+  type(kim_model_compute_arguments_destroy_handle_type), intent(inout) :: &
+    model_compute_arguments_destroy_handle
+  integer(c_int), intent(out) :: ierr
+
+  ! avoid unused dummy argument warnings
+  if (model_compute_handle .eq. KIM_MODEL_COMPUTE_NULL_HANDLE) continue
+  if (model_compute_arguments_destroy_handle .eq. &
+    KIM_MODEL_COMPUTE_ARGUMENTS_DESTROY_NULL_HANDLE) continue
+
+  ierr = 0
+  return
+end subroutine model_compute_arguments_destroy
 
 end module ex_model_Ar_P_MLJ_F03
 
@@ -508,15 +534,22 @@ call kim_set_model_numbering(model_create_handle, &
 ierr = ierr + ierr2
 
 ! register function pointers
-call kim_set_compute_pointer(model_create_handle, &
-  KIM_LANGUAGE_NAME_FORTRAN, c_funloc(Compute_Energy_Forces), ierr2)
+call kim_set_routine_pointer(model_create_handle, &
+  KIM_MODEL_ROUTINE_NAME_COMPUTE, KIM_LANGUAGE_NAME_FORTRAN, &
+  1, c_funloc(Compute_Energy_Forces), ierr2)
 ierr = ierr + ierr2
-call kim_set_compute_arguments_create_pointer( &
-  model_create_handle, KIM_LANGUAGE_NAME_FORTRAN, &
-  c_funloc(model_compute_arguments_create), ierr2)
+call kim_set_routine_pointer( &
+  model_create_handle, KIM_MODEL_ROUTINE_NAME_COMPUTE_ARGUMENTS_CREATE, &
+  KIM_LANGUAGE_NAME_FORTRAN, 1, c_funloc(model_compute_arguments_create), ierr2)
 ierr = ierr + ierr2
-call kim_set_destroy_pointer(model_create_handle, &
-  KIM_LANGUAGE_NAME_FORTRAN, c_funloc(model_destroy_func), ierr2)
+call kim_set_routine_pointer( &
+  model_create_handle, KIM_MODEL_ROUTINE_NAME_COMPUTE_ARGUMENTS_DESTROY, &
+  KIM_LANGUAGE_NAME_FORTRAN, 1, c_funloc(model_compute_arguments_destroy), &
+  ierr2)
+ierr = ierr + ierr2
+call kim_set_routine_pointer(model_create_handle, &
+  KIM_MODEL_ROUTINE_NAME_DESTROY, KIM_LANGUAGE_NAME_FORTRAN, &
+  1, c_funloc(model_destroy_func), ierr2)
 ierr = ierr + ierr2
 
 ! allocate buffer

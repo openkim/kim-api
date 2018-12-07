@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-v2.0.0-beta.2 package.
+// Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
 //
 
 
@@ -81,6 +81,13 @@ void Model::Destroy(Model ** const model)
   *model = NULL;
 }
 
+int Model::IsRoutinePresent(ModelRoutineName const modelRoutineName,
+                            int * const present,
+                            int * const required) const
+{
+  return pimpl->IsRoutinePresent(modelRoutineName, present, required);
+}
+
 void Model::GetInfluenceDistance(double * const influenceDistance) const
 {
   pimpl->GetInfluenceDistance(influenceDistance);
@@ -125,7 +132,19 @@ int Model::Compute(ComputeArguments const * const computeArguments) const
   return pimpl->Compute(computeArguments);
 }
 
+int Model::Extension(std::string const & extensionID,
+                     void * const extensionStructure)
+{
+  return pimpl->Extension(extensionID, extensionStructure);
+}
+
 int Model::ClearThenRefresh() { return pimpl->ClearThenRefresh(); }
+
+int Model::WriteParameterizedModel(std::string const & path,
+                                   std::string const & modelName) const
+{
+  return pimpl->WriteParameterizedModel(path, modelName);
+}
 
 int Model::GetSpeciesSupportAndCode(SpeciesName const speciesName,
                                     int * const speciesIsSupported,

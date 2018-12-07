@@ -27,7 +27,7 @@
 !
 
 !
-! Release: This file is part of the kim-api-v2.0.0-beta.2 package.
+! Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
 !
 
 
@@ -51,11 +51,7 @@ module kim_model_driver_create_module
     kim_set_model_numbering, &
     kim_set_influence_distance_pointer, &
     kim_set_neighbor_list_pointers, &
-    kim_set_refresh_pointer, &
-    kim_set_destroy_pointer, &
-    kim_set_compute_arguments_create_pointer, &
-    kim_set_compute_arguments_destroy_pointer, &
-    kim_set_compute_pointer, &
+    kim_set_routine_pointer, &
     kim_set_species_code, &
     kim_set_parameter_pointer, &
     kim_set_model_buffer_pointer, &
@@ -100,27 +96,9 @@ module kim_model_driver_create_module
     module procedure kim_model_driver_create_set_neighbor_list_pointers
   end interface kim_set_neighbor_list_pointers
 
-  interface kim_set_refresh_pointer
-    module procedure kim_model_driver_create_set_refresh_pointer
-  end interface kim_set_refresh_pointer
-
-  interface kim_set_destroy_pointer
-    module procedure kim_model_driver_create_set_destroy_pointer
-  end interface kim_set_destroy_pointer
-
-  interface kim_set_compute_arguments_create_pointer
-    module procedure &
-      kim_model_driver_create_set_compute_arguments_create_pointer
-  end interface kim_set_compute_arguments_create_pointer
-
-  interface kim_set_compute_arguments_destroy_pointer
-    module procedure &
-      kim_model_driver_create_set_compute_arguments_destroy_pointer
-  end interface kim_set_compute_arguments_destroy_pointer
-
-  interface kim_set_compute_pointer
-    module procedure kim_model_driver_create_set_compute_pointer
-  end interface kim_set_compute_pointer
+  interface kim_set_routine_pointer
+    module procedure kim_model_driver_create_set_routine_pointer
+  end interface kim_set_routine_pointer
 
   interface kim_set_species_code
     module procedure kim_model_driver_create_set_species_code
@@ -200,7 +178,7 @@ contains
 
   subroutine kim_model_driver_create_get_parameter_file_name( &
     model_driver_create_handle, index, parameter_file_name, ierr)
-    use kim_convert_string_module, only : kim_convert_string
+    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
     use kim_interoperable_types_module, only : kim_model_driver_create_type
     implicit none
     interface
@@ -228,11 +206,7 @@ contains
     call c_f_pointer(model_driver_create_handle%p, model_driver_create)
     ierr = get_parameter_file_name(model_driver_create, &
       index-1, p)
-    if (c_associated(p)) then
-      call kim_convert_string(p, parameter_file_name)
-    else
-      parameter_file_name = ""
-    end if
+    call kim_convert_c_char_ptr_to_string(p, parameter_file_name)
   end subroutine kim_model_driver_create_get_parameter_file_name
 
   subroutine kim_model_driver_create_set_model_numbering( &
@@ -326,158 +300,44 @@ contains
       c_loc(model_will_not_request_neighbors_of_noncontributing_particles))
   end subroutine kim_model_driver_create_set_neighbor_list_pointers
 
-  subroutine kim_model_driver_create_set_refresh_pointer( &
-    model_driver_create_handle, language_name, fptr, ierr)
+  subroutine kim_model_driver_create_set_routine_pointer( &
+    model_driver_create_handle, model_routine_name, language_name, required, &
+    fptr, ierr)
+    use kim_model_routine_name_module, only : kim_model_routine_name_type
     use kim_language_name_module, only : kim_language_name_type
     use kim_interoperable_types_module, only : kim_model_driver_create_type
     implicit none
     interface
-      integer(c_int) function set_refresh_pointer( &
-        model_driver_create, language_name, fptr) &
-        bind(c, name="KIM_ModelDriverCreate_SetRefreshPointer")
+      integer(c_int) function set_routine_pointer( &
+        model_driver_create, model_routine_name, language_name, required, &
+        fptr) bind(c, name="KIM_ModelDriverCreate_SetRoutinePointer")
         use, intrinsic :: iso_c_binding
+        use kim_model_routine_name_module, only : kim_model_routine_name_type
         use kim_language_name_module, only : kim_language_name_type
         use kim_interoperable_types_module, only : kim_model_driver_create_type
         implicit none
         type(kim_model_driver_create_type), intent(in) &
           :: model_driver_create
+        type(kim_model_routine_name_type), intent(in), value &
+          :: model_routine_name
         type(kim_language_name_type), intent(in), value :: language_name
+        integer(c_int), intent(in), value :: required
         type(c_funptr), intent(in), value :: fptr
-      end function set_refresh_pointer
+      end function set_routine_pointer
     end interface
     type(kim_model_driver_create_handle_type), intent(in) &
       :: model_driver_create_handle
+    type(kim_model_routine_name_type), intent(in) :: model_routine_name
     type(kim_language_name_type), intent(in) :: language_name
+    integer(c_int), intent(in) :: required
     type(c_funptr), intent(in), value :: fptr  ! must be left as "value"!?!
     integer(c_int), intent(out) :: ierr
     type(kim_model_driver_create_type), pointer :: model_driver_create
 
     call c_f_pointer(model_driver_create_handle%p, model_driver_create)
-    ierr = set_refresh_pointer(model_driver_create, &
-      language_name, fptr)
-  end subroutine kim_model_driver_create_set_refresh_pointer
-
-  subroutine kim_model_driver_create_set_destroy_pointer( &
-    model_driver_create_handle, language_name, fptr, ierr)
-    use kim_language_name_module, only : kim_language_name_type
-    use kim_interoperable_types_module, only : kim_model_driver_create_type
-    implicit none
-    interface
-      integer(c_int) function set_destroy_pointer(model_driver_create, &
-        language_name, fptr) &
-        bind(c, name="KIM_ModelDriverCreate_SetDestroyPointer")
-        use, intrinsic :: iso_c_binding
-        use kim_language_name_module, only : kim_language_name_type
-        use kim_interoperable_types_module, only : kim_model_driver_create_type
-        implicit none
-        type(kim_model_driver_create_type), intent(in) &
-          :: model_driver_create
-        type(kim_language_name_type), intent(in), value :: language_name
-        type(c_funptr), intent(in), value :: fptr
-      end function set_destroy_pointer
-    end interface
-    type(kim_model_driver_create_handle_type), intent(in) &
-      :: model_driver_create_handle
-    type(kim_language_name_type), intent(in) :: language_name
-    type(c_funptr), intent(in), value :: fptr  ! must be left as "value"!?!
-    integer(c_int), intent(out) :: ierr
-    type(kim_model_driver_create_type), pointer :: model_driver_create
-
-    call c_f_pointer(model_driver_create_handle%p, model_driver_create)
-    ierr = set_destroy_pointer(model_driver_create, language_name, fptr)
-  end subroutine kim_model_driver_create_set_destroy_pointer
-
-  subroutine kim_model_driver_create_set_compute_arguments_create_pointer( &
-    model_driver_create_handle, language_name, fptr, ierr)
-    use kim_language_name_module, only : kim_language_name_type
-    use kim_interoperable_types_module, only : kim_model_driver_create_type
-    implicit none
-    interface
-      integer(c_int) function set_compute_arguments_create_pointer( &
-        model_driver_create, language_name, fptr) &
-        bind(c, name="KIM_ModelDriverCreate_SetComputeArgumentsCreatePointer")
-        use, intrinsic :: iso_c_binding
-        use kim_language_name_module, only : kim_language_name_type
-        use kim_interoperable_types_module, only : kim_model_driver_create_type
-        implicit none
-        type(kim_model_driver_create_type), intent(in) &
-          :: model_driver_create
-        type(kim_language_name_type), intent(in), value :: language_name
-        type(c_funptr), intent(in), value :: fptr
-      end function set_compute_arguments_create_pointer
-    end interface
-    type(kim_model_driver_create_handle_type), intent(in) &
-      :: model_driver_create_handle
-    type(kim_language_name_type), intent(in) :: language_name
-    type(c_funptr), intent(in), value :: fptr  ! must be left as "value"!?!
-    integer(c_int), intent(out) :: ierr
-    type(kim_model_driver_create_type), pointer :: model_driver_create
-
-    call c_f_pointer(model_driver_create_handle%p, model_driver_create)
-    ierr = set_compute_arguments_create_pointer(model_driver_create, &
-      language_name, fptr)
-  end subroutine kim_model_driver_create_set_compute_arguments_create_pointer
-
-  subroutine kim_model_driver_create_set_compute_arguments_destroy_pointer( &
-    model_driver_create_handle, language_name, fptr, ierr)
-    use kim_language_name_module, only : kim_language_name_type
-    use kim_interoperable_types_module, only : kim_model_driver_create_type
-    implicit none
-    interface
-      integer(c_int) function set_compute_arguments_destroy_pointer( &
-        model_driver_create, language_name, fptr) &
-        bind(c, name="KIM_ModelDriverCreate_SetComputeArgumentsDestroyPointer")
-        use, intrinsic :: iso_c_binding
-        use kim_language_name_module, only : kim_language_name_type
-        use kim_interoperable_types_module, only : kim_model_driver_create_type
-        implicit none
-        type(kim_model_driver_create_type), intent(in) &
-          :: model_driver_create
-        type(kim_language_name_type), intent(in), value :: language_name
-        type(c_funptr), intent(in), value :: fptr
-      end function set_compute_arguments_destroy_pointer
-    end interface
-    type(kim_model_driver_create_handle_type), intent(in) &
-      :: model_driver_create_handle
-    type(kim_language_name_type), intent(in) :: language_name
-    type(c_funptr), intent(in), value :: fptr  ! must be left as "value"!?!
-    integer(c_int), intent(out) :: ierr
-    type(kim_model_driver_create_type), pointer :: model_driver_create
-
-    call c_f_pointer(model_driver_create_handle%p, model_driver_create)
-    ierr = set_compute_arguments_destroy_pointer(model_driver_create, &
-      language_name, fptr)
-  end subroutine kim_model_driver_create_set_compute_arguments_destroy_pointer
-
-  subroutine kim_model_driver_create_set_compute_pointer( &
-    model_driver_create_handle, language_name, fptr, ierr)
-    use kim_language_name_module, only : kim_language_name_type
-    use kim_interoperable_types_module, only : kim_model_driver_create_type
-    implicit none
-    interface
-      integer(c_int) function set_compute_pointer(model_driver_create, &
-        language_name, fptr) &
-        bind(c, name="KIM_ModelDriverCreate_SetComputePointer")
-        use, intrinsic :: iso_c_binding
-        use kim_language_name_module, only : kim_language_name_type
-        use kim_interoperable_types_module, only : kim_model_driver_create_type
-        implicit none
-        type(kim_model_driver_create_type), intent(in) &
-          :: model_driver_create
-        type(kim_language_name_type), intent(in), value :: language_name
-        type(c_funptr), intent(in), value :: fptr
-      end function set_compute_pointer
-    end interface
-    type(kim_model_driver_create_handle_type), intent(in) &
-      :: model_driver_create_handle
-    type(kim_language_name_type), intent(in) :: language_name
-    type(c_funptr), intent(in), value :: fptr  ! must be left as "value"!?!
-    integer(c_int), intent(out) :: ierr
-    type(kim_model_driver_create_type), pointer :: model_driver_create
-
-    call c_f_pointer(model_driver_create_handle%p, model_driver_create)
-    ierr = set_compute_pointer(model_driver_create, language_name, fptr)
-  end subroutine kim_model_driver_create_set_compute_pointer
+    ierr = set_routine_pointer(model_driver_create, model_routine_name, &
+      language_name, required, fptr)
+  end subroutine kim_model_driver_create_set_routine_pointer
 
   subroutine kim_model_driver_create_set_species_code( &
     model_driver_create_handle, species_name, code, ierr)
@@ -790,7 +650,7 @@ contains
 
   subroutine kim_model_driver_create_to_string(model_driver_create_handle, &
     string)
-    use kim_convert_string_module, only : kim_convert_string
+    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
     use kim_interoperable_types_module, only : kim_model_driver_create_type
     implicit none
     interface
@@ -813,10 +673,6 @@ contains
 
     call c_f_pointer(model_driver_create_handle%p, model_driver_create)
     p = model_driver_create_string(model_driver_create)
-    if (c_associated(p)) then
-      call kim_convert_string(p, string)
-    else
-      string = ""
-    end if
+    call kim_convert_c_char_ptr_to_string(p, string)
   end subroutine kim_model_driver_create_to_string
 end module kim_model_driver_create_module

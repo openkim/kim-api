@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-v2.0.0-beta.2 package.
+// Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
 //
 
 
@@ -48,6 +48,10 @@
 
 #ifndef KIM_LANGUAGE_NAME_HPP_
 #include "KIM_LanguageName.hpp"
+#endif
+
+#ifndef KIM_MODEL_ROUTINE_NAME_HPP_
+#include "KIM_ModelRoutineName.hpp"
 #endif
 
 #ifndef KIM_SPECIES_NAME_HPP_

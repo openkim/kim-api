@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-v2.0.0-beta.2 package.
+// Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
 //
 
 #include <iomanip>
@@ -75,7 +75,8 @@ extern std::vector<ComputeCallbackName> const requiredByAPI_ComputeCallbacks;
       .str()
 
 
-#include "KIM_ComputeArgumentsImplementationLogMacros.hpp"
+#include "KIM_LogMacros.hpp"
+#define KIM_LOGGER_OBJECT_NAME this
 namespace KIM
 {
 int ComputeArgumentsImplementation::Create(

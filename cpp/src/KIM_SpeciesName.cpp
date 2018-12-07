@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-v2.0.0-beta.2 package.
+// Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
 //
 
 #include <map>
@@ -156,12 +156,12 @@ SpeciesName const Mt(ID_Mt);  // Meitnerium
 SpeciesName const Ds(ID_Ds);  // Darmstadtium
 SpeciesName const Rg(ID_Rg);  // Roentgenium
 SpeciesName const Cn(ID_Cn);  // Copernicium
-SpeciesName const Uut(ID_Uut);  // Ununtrium
+SpeciesName const Nh(ID_Nh);  // Nihonium
 SpeciesName const Fl(ID_Fl);  // Flerovium
-SpeciesName const Uup(ID_Uup);  // Ununpentium
+SpeciesName const Mc(ID_Mc);  // Moscovium
 SpeciesName const Lv(ID_Lv);  // Livermorium
-SpeciesName const Uus(ID_Uus);  // Ununseptium
-SpeciesName const Uuo(ID_Uuo);  // Ununoctium
+SpeciesName const Ts(ID_Ts);  // Tennessien
+SpeciesName const Og(ID_Og);  // Oganesson
 SpeciesName const user01(ID_user01);  // user defined
 SpeciesName const user02(ID_user02);  // user defined
 SpeciesName const user03(ID_user03);  // user defined
@@ -304,12 +304,12 @@ StringMap const GetStringMap()
   m[Ds] = "Ds";
   m[Rg] = "Rg";
   m[Cn] = "Cn";
-  m[Uut] = "Uut";
+  m[Nh] = "Nh";
   m[Fl] = "Fl";
-  m[Uup] = "Uup";
+  m[Mc] = "Mc";
   m[Lv] = "Lv";
-  m[Uus] = "Uus";
-  m[Uuo] = "Uuo";
+  m[Ts] = "Ts";
+  m[Og] = "Og";
   m[user01] = "user01";
   m[user02] = "user02";
   m[user03] = "user03";

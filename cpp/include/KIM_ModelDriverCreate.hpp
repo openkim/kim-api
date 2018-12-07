@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-v2.0.0-beta.2 package.
+// Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
 //
 
 
@@ -47,8 +47,8 @@ namespace KIM
 class LogVerbosity;
 class LanguageName;
 class Numbering;
+class ModelRoutineName;
 class SpeciesName;
-class SupportStatus;
 class LengthUnit;
 class EnergyUnit;
 class ChargeUnit;
@@ -73,13 +73,10 @@ class ModelDriverCreate
       double const * const cutoffs,
       int const * const modelWillNotRequestNeighborsOfNoncontributingParticles);
 
-  int SetRefreshPointer(LanguageName const languageName, Function * const fptr);
-  int SetDestroyPointer(LanguageName const languageName, Function * const fptr);
-  int SetComputeArgumentsCreatePointer(LanguageName const languageName,
-                                       Function * const fptr);
-  int SetComputeArgumentsDestroyPointer(LanguageName const languageName,
-                                        Function * const fptr);
-  int SetComputePointer(LanguageName const languageName, Function * const fptr);
+  int SetRoutinePointer(ModelRoutineName const modelRoutineName,
+                        LanguageName const languageName,
+                        int const required,
+                        Function * const fptr);
 
   int SetSpeciesCode(SpeciesName const speciesName, int const code);
 

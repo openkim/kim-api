@@ -29,7 +29,7 @@
 #
 
 #
-# Release: This file is part of the kim-api-v2.0.0-beta.2 package.
+# Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
 #
 
 
@@ -50,9 +50,12 @@ set(C_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ModelComputeArgumentsCreate_c.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ModelComputeArgumentsDestroy_c.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ModelCreate_c.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ModelExtension_c.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ModelDestroy_c.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ModelDriverCreate_c.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ModelRefresh_c.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ModelRoutineName_c.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ModelWriteParameterizedModel_c.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_Numbering_c.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_SemVer_c.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_SpeciesName_c.cpp

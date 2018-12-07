@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-v2.0.0-beta.2 package.
+// Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
 //
 
 
@@ -63,6 +63,10 @@
 #include "KIM_UnitSystem.hpp"
 #endif
 
+#ifndef KIM_MODEL_ROUTINE_NAME_HPP_
+#include "KIM_ModelRoutineName.hpp"
+#endif
+
 #ifndef KIM_SPECIESNAME_HPP_
 #include "KIM_SpeciesName.hpp"
 #endif
@@ -75,8 +79,8 @@
 #include "KIM_ComputeArguments.hpp"
 #endif
 
-#ifndef KIM_MODEL_LIBRARY_HPP_
-#include "KIM_ModelLibrary.hpp"
+#ifndef KIM_SHARED_LIBRARY_HPP_
+#include "KIM_SharedLibrary.hpp"
 #endif
 
 
@@ -99,6 +103,10 @@ class ModelImplementation
                     ModelImplementation ** const modelImplementation);
   static void Destroy(ModelImplementation ** const modelImplementation);
 
+  int IsRoutinePresent(ModelRoutineName const modelRoutineName,
+                       int * const present,
+                       int * const required) const;
+
   int ComputeArgumentsCreate(ComputeArguments ** const computeArguments) const;
   int ComputeArgumentsDestroy(ComputeArguments ** const computeArguments) const;
 
@@ -117,17 +125,14 @@ class ModelImplementation
       const;
 
 
-  int SetRefreshPointer(LanguageName const languageName, Function * const fptr);
-  int SetDestroyPointer(LanguageName const languageName, Function * const fptr);
-  int SetComputeArgumentsCreatePointer(LanguageName const languageName,
-                                       Function * const fptr);
-  int SetComputeArgumentsDestroyPointer(LanguageName const languageName,
-                                        Function * const fptr);
-  int SetComputePointer(LanguageName const languageName, Function * const fptr);
+  int SetRoutinePointer(ModelRoutineName const modelRoutineName,
+                        LanguageName const languageName,
+                        int const required,
+                        Function * const fptr);
 
 
   int SetSpeciesCode(SpeciesName const speciesName, int const code);
-  int GetSpeciesSupportAndCode(KIM::SpeciesName const speciesName,
+  int GetSpeciesSupportAndCode(SpeciesName const speciesName,
                                int * const speciesIsSupported,
                                int * const code) const;
 
@@ -153,6 +158,8 @@ class ModelImplementation
   int GetNumberOfParameterFiles(int * const numberOfParameterFiles) const;
   int GetParameterFileName(int const index,
                            std::string const ** const parameterFileName) const;
+
+  void SetParameterFileName(std::string const & filename) const;
 
   int SetParameterPointer(int const extent,
                           int * const ptr,
@@ -183,7 +190,16 @@ class ModelImplementation
 
 
   int Compute(ComputeArguments const * const computeArguments) const;
+
+  void GetExtensionID(std::string const ** const extensionID) const;
+  int Extension(std::string const & extensionID,
+                void * const extensionStructure);
   int ClearThenRefresh();
+
+  void GetPath(std::string const ** const path) const;
+  void GetModelName(std::string const ** const modelName) const;
+  int WriteParameterizedModel(std::string const & path,
+                              std::string const & modelName) const;
 
 
   void SetModelBufferPointer(void * const ptr);
@@ -229,7 +245,7 @@ class ModelImplementation
   ModelImplementation(ModelImplementation const &);
   void operator=(ModelImplementation const &);
 
-  ModelImplementation(ModelLibrary * const modelLibrary, Log * const log);
+  ModelImplementation(SharedLibrary * const sharedLibrary, Log * const log);
   ~ModelImplementation();
 
   int ModelCreate(Numbering const numbering,
@@ -246,6 +262,11 @@ class ModelImplementation
   int ModelComputeArgumentsDestroy(
       ComputeArguments * const computeArguments) const;
 
+  int ModelCompute(ComputeArguments const * const computeArguments) const;
+  int ModelExtension(void * const extensionStructure);
+  int ModelRefresh();
+  int ModelWriteParameterizedModel() const;
+
 
   static int Validate(ChargeUnit const chargeUnit);
   static int Validate(DataType const dataType);
@@ -253,6 +274,7 @@ class ModelImplementation
   static int Validate(LanguageName const languageName);
   static int Validate(LengthUnit const lengthUnit);
   static int Validate(Numbering const numbering);
+  static int Validate(ModelRoutineName const modelRoutineName);
   static int Validate(SpeciesName const speciesName);
   static int Validate(SupportStatus const supportStatus);
   static int Validate(TemperatureUnit const temperatureUnit);
@@ -260,11 +282,11 @@ class ModelImplementation
 
   int IsCIdentifier(std::string const & id) const;
 
-  ModelLibrary::ITEM_TYPE modelType_;
+  SharedLibrary::ITEM_TYPE itemType_;
   std::string modelName_;
   std::string modelDriverName_;
 
-  ModelLibrary * modelLibrary_;
+  SharedLibrary * sharedLibrary_;
   int numberOfParameterFiles_;
   std::vector<std::string> parameterFileNames_;
 
@@ -305,18 +327,12 @@ class ModelImplementation
   double const * cutoffs_;
   int const * modelWillNotRequestNeighborsOfNoncontributingParticles_;
 
-
-  LanguageName refreshLanguage_;
-  Function * refreshFunction_;
-  LanguageName destroyLanguage_;
-  Function * destroyFunction_;
-  LanguageName computeArgumentsCreateLanguage_;
-  Function * computeArgumentsCreateFunction_;
-  LanguageName computeArgumentsDestroyLanguage_;
-  Function * computeArgumentsDestroyFunction_;
-  LanguageName computeLanguage_;
-  Function * computeFunction_;
-
+  std::map<ModelRoutineName const, LanguageName, MODEL_ROUTINE_NAME::Comparator>
+      routineLanguage_;
+  std::map<ModelRoutineName const, int, MODEL_ROUTINE_NAME::Comparator>
+      routineRequired_;
+  std::map<ModelRoutineName const, Function *, MODEL_ROUTINE_NAME::Comparator>
+      routineFunction_;
 
   std::map<SpeciesName const, int, SPECIES_NAME::Comparator> supportedSpecies_;
 
@@ -326,6 +342,12 @@ class ModelImplementation
   std::vector<DataType> parameterDataType_;
   std::vector<int> parameterExtent_;
   std::vector<void *> parameterPointer_;
+
+  std::string extensionID_;
+
+  mutable std::string writePath_;
+  mutable std::string writeModelName_;
+  mutable std::stringstream cmakelists_;
 
   void * modelBuffer_;
   void * simulatorBuffer_;

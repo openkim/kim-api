@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-v2.0.0-beta.2 package.
+// Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
 //
 
 
@@ -56,7 +56,7 @@ pushEnvDirs(DirectoryPathType type,
 std::string getSystemLibraryFileName();
 std::vector<std::string> getSystemDirs();
 std::vector<std::string> getUserDirs(KIM::Log * const log);
-enum GET_ITEMS_ENTRIES { IE_COLLECTION, IE_NAME, IE_DIR, IE_VER };
+enum GET_ITEMS_ENTRIES { IE_COLLECTION, IE_NAME, IE_DIR, IE_VER, IE_FULLPATH };
 void getAvailableItems(DirectoryPathType type,
                        std::list<std::vector<std::string> > & list,
                        KIM::Log * const log);

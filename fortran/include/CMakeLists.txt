@@ -29,14 +29,14 @@
 #
 
 #
-# Release: This file is part of the kim-api-v2.0.0-beta.2 package.
+# Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
 #
 
 
 target_include_directories(kim-api PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 set(F_MOD_DIR $<TARGET_PROPERTY:kim-api,Fortran_MODULE_DIRECTORY>)
-set(FORTRAN_INCLUDES
+set(FORTRAN_MODULES
   ${F_MOD_DIR}/kim_charge_unit_module.mod
   ${F_MOD_DIR}/kim_compute_argument_name_module.mod
   ${F_MOD_DIR}/kim_compute_arguments_module.mod
@@ -52,23 +52,27 @@ set(FORTRAN_INCLUDES
   ${F_MOD_DIR}/kim_model_compute_arguments_module.mod
   ${F_MOD_DIR}/kim_model_compute_module.mod
   ${F_MOD_DIR}/kim_model_create_module.mod
+  ${F_MOD_DIR}/kim_model_extension_module.mod
   ${F_MOD_DIR}/kim_model_destroy_module.mod
   ${F_MOD_DIR}/kim_model_driver_create_module.mod
   ${F_MOD_DIR}/kim_model_driver_headers_module.mod
   ${F_MOD_DIR}/kim_model_headers_module.mod
   ${F_MOD_DIR}/kim_model_module.mod
   ${F_MOD_DIR}/kim_model_refresh_module.mod
+  ${F_MOD_DIR}/kim_model_routine_name_module.mod
+  ${F_MOD_DIR}/kim_model_write_parameterized_model_module.mod
   ${F_MOD_DIR}/kim_numbering_module.mod
   ${F_MOD_DIR}/kim_sem_ver_module.mod
   ${F_MOD_DIR}/kim_simulator_headers_module.mod
   ${F_MOD_DIR}/kim_species_name_module.mod
   ${F_MOD_DIR}/kim_support_status_module.mod
+  ${F_MOD_DIR}/kim_supported_extensions_module.mod
   ${F_MOD_DIR}/kim_temperature_unit_module.mod
   ${F_MOD_DIR}/kim_time_unit_module.mod
   ${F_MOD_DIR}/kim_unit_system_module.mod
   )
 
-install(FILES ${FORTRAN_INCLUDES} DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME}/${KIM_API_Fortran_MODULE_DIR_IDENTIFIER})
+install(FILES ${FORTRAN_MODULES} DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME}/${KIM_API_Fortran_MODULE_DIR_IDENTIFIER})
 
 set(F_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/kim_charge_unit_module.f90
@@ -86,17 +90,21 @@ set(F_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/kim_model_compute_arguments_module.f90
   ${CMAKE_CURRENT_SOURCE_DIR}/kim_model_compute_module.f90
   ${CMAKE_CURRENT_SOURCE_DIR}/kim_model_create_module.f90
+  ${CMAKE_CURRENT_SOURCE_DIR}/kim_model_extension_module.f90
   ${CMAKE_CURRENT_SOURCE_DIR}/kim_model_destroy_module.f90
   ${CMAKE_CURRENT_SOURCE_DIR}/kim_model_driver_create_module.f90
   ${CMAKE_CURRENT_SOURCE_DIR}/kim_model_driver_headers_module.f90
   ${CMAKE_CURRENT_SOURCE_DIR}/kim_model_headers_module.f90
   ${CMAKE_CURRENT_SOURCE_DIR}/kim_model_module.f90
   ${CMAKE_CURRENT_SOURCE_DIR}/kim_model_refresh_module.f90
+  ${CMAKE_CURRENT_SOURCE_DIR}/kim_model_routine_name_module.f90
+  ${CMAKE_CURRENT_SOURCE_DIR}/kim_model_write_parameterized_model_module.f90
   ${CMAKE_CURRENT_SOURCE_DIR}/kim_numbering_module.f90
   ${CMAKE_CURRENT_SOURCE_DIR}/kim_sem_ver_module.f90
   ${CMAKE_CURRENT_SOURCE_DIR}/kim_simulator_headers_module.f90
   ${CMAKE_CURRENT_SOURCE_DIR}/kim_species_name_module.f90
   ${CMAKE_CURRENT_SOURCE_DIR}/kim_support_status_module.f90
+  ${CMAKE_CURRENT_SOURCE_DIR}/kim_supported_extensions_module.f90
   ${CMAKE_CURRENT_SOURCE_DIR}/kim_temperature_unit_module.f90
   ${CMAKE_CURRENT_SOURCE_DIR}/kim_time_unit_module.f90
   ${CMAKE_CURRENT_SOURCE_DIR}/kim_unit_system_module.f90

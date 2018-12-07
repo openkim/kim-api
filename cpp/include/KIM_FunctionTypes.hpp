@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-v2.0.0-beta.2 package.
+// Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
 //
 
 
@@ -45,9 +45,11 @@ class TimeUnit;
 class ModelCreate;
 class ModelDriverCreate;
 class ModelCompute;
+class ModelExtension;
 class ModelComputeArgumentsCreate;
 class ModelComputeArguments;
 class ModelRefresh;
+class ModelWriteParameterizedModel;
 class ModelComputeArgumentsDestroy;
 class ModelDestroy;
 
@@ -99,13 +101,19 @@ typedef int ProcessD2EDr2TermFunction(void * const dataObject,
                                       int const * const i,
                                       int const * const j);
 
+typedef int ModelExtensionFunction(ModelExtension * const modelExtension,
+                                   void * const extensionStructure);
+
 typedef int ModelRefreshFunction(ModelRefresh * const modelRefresh);
+
+typedef int ModelWriteParameterizedModelFunction(
+    ModelWriteParameterizedModel const * const modelWriteParameterizedModel);
 
 typedef int ModelComputeArgumentsDestroyFunction(
     ModelCompute const * const modelCompute,
     ModelComputeArgumentsDestroy * const modelComputeArgumentsDestroy);
 
-typedef int ModelDestroyFunction(ModelDestroy * const);
+typedef int ModelDestroyFunction(ModelDestroy * const modelDestroy);
 }  // namespace KIM
 
 #endif  // KIM_FUNCTION_TYPES_HPP_

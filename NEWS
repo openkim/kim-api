@@ -28,8 +28,43 @@
 #
 
 #
-# Release: This file is part of the kim-api-v2.0.0-beta.2 package.
+# Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
 #
+
+
+=== kim-api-v2.0.0-beta.3 ======= 07Dec2018 ====================================
+
+* Updated and added examples to work with and demonstrate api changes/additions
+
+* Implemented new KIM::Model::IsRoutinePresent interface to facilitate
+  backward compatibility
+
+* Updated SpeciesName entries for recently renamed periodic table elements
+
+* Added WriteParameterizedModel Routine and assoc. code
+
+* Added Extension Routine to allow for non-standard extensions
+
+* Added Push/Pop Default Verbosity to KIM::Log
+
+* Changed Release default LogVerbosity to INFORMATION
+
+* Added ctest test for items to check that shared libraries can be opened
+
+* Improvements to Collections-Management behavior
+
+* Removed unnecessary header files
+
+* Updated travis.ci configuration
+
+* Refactored some backend implementation to improve maintainability, including
+  significant new KIM_SharedLibrarySchema interface
+
+* Improvements to CMake build system
+
+* Updated create-package script
+
+* Updated documentation
 
 
 === kim-api-v2.0.0-beta.2 ======= 28Oct2018 ====================================

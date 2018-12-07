@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-v2.0.0-beta.2 package.
+// Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
 //
 
 #ifndef KIM_LOG_VERBOSITY_HPP_
@@ -45,6 +45,15 @@ extern "C" {
 extern "C" {
 #ifndef KIM_DATA_TYPE_H_
 #include "KIM_DataType.h"
+#endif
+}  // extern "C"
+
+#ifndef KIM_MODEL_ROUTINE_NAME_HPP_
+#include "KIM_ModelRoutineName.hpp"
+#endif
+extern "C" {
+#ifndef KIM_MODEL_ROUTINE_NAME_H_
+#include "KIM_ModelRoutineName.h"
 #endif
 }  // extern "C"
 
@@ -115,6 +124,12 @@ KIM_DataType makeDataTypeC(KIM::DataType const dataType)
   KIM_DataType * pTyp = (KIM_DataType *) &dataType;
   typ.dataTypeID = pTyp->dataTypeID;
   return typ;
+}
+
+KIM::ModelRoutineName
+makeRoutineNameCpp(KIM_ModelRoutineName const modelRoutineName)
+{
+  return KIM::ModelRoutineName(modelRoutineName.modelRoutineNameID);
 }
 
 KIM::SpeciesName makeSpecNameCpp(KIM_SpeciesName const speciesName)
@@ -197,6 +212,17 @@ void KIM_Model_Destroy(KIM_Model ** const model)
   KIM::Model::Destroy(&pModel);
   delete (*model);
   *model = NULL;
+}
+
+int KIM_Model_IsRoutinePresent(KIM_Model const * const model,
+                               KIM_ModelRoutineName const modelRoutineName,
+                               int * const present,
+                               int * const required)
+{
+  CONVERT_POINTER;
+
+  return pModel->IsRoutinePresent(
+      makeRoutineNameCpp(modelRoutineName), present, required);
 }
 
 void KIM_Model_GetInfluenceDistance(KIM_Model const * const model,
@@ -285,11 +311,30 @@ int KIM_Model_Compute(KIM_Model const * const model,
   return pModel->Compute(pComputeArguments);
 }
 
+int KIM_Model_Extension(KIM_Model * const model,
+                        char const * const extensionID,
+                        void * const extensionStructure)
+
+{
+  CONVERT_POINTER;
+
+  return pModel->Extension(extensionID, extensionStructure);
+}
+
 int KIM_Model_ClearThenRefresh(KIM_Model * const model)
 {
   CONVERT_POINTER;
 
   return pModel->ClearThenRefresh();
+}
+
+int KIM_Model_WriteParameterizedModel(KIM_Model const * const model,
+                                      char const * const path,
+                                      char const * const modelName)
+{
+  CONVERT_POINTER;
+
+  return pModel->WriteParameterizedModel(path, modelName);
 }
 
 int KIM_Model_GetSpeciesSupportAndCode(KIM_Model const * const model,

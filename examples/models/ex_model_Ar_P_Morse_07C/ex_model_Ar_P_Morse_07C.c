@@ -78,12 +78,16 @@ int model_create(KIM_ModelCreate * const modelCreate,
                  KIM_TimeUnit const requestedTimeUnit);
 
 /* Define prototype for other routines */
-static int
-model_compute(KIM_ModelCompute const * const modelCompute,
-              KIM_ModelComputeArguments const * const modelComputeArguments);
+
 static int compute_arguments_create(
     KIM_ModelCompute const * const modelCompute,
     KIM_ModelComputeArgumentsCreate * const modelComputeArgumentsCreate);
+static int
+model_compute(KIM_ModelCompute const * const modelCompute,
+              KIM_ModelComputeArguments const * const modelComputeArguments);
+static int compute_arguments_destroy(
+    KIM_ModelCompute const * const modelCompute,
+    KIM_ModelComputeArgumentsDestroy * const modelComputeArgumentsDestroy);
 static int model_destroy(KIM_ModelDestroy * const modelDestroy);
 
 /* Define prototypes for pair potential calculations */
@@ -526,12 +530,16 @@ int model_create(KIM_ModelCreate * const modelCreate,
   buffer * bufferPointer;
   int error;
 
-  /* use function pointer definitints to verify prototypes */
-  KIM_ModelComputeFunction * compute = model_compute;
+  /* use function pointer definitions to verify prototypes */
+  KIM_ModelCreateFunction * create = model_create;
   KIM_ModelComputeArgumentsCreateFunction * CACreate = compute_arguments_create;
+  KIM_ModelComputeFunction * compute = model_compute;
+  KIM_ModelComputeArgumentsDestroyFunction * CADestroy
+      = compute_arguments_destroy;
   KIM_ModelDestroyFunction * destroy = model_destroy;
 
-  (void) requestedLengthUnit; /* avoid unused parameter warnings */
+  (void) create; /* avoid unused parameter warnings */
+  (void) requestedLengthUnit;
   (void) requestedEnergyUnit;
   (void) requestedChargeUnit;
   (void) requestedTemperatureUnit;
@@ -561,14 +569,28 @@ int model_create(KIM_ModelCreate * const modelCreate,
   /* register function pointers */
   LOG_INFORMATION("Register model function pointers");
   error = error
-          || KIM_ModelCreate_SetComputePointer(
-                 modelCreate, KIM_LANGUAGE_NAME_c, (KIM_Function *) compute);
-  error = error
-          || KIM_ModelCreate_SetComputeArgumentsCreatePointer(
-                 modelCreate, KIM_LANGUAGE_NAME_c, (KIM_Function *) CACreate);
-  error = error
-          || KIM_ModelCreate_SetDestroyPointer(
-                 modelCreate, KIM_LANGUAGE_NAME_c, (KIM_Function *) destroy);
+          || KIM_ModelCreate_SetRoutinePointer(
+                 modelCreate,
+                 KIM_MODEL_ROUTINE_NAME_ComputeArgumentsCreate,
+                 KIM_LANGUAGE_NAME_c,
+                 TRUE,
+                 (KIM_Function *) CACreate)
+          || KIM_ModelCreate_SetRoutinePointer(modelCreate,
+                                               KIM_MODEL_ROUTINE_NAME_Compute,
+                                               KIM_LANGUAGE_NAME_c,
+                                               TRUE,
+                                               (KIM_Function *) compute)
+          || KIM_ModelCreate_SetRoutinePointer(
+                 modelCreate,
+                 KIM_MODEL_ROUTINE_NAME_ComputeArgumentsDestroy,
+                 KIM_LANGUAGE_NAME_c,
+                 TRUE,
+                 (KIM_Function *) CADestroy)
+          || KIM_ModelCreate_SetRoutinePointer(modelCreate,
+                                               KIM_MODEL_ROUTINE_NAME_Destroy,
+                                               KIM_LANGUAGE_NAME_c,
+                                               TRUE,
+                                               (KIM_Function *) destroy);
 
   /* allocate buffer */
   bufferPointer = (buffer *) malloc(sizeof(buffer));
@@ -673,4 +695,17 @@ static int compute_arguments_create(
   }
   else
     return FALSE;
+}
+
+/* compute arguments destroy routine */
+static int compute_arguments_destroy(
+    KIM_ModelCompute const * const modelCompute,
+    KIM_ModelComputeArgumentsDestroy * const modelComputeArgumentsDestroy)
+{
+  (void) modelCompute; /* avoid unused parameter warning */
+  (void) modelComputeArgumentsDestroy; /* avoid unused parameter warning */
+
+  /* Nothing further to do */
+
+  return FALSE;
 }

@@ -28,7 +28,7 @@
 #
 
 #
-# Release: This file is part of the kim-api-v2.0.0-beta.2 package.
+# Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
 #
 
 
@@ -104,7 +104,7 @@ B. QUICK START: For those who don't like to read and are a bit audacious.
 Try the following:
 
 $ mkdir build && cd build
-$ cmake .. -DCMAKE_INSTALL_TYPE=Release
+$ cmake .. -DCMAKE_BUILD_TYPE=Release
 $ make
 $ sudo make install
 $ sudo ldconfig
@@ -121,7 +121,7 @@ programmers the ability to write atomistic or molecular simulation programs
 (Simulators) that can seamlessly interface with implementations of interatomic
 potential (Models), regardless of the programming language in which the codes
 are written.  Models can be "stand-alone", corresponding to code and parameters
-all in one.  Or, Models can be "paramaterized", corresponding to just a set of
+all in one.  Or, Models can be "parameterized", corresponding to just a set of
 parameters that must be connected to a Model Driver which contains the code
 that can be used with any set of parameters.  In addition to the main KIM API
 library, a small number of associated helper utilities are provided.
@@ -354,7 +354,7 @@ The KIM API defines two additional regular build options and four advanced
 options.
 
 * KIM_API_LOG_MAXIMUM_LEVEL (="DEBUG" if CMAKE_BUILD_TYPE is "Debug", otherwise
-  ="ERROR") This option takes one of the following six values "SILENT",
+  ="INFORMATION") This option takes one of the following six values "SILENT",
   "FATAL", "ERROR", "WARNING", "INFORMATION", "DEBUG".  This value controls, at
   compile-time, which type of log messages can be printed to the "kim.log"
   file.

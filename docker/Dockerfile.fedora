@@ -28,7 +28,7 @@
 #
 
 #
-# Release: This file is part of the kim-api-v2.0.0-beta.2 package.
+# Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
 #
 
 
@@ -54,7 +54,8 @@ ARG TRAVIS_REPO_SLUG
 ARG TRAVIS_COMMIT
 ARG TRAVIS_OS_NAME
 
-RUN dnf -y install make cmake git gcc-c++ gcc-gfortran ccache wget vim-common
+RUN dnf -y install make cmake git gcc-c++ gcc-gfortran ccache wget vim-common \
+                   findutils ${SANITIZE:+libasan}
 RUN wget -O /usr/bin/codecov https://codecov.io/bash
 RUN chmod +x /usr/bin/codecov
 
@@ -70,6 +71,8 @@ USER root
 RUN chown -R kim:kim /home/kim/kim-api /home/kim/.ccache
 USER kim
 
+RUN env
+
 WORKDIR /home/kim/kim-api
 RUN mkdir build
 WORKDIR build
@@ -82,14 +85,34 @@ RUN cmake -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} \
 RUN make -j2
 RUN ccache -s
 RUN make test
-RUN make install DESTDIR=${PWD}/install && rm -rf ${PWD}/install/usr && rm -rf ${PWD}/install/etc && rmdir ${PWD}/install
+RUN make install DESTDIR=${PWD}/destdir && \
+    rm -rf ${PWD}/destdir/usr/{bin,include,lib64,libexec,share} && \
+    rm -rf ${PWD}/destdir/etc && \
+    rmdir ${PWD}/destdir/usr && \
+    rmdir ${PWD}/destdir
 RUN if [ ${COVERAGE} ]; then \
   if [ ${CC} = clang ]; then \
-    codecov -R ${PWD}/../${TRAVIS_REPO_SLUG#*/} -F "${CC}" -x "llvm-cov gcov" 2>&1 | grep -v "arcs.*block"; \
+    codecov -R ${PWD}/../../${TRAVIS_REPO_SLUG#*/} -F "${CC}" -x "llvm-cov gcov" 2>&1 | grep -v "arcs.*block"; \
   else \
-    codecov -R ${PWD}/../${TRAVIS_REPO_SLUG#*/} -F "${CC}" 2>&1 | grep -v "arcs.*block"; \
+    codecov -R ${PWD}/../../${TRAVIS_REPO_SLUG#*/} -F "${CC}" 2>&1 | grep -v "arcs.*block"; \
   fi; \
 fi
 USER root
 RUN make install
 USER kim
+WORKDIR /home/kim/kim-api
+RUN rm -rf build
+RUN mkdir build
+WORKDIR build
+RUN cmake -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} \
+          -DCMAKE_INSTALL_PREFIX=${PWD}/test-install \
+          -DKIM_API_BUILD_EXAMPLES=OFF \
+          ${COVERAGE:+-DKIM_API_ENABLE_COVERAGE=ON} \
+          ${SANITIZE:+-DKIM_API_ENABLE_SANITIZE=ON} \
+  ..
+RUN make -j2 install
+RUN ccache -s
+RUN source ./test-install/bin/kim-api-v2-activate && \
+    kim-api-v2-collections-management install system `find ../examples/model-drivers -mindepth 1 -maxdepth 1 -type d` && \
+    kim-api-v2-collections-management install system `find ../examples/models -mindepth 1 -maxdepth 1 -type d` && \
+    kim-api-v2-collections-management list

@@ -29,7 +29,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-v2.0.0-beta.2 package.
+// Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
 //
 
 #ifndef KIM_SPECIES_NAME_HPP_
@@ -195,12 +195,12 @@ KIM_SpeciesName const KIM_SPECIES_NAME_Mt = {ID_Mt};  // Meitnerium
 KIM_SpeciesName const KIM_SPECIES_NAME_Ds = {ID_Ds};  // Darmstadtium
 KIM_SpeciesName const KIM_SPECIES_NAME_Rg = {ID_Rg};  // Roentgenium
 KIM_SpeciesName const KIM_SPECIES_NAME_Cn = {ID_Cn};  // Copernicium
-KIM_SpeciesName const KIM_SPECIES_NAME_Uut = {ID_Uut};  // Ununtrium
+KIM_SpeciesName const KIM_SPECIES_NAME_Nh = {ID_Nh};  // Nihonium
 KIM_SpeciesName const KIM_SPECIES_NAME_Fl = {ID_Fl};  // Flerovium
-KIM_SpeciesName const KIM_SPECIES_NAME_Uup = {ID_Uup};  // Ununpentium
+KIM_SpeciesName const KIM_SPECIES_NAME_Mc = {ID_Mc};  // Moscovium
 KIM_SpeciesName const KIM_SPECIES_NAME_Lv = {ID_Lv};  // Livermorium
-KIM_SpeciesName const KIM_SPECIES_NAME_Uus = {ID_Uus};  // Ununseptium
-KIM_SpeciesName const KIM_SPECIES_NAME_Uuo = {ID_Uuo};  // Ununoctium
+KIM_SpeciesName const KIM_SPECIES_NAME_Ts = {ID_Ts};  // Tennessine
+KIM_SpeciesName const KIM_SPECIES_NAME_Og = {ID_Og};  // Oganesson
 KIM_SpeciesName const KIM_SPECIES_NAME_user01 = {ID_user01};  // user defined
 KIM_SpeciesName const KIM_SPECIES_NAME_user02 = {ID_user02};  // user defined
 KIM_SpeciesName const KIM_SPECIES_NAME_user03 = {ID_user03};  // user defined

@@ -29,7 +29,7 @@
 #
 
 #
-# Release: This file is part of the kim-api-v2.0.0-beta.2 package.
+# Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
 #
 
 
@@ -39,6 +39,7 @@ add_subdirectory(ex_model_Ar_P_LJ)
 add_subdirectory(ex_model_Ar_P_MLJ_Fortran)
 add_subdirectory(ex_model_Ar_P_Morse)
 add_subdirectory(ex_model_Ar_P_Morse_07C)
+add_subdirectory(ex_model_Ar_P_Morse_07C_w_Extensions)
 add_subdirectory(ex_model_Ar_P_Morse_MultiCutoff)
 add_subdirectory(ex_model_Ar_SLJ_MultiCutoff)
 add_subdirectory(LennardJones612_UniversalShifted__MO_959249795837_003)

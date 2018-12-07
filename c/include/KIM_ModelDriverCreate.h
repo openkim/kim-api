@@ -29,7 +29,7 @@
 /*                                                                            */
 
 /*                                                                            */
-/* Release: This file is part of the kim-api-v2.0.0-beta.2 package.           */
+/* Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.         */
 /*                                                                            */
 
 
@@ -56,14 +56,14 @@ typedef struct KIM_LanguageName KIM_LanguageName;
 typedef struct KIM_Numbering KIM_Numbering;
 #endif
 
+#ifndef KIM_MODEL_ROUTINE_NAME_DEFINED_
+#define KIM_MODEL_ROUTINE_NAME_DEFINED_
+typedef struct KIM_ModelRoutineName KIM_ModelRoutineName;
+#endif
+
 #ifndef KIM_SPECIES_NAME_DEFINED_
 #define KIM_SPECIES_NAME_DEFINED_
 typedef struct KIM_SpeciesName KIM_SpeciesName;
-#endif
-
-#ifndef KIM_SUPPORT_STATUS_DEFINED_
-#define KIM_SUPPORT_STATUS_DEFINED_
-typedef struct KIM_SupportStatus KIM_SupportStatus;
 #endif
 
 #ifndef KIM_LENGTH_UNIT_DEFINED_
@@ -114,7 +114,7 @@ int KIM_ModelDriverCreate_SetModelNumbering(
 
 void KIM_ModelDriverCreate_SetInfluenceDistancePointer(
     KIM_ModelDriverCreate * const modelDriverCreate,
-    double * const influenceDistance);
+    double const * const influenceDistance);
 
 void KIM_ModelDriverCreate_SetNeighborListPointers(
     KIM_ModelDriverCreate * const modelDriverCreate,
@@ -122,25 +122,11 @@ void KIM_ModelDriverCreate_SetNeighborListPointers(
     double const * const cutoffs,
     int const * const modelWillNotRequestNeighborsOfNoncontributingParticles);
 
-int KIM_ModelDriverCreate_SetRefreshPointer(
+int KIM_ModelDriverCreate_SetRoutinePointer(
     KIM_ModelDriverCreate * const modelDriverCreate,
+    KIM_ModelRoutineName const modelRoutineName,
     KIM_LanguageName const languageName,
-    KIM_Function * const fptr);
-int KIM_ModelDriverCreate_SetDestroyPointer(
-    KIM_ModelDriverCreate * const modelDriverCreate,
-    KIM_LanguageName const languageName,
-    KIM_Function * const fptr);
-int KIM_ModelDriverCreate_SetComputeArgumentsCreatePointer(
-    KIM_ModelDriverCreate * const modelDriverCreate,
-    KIM_LanguageName const languageName,
-    KIM_Function * const fptr);
-int KIM_ModelDriverCreate_SetComputeArgumentsDestroyPointer(
-    KIM_ModelDriverCreate * const modelDriverCreate,
-    KIM_LanguageName const languageName,
-    KIM_Function * const fptr);
-int KIM_ModelDriverCreate_SetComputePointer(
-    KIM_ModelDriverCreate * const modelDriverCreate,
-    KIM_LanguageName const languageName,
+    int const required,
     KIM_Function * const fptr);
 
 int KIM_ModelDriverCreate_SetSpeciesCode(

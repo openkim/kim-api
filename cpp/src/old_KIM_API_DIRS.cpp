@@ -27,18 +27,18 @@
 //
 
 //
-// Release: This file is part of the kim-api-v2.0.0-beta.2 package.
+// Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
 //
 
 
 #include "old_KIM_API_DIRS.h"
 #include "KIM_Configuration.hpp"
 #include "KIM_LogVerbosity.hpp"
+#include "KIM_SharedLibrary.hpp"
 #include "KIM_Version.hpp"
 #include <cstdlib>
 #include <cstring>
 #include <dirent.h>
-#include <dlfcn.h>
 #include <errno.h>
 #include <fstream>
 #include <iostream>
@@ -357,7 +357,7 @@ void getAvailableItems(DirectoryPathType type,
     std::list<std::string>::const_iterator itemItr;
     for (itemItr = items.begin(); itemItr != items.end(); ++itemItr)
     {
-      std::vector<std::string> entry(4);
+      std::vector<std::string> entry(5);
       entry[IE_COLLECTION] = collection;
       std::size_t split = itemItr->find_last_of("/");
       entry[IE_NAME] = itemItr->substr(split + 1);
@@ -374,40 +374,24 @@ void getAvailableItems(DirectoryPathType type,
         default: break;
       }
       lib.append(KIM_SHARED_MODULE_SUFFIX);
-      void * tmp_lib_handle = NULL;
-      tmp_lib_handle = dlopen(lib.c_str(), RTLD_NOW);
-      if (tmp_lib_handle != NULL)
+      entry[IE_FULLPATH] = lib;
+
+      KIM::SharedLibrary sharedLibrary(log);
+
+      int error = sharedLibrary.Open(lib);
+
+      if (!error)
       {
-        std::string verSymbolName = entry[IE_NAME] + "_compiled_with_version";
-        char const * const verSymbolPtr
-            = (char const *) dlsym(tmp_lib_handle, verSymbolName.c_str());
-        char * dlsym_error = dlerror();
-        if (dlsym_error)
-        {
-          if (log)
-          {
-            std::stringstream ss;
-            ss << " Cannot load symbol: " << dlsym_error << std::endl;
-            log->LogEntry(KIM::LOG_VERBOSITY::error, ss, __LINE__, __FILE__);
-          }
-          entry[IE_VER] = "unknown";
-        }
+        std::string versionString;
+        error = sharedLibrary.GetCompiledWithVersion(&versionString);
+        if (error) { entry[IE_VER] = "unknown"; }
         else
         {
-          entry[IE_VER] = verSymbolPtr;
+          entry[IE_VER] = versionString;
         }
 
         list.push_back(entry);
-        dlclose(tmp_lib_handle);
-      }
-      else
-      {
-        if (log)
-        {
-          std::stringstream ss;
-          ss << dlerror() << std::endl;
-          log->LogEntry(KIM::LOG_VERBOSITY::debug, ss, __LINE__, __FILE__);
-        }
+        sharedLibrary.Close();
       }
     }
   }

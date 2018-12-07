@@ -29,13 +29,14 @@
 #
 
 #
-# Release: This file is part of the kim-api-v2.0.0-beta.2 package.
+# Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
 #
 
 
 set(SIMULATOR_MODEL        ${PROJECT_NAME}-simulator-model)
 set(COLLECTIONS_INFO       ${PROJECT_NAME}-collections-info)
 set(COLLECTIONS_MANAGEMENT ${PROJECT_NAME}-collections-management)
+set(SHARED_LIBRARY_TEST    ${PROJECT_NAME}-shared-library-test)
 set(ACTIVATE_SCRIPT        ${PROJECT_NAME}-activate)
 set(DEACTIVATE_SCRIPT      ${PROJECT_NAME}-deactivate)
 
@@ -51,8 +52,12 @@ add_executable(collections-info collections-info.cpp)
 target_link_libraries(collections-info kim-loader)
 set_target_properties(collections-info PROPERTIES OUTPUT_NAME ${COLLECTIONS_INFO})
 
+add_executable(shared-library-test shared-library-test.cpp)
+target_link_libraries(shared-library-test ${CMAKE_DL_LIBS})
+set_target_properties(shared-library-test PROPERTIES OUTPUT_NAME ${SHARED_LIBRARY_TEST})
+
 install(
-  TARGETS simulator-model collections-info
+  TARGETS simulator-model collections-info shared-library-test
   DESTINATION ${CMAKE_INSTALL_LIBEXECDIR}/${PROJECT_NAME}
   )
 
