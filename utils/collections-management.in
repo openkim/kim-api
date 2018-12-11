@@ -35,7 +35,7 @@
 #
 
 collections_info=@CMAKE_INSTALL_FULL_LIBEXECDIR@/@PROJECT_NAME@/@PROJECT_NAME@-collections-info
-major_version=@PROJECT_MAJOR_VERSION@
+major_version=@PROJECT_VERSION_MAJOR@
 
 make_command="make"
 cmake_command="cmake"
