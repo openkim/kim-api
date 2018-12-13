@@ -390,8 +390,9 @@ program ex_test_ar_fcc_cluster_fortran
 
   integer :: middledum
 
-  ! Initialize error flag
+  ! Initialize
   ierr = 0
+  supported_extensions%number_of_supported_extensions = 0
 
   ! Get KIM Model name to use
   print '("Please enter a valid KIM model name: ")'
