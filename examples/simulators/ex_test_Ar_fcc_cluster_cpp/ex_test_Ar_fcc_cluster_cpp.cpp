@@ -323,19 +323,18 @@ int main()
             KIM::COMPUTE_ARGUMENT_NAME::numberOfParticles,
             (int *) &numberOfParticles_cluster)
         || computeArguments->SetArgumentPointer(
-               KIM::COMPUTE_ARGUMENT_NAME::particleSpeciesCodes,
-               particleSpecies_cluster_model)
+            KIM::COMPUTE_ARGUMENT_NAME::particleSpeciesCodes,
+            particleSpecies_cluster_model)
         || computeArguments->SetArgumentPointer(
-               KIM::COMPUTE_ARGUMENT_NAME::particleContributing,
-               particleContributing_cluster_model)
+            KIM::COMPUTE_ARGUMENT_NAME::particleContributing,
+            particleContributing_cluster_model)
         || computeArguments->SetArgumentPointer(
-               KIM::COMPUTE_ARGUMENT_NAME::coordinates,
-               (double *) coords_cluster)
+            KIM::COMPUTE_ARGUMENT_NAME::coordinates, (double *) coords_cluster)
         || computeArguments->SetArgumentPointer(
-               KIM::COMPUTE_ARGUMENT_NAME::partialEnergy, &energy_cluster_model)
+            KIM::COMPUTE_ARGUMENT_NAME::partialEnergy, &energy_cluster_model)
         || computeArguments->SetArgumentPointer(
-               KIM::COMPUTE_ARGUMENT_NAME::partialForces,
-               (double *) forces_cluster);
+            KIM::COMPUTE_ARGUMENT_NAME::partialForces,
+            (double *) forces_cluster);
   if (error) MY_ERROR("KIM_API_set_data");
   error = computeArguments->SetCallbackPointer(
       KIM::COMPUTE_CALLBACK_NAME::GetNeighborList,

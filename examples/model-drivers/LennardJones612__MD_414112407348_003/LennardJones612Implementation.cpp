@@ -645,28 +645,28 @@ int LennardJones612Implementation::RegisterKIMComputeArgumentsSettings(
                   KIM::COMPUTE_ARGUMENT_NAME::partialEnergy,
                   KIM::SUPPORT_STATUS::optional)
               || modelComputeArgumentsCreate->SetArgumentSupportStatus(
-                     KIM::COMPUTE_ARGUMENT_NAME::partialForces,
-                     KIM::SUPPORT_STATUS::optional)
+                  KIM::COMPUTE_ARGUMENT_NAME::partialForces,
+                  KIM::SUPPORT_STATUS::optional)
               || modelComputeArgumentsCreate->SetArgumentSupportStatus(
-                     KIM::COMPUTE_ARGUMENT_NAME::partialParticleEnergy,
-                     KIM::SUPPORT_STATUS::optional)
+                  KIM::COMPUTE_ARGUMENT_NAME::partialParticleEnergy,
+                  KIM::SUPPORT_STATUS::optional)
               || modelComputeArgumentsCreate->SetArgumentSupportStatus(
-                     KIM::COMPUTE_ARGUMENT_NAME::partialVirial,
-                     KIM::SUPPORT_STATUS::optional)
+                  KIM::COMPUTE_ARGUMENT_NAME::partialVirial,
+                  KIM::SUPPORT_STATUS::optional)
               || modelComputeArgumentsCreate->SetArgumentSupportStatus(
-                     KIM::COMPUTE_ARGUMENT_NAME::partialParticleVirial,
-                     KIM::SUPPORT_STATUS::optional);
+                  KIM::COMPUTE_ARGUMENT_NAME::partialParticleVirial,
+                  KIM::SUPPORT_STATUS::optional);
 
 
   // register callbacks
   LOG_INFORMATION("Register callback supportStatus");
   error = error
           || modelComputeArgumentsCreate->SetCallbackSupportStatus(
-                 KIM::COMPUTE_CALLBACK_NAME::ProcessDEDrTerm,
-                 KIM::SUPPORT_STATUS::optional)
+              KIM::COMPUTE_CALLBACK_NAME::ProcessDEDrTerm,
+              KIM::SUPPORT_STATUS::optional)
           || modelComputeArgumentsCreate->SetCallbackSupportStatus(
-                 KIM::COMPUTE_CALLBACK_NAME::ProcessD2EDr2Term,
-                 KIM::SUPPORT_STATUS::optional);
+              KIM::COMPUTE_CALLBACK_NAME::ProcessD2EDr2Term,
+              KIM::SUPPORT_STATUS::optional);
 
   return error;
 }
@@ -774,25 +774,25 @@ int LennardJones612Implementation::RegisterKIMFunctions(
               true,
               reinterpret_cast<KIM::Function *>(destroy))
           || modelDriverCreate->SetRoutinePointer(
-                 KIM::MODEL_ROUTINE_NAME::Refresh,
-                 KIM::LANGUAGE_NAME::cpp,
-                 true,
-                 reinterpret_cast<KIM::Function *>(refresh))
+              KIM::MODEL_ROUTINE_NAME::Refresh,
+              KIM::LANGUAGE_NAME::cpp,
+              true,
+              reinterpret_cast<KIM::Function *>(refresh))
           || modelDriverCreate->SetRoutinePointer(
-                 KIM::MODEL_ROUTINE_NAME::Compute,
-                 KIM::LANGUAGE_NAME::cpp,
-                 true,
-                 reinterpret_cast<KIM::Function *>(compute))
+              KIM::MODEL_ROUTINE_NAME::Compute,
+              KIM::LANGUAGE_NAME::cpp,
+              true,
+              reinterpret_cast<KIM::Function *>(compute))
           || modelDriverCreate->SetRoutinePointer(
-                 KIM::MODEL_ROUTINE_NAME::ComputeArgumentsCreate,
-                 KIM::LANGUAGE_NAME::cpp,
-                 true,
-                 reinterpret_cast<KIM::Function *>(CACreate))
+              KIM::MODEL_ROUTINE_NAME::ComputeArgumentsCreate,
+              KIM::LANGUAGE_NAME::cpp,
+              true,
+              reinterpret_cast<KIM::Function *>(CACreate))
           || modelDriverCreate->SetRoutinePointer(
-                 KIM::MODEL_ROUTINE_NAME::ComputeArgumentsDestroy,
-                 KIM::LANGUAGE_NAME::cpp,
-                 true,
-                 reinterpret_cast<KIM::Function *>(CADestroy));
+              KIM::MODEL_ROUTINE_NAME::ComputeArgumentsDestroy,
+              KIM::LANGUAGE_NAME::cpp,
+              true,
+              reinterpret_cast<KIM::Function *>(CADestroy));
   return error;
 }
 
@@ -921,28 +921,27 @@ int LennardJones612Implementation::SetComputeMutableValues(
   ier = modelComputeArguments->GetArgumentPointer(
             KIM::COMPUTE_ARGUMENT_NAME::numberOfParticles, &numberOfParticles)
         || modelComputeArguments->GetArgumentPointer(
-               KIM::COMPUTE_ARGUMENT_NAME::particleSpeciesCodes,
-               &particleSpeciesCodes)
+            KIM::COMPUTE_ARGUMENT_NAME::particleSpeciesCodes,
+            &particleSpeciesCodes)
         || modelComputeArguments->GetArgumentPointer(
-               KIM::COMPUTE_ARGUMENT_NAME::particleContributing,
-               &particleContributing)
+            KIM::COMPUTE_ARGUMENT_NAME::particleContributing,
+            &particleContributing)
         || modelComputeArguments->GetArgumentPointer(
-               KIM::COMPUTE_ARGUMENT_NAME::coordinates,
-               (double const **) &coordinates)
+            KIM::COMPUTE_ARGUMENT_NAME::coordinates,
+            (double const **) &coordinates)
         || modelComputeArguments->GetArgumentPointer(
-               KIM::COMPUTE_ARGUMENT_NAME::partialEnergy, &energy)
+            KIM::COMPUTE_ARGUMENT_NAME::partialEnergy, &energy)
         || modelComputeArguments->GetArgumentPointer(
-               KIM::COMPUTE_ARGUMENT_NAME::partialParticleEnergy,
-               &particleEnergy)
+            KIM::COMPUTE_ARGUMENT_NAME::partialParticleEnergy, &particleEnergy)
         || modelComputeArguments->GetArgumentPointer(
-               KIM::COMPUTE_ARGUMENT_NAME::partialForces,
-               (double const **) &forces)
+            KIM::COMPUTE_ARGUMENT_NAME::partialForces,
+            (double const **) &forces)
         || modelComputeArguments->GetArgumentPointer(
-               KIM::COMPUTE_ARGUMENT_NAME::partialVirial,
-               (double const **) &virial)
+            KIM::COMPUTE_ARGUMENT_NAME::partialVirial,
+            (double const **) &virial)
         || modelComputeArguments->GetArgumentPointer(
-               KIM::COMPUTE_ARGUMENT_NAME::partialParticleVirial,
-               (double const **) &particleVirial);
+            KIM::COMPUTE_ARGUMENT_NAME::partialParticleVirial,
+            (double const **) &particleVirial);
   if (ier)
   {
     LOG_ERROR("GetArgumentPointer");

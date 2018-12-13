@@ -237,29 +237,29 @@ compute_routine(KIM_ModelCompute const * const modelCompute,
             KIM_COMPUTE_ARGUMENT_NAME_numberOfParticles,
             &nParts)
         || KIM_ModelComputeArguments_GetArgumentPointerInteger(
-               modelComputeArguments,
-               KIM_COMPUTE_ARGUMENT_NAME_particleSpeciesCodes,
-               &particleSpeciesCodes)
+            modelComputeArguments,
+            KIM_COMPUTE_ARGUMENT_NAME_particleSpeciesCodes,
+            &particleSpeciesCodes)
         || KIM_ModelComputeArguments_GetArgumentPointerInteger(
-               modelComputeArguments,
-               KIM_COMPUTE_ARGUMENT_NAME_particleContributing,
-               &particleContributing)
+            modelComputeArguments,
+            KIM_COMPUTE_ARGUMENT_NAME_particleContributing,
+            &particleContributing)
         || KIM_ModelComputeArguments_GetArgumentPointerDouble(
-               modelComputeArguments,
-               KIM_COMPUTE_ARGUMENT_NAME_coordinates,
-               &coords)
+            modelComputeArguments,
+            KIM_COMPUTE_ARGUMENT_NAME_coordinates,
+            &coords)
         || KIM_ModelComputeArguments_GetArgumentPointerDouble(
-               modelComputeArguments,
-               KIM_COMPUTE_ARGUMENT_NAME_partialEnergy,
-               &energy)
+            modelComputeArguments,
+            KIM_COMPUTE_ARGUMENT_NAME_partialEnergy,
+            &energy)
         || KIM_ModelComputeArguments_GetArgumentPointerDouble(
-               modelComputeArguments,
-               KIM_COMPUTE_ARGUMENT_NAME_partialForces,
-               &force)
+            modelComputeArguments,
+            KIM_COMPUTE_ARGUMENT_NAME_partialForces,
+            &force)
         || KIM_ModelComputeArguments_GetArgumentPointerDouble(
-               modelComputeArguments,
-               KIM_COMPUTE_ARGUMENT_NAME_partialParticleEnergy,
-               &particleEnergy);
+            modelComputeArguments,
+            KIM_COMPUTE_ARGUMENT_NAME_partialParticleEnergy,
+            &particleEnergy);
   if (ier)
   {
     LOG_ERROR("GetArgumentPointer");
@@ -454,35 +454,35 @@ int model_driver_create(KIM_ModelDriverCreate * const modelDriverCreate,
             TRUE,
             (KIM_Function *) CACreate)
         || KIM_ModelDriverCreate_SetRoutinePointer(
-               modelDriverCreate,
-               KIM_MODEL_ROUTINE_NAME_Compute,
-               KIM_LANGUAGE_NAME_c,
-               TRUE,
-               (KIM_Function *) compute)
+            modelDriverCreate,
+            KIM_MODEL_ROUTINE_NAME_Compute,
+            KIM_LANGUAGE_NAME_c,
+            TRUE,
+            (KIM_Function *) compute)
         || KIM_ModelDriverCreate_SetRoutinePointer(
-               modelDriverCreate,
-               KIM_MODEL_ROUTINE_NAME_Refresh,
-               KIM_LANGUAGE_NAME_c,
-               TRUE,
-               (KIM_Function *) refresh)
+            modelDriverCreate,
+            KIM_MODEL_ROUTINE_NAME_Refresh,
+            KIM_LANGUAGE_NAME_c,
+            TRUE,
+            (KIM_Function *) refresh)
         || KIM_ModelDriverCreate_SetRoutinePointer(
-               modelDriverCreate,
-               KIM_MODEL_ROUTINE_NAME_WriteParameterizedModel,
-               KIM_LANGUAGE_NAME_c,
-               FALSE,
-               (KIM_Function *) writeModel)
+            modelDriverCreate,
+            KIM_MODEL_ROUTINE_NAME_WriteParameterizedModel,
+            KIM_LANGUAGE_NAME_c,
+            FALSE,
+            (KIM_Function *) writeModel)
         || KIM_ModelDriverCreate_SetRoutinePointer(
-               modelDriverCreate,
-               KIM_MODEL_ROUTINE_NAME_ComputeArgumentsDestroy,
-               KIM_LANGUAGE_NAME_c,
-               TRUE,
-               (KIM_Function *) CADestroy)
+            modelDriverCreate,
+            KIM_MODEL_ROUTINE_NAME_ComputeArgumentsDestroy,
+            KIM_LANGUAGE_NAME_c,
+            TRUE,
+            (KIM_Function *) CADestroy)
         || KIM_ModelDriverCreate_SetRoutinePointer(
-               modelDriverCreate,
-               KIM_MODEL_ROUTINE_NAME_Destroy,
-               KIM_LANGUAGE_NAME_c,
-               TRUE,
-               (KIM_Function *) destroy);
+            modelDriverCreate,
+            KIM_MODEL_ROUTINE_NAME_Destroy,
+            KIM_LANGUAGE_NAME_c,
+            TRUE,
+            (KIM_Function *) destroy);
 
   /* get number of parameter files */
   KIM_ModelDriverCreate_GetNumberOfParameterFiles(modelDriverCreate,
@@ -590,9 +590,9 @@ int model_driver_create(KIM_ModelDriverCreate * const modelDriverCreate,
                                                            "epsilon",
                                                            "Morse epsilon")
         || KIM_ModelDriverCreate_SetParameterPointerDouble(
-               modelDriverCreate, 1, &(buffer->C), "C", "Morse C")
+            modelDriverCreate, 1, &(buffer->C), "C", "Morse C")
         || KIM_ModelDriverCreate_SetParameterPointerDouble(
-               modelDriverCreate, 1, &(buffer->Rzero), "Rzero", "Morse Rzero");
+            modelDriverCreate, 1, &(buffer->Rzero), "Rzero", "Morse Rzero");
   if (ier == TRUE)
   {
     LOG_ERROR("Unable to set parameter pointer(s).");
@@ -687,13 +687,13 @@ static int compute_arguments_create(
             KIM_COMPUTE_ARGUMENT_NAME_partialEnergy,
             KIM_SUPPORT_STATUS_optional)
         || KIM_ModelComputeArgumentsCreate_SetArgumentSupportStatus(
-               modelComputeArgumentsCreate,
-               KIM_COMPUTE_ARGUMENT_NAME_partialParticleEnergy,
-               KIM_SUPPORT_STATUS_optional)
+            modelComputeArgumentsCreate,
+            KIM_COMPUTE_ARGUMENT_NAME_partialParticleEnergy,
+            KIM_SUPPORT_STATUS_optional)
         || KIM_ModelComputeArgumentsCreate_SetArgumentSupportStatus(
-               modelComputeArgumentsCreate,
-               KIM_COMPUTE_ARGUMENT_NAME_partialForces,
-               KIM_SUPPORT_STATUS_optional);
+            modelComputeArgumentsCreate,
+            KIM_COMPUTE_ARGUMENT_NAME_partialForces,
+            KIM_SUPPORT_STATUS_optional);
   if (ier == TRUE)
   {
     LOG_ERROR("Unable to set argument supportStatus.");

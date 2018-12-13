@@ -463,29 +463,29 @@ model_compute(KIM_ModelCompute const * const modelCompute,
             KIM_COMPUTE_ARGUMENT_NAME_numberOfParticles,
             &nParts)
         || KIM_ModelComputeArguments_GetArgumentPointerInteger(
-               modelComputeArguments,
-               KIM_COMPUTE_ARGUMENT_NAME_particleSpeciesCodes,
-               &particleSpeciesCodes)
+            modelComputeArguments,
+            KIM_COMPUTE_ARGUMENT_NAME_particleSpeciesCodes,
+            &particleSpeciesCodes)
         || KIM_ModelComputeArguments_GetArgumentPointerInteger(
-               modelComputeArguments,
-               KIM_COMPUTE_ARGUMENT_NAME_particleContributing,
-               &particleContributing)
+            modelComputeArguments,
+            KIM_COMPUTE_ARGUMENT_NAME_particleContributing,
+            &particleContributing)
         || KIM_ModelComputeArguments_GetArgumentPointerDouble(
-               modelComputeArguments,
-               KIM_COMPUTE_ARGUMENT_NAME_coordinates,
-               &coords)
+            modelComputeArguments,
+            KIM_COMPUTE_ARGUMENT_NAME_coordinates,
+            &coords)
         || KIM_ModelComputeArguments_GetArgumentPointerDouble(
-               modelComputeArguments,
-               KIM_COMPUTE_ARGUMENT_NAME_partialEnergy,
-               &energy)
+            modelComputeArguments,
+            KIM_COMPUTE_ARGUMENT_NAME_partialEnergy,
+            &energy)
         || KIM_ModelComputeArguments_GetArgumentPointerDouble(
-               modelComputeArguments,
-               KIM_COMPUTE_ARGUMENT_NAME_partialForces,
-               &force)
+            modelComputeArguments,
+            KIM_COMPUTE_ARGUMENT_NAME_partialForces,
+            &force)
         || KIM_ModelComputeArguments_GetArgumentPointerDouble(
-               modelComputeArguments,
-               KIM_COMPUTE_ARGUMENT_NAME_partialParticleEnergy,
-               &particleEnergy);
+            modelComputeArguments,
+            KIM_COMPUTE_ARGUMENT_NAME_partialParticleEnergy,
+            &particleEnergy);
   if (ier)
   {
     LOG_ERROR("get data pointers failed");
@@ -651,7 +651,7 @@ int model_create(KIM_ModelCreate * const modelCreate,
   LOG_INFORMATION("Setting species code");
   error = error
           || KIM_ModelCreate_SetSpeciesCode(
-                 modelCreate, KIM_SPECIES_NAME_Ar, SPECCODE);
+              modelCreate, KIM_SPECIES_NAME_Ar, SPECCODE);
 
   /* register numbering */
   LOG_INFORMATION("Setting model numbering");
@@ -663,28 +663,28 @@ int model_create(KIM_ModelCreate * const modelCreate,
   LOG_INFORMATION("Register model function pointers");
   error = error
           || KIM_ModelCreate_SetRoutinePointer(
-                 modelCreate,
-                 KIM_MODEL_ROUTINE_NAME_ComputeArgumentsCreate,
-                 KIM_LANGUAGE_NAME_c,
-                 TRUE,
-                 (KIM_Function *) CACreate)
+              modelCreate,
+              KIM_MODEL_ROUTINE_NAME_ComputeArgumentsCreate,
+              KIM_LANGUAGE_NAME_c,
+              TRUE,
+              (KIM_Function *) CACreate)
           || KIM_ModelCreate_SetRoutinePointer(modelCreate,
                                                KIM_MODEL_ROUTINE_NAME_Compute,
                                                KIM_LANGUAGE_NAME_c,
                                                TRUE,
                                                (KIM_Function *) compute)
           || KIM_ModelCreate_SetRoutinePointer(
-                 modelCreate,
-                 KIM_MODEL_ROUTINE_NAME_ComputeArgumentsDestroy,
-                 KIM_LANGUAGE_NAME_c,
-                 TRUE,
-                 (KIM_Function *) CADestroy)
+              modelCreate,
+              KIM_MODEL_ROUTINE_NAME_ComputeArgumentsDestroy,
+              KIM_LANGUAGE_NAME_c,
+              TRUE,
+              (KIM_Function *) CADestroy)
           || KIM_ModelCreate_SetRoutinePointer(
-                 modelCreate,
-                 KIM_MODEL_ROUTINE_NAME_ComputeArgumentsDestroy,
-                 KIM_LANGUAGE_NAME_c,
-                 TRUE,
-                 (KIM_Function *) destroy);
+              modelCreate,
+              KIM_MODEL_ROUTINE_NAME_ComputeArgumentsDestroy,
+              KIM_LANGUAGE_NAME_c,
+              TRUE,
+              (KIM_Function *) destroy);
 
   /* allocate buffer */
   bufferPointer = (buffer *) malloc(sizeof(buffer));
@@ -763,27 +763,27 @@ static int compute_arguments_create(
       KIM_SUPPORT_STATUS_optional);
   error = error
           || KIM_ModelComputeArgumentsCreate_SetArgumentSupportStatus(
-                 modelComputeArgumentsCreate,
-                 KIM_COMPUTE_ARGUMENT_NAME_partialForces,
-                 KIM_SUPPORT_STATUS_optional);
+              modelComputeArgumentsCreate,
+              KIM_COMPUTE_ARGUMENT_NAME_partialForces,
+              KIM_SUPPORT_STATUS_optional);
   error = error
           || KIM_ModelComputeArgumentsCreate_SetArgumentSupportStatus(
-                 modelComputeArgumentsCreate,
-                 KIM_COMPUTE_ARGUMENT_NAME_partialParticleEnergy,
-                 KIM_SUPPORT_STATUS_optional);
+              modelComputeArgumentsCreate,
+              KIM_COMPUTE_ARGUMENT_NAME_partialParticleEnergy,
+              KIM_SUPPORT_STATUS_optional);
 
   /* register call backs */
   LOG_INFORMATION("Register call back supportStatus");
   error = error
           || KIM_ModelComputeArgumentsCreate_SetCallbackSupportStatus(
-                 modelComputeArgumentsCreate,
-                 KIM_COMPUTE_CALLBACK_NAME_ProcessDEDrTerm,
-                 KIM_SUPPORT_STATUS_optional);
+              modelComputeArgumentsCreate,
+              KIM_COMPUTE_CALLBACK_NAME_ProcessDEDrTerm,
+              KIM_SUPPORT_STATUS_optional);
   error = error
           || KIM_ModelComputeArgumentsCreate_SetCallbackSupportStatus(
-                 modelComputeArgumentsCreate,
-                 KIM_COMPUTE_CALLBACK_NAME_ProcessD2EDr2Term,
-                 KIM_SUPPORT_STATUS_optional);
+              modelComputeArgumentsCreate,
+              KIM_COMPUTE_CALLBACK_NAME_ProcessD2EDr2Term,
+              KIM_SUPPORT_STATUS_optional);
 
   if (error)
   {
