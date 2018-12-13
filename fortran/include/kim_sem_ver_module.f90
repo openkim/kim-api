@@ -85,7 +85,7 @@ contains
 
   subroutine kim_parse_sem_ver(version, major, minor, patch, &
     prerelease, build_metadata, ierr)
-    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
+    use kim_convert_string_module, only : kim_convert_c_char_array_to_string
     implicit none
     interface
       integer(c_int) function parse_sem_ver(version, prerelease_length, &
@@ -111,13 +111,15 @@ contains
     character(len=*, kind=c_char), intent(out) :: build_metadata
     integer(c_int), intent(out) :: ierr
 
-    type(c_ptr) :: p_prerelease
-    type(c_ptr) :: p_build_metadata
+    character(len=1, kind=c_char), target :: prerelease_local(len(prerelease))
+    character(len=1, kind=c_char), target :: &
+      build_metadata_local(len(build_metadata))
 
     ierr = parse_sem_ver(trim(version)//c_null_char, len(prerelease), &
-      len(build_metadata), major, minor, patch, p_prerelease, &
-      p_build_metadata)
-    call kim_convert_c_char_ptr_to_string(p_prerelease, prerelease)
-    call kim_convert_c_char_ptr_to_string(p_build_metadata, build_metadata)
+      len(build_metadata), major, minor, patch, c_loc(prerelease_local), &
+      c_loc(build_metadata_local))
+    call kim_convert_c_char_array_to_string(prerelease_local, prerelease)
+    call kim_convert_c_char_array_to_string(build_metadata_local, &
+      build_metadata)
   end subroutine kim_parse_sem_ver
 end module kim_sem_ver_module
