@@ -679,12 +679,11 @@ int model_create(KIM_ModelCreate * const modelCreate,
               KIM_LANGUAGE_NAME_c,
               TRUE,
               (KIM_Function *) CADestroy)
-          || KIM_ModelCreate_SetRoutinePointer(
-              modelCreate,
-              KIM_MODEL_ROUTINE_NAME_ComputeArgumentsDestroy,
-              KIM_LANGUAGE_NAME_c,
-              TRUE,
-              (KIM_Function *) destroy);
+          || KIM_ModelCreate_SetRoutinePointer(modelCreate,
+                                               KIM_MODEL_ROUTINE_NAME_Destroy,
+                                               KIM_LANGUAGE_NAME_c,
+                                               TRUE,
+                                               (KIM_Function *) destroy);
 
   /* allocate buffer */
   bufferPointer = (buffer *) malloc(sizeof(buffer));
