@@ -162,7 +162,7 @@ contains
         import kim_temperature_unit_type
         implicit none
         integer(c_int), intent(in), value :: index
-        type(kim_temperature_unit_type), intent(in) :: temperature_unit
+        type(kim_temperature_unit_type), intent(out) :: temperature_unit
       end function get_temperature_unit
     end interface
     integer(c_int), intent(in) :: index
