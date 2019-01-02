@@ -180,13 +180,13 @@ C.2.3 THE ENVIRONMENT-VARIABLE-COLLECTION
 The environment-variable-collection is a collection of Models and Model Drivers
 that are specified by the run-time environment of the process for the Simulator
 that uses the KIM API library.  The locations of this collection are specified
-by the environment variables "KIM_API_VX_MODELS" and
-"KIM_API_VX_MODEL_DRIVERS".  These variables should contain colon ':' separated
-lists of absolute directory names where the collection Models and Model
-Drivers, respectively, are located.  (For example, in bash you could execute
-the command
+by the environment variables "KIM_API_VX_MODELS_DIR" and
+"KIM_API_VX_MODEL_DRIVERS_DIR".  These variables should contain colon ':'
+separated lists of absolute directory names where the collection Models and
+Model Drivers, respectively, are located.  (For example, in bash you could
+execute the command
 
-$ export KIM_API_VX_MODELS=/my-kim-stuff/models-i-am-developing:/my-kim-stuff/misc-models
+$ export KIM_API_VX_MODELS_DIR=/my-kim-stuff/models-i-am-developing:/my-kim-stuff/misc-models
 
 to have the KIM API look for Models in /my-kim-stuff/models-i-am-developing
 first and then look in /my-kim-stuff/misc-models.  Similarly for Model
@@ -457,9 +457,9 @@ similar.
 $ cd "${HOME}"
 
 $ mkdir -p "${HOME}/my-env-collection/model-drivers"
-$ export KIM_API_VX_MODEL_DRIVERS="${HOME}/my-env-collection/model-drivers"
+$ export KIM_API_VX_MODEL_DRIVERS_DIR="${HOME}/my-env-collection/model-drivers"
 $ mkdir -p "${HOME}/my-env-collection/models"
-$ export KIM_API_VX_MODELS="${HOME}/my-env-collection/models"
+$ export KIM_API_VX_MODELS_DIR="${HOME}/my-env-collection/models"
 $ kim-api-vX-collections-management install environment Pair_Morse_Shifted_GirifalcoWeizer_HighCutoff_Cu__MO_151002396060_001
 $ kim-api-vX-collections-management list
 $ cd "${HOME}/utility_forces_numer_deriv/build"  # we'll assume this is already built
