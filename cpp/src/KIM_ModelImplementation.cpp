@@ -590,9 +590,10 @@ int ModelImplementation::SetRoutinePointer(
     Function * const fptr)
 {
 #if DEBUG_VERBOSITY
-  std::string const callString = "SetRoutinePointer(" + languageName.String()
-                                 + ", " + SNUM(required) + ", " + SFUNC(fptr)
-                                 + ").";
+  std::string const callString = "SetRoutinePointer("
+                                 + modelRoutineName.String() + ", "
+                                 + languageName.String() + ", " + SNUM(required)
+                                 + ", " + SFUNC(fptr) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
