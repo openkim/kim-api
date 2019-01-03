@@ -54,7 +54,7 @@ usage () {
   printf "          (CWD | environment | user | system [--sudo])\n"
   printf "          (<openkim-item-id>... | <local-item-path>... | OpenKIM |\n"
   printf "           OpenKIM_with_history)\n"
-  printf "  ${command} reinstall [--force|--interacitive] [--sudo]\n"
+  printf "  ${command} reinstall [--force|--interactive] [--sudo]\n"
   printf "          (<openkim-item-id> | <local-item-path>)...\n"
   printf "  ${command} remove [--force|--interactive] [--sudo] <item-id>...\n"
   printf "  ${command} remove-all [--force|--interactive] [--sudo]\n"
