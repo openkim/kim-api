@@ -2,7 +2,7 @@
 
 ;; Keywords: c, tools
 
-;; kim-api-c-style.el is Copyright (C) 2014--2018 Ryan S. Elliott
+;; kim-api-c-style.el is Copyright (C) 2014--2019 Ryan S. Elliott
 ;;
 ;; It is free software; you can redistribute it and/or modify it under the
 ;; terms of the "Artistic License".
