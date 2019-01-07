@@ -40,6 +40,7 @@ cmake_policy(SET CMP0054 NEW)
 find_package(Doxygen)
 
 set(DOXYGEN_PROJECT_NAME         "${PROJECT_NAME}")
+set(DOXYGEN_PROJECT_NUMBER       "${PROJECT_VERSION_STRING}")
 set(DOXYGEN_STRIP_FROM_PATH      "../../")
 set(DOXYGEN_TAB_SIZE             2)
 set(DOXYGEN_EXTRACT_ALL          YES)
