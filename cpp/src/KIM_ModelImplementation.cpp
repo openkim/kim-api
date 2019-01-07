@@ -1270,6 +1270,17 @@ int ModelImplementation::Extension(std::string const & extensionID,
 #endif
   LOG_DEBUG("Enter  " + callString);
 
+#if ERROR_VERBOSITY
+  int present = false;
+  IsRoutinePresent(KIM::MODEL_ROUTINE_NAME::Extension, &present, NULL);
+  if (!present)
+  {
+    LOG_ERROR("The Model does not provide the Extension routine.");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
+#endif
+
   extensionID_ = extensionID;
   int error = ModelExtension(extensionStructure);
   extensionID_ = "";
@@ -1296,7 +1307,7 @@ int ModelImplementation::ClearThenRefresh()
   if (parameterPointer_.size() == 0)
   {
     LOG_ERROR("ClearThenRefresh() called but no parameter pointers have been "
-              "set.");
+              "set (and no Refresh routine has been provided).");
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
@@ -1392,6 +1403,17 @@ int ModelImplementation::WriteParameterizedModel(
     return true;
   }
 
+  int present = false;
+  IsRoutinePresent(
+      KIM::MODEL_ROUTINE_NAME::WriteParameterizedModel, &present, NULL);
+  if (!present)
+  {
+    LOG_ERROR(
+        "The Model does not provide the WriteParameterizedModel routine.");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
+
   if (!IsCIdentifier(modelName))
   {
     LOG_ERROR("modelName '" + modelName + "' is not a valid C identifier.");
@@ -1430,6 +1452,14 @@ int ModelImplementation::WriteParameterizedModel(
   writeModelName_ = modelName;
   int error = ModelWriteParameterizedModel();
 
+  if (error)
+  {
+    LOG_ERROR(
+        "Model supplied WriteParameterizedModel() routine returned error.");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
+
   cmakelists_ << "  )\n";
   std::ofstream cmakeFile((path + "/CMakeLists.txt").c_str(),
                           std::ios::out | std::ios::trunc);
@@ -1442,18 +1472,11 @@ int ModelImplementation::WriteParameterizedModel(
   {
     LOG_ERROR("Unable to open CMakeLists.txt file for write.");
     LOG_DEBUG("Exit 1=" + callString);
-  }
-
-  if (error)
-  {
-    LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
-  else
-  {
-    LOG_DEBUG("Exit 0=" + callString);
-    return false;
-  }
+
+  LOG_DEBUG("Exit 0=" + callString);
+  return false;
 }
 
 void ModelImplementation::SetModelBufferPointer(void * const ptr)
