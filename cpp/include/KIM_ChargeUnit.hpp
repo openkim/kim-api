@@ -38,31 +38,107 @@
 
 namespace KIM
 {
+/// This class is an Extensible Enumeration for the charge units supported by
+/// the %KIM API.  The enumeration constants are contained in the
+/// KIM::CHARGE_UNIT namespace.
+///
+/// \since 2.0
+///
 class ChargeUnit
 {
  public:
+  /// The integer identifying the specific charge unit represented.
+  ///
+  /// \note This should not be directly accessed and is only public for
+  /// cross-language reasons.
+  /// \since 2.0
   int chargeUnitID;
 
+  /// This generates the value ChargeUnit::unused.
+  /// \since 2.0
   ChargeUnit();
+
+  /// This generates a ChargeUnit object with the specified id.
+  /// \note This should not be used directly.
+  /// \since 2.0
   ChargeUnit(int const id);
+
+  /// This generates a ChargeUnit object corresponding to the provided string.
+  /// If the string does not match one of the values defined by the %KIM API,
+  /// then an "unknown" object is generated.
+  /// \since 2.0
   ChargeUnit(std::string const & str);
+
+  /// Compares ChargeUnit objects for equality.
+  /// \note Not all "unknown" objects are equal.
+  /// \since 2.0
   bool operator==(ChargeUnit const & rhs) const;
+
+  /// Compares ChargeUnit objects for inequality.
+  ///
+  /// \note It is possible for two "unknown" objects to be not equal.
+  /// \since 2.0
   bool operator!=(ChargeUnit const & rhs) const;
+
+  /// This routine converts the object to a string.
+  /// \return A string object representing the ChargeUnit object.
+  ///
+  /// \note If the ChargeUnit object does not correspond to a value defined by
+  /// the %KIM API, then the string "unknown" is returned.
+  /// \since 2.0
   std::string const & String() const;
 };  // class ChargeUnit
 
+/// This namespace contains the enumeration constants and the discovery
+/// routines for the ChargeUnitExtensible Enumeration.
 namespace CHARGE_UNIT
 {
+/// Indicates that a charge unit is not used.
+/// \since 2.0
 extern ChargeUnit const unused;
+
+/// The standard Coulomb unit of charge.
+/// \since 2.0
 extern ChargeUnit const C;
+
+/// The standard electron unit of charge.
+/// \since 2.0
 extern ChargeUnit const e;
+
+/// The standard statcoulomb unit of charge.
+/// \since 2.0
 extern ChargeUnit const statC;
 
+
+/// Allows for the discovery of the number of standard charge units defined by
+/// the %KIM API.
+///
+/// \param[out] numberOfCharegeUnits The number of standard charge units defined
+/// by the %KIM API.
+/// \since 2.0
 void GetNumberOfChargeUnits(int * const numberOfChargeUnits);
+
+/// Allows for the discovery of the identity of each defined standard charge
+/// unit.
+///
+/// \param[in] index A zero-based index uniquely labeling each defined standard
+/// charge unit.  This index ordering is only guaranteed to be stable during the
+/// lifetime of the current process.
+///
+/// \param[out] chargeUnit The ChargeUnit object associated with \p index.
+///
+/// \return \c true if \p chargeUnit is "unknown"
+/// \return \c false otherwise
+/// \since 2.0
 int GetChargeUnit(int const index, ChargeUnit * const chargeUnit);
 
+/// This structure is provided for use with std::map.
+/// \since 2.0
 struct Comparator
 {
+  /// Provides an (logically unmeaningful) ordering for ChargeUnit objects so
+  /// that they can be stored in a std::map.
+  /// \since 2.0
   bool operator()(ChargeUnit const & a, ChargeUnit const & b) const
   {
     return a.chargeUnitID < b.chargeUnitID;
