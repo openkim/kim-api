@@ -52,8 +52,8 @@ class TimeUnit;
 class ComputeArguments;
 class ModelImplementation;
 
-/// This class provides the primary interface to a %KIM API Model object and is
-/// meant to be used by Simulators.
+/// Provides the primary interface to a %KIM API Model object and is meant to
+/// be used by Simulators.
 ///
 /// \since 2.0
 class Model
@@ -62,23 +62,22 @@ class Model
   /// Create a new %KIM API Model object.
   ///
   /// Allocates a new %KIM API Model object for use by a Simulator and calls
-  /// the Model's KIM::MODEL_ROUTINE_NAME::Create routine.
+  /// the Model's MODEL_ROUTINE_NAME::Create routine.
   ///
-  /// \param[in]  numbering The KIM::Numbering value used by the Simulator.
-  /// \param[in]  requestedLengthUnit The KIM::LengthUnit requested by the
+  /// \param[in]  numbering The Numbering value used by the Simulator.
+  /// \param[in]  requestedLengthUnit The LengthUnit requested by the
   ///             Simulator.
-  /// \param[in]  requestedEnergyUnit The KIM::EnergyUnit requested by the
+  /// \param[in]  requestedEnergyUnit The EnergyUnit requested by the
   ///             Simulator.
-  /// \param[in]  requestedChargeUnit The KIM::ChargeUnit requested by the
+  /// \param[in]  requestedChargeUnit The ChargeUnit requested by the
   ///             Simulator.
-  /// \param[in]  requestedTemperatureUnit The KIM::TemperatureUnit requested
+  /// \param[in]  requestedTemperatureUnit The TemperatureUnit requested
   ///             by the Simulator.
-  /// \param[in]  requestedTimeUnit The KIM::TimeUnit requested by the
-  ///             Simulator.
+  /// \param[in]  requestedTimeUnit The TimeUnit requested by the Simulator.
   /// \param[in]  modelName The name of the Model to be created.
   /// \param[out] requestedUnitsAccepted An integer that is set to \c true if
-  ///             the Model accepts the Simulator's requested, \c false if the
-  ///             Model will use units other than those requested by the
+  ///             the Model accepts the Simulator's requested units, \c false
+  ///             if the Model will use units other than those requested by the
   ///             Simulator.
   /// \param[out] model Pointer to the newly created Model object.
   ///
@@ -86,20 +85,20 @@ class Model
   /// \return \c true if \c numbering or any of the units are invalid.
   /// \return \c true if the requested model's library cannot be found,
   ///         opened, is of the wrong type, or has some other problem.
-  /// \return \c true if the Model's KIM::MODEL_ROUTINE_NAME::Create routine
+  /// \return \c true if the Model's MODEL_ROUTINE_NAME::Create routine
   ///         returns \c true.
-  /// \return \c true if the Model's KIM::MODEL_ROUTINE_NAME::Create routine
+  /// \return \c true if the Model's MODEL_ROUTINE_NAME::Create routine
   ///         does not set the Model's (1) numbering, (2) units, (3)
   ///         influence distance, (4) numberOfNeighborLists, (5) cutoff values,
   ///         (6) modelWillNotRequesNeighborsOfNoncontributingParticles, (7)
-  ///         required KIM::ModelRoutine pointers, (8) supported sepecies codes.
-  /// \return \c true if max(cutoffs) > influenceDistance
+  ///         required ModelRoutineName pointers, (8) supported sepecies codes.
+  /// \return \c true if max(cutoffs) > influenceDistance.
   /// \return \c true if parameters are registered but not a
-  ///         KIM::MODEL_ROUTINE_NAME::Refresh pointer, or vise-versa.
-  /// \return \c true if a KIM::MODEL_ROUTINE_NAME::WriteParameterizedModel
+  ///         MODEL_ROUTINE_NAME::Refresh pointer, or vise-versa.
+  /// \return \c true if a MODEL_ROUTINE_NAME::WriteParameterizedModel
   ///         pointer is provided but no parameters are registered.
-  /// \return \c true if the Model's KIM::MODEL_ROUTINE_NAME::Create routine
-  ///         does not set the Model's KIM::Numbering.
+  /// \return \c true if the Model's MODEL_ROUTINE_NAME::Create routine
+  ///         does not set the Model's Numbering.
   /// \return \c false otherwise.
   ///
   /// \post \c requestedUnitsAccepted is unchanged and `model == NULL` if an
@@ -116,9 +115,9 @@ class Model
                     int * const requestedUnitsAccepted,
                     Model ** const model);
 
-  /// Destroy a previously KIM::Model::Create'd object.
+  /// Destroy a previously Model::Create'd object.
   ///
-  /// Call the Model's KIM::MODEL_ROUTINE_NAME::Destroy routine and deallocate
+  /// Call the Model's MODEL_ROUTINE_NAME::Destroy routine and deallocate
   /// the Model object.
   ///
   /// \param[in/out] model Pointer to the Model obejct.
@@ -130,9 +129,9 @@ class Model
   /// \since 2.0
   static void Destroy(Model ** const model);
 
-  /// Determine presence and required status of the given KIM::ModelRoutineName.
+  /// Determine presence and required status of the given ModelRoutineName.
   ///
-  /// \param[in]  modelRoutineName The KIM::ModelRoutineName of interest.
+  /// \param[in]  modelRoutineName The ModelRoutineName of interest.
   /// \param[out] present \c true if the Model provides the routine, \c false
   ///             otherwise.
   /// \param[out] required \c true if the Model requires the use of the routine,
@@ -180,11 +179,11 @@ class Model
 
   /// Get the Model's unit values.
   ///
-  /// \param[out] lengthUnit The Model's KIM::LengthUnit.
-  /// \param[out] energyUnit The Model's KIM::EnergyUnit.
-  /// \param[out] chargeUnit The Model's KIM::ChargeUnit.
-  /// \param[out] temperatureUnit The Model's KIM::TemperatureUnit.
-  /// \param[out] timeUnit The Model's KIM::TimeUnit.
+  /// \param[out] lengthUnit The Model's LengthUnit.
+  /// \param[out] energyUnit The Model's EnergyUnit.
+  /// \param[out] chargeUnit The Model's ChargeUnit.
+  /// \param[out] temperatureUnit The Model's TemperatureUnit.
+  /// \param[out] timeUnit The Model's TimeUnit.
   ///
   /// \pre \c lengthUnit, \c energyUnit, \c chargeUnit, \c temperatureUnit, or
   ///      \c timeUnit may be \c NULL if the corresponding value is not needed.
@@ -196,19 +195,18 @@ class Model
                 TemperatureUnit * const temperatureUnit,
                 TimeUnit * const timeUnit) const;
 
-  /// Create a new KIM::ComputeArguments object for the Model object.
+  /// Create a new ComputeArguments object for the Model object.
   ///
-  /// Allocates a new KIM::ComputeArguments object for use by a Simulator and
-  /// calls the Model's KIM::MODEL_ROUTINE_NAME::ComputeArgumentsCreate routine.
+  /// Allocates a new ComputeArguments object for use by a Simulator and
+  /// calls the Model's MODEL_ROUTINE_NAME::ComputeArgumentsCreate routine.
   ///
   /// \param[inout] computeArguments Pointer to the newly created
-  ///                KIM::ComputeArguments object.
+  ///                ComputeArguments object.
   ///
   /// \return \c true if the %KIM API is unable to allocate a new
-  ///         KIM::ComputeArguments object.
-  /// \return \c true if the Model's
-  ///         KIM::MODEL_ROUTINE_NAME::ComputeArgumentsCreate routine
-  ///         returns \c true.
+  ///         ComputeArguments object.
+  /// \return \c true if the Model's MODEL_ROUTINE_NAME::ComputeArgumentsCreate
+  ///         routine returns \c true.
   /// \return \c false otherwise.
   ///
   /// \post `computeArguments == NULL` if an error occurs.
@@ -216,19 +214,18 @@ class Model
   /// \since 2.0
   int ComputeArgumentsCreate(ComputeArguments ** const computeArguments) const;
 
-  /// Destroy a previously KIM::Model::ComputeArgumentsCreate'd object.
+  /// Destroy a previously Model::ComputeArgumentsCreate'd object.
   ///
-  /// Call the Model's KIM::MODEL_ROUTINE_NAME::ComputeArgumentsDestroy routine
-  /// and deallocate the KIM::ComputeArguments object.
+  /// Call the Model's MODEL_ROUTINE_NAME::ComputeArgumentsDestroy routine
+  /// and deallocate the ComputeArguments object.
   ///
-  /// \param[inout] computeArguments Pointer to the KIM::ComputeArguments
-  ///               object.
+  /// \param[inout] computeArguments Pointer to the ComputeArguments object.
   ///
-  /// \return \c true if the KIM::ComputeArguments object was created by a
+  /// \return \c true if the ComputeArguments object was created by a
   ///         different Model (as identified by its name string).
   /// \return \c true if the Model's
-  ///         KIM::MODEL_ROUTINE_NAME::ComputeArgumentsDestroy routine
-  ///         returns \c true.
+  ///         MODEL_ROUTINE_NAME::ComputeArgumentsDestroy routine returns \c
+  ///         true.
   /// \return \c false otherwise.
   ///
   /// \post \c computeArguments is unchanged if an error occurs, otherwise
@@ -237,23 +234,23 @@ class Model
   /// \since 2.0
   int ComputeArgumentsDestroy(ComputeArguments ** const computeArguments) const;
 
-  /// Call the Model's KIM::MODEL_ROUTINE_NAME::Compute routine.
+  /// Call the Model's MODEL_ROUTINE_NAME::Compute routine.
   ///
-  /// \param[in] computeArguments A KIM::ComputeArguments object.
+  /// \param[in] computeArguments A ComputeArguments object.
   ///
   /// \return \c true if \c computeArguments was created by a different Model
   ///         (as identified by its name string).
   /// \return \c true if
-  ///        `KIM::ComputeArguments::AreAllRequiredArgumentsAndCallbacksPresent`
+  ///         `ComputeArguments::AreAllRequiredArgumentsAndCallbacksPresent`
   ///         returns \c false for \c computeArguments.
-  /// \return \c true if the Model's KIM::MODEL_ROUTINE_NAME::Compute routine
+  /// \return \c true if the Model's MODEL_ROUTINE_NAME::Compute routine
   ///         returns \c true.
   /// \return \c false otherwise.
   ///
   /// \since 2.0
   int Compute(ComputeArguments const * const computeArguments) const;
 
-  /// Call the Model's KIM::MODEL_ROUTINE_NAME::Extension routine.
+  /// Call the Model's MODEL_ROUTINE_NAME::Extension routine.
   ///
   /// \param[in]    extensionID A string uniquely identifying the extension to
   ///               be executed.
@@ -261,8 +258,8 @@ class Model
   ///               defined by the extension to be executed.
   ///
   /// \return \c true if the Model does not provide a
-  ///         KIM::MODEL_ROUTINE_NAME::Extension routine.
-  /// \return \c true if the Model's KIM::MODEL_ROUTINE_NAME::Extension routine
+  ///         MODEL_ROUTINE_NAME::Extension routine.
+  /// \return \c true if the Model's MODEL_ROUTINE_NAME::Extension routine
   ///         returns \c true.
   /// \return \c false otherwise.
   ///
@@ -275,12 +272,12 @@ class Model
   ///
   /// Nullify the Model's influence distance, neighbor list cutoff, and \c
   /// modelWillNotRequestNeighborsOfNoncontributingParticles pointers.  Then
-  /// call the Model's KIM::MODEL_ROUTINE_NAME::Refresh routine.
+  /// call the Model's MODEL_ROUTINE_NAME::Refresh routine.
   ///
   /// \return \c true if the Model does not register any parameters.
-  /// \return \c true if the Model's KIM::MODEL_ROUTINE_NAME::Refresh routine
+  /// \return \c true if the Model's MODEL_ROUTINE_NAME::Refresh routine
   ///         returns \c ture.
-  /// \return \c true if the Model's KIM::MODEL_ROUTINE_NAME::Refresh routine
+  /// \return \c true if the Model's MODEL_ROUTINE_NAME::Refresh routine
   ///         does not set the influence distance, the number of neighbor lists,
   ///         the neighbor list cutoffs, or the \c
   ///         modelWillNotRequestNeighborsOfNoncontributingParticles pointer.
@@ -289,7 +286,7 @@ class Model
   /// \since 2.0
   int ClearThenRefresh();
 
-  /// Call the Model's KIM::MODEL_ROUTINE_NAME::WriteParameterizedModel routine.
+  /// Call the Model's MODEL_ROUTINE_NAME::WriteParameterizedModel routine.
   ///
   /// \param[in] path Path string to directory within which the new
   ///            parameterized model files should be written.
@@ -299,7 +296,7 @@ class Model
   /// \return \c true if the Model object is not a parameterized model.
   /// \return \c true if \c modelName is not a valid C identifier.
   /// \return \c true if the Model's
-  ///         KIM::MODEL_ROUTINE_NAME::WriteParameterizedModel routine returns
+  ///         MODEL_ROUTINE_NAME::WriteParameterizedModel routine returns
   ///         \c true.
   /// \return \c true if the %KIM API is unable to write the \c CMakeLists.txt
   ///         file.
@@ -309,9 +306,9 @@ class Model
   int WriteParameterizedModel(std::string const & path,
                               std::string const & modelName) const;
 
-  /// Get the Model's support and code for the requested KIM::SpeciesName.
+  /// Get the Model's support and code for the requested SpeciesName.
   ///
-  /// \param[in]  speciesName The KIM::SpeciesName of interest.
+  /// \param[in]  speciesName The SpeciesName of interest.
   /// \param[out] speciesIsSupported \c true the Model supports the species of
   ///             interest, \c false otherwise.
   /// \param[out] code Value used by the Model to refer to the species of
@@ -341,7 +338,7 @@ class Model
   /// Get the metadata associated with one of the Model's parameter arrays.
   ///
   /// \param[in]  parameterIndex Zero-based index for the parameter array.
-  /// \param[out] dataType The KIM::DataType value for the parameter array.
+  /// \param[out] dataType The DataType value for the parameter array.
   /// \param[out] extent The number of parameters in the array.
   /// \param[out] name A string identifying the parameter array (will be a valid
   ///             C identifier).
@@ -408,7 +405,7 @@ class Model
   /// Set the Simulator's buffer pointer within the Model.
   ///
   /// The simulator buffer pointer may be used by the Simulator to associate
-  /// a memory buffer with an instance of the KIM::Model object.
+  /// a memory buffer with an instance of the Model object.
   ///
   /// \param[in] ptr The simulator buffer pointer.
   ///
@@ -420,7 +417,7 @@ class Model
   /// \param[out] ptr The simulator buffer pointer.
   ///
   /// \note `ptr == NULL` if the Simulator has not previously called
-  ///       KIM::Model::SetSimulatorBufferPointer.
+  ///       Model::SetSimulatorBufferPointer.
   ///
   /// \since 2.0
   void GetSimulatorBufferPointer(void ** const ptr) const;
@@ -434,21 +431,21 @@ class Model
   /// \since 2.0
   std::string const & String() const;
 
-  /// Set the identity of the log object associated with the Model.
+  /// Set the identity of the Log object associated with the Model.
   ///
-  /// \param[in] logID String identifying the Model's log object.
+  /// \param[in] logID String identifying the Model's Log object.
   ///
   /// \since 2.0
   void SetLogID(std::string const & logID);
 
-  /// Push a new KIM::LogVerbosity onto the Model's log object verbosity stack.
+  /// Push a new LogVerbosity onto the Model's Log object verbosity stack.
   ///
-  /// \param[in] logVerbosity A KIM::LogVerbosity value.
+  /// \param[in] logVerbosity A LogVerbosity value.
   ///
   /// \since 2.0
   void PushLogVerbosity(LogVerbosity const logVerbosity);
 
-  /// Pop a KIM::LogVerbosity from the Model's log object verbosity stack.
+  /// Pop a LogVerbosity from the Model's Log object verbosity stack.
   ///
   /// \since 2.0
   void PopLogVerbosity();
