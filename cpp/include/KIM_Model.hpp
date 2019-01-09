@@ -81,6 +81,11 @@ class Model
   ///             Simulator.
   /// \param[out] model Pointer to the newly created Model object.
   ///
+  /// \note A requsted unit of \c unused indicates that the Simulator will not
+  /// employ any derived units connected to the associated base unit.  This
+  /// avoids the need for the Simulator to make an arbitrary choice that could
+  /// cause the Model to not accept its requested units.
+  ///
   /// \return \c true if the %KIM API is unable to allocate a new log object.
   /// \return \c true if \c numbering or any of the units are invalid.
   /// \return \c true if the requested model's library cannot be found,
@@ -120,7 +125,7 @@ class Model
   /// Call the Model's MODEL_ROUTINE_NAME::Destroy routine and deallocate
   /// the Model object.
   ///
-  /// \param[in/out] model Pointer to the Model obejct.
+  /// \param[inout] model Pointer to the Model obejct.
   ///
   /// \pre \c model points to a previously created %KIM API Model object.
   ///
@@ -184,6 +189,13 @@ class Model
   /// \param[out] chargeUnit The Model's ChargeUnit.
   /// \param[out] temperatureUnit The Model's TemperatureUnit.
   /// \param[out] timeUnit The Model's TimeUnit.
+  ///
+  /// \note A unit of \c unused indicates the the Model does not deal with any
+  /// quantities whose derived unit involves the corresponding base unit.  For
+  /// example, many models only deal with quantities that are derived from just
+  /// the energy and length base units (such as force, virial, etc.), and thus
+  /// should set \c chargeUnit, \c temperatureUnit, and \c timeUnit to \c
+  /// unused.
   ///
   /// \pre \c lengthUnit, \c energyUnit, \c chargeUnit, \c temperatureUnit, or
   ///      \c timeUnit may be \c NULL if the corresponding value is not needed.
@@ -276,7 +288,7 @@ class Model
   ///
   /// \return \c true if the Model does not register any parameters.
   /// \return \c true if the Model's MODEL_ROUTINE_NAME::Refresh routine
-  ///         returns \c ture.
+  ///         returns \c true.
   /// \return \c true if the Model's MODEL_ROUTINE_NAME::Refresh routine
   ///         does not set the influence distance, the number of neighbor lists,
   ///         the neighbor list cutoffs, or the \c
@@ -348,7 +360,7 @@ class Model
   /// \return \c true if \c parameterIndex is invalid
   /// \return \c false otherwise.
   ///
-  /// \pre \c dataType, \c extent, \c name, or \description may be \c NULL if
+  /// \pre \c dataType, \c extent, \c name, or \c description may be \c NULL if
   ///      the corresponding value is not needed.
   ///
   /// \since 2.0
@@ -402,7 +414,8 @@ class Model
                    int const arrayIndex,
                    double const parameterValue);
 
-  /// Set the Simulator's buffer pointer within the Model.
+  /// Set the \ref cache_buffer_pointers "Simulator's buffer pointer" within
+  /// the Model.
   ///
   /// The simulator buffer pointer may be used by the Simulator to associate
   /// a memory buffer with an instance of the Model object.
@@ -412,7 +425,8 @@ class Model
   /// \since 2.0
   void SetSimulatorBufferPointer(void * const ptr);
 
-  /// Get the Simulator's buffer pointer from the Model.
+  /// Get the \ref cache_buffer_pointers "Simulator's buffer pointer" from the
+  /// Model.
   ///
   /// \param[out] ptr The simulator buffer pointer.
   ///

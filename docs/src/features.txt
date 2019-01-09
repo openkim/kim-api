@@ -48,25 +48,25 @@ The current version of the %KIM API package supports the following features:
   C, C++, Fortran.
 
 - **Best Practice API Design**: The guiding design principle for the %KIM API
-    has been *simplicity*.  In addition to this, general API design *best
-    practices* have been used.  These include: implementation hiding (pimpl
-    idiom), loose coupling, minimal-completeness, ease of use (discoverable,
-    difficult to misuse, consistent, orthogonal), static factory methods, use
-    of namespaces, const-correctness, avoiding the use of abbreviations, etc.
+  has been *simplicity*.  In addition to this, general API design *best
+  practices* have been used.  These include: implementation hiding (pimpl
+  idiom), loose coupling, minimal-completeness, ease of use (discoverable,
+  difficult to misuse, consistent, orthogonal), static factory methods, use of
+  namespaces, const-correctness, avoiding the use of abbreviations, etc.
 
 - **Language Idiom Support**: Wherever it makes sense and is possible the %KIM
-    API supports common idioms of the native language.  For example, all C
-    API routines that return an error status do so using the C function return
-    value.  For Fortran, all such API routines are SUBROUTINES and have their
-    final argument as an error status.
+  API supports common idioms of the native language.  For example, all C API
+  routines that return an error status do so using the C function return value.
+  For Fortran, all such API routines are SUBROUTINES and have their final
+  argument as an error status.
 
-- **Extensible, Strongly-Typed Enumerations**: The %KIM API implements a set of
-    typed constants for each category of entity that it defines (DataType,
-    LanguageName, Numbering, SpeciesName, LengthUnit, EnergyUnit, ChargeUnit,
-    TemperatureUnit, TimeUnit, ComputeArgumentName, ComputeCallbackName,
-    SupportStatus).  This allows for backward-compatible additions to the
-    enumerations in future versions of the %KIM API.  Further, the
-    strong-typing greatly facilitates debugging.
+- **Extensible, Strongly-Typed Enumerations**: \anchor extensible_enumeration
+  The %KIM API implements a set of typed constants for each category of entity
+  that it defines (DataType, LanguageName, Numbering, SpeciesName, LengthUnit,
+  EnergyUnit, ChargeUnit, TemperatureUnit, TimeUnit, ComputeArgumentName,
+  ComputeCallbackName, SupportStatus).  This allows for backward-compatible
+  additions to the enumerations in future versions of the %KIM API.  Further,
+  the strong-typing greatly facilitates debugging.
 
 - **Numbering Origin Support**: Support for automatic translation between
   zero-based numbering of particles (C-style numbering beginning with zero) and
@@ -131,6 +131,15 @@ The current version of the %KIM API package supports the following features:
   errors.  In addition to built-in support for logging within Model codes, the
   %KIM API also provides access to logging capabilities for general use by
   Simulator codes.
+
+- **Caching capabilities**: \anchor cache_buffer_pointers The %KIM API package
+  provides a mechanism to store a pointer to a memory (cache) buffer in the
+  main API objects (KIM::Model and KIM::ComputeArguments).  In each case there
+  is a "ModelBufferPointer" which is for use by the model's routines and a
+  "SimulatorBufferPointer" which is for use by the Simulator.  (These buffer
+  pointers are not to be used for communication between the simulator and
+  model, and therefore the ModelBufferPointer is not accessible to the
+  Simulator and vise-versa.)
 
 - **Semantic Versioning**: The %KIM API package conforms to the [Semantic
   Versioning 2.0.0](https://semver.org) standard.  This standard is useful

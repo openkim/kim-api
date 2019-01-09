@@ -38,9 +38,9 @@
 
 namespace KIM
 {
-/// This class is an Extensible Enumeration for the charge units supported by
-/// the %KIM API.  The enumeration constants are contained in the CHARGE_UNIT
-/// namespace.
+/// This class is an \ref extensible_enumeration "Extensible Enumeration" for
+/// the charge units supported by the %KIM API.  The enumeration constants are
+/// contained in the CHARGE_UNIT namespace.
 ///
 /// \since 2.0
 class ChargeUnit
@@ -125,7 +125,7 @@ extern ChargeUnit const statC;
 
 /// Get the number of standard charge units defined by the %KIM API.
 ///
-/// \param[out] numberOfCharegeUnits The number of standard charge units
+/// \param[out] numberOfChargeUnits The number of standard charge units
 ///             defined by the %KIM API.
 ///
 /// \since 2.0
