@@ -72,8 +72,8 @@ mark_as_advanced(KIM_API_ENABLE_COVERAGE)
 #
 project(${PROJECT_PREFIX}-v2
   VERSION 2.0.0
-  DESCRIPTION "An Application Programming Interface (API) for the Knowledgebase of Interatomic Models (KIM)."
   LANGUAGES CXX C Fortran)
+set(PROJECT_DESCRIPTION "An Application Programming Interface (API) for the Knowledgebase of Interatomic Models (KIM).")
 include(GNUInstallDirs)  # needs to come after call to project()
 include(Bash-CompletionConfig)  # set install dirs for bash completions
 include(DefaultRPATHSettings)
