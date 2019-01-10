@@ -34,24 +34,25 @@
 /*                                                                            */
 
 /**
-\mainpage Introduction
+\mainpage Table of Contents
 
-The %KIM API package is a system-level library that aims to give computer
-programmers the ability to write atomistic or molecular simulation programs
-that can seamlessly interface (in a plug-and-play manner) with independent
-implementations of interatomic models, regardless of the programming language
-(C, C++, FORTRAN 77, Fortran 90/95/2003, Python, etc.) in which the codes are
-written.
+The Knowledgebase of Interatomic Models (%KIM) Application Programming
+Interface (API) defines a standard for how molecular Simulators interface with
+interatomic Models (also called potentials or force-fields).  This allows a
+single computer implementation of a Model to be used (without modification)
+within multiple Simulator codes.  See [openkim.org](https://openkim.org) to
+find hundreds of Model implementations,
+[openkim.org/projects-using-kim](https://openkim.org/projects-using-kim) to
+learn which Simulators support the %KIM API, and
+[openkim.org/kim-api](https://openkim.org/kim-api) to learn how to use %KIM
+Models with those Simulators.
 
-The %KIM API defines standard quantities that must be communicated between the
-simulation code and the interatomic model, such as the number of particles, the
-species and position coordinates of each particle, and the forces acting on the
-particles.  This information is communicated via memory pointers so that
-minimal data copying is necessary.  The %KIM API provides a "model object" and
-"compute-arguments object" interface which facilitates and simplifies (as much
-as possible) the exchange of memory pointers between the simulator and model.
+This documentation describes the specifications and official implementation of
+the %KIM API as a system-level software library that gives computer programmers
+the ability to write Models and/or Simulators in the programming language (C,
+C++, FORTRAN 77, Fortran 90/95/2003, Python, etc.) of their choice.
 
-This documentation is organized into the following components:
+Table of Contents:
 
 -# \ref features
 
@@ -87,5 +88,5 @@ for [browsing](files.html).
 */
 
 LocalWords:  CDDL yyyy Ellad Tadmor kim api mainpage atomistic interatomic ref
-LocalWords:  Ar fcc cpp fortran MLJ LennardJones hpp LJ params html SLJ
-LocalWords:  MultiCutoff UniversalShifted
+LocalWords:  Ar fcc cpp fortran MLJ LennardJones hpp LJ params html SLJ org
+LocalWords:  MultiCutoff UniversalShifted Knowledgebase openkim
