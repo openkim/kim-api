@@ -52,14 +52,14 @@ class TimeUnit;
 class ComputeArguments;
 class ModelImplementation;
 
-/// Provides the primary interface to a %KIM API Model object and is meant to
-/// be used by Simulators.
+/// \brief Provides the primary interface to a %KIM API Model object and is
+/// meant to be used by Simulators.
 ///
 /// \since 2.0
 class Model
 {
  public:
-  /// Create a new %KIM API Model object.
+  /// \brief Create a new %KIM API Model object.
   ///
   /// Allocates a new %KIM API Model object for use by a Simulator and calls
   /// the Model's MODEL_ROUTINE_NAME::Create routine.
@@ -109,6 +109,8 @@ class Model
   /// \post \c requestedUnitsAccepted is unchanged and `model == NULL` if an
   ///       error occurs.
   ///
+  /// \sa KIM_Model_Create
+  ///
   /// \since 2.0
   static int Create(Numbering const numbering,
                     LengthUnit const requestedLengthUnit,
@@ -120,7 +122,7 @@ class Model
                     int * const requestedUnitsAccepted,
                     Model ** const model);
 
-  /// Destroy a previously Model::Create'd object.
+  /// \brief Destroy a previously Model::Create'd object.
   ///
   /// Call the Model's MODEL_ROUTINE_NAME::Destroy routine and deallocate
   /// the Model object.
@@ -131,10 +133,13 @@ class Model
   ///
   /// \post `model == NULL`.
   ///
-  /// \since 2.0
+  /// \sa KIM_Model_Destroy
+  ///
+  // \since 2.0
   static void Destroy(Model ** const model);
 
-  /// Determine presence and required status of the given ModelRoutineName.
+  /// \brief Determine presence and required status of the given
+  /// ModelRoutineName.
   ///
   /// \param[in]  modelRoutineName The ModelRoutineName of interest.
   /// \param[out] present \c true if the Model provides the routine, \c false
@@ -147,19 +152,23 @@ class Model
   ///
   /// \post \c present and \c required are unchanged if an error occurs.
   ///
+  /// \sa KIM_Model_IsRoutinePresent
+  ///
   /// \since 2.0
   int IsRoutinePresent(ModelRoutineName const modelRoutineName,
                        int * const present,
                        int * const required) const;
 
-  /// Get the Model's influence distance.
+  /// \brief Get the Model's influence distance.
   ///
   /// \param[out] influenceDistance
+  ///
+  /// \sa KIM_Model_GetInfluenceDistance
   ///
   /// \since 2.0
   void GetInfluenceDistance(double * const influenceDistance) const;
 
-  /// Get the Model's neighbor list information
+  /// \brief Get the Model's neighbor list information
   ///
   /// Each neighbor list has a cutoff value and a flag indicating if the Model
   /// will request the neighbors of noncontributing particles.
@@ -175,6 +184,8 @@ class Model
   ///      \c modelWillNotRequestNeighborsOfNoncontributingParticles may be
   ///      \c NULL if the corresponding value is not needed.
   ///
+  /// \sa KIM_Model_GetNeighborListPointers
+  ///
   /// \since 2.0
   void GetNeighborListPointers(
       int * const numberOfNeighborLists,
@@ -182,7 +193,7 @@ class Model
       int const ** const modelWillNotRequestNeighborsOfNoncontributingParticles)
       const;
 
-  /// Get the Model's unit values.
+  /// \brief Get the Model's unit values.
   ///
   /// \param[out] lengthUnit The Model's LengthUnit.
   /// \param[out] energyUnit The Model's EnergyUnit.
@@ -200,6 +211,8 @@ class Model
   /// \pre \c lengthUnit, \c energyUnit, \c chargeUnit, \c temperatureUnit, or
   ///      \c timeUnit may be \c NULL if the corresponding value is not needed.
   ///
+  /// \sa KIM_Model_GetUnits
+  ///
   /// \since 2.0
   void GetUnits(LengthUnit * const lengthUnit,
                 EnergyUnit * const energyUnit,
@@ -207,7 +220,7 @@ class Model
                 TemperatureUnit * const temperatureUnit,
                 TimeUnit * const timeUnit) const;
 
-  /// Create a new ComputeArguments object for the Model object.
+  /// \brief Create a new ComputeArguments object for the Model object.
   ///
   /// Allocates a new ComputeArguments object for use by a Simulator and
   /// calls the Model's MODEL_ROUTINE_NAME::ComputeArgumentsCreate routine.
@@ -223,10 +236,12 @@ class Model
   ///
   /// \post `computeArguments == NULL` if an error occurs.
   ///
+  /// \sa KIM_Model_ComputeArgumentsCreate
+  ///
   /// \since 2.0
   int ComputeArgumentsCreate(ComputeArguments ** const computeArguments) const;
 
-  /// Destroy a previously Model::ComputeArgumentsCreate'd object.
+  /// \brief Destroy a previously Model::ComputeArgumentsCreate'd object.
   ///
   /// Call the Model's MODEL_ROUTINE_NAME::ComputeArgumentsDestroy routine
   /// and deallocate the ComputeArguments object.
@@ -243,10 +258,12 @@ class Model
   /// \post \c computeArguments is unchanged if an error occurs, otherwise
   ///       `computeArguments == NULL`.
   ///
+  /// \sa KIM_Model_ComputeArgumentsDestroy
+  ///
   /// \since 2.0
   int ComputeArgumentsDestroy(ComputeArguments ** const computeArguments) const;
 
-  /// Call the Model's MODEL_ROUTINE_NAME::Compute routine.
+  /// \brief Call the Model's MODEL_ROUTINE_NAME::Compute routine.
   ///
   /// \param[in] computeArguments A ComputeArguments object.
   ///
@@ -259,10 +276,12 @@ class Model
   ///         returns \c true.
   /// \return \c false otherwise.
   ///
+  /// \sa KIM_Model_Compute
+  ///
   /// \since 2.0
   int Compute(ComputeArguments const * const computeArguments) const;
 
-  /// Call the Model's MODEL_ROUTINE_NAME::Extension routine.
+  /// \brief Call the Model's MODEL_ROUTINE_NAME::Extension routine.
   ///
   /// \param[in]    extensionID A string uniquely identifying the extension to
   ///               be executed.
@@ -275,12 +294,14 @@ class Model
   ///         returns \c true.
   /// \return \c false otherwise.
   ///
+  /// \sa KIM_Model_Extension
+  ///
   /// \since 2.0
   int Extension(std::string const & extensionID,
                 void * const extensionStructure);
 
-  /// Clear influence distance and neighbor list pointers and refresh Model
-  /// after parameter changes.
+  /// \brief Clear influence distance and neighbor list pointers and refresh
+  /// Model after parameter changes.
   ///
   /// Nullify the Model's influence distance, neighbor list cutoff, and \c
   /// modelWillNotRequestNeighborsOfNoncontributingParticles pointers.  Then
@@ -295,10 +316,13 @@ class Model
   ///         modelWillNotRequestNeighborsOfNoncontributingParticles pointer.
   /// \return \c false otherwise.
   ///
+  /// \sa KIM_Model_ClearThenRefresh
+  ///
   /// \since 2.0
   int ClearThenRefresh();
 
-  /// Call the Model's MODEL_ROUTINE_NAME::WriteParameterizedModel routine.
+  /// \brief Call the Model's MODEL_ROUTINE_NAME::WriteParameterizedModel
+  /// routine.
   ///
   /// \param[in] path Path string to directory within which the new
   ///            parameterized model files should be written.
@@ -314,11 +338,13 @@ class Model
   ///         file.
   /// \return \c false otherwise.
   ///
+  /// \sa KIM_Model_WriteParameterizedModel
+  ///
   /// \since 2.0
   int WriteParameterizedModel(std::string const & path,
                               std::string const & modelName) const;
 
-  /// Get the Model's support and code for the requested SpeciesName.
+  /// \brief Get the Model's support and code for the requested SpeciesName.
   ///
   /// \param[in]  speciesName The SpeciesName of interest.
   /// \param[out] speciesIsSupported \c true the Model supports the species of
@@ -334,20 +360,25 @@ class Model
   /// \post \c speciesIsSupported and \c code are unchanged if an error occurs.
   ///       \c code is unchanged if `speciesIsSupported == false`.
   ///
+  /// \sa KIM_Model_GetSpeciesSupportAndCode
+  ///
   /// \since 2.0
   int GetSpeciesSupportAndCode(SpeciesName const speciesName,
                                int * const speciesIsSupported,
                                int * const code) const;
 
-  /// Get the number of parameter arrays provided by the Model.
+  /// \brief Get the number of parameter arrays provided by the Model.
   ///
   /// \param[out] numberOfParameters The number of parameter arrays provided
   ///             by the Model.
   ///
+  /// \sa KIM_Model_GetNumberOfParameters
+  ///
   /// \since 2.0
   void GetNumberOfParameters(int * const numberOfParameters) const;
 
-  /// Get the metadata associated with one of the Model's parameter arrays.
+  /// \brief Get the metadata associated with one of the Model's parameter
+  /// arrays.
   ///
   /// \param[in]  parameterIndex Zero-based index for the parameter array.
   /// \param[out] dataType The DataType value for the parameter array.
@@ -363,6 +394,8 @@ class Model
   /// \pre \c dataType, \c extent, \c name, or \c description may be \c NULL if
   ///      the corresponding value is not needed.
   ///
+  /// \sa KIM_Model_GetParameterMetadata
+  ///
   /// \since 2.0
   int GetParameterMetadata(int const parameterIndex,
                            DataType * const dataType,
@@ -370,7 +403,7 @@ class Model
                            std::string const ** const name,
                            std::string const ** const description) const;
 
-  /// Get a parameter value from the Model.
+  /// \brief Get a parameter value from the Model.
   ///
   /// \param[in]  parameterIndex Zero-based index for the parameter array of
   ///             interest.
@@ -382,6 +415,8 @@ class Model
   /// \return \c true if \c arrayIndex is invalid.
   /// \return \c false otherwise.
   ///
+  /// \sa KIM_Model_GetParameterInteger, KIM_Model_GetParameterDouble
+  ///
   /// \since 2.0
   int GetParameter(int const parameterIndex,
                    int const arrayIndex,
@@ -392,7 +427,7 @@ class Model
                    int const arrayIndex,
                    double * const parameterValue) const;
 
-  /// Set a parameter value for the Model.
+  /// \brief Set a parameter value for the Model.
   ///
   /// \param[in] parameterIndex Zero-based index for the parameter array of
   ///            interest.
@@ -404,6 +439,8 @@ class Model
   /// \return \c true if \c arrayIndex is invalid.
   /// \return \c false otherwise.
   ///
+  /// \sa KIM_Model_SetParameterInteger, KIM_Model_SetParameterDouble
+  ///
   /// \since 2.0
   int SetParameter(int const parameterIndex,
                    int const arrayIndex,
@@ -414,52 +451,65 @@ class Model
                    int const arrayIndex,
                    double const parameterValue);
 
-  /// Set the \ref cache_buffer_pointers "Simulator's buffer pointer" within
-  /// the Model.
+  /// \brief Set the \ref cache_buffer_pointers "Simulator's buffer pointer"
+  /// within the Model.
   ///
   /// The simulator buffer pointer may be used by the Simulator to associate
   /// a memory buffer with an instance of the Model object.
   ///
   /// \param[in] ptr The simulator buffer pointer.
   ///
+  /// \sa KIM_Model_SetSimulatorBufferPointer
+  ///
   /// \since 2.0
   void SetSimulatorBufferPointer(void * const ptr);
 
-  /// Get the \ref cache_buffer_pointers "Simulator's buffer pointer" from the
-  /// Model.
+  /// \brief Get the \ref cache_buffer_pointers "Simulator's buffer pointer"
+  /// from the Model.
   ///
   /// \param[out] ptr The simulator buffer pointer.
   ///
   /// \note `ptr == NULL` if the Simulator has not previously called
   ///       Model::SetSimulatorBufferPointer.
   ///
+  /// \sa KIM_Model_GetSimulatorBufferPointer
+  ///
   /// \since 2.0
   void GetSimulatorBufferPointer(void ** const ptr) const;
 
-  /// Get a string representing the internal state of the Model object.
+  /// \brief Get a string representing the internal state of the Model object.
   ///
   /// This string is primarily meant for use as a debugging tool.  The string
   /// may be quite long.  It begins and ends with lines consisting only of \c
   /// ='s.
   ///
+  /// \sa KIM_Model_ToString
+  ///
   /// \since 2.0
   std::string const & String() const;
 
-  /// Set the identity of the Log object associated with the Model.
+  /// \brief Set the identity of the Log object associated with the Model.
   ///
   /// \param[in] logID String identifying the Model's Log object.
+  ///
+  /// \sa KIM_Model_SetLogID
   ///
   /// \since 2.0
   void SetLogID(std::string const & logID);
 
-  /// Push a new LogVerbosity onto the Model's Log object verbosity stack.
+  /// \brief Push a new LogVerbosity onto the Model's Log object verbosity
+  /// stack.
   ///
   /// \param[in] logVerbosity A LogVerbosity value.
+  ///
+  /// \sa KIM_Model_PushLogVerbosity
   ///
   /// \since 2.0
   void PushLogVerbosity(LogVerbosity const logVerbosity);
 
-  /// Pop a LogVerbosity from the Model's Log object verbosity stack.
+  /// \brief Pop a LogVerbosity from the Model's Log object verbosity stack.
+  ///
+  /// \sa KIM_Model_PopLogVerbosity
   ///
   /// \since 2.0
   void PopLogVerbosity();

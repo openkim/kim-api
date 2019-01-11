@@ -93,6 +93,13 @@ typedef struct KIM_ComputeArguments KIM_ComputeArguments;
 #endif
 
 
+/**
+ ** \brief \copybrief KIM::Model
+ **
+ ** \sa KIM::Model
+ **
+ ** \since 2.0
+ **/
 struct KIM_Model;
 
 #ifndef KIM_MODEL_DEFINED_
@@ -100,6 +107,13 @@ struct KIM_Model;
 typedef struct KIM_Model KIM_Model;
 #endif
 
+/**
+ ** \brief \copybrief KIM::Model::Create
+ **
+ ** \sa KIM::Model::Create
+ **
+ ** \since 2.0
+ **/
 int KIM_Model_Create(KIM_Numbering const numbering,
                      KIM_LengthUnit const requestedLengthUnit,
                      KIM_EnergyUnit const requestedEnergyUnit,
@@ -109,23 +123,58 @@ int KIM_Model_Create(KIM_Numbering const numbering,
                      char const * const modelName,
                      int * const requestedUnitsAccepted,
                      KIM_Model ** const model);
+
+/**
+ ** \brief \copybrief KIM::Model::Destroy
+ **
+ ** \sa KIM::Model::Destroy
+ **
+ ** \since 2.0
+ **/
 void KIM_Model_Destroy(KIM_Model ** const model);
 
+/**
+ ** \brief \copybrief KIM::Model::IsRoutinePresent
+ **
+ ** \sa KIM::Model::IsRoutinePresent
+ **
+ ** \since 2.0
+ **/
 int KIM_Model_IsRoutinePresent(KIM_Model const * const model,
                                KIM_ModelRoutineName const modelRoutineName,
                                int * const present,
                                int * const required);
 
+/**
+ ** \brief \copybrief KIM::Model::GetInfluenceDistance
+ **
+ ** \sa KIM::Model::GetInfluenceDistance
+ **
+ ** \since 2.0
+ **/
 void KIM_Model_GetInfluenceDistance(KIM_Model const * const model,
                                     double * const influenceDistance);
 
+/**
+ ** \brief \copybrief KIM::Model::GetNeighborListPointers
+ **
+ ** \sa KIM::Model::GetNeighborListPointers
+ **
+ ** \since 2.0
+ **/
 void KIM_Model_GetNeighborListPointers(
     KIM_Model const * const model,
     int * const numberOfNeighborLists,
     double const ** const cutoffs,
     int const ** const modelWillNotRequestNeighborsOfNoncontributingParticles);
 
-
+/**
+ ** \brief \copybrief KIM::Model::GetUnits
+ **
+ ** \sa KIM::Model::GetUnits
+ **
+ ** \since 2.0
+ **/
 void KIM_Model_GetUnits(KIM_Model const * const model,
                         KIM_LengthUnit * const lengthUnit,
                         KIM_EnergyUnit * const energyUnit,
@@ -133,62 +182,210 @@ void KIM_Model_GetUnits(KIM_Model const * const model,
                         KIM_TemperatureUnit * const temperatureUnit,
                         KIM_TimeUnit * const timeUnit);
 
+/**
+ ** \brief \copybrief KIM::Model::ComputeArgumentsCreate
+ **
+ ** \sa KIM::Model::ComputeArgumentsCreate
+ **
+ ** \since 2.0
+ **/
 int KIM_Model_ComputeArgumentsCreate(
     KIM_Model const * const model,
     KIM_ComputeArguments ** const computeArguments);
+
+/**
+ ** \brief \copybrief KIM::Model::ComputeArgumentsDestroy
+ **
+ ** \sa KIM::Model::ComputeArgumentsDestroy
+ **
+ ** \since 2.0
+ **/
 int KIM_Model_ComputeArgumentsDestroy(
     KIM_Model const * const model,
     KIM_ComputeArguments ** const computeArguments);
+
+/**
+ ** \brief \copybrief KIM::Model::Compute
+ **
+ ** \sa KIM::Model::Compute
+ **
+ ** \since 2.0
+ **/
 int KIM_Model_Compute(KIM_Model const * const model,
                       KIM_ComputeArguments const * const computeArguments);
+
+/**
+ ** \brief \copybrief KIM::Model::Extension
+ **
+ ** \sa KIM::Model::Extension
+ **
+ ** \since 2.0
+ **/
 int KIM_Model_Extension(KIM_Model * const model,
                         char const * const extensionID,
                         void * const extensionStructure);
+
+/**
+ ** \brief \copybrief KIM::Model::ClearThenRefresh
+ **
+ ** \sa KIM::Model::ClearThenRefresh
+ **
+ ** \since 2.0
+ **/
 int KIM_Model_ClearThenRefresh(KIM_Model * const model);
+
+/**
+ ** \brief \copybrief KIM::Model::WriteParameterizedModel
+ **
+ ** \sa KIM::Model::WriteParameterizedModel
+ **
+ ** \since 2.0
+ **/
 int KIM_Model_WriteParameterizedModel(KIM_Model const * const model,
                                       char const * const path,
                                       char const * const modelName);
 
+/**
+ ** \brief \copybrief KIM::Model::GetSpeciesSupportAndCode
+ **
+ ** \sa KIM::Model::GetSpeciesSupportAndCode
+ **
+ ** \since 2.0
+ **/
 int KIM_Model_GetSpeciesSupportAndCode(KIM_Model const * const model,
                                        KIM_SpeciesName const speciesName,
                                        int * const speciesIsSupported,
                                        int * const code);
 
+/**
+ ** \brief \copybrief KIM::Model::GetNumberOfParameters
+ **
+ ** \sa KIM::Model::GetNumberOfParameters
+ **
+ ** \since 2.0
+ **/
 void KIM_Model_GetNumberOfParameters(KIM_Model const * const model,
                                      int * const numberOfParameters);
+
+/**
+ ** \brief \copybrief KIM::Model::GetParameterMetadata
+ **
+ ** \sa KIM::Model::GetParameterMetadata
+ **
+ ** \since 2.0
+ **/
 int KIM_Model_GetParameterMetadata(KIM_Model const * const model,
                                    int const parameterIndex,
                                    KIM_DataType * const dataType,
                                    int * const extent,
                                    char const ** const name,
                                    char const ** const description);
+
+/**
+ ** \brief \copybrief KIM::Model::GetParameter(int const, int const,
+ **                                            int * const) const
+ **
+ ** \sa KIM::Model::GetParameter(int const,int const, int * const) const
+ **
+ ** \since 2.0
+ **/
 int KIM_Model_GetParameterInteger(KIM_Model const * const model,
                                   int const parameterIndex,
                                   int const arrayIndex,
                                   int * const parameterValue);
+
+/**
+ ** \brief \copybrief KIM::Model::GetParameter(int const, int const,
+ **                                            int * const) const
+ **
+ ** \sa KIM::Model::GetParameter(int const,int const, double * const) const
+ **
+ ** \since 2.0
+ **/
 int KIM_Model_GetParameterDouble(KIM_Model const * const model,
                                  int const parameterIndex,
                                  int const arrayIndex,
                                  double * const parameterValue);
+
+/**
+ ** \brief \copybrief KIM::Model::SetParameter(int const, int const, int const)
+ **
+ ** \sa KIM::Model::SetParameter(int const, int const, int const)
+ **
+ ** \since 2.0
+ **/
 int KIM_Model_SetParameterInteger(KIM_Model * const model,
                                   int const parameterIndex,
                                   int const arrayIndex,
                                   int const parameterValue);
+
+/**
+ ** \brief \copybrief KIM::Model::SetParameter(int const, int const, int const)
+ **
+ ** \sa KIM::Model::SetParameter(int const, int const, double const)
+ **
+ ** \since 2.0
+ **/
 int KIM_Model_SetParameterDouble(KIM_Model * const model,
                                  int const parameterIndex,
                                  int const arrayIndex,
                                  double const parameterValue);
 
+/**
+ ** \brief \copybrief KIM::Model::SetSimulatorBufferPointer
+ **
+ ** \sa KIM::Model::SetSimulatorBufferPointer
+ **
+ ** \since 2.0
+ **/
 void KIM_Model_SetSimulatorBufferPointer(KIM_Model * const model,
                                          void * const ptr);
+
+/**
+ ** \brief \copybrief KIM::Model::GetSimulatorBufferPointer
+ **
+ ** \sa KIM::Model::GetSimulatorBufferPointer
+ **
+ ** \since 2.0
+ **/
 void KIM_Model_GetSimulatorBufferPointer(KIM_Model const * const model,
                                          void ** const ptr);
 
+/**
+ ** \brief \copybrief KIM::Model::String
+ **
+ ** \sa KIM::Model::String
+ **
+ ** \since 2.0
+ **/
 char const * KIM_Model_ToString(KIM_Model const * const model);
 
+/**
+ ** \brief \copybrief KIM::Model::SetLogID
+ **
+ ** \sa KIM::Model::SetLogID
+ **
+ ** \since 2.0
+ **/
 void KIM_Model_SetLogID(KIM_Model * const model, char const * const logID);
+
+/**
+ ** \brief \copybrief KIM::Model::PushLogVerbosity
+ **
+ ** \sa KIM::Model::PushLogVerbosity
+ **
+ ** \since 2.0
+ **/
 void KIM_Model_PushLogVerbosity(KIM_Model * const model,
                                 KIM_LogVerbosity const logVerbosity);
+
+/**
+ ** \brief \copybrief KIM::Model::PopLogVerbosity
+ **
+ ** \sa KIM::Model::PopLogVerbosity
+ **
+ ** \since 2.0
+ **/
 void KIM_Model_PopLogVerbosity(KIM_Model * const model);
 
 #endif /* KIM_MODEL_H_ */
