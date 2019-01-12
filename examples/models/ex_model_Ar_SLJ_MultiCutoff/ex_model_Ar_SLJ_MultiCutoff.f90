@@ -110,7 +110,7 @@ contains
 !  its derivative dphi(r)
 !
 !-------------------------------------------------------------------------------
-subroutine calc_phi(r,phi,dphi,calc_deriv)
+recursive subroutine calc_phi(r,phi,dphi,calc_deriv)
 implicit none
 
 !-- Transferred variables
@@ -143,8 +143,8 @@ end subroutine calc_phi
 !  Calculate short-range linear spring-based energy amplitude for `atom`
 !
 !-------------------------------------------------------------------------------
-subroutine calc_spring_energyamp(model_compute_arguments_handle, atom, coor, &
-                                 eps, ierr)
+recursive subroutine calc_spring_energyamp(model_compute_arguments_handle, &
+  atom, coor, eps, ierr)
 implicit none
 
 !-- Transferred variables
@@ -183,8 +183,8 @@ end subroutine calc_spring_energyamp
 !  Calculate short-range linear spring-based contribution to force
 !
 !-------------------------------------------------------------------------------
-subroutine calc_spring_force(model_compute_arguments_handle, atom, coor, eps, &
-                             phi, force, ierr)
+recursive subroutine calc_spring_force(model_compute_arguments_handle, atom, &
+  coor, eps, phi, force, ierr)
 implicit none
 
 !-- Transferred variables
@@ -230,7 +230,7 @@ end subroutine calc_spring_force
 ! Compute energy and forces on particles from the positions.
 !
 !-------------------------------------------------------------------------------
-subroutine Compute_Energy_Forces(model_compute_handle, &
+recursive subroutine Compute_Energy_Forces(model_compute_handle, &
   model_compute_arguments_handle, ierr) bind(c)
 implicit none
 
@@ -483,7 +483,7 @@ end subroutine Compute_Energy_Forces
 ! Model destroy routine (REQUIRED)
 !
 !-------------------------------------------------------------------------------
-subroutine model_destroy_func(model_destroy_handle, ierr) bind(c)
+recursive subroutine model_destroy_func(model_destroy_handle, ierr) bind(c)
   use, intrinsic :: iso_c_binding
   implicit none
 
@@ -506,7 +506,7 @@ end subroutine model_destroy_func
 ! Model compute arguments create routine (REQUIRED)
 !
 !-------------------------------------------------------------------------------
-subroutine model_compute_arguments_create(model_compute_handle, &
+recursive subroutine model_compute_arguments_create(model_compute_handle, &
   model_compute_arguments_create_handle, ierr) bind(c)
   use, intrinsic :: iso_c_binding
   implicit none
@@ -566,7 +566,7 @@ end subroutine model_compute_arguments_create
 ! Model compute arguments destroy routine (REQUIRED)
 !
 !-------------------------------------------------------------------------------
-subroutine model_compute_arguments_destroy(model_compute_handle, &
+recursive subroutine model_compute_arguments_destroy(model_compute_handle, &
   model_compute_arguments_destroy_handle, ierr) bind(c)
   use, intrinsic :: iso_c_binding
   implicit none
@@ -593,9 +593,9 @@ end module ex_model_Ar_SLJ_MultiCutoff
 ! Model create routine (REQUIRED)
 !
 !-------------------------------------------------------------------------------
-subroutine model_create_routine(model_create_handle, requested_length_unit, &
-  requested_energy_unit, requested_charge_unit, requested_temperature_unit, &
-  requested_time_unit, ierr) bind(c)
+recursive subroutine model_create_routine(model_create_handle, &
+  requested_length_unit, requested_energy_unit, requested_charge_unit, &
+  requested_temperature_unit, requested_time_unit, ierr) bind(c)
 use, intrinsic :: iso_c_binding
 use ex_model_Ar_SLJ_MultiCutoff
 use kim_model_headers_module

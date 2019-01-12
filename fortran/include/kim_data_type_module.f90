@@ -81,7 +81,7 @@ module kim_data_type_module
   end interface kim_to_string
 
 contains
-  logical function kim_data_type_equal(lhs, rhs)
+  logical recursive function kim_data_type_equal(lhs, rhs)
     implicit none
     type(kim_data_type_type), intent(in) :: lhs
     type(kim_data_type_type), intent(in) :: rhs
@@ -90,7 +90,7 @@ contains
       = (lhs%data_type_id .eq. rhs%data_type_id)
   end function kim_data_type_equal
 
-  logical function kim_data_type_not_equal(lhs, rhs)
+  logical recursive function kim_data_type_not_equal(lhs, rhs)
     implicit none
     type(kim_data_type_type), intent(in) :: lhs
     type(kim_data_type_type), intent(in) :: rhs
@@ -98,10 +98,10 @@ contains
     kim_data_type_not_equal = .not. (lhs .eq. rhs)
   end function kim_data_type_not_equal
 
-  subroutine kim_data_type_from_string(string, data_type)
+  recursive subroutine kim_data_type_from_string(string, data_type)
     implicit none
     interface
-      type(kim_data_type_type) function from_string(string) &
+      type(kim_data_type_type) recursive function from_string(string) &
         bind(c, name="KIM_DataType_FromString")
         use, intrinsic :: iso_c_binding
         import kim_data_type_type
@@ -115,11 +115,11 @@ contains
     data_type = from_string(trim(string)//c_null_char)
   end subroutine kim_data_type_from_string
 
-  subroutine kim_data_type_to_string(data_type, string)
+  recursive subroutine kim_data_type_to_string(data_type, string)
     use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
     implicit none
     interface
-      type(c_ptr) function get_string(data_type) &
+      type(c_ptr) recursive function get_string(data_type) &
         bind(c, name="KIM_DataType_ToString")
         use, intrinsic :: iso_c_binding
         import kim_data_type_type
@@ -136,10 +136,10 @@ contains
     call kim_convert_c_char_ptr_to_string(p, string)
   end subroutine kim_data_type_to_string
 
-  subroutine kim_get_number_of_data_types(number_of_data_types)
+  recursive subroutine kim_get_number_of_data_types(number_of_data_types)
     implicit none
     interface
-      subroutine get_number_of_data_types(number_of_data_types) &
+      recursive subroutine get_number_of_data_types(number_of_data_types) &
         bind(c, name="KIM_DATA_TYPE_GetNumberOfDataTypes")
         use, intrinsic :: iso_c_binding
         implicit none
@@ -151,10 +151,10 @@ contains
     call get_number_of_data_types(number_of_data_types)
   end subroutine kim_get_number_of_data_types
 
-  subroutine kim_get_data_type(index, data_type, ierr)
+  recursive subroutine kim_get_data_type(index, data_type, ierr)
     implicit none
     interface
-      integer(c_int) function get_data_type(index, data_type) &
+      integer(c_int) recursive function get_data_type(index, data_type) &
         bind(c, name="KIM_DATA_TYPE_GetDataType")
         use, intrinsic :: iso_c_binding
         import kim_data_type_type

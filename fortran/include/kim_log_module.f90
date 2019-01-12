@@ -101,7 +101,7 @@ module kim_log_module
   end interface kim_log_entry
 
 contains
-  logical function kim_log_handle_equal(lhs, rhs)
+  logical recursive function kim_log_handle_equal(lhs, rhs)
     implicit none
     type(kim_log_handle_type), intent(in) :: lhs
     type(kim_log_handle_type), intent(in) :: rhs
@@ -113,7 +113,7 @@ contains
     end if
   end function kim_log_handle_equal
 
-  logical function kim_log_handle_not_equal(lhs, rhs)
+  logical recursive function kim_log_handle_not_equal(lhs, rhs)
     implicit none
     type(kim_log_handle_type), intent(in) :: lhs
     type(kim_log_handle_type), intent(in) :: rhs
@@ -121,10 +121,11 @@ contains
     kim_log_handle_not_equal = .not. (lhs .eq. rhs)
   end function kim_log_handle_not_equal
 
-  subroutine kim_log_create(log_handle, ierr)
+  recursive subroutine kim_log_create(log_handle, ierr)
     implicit none
     interface
-      integer(c_int) function create(log) bind(c, name="KIM_Log_Create")
+      integer(c_int) recursive function create(log) &
+        bind(c, name="KIM_Log_Create")
         use, intrinsic :: iso_c_binding
         implicit none
         type(c_ptr), intent(out) :: log
@@ -139,10 +140,10 @@ contains
     log_handle%p = plog
   end subroutine kim_log_create
 
-  subroutine kim_log_destroy(log_handle)
+  recursive subroutine kim_log_destroy(log_handle)
     implicit none
     interface
-      subroutine destroy(log) bind(c, name="KIM_Log_Destroy")
+      recursive subroutine destroy(log) bind(c, name="KIM_Log_Destroy")
         use, intrinsic :: iso_c_binding
         implicit none
         type(c_ptr), intent(inout) :: log
@@ -156,11 +157,11 @@ contains
     log_handle%p = c_null_ptr
   end subroutine kim_log_destroy
 
-  subroutine kim_log_push_default_verbosity(log_verbosity)
+  recursive subroutine kim_log_push_default_verbosity(log_verbosity)
     use kim_log_verbosity_module, only : kim_log_verbosity_type
     implicit none
     interface
-      subroutine push_default_verbosity(log_verbosity) &
+      recursive subroutine push_default_verbosity(log_verbosity) &
         bind(c, name="KIM_Log_PushDefaultVerbosity")
         use, intrinsic :: iso_c_binding
         use kim_log_verbosity_module, only : kim_log_verbosity_type
@@ -173,10 +174,10 @@ contains
     call push_default_verbosity(log_verbosity)
   end subroutine kim_log_push_default_verbosity
 
-  subroutine kim_log_pop_default_verbosity()
+  recursive subroutine kim_log_pop_default_verbosity()
     implicit none
     interface
-      subroutine pop_default_verbosity() &
+      recursive subroutine pop_default_verbosity() &
         bind(c, name="KIM_Log_PopDefaultVerbosity")
         use, intrinsic :: iso_c_binding
         implicit none
@@ -186,12 +187,12 @@ contains
     call pop_default_verbosity()
   end subroutine kim_log_pop_default_verbosity
 
-  subroutine kim_log_get_id(log_handle, id_string)
+  recursive subroutine kim_log_get_id(log_handle, id_string)
     use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
     use kim_interoperable_types_module, only : kim_log_type
     implicit none
     interface
-      type(c_ptr) function get_id(log) bind(c, name="KIM_Log_GetID")
+      type(c_ptr) recursive function get_id(log) bind(c, name="KIM_Log_GetID")
         use, intrinsic :: iso_c_binding
         use kim_interoperable_types_module, only : kim_log_type
         implicit none
@@ -209,11 +210,11 @@ contains
     call kim_convert_c_char_ptr_to_string(p, id_string)
   end subroutine kim_log_get_id
 
-  subroutine kim_log_set_id(log_handle, id_string)
+  recursive subroutine kim_log_set_id(log_handle, id_string)
     use kim_interoperable_types_module, only : kim_log_type
     implicit none
     interface
-      subroutine set_id(log, id_string) bind(c, name="KIM_Log_SetID")
+      recursive subroutine set_id(log, id_string) bind(c, name="KIM_Log_SetID")
         use, intrinsic :: iso_c_binding
         use kim_interoperable_types_module, only : kim_log_type
         implicit none
@@ -229,12 +230,12 @@ contains
     call set_id(log, trim(id_string)//c_null_char)
   end subroutine kim_log_set_id
 
-  subroutine kim_log_push_verbosity(log_handle, log_verbosity)
+  recursive subroutine kim_log_push_verbosity(log_handle, log_verbosity)
     use kim_log_verbosity_module, only : kim_log_verbosity_type
     use kim_interoperable_types_module, only : kim_log_type
     implicit none
     interface
-      subroutine push_verbosity(log, log_verbosity) &
+      recursive subroutine push_verbosity(log, log_verbosity) &
         bind(c, name="KIM_Log_PushVerbosity")
         use, intrinsic :: iso_c_binding
         use kim_log_verbosity_module, only : kim_log_verbosity_type
@@ -252,11 +253,12 @@ contains
     call push_verbosity(log, log_verbosity)
   end subroutine kim_log_push_verbosity
 
-  subroutine kim_log_pop_verbosity(log_handle)
+  recursive subroutine kim_log_pop_verbosity(log_handle)
     use kim_interoperable_types_module, only : kim_log_type
     implicit none
     interface
-      subroutine pop_verbosity(log) bind(c, name="KIM_Log_PopVerbosity")
+      recursive subroutine pop_verbosity(log) &
+        bind(c, name="KIM_Log_PopVerbosity")
         use, intrinsic :: iso_c_binding
         use kim_interoperable_types_module, only : kim_log_type
         implicit none
@@ -270,12 +272,12 @@ contains
     call pop_verbosity(log)
   end subroutine kim_log_pop_verbosity
 
-  subroutine kim_log_log_entry(log_handle, log_verbosity, message)
+  recursive subroutine kim_log_log_entry(log_handle, log_verbosity, message)
     use kim_log_verbosity_module, only : kim_log_verbosity_type
     use kim_interoperable_types_module, only : kim_log_type
     implicit none
     interface
-      subroutine log_entry(log, log_verbosity, message, line_number, &
+      recursive subroutine log_entry(log, log_verbosity, message, line_number, &
         file_name) bind(c, name="KIM_Log_LogEntry")
         use, intrinsic :: iso_c_binding
         use kim_log_verbosity_module, only : kim_log_verbosity_type

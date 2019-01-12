@@ -120,7 +120,7 @@ module kim_model_create_module
   end interface kim_to_string
 
 contains
-  logical function kim_model_create_handle_equal(lhs, rhs)
+  logical recursive function kim_model_create_handle_equal(lhs, rhs)
     implicit none
     type(kim_model_create_handle_type), intent(in) :: lhs
     type(kim_model_create_handle_type), intent(in) :: rhs
@@ -132,7 +132,7 @@ contains
     end if
   end function kim_model_create_handle_equal
 
-  logical function kim_model_create_handle_not_equal(lhs, rhs)
+  logical recursive function kim_model_create_handle_not_equal(lhs, rhs)
     implicit none
     type(kim_model_create_handle_type), intent(in) :: lhs
     type(kim_model_create_handle_type), intent(in) :: rhs
@@ -140,13 +140,13 @@ contains
     kim_model_create_handle_not_equal = .not. (lhs .eq. rhs)
   end function kim_model_create_handle_not_equal
 
-  subroutine kim_model_create_set_model_numbering( &
+  recursive subroutine kim_model_create_set_model_numbering( &
     model_create_handle, numbering, ierr)
     use kim_numbering_module, only : kim_numbering_type
     use kim_interoperable_types_module, only : kim_model_create_type
     implicit none
     interface
-      integer(c_int) function set_model_numbering(model_create, &
+      integer(c_int) recursive function set_model_numbering(model_create, &
         numbering) bind(c, name="KIM_ModelCreate_SetModelNumbering")
         use, intrinsic :: iso_c_binding
         use kim_numbering_module, only : kim_numbering_type
@@ -165,12 +165,12 @@ contains
     ierr = set_model_numbering(model_create, numbering)
   end subroutine kim_model_create_set_model_numbering
 
-  subroutine kim_model_create_set_influence_distance_pointer( &
+  recursive subroutine kim_model_create_set_influence_distance_pointer( &
     model_create_handle, influence_distance)
     use kim_interoperable_types_module, only : kim_model_create_type
     implicit none
     interface
-      subroutine set_influence_distance_pointer(model_create, &
+      recursive subroutine set_influence_distance_pointer(model_create, &
         influence_distance) &
         bind(c, name="KIM_ModelCreate_SetInfluenceDistancePointer")
         use, intrinsic :: iso_c_binding
@@ -189,13 +189,13 @@ contains
       c_loc(influence_distance))
   end subroutine kim_model_create_set_influence_distance_pointer
 
-  subroutine kim_model_create_set_neighbor_list_pointers( &
+  recursive subroutine kim_model_create_set_neighbor_list_pointers( &
     model_create_handle, number_of_neighbor_lists, cutoffs, &
     model_will_not_request_neighbors_of_noncontributing_particles)
     use kim_interoperable_types_module, only : kim_model_create_type
     implicit none
     interface
-      subroutine set_neighbor_list_pointers(model_create, &
+      recursive subroutine set_neighbor_list_pointers(model_create, &
         number_of_neighbor_lists, cutoffs_ptr, &
         model_will_not_request_neighbors_of_noncontributing_particles) &
         bind(c, name="KIM_ModelCreate_SetNeighborListPointers")
@@ -223,7 +223,7 @@ contains
       c_loc(model_will_not_request_neighbors_of_noncontributing_particles))
   end subroutine kim_model_create_set_neighbor_list_pointers
 
-  subroutine kim_model_create_set_routine_pointer( &
+  recursive subroutine kim_model_create_set_routine_pointer( &
     model_create_handle, model_routine_name, language_name, required, fptr, &
     ierr)
     use kim_model_routine_name_module, only : kim_model_routine_name_type
@@ -231,7 +231,7 @@ contains
     use kim_interoperable_types_module, only : kim_model_create_type
     implicit none
     interface
-      integer(c_int) function set_routine_pointer(model_create, &
+      integer(c_int) recursive function set_routine_pointer(model_create, &
         model_routine_name, language_name, required, fptr) &
         bind(c, name="KIM_ModelCreate_SetRoutinePointer")
         use, intrinsic :: iso_c_binding
@@ -260,13 +260,13 @@ contains
       language_name, required, fptr)
   end subroutine kim_model_create_set_routine_pointer
 
-  subroutine kim_model_create_set_species_code(model_create_handle, &
+  recursive subroutine kim_model_create_set_species_code(model_create_handle, &
     species_name, code, ierr)
     use kim_species_name_module, only : kim_species_name_type
     use kim_interoperable_types_module, only : kim_model_create_type
     implicit none
     interface
-      integer(c_int) function set_species_code(model_create, &
+      integer(c_int) recursive function set_species_code(model_create, &
         species_name, code) &
         bind(c, name="KIM_ModelCreate_SetSpeciesCode")
         use, intrinsic :: iso_c_binding
@@ -288,7 +288,7 @@ contains
     ierr = set_species_code(model_create, species_name, code)
   end subroutine kim_model_create_set_species_code
 
-  subroutine kim_model_create_set_parameter_pointer_integer( &
+  recursive subroutine kim_model_create_set_parameter_pointer_integer( &
     model_create_handle, int1, name, description, ierr)
     use kim_interoperable_types_module, only : kim_model_create_type
     implicit none
@@ -305,12 +305,12 @@ contains
     return
 
   contains
-    subroutine set_parameter(model_create, extent, int1, name, description, &
-      ierr)
+    recursive subroutine set_parameter(model_create, extent, int1, name, &
+      description, ierr)
       use kim_interoperable_types_module, only : kim_model_create_type
       implicit none
       interface
-        integer(c_int) function set_parameter_pointer_integer( &
+        integer(c_int) recursive function set_parameter_pointer_integer( &
           model_create, extent, ptr, name, description) &
           bind(c, name="KIM_ModelCreate_SetParameterPointerInteger")
           use, intrinsic :: iso_c_binding
@@ -336,7 +336,7 @@ contains
     end subroutine set_parameter
   end subroutine kim_model_create_set_parameter_pointer_integer
 
-  subroutine kim_model_create_set_parameter_pointer_double( &
+  recursive subroutine kim_model_create_set_parameter_pointer_double( &
     model_create_handle, double1, name, description, ierr)
     use kim_interoperable_types_module, only : kim_model_create_type
     implicit none
@@ -353,12 +353,12 @@ contains
     return
 
   contains
-    subroutine set_parameter(model_create, extent, double1, name, description, &
-      ierr)
+    recursive subroutine set_parameter(model_create, extent, double1, name, &
+      description, ierr)
       implicit none
       interface
-        integer(c_int) function set_parameter_pointer_double(model_create, &
-          extent, ptr, name, description) &
+        integer(c_int) recursive function set_parameter_pointer_double( &
+          model_create, extent, ptr, name, description) &
           bind(c, name="KIM_ModelCreate_SetParameterPointerDouble")
           use, intrinsic :: iso_c_binding
           use kim_interoperable_types_module, only : kim_model_create_type
@@ -383,12 +383,12 @@ contains
     end subroutine set_parameter
   end subroutine kim_model_create_set_parameter_pointer_double
 
-  subroutine kim_model_create_set_model_buffer_pointer( &
+  recursive subroutine kim_model_create_set_model_buffer_pointer( &
     model_create_handle, ptr)
     use kim_interoperable_types_module, only : kim_model_create_type
     implicit none
     interface
-      subroutine set_model_buffer_pointer(model_create, ptr) &
+      recursive subroutine set_model_buffer_pointer(model_create, ptr) &
         bind(c, name="KIM_ModelCreate_SetModelBufferPointer")
         use, intrinsic :: iso_c_binding
         use kim_interoperable_types_module, only : kim_model_create_type
@@ -405,7 +405,7 @@ contains
     call set_model_buffer_pointer(model_create, ptr)
   end subroutine kim_model_create_set_model_buffer_pointer
 
-  subroutine kim_model_create_set_units(model_create_handle, &
+  recursive subroutine kim_model_create_set_units(model_create_handle, &
     length_unit, energy_unit, charge_unit, temperature_unit, time_unit, ierr)
     use kim_unit_system_module, only : &
       kim_length_unit_type, &
@@ -416,7 +416,7 @@ contains
     use kim_interoperable_types_module, only : kim_model_create_type
     implicit none
     interface
-      integer(c_int) function set_units(model_create, length_unit, &
+      integer(c_int) recursive function set_units(model_create, length_unit, &
         energy_unit, charge_unit, temperature_unit, time_unit) &
         bind(c, name="KIM_ModelCreate_SetUnits")
         use, intrinsic :: iso_c_binding
@@ -450,7 +450,7 @@ contains
       charge_unit, temperature_unit, time_unit)
   end subroutine kim_model_create_set_units
 
-  subroutine kim_model_create_convert_unit( &
+  recursive subroutine kim_model_create_convert_unit( &
     from_length_unit, from_energy_unit, &
     from_charge_unit, from_temperature_unit, from_time_unit, &
     to_length_unit, to_energy_unit, to_charge_unit, to_temperature_unit, &
@@ -463,7 +463,7 @@ contains
     use kim_unit_system_module, only : kim_time_unit_type
     implicit none
     interface
-      integer(c_int) function convert_unit( &
+      integer(c_int) recursive function convert_unit( &
         from_length_unit, from_energy_unit, &
         from_charge_unit, from_temperature_unit, from_time_unit, &
         to_length_unit, to_energy_unit, to_charge_unit, to_temperature_unit, &
@@ -522,14 +522,14 @@ contains
       charge_exponent, temperature_exponent, time_exponent, conversion_factor)
   end subroutine kim_model_create_convert_unit
 
-  subroutine kim_model_create_log_entry(model_create_handle, log_verbosity, &
-    message)
+  recursive subroutine kim_model_create_log_entry(model_create_handle, &
+    log_verbosity, message)
     use kim_log_verbosity_module, only : kim_log_verbosity_type
     use kim_interoperable_types_module, only : kim_model_create_type
     implicit none
     interface
-      subroutine log_entry(model_create, log_verbosity, message, line_number, &
-        file_name) bind(c, name="KIM_ModelCreate_LogEntry")
+      recursive subroutine log_entry(model_create, log_verbosity, message, &
+        line_number, file_name) bind(c, name="KIM_ModelCreate_LogEntry")
         use, intrinsic :: iso_c_binding
         use kim_log_verbosity_module, only : kim_log_verbosity_type
         use kim_interoperable_types_module, only : kim_model_create_type
@@ -551,12 +551,12 @@ contains
       0, ""//c_null_char)
   end subroutine kim_model_create_log_entry
 
-  subroutine kim_model_create_to_string(model_create_handle, string)
+  recursive subroutine kim_model_create_to_string(model_create_handle, string)
     use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
     use kim_interoperable_types_module, only : kim_model_create_type
     implicit none
     interface
-      type(c_ptr) function model_create_string(model_create) &
+      type(c_ptr) recursive function model_create_string(model_create) &
         bind(c, name="KIM_ModelCreate_ToString")
         use, intrinsic :: iso_c_binding
         use kim_interoperable_types_module, only : kim_model_create_type

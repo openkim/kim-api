@@ -91,7 +91,8 @@ module kim_model_compute_arguments_create_module
   end interface kim_to_string
 
 contains
-  logical function kim_model_compute_arguments_create_handle_equal(lhs, rhs)
+  logical recursive function kim_model_compute_arguments_create_handle_equal( &
+    lhs, rhs)
     implicit none
     type(kim_model_compute_arguments_create_handle_type), intent(in) :: lhs
     type(kim_model_compute_arguments_create_handle_type), intent(in) :: rhs
@@ -104,8 +105,8 @@ contains
     end if
   end function kim_model_compute_arguments_create_handle_equal
 
-  logical function kim_model_compute_arguments_create_handle_not_equal(lhs, &
-    rhs)
+  logical recursive function &
+    kim_model_compute_arguments_create_handle_not_equal(lhs, rhs)
     implicit none
     type(kim_model_compute_arguments_create_handle_type), intent(in) :: lhs
     type(kim_model_compute_arguments_create_handle_type), intent(in) :: rhs
@@ -114,7 +115,8 @@ contains
       .not. (lhs .eq. rhs)
   end function kim_model_compute_arguments_create_handle_not_equal
 
-  subroutine kim_model_compute_arguments_create_set_argument_support_status( &
+  recursive subroutine &
+    kim_model_compute_arguments_create_set_argument_support_status( &
     model_commpute_arguments_create_handle, compute_argument_name, &
     support_status, ierr)
     use kim_compute_argument_name_module, only : kim_compute_argument_name_type
@@ -123,7 +125,7 @@ contains
       kim_model_compute_arguments_create_type
     implicit none
     interface
-      integer(c_int) function set_argument_support_status( &
+      integer(c_int) recursive function set_argument_support_status( &
         model_commpute_arguments_create, compute_argument_name, &
         support_status) &
         bind(c, name="KIM_ModelComputeArgumentsCreate_SetArgumentSupportStatus")
@@ -156,7 +158,8 @@ contains
       compute_argument_name, support_status)
   end subroutine kim_model_compute_arguments_create_set_argument_support_status
 
-  subroutine kim_model_compute_arguments_create_set_callback_support_status( &
+  recursive subroutine &
+    kim_model_compute_arguments_create_set_callback_support_status( &
     model_commpute_arguments_create_handle, compute_callback_name, &
     support_status, ierr)
     use kim_compute_callback_name_module, only : kim_compute_callback_name_type
@@ -165,7 +168,7 @@ contains
       kim_model_compute_arguments_create_type
     implicit none
     interface
-      integer(c_int) function set_callback_support_status( &
+      integer(c_int) recursive function set_callback_support_status( &
         model_commpute_arguments_create, compute_callback_name, &
         support_status) &
         bind(c, name="KIM_ModelComputeArgumentsCreate_SetCallbackSupportStatus")
@@ -198,14 +201,15 @@ contains
       compute_callback_name, support_status)
   end subroutine kim_model_compute_arguments_create_set_callback_support_status
 
-  subroutine kim_model_compute_arguments_create_set_model_buffer_pointer( &
+  recursive subroutine &
+    kim_model_compute_arguments_create_set_model_buffer_pointer( &
     model_commpute_arguments_create_handle, ptr)
     use kim_interoperable_types_module, only : &
       kim_model_compute_arguments_create_type
     implicit none
     interface
-      subroutine set_model_buffer_pointer(model_commpute_arguments_create, &
-        ptr) bind(c, &
+      recursive subroutine set_model_buffer_pointer( &
+        model_commpute_arguments_create, ptr) bind(c, &
         name="KIM_ModelComputeArgumentsCreate_SetModelBufferPointer")
         use, intrinsic :: iso_c_binding
         use kim_interoperable_types_module, only : &
@@ -227,15 +231,15 @@ contains
     call set_model_buffer_pointer(model_commpute_arguments_create, ptr)
   end subroutine kim_model_compute_arguments_create_set_model_buffer_pointer
 
-  subroutine kim_model_compute_arguments_create_log_entry( &
+  recursive subroutine kim_model_compute_arguments_create_log_entry( &
     model_commpute_arguments_create_handle, log_verbosity, message)
     use kim_log_verbosity_module, only : kim_log_verbosity_type
     use kim_interoperable_types_module, only : &
       kim_model_compute_arguments_create_type
     implicit none
     interface
-      subroutine log_entry(model_commpute_arguments_create, log_verbosity, &
-        message, line_number, file_name) &
+      recursive subroutine log_entry(model_commpute_arguments_create, &
+        log_verbosity, message, line_number, file_name) &
         bind(c, name="KIM_ModelComputeArgumentsCreate_LogEntry")
         use, intrinsic :: iso_c_binding
         use kim_log_verbosity_module, only : kim_log_verbosity_type
@@ -263,14 +267,14 @@ contains
       trim(message)//c_null_char, 0, ""//c_null_char)
   end subroutine kim_model_compute_arguments_create_log_entry
 
-  subroutine kim_model_compute_arguments_create_to_string( &
+  recursive subroutine kim_model_compute_arguments_create_to_string( &
     model_commpute_arguments_create_handle, string)
     use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
     use kim_interoperable_types_module, only : &
       kim_model_compute_arguments_create_type
     implicit none
     interface
-      type(c_ptr) function model_commpute_arguments_create_string( &
+      type(c_ptr) recursive function model_commpute_arguments_create_string( &
         model_commpute_arguments_create) &
         bind(c, name="KIM_ModelComputeArgumentsCreate_ToString")
         use, intrinsic :: iso_c_binding

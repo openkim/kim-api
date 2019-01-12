@@ -85,7 +85,7 @@ module kim_compute_callback_name_module
   end interface kim_to_string
 
 contains
-  logical function kim_compute_callback_name_equal(lhs, rhs)
+  logical recursive function kim_compute_callback_name_equal(lhs, rhs)
     implicit none
     type(kim_compute_callback_name_type), intent(in) :: lhs
     type(kim_compute_callback_name_type), intent(in) :: rhs
@@ -94,7 +94,7 @@ contains
       = (lhs%compute_callback_name_id .eq. rhs%compute_callback_name_id)
   end function kim_compute_callback_name_equal
 
-  logical function kim_compute_callback_name_not_equal(lhs, rhs)
+  logical recursive function kim_compute_callback_name_not_equal(lhs, rhs)
     implicit none
     type(kim_compute_callback_name_type), intent(in) :: lhs
     type(kim_compute_callback_name_type), intent(in) :: rhs
@@ -102,12 +102,12 @@ contains
     kim_compute_callback_name_not_equal = .not. (lhs .eq. rhs)
   end function kim_compute_callback_name_not_equal
 
-  subroutine kim_compute_callback_name_from_string(string, &
+  recursive subroutine kim_compute_callback_name_from_string(string, &
     compute_callback_name)
     implicit none
     interface
-      type(kim_compute_callback_name_type) function from_string(string) &
-        bind(c, name="KIM_ComputeCallbackName_FromString")
+      type(kim_compute_callback_name_type) recursive function from_string( &
+        string) bind(c, name="KIM_ComputeCallbackName_FromString")
         use, intrinsic :: iso_c_binding
         import kim_compute_callback_name_type
         implicit none
@@ -120,11 +120,12 @@ contains
     compute_callback_name = from_string(trim(string)//c_null_char)
   end subroutine kim_compute_callback_name_from_string
 
-  subroutine kim_compute_callback_name_to_string(compute_callback_name, string)
+  recursive subroutine kim_compute_callback_name_to_string( &
+    compute_callback_name, string)
     use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
     implicit none
     interface
-      type(c_ptr) function get_string(compute_callback_name) &
+      type(c_ptr) recursive function get_string(compute_callback_name) &
         bind(c, name="KIM_ComputeCallbackName_ToString")
         use, intrinsic :: iso_c_binding
         import kim_compute_callback_name_type
@@ -143,11 +144,11 @@ contains
     call kim_convert_c_char_ptr_to_string(p, string)
   end subroutine kim_compute_callback_name_to_string
 
-  subroutine kim_get_number_of_compute_callback_names( &
+  recursive subroutine kim_get_number_of_compute_callback_names( &
     number_of_compute_callback_names)
     implicit none
     interface
-      subroutine get_number_of_compute_callback_names( &
+      recursive subroutine get_number_of_compute_callback_names( &
         number_of_compute_callback_names) &
         bind(c, &
         name="KIM_COMPUTE_CALLBACK_NAME_GetNumberOfComputeCallbackNames")
@@ -160,11 +161,11 @@ contains
     call get_number_of_compute_callback_names(number_of_compute_callback_names)
   end subroutine kim_get_number_of_compute_callback_names
 
-  subroutine kim_get_compute_callback_name(index, &
+  recursive subroutine kim_get_compute_callback_name(index, &
     compute_callback_name, ierr)
     implicit none
     interface
-      integer(c_int) function get_compute_callback_name(index, &
+      integer(c_int) recursive function get_compute_callback_name(index, &
         compute_callback_name) &
         bind(c, name="KIM_COMPUTE_CALLBACK_NAME_GetComputeCallbackName")
         use, intrinsic :: iso_c_binding

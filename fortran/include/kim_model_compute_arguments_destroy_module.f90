@@ -80,7 +80,8 @@ module kim_model_compute_arguments_destroy_module
   end interface kim_to_string
 
 contains
-  logical function kim_model_compute_arguments_destroy_handle_equal(lhs, rhs)
+  logical recursive function kim_model_compute_arguments_destroy_handle_equal( &
+    lhs, rhs)
     implicit none
     type(kim_model_compute_arguments_destroy_handle_type), intent(in) :: lhs
     type(kim_model_compute_arguments_destroy_handle_type), intent(in) :: rhs
@@ -93,8 +94,8 @@ contains
     end if
   end function kim_model_compute_arguments_destroy_handle_equal
 
-  logical function kim_model_compute_arguments_destroy_handle_not_equal(lhs, &
-    rhs)
+  logical recursive function &
+    kim_model_compute_arguments_destroy_handle_not_equal(lhs, rhs)
     implicit none
     type(kim_model_compute_arguments_destroy_handle_type), intent(in) :: lhs
     type(kim_model_compute_arguments_destroy_handle_type), intent(in) :: rhs
@@ -103,14 +104,15 @@ contains
       .not. (lhs .eq. rhs)
   end function kim_model_compute_arguments_destroy_handle_not_equal
 
-  subroutine kim_model_compute_arguments_destroy_get_model_buffer_pointer( &
+  recursive subroutine &
+    kim_model_compute_arguments_destroy_get_model_buffer_pointer( &
     model_compute_arguments_destroy_handle, ptr)
     use kim_interoperable_types_module, only : &
       kim_model_compute_arguments_destroy_type
     implicit none
     interface
-      subroutine get_model_buffer_pointer(model_compute_arguments_destroy, &
-        ptr) bind(c, &
+      recursive subroutine get_model_buffer_pointer( &
+        model_compute_arguments_destroy, ptr) bind(c, &
         name="KIM_ModelComputeArgumentsDestroy_GetModelBufferPointer")
         use, intrinsic :: iso_c_binding
         use kim_interoperable_types_module, only : &
@@ -132,15 +134,15 @@ contains
     call get_model_buffer_pointer(model_compute_arguments_destroy, ptr)
   end subroutine kim_model_compute_arguments_destroy_get_model_buffer_pointer
 
-  subroutine kim_model_compute_arguments_destroy_log_entry( &
+  recursive subroutine kim_model_compute_arguments_destroy_log_entry( &
     model_compute_arguments_destroy_handle, log_verbosity, message)
     use kim_log_verbosity_module, only : kim_log_verbosity_type
     use kim_interoperable_types_module, only : &
       kim_model_compute_arguments_destroy_type
     implicit none
     interface
-      subroutine log_entry(model_compute_arguments_destroy, log_verbosity, &
-        message, line_number, file_name) &
+      recursive subroutine log_entry(model_compute_arguments_destroy, &
+        log_verbosity, message, line_number, file_name) &
         bind(c, name="KIM_ModelComputeArgumentsDestroy_LogEntry")
         use, intrinsic :: iso_c_binding
         use kim_log_verbosity_module, only : kim_log_verbosity_type
@@ -168,14 +170,14 @@ contains
       trim(message)//c_null_char, 0, ""//c_null_char)
   end subroutine kim_model_compute_arguments_destroy_log_entry
 
-  subroutine kim_model_compute_arguments_destroy_to_string( &
+  recursive subroutine kim_model_compute_arguments_destroy_to_string( &
     model_compute_arguments_destroy_handle, string)
     use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
     use kim_interoperable_types_module, only : &
       kim_model_compute_arguments_destroy_type
     implicit none
     interface
-      type(c_ptr) function model_compute_arguments_destroy_string( &
+      type(c_ptr) recursive function model_compute_arguments_destroy_string( &
         model_compute_arguments_destroy) &
         bind(c, name="KIM_ModelComputeArgumentsDestroy_ToString")
         use, intrinsic :: iso_c_binding

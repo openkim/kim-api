@@ -81,7 +81,7 @@ module kim_numbering_module
   end interface kim_to_string
 
 contains
-  logical function kim_numbering_equal(lhs, rhs)
+  logical recursive function kim_numbering_equal(lhs, rhs)
     implicit none
     type(kim_numbering_type), intent(in) :: lhs
     type(kim_numbering_type), intent(in) :: rhs
@@ -90,7 +90,7 @@ contains
       = (lhs%numbering_id .eq. rhs%numbering_id)
   end function kim_numbering_equal
 
-  logical function kim_numbering_not_equal(lhs, rhs)
+  logical recursive function kim_numbering_not_equal(lhs, rhs)
     implicit none
     type(kim_numbering_type), intent(in) :: lhs
     type(kim_numbering_type), intent(in) :: rhs
@@ -98,10 +98,10 @@ contains
     kim_numbering_not_equal = .not. (lhs .eq. rhs)
   end function kim_numbering_not_equal
 
-  subroutine kim_numbering_from_string(string, numbering)
+  recursive subroutine kim_numbering_from_string(string, numbering)
     implicit none
     interface
-      type(kim_numbering_type) function from_string(string) &
+      type(kim_numbering_type) recursive function from_string(string) &
         bind(c, name="KIM_Numbering_FromString")
         use, intrinsic :: iso_c_binding
         import kim_numbering_type
@@ -115,11 +115,11 @@ contains
     numbering = from_string(trim(string)//c_null_char)
   end subroutine kim_numbering_from_string
 
-  subroutine kim_numbering_to_string(numbering, string)
+  recursive subroutine kim_numbering_to_string(numbering, string)
     use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
     implicit none
     interface
-      type(c_ptr) function get_string(numbering) &
+      type(c_ptr) recursive function get_string(numbering) &
         bind(c, name="KIM_Numbering_ToString")
         use, intrinsic :: iso_c_binding
         import kim_numbering_type
@@ -136,10 +136,10 @@ contains
     call kim_convert_c_char_ptr_to_string(p, string)
   end subroutine kim_numbering_to_string
 
-  subroutine kim_get_number_of_numberings(number_of_numberings)
+  recursive subroutine kim_get_number_of_numberings(number_of_numberings)
     implicit none
     interface
-      subroutine get_number_of_numberings(number_of_numberings) &
+      recursive subroutine get_number_of_numberings(number_of_numberings) &
         bind(c, name="KIM_NUMBERING_GetNumberOfNumberings")
         use, intrinsic :: iso_c_binding
         implicit none
@@ -151,10 +151,10 @@ contains
     call get_number_of_numberings(number_of_numberings)
   end subroutine kim_get_number_of_numberings
 
-  subroutine kim_get_numbering(index, numbering, ierr)
+  recursive subroutine kim_get_numbering(index, numbering, ierr)
     implicit none
     interface
-      integer(c_int) function get_numbering(index, numbering) &
+      integer(c_int) recursive function get_numbering(index, numbering) &
         bind(c, name="KIM_NUMBERING_GetNumbering")
         use, intrinsic :: iso_c_binding
         import kim_numbering_type

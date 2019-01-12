@@ -629,7 +629,7 @@ module kim_species_name_module
   end interface kim_to_string
 
 contains
-  logical function kim_species_name_equal(lhs, rhs)
+  logical recursive function kim_species_name_equal(lhs, rhs)
     implicit none
     type(kim_species_name_type), intent(in) :: lhs
     type(kim_species_name_type), intent(in) :: rhs
@@ -638,7 +638,7 @@ contains
       = (lhs%species_name_id .eq. rhs%species_name_id)
   end function kim_species_name_equal
 
-  logical function kim_species_name_not_equal(lhs, rhs)
+  logical recursive function kim_species_name_not_equal(lhs, rhs)
     implicit none
     type(kim_species_name_type), intent(in) :: lhs
     type(kim_species_name_type), intent(in) :: rhs
@@ -646,10 +646,10 @@ contains
     kim_species_name_not_equal = .not. (lhs .eq. rhs)
   end function kim_species_name_not_equal
 
-  subroutine kim_species_name_from_string(string, species_name)
+  recursive subroutine kim_species_name_from_string(string, species_name)
     implicit none
     interface
-      type(kim_species_name_type) function from_string(string) &
+      type(kim_species_name_type) recursive function from_string(string) &
         bind(c, name="KIM_SpeciesName_FromString")
         use, intrinsic :: iso_c_binding
         import kim_species_name_type
@@ -663,11 +663,11 @@ contains
     species_name = from_string(trim(string)//c_null_char)
   end subroutine kim_species_name_from_string
 
-  subroutine kim_species_name_to_string(species_name, string)
+  recursive subroutine kim_species_name_to_string(species_name, string)
     use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
     implicit none
     interface
-      type(c_ptr) function get_string(species_name) &
+      type(c_ptr) recursive function get_string(species_name) &
         bind(c, name="KIM_SpeciesName_ToString")
         use, intrinsic :: iso_c_binding
         import kim_species_name_type
@@ -684,10 +684,11 @@ contains
     call kim_convert_c_char_ptr_to_string(p, string)
   end subroutine kim_species_name_to_string
 
-  subroutine kim_get_number_of_species_names(number_of_species_names)
+  recursive subroutine kim_get_number_of_species_names(number_of_species_names)
     implicit none
     interface
-      subroutine get_number_of_species_names(number_of_species_names) &
+      recursive subroutine get_number_of_species_names( &
+        number_of_species_names) &
         bind(c, name="KIM_SPECIES_NAME_GetNumberOfSpeciesNames")
         use, intrinsic :: iso_c_binding
         implicit none
@@ -699,10 +700,10 @@ contains
     call get_number_of_species_names(number_of_species_names)
   end subroutine kim_get_number_of_species_names
 
-  subroutine kim_get_species_name(index, species_name, ierr)
+  recursive subroutine kim_get_species_name(index, species_name, ierr)
     implicit none
     interface
-      integer(c_int) function get_species_name(index, species_name) &
+      integer(c_int) recursive function get_species_name(index, species_name) &
         bind(c, name="KIM_SPECIES_NAME_GetSpeciesName")
         use, intrinsic :: iso_c_binding
         import kim_species_name_type

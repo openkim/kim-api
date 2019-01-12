@@ -117,7 +117,7 @@ module kim_log_verbosity_module
   end interface kim_to_string
 
 contains
-  logical function kim_log_verbosity_less_than(lhs, rhs)
+  logical recursive function kim_log_verbosity_less_than(lhs, rhs)
     implicit none
     type(kim_log_verbosity_type), intent(in) :: lhs
     type(kim_log_verbosity_type), intent(in) :: rhs
@@ -126,7 +126,7 @@ contains
       = (lhs%log_verbosity_id .lt. rhs%log_verbosity_id)
   end function kim_log_verbosity_less_than
 
-  logical function kim_log_verbosity_greater_than(lhs, rhs)
+  logical recursive function kim_log_verbosity_greater_than(lhs, rhs)
     implicit none
     type(kim_log_verbosity_type), intent(in) :: lhs
     type(kim_log_verbosity_type), intent(in) :: rhs
@@ -135,7 +135,7 @@ contains
       = (lhs%log_verbosity_id .ge. rhs%log_verbosity_id)
   end function kim_log_verbosity_greater_than
 
-  logical function kim_log_verbosity_less_than_equal(lhs, rhs)
+  logical recursive function kim_log_verbosity_less_than_equal(lhs, rhs)
     implicit none
     type(kim_log_verbosity_type), intent(in) :: lhs
     type(kim_log_verbosity_type), intent(in) :: rhs
@@ -144,7 +144,7 @@ contains
       = (lhs%log_verbosity_id .le. rhs%log_verbosity_id)
   end function kim_log_verbosity_less_than_equal
 
-  logical function kim_log_verbosity_greater_than_equal(lhs, rhs)
+  logical recursive function kim_log_verbosity_greater_than_equal(lhs, rhs)
     implicit none
     type(kim_log_verbosity_type), intent(in) :: lhs
     type(kim_log_verbosity_type), intent(in) :: rhs
@@ -153,7 +153,7 @@ contains
       = (lhs%log_verbosity_id .ge. rhs%log_verbosity_id)
   end function kim_log_verbosity_greater_than_equal
 
-  logical function kim_log_verbosity_equal(lhs, rhs)
+  logical recursive function kim_log_verbosity_equal(lhs, rhs)
     implicit none
     type(kim_log_verbosity_type), intent(in) :: lhs
     type(kim_log_verbosity_type), intent(in) :: rhs
@@ -162,7 +162,7 @@ contains
       = (lhs%log_verbosity_id .eq. rhs%log_verbosity_id)
   end function kim_log_verbosity_equal
 
-  logical function kim_log_verbosity_not_equal(lhs, rhs)
+  logical recursive function kim_log_verbosity_not_equal(lhs, rhs)
     implicit none
     type(kim_log_verbosity_type), intent(in) :: lhs
     type(kim_log_verbosity_type), intent(in) :: rhs
@@ -170,10 +170,10 @@ contains
     kim_log_verbosity_not_equal = .not. (lhs .eq. rhs)
   end function kim_log_verbosity_not_equal
 
-  subroutine kim_log_verbosity_from_string(string, log_verbosity)
+  recursive subroutine kim_log_verbosity_from_string(string, log_verbosity)
     implicit none
     interface
-      type(kim_log_verbosity_type) function from_string(string) &
+      type(kim_log_verbosity_type) recursive function from_string(string) &
         bind(c, name="KIM_LogVerbosity_FromString")
         use, intrinsic :: iso_c_binding
         import kim_log_verbosity_type
@@ -187,11 +187,11 @@ contains
     log_verbosity = from_string(trim(string)//c_null_char)
   end subroutine kim_log_verbosity_from_string
 
-  subroutine kim_log_verbosity_to_string(log_verbosity, string)
+  recursive subroutine kim_log_verbosity_to_string(log_verbosity, string)
     use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
     implicit none
     interface
-      type(c_ptr) function get_string(log_verbosity) &
+      type(c_ptr) recursive function get_string(log_verbosity) &
         bind(c, name="KIM_LogVerbosity_ToString")
         use, intrinsic :: iso_c_binding
         import kim_log_verbosity_type
@@ -208,11 +208,12 @@ contains
     call kim_convert_c_char_ptr_to_string(p, string)
   end subroutine kim_log_verbosity_to_string
 
-  subroutine kim_get_number_of_log_verbosities( &
+  recursive subroutine kim_get_number_of_log_verbosities( &
     number_of_log_verbosities)
     implicit none
     interface
-      subroutine get_number_of_log_verbosities(number_of_log_verbosities) &
+      recursive subroutine get_number_of_log_verbosities( &
+        number_of_log_verbosities) &
         bind(c, name="KIM_LOG_VERBOSITY_GetNumberOfLogVerbosities")
         use, intrinsic :: iso_c_binding
         implicit none
@@ -224,11 +225,11 @@ contains
     call get_number_of_log_verbosities(number_of_log_verbosities)
   end subroutine kim_get_number_of_log_verbosities
 
-  subroutine kim_get_log_verbosity(index, log_verbosity, ierr)
+  recursive subroutine kim_get_log_verbosity(index, log_verbosity, ierr)
     implicit none
     interface
-      integer(c_int) function get_log_verbosity(index, log_verbosity) &
-        bind(c, name="KIM_LOG_VERBOSITY_GetLogVerbosity")
+      integer(c_int) recursive function get_log_verbosity(index, &
+        log_verbosity) bind(c, name="KIM_LOG_VERBOSITY_GetLogVerbosity")
         use, intrinsic :: iso_c_binding
         import kim_log_verbosity_type
         implicit none

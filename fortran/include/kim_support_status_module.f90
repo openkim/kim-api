@@ -89,7 +89,7 @@ module kim_support_status_module
   end interface kim_to_string
 
 contains
-  logical function kim_support_status_equal(lhs, rhs)
+  logical recursive function kim_support_status_equal(lhs, rhs)
     implicit none
     type(kim_support_status_type), intent(in) :: lhs
     type(kim_support_status_type), intent(in) :: rhs
@@ -98,7 +98,7 @@ contains
       = (lhs%support_status_id .eq. rhs%support_status_id)
   end function kim_support_status_equal
 
-  logical function kim_support_status_not_equal(lhs, rhs)
+  logical recursive function kim_support_status_not_equal(lhs, rhs)
     implicit none
     type(kim_support_status_type), intent(in) :: lhs
     type(kim_support_status_type), intent(in) :: rhs
@@ -106,10 +106,10 @@ contains
     kim_support_status_not_equal = .not. (lhs .eq. rhs)
   end function kim_support_status_not_equal
 
-  subroutine kim_support_status_from_string(string, support_status)
+  recursive subroutine kim_support_status_from_string(string, support_status)
     implicit none
     interface
-      type(kim_support_status_type) function from_string(string) &
+      type(kim_support_status_type) recursive function from_string(string) &
         bind(c, name="KIM_SupportStatus_FromString")
         use, intrinsic :: iso_c_binding
         import kim_support_status_type
@@ -123,11 +123,11 @@ contains
     support_status = from_string(trim(string)//c_null_char)
   end subroutine kim_support_status_from_string
 
-  subroutine kim_support_status_to_string(support_status, string)
+  recursive subroutine kim_support_status_to_string(support_status, string)
     use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
     implicit none
     interface
-      type(c_ptr) function get_string(support_status) &
+      type(c_ptr) recursive function get_string(support_status) &
         bind(c, name="KIM_SupportStatus_ToString")
         use, intrinsic :: iso_c_binding
         import kim_support_status_type
@@ -144,10 +144,12 @@ contains
     call kim_convert_c_char_ptr_to_string(p, string)
   end subroutine kim_support_status_to_string
 
-  subroutine kim_get_number_of_support_statuses(number_of_support_statuses)
+  recursive subroutine kim_get_number_of_support_statuses( &
+    number_of_support_statuses)
     implicit none
     interface
-      subroutine get_number_of_support_statuses(number_of_support_statuses) &
+      recursive subroutine get_number_of_support_statuses( &
+        number_of_support_statuses) &
         bind(c, name="KIM_SUPPORT_STATUS_GetNumberOfSupportStatuses")
         use, intrinsic :: iso_c_binding
         implicit none
@@ -159,11 +161,11 @@ contains
     call get_number_of_support_statuses(number_of_support_statuses)
   end subroutine kim_get_number_of_support_statuses
 
-  subroutine kim_get_support_status(index, support_status, ierr)
+  recursive subroutine kim_get_support_status(index, support_status, ierr)
     implicit none
     interface
-      integer(c_int) function get_support_status(index, support_status) &
-        bind(c, name="KIM_SUPPORT_STATUS_GetSupportStatus")
+      integer(c_int) recursive function get_support_status(index, &
+        support_status) bind(c, name="KIM_SUPPORT_STATUS_GetSupportStatus")
         use, intrinsic :: iso_c_binding
         import kim_support_status_type
         implicit none

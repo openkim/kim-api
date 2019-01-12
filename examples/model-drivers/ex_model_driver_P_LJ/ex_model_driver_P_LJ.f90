@@ -91,7 +91,7 @@ contains
 !  Calculate pair potential phi(r)
 !
 !-------------------------------------------------------------------------------
-subroutine calc_phi(model_epsilon,  &
+recursive subroutine calc_phi(model_epsilon,  &
                     model_sigma,    &
                     model_shift,    &
                     model_cutoff,r,phi)
@@ -127,7 +127,7 @@ end subroutine calc_phi
 !  Calculate pair potential phi(r) and its derivative dphi(r)
 !
 !-------------------------------------------------------------------------------
-subroutine calc_phi_dphi(model_epsilon,  &
+recursive subroutine calc_phi_dphi(model_epsilon,  &
                          model_sigma,    &
                          model_shift,    &
                          model_cutoff,r,phi,dphi)
@@ -165,7 +165,7 @@ end subroutine calc_phi_dphi
 !  Calculate pair potential phi(r) and its derivatives dphi(r) and d2phi(r)
 !
 !-------------------------------------------------------------------------------
-subroutine calc_phi_dphi_d2phi(model_epsilon,  &
+recursive subroutine calc_phi_dphi_d2phi(model_epsilon,  &
                                model_sigma,    &
                                model_shift,    &
                                model_cutoff,r,phi,dphi,d2phi)
@@ -205,7 +205,7 @@ end subroutine calc_phi_dphi_d2phi
 ! Compute energy and forces on particles from the positions.
 !
 !-------------------------------------------------------------------------------
-subroutine Compute_Energy_Forces(model_compute_handle, &
+recursive subroutine Compute_Energy_Forces(model_compute_handle, &
   model_compute_arguments_handle, ierr) bind(c)
 implicit none
 
@@ -464,7 +464,7 @@ end subroutine Compute_Energy_Forces
 ! Model driver refresh routine
 !
 !-------------------------------------------------------------------------------
-subroutine refresh(model_refresh_handle, ierr) bind(c)
+recursive subroutine refresh(model_refresh_handle, ierr) bind(c)
 implicit none
 
 !-- transferred variables
@@ -507,7 +507,8 @@ end subroutine refresh
 ! Model driver write_model routine
 !
 !-------------------------------------------------------------------------------
-subroutine write_model(model_write_parameterized_model_handle, ierr) bind(c)
+recursive subroutine write_model(model_write_parameterized_model_handle, ierr) &
+  bind(c)
 implicit none
 
 !-- transferred variables
@@ -562,7 +563,7 @@ end subroutine write_model
 ! Model driver destroy routine
 !
 !-------------------------------------------------------------------------------
-subroutine destroy(model_destroy_handle, ierr) bind(c)
+recursive subroutine destroy(model_destroy_handle, ierr) bind(c)
 implicit none
 
 !-- Transferred variables
@@ -588,7 +589,7 @@ end subroutine destroy
 ! Model driver compute arguments create routine
 !
 !-------------------------------------------------------------------------------
-subroutine compute_arguments_create(model_compute_handle, &
+recursive subroutine compute_arguments_create(model_compute_handle, &
   model_compute_arguments_create_handle, ierr) bind(c)
 implicit none
 
@@ -658,7 +659,7 @@ end subroutine compute_arguments_create
 ! Model driver compute arguments destroy routine
 !
 !-------------------------------------------------------------------------------
-subroutine compute_arguments_destroy(model_compute_handle, &
+recursive subroutine compute_arguments_destroy(model_compute_handle, &
   model_compute_arguments_destroy_handle, ierr) bind(c)
 implicit none
 
@@ -684,7 +685,7 @@ end module ex_model_driver_p_lj
 ! Model driver create routine (REQUIRED)
 !
 !-------------------------------------------------------------------------------
-subroutine model_driver_create_routine(model_driver_create_handle, &
+recursive subroutine model_driver_create_routine(model_driver_create_handle, &
   requested_length_unit, requested_energy_unit, requested_charge_unit, &
   requested_temperature_unit, requested_time_unit, ierr) bind(c)
 use, intrinsic :: iso_c_binding

@@ -95,7 +95,8 @@ module kim_model_write_parameterized_model_module
   end interface kim_to_string
 
 contains
-  logical function kim_model_write_parameterized_model_handle_equal(lhs, rhs)
+  logical recursive function kim_model_write_parameterized_model_handle_equal( &
+    lhs, rhs)
     implicit none
     type(kim_model_write_parameterized_model_handle_type), intent(in) :: lhs
     type(kim_model_write_parameterized_model_handle_type), intent(in) :: rhs
@@ -108,8 +109,8 @@ contains
     end if
   end function kim_model_write_parameterized_model_handle_equal
 
-  logical function kim_model_write_parameterized_model_handle_not_equal(lhs, &
-    rhs)
+  logical recursive function &
+    kim_model_write_parameterized_model_handle_not_equal(lhs, rhs)
     implicit none
     type(kim_model_write_parameterized_model_handle_type), intent(in) :: lhs
     type(kim_model_write_parameterized_model_handle_type), intent(in) :: rhs
@@ -117,14 +118,14 @@ contains
     kim_model_write_parameterized_model_handle_not_equal = .not. (lhs .eq. rhs)
   end function kim_model_write_parameterized_model_handle_not_equal
 
-  subroutine kim_model_write_parameterized_model_get_path( &
+  recursive subroutine kim_model_write_parameterized_model_get_path( &
     model_write_parameterized_model_handle, path)
     use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
     use kim_interoperable_types_module, only : &
       kim_model_write_parameterized_model_type
     implicit none
     interface
-      subroutine get_path(model_write_parameterized_model, path) &
+      recursive subroutine get_path(model_write_parameterized_model, path) &
         bind(c, name="KIM_ModelWriteParameterizedModel_GetPath")
         use, intrinsic :: iso_c_binding
         use kim_interoperable_types_module, only : &
@@ -149,14 +150,15 @@ contains
     call kim_convert_c_char_ptr_to_string(ppath, path)
   end subroutine kim_model_write_parameterized_model_get_path
 
-  subroutine kim_model_write_parameterized_model_get_model_name( &
+  recursive subroutine kim_model_write_parameterized_model_get_model_name( &
     model_write_parameterized_model_handle, model_name)
     use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
     use kim_interoperable_types_module, only : &
       kim_model_write_parameterized_model_type
     implicit none
     interface
-      subroutine get_model_name(model_write_parameterized_model, model_name) &
+      recursive subroutine get_model_name(model_write_parameterized_model, &
+        model_name) &
         bind(c, name="KIM_ModelWriteParameterizedModel_GetModelName")
         use, intrinsic :: iso_c_binding
         use kim_interoperable_types_module, only : &
@@ -181,14 +183,15 @@ contains
     call kim_convert_c_char_ptr_to_string(pmodel_name, model_name)
   end subroutine kim_model_write_parameterized_model_get_model_name
 
-  subroutine kim_model_write_parameterized_model_set_parameter_file_name( &
+  recursive subroutine &
+    kim_model_write_parameterized_model_set_parameter_file_name( &
     model_write_parameterized_model_handle, file_name)
     use kim_interoperable_types_module, only : &
       kim_model_write_parameterized_model_type
     implicit none
     interface
-      subroutine set_parameter_file_name(model_write_parameterized_model, &
-        file_name) &
+      recursive subroutine set_parameter_file_name( &
+        model_write_parameterized_model, file_name) &
         bind(c, name="KIM_ModelWriteParameterizedModel_SetParameterFileName")
         use, intrinsic :: iso_c_binding
         use kim_interoperable_types_module, only : &
@@ -211,14 +214,16 @@ contains
       trim(file_name)//c_null_char)
   end subroutine kim_model_write_parameterized_model_set_parameter_file_name
 
-  subroutine kim_model_write_parameterized_model_get_model_buffer_pointer( &
+  recursive subroutine &
+    kim_model_write_parameterized_model_get_model_buffer_pointer( &
     model_write_parameterized_model_handle, ptr)
     use kim_interoperable_types_module, only : &
       kim_model_write_parameterized_model_type
     implicit none
     interface
-      subroutine get_model_buffer_pointer(model_write_parameterized_model, &
-        ptr) bind(c, name="KIM_ModelCompute_GetModelBufferPointer")
+      recursive subroutine get_model_buffer_pointer( &
+        model_write_parameterized_model, ptr) &
+        bind(c, name="KIM_ModelCompute_GetModelBufferPointer")
         use, intrinsic :: iso_c_binding
         use kim_interoperable_types_module, only : &
           kim_model_write_parameterized_model_type
@@ -239,15 +244,15 @@ contains
     call get_model_buffer_pointer(model_write_parameterized_model, ptr)
   end subroutine kim_model_write_parameterized_model_get_model_buffer_pointer
 
-  subroutine kim_model_write_parameterized_model_log_entry( &
+  recursive subroutine kim_model_write_parameterized_model_log_entry( &
     model_write_parameterized_model_handle, log_verbosity, message)
     use kim_log_verbosity_module, only : kim_log_verbosity_type
     use kim_interoperable_types_module, only : &
       kim_model_write_parameterized_model_type
     implicit none
     interface
-      subroutine log_entry(model_write_parameterized_model, log_verbosity, &
-        message, line_number, file_name) &
+      recursive subroutine log_entry(model_write_parameterized_model, &
+        log_verbosity, message, line_number, file_name) &
         bind(c, name="KIM_ModelCompute_LogEntry")
         use, intrinsic :: iso_c_binding
         use kim_log_verbosity_module, only : kim_log_verbosity_type
@@ -275,14 +280,14 @@ contains
       trim(message)//c_null_char, 0, ""//c_null_char)
   end subroutine kim_model_write_parameterized_model_log_entry
 
-  subroutine kim_model_write_parameterized_model_to_string( &
+  recursive subroutine kim_model_write_parameterized_model_to_string( &
     model_write_parameterized_model_handle, string)
     use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
     use kim_interoperable_types_module, only : &
       kim_model_write_parameterized_model_type
     implicit none
     interface
-      type(c_ptr) function model_write_parameterized_model_string( &
+      type(c_ptr) recursive function model_write_parameterized_model_string( &
         model_write_parameterized_model) &
         bind(c, name="KIM_ModelCompute_ToString")
         use, intrinsic :: iso_c_binding

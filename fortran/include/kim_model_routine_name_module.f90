@@ -105,7 +105,7 @@ module kim_model_routine_name_module
   end interface kim_to_string
 
 contains
-  logical function kim_model_routine_name_equal(lhs, rhs)
+  logical recursive function kim_model_routine_name_equal(lhs, rhs)
     implicit none
     type(kim_model_routine_name_type), intent(in) :: lhs
     type(kim_model_routine_name_type), intent(in) :: rhs
@@ -114,7 +114,7 @@ contains
       = (lhs%model_routine_name_id .eq. rhs%model_routine_name_id)
   end function kim_model_routine_name_equal
 
-  logical function kim_model_routine_name_not_equal(lhs, rhs)
+  logical recursive function kim_model_routine_name_not_equal(lhs, rhs)
     implicit none
     type(kim_model_routine_name_type), intent(in) :: lhs
     type(kim_model_routine_name_type), intent(in) :: rhs
@@ -122,11 +122,11 @@ contains
     kim_model_routine_name_not_equal = .not. (lhs .eq. rhs)
   end function kim_model_routine_name_not_equal
 
-  subroutine kim_model_routine_name_from_string(string, &
+  recursive subroutine kim_model_routine_name_from_string(string, &
     model_routine_name)
     implicit none
     interface
-      type(kim_model_routine_name_type) function from_string(string) &
+      type(kim_model_routine_name_type) recursive function from_string(string) &
         bind(c, name="KIM_ModelRoutineName_FromString")
         use, intrinsic :: iso_c_binding
         import kim_model_routine_name_type
@@ -140,11 +140,12 @@ contains
     model_routine_name = from_string(trim(string)//c_null_char)
   end subroutine kim_model_routine_name_from_string
 
-  subroutine kim_model_routine_name_to_string(model_routine_name, string)
+  recursive subroutine kim_model_routine_name_to_string(model_routine_name, &
+    string)
     use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
     implicit none
     interface
-      type(c_ptr) function get_string(model_routine_name) &
+      type(c_ptr) recursive function get_string(model_routine_name) &
         bind(c, name="KIM_ModelRoutineName_ToString")
         use, intrinsic :: iso_c_binding
         import kim_model_routine_name_type
@@ -163,11 +164,11 @@ contains
     call kim_convert_c_char_ptr_to_string(p, string)
   end subroutine kim_model_routine_name_to_string
 
-  subroutine kim_get_number_of_model_routine_names( &
+  recursive subroutine kim_get_number_of_model_routine_names( &
     number_of_model_routine_names)
     implicit none
     interface
-      subroutine get_number_of_model_routine_names( &
+      recursive subroutine get_number_of_model_routine_names( &
         number_of_model_routine_names) &
         bind(c, &
         name="KIM_MODEL_ROUTINE_NAME_GetNumberOfModelRoutineNames")
@@ -180,11 +181,11 @@ contains
     call get_number_of_model_routine_names(number_of_model_routine_names)
   end subroutine kim_get_number_of_model_routine_names
 
-  subroutine kim_get_model_routine_name(index, &
+  recursive subroutine kim_get_model_routine_name(index, &
     model_routine_name, ierr)
     implicit none
     interface
-      integer(c_int) function get_model_routine_name(index, &
+      integer(c_int) recursive function get_model_routine_name(index, &
         model_routine_name) &
         bind(c, name="KIM_MODEL_ROUTINE_NAME_GetModelRoutineName")
         use, intrinsic :: iso_c_binding

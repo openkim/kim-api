@@ -44,11 +44,11 @@ module kim_sem_ver_module
 
 
 contains
-  subroutine kim_get_sem_ver(version)
+  recursive subroutine kim_get_sem_ver(version)
     use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
     implicit none
     interface
-      type(c_ptr) function get_sem_ver() &
+      type(c_ptr) recursive function get_sem_ver() &
         bind(c, name="KIM_SEM_VER_GetSemVer")
         use, intrinsic :: iso_c_binding
         implicit none
@@ -62,11 +62,12 @@ contains
     call kim_convert_c_char_ptr_to_string(p, version)
   end subroutine kim_get_sem_ver
 
-  subroutine kim_is_less_than(version_a, version_b, is_less_than, ierr)
+  recursive subroutine kim_is_less_than(version_a, version_b, is_less_than, &
+    ierr)
     implicit none
     interface
-      integer(c_int) function is_less_than_func(version_a, version_b, &
-        is_less_than) bind(c, name="KIM_SEM_VER_IsLessThan")
+      integer(c_int) recursive function is_less_than_func(version_a, &
+        version_b, is_less_than) bind(c, name="KIM_SEM_VER_IsLessThan")
         use, intrinsic :: iso_c_binding
         implicit none
         character(c_char), intent(in) :: version_a(*)
@@ -83,14 +84,14 @@ contains
       trim(version_b)//c_null_char, is_less_than)
   end subroutine kim_is_less_than
 
-  subroutine kim_parse_sem_ver(version, major, minor, patch, &
+  recursive subroutine kim_parse_sem_ver(version, major, minor, patch, &
     prerelease, build_metadata, ierr)
     use kim_convert_string_module, only : kim_convert_c_char_array_to_string
     implicit none
     interface
-      integer(c_int) function parse_sem_ver(version, prerelease_length, &
-        build_metadata_length, major, minor, patch, prerelease, &
-        build_metadata) bind(c, name="KIM_SEM_VER_ParseSemVer")
+      integer(c_int) recursive function parse_sem_ver(version, &
+        prerelease_length, build_metadata_length, major, minor, patch, &
+        prerelease, build_metadata) bind(c, name="KIM_SEM_VER_ParseSemVer")
         use, intrinsic :: iso_c_binding
         implicit none
         character(c_char), intent(in) :: version(*)

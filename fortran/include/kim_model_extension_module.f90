@@ -149,7 +149,7 @@ module kim_model_extension_module
   end interface kim_to_string
 
 contains
-  logical function kim_model_extension_handle_equal(lhs, rhs)
+  logical recursive function kim_model_extension_handle_equal(lhs, rhs)
     implicit none
     type(kim_model_extension_handle_type), intent(in) :: lhs
     type(kim_model_extension_handle_type), intent(in) :: rhs
@@ -161,7 +161,7 @@ contains
     end if
   end function kim_model_extension_handle_equal
 
-  logical function kim_model_extension_handle_not_equal(lhs, rhs)
+  logical recursive function kim_model_extension_handle_not_equal(lhs, rhs)
     implicit none
     type(kim_model_extension_handle_type), intent(in) :: lhs
     type(kim_model_extension_handle_type), intent(in) :: rhs
@@ -169,13 +169,13 @@ contains
     kim_model_extension_handle_not_equal = .not. (lhs .eq. rhs)
   end function kim_model_extension_handle_not_equal
 
-  subroutine kim_model_extension_get_extension_id(model_extension_handle, &
-    extension_id)
+  recursive subroutine kim_model_extension_get_extension_id( &
+    model_extension_handle, extension_id)
     use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
     use kim_interoperable_types_module, only : kim_model_extension_type
     implicit none
     interface
-      subroutine get_extension_id(model_extension, extension_id) &
+      recursive subroutine get_extension_id(model_extension, extension_id) &
         bind(c, name="KIM_ModelExtension_GetExtensionID")
         use, intrinsic :: iso_c_binding
         use kim_interoperable_types_module, only : kim_model_extension_type
@@ -195,7 +195,8 @@ contains
     call kim_convert_c_char_ptr_to_string(p, extension_id)
   end subroutine kim_model_extension_get_extension_id
 
-  subroutine kim_model_extension_to_model(model_extension_handle, model_handle)
+  recursive subroutine kim_model_extension_to_model(model_extension_handle, &
+    model_handle)
     use kim_model_module
     implicit none
     type(kim_model_extension_handle_type), intent(in) :: model_extension_handle
@@ -204,8 +205,8 @@ contains
     model_handle%p = model_extension_handle%p
   end subroutine kim_model_extension_to_model
 
-  subroutine kim_model_extension_to_model_compute(model_extension_handle, &
-    model_compute_handle)
+  recursive subroutine kim_model_extension_to_model_compute( &
+    model_extension_handle, model_compute_handle)
     use kim_model_compute_module
     implicit none
     type(kim_model_extension_handle_type), intent(in) :: model_extension_handle
@@ -214,8 +215,8 @@ contains
     model_compute_handle%p = model_extension_handle%p
   end subroutine kim_model_extension_to_model_compute
 
-  subroutine kim_model_extension_to_model_create(model_extension_handle, &
-    model_create_handle)
+  recursive subroutine kim_model_extension_to_model_create( &
+    model_extension_handle, model_create_handle)
     use kim_model_create_module
     implicit none
     type(kim_model_extension_handle_type), intent(in) :: model_extension_handle
@@ -224,8 +225,8 @@ contains
     model_create_handle%p = model_extension_handle%p
   end subroutine kim_model_extension_to_model_create
 
-  subroutine kim_model_extension_to_model_destroy(model_extension_handle, &
-    model_destroy_handle)
+  recursive subroutine kim_model_extension_to_model_destroy( &
+    model_extension_handle, model_destroy_handle)
     use kim_model_destroy_module
     implicit none
     type(kim_model_extension_handle_type), intent(in) :: model_extension_handle
@@ -234,7 +235,7 @@ contains
     model_destroy_handle%p = model_extension_handle%p
   end subroutine kim_model_extension_to_model_destroy
 
-  subroutine kim_model_extension_to_model_driver_create( &
+  recursive subroutine kim_model_extension_to_model_driver_create( &
     model_extension_handle, model_driver_create_handle)
     use kim_model_driver_create_module
     implicit none
@@ -245,8 +246,8 @@ contains
     model_driver_create_handle%p = model_extension_handle%p
   end subroutine kim_model_extension_to_model_driver_create
 
-  subroutine kim_model_extension_to_model_refresh(model_extension_handle, &
-    model_refresh_handle)
+  recursive subroutine kim_model_extension_to_model_refresh( &
+    model_extension_handle, model_refresh_handle)
     use kim_model_refresh_module
     implicit none
     type(kim_model_extension_handle_type), intent(in) :: model_extension_handle
@@ -255,7 +256,7 @@ contains
     model_refresh_handle%p = model_extension_handle%p
   end subroutine kim_model_extension_to_model_refresh
 
-  subroutine kim_model_extension_to_model_write_parameterized_model( &
+  recursive subroutine kim_model_extension_to_model_write_parameterized_model( &
     model_extension_handle, model_write_parameterized_model_handle)
     use kim_model_write_parameterized_model_module
     implicit none
@@ -266,7 +267,7 @@ contains
     model_write_parameterized_model_handle%p = model_extension_handle%p
   end subroutine kim_model_extension_to_model_write_parameterized_model
 
-  subroutine kim_model_extension_to_model_compute_arguments( &
+  recursive subroutine kim_model_extension_to_model_compute_arguments( &
     model_extension_handle, compute_arguments_c_ptr, &
     model_compute_arguments_handle)
     use kim_model_compute_arguments_module
@@ -282,7 +283,7 @@ contains
     model_compute_arguments_handle%p = compute_arguments_c_ptr
   end subroutine kim_model_extension_to_model_compute_arguments
 
-  subroutine kim_model_extension_to_model_compute_arguments_create( &
+  recursive subroutine kim_model_extension_to_model_compute_arguments_create( &
     model_extension_handle, compute_arguments_c_ptr, &
     model_compute_arguments_create_handle)
     use kim_model_compute_arguments_create_module
@@ -298,7 +299,7 @@ contains
     model_compute_arguments_create_handle%p = compute_arguments_c_ptr
   end subroutine kim_model_extension_to_model_compute_arguments_create
 
-  subroutine kim_model_extension_to_model_compute_arguments_destroy( &
+  recursive subroutine kim_model_extension_to_model_compute_arguments_destroy( &
     model_extension_handle, compute_arguments_c_ptr, &
     model_compute_arguments_destroy_handle)
     use kim_model_compute_arguments_destroy_module
@@ -314,7 +315,7 @@ contains
     model_compute_arguments_destroy_handle%p = compute_arguments_c_ptr
   end subroutine kim_model_extension_to_model_compute_arguments_destroy
 
-  subroutine kim_model_extension_convert_c_char_array_to_string( &
+  recursive subroutine kim_model_extension_convert_c_char_array_to_string( &
     c_char_array, string)
     use kim_convert_string_module, only : kim_convert_c_char_array_to_string
     implicit none
@@ -324,7 +325,7 @@ contains
     call kim_convert_c_char_array_to_string(c_char_array, string)
   end subroutine kim_model_extension_convert_c_char_array_to_string
 
-  subroutine kim_model_extension_convert_c_char_ptr_to_string( &
+  recursive subroutine kim_model_extension_convert_c_char_ptr_to_string( &
     c_char_ptr, string)
     use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
     implicit none
@@ -334,7 +335,7 @@ contains
     call kim_convert_c_char_ptr_to_string(c_char_ptr, string)
   end subroutine kim_model_extension_convert_c_char_ptr_to_string
 
-  subroutine kim_model_extension_convert_string_to_c_char_array( &
+  recursive subroutine kim_model_extension_convert_string_to_c_char_array( &
     string, c_char_array)
     use kim_convert_string_module, only : kim_convert_string_to_c_char_array
     implicit none
@@ -344,12 +345,12 @@ contains
     call kim_convert_string_to_c_char_array(string, c_char_array)
   end subroutine kim_model_extension_convert_string_to_c_char_array
 
-  subroutine kim_model_extension_get_model_buffer_pointer( &
+  recursive subroutine kim_model_extension_get_model_buffer_pointer( &
     model_extension_handle, ptr)
     use kim_interoperable_types_module, only : kim_model_extension_type
     implicit none
     interface
-      subroutine get_model_buffer_pointer(model_extension, ptr) &
+      recursive subroutine get_model_buffer_pointer(model_extension, ptr) &
         bind(c, name="KIM_ModelExtension_GetModelBufferPointer")
         use, intrinsic :: iso_c_binding
         use kim_interoperable_types_module, only : kim_model_extension_type
@@ -366,13 +367,13 @@ contains
     call get_model_buffer_pointer(model_extension, ptr)
   end subroutine kim_model_extension_get_model_buffer_pointer
 
-  subroutine kim_model_extension_log_entry(model_extension_handle, &
+  recursive subroutine kim_model_extension_log_entry(model_extension_handle, &
     log_verbosity, message)
     use kim_log_verbosity_module, only : kim_log_verbosity_type
     use kim_interoperable_types_module, only : kim_model_extension_type
     implicit none
     interface
-      subroutine log_entry(model_extension, log_verbosity, message, &
+      recursive subroutine log_entry(model_extension, log_verbosity, message, &
         line_number, file_name) bind(c, name="KIM_ModelExtension_LogEntry")
         use, intrinsic :: iso_c_binding
         use kim_log_verbosity_module, only : kim_log_verbosity_type
@@ -395,12 +396,13 @@ contains
       0, ""//c_null_char)
   end subroutine kim_model_extension_log_entry
 
-  subroutine kim_model_extension_to_string(model_extension_handle, string)
+  recursive subroutine kim_model_extension_to_string(model_extension_handle, &
+    string)
     use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
     use kim_interoperable_types_module, only : kim_model_extension_type
     implicit none
     interface
-      type(c_ptr) function model_extension_string(model_extension) &
+      type(c_ptr) recursive function model_extension_string(model_extension) &
         bind(c, name="KIM_ModelExtension_ToString")
         use, intrinsic :: iso_c_binding
         use kim_interoperable_types_module, only : kim_model_extension_type
