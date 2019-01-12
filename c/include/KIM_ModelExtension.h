@@ -48,7 +48,7 @@ typedef struct KIM_Model KIM_Model;
 #endif
 
 #ifndef KIM_MODEL_COMPUTE_DEFINED_
-#define KIM_MODEL_COMPUTEDEFINED_
+#define KIM_MODEL_COMPUTE_DEFINED_
 typedef struct KIM_ModelCompute KIM_ModelCompute;
 #endif
 
