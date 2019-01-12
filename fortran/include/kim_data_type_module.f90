@@ -57,10 +57,10 @@ module kim_data_type_module
     integer(c_int) :: data_type_id
   end type kim_data_type_type
 
-  type(kim_data_type_type), protected, &
+  type(kim_data_type_type), protected, save, &
     bind(c, name="KIM_DATA_TYPE_Integer") &
     :: KIM_DATA_TYPE_INTEGER
-  type(kim_data_type_type), protected, &
+  type(kim_data_type_type), protected, save, &
     bind(c, name="KIM_DATA_TYPE_Double") &
     :: KIM_DATA_TYPE_DOUBLE
 

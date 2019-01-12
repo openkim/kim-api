@@ -62,25 +62,25 @@ module kim_energy_unit_module
     integer(c_int) energy_unit_id
   end type kim_energy_unit_type
 
-  type(kim_energy_unit_type), protected, &
+  type(kim_energy_unit_type), protected, save, &
     bind(c, name="KIM_ENERGY_UNIT_unused") &
     :: KIM_ENERGY_UNIT_UNUSED
-  type(kim_energy_unit_type), protected, &
+  type(kim_energy_unit_type), protected, save, &
     bind(c, name="KIM_ENERGY_UNIT_amu_A2_per_ps2") &
     :: KIM_ENERGY_UNIT_AMU_A2_PER_PS2
-  type(kim_energy_unit_type), protected, &
+  type(kim_energy_unit_type), protected, save, &
     bind(c, name="KIM_ENERGY_UNIT_erg") &
     :: KIM_ENERGY_UNIT_ERG
-  type(kim_energy_unit_type), protected, &
+  type(kim_energy_unit_type), protected, save, &
     bind(c, name="KIM_ENERGY_UNIT_eV") &
     :: KIM_ENERGY_UNIT_EV
-  type(kim_energy_unit_type), protected, &
+  type(kim_energy_unit_type), protected, save, &
     bind(c, name="KIM_ENERGY_UNIT_Hartree") &
     :: KIM_ENERGY_UNIT_HARTREE
-  type(kim_energy_unit_type), protected, &
+  type(kim_energy_unit_type), protected, save, &
     bind(c, name="KIM_ENERGY_UNIT_J") &
     :: KIM_ENERGY_UNIT_J
-  type(kim_energy_unit_type), protected, &
+  type(kim_energy_unit_type), protected, save, &
     bind(c, name="KIM_ENERGY_UNIT_kcal_mol") &
     :: KIM_ENERGY_UNIT_KCAL_MOL
 

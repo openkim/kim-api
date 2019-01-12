@@ -57,10 +57,10 @@ module kim_temperature_unit_module
     integer(c_int) temperature_unit_id
   end type kim_temperature_unit_type
 
-  type(kim_temperature_unit_type), protected, &
+  type(kim_temperature_unit_type), protected, save, &
     bind(c, name="KIM_TEMPERATURE_UNIT_unused") &
     :: KIM_TEMPERATURE_UNIT_UNUSED
-  type(kim_temperature_unit_type), protected, &
+  type(kim_temperature_unit_type), protected, save, &
     bind(c, name="KIM_TEMPERATURE_UNIT_K") &
     :: KIM_TEMPERATURE_UNIT_K
 

@@ -65,31 +65,31 @@ module kim_compute_argument_name_module
     integer(c_int) compute_argument_name_id
   end type kim_compute_argument_name_type
 
-  type(kim_compute_argument_name_type), protected, &
+  type(kim_compute_argument_name_type), protected, save, &
     bind(c, name="KIM_COMPUTE_ARGUMENT_NAME_numberOfParticles") &
     :: KIM_COMPUTE_ARGUMENT_NAME_NUMBER_OF_PARTICLES
-  type(kim_compute_argument_name_type), protected, &
+  type(kim_compute_argument_name_type), protected, save, &
     bind(c, name="KIM_COMPUTE_ARGUMENT_NAME_particleSpeciesCodes") &
     :: KIM_COMPUTE_ARGUMENT_NAME_PARTICLE_SPECIES_CODES
-  type(kim_compute_argument_name_type), protected, &
+  type(kim_compute_argument_name_type), protected, save, &
     bind(c, name="KIM_COMPUTE_ARGUMENT_NAME_particleContributing") &
     :: KIM_COMPUTE_ARGUMENT_NAME_PARTICLE_CONTRIBUTING
-  type(kim_compute_argument_name_type), protected, &
+  type(kim_compute_argument_name_type), protected, save, &
     bind(c, name="KIM_COMPUTE_ARGUMENT_NAME_coordinates") &
     :: KIM_COMPUTE_ARGUMENT_NAME_COORDINATES
-  type(kim_compute_argument_name_type), protected, &
+  type(kim_compute_argument_name_type), protected, save, &
     bind(c, name="KIM_COMPUTE_ARGUMENT_NAME_partialEnergy") &
     :: KIM_COMPUTE_ARGUMENT_NAME_PARTIAL_ENERGY
-  type(kim_compute_argument_name_type), protected, &
+  type(kim_compute_argument_name_type), protected, save, &
     bind(c, name="KIM_COMPUTE_ARGUMENT_NAME_partialForces") &
     :: KIM_COMPUTE_ARGUMENT_NAME_PARTIAL_FORCES
-  type(kim_compute_argument_name_type), protected, &
+  type(kim_compute_argument_name_type), protected, save, &
     bind(c, name="KIM_COMPUTE_ARGUMENT_NAME_partialParticleEnergy") &
     :: KIM_COMPUTE_ARGUMENT_NAME_PARTIAL_PARTICLE_ENERGY
-  type(kim_compute_argument_name_type), protected, &
+  type(kim_compute_argument_name_type), protected, save, &
     bind(c, name="KIM_COMPUTE_ARGUMENT_NAME_partialVirial") &
     :: KIM_COMPUTE_ARGUMENT_NAME_PARTIAL_VIRIAL
-  type(kim_compute_argument_name_type), protected, &
+  type(kim_compute_argument_name_type), protected, save, &
     bind(c, name="KIM_COMPUTE_ARGUMENT_NAME_partialParticleVirial") &
     :: KIM_COMPUTE_ARGUMENT_NAME_PARTIAL_PARTICLE_VIRIAL
 

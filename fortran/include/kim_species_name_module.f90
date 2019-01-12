@@ -194,421 +194,421 @@ module kim_species_name_module
     integer(c_int) species_name_id
   end type kim_species_name_type
 
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_electron") &
     :: KIM_SPECIES_NAME_ELECTRON
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_H") &
     :: KIM_SPECIES_NAME_H
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_He") &
     :: KIM_SPECIES_NAME_HE
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Li") &
     :: KIM_SPECIES_NAME_LI
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Be") &
     :: KIM_SPECIES_NAME_BE
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_B") &
     :: KIM_SPECIES_NAME_B
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_C") &
     :: KIM_SPECIES_NAME_C
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_N") &
     :: KIM_SPECIES_NAME_N
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_O") &
     :: KIM_SPECIES_NAME_O
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_F") &
     :: KIM_SPECIES_NAME_F
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Ne") &
     :: KIM_SPECIES_NAME_NE
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Na") &
     :: KIM_SPECIES_NAME_NA
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Mg") &
     :: KIM_SPECIES_NAME_MG
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Al") &
     :: KIM_SPECIES_NAME_AL
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Si") &
     :: KIM_SPECIES_NAME_SI
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_P") &
     :: KIM_SPECIES_NAME_P
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_S") &
     :: KIM_SPECIES_NAME_S
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Cl") &
     :: KIM_SPECIES_NAME_CL
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Ar") &
     :: KIM_SPECIES_NAME_AR
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_K") &
     :: KIM_SPECIES_NAME_K
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Ca") &
     :: KIM_SPECIES_NAME_CA
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Sc") &
     :: KIM_SPECIES_NAME_SC
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Ti") &
     :: KIM_SPECIES_NAME_TI
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_V") &
     :: KIM_SPECIES_NAME_V
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Cr") &
     :: KIM_SPECIES_NAME_CR
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Mn") &
     :: KIM_SPECIES_NAME_MN
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Fe") &
     :: KIM_SPECIES_NAME_FE
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Co") &
     :: KIM_SPECIES_NAME_CO
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Ni") &
     :: KIM_SPECIES_NAME_NI
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Cu") &
     :: KIM_SPECIES_NAME_CU
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Zn") &
     :: KIM_SPECIES_NAME_ZN
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Ga") &
     :: KIM_SPECIES_NAME_GA
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Ge") &
     :: KIM_SPECIES_NAME_GE
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_As") &
     :: KIM_SPECIES_NAME_AS
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Se") &
     :: KIM_SPECIES_NAME_SE
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Br") &
     :: KIM_SPECIES_NAME_BR
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Kr") &
     :: KIM_SPECIES_NAME_KR
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Rb") &
     :: KIM_SPECIES_NAME_RB
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Sr") &
     :: KIM_SPECIES_NAME_SR
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Y") &
     :: KIM_SPECIES_NAME_Y
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Zr") &
     :: KIM_SPECIES_NAME_ZR
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Nb") &
     :: KIM_SPECIES_NAME_NB
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Mo") &
     :: KIM_SPECIES_NAME_MO
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Tc") &
     :: KIM_SPECIES_NAME_TC
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Ru") &
     :: KIM_SPECIES_NAME_RU
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Rh") &
     :: KIM_SPECIES_NAME_RH
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Pd") &
     :: KIM_SPECIES_NAME_PD
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Ag") &
     :: KIM_SPECIES_NAME_AG
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Cd") &
     :: KIM_SPECIES_NAME_CD
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_In") &
     :: KIM_SPECIES_NAME_IN
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Sn") &
     :: KIM_SPECIES_NAME_SN
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Sb") &
     :: KIM_SPECIES_NAME_SB
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Te") &
     :: KIM_SPECIES_NAME_TE
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_I") &
     :: KIM_SPECIES_NAME_I
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Xe") &
     :: KIM_SPECIES_NAME_XE
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Cs") &
     :: KIM_SPECIES_NAME_CS
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Ba") &
     :: KIM_SPECIES_NAME_BA
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_La") &
     :: KIM_SPECIES_NAME_LA
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Ce") &
     :: KIM_SPECIES_NAME_CE
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Pr") &
     :: KIM_SPECIES_NAME_PR
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Nd") &
     :: KIM_SPECIES_NAME_ND
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Pm") &
     :: KIM_SPECIES_NAME_PM
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Sm") &
     :: KIM_SPECIES_NAME_SM
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Eu") &
     :: KIM_SPECIES_NAME_EU
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Gd") &
     :: KIM_SPECIES_NAME_GD
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Tb") &
     :: KIM_SPECIES_NAME_TB
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Dy") &
     :: KIM_SPECIES_NAME_DY
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Ho") &
     :: KIM_SPECIES_NAME_HO
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Er") &
     :: KIM_SPECIES_NAME_ER
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Tm") &
     :: KIM_SPECIES_NAME_TM
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Yb") &
     :: KIM_SPECIES_NAME_YB
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Lu") &
     :: KIM_SPECIES_NAME_LU
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Hf") &
     :: KIM_SPECIES_NAME_HF
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Ta") &
     :: KIM_SPECIES_NAME_TA
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_W") &
     :: KIM_SPECIES_NAME_W
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Re") &
     :: KIM_SPECIES_NAME_RE
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Os") &
     :: KIM_SPECIES_NAME_OS
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Ir") &
     :: KIM_SPECIES_NAME_IR
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Pt") &
     :: KIM_SPECIES_NAME_PT
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Au") &
     :: KIM_SPECIES_NAME_AU
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Hg") &
     :: KIM_SPECIES_NAME_HG
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Tl") &
     :: KIM_SPECIES_NAME_TL
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Pb") &
     :: KIM_SPECIES_NAME_PB
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Bi") &
     :: KIM_SPECIES_NAME_BI
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Po") &
     :: KIM_SPECIES_NAME_PO
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_At") &
     :: KIM_SPECIES_NAME_AT
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Rn") &
     :: KIM_SPECIES_NAME_RN
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Fr") &
     :: KIM_SPECIES_NAME_FR
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Ra") &
     :: KIM_SPECIES_NAME_RA
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Ac") &
     :: KIM_SPECIES_NAME_AC
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Th") &
     :: KIM_SPECIES_NAME_TH
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Pa") &
     :: KIM_SPECIES_NAME_PA
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_U") &
     :: KIM_SPECIES_NAME_U
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Np") &
     :: KIM_SPECIES_NAME_NP
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Pu") &
     :: KIM_SPECIES_NAME_PU
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Am") &
     :: KIM_SPECIES_NAME_AM
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Cm") &
     :: KIM_SPECIES_NAME_CM
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Bk") &
     :: KIM_SPECIES_NAME_BK
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Cf") &
     :: KIM_SPECIES_NAME_CF
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Es") &
     :: KIM_SPECIES_NAME_ES
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Fm") &
     :: KIM_SPECIES_NAME_FM
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Md") &
     :: KIM_SPECIES_NAME_MD
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_No") &
     :: KIM_SPECIES_NAME_NO
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Lr") &
     :: KIM_SPECIES_NAME_LR
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Rf") &
     :: KIM_SPECIES_NAME_RF
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Db") &
     :: KIM_SPECIES_NAME_DB
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Sg") &
     :: KIM_SPECIES_NAME_SG
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Bh") &
     :: KIM_SPECIES_NAME_BH
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Hs") &
     :: KIM_SPECIES_NAME_HS
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Mt") &
     :: KIM_SPECIES_NAME_MT
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Ds") &
     :: KIM_SPECIES_NAME_DS
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Rg") &
     :: KIM_SPECIES_NAME_RG
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Cn") &
     :: KIM_SPECIES_NAME_CN
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Nh") &
     :: KIM_SPECIES_NAME_NH
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Fl") &
     :: KIM_SPECIES_NAME_FL
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Mc") &
     :: KIM_SPECIES_NAME_MC
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Lv") &
     :: KIM_SPECIES_NAME_LV
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Ts") &
     :: KIM_SPECIES_NAME_TS
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_Og") &
     :: KIM_SPECIES_NAME_OG
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_User01") &
     :: KIM_SPECIES_NAME_USER01
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_User02") &
     :: KIM_SPECIES_NAME_USER02
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_User03") &
     :: KIM_SPECIES_NAME_USER03
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_User04") &
     :: KIM_SPECIES_NAME_USER04
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_User05") &
     :: KIM_SPECIES_NAME_USER05
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_User06") &
     :: KIM_SPECIES_NAME_USER06
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_User07") &
     :: KIM_SPECIES_NAME_USER07
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_User08") &
     :: KIM_SPECIES_NAME_USER08
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_User09") &
     :: KIM_SPECIES_NAME_USER09
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_User10") &
     :: KIM_SPECIES_NAME_USER10
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_User11") &
     :: KIM_SPECIES_NAME_USER11
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_User12") &
     :: KIM_SPECIES_NAME_USER12
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_User13") &
     :: KIM_SPECIES_NAME_USER13
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_User14") &
     :: KIM_SPECIES_NAME_USER14
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_User15") &
     :: KIM_SPECIES_NAME_USER15
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_User16") &
     :: KIM_SPECIES_NAME_USER16
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_User17") &
     :: KIM_SPECIES_NAME_USER17
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_User18") &
     :: KIM_SPECIES_NAME_USER18
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_User19") &
     :: KIM_SPECIES_NAME_USER19
-  type(kim_species_name_type), protected, &
+  type(kim_species_name_type), protected, save, &
     bind(c, name="KIM_SPECIES_NAME_User20") &
     :: KIM_SPECIES_NAME_USER20
 

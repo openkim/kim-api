@@ -58,13 +58,13 @@ module kim_language_name_module
     integer(c_int) :: language_name_id
   end type kim_language_name_type
 
-  type(kim_language_name_type), protected, &
+  type(kim_language_name_type), protected, save, &
     bind(c, name="KIM_LANGUAGE_NAME_cpp") &
     :: KIM_LANGUAGE_NAME_CPP
-  type(kim_language_name_type), protected, &
+  type(kim_language_name_type), protected, save, &
     bind(c, name="KIM_LANGUAGE_NAME_c") &
     :: KIM_LANGUAGE_NAME_C
-  type(kim_language_name_type), protected, &
+  type(kim_language_name_type), protected, save, &
     bind(c, name="KIM_LANGUAGE_NAME_fortran") &
     :: KIM_LANGUAGE_NAME_FORTRAN
 

@@ -59,16 +59,16 @@ module kim_charge_unit_module
     integer(c_int) charge_unit_id
   end type kim_charge_unit_type
 
-  type(kim_charge_unit_type), protected, &
+  type(kim_charge_unit_type), protected, save, &
     bind(c, name="KIM_CHARGE_UNIT_unused") &
     :: KIM_CHARGE_UNIT_UNUSED
-  type(kim_charge_unit_type), protected, &
+  type(kim_charge_unit_type), protected, save, &
     bind(c, name="KIM_CHARGE_UNIT_c") &
     :: KIM_CHARGE_UNIT_C
-  type(kim_charge_unit_type), protected, &
+  type(kim_charge_unit_type), protected, save, &
     bind(c, name="KIM_CHARGE_UNIT_e") &
     :: KIM_CHARGE_UNIT_E
-  type(kim_charge_unit_type), protected, &
+  type(kim_charge_unit_type), protected, save, &
     bind(c, name="KIM_CHARGE_UNIT_statC") &
     :: KIM_CHARGE_UNIT_STATC
 

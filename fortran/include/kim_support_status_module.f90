@@ -59,16 +59,16 @@ module kim_support_status_module
     integer(c_int) :: support_status_id
   end type kim_support_status_type
 
-  type(kim_support_status_type), protected, &
+  type(kim_support_status_type), protected, save, &
     bind(c, name="KIM_SUPPORT_STATUS_requiredByAPI") &
     :: KIM_SUPPORT_STATUS_REQUIRED_BY_API
-  type(kim_support_status_type), protected, &
+  type(kim_support_status_type), protected, save, &
     bind(c, name="KIM_SUPPORT_STATUS_notSupported") &
     :: KIM_SUPPORT_STATUS_NOT_SUPPORTED
-  type(kim_support_status_type), protected, &
+  type(kim_support_status_type), protected, save, &
     bind(c, name="KIM_SUPPORT_STATUS_required") &
     :: KIM_SUPPORT_STATUS_REQUIRED
-  type(kim_support_status_type), protected, &
+  type(kim_support_status_type), protected, save, &
     bind(c, name="KIM_SUPPORT_STATUS_optional") &
     :: KIM_SUPPORT_STATUS_OPTIONAL
 

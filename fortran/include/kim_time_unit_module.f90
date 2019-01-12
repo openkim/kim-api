@@ -60,19 +60,19 @@ module kim_time_unit_module
     integer(c_int) time_unit_id
   end type kim_time_unit_type
 
-  type(kim_time_unit_type), protected, &
+  type(kim_time_unit_type), protected, save, &
     bind(c, name="KIM_TIME_UNIT_unused") &
     :: KIM_TIME_UNIT_UNUSED
-  type(kim_time_unit_type), protected, &
+  type(kim_time_unit_type), protected, save, &
     bind(c, name="KIM_TIME_UNIT_fs") &
     :: KIM_TIME_UNIT_FS
-  type(kim_time_unit_type), protected, &
+  type(kim_time_unit_type), protected, save, &
     bind(c, name="KIM_TIME_UNIT_ps") &
     :: KIM_TIME_UNIT_PS
-  type(kim_time_unit_type), protected, &
+  type(kim_time_unit_type), protected, save, &
     bind(c, name="KIM_TIME_UNIT_ns") &
     :: KIM_TIME_UNIT_NS
-  type(kim_time_unit_type), protected, &
+  type(kim_time_unit_type), protected, save, &
     bind(c, name="KIM_TIME_UNIT_s") &
     :: KIM_TIME_UNIT_S
 

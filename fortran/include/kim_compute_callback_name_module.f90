@@ -58,13 +58,13 @@ module kim_compute_callback_name_module
     integer(c_int) compute_callback_name_id
   end type kim_compute_callback_name_type
 
-  type(kim_compute_callback_name_type), protected, &
+  type(kim_compute_callback_name_type), protected, save, &
     bind(c, name="KIM_COMPUTE_CALLBACK_NAME_GetNeighborList") &
     :: KIM_COMPUTE_CALLBACK_NAME_GET_NEIGHBOR_LIST
-  type(kim_compute_callback_name_type), protected, &
+  type(kim_compute_callback_name_type), protected, save, &
     bind(c, name="KIM_COMPUTE_CALLBACK_NAME_ProcessDEDrTerm") &
     :: KIM_COMPUTE_CALLBACK_NAME_PROCESS_DEDR_TERM
-  type(kim_compute_callback_name_type), protected, &
+  type(kim_compute_callback_name_type), protected, save, &
     bind(c, name="KIM_COMPUTE_CALLBACK_NAME_ProcessD2EDr2Term") &
     :: KIM_COMPUTE_CALLBACK_NAME_PROCESS_D2EDR2_TERM
 

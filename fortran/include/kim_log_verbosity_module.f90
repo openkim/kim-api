@@ -65,22 +65,22 @@ module kim_log_verbosity_module
     integer(c_int) :: log_verbosity_id
   end type kim_log_verbosity_type
 
-  type(kim_log_verbosity_type), protected, &
+  type(kim_log_verbosity_type), protected, save, &
     bind(c, name="KIM_LOG_VERBOSITY_silent") &
     :: KIM_LOG_VERBOSITY_SILENT
-  type(kim_log_verbosity_type), protected, &
+  type(kim_log_verbosity_type), protected, save, &
     bind(c, name="KIM_LOG_VERBOSITY_fatal") &
     :: KIM_LOG_VERBOSITY_FATAL
-  type(kim_log_verbosity_type), protected, &
+  type(kim_log_verbosity_type), protected, save, &
     bind(c, name="KIM_LOG_VERBOSITY_error") &
     :: KIM_LOG_VERBOSITY_ERROR
-  type(kim_log_verbosity_type), protected, &
+  type(kim_log_verbosity_type), protected, save, &
     bind(c, name="KIM_LOG_VERBOSITY_warning") &
     :: KIM_LOG_VERBOSITY_WARNING
-  type(kim_log_verbosity_type), protected, &
+  type(kim_log_verbosity_type), protected, save, &
     bind(c, name="KIM_LOG_VERBOSITY_information") &
     :: KIM_LOG_VERBOSITY_INFORMATION
-  type(kim_log_verbosity_type), protected, &
+  type(kim_log_verbosity_type), protected, save, &
     bind(c, name="KIM_LOG_VERBOSITY_debug") &
     :: KIM_LOG_VERBOSITY_DEBUG
 

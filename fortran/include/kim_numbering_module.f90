@@ -57,10 +57,10 @@ module kim_numbering_module
     integer(c_int) :: numbering_id
   end type kim_numbering_type
 
-  type(kim_numbering_type), protected, &
+  type(kim_numbering_type), protected, save, &
     bind(c, name="KIM_NUMBERING_zeroBased") &
     :: KIM_NUMBERING_ZERO_BASED
-  type(kim_numbering_type), protected, &
+  type(kim_numbering_type), protected, save, &
     bind(c, name="KIM_NUMBERING_oneBased") &
     :: KIM_NUMBERING_ONE_BASED
 

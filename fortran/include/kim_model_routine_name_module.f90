@@ -63,28 +63,28 @@ module kim_model_routine_name_module
     integer(c_int) model_routine_name_id
   end type kim_model_routine_name_type
 
-  type(kim_model_routine_name_type), protected, &
+  type(kim_model_routine_name_type), protected, save, &
     bind(c, name="KIM_MODEL_ROUTINE_NAME_Create") &
     :: KIM_MODEL_ROUTINE_NAME_CREATE
-  type(kim_model_routine_name_type), protected, &
+  type(kim_model_routine_name_type), protected, save, &
     bind(c, name="KIM_MODEL_ROUTINE_NAME_ComputeArgumentsCreate") &
     :: KIM_MODEL_ROUTINE_NAME_COMPUTE_ARGUMENTS_CREATE
-  type(kim_model_routine_name_type), protected, &
+  type(kim_model_routine_name_type), protected, save, &
     bind(c, name="KIM_MODEL_ROUTINE_NAME_Compute") &
     :: KIM_MODEL_ROUTINE_NAME_COMPUTE
-  type(kim_model_routine_name_type), protected, &
+  type(kim_model_routine_name_type), protected, save, &
     bind(c, name="KIM_MODEL_ROUTINE_NAME_Extension") &
     :: KIM_MODEL_ROUTINE_NAME_EXTENSION
-  type(kim_model_routine_name_type), protected, &
+  type(kim_model_routine_name_type), protected, save, &
     bind(c, name="KIM_MODEL_ROUTINE_NAME_Refresh") &
     :: KIM_MODEL_ROUTINE_NAME_REFRESH
-  type(kim_model_routine_name_type), protected, &
+  type(kim_model_routine_name_type), protected, save, &
     bind(c, name="KIM_MODEL_ROUTINE_NAME_WriteParameterizedModel") &
     :: KIM_MODEL_ROUTINE_NAME_WRITE_PARAMETERIZED_MODEL
-  type(kim_model_routine_name_type), protected, &
+  type(kim_model_routine_name_type), protected, save, &
     bind(c, name="KIM_MODEL_ROUTINE_NAME_ComputeArgumentsDestroy") &
     :: KIM_MODEL_ROUTINE_NAME_COMPUTE_ARGUMENTS_DESTROY
-  type(kim_model_routine_name_type), protected, &
+  type(kim_model_routine_name_type), protected, save, &
     bind(c, name="KIM_MODEL_ROUTINE_NAME_Destroy") &
     :: KIM_MODEL_ROUTINE_NAME_DESTROY
 

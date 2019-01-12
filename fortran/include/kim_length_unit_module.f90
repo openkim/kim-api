@@ -61,22 +61,22 @@ module kim_length_unit_module
     integer(c_int) length_unit_id
   end type kim_length_unit_type
 
-  type(kim_length_unit_type), protected, &
+  type(kim_length_unit_type), protected, save, &
     bind(c, name="KIM_LENGTH_UNIT_unused") &
     :: KIM_LENGTH_UNIT_UNUSED
-  type(kim_length_unit_type), protected, &
+  type(kim_length_unit_type), protected, save, &
     bind(c, name="KIM_LENGTH_UNIT_A") &
     :: KIM_LENGTH_UNIT_A
-  type(kim_length_unit_type), protected, &
+  type(kim_length_unit_type), protected, save, &
     bind(c, name="KIM_LENGTH_UNIT_Bhor") &
     :: KIM_LENGTH_UNIT_BOHR
-  type(kim_length_unit_type), protected, &
+  type(kim_length_unit_type), protected, save, &
     bind(c, name="KIM_LENGTH_UNIT_cm") &
     :: KIM_LENGTH_UNIT_CM
-  type(kim_length_unit_type), protected, &
+  type(kim_length_unit_type), protected, save, &
     bind(c, name="KIM_LENGTH_UNIT_m") &
     :: KIM_LENGTH_UNIT_M
-  type(kim_length_unit_type), protected, &
+  type(kim_length_unit_type), protected, save, &
     bind(c, name="KIM_LENGTH_UNIT_nm") &
     :: KIM_LENGTH_UNIT_NM
 
