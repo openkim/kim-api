@@ -111,7 +111,7 @@ bool LanguageName::operator!=(LanguageName const & rhs) const
   return languageNameID != rhs.languageNameID;
 }
 
-std::string const & LanguageName::String() const
+std::string const & LanguageName::ToString() const
 {
   LANGUAGE_NAME::StringMap::const_iterator iter
       = LANGUAGE_NAME::languageNameToString.find(*this);

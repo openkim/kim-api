@@ -113,7 +113,7 @@ bool TimeUnit::operator!=(TimeUnit const & rhs) const
   return timeUnitID != rhs.timeUnitID;
 }
 
-std::string const & TimeUnit::String() const
+std::string const & TimeUnit::ToString() const
 {
   TIME_UNIT::StringMap::const_iterator iter
       = TIME_UNIT::timeUnitToString.find(*this);

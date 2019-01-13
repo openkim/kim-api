@@ -51,7 +51,7 @@ class ComputeArgumentName
   ComputeArgumentName(std::string const & str);
   bool operator==(ComputeArgumentName const & rhs) const;
   bool operator!=(ComputeArgumentName const & rhs) const;
-  std::string const & String() const;
+  std::string const & ToString() const;
 };  // class ComputeArgumentName
 
 namespace COMPUTE_ARGUMENT_NAME

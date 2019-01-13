@@ -460,7 +460,7 @@ char const * KIM_Model_ToString(KIM_Model const * const model)
 {
   CONVERT_POINTER;
 
-  return pModel->String().c_str();
+  return pModel->ToString().c_str();
 }
 
 void KIM_Model_SetLogID(KIM_Model * const model, char const * const logID)

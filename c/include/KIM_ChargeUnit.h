@@ -87,9 +87,9 @@ int KIM_ChargeUnit_Equal(KIM_ChargeUnit const lhs, KIM_ChargeUnit const rhs);
 int KIM_ChargeUnit_NotEqual(KIM_ChargeUnit const lhs, KIM_ChargeUnit const rhs);
 
 /**
- ** \brief \copybrief KIM::ChargeUnit::String
+ ** \brief \copybrief KIM::ChargeUnit::ToString
  **
- ** \sa KIM::ChargeUnit::String
+ ** \sa KIM::ChargeUnit::ToString
  **
  ** \since 2.0
  **/

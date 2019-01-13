@@ -117,7 +117,7 @@ bool LengthUnit::operator!=(LengthUnit const & rhs) const
   return lengthUnitID != rhs.lengthUnitID;
 }
 
-std::string const & LengthUnit::String() const
+std::string const & LengthUnit::ToString() const
 {
   LENGTH_UNIT::StringMap::const_iterator iter
       = LENGTH_UNIT::lengthUnitToString.find(*this);

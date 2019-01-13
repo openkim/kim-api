@@ -116,7 +116,7 @@ KIM_ModelRefresh_ToString(KIM_ModelRefresh const * const modelRefresh)
 {
   CONVERT_POINTER;
 
-  return pModelRefresh->String().c_str();
+  return pModelRefresh->ToString().c_str();
 }
 
 }  // extern "C"

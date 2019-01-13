@@ -93,11 +93,11 @@ void ModelRefresh::LogEntry(LogVerbosity const logVerbosity,
   pImpl->LogEntry(logVerbosity, message, lineNumber, fileName);
 }
 
-std::string const & ModelRefresh::String() const
+std::string const & ModelRefresh::ToString() const
 {
   CONVERT_POINTER;
 
-  return pImpl->String();
+  return pImpl->ToString();
 }
 
 ModelRefresh::ModelRefresh() : pimpl(NULL) {}

@@ -361,7 +361,7 @@ char const * KIM_ModelDriverCreate_ToString(
 {
   CONVERT_POINTER;
 
-  return pModelDriverCreate->String().c_str();
+  return pModelDriverCreate->ToString().c_str();
 }
 
 }  // extern "C"

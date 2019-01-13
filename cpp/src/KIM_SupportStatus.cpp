@@ -113,7 +113,7 @@ bool SupportStatus::operator!=(SupportStatus const & rhs) const
   return supportStatusID != rhs.supportStatusID;
 }
 
-std::string const & SupportStatus::String() const
+std::string const & SupportStatus::ToString() const
 {
   SUPPORT_STATUS::StringMap::const_iterator iter
       = SUPPORT_STATUS::supportStatusToString.find(*this);

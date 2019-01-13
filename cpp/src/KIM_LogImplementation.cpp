@@ -91,7 +91,7 @@ int LogImplementation::Create(LogImplementation ** const logImplementation)
 
   std::stringstream ss;
   ss << "Log object created.  Default verbosity level is '"
-     << defaultLogVerbosity.top().String() << "'.";
+     << defaultLogVerbosity.top().ToString() << "'.";
   (*logImplementation)
       ->LogEntry(LOG_VERBOSITY::information, ss.str(), __LINE__, __FILE__);
 
@@ -166,8 +166,8 @@ void LogImplementation::PushVerbosity(LogVerbosity const logVerbosity)
   if (!Validate(logVerbosity)) logVerb = verbosity_.top();
 
   std::stringstream ss;
-  ss << "Log verbosity '" << logVerb.String() << "' pushed (on top of "
-     << verbosity_.top().String() << ").";
+  ss << "Log verbosity '" << logVerb.ToString() << "' pushed (on top of "
+     << verbosity_.top().ToString() << ").";
   LogEntry(LOG_VERBOSITY::information, ss.str(), __LINE__, __FILE__);
 
   verbosity_.push(logVerb);
@@ -176,13 +176,13 @@ void LogImplementation::PushVerbosity(LogVerbosity const logVerbosity)
 void LogImplementation::PopVerbosity()
 {
   std::stringstream ss;
-  ss << "Log verbosity '" << verbosity_.top().String()
+  ss << "Log verbosity '" << verbosity_.top().ToString()
      << "' popped, revealing '";
 
   verbosity_.pop();
   if (verbosity_.empty()) { verbosity_.push(defaultLogVerbosity.top()); }
 
-  ss << verbosity_.top().String() << "'.";
+  ss << verbosity_.top().ToString() << "'.";
   LogEntry(LOG_VERBOSITY::information, ss.str(), __LINE__, __FILE__);
 }
 
@@ -207,7 +207,7 @@ void LogImplementation::LogEntry(LogVerbosity const logVerbosity,
     else
     {
       std::string tm(GetTimeStamp());
-      std::string entry(EntryString(logVerb.String(),
+      std::string entry(EntryString(logVerb.ToString(),
                                     tm,
                                     sequence_,
                                     idString_,

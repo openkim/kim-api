@@ -76,7 +76,7 @@ int KIM_Numbering_NotEqual(KIM_Numbering const lhs, KIM_Numbering const rhs)
 
 char const * KIM_Numbering_ToString(KIM_Numbering const numbering)
 {
-  return makeNumberingCpp(numbering).String().c_str();
+  return makeNumberingCpp(numbering).ToString().c_str();
 }
 
 #include "KIM_Numbering.inc"

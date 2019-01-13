@@ -197,7 +197,7 @@ bool ComputeArgumentName::operator!=(ComputeArgumentName const & rhs) const
   return computeArgumentNameID != rhs.computeArgumentNameID;
 }
 
-std::string const & ComputeArgumentName::String() const
+std::string const & ComputeArgumentName::ToString() const
 {
   COMPUTE_ARGUMENT_NAME::StringMap::const_iterator iter
       = COMPUTE_ARGUMENT_NAME::computeArgumentNameToString.find(*this);

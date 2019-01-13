@@ -268,12 +268,13 @@ int ModelImplementation::Create(
   pModelImplementation = new ModelImplementation(new SharedLibrary(pLog), pLog);
 #if DEBUG_VERBOSITY
   std::string const callString
-      = "Create(" + numbering.String() + ", " + requestedLengthUnit.String()
-        + ", " + requestedEnergyUnit.String() + ", "
-        + requestedChargeUnit.String() + ", "
-        + requestedTemperatureUnit.String() + ", " + requestedTimeUnit.String()
-        + ", '" + modelName + "', " + SPTR(requestedUnitsAccepted) + ", "
-        + SPTR(modelImplementation) + ").";
+      = "Create(" + numbering.ToString() + ", " + requestedLengthUnit.ToString()
+        + ", " + requestedEnergyUnit.ToString() + ", "
+        + requestedChargeUnit.ToString() + ", "
+        + requestedTemperatureUnit.ToString() + ", "
+        + requestedTimeUnit.ToString() + ", '" + modelName + "', "
+        + SPTR(requestedUnitsAccepted) + ", " + SPTR(modelImplementation)
+        + ").";
   pModelImplementation->LogEntry(
       LOG_VERBOSITY::debug,
       "Created Log and ModelImplementation objects after enter " + callString,
@@ -374,9 +375,9 @@ int ModelImplementation::IsRoutinePresent(
     int * const required) const
 {
 #if DEBUG_VERBOSITY
-  std::string const callString = "IsRoutinePresent(" + modelRoutineName.String()
-                                 + ", " + SNUM(present) + ", " + SNUM(required)
-                                 + ").";
+  std::string const callString = "IsRoutinePresent("
+                                 + modelRoutineName.ToString() + ", "
+                                 + SNUM(present) + ", " + SNUM(required) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -591,9 +592,9 @@ int ModelImplementation::SetRoutinePointer(
 {
 #if DEBUG_VERBOSITY
   std::string const callString = "SetRoutinePointer("
-                                 + modelRoutineName.String() + ", "
-                                 + languageName.String() + ", " + SNUM(required)
-                                 + ", " + SFUNC(fptr) + ").";
+                                 + modelRoutineName.ToString() + ", "
+                                 + languageName.ToString() + ", "
+                                 + SNUM(required) + ", " + SFUNC(fptr) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -613,7 +614,7 @@ int ModelImplementation::SetRoutinePointer(
     {
       if (requiredByAPI_ModelRoutines.at(i) == modelRoutineName)
       {
-        LOG_ERROR(modelRoutineName.String() + " routine must be required.");
+        LOG_ERROR(modelRoutineName.ToString() + " routine must be required.");
         LOG_DEBUG("Exit 1=" + callString);
         return true;
       }
@@ -634,7 +635,7 @@ int ModelImplementation::SetSpeciesCode(SpeciesName const speciesName,
 {
 #if DEBUG_VERBOSITY
   std::string const callString
-      = "SetSpeciesCode(" + speciesName.String() + ", " + SNUM(code) + ").";
+      = "SetSpeciesCode(" + speciesName.ToString() + ", " + SNUM(code) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -661,7 +662,7 @@ int ModelImplementation::GetSpeciesSupportAndCode(
 {
 #if DEBUG_VERBOSITY
   std::string const callString
-      = "GetSpeciesSupportAndCode(" + speciesName.String() + ", "
+      = "GetSpeciesSupportAndCode(" + speciesName.ToString() + ", "
         + SPTR(speciesIsSupported) + ", " + SPTR(code) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
@@ -699,7 +700,7 @@ int ModelImplementation::SetModelNumbering(Numbering const numbering)
 {
 #if DEBUG_VERBOSITY
   std::string const callString
-      = "SetModelNumbering(" + numbering.String() + ").";
+      = "SetModelNumbering(" + numbering.ToString() + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -724,7 +725,7 @@ int ModelImplementation::SetSimulatorNumbering(Numbering const numbering)
 {
 #if DEBUG_VERBOSITY
   std::string const callString
-      = "SetSimulatorNumbering(" + numbering.String() + ").";
+      = "SetSimulatorNumbering(" + numbering.ToString() + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -752,9 +753,9 @@ int ModelImplementation::SetUnits(LengthUnit const lengthUnit,
 {
 #if DEBUG_VERBOSITY
   std::string const callString
-      = "SetUnits(" + lengthUnit.String() + ", " + energyUnit.String() + ", "
-        + chargeUnit.String() + ", " + temperatureUnit.String() + ", "
-        + timeUnit.String() + ").";
+      = "SetUnits(" + lengthUnit.ToString() + ", " + energyUnit.ToString()
+        + ", " + chargeUnit.ToString() + ", " + temperatureUnit.ToString()
+        + ", " + timeUnit.ToString() + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -1614,16 +1615,16 @@ int ModelImplementation::ConvertUnit(LengthUnit const fromLengthUnit,
   //
   // #if DEBUG_VERBOSITY
   //   std::string const callString = "ConvertUnit("
-  //       + fromLengthUnit.String() + ", "
-  //       + fromEnergyUnit.String() + ", "
-  //       + fromChargeUnit.String() + ", "
-  //       + fromTemperatureUnit.String() + ", "
-  //       + fromTimeUnit.String() + ", "
-  //       + toLengthUnit.String() + ", "
-  //       + toEnergyUnit.String() + ", "
-  //       + toChargeUnit.String() + ", "
-  //       + toTemperatureUnit.String() + ", "
-  //       + toTimeUnit.String() + ", "
+  //       + fromLengthUnit.ToString() + ", "
+  //       + fromEnergyUnit.ToString() + ", "
+  //       + fromChargeUnit.ToString() + ", "
+  //       + fromTemperatureUnit.ToString() + ", "
+  //       + fromTimeUnit.ToString() + ", "
+  //       + toLengthUnit.ToString() + ", "
+  //       + toEnergyUnit.ToString() + ", "
+  //       + toChargeUnit.ToString() + ", "
+  //       + toTemperatureUnit.ToString() + ", "
+  //       + toTimeUnit.ToString() + ", "
   //       + SNUM(lengthExponent) + ", "
   //       + SNUM(energyExponent) + ", "
   //       + SNUM(chargeExponent) + ", "
@@ -1746,7 +1747,7 @@ void ModelImplementation::PushLogVerbosity(LogVerbosity const logVerbosity)
 {
 #if DEBUG_VERBOSITY
   std::string const callString
-      = "PushLogVerbosity(" + logVerbosity.String() + ").";
+      = "PushLogVerbosity(" + logVerbosity.ToString() + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -1785,10 +1786,10 @@ void ModelImplementation::LogEntry(LogVerbosity const logVerbosity,
   log_->LogEntry(logVerbosity, message, lineNumber, fileName);
 }
 
-std::string const & ModelImplementation::String() const
+std::string const & ModelImplementation::ToString() const
 {
 #if DEBUG_VERBOSITY
-  std::string const callString = "String().";
+  std::string const callString = "ToString().";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -1833,29 +1834,30 @@ std::string const & ModelImplementation::String() const
              MODEL_ROUTINE_NAME::Comparator>::const_iterator fptrResult
         = routineFunction_.find(modelRoutineName);
 
-    ss << "\t" << std::setw(25) << modelRoutineName.String() << std::setw(10)
-       << langResult->second.String() << std::setw(10) << requiredResult->second
-       << std::setw(25) << SFUNC(fptrResult->second) << "\n";
+    ss << "\t" << std::setw(25) << modelRoutineName.ToString() << std::setw(10)
+       << langResult->second.ToString() << std::setw(10)
+       << requiredResult->second << std::setw(25) << SFUNC(fptrResult->second)
+       << "\n";
   }
   ss << "\n";
 
-  ss << "Numbering : " << modelNumbering_.String() << "\n\n";
+  ss << "Numbering : " << modelNumbering_.ToString() << "\n\n";
 
   ss << "Units : \n"
         "\tLength Unit      : "
-     << lengthUnit_.String()
+     << lengthUnit_.ToString()
      << "\n"
         "\tEnergy Unit      : "
-     << energyUnit_.String()
+     << energyUnit_.ToString()
      << "\n"
         "\tCharge Unit      : "
-     << chargeUnit_.String()
+     << chargeUnit_.ToString()
      << "\n"
         "\tTemperature Unit : "
-     << temperatureUnit_.String()
+     << temperatureUnit_.ToString()
      << "\n"
         "\tTime Unit        : "
-     << timeUnit_.String() << "\n\n";
+     << timeUnit_.ToString() << "\n\n";
 
   if (influenceDistance_ == NULL)
     ss << "Influence Distance : "
@@ -1898,7 +1900,7 @@ std::string const & ModelImplementation::String() const
        spec != supportedSpecies_.end();
        ++spec)
   {
-    ss << "\t" << std::setw(specWidth) << (spec->first).String()
+    ss << "\t" << std::setw(specWidth) << (spec->first).ToString()
        << std::setw(specWidth) << spec->second << "\n";
   }
   ss << "\n";
@@ -1917,9 +1919,9 @@ std::string const & ModelImplementation::String() const
   for (int i = 0; i < numberOfParameters; ++i)
   {
     ss << "\t" << std::setw(8) << i << std::setw(10)
-       << parameterDataType_[i].String() << std::setw(10) << parameterExtent_[i]
-       << std::setw(15) << SPTR(parameterPointer_[i]) << parameterName_[i]
-       << "\n";
+       << parameterDataType_[i].ToString() << std::setw(10)
+       << parameterExtent_[i] << std::setw(15) << SPTR(parameterPointer_[i])
+       << parameterName_[i] << "\n";
   }
   ss << "\n";
 
@@ -2016,11 +2018,11 @@ int ModelImplementation::ModelCreate(
 {
 #if DEBUG_VERBOSITY
   std::string const callString
-      = "ModelCreate(" + numbering.String() + ", "
-        + requestedLengthUnit.String() + ", " + requestedEnergyUnit.String()
-        + ", " + requestedChargeUnit.String() + ", "
-        + requestedTemperatureUnit.String() + ", " + requestedTimeUnit.String()
-        + ", '" + modelName + "').";
+      = "ModelCreate(" + numbering.ToString() + ", "
+        + requestedLengthUnit.ToString() + ", " + requestedEnergyUnit.ToString()
+        + ", " + requestedChargeUnit.ToString() + ", "
+        + requestedTemperatureUnit.ToString() + ", "
+        + requestedTimeUnit.ToString() + ", '" + modelName + "').";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -2187,7 +2189,7 @@ int ModelImplementation::ModelCreate(
       if (funcResult->second == NULL)
       {
         LOG_ERROR("Model supplied Create() routine did not set pointer for "
-                  + modelRoutineName.String() + ".");
+                  + modelRoutineName.ToString() + ".");
         LOG_DEBUG("Exit 1=" + callString);
         return true;
       }
@@ -2199,7 +2201,7 @@ int ModelImplementation::ModelCreate(
     if (routineFunction_[MODEL_ROUTINE_NAME::Refresh] == NULL)
     {  // Must be provided if parameter pointers set
       LOG_ERROR("Model supplied Create() routine did not set pointer for "
-                + MODEL_ROUTINE_NAME::Refresh.String() + ".");
+                + MODEL_ROUTINE_NAME::Refresh.ToString() + ".");
       LOG_DEBUG("Exit 1=" + callString);
       return true;
     }
@@ -2209,7 +2211,7 @@ int ModelImplementation::ModelCreate(
     if (routineFunction_[MODEL_ROUTINE_NAME::Refresh] != NULL)
     {  // Must not be provided if no parameters set
       LOG_ERROR("Model supplied Create() routine set pointer for "
-                + MODEL_ROUTINE_NAME::Refresh.String()
+                + MODEL_ROUTINE_NAME::Refresh.ToString()
                 + " but did not "
                   "set parameter pointer(s).");
       LOG_DEBUG("Exit 1=" + callString);
@@ -2218,7 +2220,7 @@ int ModelImplementation::ModelCreate(
     if (routineFunction_[MODEL_ROUTINE_NAME::WriteParameterizedModel] != NULL)
     {  // Must not be provided if no parameters set
       LOG_ERROR("Model supplied Create() routine set pointer for "
-                + MODEL_ROUTINE_NAME::WriteParameterizedModel.String()
+                + MODEL_ROUTINE_NAME::WriteParameterizedModel.ToString()
                 + " but did not "
                   "set parameter pointer(s).");
       LOG_DEBUG("Exit 1=" + callString);
@@ -2788,10 +2790,10 @@ int ModelImplementation::InitializeStandAloneModel(
 {
 #if DEBUG_VERBOSITY
   std::string const callString
-      = "InitializeStandAloneModel(" + requestedLengthUnit.String() + ", "
-        + requestedEnergyUnit.String() + ", " + requestedChargeUnit.String()
-        + ", " + requestedTemperatureUnit.String() + ", "
-        + requestedTimeUnit.String() + ").";
+      = "InitializeStandAloneModel(" + requestedLengthUnit.ToString() + ", "
+        + requestedEnergyUnit.ToString() + ", " + requestedChargeUnit.ToString()
+        + ", " + requestedTemperatureUnit.ToString() + ", "
+        + requestedTimeUnit.ToString() + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -2910,10 +2912,10 @@ int ModelImplementation::InitializeParameterizedModel(
 {
 #if DEBUG_VERBOSITY
   std::string const callString
-      = "InitializeParameterizedModel(" + requestedLengthUnit.String() + ", "
-        + requestedEnergyUnit.String() + ", " + requestedChargeUnit.String()
-        + ", " + requestedTemperatureUnit.String() + ", "
-        + requestedTimeUnit.String() + ").";
+      = "InitializeParameterizedModel(" + requestedLengthUnit.ToString() + ", "
+        + requestedEnergyUnit.ToString() + ", " + requestedChargeUnit.ToString()
+        + ", " + requestedTemperatureUnit.ToString() + ", "
+        + requestedTimeUnit.ToString() + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -3146,7 +3148,7 @@ int ModelImplementation::Validate(ChargeUnit const chargeUnit)
   // No logging for Validate: no log object available
   //
   // #if DEBUG_VERBOSITY
-  //   std::string const callString = "Validate(" + chargeUnit.String()
+  //   std::string const callString = "Validate(" + chargeUnit.ToString()
   //       + ").";
   // #endif
   //   LOG_DEBUG("Enter  " + callString);
@@ -3176,7 +3178,7 @@ int ModelImplementation::Validate(DataType const dataType)
   // No logging for Validate: no log object available
   //
   // #if DEBUG_VERBOSITY
-  //   std::string const callString = "Validate(" + dataType.String()
+  //   std::string const callString = "Validate(" + dataType.ToString()
   //       + ").";
   // #endif
   //   LOG_DEBUG("Enter  " + callString);
@@ -3206,7 +3208,8 @@ int ModelImplementation::Validate(EnergyUnit const energyUnit)
   // No logging for Validate: no log object available
   //
   // #if DEBUG_VERBOSITY
-  //   std::string const callString = "Validate(" + energyUnit.String() + ").";
+  //   std::string const callString = "Validate(" + energyUnit.ToString() +
+  //   ").";
   // #endif
   //   LOG_DEBUG("Enter  " + callString);
 
@@ -3235,7 +3238,7 @@ int ModelImplementation::Validate(LanguageName const languageName)
   // No logging for Validate: no log object available
   //
   // #if DEBUG_VERBOSITY
-  //   std::string const callString = "Validate(" + languageName.String()
+  //   std::string const callString = "Validate(" + languageName.ToString()
   //       + ").";
   // #endif
   //   LOG_DEBUG("Enter  " + callString);
@@ -3265,7 +3268,7 @@ int ModelImplementation::Validate(LengthUnit const lengthUnit)
   // No logging for Validate: no log object available
   //
   // #if DEBUG_VERBOSITY
-  //   std::string const callString = "Validate(" + lengthUnit.String()
+  //   std::string const callString = "Validate(" + lengthUnit.ToString()
   //       + ").";
   // #endif
   //   LOG_DEBUG("Enter  " + callString);
@@ -3295,7 +3298,7 @@ int ModelImplementation::Validate(Numbering const numbering)
   // No logging for Validate: no log object available
   //
   // #if DEBUG_VERBOSITY
-  //   std::string const callString = "Validate(" + numbering.String()
+  //   std::string const callString = "Validate(" + numbering.ToString()
   //       + ").";
   // #endif
   //   LOG_DEBUG("Enter  " + callString);
@@ -3325,7 +3328,7 @@ int ModelImplementation::Validate(ModelRoutineName const modelRoutineName)
   // No logging for Validate: no log object available
   //
   // #if DEBUG_VERBOSITY
-  //   std::string const callString = "Validate(" + modelRoutineName.String()
+  //   std::string const callString = "Validate(" + modelRoutineName.ToString()
   //       + ").";
   // #endif
   //   LOG_DEBUG("Enter  " + callString);
@@ -3355,7 +3358,7 @@ int ModelImplementation::Validate(SpeciesName const speciesName)
   // No logging for Validate: no log function available
   //
   // #if DEBUG_VERBOSITY
-  //   std::string const callString = "Validate(" + speciesName.String()
+  //   std::string const callString = "Validate(" + speciesName.ToString()
   //       + ").";
   // #endif
   //   LOG_DEBUG("Enter  " + callString);
@@ -3385,7 +3388,7 @@ int ModelImplementation::Validate(SupportStatus const supportStatus)
   // No logging for Validate: no log object available
   //
   // #if DEBUG_VERBOSITY
-  //   std::string const callString = "Validate(" + supportStatus.String()
+  //   std::string const callString = "Validate(" + supportStatus.ToString()
   //       + ").";
   // #endif
   //   LOG_DEBUG("Enter  " + callString);
@@ -3415,7 +3418,7 @@ int ModelImplementation::Validate(TemperatureUnit const temperatureUnit)
   // No logging for Validate: no log object available
   //
   // #if DEBUG_VERBOSITY
-  //   std::string const callString = "Validate(" + temperatureUnit.String()
+  //   std::string const callString = "Validate(" + temperatureUnit.ToString()
   //       + ").";
   // #endif
   //   LOG_DEBUG("Enter  " + callString);
@@ -3445,7 +3448,7 @@ int ModelImplementation::Validate(TimeUnit const timeUnit)
   // No logging for Validate: no log object available
   //
   // #if DEBUG_VERBOSITY
-  //   std::string const callString = "Validate(" + timeUnit.String()
+  //   std::string const callString = "Validate(" + timeUnit.ToString()
   //       + ").";
   // #endif
   //   LOG_DEBUG("Enter  " + callString);

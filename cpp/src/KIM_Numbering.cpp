@@ -108,7 +108,7 @@ bool Numbering::operator!=(Numbering const & rhs) const
   return numberingID != rhs.numberingID;
 }
 
-std::string const & Numbering::String() const
+std::string const & Numbering::ToString() const
 {
   NUMBERING::StringMap::const_iterator iter
       = NUMBERING::numberingToString.find(*this);

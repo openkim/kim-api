@@ -113,7 +113,7 @@ bool ChargeUnit::operator!=(ChargeUnit const & rhs) const
   return chargeUnitID != rhs.chargeUnitID;
 }
 
-std::string const & ChargeUnit::String() const
+std::string const & ChargeUnit::ToString() const
 {
   CHARGE_UNIT::StringMap::const_iterator iter
       = CHARGE_UNIT::chargeUnitToString.find(*this);

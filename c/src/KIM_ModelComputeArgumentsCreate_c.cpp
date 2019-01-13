@@ -167,7 +167,7 @@ char const * KIM_ModelComputeArgumentsCreate_ToString(
 {
   CONVERT_POINTER;
 
-  return pModelComputeArgumentsCreate->String().c_str();
+  return pModelComputeArgumentsCreate->ToString().c_str();
 }
 
 }  // extern "C"

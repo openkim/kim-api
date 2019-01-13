@@ -132,7 +132,7 @@ bool LogVerbosity::operator!=(LogVerbosity const & rhs) const
   return logVerbosityID != rhs.logVerbosityID;
 }
 
-std::string const & LogVerbosity::String() const
+std::string const & LogVerbosity::ToString() const
 {
   LOG_VERBOSITY::StringMap::const_iterator iter
       = LOG_VERBOSITY::logVerbosityToString.find(*this);

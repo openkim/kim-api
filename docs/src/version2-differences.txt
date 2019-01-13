@@ -392,27 +392,27 @@ a guiding principle.
   <td>
     KIM_API_print()
   </td><td>
-    KIM::ComputeArguments::String()
+    KIM::ComputeArguments::ToString()
     <br>
-    KIM::Model::String()
+    KIM::Model::ToString()
     <br>
-    KIM::ModelCompute::String()
+    KIM::ModelCompute::ToString()
     <br>
-    KIM::ModelComputeArguments::String()
+    KIM::ModelComputeArguments::ToString()
     <br>
-    KIM::ModelComputeArgumentsCreate::String()
+    KIM::ModelComputeArgumentsCreate::ToString()
     <br>
-    KIM::ModelComputeArgumentsDestroy::String()
+    KIM::ModelComputeArgumentsDestroy::ToString()
     <br>
-    KIM::ModelCreate::String()
+    KIM::ModelCreate::ToString()
     <br>
-    KIM::ModelExtension::String()
+    KIM::ModelExtension::ToString()
     <br>
-    KIM::ModelDestroy::String()
+    KIM::ModelDestroy::ToString()
     <br>
-    KIM::ModelDriverCreate::String()
+    KIM::ModelDriverCreate::ToString()
     <br>
-    KIM::ModelRefresh::String()
+    KIM::ModelRefresh::ToString()
   </td><td>
     KIM_ComputeArguments_ToString()
     <br>
@@ -3290,7 +3290,7 @@ and comparison routines are listed in the table below.
 </tr>
 <tr>
   <td>
-    KIM::ChargeUnit::String()
+    KIM::ChargeUnit::ToString()
   </td><td>
     KIM_ChargeUnit_ToString()
   </td><td>
@@ -3366,7 +3366,7 @@ and comparison routines are listed in the table below.
 </tr>
 <tr>
   <td>
-    KIM::ModelRoutineName::String()
+    KIM::ModelRoutineName::ToString()
   </td><td>
     KIM_ModelRoutineName_ToString()
   </td><td>
@@ -3442,7 +3442,7 @@ and comparison routines are listed in the table below.
 </tr>
 <tr>
   <td>
-    KIM::ComputeArgumentName::String()
+    KIM::ComputeArgumentName::ToString()
   </td><td>
     KIM_ComputeArgumentName_ToString()
   </td><td>
@@ -3527,7 +3527,7 @@ and comparison routines are listed in the table below.
 </tr>
 <tr>
   <td>
-    KIM::ComputeCallbackName::String()
+    KIM::ComputeCallbackName::ToString()
   </td><td>
     KIM_ComputeCallbackName_ToString()
   </td><td>
@@ -3603,7 +3603,7 @@ and comparison routines are listed in the table below.
 </tr>
 <tr>
   <td>
-    KIM::DataType::String()
+    KIM::DataType::ToString()
   </td><td>
     KIM_DataType_ToString()
   </td><td>
@@ -3679,7 +3679,7 @@ and comparison routines are listed in the table below.
 </tr>
 <tr>
   <td>
-    KIM::EnergyUnit::String()
+    KIM::EnergyUnit::ToString()
   </td><td>
     KIM_EnergyUnit_ToString()
   </td><td>
@@ -3755,7 +3755,7 @@ and comparison routines are listed in the table below.
 </tr>
 <tr>
   <td>
-    KIM::LanguageName::String()
+    KIM::LanguageName::ToString()
   </td><td>
     KIM_LanguageName_ToString()
   </td><td>
@@ -3831,7 +3831,7 @@ and comparison routines are listed in the table below.
 </tr>
 <tr>
   <td>
-    KIM::LengthUnit::String()
+    KIM::LengthUnit::ToString()
   </td><td>
     KIM_LengthUnit_ToString()
   </td><td>
@@ -3951,7 +3951,7 @@ and comparison routines are listed in the table below.
 </tr>
 <tr>
   <td>
-    KIM::LogVerbosity::String()
+    KIM::LogVerbosity::ToString()
   </td><td>
     KIM_LogVerbosity_ToString()
   </td><td>
@@ -4027,7 +4027,7 @@ and comparison routines are listed in the table below.
 </tr>
 <tr>
   <td>
-    KIM::Numbering::String()
+    KIM::Numbering::ToString()
   </td><td>
     KIM_Numbering_ToString()
   </td><td>
@@ -4103,7 +4103,7 @@ and comparison routines are listed in the table below.
 </tr>
 <tr>
   <td>
-    KIM::SpeciesName::String()
+    KIM::SpeciesName::ToString()
   </td><td>
     KIM_SpeciesName_ToString()
   </td><td>
@@ -4179,7 +4179,7 @@ and comparison routines are listed in the table below.
 </tr>
 <tr>
   <td>
-    KIM::SupportStatus::String()
+    KIM::SupportStatus::ToString()
   </td><td>
     KIM_SupportStatus_ToString()
   </td><td>
@@ -4255,7 +4255,7 @@ and comparison routines are listed in the table below.
 </tr>
 <tr>
   <td>
-    KIM::TemperatureUnit::String()
+    KIM::TemperatureUnit::ToString()
   </td><td>
     KIM_TemperatureUnit_ToString()
   </td><td>
@@ -4331,7 +4331,7 @@ and comparison routines are listed in the table below.
 </tr>
 <tr>
   <td>
-    KIM::TimeUnit::String()
+    KIM::TimeUnit::ToString()
   </td><td>
     KIM_TimeUnit_ToString()
   </td><td>

@@ -83,7 +83,7 @@ int KIM_ModelRoutineName_NotEqual(KIM_ModelRoutineName const lhs,
 char const *
 KIM_ModelRoutineName_ToString(KIM_ModelRoutineName modelRoutineName)
 {
-  return makeModelRoutineNameCpp(modelRoutineName).String().c_str();
+  return makeModelRoutineNameCpp(modelRoutineName).ToString().c_str();
 }
 
 // Order doesn't matter as long as all values are unique

@@ -95,11 +95,11 @@ void ModelWriteParameterizedModel::LogEntry(LogVerbosity const logVerbosity,
   pImpl->LogEntry(logVerbosity, message, lineNumber, fileName);
 }
 
-std::string const & ModelWriteParameterizedModel::String() const
+std::string const & ModelWriteParameterizedModel::ToString() const
 {
   CONVERT_POINTER;
 
-  return pImpl->String();
+  return pImpl->ToString();
 }
 
 ModelWriteParameterizedModel::ModelWriteParameterizedModel() : pimpl(NULL) {}

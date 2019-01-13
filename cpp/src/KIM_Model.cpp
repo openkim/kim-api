@@ -207,7 +207,7 @@ void Model::GetSimulatorBufferPointer(void ** const ptr) const
   pimpl->GetSimulatorBufferPointer(ptr);
 }
 
-std::string const & Model::String() const { return pimpl->String(); }
+std::string const & Model::ToString() const { return pimpl->ToString(); }
 
 void Model::SetLogID(std::string const & logID) { pimpl->SetLogID(logID); }
 

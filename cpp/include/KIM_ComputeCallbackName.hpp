@@ -48,7 +48,7 @@ class ComputeCallbackName
   ComputeCallbackName(std::string const & str);
   bool operator==(ComputeCallbackName const & rhs) const;
   bool operator!=(ComputeCallbackName const & rhs) const;
-  std::string const & String() const;
+  std::string const & ToString() const;
 };  // class ComputeCallbackName
 
 namespace COMPUTE_CALLBACK_NAME

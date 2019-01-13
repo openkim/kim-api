@@ -134,7 +134,7 @@ bool ComputeCallbackName::operator!=(ComputeCallbackName const & rhs) const
   return computeCallbackNameID != rhs.computeCallbackNameID;
 }
 
-std::string const & ComputeCallbackName::String() const
+std::string const & ComputeCallbackName::ToString() const
 {
   COMPUTE_CALLBACK_NAME::StringMap::const_iterator iter
       = COMPUTE_CALLBACK_NAME::computeCallbackNameToString.find(*this);

@@ -79,7 +79,7 @@ int KIM_LanguageName_NotEqual(KIM_LanguageName const lhs,
 
 char const * KIM_LanguageName_ToString(KIM_LanguageName languageName)
 {
-  return makeLanguageNameCpp(languageName).String().c_str();
+  return makeLanguageNameCpp(languageName).ToString().c_str();
 }
 
 // Order doesn't matter as long as all values are unique

@@ -93,7 +93,7 @@ KIM_ModelCompute_ToString(KIM_ModelCompute const * const modelCompute)
 {
   CONVERT_POINTER;
 
-  return pModelCompute->String().c_str();
+  return pModelCompute->ToString().c_str();
 }
 
 }  // extern "C"

@@ -48,7 +48,7 @@ class DataType
   DataType(std::string const & str);
   bool operator==(DataType const & rhs) const;
   bool operator!=(DataType const & rhs) const;
-  std::string const & String() const;
+  std::string const & ToString() const;
 };  // class DataType
 
 namespace DATA_TYPE

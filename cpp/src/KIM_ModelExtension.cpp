@@ -121,11 +121,11 @@ void ModelExtension::LogEntry(LogVerbosity const logVerbosity,
   pImpl->LogEntry(logVerbosity, message, lineNumber, fileName);
 }
 
-std::string const & ModelExtension::String() const
+std::string const & ModelExtension::ToString() const
 {
   CONVERT_POINTER;
 
-  return pImpl->String();
+  return pImpl->ToString();
 }
 
 ModelExtension::ModelExtension() : pimpl(NULL) {}

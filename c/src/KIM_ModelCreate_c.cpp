@@ -316,7 +316,7 @@ char const * KIM_ModelCreate_ToString(KIM_ModelCreate const * const modelCreate)
 {
   CONVERT_POINTER;
 
-  return pModelCreate->String().c_str();
+  return pModelCreate->ToString().c_str();
 }
 
 }  // extern "C"

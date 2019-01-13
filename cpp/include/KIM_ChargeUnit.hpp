@@ -108,7 +108,7 @@ class ChargeUnit
   /// \sa KIM_ChargeUnit_ToString
   ///
   /// \since 2.0
-  std::string const & String() const;
+  std::string const & ToString() const;
 };  // class ChargeUnit
 
 /// Contains the enumeration constants and the discovery routines for the

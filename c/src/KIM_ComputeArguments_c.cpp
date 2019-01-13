@@ -234,7 +234,7 @@ char const * KIM_ComputeArguments_ToString(
 {
   CONVERT_POINTER;
 
-  return pComputeArguments->String().c_str();
+  return pComputeArguments->ToString().c_str();
 }
 
 void KIM_ComputeArguments_SetLogID(

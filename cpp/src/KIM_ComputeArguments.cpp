@@ -105,7 +105,10 @@ void ComputeArguments::GetSimulatorBufferPointer(void ** const ptr) const
   pimpl->GetSimulatorBufferPointer(ptr);
 }
 
-std::string const & ComputeArguments::String() const { return pimpl->String(); }
+std::string const & ComputeArguments::ToString() const
+{
+  return pimpl->ToString();
+}
 
 void ComputeArguments::SetLogID(std::string const & logID)
 {

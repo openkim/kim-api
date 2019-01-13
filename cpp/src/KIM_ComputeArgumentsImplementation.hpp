@@ -152,7 +152,7 @@ class ComputeArgumentsImplementation
   void SetSimulatorBufferPointer(void * const ptr);
   void GetSimulatorBufferPointer(void ** const ptr) const;
 
-  std::string const & String() const;
+  std::string const & ToString() const;
 
   void SetLogID(std::string const & logID);
   void PushLogVerbosity(LogVerbosity const logVerbosity);

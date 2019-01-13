@@ -78,7 +78,7 @@ int KIM_SupportStatus_NotEqual(KIM_SupportStatus const lhs,
 
 char const * KIM_SupportStatus_ToString(KIM_SupportStatus const supportStatus)
 {
-  return makeSupportStatusCpp(supportStatus).String().c_str();
+  return makeSupportStatusCpp(supportStatus).ToString().c_str();
 }
 
 #include "KIM_SupportStatus.inc"

@@ -48,7 +48,7 @@ class LanguageName
   LanguageName(std::string const str);
   bool operator==(LanguageName const & rhs) const;
   bool operator!=(LanguageName const & rhs) const;
-  std::string const & String() const;
+  std::string const & ToString() const;
 };  // class LanguageName
 
 namespace LANGUAGE_NAME

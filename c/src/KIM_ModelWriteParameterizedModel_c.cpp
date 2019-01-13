@@ -127,7 +127,7 @@ char const * KIM_ModelWriteParameterizedModel_ToString(
 {
   CONVERT_POINTER;
 
-  return pModelWriteParameterizedModel->String().c_str();
+  return pModelWriteParameterizedModel->ToString().c_str();
 }
 
 }  // extern "C"

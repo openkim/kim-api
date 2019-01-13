@@ -101,7 +101,7 @@ int KIM_LogVerbosity_NotEqual(KIM_LogVerbosity const lhs,
 
 char const * KIM_LogVerbosity_ToString(KIM_LogVerbosity const logVerbosity)
 {
-  return makeLogVerbosityCpp(logVerbosity).String().c_str();
+  return makeLogVerbosityCpp(logVerbosity).ToString().c_str();
 }
 
 KIM_LogVerbosity const KIM_LOG_VERBOSITY_silent

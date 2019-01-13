@@ -110,7 +110,7 @@ bool TemperatureUnit::operator!=(TemperatureUnit const & rhs) const
   return temperatureUnitID != rhs.temperatureUnitID;
 }
 
-std::string const & TemperatureUnit::String() const
+std::string const & TemperatureUnit::ToString() const
 {
   TEMPERATURE_UNIT::StringMap::const_iterator iter
       = TEMPERATURE_UNIT::temperatureUnitToString.find(*this);

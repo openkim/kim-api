@@ -352,9 +352,9 @@ void KIM_Model_GetSimulatorBufferPointer(KIM_Model const * const model,
                                          void ** const ptr);
 
 /**
- ** \brief \copybrief KIM::Model::String
+ ** \brief \copybrief KIM::Model::ToString
  **
- ** \sa KIM::Model::String
+ ** \sa KIM::Model::ToString
  **
  ** \since 2.0
  **/

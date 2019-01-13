@@ -210,7 +210,7 @@ char const * KIM_ModelComputeArguments_ToString(
 {
   CONVERT_POINTER;
 
-  return pModelComputeArguments->String().c_str();
+  return pModelComputeArguments->ToString().c_str();
 }
 
 }  // extern "C"

@@ -94,7 +94,7 @@ KIM_ModelDestroy_ToString(KIM_ModelDestroy const * const modelDestroy)
 {
   CONVERT_POINTER;
 
-  return pModelDestroy->String().c_str();
+  return pModelDestroy->ToString().c_str();
 }
 
 }  // extern "C"

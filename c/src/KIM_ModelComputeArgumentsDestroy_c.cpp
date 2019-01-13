@@ -99,7 +99,7 @@ char const * KIM_ModelComputeArgumentsDestroy_ToString(
 {
   CONVERT_POINTER;
 
-  return pModelComputeArgumentsDestroy->String().c_str();
+  return pModelComputeArgumentsDestroy->ToString().c_str();
 }
 
 }  // extern "C"

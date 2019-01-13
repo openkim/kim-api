@@ -77,7 +77,7 @@ int KIM_ChargeUnit_NotEqual(KIM_ChargeUnit const lhs, KIM_ChargeUnit const rhs)
 
 char const * KIM_ChargeUnit_ToString(KIM_ChargeUnit const chargeUnit)
 {
-  return makeChargeUnitCpp(chargeUnit).String().c_str();
+  return makeChargeUnitCpp(chargeUnit).ToString().c_str();
 }
 
 #include "KIM_ChargeUnit.inc"

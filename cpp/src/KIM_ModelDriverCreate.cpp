@@ -206,11 +206,11 @@ void ModelDriverCreate::LogEntry(LogVerbosity const logVerbosity,
   pImpl->LogEntry(logVerbosity, message, lineNumber, fileName);
 }
 
-std::string const & ModelDriverCreate::String() const
+std::string const & ModelDriverCreate::ToString() const
 {
   CONVERT_POINTER;
 
-  return pImpl->String();
+  return pImpl->ToString();
 }
 
 ModelDriverCreate::ModelDriverCreate() : pimpl(NULL) {}

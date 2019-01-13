@@ -88,7 +88,7 @@ class ModelComputeArguments
                 int const lineNumber,
                 std::string const & fileName) const;
 
-  std::string const & String() const;
+  std::string const & ToString() const;
 
  private:
   // do not allow copy constructor or operator=

@@ -142,7 +142,7 @@ bool ModelRoutineName::operator!=(ModelRoutineName const & rhs) const
   return modelRoutineNameID != rhs.modelRoutineNameID;
 }
 
-std::string const & ModelRoutineName::String() const
+std::string const & ModelRoutineName::ToString() const
 {
   MODEL_ROUTINE_NAME::StringMap::const_iterator iter
       = MODEL_ROUTINE_NAME::modelRoutineNameToString.find(*this);

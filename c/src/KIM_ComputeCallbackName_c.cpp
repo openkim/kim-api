@@ -84,7 +84,7 @@ int KIM_ComputeCallbackNameNot_Equal(KIM_ComputeCallbackName const lhs,
 char const *
 KIM_ComputeCallbackName_ToString(KIM_ComputeCallbackName computeCallbackName)
 {
-  return makeComputeCallbackNameCpp(computeCallbackName).String().c_str();
+  return makeComputeCallbackNameCpp(computeCallbackName).ToString().c_str();
 }
 
 // Order doesn't matter as long as all values are unique

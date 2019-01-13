@@ -77,7 +77,7 @@ int KIM_EnergyUnit_NotEqual(KIM_EnergyUnit const lhs, KIM_EnergyUnit const rhs)
 
 char const * KIM_EnergyUnit_ToString(KIM_EnergyUnit const energyUnit)
 {
-  return makeEnergyUnitCpp(energyUnit).String().c_str();
+  return makeEnergyUnitCpp(energyUnit).ToString().c_str();
 }
 
 #include "KIM_EnergyUnit.inc"

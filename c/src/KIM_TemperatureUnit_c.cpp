@@ -82,7 +82,7 @@ int KIM_TemperatureUnit_NotEqual(KIM_TemperatureUnit const lhs,
 char const *
 KIM_TemperatureUnit_ToString(KIM_TemperatureUnit const temperatureUnit)
 {
-  return makeTemperatureUnitCpp(temperatureUnit).String().c_str();
+  return makeTemperatureUnitCpp(temperatureUnit).ToString().c_str();
 }
 
 #include "KIM_TemperatureUnit.inc"

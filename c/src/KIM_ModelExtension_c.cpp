@@ -174,7 +174,7 @@ KIM_ModelExtension_ToString(KIM_ModelExtension const * const modelExtension)
 {
   CONVERT_POINTER;
 
-  return pModelExtension->String().c_str();
+  return pModelExtension->ToString().c_str();
 }
 
 }  // extern "C"

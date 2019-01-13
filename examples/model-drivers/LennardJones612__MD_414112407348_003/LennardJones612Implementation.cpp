@@ -462,7 +462,7 @@ int LennardJones612Implementation::ProcessParameterFiles(
     if (cutoffs_[(i * N + i - (i * i + i) / 2)] == -1)
     {
       strcat(nextLine, "  ");
-      strcat(nextLine, (speciesNameVector[i].String()).c_str());
+      strcat(nextLine, (speciesNameVector[i].ToString()).c_str());
       ier = -1;
     }
   }

@@ -70,11 +70,11 @@ void ModelCompute::LogEntry(LogVerbosity const logVerbosity,
   pImpl->LogEntry(logVerbosity, message, lineNumber, fileName);
 }
 
-std::string const & ModelCompute::String() const
+std::string const & ModelCompute::ToString() const
 {
   CONVERT_POINTER;
 
-  return pImpl->String();
+  return pImpl->ToString();
 }
 
 ModelCompute::ModelCompute() : pimpl(NULL) {}

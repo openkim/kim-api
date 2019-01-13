@@ -77,7 +77,7 @@ int KIM_TimeUnit_NotEqual(KIM_TimeUnit const lhs, KIM_TimeUnit const rhs)
 
 char const * KIM_TimeUnit_ToString(KIM_TimeUnit const tiemUnit)
 {
-  return makeTimeUnitCpp(tiemUnit).String().c_str();
+  return makeTimeUnitCpp(tiemUnit).ToString().c_str();
 }
 
 #include "KIM_TimeUnit.inc"

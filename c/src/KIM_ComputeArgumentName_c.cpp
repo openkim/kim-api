@@ -100,7 +100,7 @@ int KIM_ComputeArgumentName_NotEqual(KIM_ComputeArgumentName const lhs,
 char const *
 KIM_ComputeArgumentName_ToString(KIM_ComputeArgumentName computeArgumentName)
 {
-  return makeComputeArgumentNameCpp(computeArgumentName).String().c_str();
+  return makeComputeArgumentNameCpp(computeArgumentName).ToString().c_str();
 }
 
 // Order doesn't matter as long as all values are unique

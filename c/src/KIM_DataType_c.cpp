@@ -77,7 +77,7 @@ int KIM_DataType_NotEqual(KIM_DataType const lhs, KIM_DataType const rhs)
 
 char const * KIM_DataType_ToString(KIM_DataType const dataType)
 {
-  return makeDataTypeCpp(dataType).String().c_str();
+  return makeDataTypeCpp(dataType).ToString().c_str();
 }
 
 #include "KIM_DataType.inc"

@@ -108,7 +108,7 @@ bool DataType::operator!=(DataType const & rhs) const
   return dataTypeID != rhs.dataTypeID;
 }
 
-std::string const & DataType::String() const
+std::string const & DataType::ToString() const
 {
   DATA_TYPE::StringMap::const_iterator iter
       = DATA_TYPE::dataTypeToString.find(*this);

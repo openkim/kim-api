@@ -486,7 +486,7 @@ class Model
   /// \sa KIM_Model_ToString
   ///
   /// \since 2.0
-  std::string const & String() const;
+  std::string const & ToString() const;
 
   /// \brief Set the identity of the Log object associated with the Model.
   ///

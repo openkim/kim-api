@@ -120,7 +120,7 @@ bool EnergyUnit::operator!=(EnergyUnit const & rhs) const
   return energyUnitID != rhs.energyUnitID;
 }
 
-std::string const & EnergyUnit::String() const
+std::string const & EnergyUnit::ToString() const
 {
   ENERGY_UNIT::StringMap::const_iterator iter
       = ENERGY_UNIT::energyUnitToString.find(*this);

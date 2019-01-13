@@ -48,7 +48,7 @@ class ModelRoutineName
   ModelRoutineName(std::string const & str);
   bool operator==(ModelRoutineName const & rhs) const;
   bool operator!=(ModelRoutineName const & rhs) const;
-  std::string const & String() const;
+  std::string const & ToString() const;
 };  // class ModelRoutineName
 
 namespace MODEL_ROUTINE_NAME

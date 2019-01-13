@@ -77,7 +77,7 @@ int KIM_LengthUnit_NotEqual(KIM_LengthUnit const lhs, KIM_LengthUnit const rhs)
 
 char const * KIM_LengthUnit_ToString(KIM_LengthUnit const lengthUnit)
 {
-  return makeLengthUnitCpp(lengthUnit).String().c_str();
+  return makeLengthUnitCpp(lengthUnit).ToString().c_str();
 }
 
 #include "KIM_LengthUnit.inc"
