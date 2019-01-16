@@ -45,7 +45,7 @@ the codes are written.  It is part of the larger KIM project
 (https://openkim.org).
 
 
-See the INSTAL file for instructions on how to build and install the package
+See the INSTALL file for instructions on how to build and install the package
 and its documentation.
 
 *******************************************************************************
