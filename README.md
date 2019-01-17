@@ -34,7 +34,7 @@
 -->
 
 [![Build Status](https://travis-ci.org/openkim/kim-api.svg?branch=master-v2)](https://travis-ci.org/openkim/kim-api)
-[![Docs Status](https://kim-api.readthedocs.io/en/latest/?badge=stable)
+[![Docs Status](https://kim-api.readthedocs.io/en/latest/?badge=stable)](https://kim-api-readthedocs.io/en/latest)
 
 ============================= The KIM API package =============================
 
