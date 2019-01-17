@@ -113,7 +113,7 @@ int main()
   int number_of_neighbor_lists_cluster_model;
   double influence_distance_cluster_model;
   double const * cutoff_cluster_model;
-  double energy_cluster_model;
+  double energy_cluster_model = 0.0;
   double forces_cluster[NCLUSTERPARTS * DIM];
 
   char modelname[NAMESTRLEN];

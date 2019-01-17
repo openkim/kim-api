@@ -50,7 +50,7 @@ namespace KIM
 class LanguageName;
 namespace SHARED_LIBRARY_SCHEMA
 {
-class SharedLibrarySchemaV1;
+struct SharedLibrarySchemaV1;
 }  // namespace SHARED_LIBRARY_SCHEMA
 
 
