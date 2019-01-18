@@ -50,6 +50,7 @@ module kim_energy_unit_module
     KIM_ENERGY_UNIT_KCAL_MOL, &
 
     ! Routines
+    kim_known, &
     operator (.eq.), &
     operator (.ne.), &
     kim_from_string, &
@@ -84,6 +85,10 @@ module kim_energy_unit_module
     bind(c, name="KIM_ENERGY_UNIT_kcal_mol") &
     :: KIM_ENERGY_UNIT_KCAL_MOL
 
+  interface kim_known
+    module procedure kim_energy_unit_known
+  end interface kim_known
+
   interface operator (.eq.)
     module procedure kim_energy_unit_equal
   end interface operator (.eq.)
@@ -101,6 +106,22 @@ module kim_energy_unit_module
   end interface kim_to_string
 
 contains
+  logical recursive function kim_energy_unit_known(energy_unit)
+    implicit none
+    interface
+      integer(c_int) recursive function known(energy_unit) &
+        bind(c, name="KIM_ChargeUnit_Known")
+        use, intrinsic :: iso_c_binding
+        import kim_energy_unit_type
+        implicit none
+        type(kim_energy_unit_type), intent(in), value :: energy_unit
+      end function known
+    end interface
+    type(kim_energy_unit_type), intent(in) :: energy_unit
+
+    kim_energy_unit_known = (known(energy_unit) /= 0)
+  end function kim_energy_unit_known
+
   logical recursive function kim_energy_unit_equal(lhs, rhs)
     implicit none
     type(kim_energy_unit_type), intent(in) :: lhs

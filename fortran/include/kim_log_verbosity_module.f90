@@ -49,6 +49,7 @@ module kim_log_verbosity_module
     KIM_LOG_VERBOSITY_DEBUG, &
 
     ! Routines
+    kim_known, &
     operator (.lt.), &
     operator (.gt.), &
     operator (.le.), &
@@ -84,6 +85,10 @@ module kim_log_verbosity_module
     bind(c, name="KIM_LOG_VERBOSITY_debug") &
     :: KIM_LOG_VERBOSITY_DEBUG
 
+  interface kim_known
+    module procedure kim_log_verbosity_known
+  end interface kim_known
+
   interface operator (.lt.)
     module procedure kim_log_verbosity_less_than
   end interface operator (.lt.)
@@ -117,6 +122,22 @@ module kim_log_verbosity_module
   end interface kim_to_string
 
 contains
+  logical recursive function kim_log_verbosity_known(log_verbosity)
+    implicit none
+    interface
+      integer(c_int) recursive function known(log_verbosity) &
+        bind(c, name="KIM_ChargeUnit_Known")
+        use, intrinsic :: iso_c_binding
+        import kim_log_verbosity_type
+        implicit none
+        type(kim_log_verbosity_type), intent(in), value :: log_verbosity
+      end function known
+    end interface
+    type(kim_log_verbosity_type), intent(in) :: log_verbosity
+
+    kim_log_verbosity_known = (known(log_verbosity) /= 0)
+  end function kim_log_verbosity_known
+
   logical recursive function kim_log_verbosity_less_than(lhs, rhs)
     implicit none
     type(kim_log_verbosity_type), intent(in) :: lhs

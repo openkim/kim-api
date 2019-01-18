@@ -45,6 +45,7 @@ module kim_numbering_module
     KIM_NUMBERING_ONE_BASED, &
 
     ! Routines
+    kim_known, &
     operator (.eq.), &
     operator (.ne.), &
     kim_from_string, &
@@ -64,6 +65,10 @@ module kim_numbering_module
     bind(c, name="KIM_NUMBERING_oneBased") &
     :: KIM_NUMBERING_ONE_BASED
 
+  interface kim_known
+    module procedure kim_numbering_known
+  end interface kim_known
+
   interface operator (.eq.)
     module procedure kim_numbering_equal
   end interface operator (.eq.)
@@ -81,6 +86,22 @@ module kim_numbering_module
   end interface kim_to_string
 
 contains
+  logical recursive function kim_numbering_known(numbering)
+    implicit none
+    interface
+      integer(c_int) recursive function known(numbering) &
+        bind(c, name="KIM_ChargeUnit_Known")
+        use, intrinsic :: iso_c_binding
+        import kim_numbering_type
+        implicit none
+        type(kim_numbering_type), intent(in), value :: numbering
+      end function known
+    end interface
+    type(kim_numbering_type), intent(in) :: numbering
+
+    kim_numbering_known = (known(numbering) /= 0)
+  end function kim_numbering_known
+
   logical recursive function kim_numbering_equal(lhs, rhs)
     implicit none
     type(kim_numbering_type), intent(in) :: lhs

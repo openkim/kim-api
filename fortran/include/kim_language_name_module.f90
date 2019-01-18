@@ -46,6 +46,7 @@ module kim_language_name_module
     KIM_LANGUAGE_NAME_FORTRAN, &
 
     ! Routines
+    kim_known, &
     operator (.eq.), &
     operator (.ne.), &
     kim_from_string, &
@@ -68,6 +69,10 @@ module kim_language_name_module
     bind(c, name="KIM_LANGUAGE_NAME_fortran") &
     :: KIM_LANGUAGE_NAME_FORTRAN
 
+  interface kim_known
+    module procedure kim_language_name_known
+  end interface kim_known
+
   interface operator (.eq.)
     module procedure kim_language_name_equal
   end interface operator (.eq.)
@@ -85,6 +90,22 @@ module kim_language_name_module
   end interface kim_to_string
 
 contains
+  logical recursive function kim_language_name_known(language_name)
+    implicit none
+    interface
+      integer(c_int) recursive function known(language_name) &
+        bind(c, name="KIM_LanguageName_Known")
+        use, intrinsic :: iso_c_binding
+        import kim_language_name_type
+        implicit none
+        type(kim_language_name_type), intent(in), value :: language_name
+      end function known
+    end interface
+    type(kim_language_name_type), intent(in) :: language_name
+
+    kim_language_name_known = (known(language_name) /= 0)
+  end function kim_language_name_known
+
   logical recursive function kim_language_name_equal(lhs, rhs)
     implicit none
     type(kim_language_name_type), intent(in) :: lhs

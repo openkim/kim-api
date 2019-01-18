@@ -51,6 +51,7 @@ module kim_model_routine_name_module
     KIM_MODEL_ROUTINE_NAME_DESTROY, &
 
     ! Routines
+    kim_known, &
     operator (.eq.), &
     operator (.ne.), &
     kim_from_string, &
@@ -88,6 +89,10 @@ module kim_model_routine_name_module
     bind(c, name="KIM_MODEL_ROUTINE_NAME_Destroy") &
     :: KIM_MODEL_ROUTINE_NAME_DESTROY
 
+  interface kim_known
+    module procedure kim_model_routine_name_known
+  end interface kim_known
+
   interface operator (.eq.)
     module procedure kim_model_routine_name_equal
   end interface operator (.eq.)
@@ -105,6 +110,23 @@ module kim_model_routine_name_module
   end interface kim_to_string
 
 contains
+  logical recursive function kim_model_routine_name_known(model_routine_name)
+    implicit none
+    interface
+      integer(c_int) recursive function known(model_routine_name) &
+        bind(c, name="KIM_ChargeUnit_Known")
+        use, intrinsic :: iso_c_binding
+        import kim_model_routine_name_type
+        implicit none
+        type(kim_model_routine_name_type), intent(in), value :: &
+          model_routine_name
+      end function known
+    end interface
+    type(kim_model_routine_name_type), intent(in) :: model_routine_name
+
+    kim_model_routine_name_known = (known(model_routine_name) /= 0)
+  end function kim_model_routine_name_known
+
   logical recursive function kim_model_routine_name_equal(lhs, rhs)
     implicit none
     type(kim_model_routine_name_type), intent(in) :: lhs

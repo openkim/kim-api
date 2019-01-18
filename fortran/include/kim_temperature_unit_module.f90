@@ -45,6 +45,7 @@ module kim_temperature_unit_module
     KIM_TEMPERATURE_UNIT_K, &
 
     ! Routines
+    kim_known, &
     operator (.eq.), &
     operator (.ne.), &
     kim_from_string, &
@@ -64,6 +65,10 @@ module kim_temperature_unit_module
     bind(c, name="KIM_TEMPERATURE_UNIT_K") &
     :: KIM_TEMPERATURE_UNIT_K
 
+  interface kim_known
+    module procedure kim_temperature_unit_known
+  end interface kim_known
+
   interface operator (.eq.)
     module procedure kim_temperature_unit_equal
   end interface operator (.eq.)
@@ -81,6 +86,22 @@ module kim_temperature_unit_module
   end interface kim_to_string
 
 contains
+  logical recursive function kim_temperature_unit_known(temperature_unit)
+    implicit none
+    interface
+      integer(c_int) recursive function known(temperature_unit) &
+        bind(c, name="KIM_TemperatureUnit_Known")
+        use, intrinsic :: iso_c_binding
+        import kim_temperature_unit_type
+        implicit none
+        type(kim_temperature_unit_type), intent(in), value :: temperature_unit
+      end function known
+    end interface
+    type(kim_temperature_unit_type), intent(in) :: temperature_unit
+
+    kim_temperature_unit_known = (known(temperature_unit) /= 0)
+  end function kim_temperature_unit_known
+
   logical recursive function kim_temperature_unit_equal(lhs, rhs)
     implicit none
     type(kim_temperature_unit_type), intent(in) :: lhs

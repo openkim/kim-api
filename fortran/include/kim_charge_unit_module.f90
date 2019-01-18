@@ -47,6 +47,7 @@ module kim_charge_unit_module
     KIM_CHARGE_UNIT_STATC, &
 
     ! Routines
+    kim_known, &
     operator (.eq.), &
     operator (.ne.), &
     kim_from_string, &
@@ -72,6 +73,10 @@ module kim_charge_unit_module
     bind(c, name="KIM_CHARGE_UNIT_statC") &
     :: KIM_CHARGE_UNIT_STATC
 
+  interface kim_known
+    module procedure kim_charge_unit_known
+  end interface kim_known
+
   interface operator (.eq.)
     module procedure kim_charge_unit_equal
   end interface operator (.eq.)
@@ -89,6 +94,22 @@ module kim_charge_unit_module
   end interface kim_to_string
 
 contains
+  logical recursive function kim_charge_unit_known(charge_unit)
+    implicit none
+    interface
+      integer(c_int) recursive function known(charge_unit) &
+        bind(c, name="KIM_ChargeUnit_Known")
+        use, intrinsic :: iso_c_binding
+        import kim_charge_unit_type
+        implicit none
+        type(kim_charge_unit_type), intent(in), value :: charge_unit
+      end function known
+    end interface
+    type(kim_charge_unit_type), intent(in) :: charge_unit
+
+    kim_charge_unit_known = (known(charge_unit) /= 0)
+  end function kim_charge_unit_known
+
   logical recursive function kim_charge_unit_equal(lhs, rhs)
     implicit none
     type(kim_charge_unit_type), intent(in) :: lhs

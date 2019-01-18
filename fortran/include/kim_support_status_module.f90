@@ -47,6 +47,7 @@ module kim_support_status_module
     KIM_SUPPORT_STATUS_OPTIONAL, &
 
     ! Routines
+    kim_known, &
     operator (.eq.), &
     operator (.ne.), &
     kim_from_string, &
@@ -72,6 +73,10 @@ module kim_support_status_module
     bind(c, name="KIM_SUPPORT_STATUS_optional") &
     :: KIM_SUPPORT_STATUS_OPTIONAL
 
+  interface kim_known
+    module procedure kim_support_status_known
+  end interface kim_known
+
   interface operator (.eq.)
     module procedure kim_support_status_equal
   end interface operator (.eq.)
@@ -89,6 +94,22 @@ module kim_support_status_module
   end interface kim_to_string
 
 contains
+  logical recursive function kim_support_status_known(support_status)
+    implicit none
+    interface
+      integer(c_int) recursive function known(support_status) &
+        bind(c, name="KIM_ChargeUnit_Known")
+        use, intrinsic :: iso_c_binding
+        import kim_support_status_type
+        implicit none
+        type(kim_support_status_type), intent(in), value :: support_status
+      end function known
+    end interface
+    type(kim_support_status_type), intent(in) :: support_status
+
+    kim_support_status_known = (known(support_status) /= 0)
+  end function kim_support_status_known
+
   logical recursive function kim_support_status_equal(lhs, rhs)
     implicit none
     type(kim_support_status_type), intent(in) :: lhs

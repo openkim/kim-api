@@ -49,6 +49,7 @@ module kim_length_unit_module
     KIM_LENGTH_UNIT_NM, &
 
     ! Routines
+    kim_known, &
     operator (.eq.), &
     operator (.ne.), &
     kim_from_string, &
@@ -80,6 +81,10 @@ module kim_length_unit_module
     bind(c, name="KIM_LENGTH_UNIT_nm") &
     :: KIM_LENGTH_UNIT_NM
 
+  interface kim_known
+    module procedure kim_length_unit_known
+  end interface kim_known
+
   interface operator (.eq.)
     module procedure kim_length_unit_equal
   end interface operator (.eq.)
@@ -97,6 +102,22 @@ module kim_length_unit_module
   end interface kim_to_string
 
 contains
+  logical recursive function kim_length_unit_known(length_unit)
+    implicit none
+    interface
+      integer(c_int) recursive function known(length_unit) &
+        bind(c, name="KIM_LengthUnit_Known")
+        use, intrinsic :: iso_c_binding
+        import kim_length_unit_type
+        implicit none
+        type(kim_length_unit_type), intent(in), value :: length_unit
+      end function known
+    end interface
+    type(kim_length_unit_type), intent(in) :: length_unit
+
+    kim_length_unit_known = (known(length_unit) /= 0)
+  end function kim_length_unit_known
+
   logical recursive function kim_length_unit_equal(lhs, rhs)
     implicit none
     type(kim_length_unit_type), intent(in) :: lhs

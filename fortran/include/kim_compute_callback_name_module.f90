@@ -46,6 +46,7 @@ module kim_compute_callback_name_module
     KIM_COMPUTE_CALLBACK_NAME_PROCESS_D2EDR2_TERM, &
 
     ! Routines
+    kim_known, &
     operator (.eq.), &
     operator (.ne.), &
     kim_from_string, &
@@ -68,6 +69,10 @@ module kim_compute_callback_name_module
     bind(c, name="KIM_COMPUTE_CALLBACK_NAME_ProcessD2EDr2Term") &
     :: KIM_COMPUTE_CALLBACK_NAME_PROCESS_D2EDR2_TERM
 
+  interface kim_known
+    module procedure kim_compute_callback_name_known
+  end interface kim_known
+
   interface operator (.eq.)
     module procedure kim_compute_callback_name_equal
   end interface operator (.eq.)
@@ -85,6 +90,24 @@ module kim_compute_callback_name_module
   end interface kim_to_string
 
 contains
+  logical recursive function kim_compute_callback_name_known( &
+    compute_callback_name)
+    implicit none
+    interface
+      integer(c_int) recursive function known(compute_callback_name) &
+        bind(c, name="KIM_ComputeCallbackName_Known")
+        use, intrinsic :: iso_c_binding
+        import kim_compute_callback_name_type
+        implicit none
+        type(kim_compute_callback_name_type), intent(in), value :: &
+          compute_callback_name
+      end function known
+    end interface
+    type(kim_compute_callback_name_type), intent(in) :: compute_callback_name
+
+    kim_compute_callback_name_known = (known(compute_callback_name) /= 0)
+  end function kim_compute_callback_name_known
+
   logical recursive function kim_compute_callback_name_equal(lhs, rhs)
     implicit none
     type(kim_compute_callback_name_type), intent(in) :: lhs

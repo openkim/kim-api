@@ -52,6 +52,7 @@ module kim_compute_argument_name_module
     KIM_COMPUTE_ARGUMENT_NAME_PARTIAL_PARTICLE_VIRIAL, &
 
     ! Routines
+    kim_known, &
     operator (.eq.), &
     operator (.ne.), &
     kim_from_string, &
@@ -93,6 +94,10 @@ module kim_compute_argument_name_module
     bind(c, name="KIM_COMPUTE_ARGUMENT_NAME_partialParticleVirial") &
     :: KIM_COMPUTE_ARGUMENT_NAME_PARTIAL_PARTICLE_VIRIAL
 
+  interface kim_known
+    module procedure kim_compute_argument_name_known
+  end interface kim_known
+
   interface operator (.eq.)
     module procedure kim_compute_argument_name_equal
   end interface operator (.eq.)
@@ -110,6 +115,24 @@ module kim_compute_argument_name_module
   end interface kim_to_string
 
 contains
+  logical recursive function kim_compute_argument_name_known( &
+    compute_argument_name)
+    implicit none
+    interface
+      integer(c_int) recursive function known(compute_argument_name) &
+        bind(c, name="KIM_ComputeArgumentName_Known")
+        use, intrinsic :: iso_c_binding
+        import kim_compute_argument_name_type
+        implicit none
+        type(kim_compute_argument_name_type), intent(in), value :: &
+          compute_argument_name
+      end function known
+    end interface
+    type(kim_compute_argument_name_type), intent(in) :: compute_argument_name
+
+    kim_compute_argument_name_known = (known(compute_argument_name) /= 0)
+  end function kim_compute_argument_name_known
+
   logical recursive function kim_compute_argument_name_equal(lhs, rhs)
     implicit none
     type(kim_compute_argument_name_type), intent(in) :: lhs

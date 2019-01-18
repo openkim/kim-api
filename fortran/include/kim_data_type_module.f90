@@ -45,6 +45,7 @@ module kim_data_type_module
     KIM_DATA_TYPE_DOUBLE, &
 
     ! Routines
+    kim_known, &
     operator (.eq.), &
     operator (.ne.), &
     kim_from_string, &
@@ -64,6 +65,10 @@ module kim_data_type_module
     bind(c, name="KIM_DATA_TYPE_Double") &
     :: KIM_DATA_TYPE_DOUBLE
 
+  interface kim_known
+    module procedure kim_data_type_known
+  end interface kim_known
+
   interface operator (.eq.)
     module procedure kim_data_type_equal
   end interface operator (.eq.)
@@ -81,6 +86,22 @@ module kim_data_type_module
   end interface kim_to_string
 
 contains
+  logical recursive function kim_data_type_known(data_type)
+    implicit none
+    interface
+      integer(c_int) recursive function known(data_type) &
+        bind(c, name="KIM_DataType_Known")
+        use, intrinsic :: iso_c_binding
+        import kim_data_type_type
+        implicit none
+        type(kim_data_type_type), intent(in), value :: data_type
+      end function known
+    end interface
+    type(kim_data_type_type), intent(in) :: data_type
+
+    kim_data_type_known = (known(data_type) /= 0)
+  end function kim_data_type_known
+
   logical recursive function kim_data_type_equal(lhs, rhs)
     implicit none
     type(kim_data_type_type), intent(in) :: lhs

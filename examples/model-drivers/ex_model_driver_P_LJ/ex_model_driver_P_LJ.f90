@@ -819,13 +819,6 @@ goto 42
 
 ! register species
 call kim_from_string(in_species, species_name)
-if (ierr /= 0) then
-  call kim_log_entry(model_driver_create_handle, &
-    KIM_LOG_VERBOSITY_ERROR, "Unable to set species_name")
-  ierr = 1
-  goto 42
-end if
-
 call kim_set_species_code( &
   model_driver_create_handle, species_name, speccode, ierr)
 if (ierr /= 0) then
