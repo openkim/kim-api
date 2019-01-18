@@ -50,6 +50,7 @@ class LogVerbosity
   LogVerbosity();
   LogVerbosity(int const id);
   LogVerbosity(std::string const & str);
+  bool Known() const;
   bool operator<(LogVerbosity const & rhs) const;
   bool operator>(LogVerbosity const & rhs) const;
   bool operator<=(LogVerbosity const & rhs) const;

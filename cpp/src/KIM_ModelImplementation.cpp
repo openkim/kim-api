@@ -382,7 +382,7 @@ int ModelImplementation::IsRoutinePresent(
   LOG_DEBUG("Enter  " + callString);
 
 #if ERROR_VERBOSITY
-  int error = Validate(modelRoutineName);
+  int error = !modelRoutineName.Known();
   if (error)
   {
     LOG_ERROR("Invalid arguments.");
@@ -599,7 +599,7 @@ int ModelImplementation::SetRoutinePointer(
   LOG_DEBUG("Enter  " + callString);
 
 #if ERROR_VERBOSITY
-  int error = Validate(modelRoutineName) || Validate(languageName);
+  int error = (!modelRoutineName.Known()) || (!languageName.Known());
   if (error)
   {
     LOG_ERROR("Invalid arguments.");
@@ -640,7 +640,7 @@ int ModelImplementation::SetSpeciesCode(SpeciesName const speciesName,
   LOG_DEBUG("Enter  " + callString);
 
 #if ERROR_VERBOSITY
-  int error = Validate(speciesName);
+  int error = !speciesName.Known();
   if (error)
   {
     LOG_ERROR("Invalid arguments.");
@@ -668,7 +668,7 @@ int ModelImplementation::GetSpeciesSupportAndCode(
   LOG_DEBUG("Enter  " + callString);
 
 #if ERROR_VERBOSITY
-  int error = Validate(speciesName);
+  int error = !speciesName.Known();
   if (error)
   {
     LOG_ERROR("Invalid arguments.");
@@ -705,7 +705,7 @@ int ModelImplementation::SetModelNumbering(Numbering const numbering)
   LOG_DEBUG("Enter  " + callString);
 
 #if ERROR_VERBOSITY
-  int error = Validate(numbering);
+  int error = !numbering.Known();
   if (error)
   {
     LOG_ERROR("Invalid arguments.");
@@ -730,7 +730,7 @@ int ModelImplementation::SetSimulatorNumbering(Numbering const numbering)
   LOG_DEBUG("Enter  " + callString);
 
 #if ERROR_VERBOSITY
-  int error = Validate(numbering);
+  int error = !numbering.Known();
   if (error)
   {
     LOG_ERROR("Invalid arguments.");
@@ -760,9 +760,9 @@ int ModelImplementation::SetUnits(LengthUnit const lengthUnit,
   LOG_DEBUG("Enter  " + callString);
 
 #if ERROR_VERBOSITY
-  int error = Validate(lengthUnit) || Validate(energyUnit)
-              || Validate(chargeUnit) || Validate(temperatureUnit)
-              || Validate(timeUnit);
+  int error = (!lengthUnit.Known()) || (!energyUnit.Known())
+              || (!chargeUnit.Known()) || (!temperatureUnit.Known())
+              || (!timeUnit.Known());
   if (error)
   {
     LOG_ERROR("Invalid arguments.");
@@ -1641,11 +1641,11 @@ int ModelImplementation::ConvertUnit(LengthUnit const fromLengthUnit,
   static TimeMap const timeConvertToSI = GetTimeMap();
 
 #if ERROR_VERBOSITY
-  int error = Validate(fromLengthUnit) || Validate(fromEnergyUnit)
-              || Validate(fromChargeUnit) || Validate(fromTemperatureUnit)
-              || Validate(fromTimeUnit) || Validate(toLengthUnit)
-              || Validate(toEnergyUnit) || Validate(toChargeUnit)
-              || Validate(toTemperatureUnit) || Validate(toTimeUnit);
+  int error = (!fromLengthUnit.Known()) || (!fromEnergyUnit.Known())
+              || (!fromChargeUnit.Known()) || (!fromTemperatureUnit.Known())
+              || (!fromTimeUnit.Known()) || (!toLengthUnit.Known())
+              || (!toEnergyUnit.Known()) || (!toChargeUnit.Known())
+              || (!toTemperatureUnit.Known()) || (!toTimeUnit.Known());
   if (error)
   {
     // LOG_ERROR("Invalid arguments.");
@@ -2027,10 +2027,10 @@ int ModelImplementation::ModelCreate(
   LOG_DEBUG("Enter  " + callString);
 
 #if ERROR_VERBOSITY
-  int error = Validate(numbering) || Validate(requestedLengthUnit)
-              || Validate(requestedEnergyUnit) || Validate(requestedChargeUnit)
-              || Validate(requestedTemperatureUnit)
-              || Validate(requestedTimeUnit);
+  int error
+      = (!numbering.Known()) || (!requestedLengthUnit.Known())
+        || (!requestedEnergyUnit.Known()) || (!requestedChargeUnit.Known())
+        || (!requestedTemperatureUnit.Known()) || (!requestedTimeUnit.Known());
   if (error)
   {
     LOG_ERROR("Invalid arguments.");
@@ -2798,10 +2798,10 @@ int ModelImplementation::InitializeStandAloneModel(
   LOG_DEBUG("Enter  " + callString);
 
 #if ERROR_VERBOSITY
-  int error = Validate(requestedLengthUnit) || Validate(requestedEnergyUnit)
-              || Validate(requestedChargeUnit)
-              || Validate(requestedTemperatureUnit)
-              || Validate(requestedTimeUnit);
+  int error = (!requestedLengthUnit.Known()) || (!requestedEnergyUnit.Known())
+              || (!requestedChargeUnit.Known())
+              || (!requestedTemperatureUnit.Known())
+              || (!requestedTimeUnit.Known());
   if (error)
   {
     LOG_ERROR("Invalid arguments.");
@@ -2920,10 +2920,10 @@ int ModelImplementation::InitializeParameterizedModel(
   LOG_DEBUG("Enter  " + callString);
 
 #if ERROR_VERBOSITY
-  int error = Validate(requestedLengthUnit) || Validate(requestedEnergyUnit)
-              || Validate(requestedChargeUnit)
-              || Validate(requestedTemperatureUnit)
-              || Validate(requestedTimeUnit);
+  int error = (!requestedLengthUnit.Known()) || (!requestedEnergyUnit.Known())
+              || (!requestedChargeUnit.Known())
+              || (!requestedTemperatureUnit.Known())
+              || (!requestedTimeUnit.Known());
   if (error)
   {
     LOG_ERROR("Invalid arguments.");
@@ -3141,336 +3141,6 @@ int ModelImplementation::WriteParameterFiles()
 
   LOG_DEBUG("Exit 0=" + callString);
   return false;
-}
-
-int ModelImplementation::Validate(ChargeUnit const chargeUnit)
-{
-  // No logging for Validate: no log object available
-  //
-  // #if DEBUG_VERBOSITY
-  //   std::string const callString = "Validate(" + chargeUnit.ToString()
-  //       + ").";
-  // #endif
-  //   LOG_DEBUG("Enter  " + callString);
-
-  int numberOfChargeUnits;
-  CHARGE_UNIT::GetNumberOfChargeUnits(&numberOfChargeUnits);
-
-  for (int i = 0; i < numberOfChargeUnits; ++i)
-  {
-    ChargeUnit cgUnit;
-    CHARGE_UNIT::GetChargeUnit(i, &cgUnit);
-
-    if (chargeUnit == cgUnit)
-    {
-      // LOG_DEBUG("Exit 0=" + callString);
-      return false;
-    }
-  }
-
-  // LOG_ERROR("Invalid ChargeUnit encountered.");
-  // LOG_DEBUG("Exit 1=" + callString);
-  return true;
-}
-
-int ModelImplementation::Validate(DataType const dataType)
-{
-  // No logging for Validate: no log object available
-  //
-  // #if DEBUG_VERBOSITY
-  //   std::string const callString = "Validate(" + dataType.ToString()
-  //       + ").";
-  // #endif
-  //   LOG_DEBUG("Enter  " + callString);
-
-  int numberOfDataTypes;
-  DATA_TYPE::GetNumberOfDataTypes(&numberOfDataTypes);
-
-  for (int i = 0; i < numberOfDataTypes; ++i)
-  {
-    DataType dType;
-    DATA_TYPE::GetDataType(i, &dType);
-
-    if (dataType == dType)
-    {
-      // LOG_DEBUG("Exit 0=" + callString);
-      return false;
-    }
-  }
-
-  // LOG_ERROR("Invalid DataType encountered.");
-  // LOG_DEBUG("Exit 1=" + callString);
-  return true;
-}
-
-int ModelImplementation::Validate(EnergyUnit const energyUnit)
-{
-  // No logging for Validate: no log object available
-  //
-  // #if DEBUG_VERBOSITY
-  //   std::string const callString = "Validate(" + energyUnit.ToString() +
-  //   ").";
-  // #endif
-  //   LOG_DEBUG("Enter  " + callString);
-
-  int numberOfEnergyUnits;
-  ENERGY_UNIT::GetNumberOfEnergyUnits(&numberOfEnergyUnits);
-
-  for (int i = 0; i < numberOfEnergyUnits; ++i)
-  {
-    EnergyUnit eUnit;
-    ENERGY_UNIT::GetEnergyUnit(i, &eUnit);
-
-    if (energyUnit == eUnit)
-    {
-      // LOG_DEBUG("Exit 0=" + callString);
-      return false;
-    }
-  }
-
-  // LOG_ERROR("Invalid EnergyUnit encountered.");
-  // LOG_DEBUG("Exit 1=" + callString);
-  return true;
-}
-
-int ModelImplementation::Validate(LanguageName const languageName)
-{
-  // No logging for Validate: no log object available
-  //
-  // #if DEBUG_VERBOSITY
-  //   std::string const callString = "Validate(" + languageName.ToString()
-  //       + ").";
-  // #endif
-  //   LOG_DEBUG("Enter  " + callString);
-
-  int numberOfLanguageNames;
-  LANGUAGE_NAME::GetNumberOfLanguageNames(&numberOfLanguageNames);
-
-  for (int i = 0; i < numberOfLanguageNames; ++i)
-  {
-    LanguageName langName;
-    LANGUAGE_NAME::GetLanguageName(i, &langName);
-
-    if (languageName == langName)
-    {
-      // LOG_DEBUG("Exit 0=" + callString);
-      return false;
-    }
-  }
-
-  // LOG_ERROR("Invalid LanguageName encountered.");
-  // LOG_DEBUG("Exit 1=" + callString);
-  return true;
-}
-
-int ModelImplementation::Validate(LengthUnit const lengthUnit)
-{
-  // No logging for Validate: no log object available
-  //
-  // #if DEBUG_VERBOSITY
-  //   std::string const callString = "Validate(" + lengthUnit.ToString()
-  //       + ").";
-  // #endif
-  //   LOG_DEBUG("Enter  " + callString);
-
-  int numberOfLengthUnits;
-  LENGTH_UNIT::GetNumberOfLengthUnits(&numberOfLengthUnits);
-
-  for (int i = 0; i < numberOfLengthUnits; ++i)
-  {
-    LengthUnit lenUnit;
-    LENGTH_UNIT::GetLengthUnit(i, &lenUnit);
-
-    if (lengthUnit == lenUnit)
-    {
-      // LOG_DEBUG("Exit 0=" + callString);
-      return false;
-    }
-  }
-
-  // LOG_ERROR("Invalid LengthUnit encountered.");
-  // LOG_DEBUG("Exit 1=" + callString);
-  return true;
-}
-
-int ModelImplementation::Validate(Numbering const numbering)
-{
-  // No logging for Validate: no log object available
-  //
-  // #if DEBUG_VERBOSITY
-  //   std::string const callString = "Validate(" + numbering.ToString()
-  //       + ").";
-  // #endif
-  //   LOG_DEBUG("Enter  " + callString);
-
-  int numberOfNumberings;
-  NUMBERING::GetNumberOfNumberings(&numberOfNumberings);
-
-  for (int i = 0; i < numberOfNumberings; ++i)
-  {
-    Numbering num;
-    NUMBERING::GetNumbering(i, &num);
-
-    if (numbering == num)
-    {
-      // LOG_DEBUG("Exit 0=" + callString);
-      return false;
-    }
-  }
-
-  // LOG_ERROR("Invalid Numbering encountered.");
-  // LOG_DEBUG("Exit 1=" + callString);
-  return true;
-}
-
-int ModelImplementation::Validate(ModelRoutineName const modelRoutineName)
-{
-  // No logging for Validate: no log object available
-  //
-  // #if DEBUG_VERBOSITY
-  //   std::string const callString = "Validate(" + modelRoutineName.ToString()
-  //       + ").";
-  // #endif
-  //   LOG_DEBUG("Enter  " + callString);
-
-  int numberOfModelRoutineNames;
-  MODEL_ROUTINE_NAME::GetNumberOfModelRoutineNames(&numberOfModelRoutineNames);
-
-  for (int i = 0; i < numberOfModelRoutineNames; ++i)
-  {
-    ModelRoutineName routine;
-    MODEL_ROUTINE_NAME::GetModelRoutineName(i, &routine);
-
-    if (modelRoutineName == routine)
-    {
-      // LOG_DEBUG("Exit 0=" + callString);
-      return false;
-    }
-  }
-
-  // LOG_ERROR("Invalid ModelRoutineName encountered.");
-  // LOG_DEBUG("Exit 1=" + callString);
-  return true;
-}
-
-int ModelImplementation::Validate(SpeciesName const speciesName)
-{
-  // No logging for Validate: no log function available
-  //
-  // #if DEBUG_VERBOSITY
-  //   std::string const callString = "Validate(" + speciesName.ToString()
-  //       + ").";
-  // #endif
-  //   LOG_DEBUG("Enter  " + callString);
-
-  int numberOfSpeciesNames;
-  SPECIES_NAME::GetNumberOfSpeciesNames(&numberOfSpeciesNames);
-
-  for (int i = 0; i < numberOfSpeciesNames; ++i)
-  {
-    SpeciesName specName;
-    SPECIES_NAME::GetSpeciesName(i, &specName);
-
-    if (speciesName == specName)
-    {
-      // LOG_DEBUG("Exit 0=" + callString);
-      return false;
-    }
-  }
-
-  // LOG_ERROR("Invalid SpeciesName encountered.");
-  // LOG_DEBUG("Exit 1=" + callString);
-  return true;
-}
-
-int ModelImplementation::Validate(SupportStatus const supportStatus)
-{
-  // No logging for Validate: no log object available
-  //
-  // #if DEBUG_VERBOSITY
-  //   std::string const callString = "Validate(" + supportStatus.ToString()
-  //       + ").";
-  // #endif
-  //   LOG_DEBUG("Enter  " + callString);
-
-  int numberOfSupportStatuses;
-  SUPPORT_STATUS::GetNumberOfSupportStatuses(&numberOfSupportStatuses);
-
-  for (int i = 0; i < numberOfSupportStatuses; ++i)
-  {
-    SupportStatus supStatus;
-    SUPPORT_STATUS::GetSupportStatus(i, &supStatus);
-
-    if (supportStatus == supStatus)
-    {
-      // LOG_DEBUG("Exit 0=" + callString);
-      return false;
-    }
-  }
-
-  // LOG_ERROR("Invalid SupportStatus encountered.");
-  // LOG_DEBUG("Exit 1=" + callString);
-  return true;
-}
-
-int ModelImplementation::Validate(TemperatureUnit const temperatureUnit)
-{
-  // No logging for Validate: no log object available
-  //
-  // #if DEBUG_VERBOSITY
-  //   std::string const callString = "Validate(" + temperatureUnit.ToString()
-  //       + ").";
-  // #endif
-  //   LOG_DEBUG("Enter  " + callString);
-
-  int numberOfTemperatureUnits;
-  TEMPERATURE_UNIT::GetNumberOfTemperatureUnits(&numberOfTemperatureUnits);
-
-  for (int i = 0; i < numberOfTemperatureUnits; ++i)
-  {
-    TemperatureUnit tempUnit;
-    TEMPERATURE_UNIT::GetTemperatureUnit(i, &tempUnit);
-
-    if (temperatureUnit == tempUnit)
-    {
-      // LOG_DEBUG("Exit 0=" + callString);
-      return false;
-    }
-  }
-
-  // LOG_ERROR("Invalid TemperatureUnit encountered.");
-  // LOG_DEBUG("Exit 1=" + callString);
-  return true;
-}
-
-int ModelImplementation::Validate(TimeUnit const timeUnit)
-{
-  // No logging for Validate: no log object available
-  //
-  // #if DEBUG_VERBOSITY
-  //   std::string const callString = "Validate(" + timeUnit.ToString()
-  //       + ").";
-  // #endif
-  //   LOG_DEBUG("Enter  " + callString);
-
-  int numberOfTimeUnits;
-  TIME_UNIT::GetNumberOfTimeUnits(&numberOfTimeUnits);
-
-  for (int i = 0; i < numberOfTimeUnits; ++i)
-  {
-    TimeUnit tmUnit;
-    TIME_UNIT::GetTimeUnit(i, &tmUnit);
-
-    if (timeUnit == tmUnit)
-    {
-      // LOG_DEBUG("Exit 0=" + callString);
-      return false;
-    }
-  }
-
-  // LOG_ERROR("Invalid TimeUnit encountered.");
-  // LOG_DEBUG("Exit 1=" + callString);
-  return true;
 }
 
 int ModelImplementation::IsCIdentifier(std::string const & id) const

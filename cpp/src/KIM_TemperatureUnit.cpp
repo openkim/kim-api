@@ -101,6 +101,22 @@ TemperatureUnit::TemperatureUnit(std::string const & str)
   }
 }
 
+bool TemperatureUnit::Known() const
+{
+  int numberOfTemperatureUnits;
+  TEMPERATURE_UNIT::GetNumberOfTemperatureUnits(&numberOfTemperatureUnits);
+
+  for (int i = 0; i < numberOfTemperatureUnits; ++i)
+  {
+    TemperatureUnit tempUnit;
+    TEMPERATURE_UNIT::GetTemperatureUnit(i, &tempUnit);
+
+    if (*this == tempUnit) { return true; }
+  }
+
+  return false;
+}
+
 bool TemperatureUnit::operator==(TemperatureUnit const & rhs) const
 {
   return temperatureUnitID == rhs.temperatureUnitID;

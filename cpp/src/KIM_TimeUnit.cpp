@@ -104,6 +104,22 @@ TimeUnit::TimeUnit(std::string const & str)
   }
 }
 
+bool TimeUnit::Known() const
+{
+  int numberOfTimeUnits;
+  TIME_UNIT::GetNumberOfTimeUnits(&numberOfTimeUnits);
+
+  for (int i = 0; i < numberOfTimeUnits; ++i)
+  {
+    TimeUnit tmUnit;
+    TIME_UNIT::GetTimeUnit(i, &tmUnit);
+
+    if (*this == tmUnit) { return true; }
+  }
+
+  return false;
+}
+
 bool TimeUnit::operator==(TimeUnit const & rhs) const
 {
   return timeUnitID == rhs.timeUnitID;

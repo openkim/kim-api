@@ -99,6 +99,22 @@ Numbering::Numbering(std::string const & str)
   }
 }
 
+bool Numbering::Known() const
+{
+  int numberOfNumberings;
+  NUMBERING::GetNumberOfNumberings(&numberOfNumberings);
+
+  for (int i = 0; i < numberOfNumberings; ++i)
+  {
+    Numbering num;
+    NUMBERING::GetNumbering(i, &num);
+
+    if (*this == num) { return true; }
+  }
+
+  return false;
+}
+
 bool Numbering::operator==(Numbering const & rhs) const
 {
   return numberingID == rhs.numberingID;

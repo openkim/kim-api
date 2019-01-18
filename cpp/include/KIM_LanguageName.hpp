@@ -46,6 +46,7 @@ class LanguageName
   LanguageName();
   LanguageName(int const id);
   LanguageName(std::string const str);
+  bool Known() const;
   bool operator==(LanguageName const & rhs) const;
   bool operator!=(LanguageName const & rhs) const;
   std::string const & ToString() const;

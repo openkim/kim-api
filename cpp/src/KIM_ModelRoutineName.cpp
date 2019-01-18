@@ -133,6 +133,22 @@ ModelRoutineName::ModelRoutineName(std::string const & str)
   }
 }
 
+bool ModelRoutineName::Known() const
+{
+  int numberOfModelRoutineNames;
+  MODEL_ROUTINE_NAME::GetNumberOfModelRoutineNames(&numberOfModelRoutineNames);
+
+  for (int i = 0; i < numberOfModelRoutineNames; ++i)
+  {
+    ModelRoutineName routine;
+    MODEL_ROUTINE_NAME::GetModelRoutineName(i, &routine);
+
+    if (*this == routine) { return true; }
+  }
+
+  return false;
+}
+
 bool ModelRoutineName::operator==(ModelRoutineName const & rhs) const
 {
   return modelRoutineNameID == rhs.modelRoutineNameID;

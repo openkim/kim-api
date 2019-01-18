@@ -46,6 +46,7 @@ class ComputeCallbackName
   ComputeCallbackName();
   ComputeCallbackName(int const id);
   ComputeCallbackName(std::string const & str);
+  bool Known() const;
   bool operator==(ComputeCallbackName const & rhs) const;
   bool operator!=(ComputeCallbackName const & rhs) const;
   std::string const & ToString() const;

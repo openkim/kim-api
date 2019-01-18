@@ -375,6 +375,22 @@ SpeciesName::SpeciesName(std::string const & str)
   }
 }
 
+bool SpeciesName::Known() const
+{
+  int numberOfSpeciesNames;
+  SPECIES_NAME::GetNumberOfSpeciesNames(&numberOfSpeciesNames);
+
+  for (int i = 0; i < numberOfSpeciesNames; ++i)
+  {
+    SpeciesName specName;
+    SPECIES_NAME::GetSpeciesName(i, &specName);
+
+    if (*this == specName) { return true; }
+  }
+
+  return false;
+}
+
 bool SpeciesName::operator==(SpeciesName const & rhs) const
 {
   return speciesNameID == rhs.speciesNameID;

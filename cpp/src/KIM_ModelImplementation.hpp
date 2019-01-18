@@ -268,18 +268,6 @@ class ModelImplementation
   int ModelWriteParameterizedModel() const;
 
 
-  static int Validate(ChargeUnit const chargeUnit);
-  static int Validate(DataType const dataType);
-  static int Validate(EnergyUnit const energyUnit);
-  static int Validate(LanguageName const languageName);
-  static int Validate(LengthUnit const lengthUnit);
-  static int Validate(Numbering const numbering);
-  static int Validate(ModelRoutineName const modelRoutineName);
-  static int Validate(SpeciesName const speciesName);
-  static int Validate(SupportStatus const supportStatus);
-  static int Validate(TemperatureUnit const temperatureUnit);
-  static int Validate(TimeUnit const timeUnit);
-
   int IsCIdentifier(std::string const & id) const;
 
   SharedLibrary::ITEM_TYPE itemType_;

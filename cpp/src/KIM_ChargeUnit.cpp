@@ -104,6 +104,22 @@ ChargeUnit::ChargeUnit(std::string const & str)
   }
 }
 
+bool ChargeUnit::Known() const
+{
+  int numberOfChargeUnits;
+  CHARGE_UNIT::GetNumberOfChargeUnits(&numberOfChargeUnits);
+
+  for (int i = 0; i < numberOfChargeUnits; ++i)
+  {
+    ChargeUnit cgUnit;
+    CHARGE_UNIT::GetChargeUnit(i, &cgUnit);
+
+    if (*this == cgUnit) { return true; }
+  }
+
+  return false;
+}
+
 bool ChargeUnit::operator==(ChargeUnit const & rhs) const
 {
   return chargeUnitID == rhs.chargeUnitID;

@@ -80,6 +80,15 @@ class EnergyUnit
   /// \since 2.0
   EnergyUnit(std::string const & str);
 
+  /// \brief Determines if the object is a quantity known to the %KIM API.
+  ///
+  /// EnergyUnit's known to the %KIM API are found in the ENERGY_UNIT namespace.
+  ///
+  /// \sa KIM_EnergyUnit_Known
+  ///
+  /// \since 2.0
+  bool Known() const;
+
   /// \brief Compares EnergyUnit objects for equality.
   ///
   /// \note Not all "unknown" objects are equal.

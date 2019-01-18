@@ -46,6 +46,7 @@ class SupportStatus
   SupportStatus();
   SupportStatus(int const id);
   SupportStatus(std::string const & str);
+  bool Known() const;
   bool operator==(SupportStatus const & rhs) const;
   bool operator!=(SupportStatus const & rhs) const;
   std::string const & ToString() const;

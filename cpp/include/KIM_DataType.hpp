@@ -46,6 +46,7 @@ class DataType
   DataType();
   DataType(int const id);
   DataType(std::string const & str);
+  bool Known() const;
   bool operator==(DataType const & rhs) const;
   bool operator!=(DataType const & rhs) const;
   std::string const & ToString() const;

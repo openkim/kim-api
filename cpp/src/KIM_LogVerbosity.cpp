@@ -107,6 +107,22 @@ LogVerbosity::LogVerbosity(std::string const & str)
   }
 }
 
+bool LogVerbosity::Known() const
+{
+  int numberOfLogVerbosities;
+  LOG_VERBOSITY::GetNumberOfLogVerbosities(&numberOfLogVerbosities);
+
+  for (int i = 0; i < numberOfLogVerbosities; ++i)
+  {
+    LogVerbosity lv;
+    LOG_VERBOSITY::GetLogVerbosity(i, &lv);
+
+    if (*this == lv) { return true; }
+  }
+
+  return false;
+}
+
 bool LogVerbosity::operator<(LogVerbosity const & rhs) const
 {
   return logVerbosityID < rhs.logVerbosityID;

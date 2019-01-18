@@ -104,6 +104,22 @@ SupportStatus::SupportStatus(std::string const & str)
   }
 }
 
+bool SupportStatus::Known() const
+{
+  int numberOfSupportStatuses;
+  SUPPORT_STATUS::GetNumberOfSupportStatuses(&numberOfSupportStatuses);
+
+  for (int i = 0; i < numberOfSupportStatuses; ++i)
+  {
+    SupportStatus supStatus;
+    SUPPORT_STATUS::GetSupportStatus(i, &supStatus);
+
+    if (*this == supStatus) { return true; }
+  }
+
+  return false;
+}
+
 bool SupportStatus::operator==(SupportStatus const & rhs) const
 {
   return supportStatusID == rhs.supportStatusID;

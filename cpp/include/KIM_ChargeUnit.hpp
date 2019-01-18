@@ -80,6 +80,15 @@ class ChargeUnit
   /// \since 2.0
   ChargeUnit(std::string const & str);
 
+  /// \brief Determines if the object is a quantity known to the %KIM API.
+  ///
+  /// ChargeUnit's known to the %KIM API are found in the CHARGE_UNIT namespace.
+  ///
+  /// \sa KIM_ChargeUnit_Known
+  ///
+  /// \since 2.0
+  bool Known() const;
+
   /// \brief Compares ChargeUnit objects for equality.
   ///
   /// \note Not all "unknown" objects are equal.

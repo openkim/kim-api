@@ -75,47 +75,56 @@ class LengthUnit
   /// If the string does not match one of the values defined by the %KIM API,
   /// then an "unknown" object is generated.
   ///
-  /// \sa KIM_EnergyUnit_FromString
+  /// \sa KIM_LengthUnit_FromString
   ///
   /// \since 2.0
   LengthUnit(std::string const & str);
 
-  /// \brief Compares EnergyUnit objects for equality.
+  /// \brief Determines if the object is a quantity known to the %KIM API.
+  ///
+  /// LengthUnit's known to the %KIM API are found in the LENGTH_UNIT namespace.
+  ///
+  /// \sa KIM_LengthUnit_Known
+  ///
+  /// \since 2.0
+  bool Known() const;
+
+  /// \brief Compares LengthUnit objects for equality.
   ///
   /// \note Not all "unknown" objects are equal.
   ///
-  /// \sa KIM_EnergyUnit_Equal
+  /// \sa KIM_LengthUnit_Equal
   ///
   /// \since 2.0
   bool operator==(LengthUnit const & rhs) const;
 
-  /// \brief Compares EnergyUnit objects for inequality.
+  /// \brief Compares LengthUnit objects for inequality.
   ///
   /// \note It is possible for two "unknown" objects to be not equal.
   ///
-  /// \sa KIM_EnergyUnit_NotEqual
+  /// \sa KIM_LengthUnit_NotEqual
   ///
   /// \since 2.0
   bool operator!=(LengthUnit const & rhs) const;
 
   /// \brief Converts the object to a string.
   ///
-  /// \return A string object representing the EnergyUnit object.
+  /// \return A string object representing the LengthUnit object.
   ///
-  /// \note If the EnergyUnit object does not correspond to a value defined by
+  /// \note If the LengthUnit object does not correspond to a value defined by
   /// the %KIM API, then the string "unknown" is returned.
   ///
-  /// \sa KIM_EnergyUnit_ToString
+  /// \sa KIM_LengthUnit_ToString
   ///
   /// \since 2.0
   std::string const & ToString() const;
 };  // class LengthUnit
 
 /// Contains the enumeration constants and the discovery routines for the
-/// EnergyUnit \ref extensible_enumeration "Extensible Enumeration".
+/// LengthUnit \ref extensible_enumeration "Extensible Enumeration".
 namespace LENGTH_UNIT
 {
-/// \brief Indicates that a EnergyUnit is not used.
+/// \brief Indicates that a LengthUnit is not used.
 ///
 /// \sa KIM_ENERGY_UNIT_unused
 ///
@@ -172,7 +181,7 @@ void GetNumberOfLengthUnits(int * const numberOfLengthUnits);
 /// \param[in]  index Zero-based index uniquely labeling each defined standard
 ///             LengthUnit.  This index ordering is only guaranteed to be
 ///             stable during the lifetime of the current process.
-/// \param[out] lengthUnit The EnergyUnit object associated with \c index.
+/// \param[out] lengthUnit The LengthUnit object associated with \c index.
 ///
 /// \return \c true if `index < 0` or `index >= numberOfLengthUnits`.
 /// \return \c false otherwise.

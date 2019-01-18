@@ -111,6 +111,22 @@ EnergyUnit::EnergyUnit(std::string const & str)
   }
 }
 
+bool EnergyUnit::Known() const
+{
+  int numberOfEnergyUnits;
+  ENERGY_UNIT::GetNumberOfEnergyUnits(&numberOfEnergyUnits);
+
+  for (int i = 0; i < numberOfEnergyUnits; ++i)
+  {
+    EnergyUnit eUnit;
+    ENERGY_UNIT::GetEnergyUnit(i, &eUnit);
+
+    if (*this == eUnit) { return true; }
+  }
+
+  return false;
+}
+
 bool EnergyUnit::operator==(EnergyUnit const & rhs) const
 {
   return energyUnitID == rhs.energyUnitID;

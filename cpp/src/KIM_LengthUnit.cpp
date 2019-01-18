@@ -108,6 +108,22 @@ LengthUnit::LengthUnit(std::string const & str)
   }
 }
 
+bool LengthUnit::Known() const
+{
+  int numberOfLengthUnits;
+  LENGTH_UNIT::GetNumberOfLengthUnits(&numberOfLengthUnits);
+
+  for (int i = 0; i < numberOfLengthUnits; ++i)
+  {
+    LengthUnit lenUnit;
+    LENGTH_UNIT::GetLengthUnit(i, &lenUnit);
+
+    if (*this == lenUnit) { return true; }
+  }
+
+  return false;
+}
+
 bool LengthUnit::operator==(LengthUnit const & rhs) const
 {
   return lengthUnitID == rhs.lengthUnitID;

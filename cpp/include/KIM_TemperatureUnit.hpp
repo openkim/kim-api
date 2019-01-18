@@ -81,6 +81,16 @@ class TemperatureUnit
   /// \since 2.0
   TemperatureUnit(std::string const & str);
 
+  /// \brief Determines if the object is a quantity known to the %KIM API.
+  ///
+  /// TemperatureUnit's known to the %KIM API are found in the TEMPERATURE_UNIT
+  /// namespace.
+  ///
+  /// \sa KIM_TemperatureUnit_Known
+  ///
+  /// \since 2.0
+  bool Known() const;
+
   /// \brief Compares TemperatureUnit objects for equality.
   ///
   /// \note Not all "unknown" objects are equal.

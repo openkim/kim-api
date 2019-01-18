@@ -188,6 +188,23 @@ ComputeArgumentName::ComputeArgumentName(std::string const & str)
   }
 }
 
+bool ComputeArgumentName::Known() const
+{
+  int numberOfComputeArgumentNames;
+  COMPUTE_ARGUMENT_NAME::GetNumberOfComputeArgumentNames(
+      &numberOfComputeArgumentNames);
+
+  for (int i = 0; i < numberOfComputeArgumentNames; ++i)
+  {
+    ComputeArgumentName cam;
+    COMPUTE_ARGUMENT_NAME::GetComputeArgumentName(i, &cam);
+
+    if (*this == cam) { return true; }
+  }
+
+  return false;
+}
+
 bool ComputeArgumentName::operator==(ComputeArgumentName const & rhs) const
 {
   return computeArgumentNameID == rhs.computeArgumentNameID;

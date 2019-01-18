@@ -99,6 +99,22 @@ DataType::DataType(std::string const & str)
   }
 }
 
+bool DataType::Known() const
+{
+  int numberOfDataTypes;
+  DATA_TYPE::GetNumberOfDataTypes(&numberOfDataTypes);
+
+  for (int i = 0; i < numberOfDataTypes; ++i)
+  {
+    DataType dType;
+    DATA_TYPE::GetDataType(i, &dType);
+
+    if (*this == dType) { return true; }
+  }
+
+  return false;
+}
+
 bool DataType::operator==(DataType const & rhs) const
 {
   return dataTypeID == rhs.dataTypeID;

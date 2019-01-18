@@ -85,6 +85,16 @@ class ComputeArgumentName
   /// \since 2.0
   ComputeArgumentName(std::string const & str);
 
+  /// \brief Determines if the object is a quantity known to the %KIM API.
+  ///
+  /// ComputeArgumentName's known to the %KIM API are found in the
+  /// COMPUTE_ARGUMENT_NAME namespace.
+  ///
+  /// \sa KIM_ComputeArgumentName_Known
+  ///
+  /// \since 2.0
+  bool Known() const;
+
   /// \brief Compares ComputeArgumentName objects for equality.
   ///
   /// \note Not all "unknown" objects are equal.

@@ -80,6 +80,15 @@ class TimeUnit
   /// \since 2.0
   TimeUnit(std::string const & str);
 
+  /// \brief Determines if the object is a quantity known to the %KIM API.
+  ///
+  /// TimeUnit's known to the %KIM API are found in the TIME_UNIT namespace.
+  ///
+  /// \sa KIM_TimeUnit_Known
+  ///
+  /// \since 2.0
+  bool Known() const;
+
   /// \brief Compares TimeUnit objects for equality.
   ///
   /// \note Not all "unknown" objects are equal.

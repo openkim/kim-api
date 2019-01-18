@@ -125,6 +125,23 @@ ComputeCallbackName::ComputeCallbackName(std::string const & str)
   }
 }
 
+bool ComputeCallbackName::Known() const
+{
+  int numberOfComputeCallbackNames;
+  COMPUTE_CALLBACK_NAME::GetNumberOfComputeCallbackNames(
+      &numberOfComputeCallbackNames);
+
+  for (int i = 0; i < numberOfComputeCallbackNames; ++i)
+  {
+    ComputeCallbackName ccn;
+    COMPUTE_CALLBACK_NAME::GetComputeCallbackName(i, &ccn);
+
+    if (*this == ccn) { return true; }
+  }
+
+  return false;
+}
+
 bool ComputeCallbackName::operator==(ComputeCallbackName const & rhs) const
 {
   return computeCallbackNameID == rhs.computeCallbackNameID;

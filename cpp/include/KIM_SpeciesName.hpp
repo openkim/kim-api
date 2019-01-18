@@ -46,6 +46,7 @@ class SpeciesName
   SpeciesName();
   SpeciesName(int const id);
   SpeciesName(std::string const & str);
+  bool Known() const;
   bool operator==(SpeciesName const & rhs) const;
   bool operator!=(SpeciesName const & rhs) const;
   std::string const & ToString() const;

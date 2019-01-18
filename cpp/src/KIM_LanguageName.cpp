@@ -102,6 +102,22 @@ LanguageName::LanguageName(std::string const str)
   }
 }
 
+bool LanguageName::Known() const
+{
+  int numberOfLanguageNames;
+  LANGUAGE_NAME::GetNumberOfLanguageNames(&numberOfLanguageNames);
+
+  for (int i = 0; i < numberOfLanguageNames; ++i)
+  {
+    LanguageName langName;
+    LANGUAGE_NAME::GetLanguageName(i, &langName);
+
+    if (*this == langName) { return true; }
+  }
+
+  return false;
+}
+
 bool LanguageName::operator==(LanguageName const & rhs) const
 {
   return languageNameID == rhs.languageNameID;
