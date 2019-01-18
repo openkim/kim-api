@@ -69,6 +69,12 @@ KIM_ComputeCallbackName_FromString(char const * const str)
   return makeComputeCallbackNameC(KIM::ComputeCallbackName(std::string(str)));
 }
 
+int KIM_ComputeCallbackName_Known(
+    KIM_ComputeCallbackName const computeCallbackName)
+{
+  return makeComputeCallbackNameCpp(computeCallbackName).Known();
+}
+
 int KIM_ComputeCallbackName_Equal(KIM_ComputeCallbackName const lhs,
                                   KIM_ComputeCallbackName const rhs)
 {

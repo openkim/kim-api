@@ -64,6 +64,11 @@ KIM_SpeciesName KIM_SpeciesName_FromString(char const * const str)
   return makeSpeciesNameC(KIM::SpeciesName(std::string(str)));
 }
 
+int KIM_SpeciesName_Known(KIM_SpeciesName const speciesName)
+{
+  return makeSpeciesNameCpp(speciesName).Known();
+}
+
 int KIM_SpeciesName_Equal(KIM_SpeciesName const lhs, KIM_SpeciesName const rhs)
 {
   return (lhs.speciesNameID == rhs.speciesNameID);

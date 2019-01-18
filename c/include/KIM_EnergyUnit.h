@@ -46,6 +46,7 @@ typedef struct KIM_EnergyUnit KIM_EnergyUnit;
 #endif
 
 KIM_EnergyUnit KIM_EnergyUnit_FromString(char const * const str);
+int KIM_EnergyUnit_Known(KIM_EnergyUnit const energyUnit);
 int KIM_EnergyUnit_Equal(KIM_EnergyUnit const lhs, KIM_EnergyUnit const rhs);
 int KIM_EnergyUnit_NotEqual(KIM_EnergyUnit const lhs, KIM_EnergyUnit const rhs);
 char const * KIM_EnergyUnit_ToString(KIM_EnergyUnit const energyUnit);

@@ -46,6 +46,7 @@ typedef struct KIM_ModelRoutineName KIM_ModelRoutineName;
 #endif
 
 KIM_ModelRoutineName KIM_ModelRoutineName_FromString(char const * const str);
+int KIM_ModelRoutineName_Known(KIM_ModelRoutineName const modelRoutineName);
 int KIM_ModelRoutineName_Equal(KIM_ModelRoutineName const lhs,
                                KIM_ModelRoutineName const rhs);
 int KIM_ModelRoutineName_NotEqual(KIM_ModelRoutineName const lhs,

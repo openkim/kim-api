@@ -65,6 +65,11 @@ KIM_DataType KIM_DataType_FromString(char const * const str)
   return makeDataTypeC(KIM::DataType(std::string(str)));
 }
 
+int KIM_DataType_Known(KIM_DataType const dataType)
+{
+  return makeDataTypeCpp(dataType).Known();
+}
+
 int KIM_DataType_Equal(KIM_DataType const lhs, KIM_DataType const rhs)
 {
   return (lhs.dataTypeID == rhs.dataTypeID);

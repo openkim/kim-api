@@ -67,6 +67,11 @@ KIM_TemperatureUnit KIM_TemperatureUnit_FromString(char const * const str)
   return makeTemperatureUnitC(KIM::TemperatureUnit(std::string(str)));
 }
 
+int KIM_TemperatureUnit_Known(KIM_TemperatureUnit const temperatureUnit)
+{
+  return makeTemperatureUnitCpp(temperatureUnit).Known();
+}
+
 int KIM_TemperatureUnit_Equal(KIM_TemperatureUnit const lhs,
                               KIM_TemperatureUnit const rhs)
 {

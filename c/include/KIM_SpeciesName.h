@@ -47,6 +47,7 @@ typedef struct KIM_SpeciesName KIM_SpeciesName;
 #endif
 
 KIM_SpeciesName KIM_SpeciesName_FromString(char const * const str);
+int KIM_SpeciesName_Known(KIM_SpeciesName const speciesName);
 int KIM_SpeciesName_Equal(KIM_SpeciesName const lhs, KIM_SpeciesName const rhs);
 int KIM_SpeciesName_NotEqual(KIM_SpeciesName const lhs,
                              KIM_SpeciesName const rhs);

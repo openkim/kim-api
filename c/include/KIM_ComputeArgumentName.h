@@ -54,6 +54,8 @@ typedef struct KIM_ComputeArgumentName KIM_ComputeArgumentName;
 
 KIM_ComputeArgumentName
 KIM_ComputeArgumentName_FromString(char const * const str);
+int KIM_ComputeArgumentName_Known(
+    KIM_ComputeArgumentName const computeArgumentName);
 int KIM_ComputeArgumentName_Equal(KIM_ComputeArgumentName const lhs,
                                   KIM_ComputeArgumentName const rhs);
 int KIM_ComputeArgumentName_NotEqual(KIM_ComputeArgumentName const lhs,

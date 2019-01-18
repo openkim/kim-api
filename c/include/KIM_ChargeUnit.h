@@ -69,6 +69,15 @@ typedef struct KIM_ChargeUnit KIM_ChargeUnit;
 KIM_ChargeUnit KIM_ChargeUnit_FromString(char const * const str);
 
 /**
+ ** \brief \copybrief KIM::ChargeUnit::Known
+ **
+ ** \sa KIM::ChargeUnit::Known
+ **
+ ** \since 2.0
+ **/
+int KIM_ChargeUnit_Known(KIM_ChargeUnit const chargeUnit);
+
+/**
  ** \brief \copybrief KIM::ChargeUnit::operator==()
  **
  ** \sa KIM::ChargeUnit::operator==()

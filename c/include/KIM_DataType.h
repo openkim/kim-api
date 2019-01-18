@@ -46,6 +46,7 @@ typedef struct KIM_DataType KIM_DataType;
 #endif
 
 KIM_DataType KIM_DataType_FromString(char const * const str);
+int KIM_DataType_Known(KIM_DataType const dataType);
 int KIM_DataType_Equal(KIM_DataType const lhs, KIM_DataType const rhs);
 int KIM_DataType_NotEqual(KIM_DataType const lhs, KIM_DataType const rhs);
 char const * KIM_DataType_ToString(KIM_DataType const dataType);

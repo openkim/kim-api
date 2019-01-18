@@ -85,6 +85,12 @@ KIM_ComputeArgumentName_FromString(char const * const str)
   return makeComputeArgumentNameC(KIM::ComputeArgumentName(std::string(str)));
 }
 
+int KIM_ComputeArgumentName_Known(
+    KIM_ComputeArgumentName const computeArgumentName)
+{
+  return makeComputeArgumentNameCpp(computeArgumentName).Known();
+}
+
 int KIM_ComputeArgumentName_Equal(KIM_ComputeArgumentName const lhs,
                                   KIM_ComputeArgumentName const rhs)
 {

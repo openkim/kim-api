@@ -65,6 +65,11 @@ KIM_ChargeUnit KIM_ChargeUnit_FromString(char const * const str)
   return makeChargeUnitC(KIM::ChargeUnit(std::string(str)));
 }
 
+int KIM_ChargeUnit_Known(KIM_ChargeUnit const chargeUnit)
+{
+  return makeChargeUnitCpp(chargeUnit).Known();
+}
+
 int KIM_ChargeUnit_Equal(KIM_ChargeUnit const lhs, KIM_ChargeUnit const rhs)
 {
   return (lhs.chargeUnitID == rhs.chargeUnitID);

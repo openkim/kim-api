@@ -65,6 +65,11 @@ KIM_EnergyUnit KIM_EnergyUnit_FromString(char const * const str)
   return makeEnergyUnitC(KIM::EnergyUnit(std::string(str)));
 }
 
+int KIM_EnergyUnit_Known(KIM_EnergyUnit const energyUnit)
+{
+  return makeEnergyUnitCpp(energyUnit).Known();
+}
+
 int KIM_EnergyUnit_Equal(KIM_EnergyUnit const lhs, KIM_EnergyUnit const rhs)
 {
   return (lhs.energyUnitID == rhs.energyUnitID);

@@ -68,6 +68,11 @@ KIM_ModelRoutineName KIM_ModelRoutineName_FromString(char const * const str)
   return makeModelRoutineNameC(KIM::ModelRoutineName(std::string(str)));
 }
 
+int KIM_ModelRoutineName_Known(KIM_ModelRoutineName const modelRoutineName)
+{
+  return makeModelRoutineNameCpp(modelRoutineName).Known();
+}
+
 int KIM_ModelRoutineName_Equal(KIM_ModelRoutineName const lhs,
                                KIM_ModelRoutineName const rhs)
 {

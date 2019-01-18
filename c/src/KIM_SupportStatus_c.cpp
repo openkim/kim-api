@@ -64,6 +64,11 @@ KIM_SupportStatus KIM_SupportStatus_FromString(char const * const str)
   return makeSupportStatusC(KIM::SupportStatus(std::string(str)));
 }
 
+int KIM_SupportStatus_Known(KIM_SupportStatus const supportStatus)
+{
+  return makeSupportStatusCpp(supportStatus).Known();
+}
+
 int KIM_SupportStatus_Equal(KIM_SupportStatus const lhs,
                             KIM_SupportStatus const rhs)
 {

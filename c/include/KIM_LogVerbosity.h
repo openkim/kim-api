@@ -50,6 +50,7 @@ typedef struct KIM_LogVerbosity KIM_LogVerbosity;
 #endif
 
 KIM_LogVerbosity KIM_LogVerbosity_FromString(char const * const str);
+int KIM_LogVerbosity_Known(KIM_LogVerbosity const logVerbosity);
 int KIM_LogVerbosity_LessThan(KIM_LogVerbosity const lhs,
                               KIM_LogVerbosity const rhs);
 int KIM_LogVerbosity_GreaterThan(KIM_LogVerbosity const lhs,

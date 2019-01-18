@@ -65,6 +65,11 @@ KIM_TimeUnit KIM_TimeUnit_FromString(char const * const str)
   return makeTimeUnitC(KIM::TimeUnit(std::string(str)));
 }
 
+int KIM_TimeUnit_Known(KIM_TimeUnit const timeUnit)
+{
+  return makeTimeUnitCpp(timeUnit).Known();
+}
+
 int KIM_TimeUnit_Equal(KIM_TimeUnit const lhs, KIM_TimeUnit const rhs)
 {
   return (lhs.timeUnitID == rhs.timeUnitID);

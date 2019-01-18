@@ -47,6 +47,8 @@ typedef struct KIM_ComputeCallbackName KIM_ComputeCallbackName;
 
 KIM_ComputeCallbackName
 KIM_ComputeCallbackName_FromString(char const * const str);
+int KIM_ComputeCallbackName_Known(
+    KIM_ComputeCallbackName const computeCallbackName);
 int KIM_ComputeCallbackName_Equal(KIM_ComputeCallbackName const lhs,
                                   KIM_ComputeCallbackName const rhs);
 int KIM_ComputeCallbackName_NotEqual(KIM_ComputeCallbackName const lhs,

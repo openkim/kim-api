@@ -65,6 +65,11 @@ KIM_LogVerbosity KIM_LogVerbosity_FromString(char const * const str)
   return makeLogVerbosityC(KIM::LogVerbosity(std::string(str)));
 }
 
+int KIM_LogVerbosity_Known(KIM_LogVerbosity const logVerbosity)
+{
+  return makeLogVerbosityCpp(logVerbosity).Known();
+}
+
 int KIM_LogVerbosity_LessThan(KIM_LogVerbosity const lhs,
                               KIM_LogVerbosity const rhs)
 {

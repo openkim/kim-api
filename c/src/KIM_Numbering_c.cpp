@@ -64,6 +64,11 @@ KIM_Numbering KIM_Numbering_FromString(char const * const str)
   return makeNumberingC(KIM::Numbering(std::string(str)));
 }
 
+int KIM_Numbering_Known(KIM_Numbering const numbering)
+{
+  return makeNumberingCpp(numbering).Known();
+}
+
 int KIM_Numbering_Equal(KIM_Numbering const lhs, KIM_Numbering const rhs)
 {
   return (lhs.numberingID == rhs.numberingID);

@@ -65,6 +65,11 @@ KIM_LanguageName KIM_LanguageName_FromString(char const * const str)
   return makeLanguageNameC(KIM::LanguageName(std::string(str)));
 }
 
+int KIM_LanguageName_Known(KIM_LanguageName const languageName)
+{
+  return makeLanguageNameCpp(languageName).Known();
+}
+
 int KIM_LanguageName_Equal(KIM_LanguageName const lhs,
                            KIM_LanguageName const rhs)
 {

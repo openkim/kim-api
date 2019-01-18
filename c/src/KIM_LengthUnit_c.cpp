@@ -65,6 +65,11 @@ KIM_LengthUnit KIM_LengthUnit_FromString(char const * const str)
   return makeLengthUnitC(KIM::LengthUnit(std::string(str)));
 }
 
+int KIM_LengthUnit_Known(KIM_LengthUnit const lengthUnit)
+{
+  return makeLengthUnitCpp(lengthUnit).Known();
+}
+
 int KIM_LengthUnit_Equal(KIM_LengthUnit const lhs, KIM_LengthUnit const rhs)
 {
   return (lhs.lengthUnitID == rhs.lengthUnitID);
