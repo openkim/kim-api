@@ -62,11 +62,12 @@ The current version of the %KIM API package supports the following features:
 
 - **Extensible, Strongly-Typed Enumerations**: \anchor extensible_enumeration
   The %KIM API implements a set of typed constants for each category of entity
-  that it defines (DataType, LanguageName, Numbering, SpeciesName, LengthUnit,
-  EnergyUnit, ChargeUnit, TemperatureUnit, TimeUnit, ComputeArgumentName,
-  ComputeCallbackName, SupportStatus).  This allows for backward-compatible
-  additions to the enumerations in future versions of the %KIM API.  Further,
-  the strong-typing greatly facilitates debugging.
+  that it defines (KIM::DataType, KIM::LanguageName, KIM::Numbering,
+  KIM::SpeciesName, KIM::LengthUnit, KIM::EnergyUnit, KIM::ChargeUnit,
+  KIM::TemperatureUnit, KIM::TimeUnit, KIM::ComputeArgumentName,
+  KIM::ComputeCallbackName, KIM::SupportStatus).  This allows for
+  backward-compatible additions to the enumerations in future versions of the
+  %KIM API.  Further, the strong-typing greatly facilitates debugging.
 
 - **Numbering Origin Support**: Support for automatic translation between
   zero-based numbering of particles (C-style numbering beginning with zero) and

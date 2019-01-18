@@ -39,7 +39,7 @@
 namespace KIM
 {
 /// \brief This class is an \ref extensible_enumeration
-/// "Extensible Enumeration" for the charge units supported by the %KIM API.
+/// "Extensible Enumeration" for the ChargeUnit's supported by the %KIM API.
 ///
 /// The enumeration constants are contained in the CHARGE_UNIT namespace.
 ///
@@ -49,7 +49,7 @@ namespace KIM
 class ChargeUnit
 {
  public:
-  /// \brief Integer identifying the specific charge unit represented.
+  /// \brief Integer identifying the specific ChargeUnit represented.
   ///
   /// \note This should not be directly accessed and is only public for
   /// cross-language reasons.
@@ -59,7 +59,7 @@ class ChargeUnit
   /// \since 2.0
   int chargeUnitID;
 
-  /// \brief Create the value ChargeUnit::unused.
+  /// \brief Create an uninitialized instance of ChargeUnit.
   ///
   /// \since 2.0
   ChargeUnit();
@@ -115,7 +115,7 @@ class ChargeUnit
 /// ChargeUnit \ref extensible_enumeration "Extensible Enumeration".
 namespace CHARGE_UNIT
 {
-/// \brief Indicates that a charge unit is not used.
+/// \brief Indicates that a ChargeUnit is not used.
 ///
 /// \sa KIM_CHARGE_UNIT_unused
 ///
@@ -144,9 +144,9 @@ extern ChargeUnit const e;
 extern ChargeUnit const statC;
 
 
-/// \brief Get the number of standard charge units defined by the %KIM API.
+/// \brief Get the number of standard ChargeUnit's defined by the %KIM API.
 ///
-/// \param[out] numberOfChargeUnits The number of standard charge units
+/// \param[out] numberOfChargeUnits The number of standard ChargeUnit's
 ///             defined by the %KIM API.
 ///
 /// \sa KIM_CHARGE_UNIT_GetNumberOfChargeUnits
@@ -154,14 +154,14 @@ extern ChargeUnit const statC;
 /// \since 2.0
 void GetNumberOfChargeUnits(int * const numberOfChargeUnits);
 
-/// \brief Get the identity of each defined standard charge unit.
+/// \brief Get the identity of each defined standard ChargeUnit.
 ///
 /// \param[in]  index Zero-based index uniquely labeling each defined standard
-///             charge unit.  This index ordering is only guaranteed to be
+///             ChargeUnit.  This index ordering is only guaranteed to be
 ///             stable during the lifetime of the current process.
 /// \param[out] chargeUnit The ChargeUnit object associated with \c index.
 ///
-/// \return \c true if \p chargeUnit is "unknown".
+/// \return \c true if `index < 0` or `index >= numberOfChargeUnits`.
 /// \return \c false otherwise.
 ///
 /// \sa KIM_CHARGE_UNIT_GetChargeUnit
