@@ -104,7 +104,7 @@ int GetComputeCallbackName(int const index,
 }  // namespace COMPUTE_CALLBACK_NAME
 
 // implementation of ComputeCallbackName
-ComputeCallbackName::ComputeCallbackName() : computeCallbackNameID(0) {}
+ComputeCallbackName::ComputeCallbackName() {}
 ComputeCallbackName::ComputeCallbackName(int const id) :
     computeCallbackNameID(id)
 {

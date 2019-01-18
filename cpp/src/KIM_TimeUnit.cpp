@@ -86,7 +86,7 @@ int GetTimeUnit(int const index, TimeUnit * const timeUnit)
 }  // namespace TIME_UNIT
 
 // implementation of TimeUnit
-TimeUnit::TimeUnit() : timeUnitID(0) {}
+TimeUnit::TimeUnit() {}
 TimeUnit::TimeUnit(int const id) : timeUnitID(id) {}
 TimeUnit::TimeUnit(std::string const & str)
 {

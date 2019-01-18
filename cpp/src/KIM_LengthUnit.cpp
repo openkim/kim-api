@@ -90,7 +90,7 @@ int GetLengthUnit(int const index, LengthUnit * const lengthUnit)
 }  // namespace LENGTH_UNIT
 
 // implementation of LengthUnit
-LengthUnit::LengthUnit() : lengthUnitID(0) {}
+LengthUnit::LengthUnit() {}
 LengthUnit::LengthUnit(int const id) : lengthUnitID(id) {}
 LengthUnit::LengthUnit(std::string const & str)
 {

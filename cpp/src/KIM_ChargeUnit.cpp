@@ -86,7 +86,7 @@ int GetChargeUnit(int const index, ChargeUnit * const chargeUnit)
 }  // namespace CHARGE_UNIT
 
 // implementation of ChargeUnit
-ChargeUnit::ChargeUnit() : chargeUnitID(0) {}
+ChargeUnit::ChargeUnit() {}
 ChargeUnit::ChargeUnit(int const id) : chargeUnitID(id) {}
 ChargeUnit::ChargeUnit(std::string const & str)
 {

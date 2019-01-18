@@ -81,7 +81,7 @@ int GetNumbering(int const index, Numbering * const numbering)
 }  // namespace NUMBERING
 
 // implementation of Numbering
-Numbering::Numbering() : numberingID(0) {}
+Numbering::Numbering() {}
 Numbering::Numbering(int const id) : numberingID(id) {}
 Numbering::Numbering(std::string const & str)
 {

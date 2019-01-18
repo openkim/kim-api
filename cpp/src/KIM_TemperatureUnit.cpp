@@ -83,7 +83,7 @@ int GetTemperatureUnit(int const index, TemperatureUnit * const temperatureUnit)
 }  // namespace TEMPERATURE_UNIT
 
 // implementation of TemperatureUnit
-TemperatureUnit::TemperatureUnit() : temperatureUnitID(0) {}
+TemperatureUnit::TemperatureUnit() {}
 TemperatureUnit::TemperatureUnit(int const id) : temperatureUnitID(id) {}
 TemperatureUnit::TemperatureUnit(std::string const & str)
 {

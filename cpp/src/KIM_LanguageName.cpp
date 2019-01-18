@@ -84,7 +84,7 @@ int GetLanguageName(int const index, LanguageName * const languageName)
 }  // namespace LANGUAGE_NAME
 
 // implementation of LanguageName
-LanguageName::LanguageName() : languageNameID(0) {}
+LanguageName::LanguageName() {}
 LanguageName::LanguageName(int const id) : languageNameID(id) {}
 LanguageName::LanguageName(std::string const str)
 {

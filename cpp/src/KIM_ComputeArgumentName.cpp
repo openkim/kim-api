@@ -166,7 +166,7 @@ int GetComputeArgumentDataType(ComputeArgumentName const computeArgumentName,
 
 
 // implementation of ComputeArgumentName
-ComputeArgumentName::ComputeArgumentName() : computeArgumentNameID(0) {}
+ComputeArgumentName::ComputeArgumentName() {}
 ComputeArgumentName::ComputeArgumentName(int const id) :
     computeArgumentNameID(id)
 {

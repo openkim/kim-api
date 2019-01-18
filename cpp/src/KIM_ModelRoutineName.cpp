@@ -115,7 +115,7 @@ int GetModelRoutineName(int const index,
 }  // namespace MODEL_ROUTINE_NAME
 
 // implementation of ModelRoutineName
-ModelRoutineName::ModelRoutineName() : modelRoutineNameID(0) {}
+ModelRoutineName::ModelRoutineName() {}
 ModelRoutineName::ModelRoutineName(int const id) : modelRoutineNameID(id) {}
 ModelRoutineName::ModelRoutineName(std::string const & str)
 {

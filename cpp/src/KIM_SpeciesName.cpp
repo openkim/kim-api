@@ -357,7 +357,7 @@ int GetSpeciesName(int const index, SpeciesName * const speciesName)
 }  // namespace SPECIES_NAME
 
 // implementation of SpeciesName
-SpeciesName::SpeciesName() : speciesNameID(0) {}
+SpeciesName::SpeciesName() {}
 SpeciesName::SpeciesName(int const id) : speciesNameID(id) {}
 SpeciesName::SpeciesName(std::string const & str)
 {

@@ -81,7 +81,7 @@ int GetDataType(int const index, DataType * const dataType)
 }  // namespace DATA_TYPE
 
 // implementation of DataType
-DataType::DataType() : dataTypeID(0) {}
+DataType::DataType() {}
 DataType::DataType(int const id) : dataTypeID(id) {}
 DataType::DataType(std::string const & str)
 {

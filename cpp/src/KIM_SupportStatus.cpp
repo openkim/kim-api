@@ -86,7 +86,7 @@ int GetSupportStatus(int const index, SupportStatus * const supportStatus)
 }  // namespace SUPPORT_STATUS
 
 // implementation of SupportStatus
-SupportStatus::SupportStatus() : supportStatusID(0) {}
+SupportStatus::SupportStatus() {}
 SupportStatus::SupportStatus(int const id) : supportStatusID(id) {}
 SupportStatus::SupportStatus(std::string const & str)
 {

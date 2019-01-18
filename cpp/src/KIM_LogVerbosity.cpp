@@ -89,7 +89,7 @@ int GetLogVerbosity(int const index, LogVerbosity * const logVerbosity)
 }  // namespace LOG_VERBOSITY
 
 // implementation of LogVerbosity
-LogVerbosity::LogVerbosity() : logVerbosityID(0) {}
+LogVerbosity::LogVerbosity() {}
 LogVerbosity::LogVerbosity(int const id) : logVerbosityID(id) {}
 LogVerbosity::LogVerbosity(std::string const & str)
 {

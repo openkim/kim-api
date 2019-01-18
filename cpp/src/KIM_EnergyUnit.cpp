@@ -93,7 +93,7 @@ int GetEnergyUnit(int const index, EnergyUnit * const energyUnit)
 }  // namespace ENERGY_UNIT
 
 // implementation of EnergyUnit
-EnergyUnit::EnergyUnit() : energyUnitID(0) {}
+EnergyUnit::EnergyUnit() {}
 EnergyUnit::EnergyUnit(int const id) : energyUnitID(id) {}
 EnergyUnit::EnergyUnit(std::string const & str)
 {
