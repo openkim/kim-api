@@ -64,7 +64,7 @@ class ComputeArgumentName
   /// \since 2.0
   int computeArgumentNameID;
 
-  /// \brief Create an uninitialized instance of ComputeArgumentName.
+  /// \brief Create an uninitialized ComputeArgumentName object.
   ///
   /// \since 2.0
   ComputeArgumentName();

@@ -59,7 +59,7 @@ class ChargeUnit
   /// \since 2.0
   int chargeUnitID;
 
-  /// \brief Create an uninitialized instance of ChargeUnit.
+  /// \brief Create an uninitialized ChargeUnit object.
   ///
   /// \since 2.0
   ChargeUnit();
@@ -82,7 +82,8 @@ class ChargeUnit
 
   /// \brief Determines if the object is a quantity known to the %KIM API.
   ///
-  /// ChargeUnit's known to the %KIM API are found in the CHARGE_UNIT namespace.
+  /// ChargeUnit's known to the %KIM API are found in the CHARGE_UNIT
+  /// namespace.
   ///
   /// \sa KIM_ChargeUnit_Known
   ///
@@ -155,8 +156,8 @@ extern ChargeUnit const statC;
 
 /// \brief Get the number of standard ChargeUnit's defined by the %KIM API.
 ///
-/// \param[out] numberOfChargeUnits The number of standard ChargeUnit's
-///             defined by the %KIM API.
+/// \param[out] numberOfChargeUnits The number of standard ChargeUnit's defined
+///             by the %KIM API.
 ///
 /// \sa KIM_CHARGE_UNIT_GetNumberOfChargeUnits
 ///

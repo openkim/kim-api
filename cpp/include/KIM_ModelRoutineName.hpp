@@ -38,37 +38,205 @@
 
 namespace KIM
 {
+/// \brief This class is an \ref extensible_enumeration
+/// "Extensible Enumeration" for the ModelRoutineName's supported by the %KIM
+/// API.
+///
+/// The enumeration constants are contained in the MODEL_ROUTINE_NAME
+/// namespace.
+///
+/// \sa KIM_ModelRoutineName
+///
+/// \since 2.0
 class ModelRoutineName
 {
  public:
+  /// \brief Integer identifying the specific ModelRoutineName represented.
+  ///
+  /// \note This should not be directly accessed and is only public for
+  /// cross-language reasons.
+  ///
+  /// \sa KIM_ModelRoutineName::modelRoutineNameID
+  ///
+  /// \since 2.0
   int modelRoutineNameID;
 
+  /// \brief Create an uninitialized ModelRoutineName object.
+  ///
+  /// \since 2.0
   ModelRoutineName();
+
+  /// \brief Create a ModelRoutineName object with the specified id.
+  ///
+  /// \note This should not be used directly.
+  ///
+  /// \since 2.0
   ModelRoutineName(int const id);
+
+  /// \brief Create a ModelRoutineName object corresponding to the provided
+  /// string.  If the string does not match one of the values defined by the
+  /// %KIM API, then an "unknown" object is generated.
+  ///
+  /// \sa KIM_ModelRoutineName_FromString
+  ///
+  /// \since 2.0
   ModelRoutineName(std::string const & str);
+
+  /// \brief Determines if the object is a quantity known to the %KIM API.
+  ///
+  /// ModelRoutineName's known to the %KIM API are found in the
+  /// MODEL_ROUTINE_NAME namespace.
+  ///
+  /// \sa KIM_ModelRoutineName_Known
+  ///
+  /// \since 2.0
   bool Known() const;
+
+  /// \brief Compares ModelRoutineName objects for equality.
+  ///
+  /// \note Not all "unknown" objects are equal.
+  ///
+  /// \sa KIM_ModelRoutineName_Equal
+  ///
+  /// \since 2.0
   bool operator==(ModelRoutineName const & rhs) const;
+
+  /// \brief Compares ModelRoutineName objects for inequality.
+  ///
+  /// \note It is possible for two "unknown" objects to be not equal.
+  ///
+  /// \sa KIM_ModelRoutineName_NotEqual
+  ///
+  /// \since 2.0
   bool operator!=(ModelRoutineName const & rhs) const;
+
+  /// \brief Converts the object to a string.
+  ///
+  /// \return A string object representing the ModelRoutineName object.
+  ///
+  /// \note If the ModelRoutineName object does not correspond to a value
+  /// defined by the %KIM API, then the string "unknown" is returned.
+  ///
+  /// \sa KIM_ModelRoutineName_ToString
+  ///
+  /// \since 2.0
   std::string const & ToString() const;
 };  // class ModelRoutineName
 
+/// Contains the enumeration constants and the discovery routines for the
+/// ModelRoutineName \ref extensible_enumeration "Extensible Enumeration".
 namespace MODEL_ROUTINE_NAME
 {
+/// \brief The standard \c Create routine.
+///
+/// \todo Add more detailed description of routine.
+///
+/// \sa KIM_MODEL_ROUTINE_NAME_Create
+///
+/// \since 2.0
 extern ModelRoutineName const Create;
+
+/// \brief The standard \c ComputeArgumentsCreate routine.
+///
+/// \todo Add more detailed description of routine.
+///
+/// \sa KIM_MODEL_ROUTINE_NAME_ComputeArgumentsCreate
+///
+/// \since 2.0
 extern ModelRoutineName const ComputeArgumentsCreate;
+
+/// \brief The standard \c Compute routine.
+///
+/// \todo Add more detailed description of routine.
+///
+/// \sa KIM_MODEL_ROUTINE_NAME_Compute
+///
+/// \since 2.0
 extern ModelRoutineName const Compute;
+
+/// \brief The standard \c Extension routine.
+///
+/// \todo Add more detailed description of routine.
+///
+/// \sa KIM_MODEL_ROUTINE_NAME_Extension
+///
+/// \since 2.0
 extern ModelRoutineName const Extension;
+
+/// \brief The standard \c Refresh routine.
+///
+/// \todo Add more detailed description of routine.
+///
+/// \sa KIM_MODEL_ROUTINE_NAME_Refresh
+///
+/// \since 2.0
 extern ModelRoutineName const Refresh;
+
+/// \brief The standard \c WriteParameterizedModel routine.
+///
+/// \todo Add more detailed description of routine.
+///
+/// \sa KIM_MODEL_ROUTINE_NAME_WriteParameterizedModel
+///
+/// \since 2.0
 extern ModelRoutineName const WriteParameterizedModel;
+
+/// \brief The standard \c ComputeArgumentsDestroy  routine.
+///
+/// \todo Add more detailed description of routine.
+///
+/// \sa KIM_MODEL_ROUTINE_NAME_ComputeArgumentsDestroy
+///
+/// \since 2.0
 extern ModelRoutineName const ComputeArgumentsDestroy;
+
+/// \brief The standard \c Destroy routine.
+///
+/// \todo Add more detailed description of routine.
+///
+/// \sa KIM_MODEL_ROUTINE_NAME_Destroy
+///
+/// \since 2.0
 extern ModelRoutineName const Destroy;
 
+
+/// \brief Get the number of standard ModelRoutineName's defined by the %KIM
+/// API.
+///
+/// \param[out] numberOfModelRoutineNames The number of standard
+///             ModelRoutineName's defined by the %KIM API.
+///
+/// \sa KIM_MODEL_ROUTINE_NAME_GetNumberOfModelRoutineNames
+///
+/// \since 2.0
 void GetNumberOfModelRoutineNames(int * const numberOfModelRoutineNames);
+
+/// \brief Get the identity of each defined standard ModelRoutineName.
+///
+/// \param[in]  index Zero-based index uniquely labeling each defined standard
+///             ModelRoutineName.  This index ordering is only guaranteed to be
+///             stable during the lifetime of the current process.
+/// \param[out] modelRoutineName The ModelRoutineName object associated with \c
+///             index.
+///
+/// \return \c true if `index < 0` or `index >= numberOfModelRoutineNames`.
+/// \return \c false otherwise.
+///
+/// \sa KIM_MODEL_ROUTINE_NAME_GetModelRoutineName
+///
+/// \since 2.0
 int GetModelRoutineName(int const index,
                         ModelRoutineName * const modelRoutineName);
 
+/// \brief Structure provided for use with std::map.
+///
+/// \since 2.0
 struct Comparator
 {
+  /// \brief Provides an (logically unmeaningful) ordering for ModelRoutineName
+  /// objects so that they can be stored in a std::map.
+  ///
+  /// \since 2.0
   bool operator()(ModelRoutineName const & a, ModelRoutineName const & b) const
   {
     return a.modelRoutineNameID < b.modelRoutineNameID;

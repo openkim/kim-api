@@ -59,7 +59,7 @@ class EnergyUnit
   /// \since 2.0
   int energyUnitID;
 
-  /// \brief Create an uninitialized instance of EnergyUnit.
+  /// \brief Create an uninitialized EnergyUnit object.
   ///
   /// \since 2.0
   EnergyUnit();
@@ -82,7 +82,8 @@ class EnergyUnit
 
   /// \brief Determines if the object is a quantity known to the %KIM API.
   ///
-  /// EnergyUnit's known to the %KIM API are found in the ENERGY_UNIT namespace.
+  /// EnergyUnit's known to the %KIM API are found in the ENERGY_UNIT
+  /// namespace.
   ///
   /// \sa KIM_EnergyUnit_Known
   ///
@@ -175,8 +176,8 @@ extern EnergyUnit const kcal_mol;
 
 /// \brief Get the number of standard EnergyUnit's defined by the %KIM API.
 ///
-/// \param[out] numberOfEnergyUnits The number of standard EnergyUnit's
-///             defined by the %KIM API.
+/// \param[out] numberOfEnergyUnits The number of standard EnergyUnit's defined
+///             by the %KIM API.
 ///
 /// \sa KIM_ENERGY_UNIT_GetNumberOfEnergyUnits
 ///

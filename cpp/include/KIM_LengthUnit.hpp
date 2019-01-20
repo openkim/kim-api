@@ -59,7 +59,7 @@ class LengthUnit
   /// \since 2.0
   int lengthUnitID;
 
-  /// \brief Create an uninitialized instance of LengthUnit.
+  /// \brief Create an uninitialized LengthUnit object.
   ///
   /// \since 2.0
   LengthUnit();
@@ -82,7 +82,8 @@ class LengthUnit
 
   /// \brief Determines if the object is a quantity known to the %KIM API.
   ///
-  /// LengthUnit's known to the %KIM API are found in the LENGTH_UNIT namespace.
+  /// LengthUnit's known to the %KIM API are found in the LENGTH_UNIT
+  /// namespace.
   ///
   /// \sa KIM_LengthUnit_Known
   ///
@@ -168,8 +169,8 @@ extern LengthUnit const nm;
 
 /// \brief Get the number of standard LengthUnit's defined by the %KIM API.
 ///
-/// \param[out] numberOfLengthUnits The number of standard LengthUnit's
-///             defined by the %KIM API.
+/// \param[out] numberOfLengthUnits The number of standard LengthUnit's defined
+///             by the %KIM API.
 ///
 /// \sa KIM_LENGTH_UNIT_GetNumberOfLengthUnits
 ///

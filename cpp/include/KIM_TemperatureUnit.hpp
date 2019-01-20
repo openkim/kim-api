@@ -60,7 +60,7 @@ class TemperatureUnit
   /// \since 2.0
   int temperatureUnitID;
 
-  /// \brief Create an uninitialized instance of TemperatureUnit.
+  /// \brief Create an uninitialized TemperatureUnit object.
   ///
   /// \since 2.0
   TemperatureUnit();
@@ -141,7 +141,8 @@ extern TemperatureUnit const unused;
 extern TemperatureUnit const K;
 
 
-/// \brief Get the number of standard TemperatureUnit's defined by the %KIM API.
+/// \brief Get the number of standard TemperatureUnit's defined by the %KIM
+/// API.
 ///
 /// \param[out] numberOfTemperatureUnits The number of standard
 ///             TemperatureUnit's defined by the %KIM API.

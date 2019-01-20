@@ -59,7 +59,7 @@ class TimeUnit
   /// \since 2.0
   int timeUnitID;
 
-  /// \brief Create an uninitialized instance of TimeUnit.
+  /// \brief Create an uninitialized TimeUnit object.
   ///
   /// \since 2.0
   TimeUnit();
@@ -71,9 +71,9 @@ class TimeUnit
   /// \since 2.0
   TimeUnit(int const id);
 
-  /// \brief Create a TimeUnit object corresponding to the provided string.
-  /// If the string does not match one of the values defined by the %KIM API,
-  /// then an "unknown" object is generated.
+  /// \brief Create a TimeUnit object corresponding to the provided string.  If
+  /// the string does not match one of the values defined by the %KIM API, then
+  /// an "unknown" object is generated.
   ///
   /// \sa KIM_TimeUnit_FromString
   ///
@@ -161,8 +161,8 @@ extern TimeUnit const s;
 
 /// \brief Get the number of standard TimeUnit's defined by the %KIM API.
 ///
-/// \param[out] numberOfTimeUnits The number of standard TimeUnit's
-///             defined by the %KIM API.
+/// \param[out] numberOfTimeUnits The number of standard TimeUnit's defined by
+///             the %KIM API.
 ///
 /// \sa KIM_TIME_UNIT_GetNumberOfTimeUnits
 ///
@@ -189,8 +189,8 @@ int GetTimeUnit(int const index, TimeUnit * const timeUnit);
 /// \since 2.0
 struct Comparator
 {
-  /// \brief Provides an (logically unmeaningful) ordering for TimeUnit
-  /// objects so that they can be stored in a std::map.
+  /// \brief Provides an (logically unmeaningful) ordering for TimeUnit objects
+  /// so that they can be stored in a std::map.
   ///
   /// \since 2.0
   bool operator()(TimeUnit const & a, TimeUnit const & b) const
