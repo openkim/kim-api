@@ -65,39 +65,42 @@ class Model
   /// the Model's MODEL_ROUTINE_NAME::Create routine.
   ///
   /// \param[in]  numbering The Numbering value used by the Simulator.
-  /// \param[in]  requestedLengthUnit The LengthUnit requested by the
+  /// \param[in]  requestedLengthUnit The base LengthUnit requested by the
   ///             Simulator.
-  /// \param[in]  requestedEnergyUnit The EnergyUnit requested by the
+  /// \param[in]  requestedEnergyUnit The base EnergyUnit requested by the
   ///             Simulator.
-  /// \param[in]  requestedChargeUnit The ChargeUnit requested by the
+  /// \param[in]  requestedChargeUnit The base ChargeUnit requested by the
   ///             Simulator.
-  /// \param[in]  requestedTemperatureUnit The TemperatureUnit requested
+  /// \param[in]  requestedTemperatureUnit The base TemperatureUnit requested
   ///             by the Simulator.
-  /// \param[in]  requestedTimeUnit The TimeUnit requested by the Simulator.
-  /// \param[in]  modelName The name of the Model to be created.
-  /// \param[out] requestedUnitsAccepted An integer that is set to \c true if
-  ///             the Model accepts the Simulator's requested units, \c false
-  ///             if the Model will use units other than those requested by the
+  /// \param[in]  requestedTimeUnit The base TimeUnit requested by the
   ///             Simulator.
+  /// \param[in]  modelName The name of the Model to be created.
+
+  /// \param[out] requestedUnitsAccepted An integer that is set to \c true if
+  ///             the Model accepts the Simulator's requested base units, \c
+  ///             false if the Model will use base units other than those
+  ///             requested by the Simulator.
   /// \param[out] model Pointer to the newly created Model object.
   ///
   /// \note A requsted unit of \c unused indicates that the Simulator will not
   /// employ any derived units connected to the associated base unit.  This
   /// avoids the need for the Simulator to make an arbitrary choice that could
-  /// cause the Model to not accept its requested units.
+  /// cause the Model to not accept its requested base units.
   ///
   /// \return \c true if the %KIM API is unable to allocate a new log object.
-  /// \return \c true if \c numbering or any of the units are invalid.
+  /// \return \c true if \c numbering or any of the base units are unknown.
   /// \return \c true if the requested model's library cannot be found,
   ///         opened, is of the wrong type, or has some other problem.
   /// \return \c true if the Model's MODEL_ROUTINE_NAME::Create routine
   ///         returns \c true.
-  /// \return \c true if the Model's MODEL_ROUTINE_NAME::Create routine
-  ///         does not set the Model's (1) numbering, (2) units, (3)
-  ///         influence distance, (4) numberOfNeighborLists, (5) cutoff values,
-  ///         (6) modelWillNotRequesNeighborsOfNoncontributingParticles, (7)
-  ///         required ModelRoutineName pointers, (8) supported sepecies codes.
-  /// \return \c true if max(cutoffs) > influenceDistance.
+  /// \return \c true if the Model's MODEL_ROUTINE_NAME::Create routine does
+  ///         not set the Model's (1) numbering, (2) base units, (3) influence
+  ///         distance, (4) numberOfNeighborLists, (5) cutoff values, (6)
+  ///         modelWillNotRequesNeighborsOfNoncontributingParticles, (7)
+  ///         required ModelRoutineName pointers, or (8) supported sepecies
+  ///         codes.
+  /// \return \c true if `max(cutoffs) > influenceDistance`.
   /// \return \c true if parameters are registered but not a
   ///         MODEL_ROUTINE_NAME::Refresh pointer, or vise-versa.
   /// \return \c true if a MODEL_ROUTINE_NAME::WriteParameterizedModel
@@ -163,6 +166,9 @@ class Model
   ///
   /// \param[out] influenceDistance
   ///
+  /// \todo Add more detailed description of \c influenceDistance. (or link to
+  /// docs elsewhere?)
+  ///
   /// \sa KIM_Model_GetInfluenceDistance
   ///
   /// \since 2.0
@@ -195,11 +201,11 @@ class Model
 
   /// \brief Get the Model's unit values.
   ///
-  /// \param[out] lengthUnit The Model's LengthUnit.
-  /// \param[out] energyUnit The Model's EnergyUnit.
-  /// \param[out] chargeUnit The Model's ChargeUnit.
-  /// \param[out] temperatureUnit The Model's TemperatureUnit.
-  /// \param[out] timeUnit The Model's TimeUnit.
+  /// \param[out] lengthUnit The Model's base LengthUnit.
+  /// \param[out] energyUnit The Model's base EnergyUnit.
+  /// \param[out] chargeUnit The Model's base ChargeUnit.
+  /// \param[out] temperatureUnit The Model's base TemperatureUnit.
+  /// \param[out] timeUnit The Model's base TimeUnit.
   ///
   /// \note A unit of \c unused indicates the the Model does not deal with any
   /// quantities whose derived unit involves the corresponding base unit.  For
@@ -226,7 +232,7 @@ class Model
   /// calls the Model's MODEL_ROUTINE_NAME::ComputeArgumentsCreate routine.
   ///
   /// \param[inout] computeArguments Pointer to the newly created
-  ///                ComputeArguments object.
+  ///               ComputeArguments object.
   ///
   /// \return \c true if the %KIM API is unable to allocate a new
   ///         ComputeArguments object.
@@ -270,7 +276,7 @@ class Model
   /// \return \c true if \c computeArguments was created by a different Model
   ///         (as identified by its name string).
   /// \return \c true if
-  ///         `ComputeArguments::AreAllRequiredArgumentsAndCallbacksPresent`
+  ///         ComputeArguments::AreAllRequiredArgumentsAndCallbacksPresent
   ///         returns \c false for \c computeArguments.
   /// \return \c true if the Model's MODEL_ROUTINE_NAME::Compute routine
   ///         returns \c true.
@@ -301,7 +307,7 @@ class Model
                 void * const extensionStructure);
 
   /// \brief Clear influence distance and neighbor list pointers and refresh
-  /// Model after parameter changes.
+  /// Model object after parameter changes.
   ///
   /// Nullify the Model's influence distance, neighbor list cutoff, and \c
   /// modelWillNotRequestNeighborsOfNoncontributingParticles pointers.  Then
@@ -352,7 +358,7 @@ class Model
   /// \param[out] code Value used by the Model to refer to the species of
   ///             interest.
   ///
-  /// \return \c true if \c speciesName is invalid.
+  /// \return \c true if \c speciesName is unknown.
   /// \return \c false otherwise.
   ///
   /// \pre \c code may be \c NULL if the value is not needed.
@@ -385,7 +391,7 @@ class Model
   /// \param[out] extent The number of parameters in the array.
   /// \param[out] name A string identifying the parameter array (will be a valid
   ///             C identifier).
-  /// \param[out] description A free-from string description of the parameter
+  /// \param[out] description A free-form string description of the parameter
   ///             array's content.
   ///
   /// \return \c true if \c parameterIndex is invalid
@@ -455,7 +461,7 @@ class Model
   /// within the Model.
   ///
   /// The simulator buffer pointer may be used by the Simulator to associate
-  /// a memory buffer with an instance of the Model object.
+  /// a memory buffer with the Model object.
   ///
   /// \param[in] ptr The simulator buffer pointer.
   ///
