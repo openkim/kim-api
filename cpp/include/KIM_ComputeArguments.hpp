@@ -52,39 +52,180 @@ class ModelImplementation;
 class ComputeArgumentsImplementation;
 
 
+/// \brief Provides the primary interface to a %KIM API ComputeArguments object
+/// and is meant to be used by Simulators.
+///
+/// \since 2.0
 class ComputeArguments
 {
  public:
+  /// \brief Get the SupportStatus of a ComputeArgumentName.
+  ///
+  /// \param[in] computeArgumentName The ComputeArgumentName of interest.
+  /// \param[out] supportStatus The Model's corresponding SupportStatus.
+  ///
+  /// \return \c true if \c computeArgumentName is unknown.
+  /// \return \c false otherwise.
+  ///
+  /// \sa KIM_ComputeArguments_GetArgumentSupportStatus
+  ///
+  /// \since 2.0
   int GetArgumentSupportStatus(ComputeArgumentName const computeArgumentName,
                                SupportStatus * const supportStatus) const;
+
+  /// \brief Get the SupportStatus of a ComputeCallbackName.
+  ///
+  /// \param[in] computeCallbackName The ComputeCallbackName of interest.
+  /// \param[out] supportStatus The Model's corresponding SupportStatus.
+  ///
+  /// \return \c true if \c computeCallbackName is unknown.
+  /// \return \c false otherwise.
+  ///
+  /// \sa KIM_ComputeArguments_GetCallbackSupportStatus
+  ///
+  /// \since 2.0
   int GetCallbackSupportStatus(ComputeCallbackName const computeCallbackName,
                                SupportStatus * const supportStatus) const;
 
+  /// \brief Set the data pointer for a ComputeArgumentName.
+  ///
+  /// \todo Add more detailed description what it means to provide a NULL or
+  /// non-NULL value for various SupportStatus'es.
+  ///
+  /// \param[in] computeArgumentName The ComputeArgumentName of interest.
+  /// \param[in] ptr The data pointer.
+  ///
+  /// \return \c true if \c computeArgumentName is unknown.
+  /// \return \c true if `ptr != NULL` and `computeArgumentName ==
+  ///         SUPPORT_STATUS::notSupported`.
+  /// \return \c false otherwise.
+  ///
+  /// \sa KIM_ComputeArguments_SetArgumentPointerInteger,
+  ///     KIM_ComputeArguments_SetArgumentPointerDouble
+  ///
+  /// \since 2.0
   int SetArgumentPointer(ComputeArgumentName const computeArgumentName,
                          int const * const ptr);
+
+  /// \overload
   int SetArgumentPointer(ComputeArgumentName const computeArgumentName,
                          int * const ptr);
+
+  /// \overload
   int SetArgumentPointer(ComputeArgumentName const computeArgumentName,
                          double const * const ptr);
+
+  /// \overload
   int SetArgumentPointer(ComputeArgumentName const computeArgumentName,
                          double * const ptr);
 
+  /// \brief Set the function pointer for a ComputeCallbackName.
+  ///
+  /// \todo Add more detailed description what it means to provide a NULL or
+  /// non-NULL value for various SupportStatus'es.
+  ///
+  /// \param[in] computeCallbackName The ComputeCallbackName of interest.
+  /// \param[in] fptr The function pointer.
+  ///
+  /// \return \c true if \c computeCallbackName is unknown.
+  /// \return \c true if `fptr != NULL` and `computeCallbackName ==
+  ///         SUPPORT_STATUS::notSupported`.
+  /// \return \c false otherwise.
+  ///
+  /// \sa KIM_ComputeArguments_SetCallbackPointer
+  ///
+  /// \since 2.0
   int SetCallbackPointer(ComputeCallbackName const computeCallbackName,
                          LanguageName const languageName,
                          Function * const fptr,
                          void * const dataObject);
 
+  /// \brief Determine if non-NULL pointers have been set for all
+  /// ComputeArgumentName's and ComputeCallbackName's with SupportStatus
+  /// values of SUPPORT_STATUS::requiredByAPI or SUPPORT_STATUS::required.
+  ///
+  /// \param[out] result Is \c ture if all such arguments and callbacks have
+  ///             non-NULL pointers, and is \c false otherwise.
+  ///
+  /// \sa KIM_ComputeArguments_AreAllRequiredArgumentsAndCallbacksPresent
+  ///
+  /// \since 2.0
   void AreAllRequiredArgumentsAndCallbacksPresent(int * const result) const;
 
+  /// \brief Set the \ref cache_buffer_pointers "Simulator's buffer pointer"
+  /// within the ComputeArguments object.
+  ///
+  /// The simulator buffer pointer may be used by the Simulator to associate
+  /// a memory buffer with the ComputeArguments object.
+  ///
+  /// \param[in] ptr The simulator buffer data pointer.
+  ///
+  /// \sa KIM_ComputeArguments_SetSimulatorBufferPointer
+  ///
+  /// \since 2.0
   void SetSimulatorBufferPointer(void * const ptr);
+
+
+  /// \brief Get the \ref cache_buffer_pointers "Simulator's buffer pointer"
+  /// from the ComputeArguments object.
+  ///
+  /// \param[out] ptr The simulator buffer data pointer.
+  ///
+  /// \note `ptr == NULL` if the Simulator has not previously called
+  ///       ComputeArguments::SetSimulatorBufferPointer.
+  ///
+  /// \sa KIM_ComputeArguments_GetSimulatorBufferPointer
+  ///
+  /// \since 2.0
   void GetSimulatorBufferPointer(void ** const ptr) const;
 
+  /// \brief Get a string representing the internal state of the
+  /// ComputeArguments object.
+  ///
+  /// This string is primarily meant for use as a debugging tool.  The string
+  /// may be quite long.  It begins and ends with lines consisting only of \c
+  /// ='s.
+  ///
+  /// \sa KIM_ComputeArguments_ToString
+  ///
+  /// \since 2.0
   std::string const & ToString() const;
 
+  /// \brief Set the identity of the Log object associated with the
+  /// ComputeArguments object.
+  ///
+  /// \param[in] logID String identifying the ComputeArguments object's Log
+  /// object.
+  ///
+  /// \sa KIM_ComputeArguments_SetLogID
+  ///
+  /// \since 2.0
   void SetLogID(std::string const & logID);
+
+  /// \brief Push a new LogVerbosity onto the ComputeArguments object's Log
+  /// object verbosity stack.
+  ///
+  /// \param[in] logVerbosity A LogVerbosity value.
+  ///
+  /// \sa KIM_ComputeArguments_PushLogVerbosity
+  ///
+  /// \since 2.0
   void PushLogVerbosity(LogVerbosity const logVerbosity);
+
+  /// \brief Pop a LogVerbosity from the ComputeArguments object's Log object
+  /// verbosity stack.
+  ///
+  /// \sa KIM_ComputeArguments_PopLogVerbosity
+  ///
+  /// \since 2.0
   void PopLogVerbosity();
 
+  /// \brief Allows Model objects to directly access private member data of a
+  /// ComptueArguments object.
+  ///
+  /// \note This has no practical effect on \e users of the %KIM API.
+  ///
+  /// \since 2.0
   friend class ModelImplementation;
 
  private:

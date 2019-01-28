@@ -174,7 +174,7 @@ class Model
   /// \since 2.0
   void GetInfluenceDistance(double * const influenceDistance) const;
 
-  /// \brief Get the Model's neighbor list information
+  /// \brief Get the Model's neighbor list information.
   ///
   /// Each neighbor list has a cutoff value and a flag indicating if the Model
   /// will request the neighbors of noncontributing particles.
@@ -458,12 +458,12 @@ class Model
                    double const parameterValue);
 
   /// \brief Set the \ref cache_buffer_pointers "Simulator's buffer pointer"
-  /// within the Model.
+  /// within the Model object.
   ///
   /// The simulator buffer pointer may be used by the Simulator to associate
   /// a memory buffer with the Model object.
   ///
-  /// \param[in] ptr The simulator buffer pointer.
+  /// \param[in] ptr The simulator buffer data pointer.
   ///
   /// \sa KIM_Model_SetSimulatorBufferPointer
   ///
@@ -471,9 +471,9 @@ class Model
   void SetSimulatorBufferPointer(void * const ptr);
 
   /// \brief Get the \ref cache_buffer_pointers "Simulator's buffer pointer"
-  /// from the Model.
+  /// from the Model object.
   ///
-  /// \param[out] ptr The simulator buffer pointer.
+  /// \param[out] ptr The simulator buffer data pointer.
   ///
   /// \note `ptr == NULL` if the Simulator has not previously called
   ///       Model::SetSimulatorBufferPointer.
@@ -494,17 +494,18 @@ class Model
   /// \since 2.0
   std::string const & ToString() const;
 
-  /// \brief Set the identity of the Log object associated with the Model.
+  /// \brief Set the identity of the Log object associated with the Model
+  /// object.
   ///
-  /// \param[in] logID String identifying the Model's Log object.
+  /// \param[in] logID String identifying the Model object's Log object.
   ///
   /// \sa KIM_Model_SetLogID
   ///
   /// \since 2.0
   void SetLogID(std::string const & logID);
 
-  /// \brief Push a new LogVerbosity onto the Model's Log object verbosity
-  /// stack.
+  /// \brief Push a new LogVerbosity onto the Model object's Log object
+  /// verbosity stack.
   ///
   /// \param[in] logVerbosity A LogVerbosity value.
   ///
@@ -513,7 +514,8 @@ class Model
   /// \since 2.0
   void PushLogVerbosity(LogVerbosity const logVerbosity);
 
-  /// \brief Pop a LogVerbosity from the Model's Log object verbosity stack.
+  /// \brief Pop a LogVerbosity from the Model object's Log object verbosity
+  /// stack.
   ///
   /// \sa KIM_Model_PopLogVerbosity
   ///
