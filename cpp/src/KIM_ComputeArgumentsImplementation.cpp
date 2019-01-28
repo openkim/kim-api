@@ -153,7 +153,7 @@ int ComputeArgumentsImplementation::SetArgumentSupportStatus(
   LOG_DEBUG("Enter  " + callString);
 
 #if ERROR_VERBOSITY
-  int error = Validate(computeArgumentName) || Validate(supportStatus);
+  int error = (!computeArgumentName.Known()) || (!supportStatus.Known());
   if (error)
   {
     LOG_ERROR("Invalid arguments.");
@@ -205,7 +205,7 @@ int ComputeArgumentsImplementation::GetArgumentSupportStatus(
   LOG_DEBUG("Enter  " + callString);
 
 #if ERROR_VERBOSITY
-  int error = Validate(computeArgumentName);
+  int error = (!computeArgumentName.Known());
   if (error)
   {
     LOG_ERROR("Invalid arguments.");
@@ -236,7 +236,7 @@ int ComputeArgumentsImplementation::SetCallbackSupportStatus(
   LOG_DEBUG("Enter  " + callString);
 
 #if ERROR_VERBOSITY
-  int error = Validate(computeCallbackName) || Validate(supportStatus);
+  int error = (!computeCallbackName.Known()) || (!supportStatus.Known());
   if (error)
   {
     LOG_ERROR("Invalid arguments.");
@@ -291,7 +291,7 @@ int ComputeArgumentsImplementation::GetCallbackSupportStatus(
   LOG_DEBUG("Enter  " + callString);
 
 #if ERROR_VERBOSITY
-  int error = Validate(computeCallbackName);
+  int error = (!computeCallbackName.Known());
   if (error)
   {
     LOG_ERROR("Invalid arguments.");
@@ -321,7 +321,7 @@ int ComputeArgumentsImplementation::SetArgumentPointer(
   LOG_DEBUG("Enter  " + callString);
 
 #if ERROR_VERBOSITY
-  int error = Validate(computeArgumentName);
+  int error = (!computeArgumentName.Known());
   if (error)
   {
     LOG_ERROR("Invalid arguments.");
@@ -379,7 +379,7 @@ int ComputeArgumentsImplementation::SetArgumentPointer(
   LOG_DEBUG("Enter  " + callString);
 
 #if ERROR_VERBOSITY
-  int error = Validate(computeArgumentName);
+  int error = (!computeArgumentName.Known());
   if (error)
   {
     LOG_ERROR("Invalid arguments.");
@@ -438,7 +438,7 @@ int ComputeArgumentsImplementation::GetArgumentPointer(
   LOG_DEBUG("Enter  " + callString);
 
 #if ERROR_VERBOSITY
-  int error = Validate(computeArgumentName);
+  int error = (!computeArgumentName.Known());
   if (error)
   {
     LOG_ERROR("Invalid arguments.");
@@ -481,7 +481,7 @@ int ComputeArgumentsImplementation::GetArgumentPointer(
   LOG_DEBUG("Enter  " + callString);
 
 #if ERROR_VERBOSITY
-  int error = Validate(computeArgumentName);
+  int error = (!computeArgumentName.Known());
   if (error)
   {
     LOG_ERROR("Invalid arguments.");
@@ -526,7 +526,7 @@ int ComputeArgumentsImplementation::GetArgumentPointer(
   LOG_DEBUG("Enter  " + callString);
 
 #if ERROR_VERBOSITY
-  int error = Validate(computeArgumentName);
+  int error = (!computeArgumentName.Known());
   if (error)
   {
     LOG_ERROR("Invalid arguments.");
@@ -570,7 +570,7 @@ int ComputeArgumentsImplementation::GetArgumentPointer(
   LOG_DEBUG("Enter  " + callString);
 
 #if ERROR_VERBOSITY
-  int error = Validate(computeArgumentName);
+  int error = (!computeArgumentName.Known());
   if (error)
   {
     LOG_ERROR("Invalid arguments.");
@@ -618,7 +618,7 @@ int ComputeArgumentsImplementation::SetCallbackPointer(
   LOG_DEBUG("Enter  " + callString);
 
 #if ERROR_VERBOSITY
-  int error = Validate(computeCallbackName) || Validate(languageName);
+  int error = (!computeCallbackName.Known()) || (!languageName.Known());
   if (error)
   {
     LOG_ERROR("Invalid arguments.");
@@ -671,7 +671,7 @@ int ComputeArgumentsImplementation::IsCallbackPresent(
   LOG_DEBUG("Enter  " + callString);
 
 #if ERROR_VERBOSITY
-  int error = Validate(computeCallbackName);
+  int error = (!computeCallbackName.Known());
   if (error)
   {
     LOG_ERROR("Invalid arguments.");
@@ -1424,133 +1424,5 @@ ComputeArgumentsImplementation::~ComputeArgumentsImplementation()
 
   LOG_DEBUG("Destroying Log object and exit " + callString);
   Log::Destroy(&log_);
-}
-
-int ComputeArgumentsImplementation::Validate(
-    ComputeArgumentName const computeArgumentName) const
-{
-  // No debug logging for Validate: too expensive
-  //
-  // #if DEBUG_VERBOSITY
-  //   std::string const callString = "Validate(" +
-  //   computeArgumentName.ToString()
-  //       + ").";
-  // #endif
-  //   LOG_DEBUG("Enter  " + callString);
-
-  int numberOfComputeArgumentNames;
-  COMPUTE_ARGUMENT_NAME::GetNumberOfComputeArgumentNames(
-      &numberOfComputeArgumentNames);
-
-  for (int i = 0; i < numberOfComputeArgumentNames; ++i)
-  {
-    ComputeArgumentName argName;
-    COMPUTE_ARGUMENT_NAME::GetComputeArgumentName(i, &argName);
-
-    if (computeArgumentName == argName)
-    {
-      // LOG_DEBUG("Exit 0=" + callString);
-      return false;
-    }
-  }
-
-  LOG_ERROR("Invalid ComputeArgumentName encountered.");
-  // LOG_DEBUG("Exit 1=" + callString);
-  return true;
-}
-
-int ComputeArgumentsImplementation::Validate(
-    ComputeCallbackName const computeCallbackName) const
-{
-  // No debug logging for Validate: too expensive
-  //
-  // #if DEBUG_VERBOSITY
-  //   std::string const callString = "Validate(" +
-  //   computeCallbackName.ToString()
-  //       + ").";
-  // #endif
-  //   LOG_DEBUG("Enter  " + callString);
-
-  int numberOfComputeCallbackNames;
-  COMPUTE_CALLBACK_NAME::GetNumberOfComputeCallbackNames(
-      &numberOfComputeCallbackNames);
-
-  for (int i = 0; i < numberOfComputeCallbackNames; ++i)
-  {
-    ComputeCallbackName cbName;
-    COMPUTE_CALLBACK_NAME::GetComputeCallbackName(i, &cbName);
-
-    if (computeCallbackName == cbName)
-    {
-      // LOG_DEBUG("Exit 0=" + callString);
-      return false;
-    }
-  }
-
-  LOG_ERROR("Invalid ComputeCallbackName encountered.");
-  // LOG_DEBUG("Exit 1=" + callString);
-  return true;
-}
-
-int ComputeArgumentsImplementation::Validate(
-    LanguageName const languageName) const
-{
-  // No debug logging for Validate: too expensive
-  //
-  // #if DEBUG_VERBOSITY
-  //   std::string const callString = "Validate(" + languageName.ToString()
-  //       + ").";
-  // #endif
-  //   LOG_DEBUG("Enter  " + callString);
-
-  int numberOfLanguageNames;
-  LANGUAGE_NAME::GetNumberOfLanguageNames(&numberOfLanguageNames);
-
-  for (int i = 0; i < numberOfLanguageNames; ++i)
-  {
-    LanguageName langName;
-    LANGUAGE_NAME::GetLanguageName(i, &langName);
-
-    if (languageName == langName)
-    {
-      // LOG_DEBUG("Exit 0=" + callString);
-      return false;
-    }
-  }
-
-  LOG_ERROR("Invalid LanguageName encountered.");
-  // LOG_DEBUG("Exit 1=" + callString);
-  return true;
-}
-
-int ComputeArgumentsImplementation::Validate(
-    SupportStatus const supportStatus) const
-{
-  // No debug logging for Validate: too expensive
-  //
-  // #if DEBUG_VERBOSITY
-  //   std::string const callString = "Validate(" + supportStatus.ToString()
-  //       + ").";
-  // #endif
-  //   LOG_DEBUG("Enter  " + callString);
-
-  int numberOfSupportStatuses;
-  SUPPORT_STATUS::GetNumberOfSupportStatuses(&numberOfSupportStatuses);
-
-  for (int i = 0; i < numberOfSupportStatuses; ++i)
-  {
-    SupportStatus supStatus;
-    SUPPORT_STATUS::GetSupportStatus(i, &supStatus);
-
-    if (supportStatus == supStatus)
-    {
-      // LOG_DEBUG("Exit 0=" + callString);
-      return false;
-    }
-  }
-
-  LOG_ERROR("Invalid SupportStatus encountered.");
-  // LOG_DEBUG("Exit 1=" + callString);
-  return true;
 }
 }  // namespace KIM
