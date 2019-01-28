@@ -733,7 +733,7 @@ void ComputeArgumentsImplementation::AreAllRequiredArgumentsAndCallbacksPresent(
         LOG_ERROR("Required ComputeArgument '" + (itr->first).ToString()
                   + "' is not present.");
 
-        *result = 0;
+        *result = false;
         LOG_DEBUG("Exit   " + callString);
         return;
       }
@@ -756,14 +756,14 @@ void ComputeArgumentsImplementation::AreAllRequiredArgumentsAndCallbacksPresent(
         LOG_ERROR("Required ComputeCallback '" + (itr->first).ToString()
                   + "' is not present.");
 
-        *result = 0;
+        *result = false;
         LOG_DEBUG("Exit   " + callString);
         return;
       }
     }
   }
 
-  *result = 1;
+  *result = true;
   LOG_DEBUG("Exit   " + callString);
   return;
 }
