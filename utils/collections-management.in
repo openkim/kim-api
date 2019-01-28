@@ -100,8 +100,8 @@ usage () {
 
 check_version_compatibility () {
   local version="$1"
-  local major="`printf -- "${version}" | sed -e 's/\([^.}]*\).*/\1/'`"
-  local minor="`printf -- "${version}" | sed -e 's/[^.]*\.\([^.:]*\).*/\1/'`"
+  local major="`printf -- "%s" "${version}" | sed -e 's/\([^.}]*\).*/\1/'`"
+  local minor="`printf -- "%s" "${version}" | sed -e 's/[^.]*\.\([^.:]*\).*/\1/'`"
   if test \( ${major} -eq ${major_version} \) ; then
     return 0
   else
@@ -120,7 +120,7 @@ check_item_compatibility () {
     printf "*** ERROR *** Unable to successfully contact openkim.org to check ${item_name} compatibility.\n"
     return 1
   fi
-  version="`printf -- "${version}" | \
+  version="`printf -- "%s" "${version}" | \
                  sed -e 's/\[//g' -e 's/\]//g' \
                  -e 's/{"kim-api-version": "\([0-9.]*\)"}/\1/g'`"
   if test x"" = x"${version}"; then
@@ -175,11 +175,11 @@ get_local_build_item_name () {
     local item_type="`grep -- "item-type:" item-info.txt | sed -e 's/^item-type://'`"
     case "${item_type}" in
       STAND_ALONE_MODEL|PARAMETERIZED_MODEL|SIMULATOR_MODEL)
-        printf -- "`grep -- "item-name:" item-info.txt | sed -e 's/^item-name:"\(.*\)"/\1/'`" \
+        printf -- "%s" "`grep -- "item-name:" item-info.txt | sed -e 's/^item-name:"\(.*\)"/\1/'`" \
                > "${build_dir}/item_name"
         ;;
       MODEL_DRIVER)
-        printf -- "`grep -- "item-name:" item-info.txt | sed -e 's/^item-name:"\(.*\)"/\1/'`" \
+        printf -- "%s" "`grep -- "item-name:" item-info.txt | sed -e 's/^item-name:"\(.*\)"/\1/'`" \
                > "${build_dir}/item_name"
         ;;
       *)
@@ -295,7 +295,7 @@ get_build_install_item () {
     found_item="${found_item}""`${collections_info} models find "${item_name}"`"; if test $? -ne 0; then return 1; fi
   fi
   if test x"" != x"${found_item}"; then
-    local item_collection="`printf -- "${found_item}" | sed -e 's/ .*//'`"
+    local item_collection="`printf -- "%s" "${found_item}" | sed -e 's/ .*//'`"
     printf "Item '${item_name}' already installed in collection '${item_collection}'.\n"
     if test x"${force}" = x"yes"; then
       if ! remove_item "${item_name}" "${use_sudo}" "${PASSWORD}" "interactive-no"; then
@@ -335,12 +335,12 @@ get_build_install_item () {
         printf "*** ERROR *** Unable to successfully contact openkim.org to download models.\n"
         return 1
       fi
-      list="`printf -- "${list}" | \
+      list="`printf -- "%s" "${list}" | \
                      sed -e 's/\[//g' -e 's/\]//g' \
                      -e 's/{"kim-api-version": "\([0-9.]*\)", "kimcode": "\([^"]*\)"},*/\1:\2/g'`"
       for version in ${list}; do \
         if check_version_compatibility "${version}"; then
-          local modname="`printf -- ${version} | sed -e s/[^:]*://`"
+          local modname="`printf -- "%s" "${version}" | sed -e s/[^:]*://`"
           get_build_install_item "$install_collection" "${modname}" "${force}" "${use_sudo}" "${PASSWORD}" || return 1
         fi
       done
@@ -381,7 +381,7 @@ get_build_install_item () {
         fi
         if ! ((${make_command} clean && ${make_command} && ${make_command} CTEST_OUTPUT_ON_FAILURE=1 test) > ./make-log.txt 2>&1 && \
                 if test x"sudo-yes" = x"${use_sudo}"; then
-                  printf -- "${PASSWORD}\n" | sudo -k -S ${make_command} install 2> /dev/null
+                  printf -- "%s\n" "${PASSWORD}" | sudo -k -S ${make_command} install 2> /dev/null
                 else
                   ${make_command} install
                 fi); then
@@ -393,7 +393,7 @@ get_build_install_item () {
                 x"SIMULATOR_MODEL"   = x"${item_type}"; then
         if ! ((${make_command} clean && ${make_command} && ${make_command} CTEST_OUTPUT_ON_FAILURE=1 test) > ./make-log.txt 2>&1 && \
                 if test x"sudo-yes" = x"${use_sudo}"; then
-                  printf -- "${PASSWORD}\n" | sudo -k -S ${make_command} install 2> /dev/null
+                  printf -- "%s\n" "${PASSWORD}" | sudo -k -S ${make_command} install 2> /dev/null
                 else
                   ${make_command} install
                 fi); then
@@ -447,7 +447,7 @@ remove_item () {
   fi
   if test 0 -eq ${confirmed}; then
     if test x"sudo-yes" = x"${use_sudo}"; then
-      printf -- "${PASSWORD}\n" | sudo -k -S rm -rf "${item_dir}" 2> /dev/null || return 1
+      printf -- "%s\n" "${PASSWORD}" | sudo -k -S rm -rf "${item_dir}" 2> /dev/null || return 1
     else
       rm -rf "${item_dir}" || return 1
     fi
@@ -465,10 +465,10 @@ split_drivers_list_into_collections () {
   drivers_usr_collection=""; number_drivers_usr=0
   drivers_sys_collection=""; number_drivers_sys=0
   while read line; do
-    local collection="`printf -- "$line" | sed -e 's/\([^ ]*\) .*/\1/'`"
-    local name="`printf -- "$line" | sed -e 's/[^ ]* \([^ ]*\) .*/\1/'`"
-    local directory="`printf -- "$line" | sed -e 's/[^ ]* [^ ]* \([^ ]*\) .*/\1/'`"
-    local version="`printf -- "$line" | sed -e 's/[^ ]* [^ ]* [^ ]* \([^ ]*\).*/\1/'`"
+    local collection="`printf -- "%s" "$line" | sed -e 's/\([^ ]*\) .*/\1/'`"
+    local name="`printf -- "%s" "$line" | sed -e 's/[^ ]* \([^ ]*\) .*/\1/'`"
+    local directory="`printf -- "%s" "$line" | sed -e 's/[^ ]* [^ ]* \([^ ]*\) .*/\1/'`"
+    local version="`printf -- "%s" "$line" | sed -e 's/[^ ]* [^ ]* [^ ]* \([^ ]*\).*/\1/'`"
     case $collection in
       "")
       # empty do nothing
@@ -523,10 +523,10 @@ split_models_list_into_collections () {
   models_usr_collection=""; number_models_usr=0
   models_sys_collection=""; number_models_sys=0
   while read line; do
-    local collection="`printf -- "$line" | sed -e 's/\([^ ]*\) .*/\1/'`"
-    local name="`printf -- "$line" | sed -e 's/[^ ]* \([^ ]*\) .*/\1/'`"
-    local directory="`printf -- "$line" | sed -e 's/[^ ]* [^ ]* \([^ ]*\) .*/\1/'`"
-    local version="`printf -- "$line" | sed -e 's/[^ ]* [^ ]* [^ ]* \([^ ]*\).*/\1/'`"
+    local collection="`printf -- "%s" "$line" | sed -e 's/\([^ ]*\) .*/\1/'`"
+    local name="`printf -- "%s" "$line" | sed -e 's/[^ ]* \([^ ]*\) .*/\1/'`"
+    local directory="`printf -- "%s" "$line" | sed -e 's/[^ ]* [^ ]* \([^ ]*\) .*/\1/'`"
+    local version="`printf -- "%s" "$line" | sed -e 's/[^ ]* [^ ]* [^ ]* \([^ ]*\).*/\1/'`"
     case $collection in
       "")
       # empty do nothing
@@ -608,14 +608,14 @@ print_list_of_drivers_and_models () {
   printf "\n\n"
   printf "Environment Variables:\n"
   print_separator_line "-"
-  printf -- "${config_env_name}:\n"
-  printf -- "\t${config_env}\n"
+  printf -- "%s:\n" "${config_env_name}"
+  printf -- "\t%s\n" "${config_env}"
   printf "\n"
-  printf -- "${drivers_env_name}:\n"
-  printf -- "%s\n" "`printf -- "${drivers_env}" | sed -e 's/^/	/g'`"
+  printf -- "%s:\n" "${drivers_env_name}"
+  printf -- "\t%s\n" "${drivers_env}"
   printf "\n"
-  printf -- "${models_env_name}:\n"
-  printf -- "%s\n" "`printf -- "${models_env}" | sed -e 's/^/	/g'`"
+  printf -- "%s:\n" "${models_env_name}"
+  printf -- "\t%s\n" "${models_env}"
   printf "\n"
   print_separator_line "="
 
@@ -638,7 +638,7 @@ print_list_of_drivers_and_models () {
 
   printf "Models: %s\n" "${PWD}"
   if test $number_models_cwd -gt 0; then
-    printf -- "${models_cwd_collection}"
+    printf -- "${models_cwd_collection}"  # expected to have control characters
   else
     printf "\t--empty--\n"
   fi
@@ -654,7 +654,7 @@ print_list_of_drivers_and_models () {
   fi
   printf "\n"
   if test $number_drivers_env -gt 0; then
-    printf -- "${drivers_env_collection}"
+    printf -- "${drivers_env_collection}"  # expected to have control characters
   else
     printf "\t--empty--\n"
   fi
@@ -667,7 +667,7 @@ print_list_of_drivers_and_models () {
   fi
   printf "\n"
   if test $number_models_env -gt 0; then
-    printf -- "${models_env_collection}"
+    printf -- "${models_env_collection}"  # expected to have control characters
   else
     printf "\t--empty--\n"
   fi
@@ -681,14 +681,14 @@ print_list_of_drivers_and_models () {
   print_separator_line "-"
   printf "Drivers: %s\n" "${drivers_usr}"
   if test $number_drivers_usr -gt 0; then
-    printf -- "${drivers_usr_collection}"
+    printf -- "%s" "${drivers_usr_collection}"
   else
     printf "\t--empty--\n"
   fi
   printf "\n"
   printf "Models: %s\n" "${models_usr}"
   if test $number_models_usr -gt 0; then
-    printf -- "${models_usr_collection}"
+    printf -- "${models_usr_collection}"  # expected to have control characters
   else
     printf "\t--empty--\n"
   fi
@@ -698,14 +698,14 @@ print_list_of_drivers_and_models () {
   print_separator_line "-"
   printf "Drivers: %s\n" "`${collections_info} system model_drivers`"
   if test $number_drivers_sys -gt 0; then
-    printf -- "${drivers_sys_collection}"
+    printf -- "${drivers_sys_collection}"  # expected to have control characters
   else
     printf "\t--empty--\n"
   fi
   printf "\n\n"
   printf "Models: %s\n" "`${collections_info} system models`"
   if test $number_models_sys -gt 0; then
-    printf -- "${models_sys_collection}"
+    printf -- "${models_sys_collection}"  # expected to have control characters
   else
     printf "\t--empty--\n"
   fi
@@ -721,7 +721,7 @@ get_password () {
   stty echo
   trap - EXIT
   printf "\n"
-  if ! (printf -- "${PASSWORD}\n" | \
+  if ! (printf -- "%s\n" "${PASSWORD}" | \
           sudo -k -S printf "" > /dev/null 2>&1); then
     printf "Bad password.\n"
     return 1
@@ -878,7 +878,7 @@ case $command in
       use_sudo="sudo-no"
       use_force="force-no"
       use_interactive="interactive-no"
-      while test x"--" = x"`printf -- "$1" | sed -e 's/^\(..\).*/\1/'`"; do
+      while test x"--" = x"`printf -- "%s" "$1" | sed -e 's/^\(..\).*/\1/'`"; do
         case $1 in
           --force)
             use_force="force-yes"
@@ -958,7 +958,7 @@ case $command in
       use_sudo="sudo-no"
       use_force="force-no"
       use_interactive="interactive-no"
-      while test x"--" = x"`printf -- "$1" | sed -e 's/^\(..\).*/\1/'`"; do
+      while test x"--" = x"`printf -- "%s" "$1" | sed -e 's/^\(..\).*/\1/'`"; do
         case $1 in
           --force)
             use_force="force-yes"
@@ -1015,7 +1015,7 @@ case $command in
     use_sudo="sudo-no"
     use_force="force-no"
     use_interactive="interactive-no"
-    while test x"--" = x"`printf -- "$1" | sed -e 's/^\(..\).*/\1/'`"; do
+    while test x"--" = x"`printf -- "%s" "$1" | sed -e 's/^\(..\).*/\1/'`"; do
       case $1 in
         --force)
           use_force="force-yes"
