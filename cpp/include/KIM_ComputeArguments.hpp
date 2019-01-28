@@ -53,7 +53,7 @@ class ComputeArgumentsImplementation;
 
 
 /// \brief Provides the primary interface to a %KIM API ComputeArguments object
-/// and is meant to be used by Simulators.
+/// and is meant to be used by simulators.
 ///
 /// \since 2.0
 class ComputeArguments
@@ -122,10 +122,12 @@ class ComputeArguments
   /// \brief Set the function pointer for a ComputeCallbackName.
   ///
   /// \todo Add more detailed description what it means to provide a NULL or
-  /// non-NULL value for various SupportStatus'es.
+  /// non-NULL value for various SupportStatus'es.  Also, describe dataObject.
   ///
   /// \param[in] computeCallbackName The ComputeCallbackName of interest.
+  /// \param[in] languageName The LanguageName of the callback.
   /// \param[in] fptr The function pointer.
+  /// \param[in] dataObject The data pointer associated with the callback.
   ///
   /// \return \c true if \c computeCallbackName is unknown.
   /// \return \c true if `fptr != NULL` and `computeCallbackName ==
@@ -155,7 +157,7 @@ class ComputeArguments
   /// \brief Set the \ref cache_buffer_pointers "Simulator's buffer pointer"
   /// within the ComputeArguments object.
   ///
-  /// The simulator buffer pointer may be used by the Simulator to associate
+  /// The simulator buffer pointer may be used by the simulator to associate
   /// a memory buffer with the ComputeArguments object.
   ///
   /// \param[in] ptr The simulator buffer data pointer.
@@ -171,7 +173,7 @@ class ComputeArguments
   ///
   /// \param[out] ptr The simulator buffer data pointer.
   ///
-  /// \note `ptr == NULL` if the Simulator has not previously called
+  /// \note `ptr == NULL` if the simulator has not previously called
   ///       ComputeArguments::SetSimulatorBufferPointer.
   ///
   /// \sa KIM_ComputeArguments_GetSimulatorBufferPointer

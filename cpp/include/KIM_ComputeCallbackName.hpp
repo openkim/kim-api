@@ -129,6 +129,9 @@ namespace COMPUTE_CALLBACK_NAME
 {
 /// \brief The standard \c GetNeighborList callback.
 ///
+/// The C++ prototype for this routine is GetNeighborListFunction().  The C
+/// prototype for this routine is KIM_GetNeighborListFunction().
+///
 /// \todo Add more detailed description of callback.
 ///
 /// \sa KIM_COMPUTE_CALLBACK_NAME_GetNeighborList
@@ -138,6 +141,9 @@ extern ComputeCallbackName const GetNeighborList;
 
 /// \brief The standard \c ProcessDEDrTerm callback.
 ///
+/// The C++ prototype for this routine is ProcessDEDrTermFunction().  The C
+/// prototype for this routine is KIM_ProcessDEDrTermFunction().
+///
 /// \todo Add more detailed description of callback.
 ///
 /// \sa KIM_COMPUTE_CALLBACK_NAME_ProcessDEDrTerm
@@ -146,6 +152,9 @@ extern ComputeCallbackName const GetNeighborList;
 extern ComputeCallbackName const ProcessDEDrTerm;
 
 /// \brief The standard \c ProcessD2EDr2Term callback.
+///
+/// The C++ prototype for this routine is ProcessD2EDr2TermFunction().  The C
+/// prototype for this routine is KIM_ProcessD2EDr2TermFunction().
 ///
 /// \todo Add more detailed description of callback.
 ///

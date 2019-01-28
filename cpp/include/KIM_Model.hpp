@@ -53,7 +53,7 @@ class ComputeArguments;
 class ModelImplementation;
 
 /// \brief Provides the primary interface to a %KIM API Model object and is
-/// meant to be used by Simulators.
+/// meant to be used by simulators.
 ///
 /// \since 2.0
 class Model
@@ -460,7 +460,7 @@ class Model
   /// \brief Set the \ref cache_buffer_pointers "Simulator's buffer pointer"
   /// within the Model object.
   ///
-  /// The simulator buffer pointer may be used by the Simulator to associate
+  /// The simulator buffer pointer may be used by the simulator to associate
   /// a memory buffer with the Model object.
   ///
   /// \param[in] ptr The simulator buffer data pointer.
@@ -475,7 +475,7 @@ class Model
   ///
   /// \param[out] ptr The simulator buffer data pointer.
   ///
-  /// \note `ptr == NULL` if the Simulator has not previously called
+  /// \note `ptr == NULL` if the simulator has not previously called
   ///       Model::SetSimulatorBufferPointer.
   ///
   /// \sa KIM_Model_GetSimulatorBufferPointer

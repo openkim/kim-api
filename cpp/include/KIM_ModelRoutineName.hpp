@@ -129,6 +129,9 @@ namespace MODEL_ROUTINE_NAME
 {
 /// \brief The standard \c Create routine.
 ///
+/// The C++ prototype for this routine is ModelCreateFunction().  The C
+/// prototype for this routine is KIM_ModelCreateFunction().
+///
 /// \todo Add more detailed description of routine.
 ///
 /// \sa KIM_MODEL_ROUTINE_NAME_Create
@@ -137,6 +140,10 @@ namespace MODEL_ROUTINE_NAME
 extern ModelRoutineName const Create;
 
 /// \brief The standard \c ComputeArgumentsCreate routine.
+///
+/// The C++ prototype for this routine is
+/// ModelComputeArgumentsCreateFunction().  The C prototype for this routine is
+/// KIM_ModelComputeArgumentsCreateFunction().
 ///
 /// \todo Add more detailed description of routine.
 ///
@@ -147,6 +154,9 @@ extern ModelRoutineName const ComputeArgumentsCreate;
 
 /// \brief The standard \c Compute routine.
 ///
+/// The C++ prototype for this routine is ModelComputeFunction().  The C
+/// prototype for this routine is KIM_ModelComputeFunction().
+///
 /// \todo Add more detailed description of routine.
 ///
 /// \sa KIM_MODEL_ROUTINE_NAME_Compute
@@ -155,6 +165,9 @@ extern ModelRoutineName const ComputeArgumentsCreate;
 extern ModelRoutineName const Compute;
 
 /// \brief The standard \c Extension routine.
+///
+/// The C++ prototype for this routine is ModelExtensionFunction().  The C
+/// prototype for this routine is KIM_ModelExtensionFunction().
 ///
 /// \todo Add more detailed description of routine.
 ///
@@ -165,6 +178,9 @@ extern ModelRoutineName const Extension;
 
 /// \brief The standard \c Refresh routine.
 ///
+/// The C++ prototype for this routine is ModelRefreshFunction().  The C
+/// prototype for this routine is KIM_ModelRefreshFunction().
+///
 /// \todo Add more detailed description of routine.
 ///
 /// \sa KIM_MODEL_ROUTINE_NAME_Refresh
@@ -173,6 +189,10 @@ extern ModelRoutineName const Extension;
 extern ModelRoutineName const Refresh;
 
 /// \brief The standard \c WriteParameterizedModel routine.
+///
+/// The C++ prototype for this routine is
+/// ModelWriteParameterizedModelFunction().  The C prototype for this routine
+/// is KIM_ModelWriteParameterizedModelFunction().
 ///
 /// \todo Add more detailed description of routine.
 ///
@@ -183,6 +203,10 @@ extern ModelRoutineName const WriteParameterizedModel;
 
 /// \brief The standard \c ComputeArgumentsDestroy  routine.
 ///
+/// The C++ prototype for this routine is
+/// ModelComputeArgumentsDestroyFunction().  The C prototype for this routine
+/// is KIM_ModelComputeArgumentsDestroyFunction().
+///
 /// \todo Add more detailed description of routine.
 ///
 /// \sa KIM_MODEL_ROUTINE_NAME_ComputeArgumentsDestroy
@@ -191,6 +215,9 @@ extern ModelRoutineName const WriteParameterizedModel;
 extern ModelRoutineName const ComputeArgumentsDestroy;
 
 /// \brief The standard \c Destroy routine.
+///
+/// The C++ prototype for this routine is ModelDestroyFunction().  The C
+/// prototype for this routine is KIM_ModelDestroyFunction().
 ///
 /// \todo Add more detailed description of routine.
 ///
