@@ -44,20 +44,64 @@ class LogVerbosity;
 class ModelComputeArgumentsDestroyImplementation;
 
 
+/// \brief Provides the interface to a %KIM API ComputeArguments object for use
+/// by models within their MODEL_ROUTINE_NAME::ComputeArgumentsDestroy routine.
+///
+/// \since 2.0
 class ModelComputeArgumentsDestroy
 {
  public:
+  /// \brief Get the \ref cache_buffer_pointers "Model's buffer pointer"
+  /// within the ComputeArguments object.
+  ///
+  /// The model buffer pointer may be used by the model to associate
+  /// a memory buffer with the ComputeArguments object.
+  ///
+  /// \param[in] ptr The model buffer data pointer.
+  ///
+  /// \note `ptr == NULL` if the model has not previously called
+  ///       ModelComputeArguments::SetModelBufferPointer.
+  ///
+  /// \sa KIM_ModelComputeArgumentsDestroy_GetModelBufferPointer
+  ///
+  /// \since 2.0
   void GetModelBufferPointer(void ** const ptr) const;
 
+  /// \brief Write a log entry into the log file.
+  ///
+  /// This results in a no-op if \c logVerbosity is LOG_VERBOSITY::silent or if
+  /// \c logVerbosity is greater-than the Log object's top LogVerbosity its
+  /// stack.
+  ///
+  /// \param[in] logVerbosity The LogVerbosity level for the entry.
+  /// \param[in] message The body text of the log entry.
+  /// \param[in] lineNumber The source code file line number.
+  /// \param[in] fileName The source code file name.
+  ///
+  /// \sa KIM_ModelComputeArgumentsDestroy_LogEntry
+  ///
+  /// \since 2.0
   void LogEntry(LogVerbosity const logVerbosity,
                 std::string const & message,
                 int const lineNumber,
                 std::string const & fileName) const;
+
+  /// \overload
   void LogEntry(LogVerbosity const logVerbosity,
                 std::stringstream const & message,
                 int const lineNumber,
                 std::string const & fileName) const;
 
+  /// \brief Get a string representing the internal state of the
+  /// ComputeArguments object.
+  ///
+  /// This string is primarily meant for use as a debugging tool.  The string
+  /// may be quite long.  It begins and ends with lines consisting only of \c
+  /// ='s.
+  ///
+  /// \sa KIM_ModelComputeArgumentsDestroy_ToString
+  ///
+  /// \since 2.0
   std::string const & ToString() const;
 
  private:

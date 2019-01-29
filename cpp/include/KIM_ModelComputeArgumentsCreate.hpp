@@ -47,26 +47,81 @@ class ComputeCallbackName;
 class ModelComputeArgumentsCreateImplementation;
 
 
+/// \brief Provides the interface to a %KIM API ComputeArguments object for use
+/// by models within their MODEL_ROUTINE_NAME::ComputeArgumentsCreate routine.
+///
+/// \since 2.0
 class ModelComputeArgumentsCreate
 {
  public:
+  /// \brief Set the SupportStatus of a ComputeArgumentName.
+  ///
+  /// \param[in] computeArgumentName The ComputeArgumentName of interest.
+  /// \param[in] supportStatus The corresponding SupportStatus.
+  ///
+  /// \return \c true if \c computeArgumentName is unknown.
+  /// \return \c true if \c computeArgumentName is SUPPORT_STATUS::requiredByAPI
+  ///         and \c supportStatus is not SUPPORT_STATUS::requiredByAPI.
+  /// \return \c false otherwise.
+  ///
+  /// \sa KIM_ModelComputeArgumentsCreate_SetArgumentSupportStatus
+  ///
+  /// \since 2.0
   int SetArgumentSupportStatus(ComputeArgumentName const clomputeArgumentName,
                                SupportStatus const supportStatus);
 
+  /// \overload
   int SetCallbackSupportStatus(ComputeCallbackName const computeCallbackName,
                                SupportStatus const supportStatus);
 
+  /// \brief Set the \ref cache_buffer_pointers "Model's buffer pointer"
+  /// within the ComputeArguments object.
+  ///
+  /// The model buffer pointer may be used by the model to associate a memory
+  /// buffer with the ComputeArguments object.
+  ///
+  /// \param[in] ptr The model buffer data pointer.
+  ///
+  /// \sa KIM_ModelComputeArguments_SetModelBufferPointer
+  ///
+  /// \since 2.0
   void SetModelBufferPointer(void * const ptr);
 
+  /// \brief Write a log entry into the log file.
+  ///
+  /// This results in a no-op if \c logVerbosity is LOG_VERBOSITY::silent or if
+  /// \c logVerbosity is greater-than the Log object's top LogVerbosity its
+  /// stack.
+  ///
+  /// \param[in] logVerbosity The LogVerbosity level for the entry.
+  /// \param[in] message The body text of the log entry.
+  /// \param[in] lineNumber The source code file line number.
+  /// \param[in] fileName The source code file name.
+  ///
+  /// \sa KIM_ModelComputeArgumentsCreate_LogEntry
+  ///
+  /// \since 2.0
   void LogEntry(LogVerbosity const logVerbosity,
                 std::string const & message,
                 int const lineNumber,
                 std::string const & fileName) const;
+
+  /// \overload
   void LogEntry(LogVerbosity const logVerbosity,
                 std::stringstream const & message,
                 int const lineNumber,
                 std::string const & fileName) const;
 
+  /// \brief Get a string representing the internal state of the
+  /// ComputeArguments object.
+  ///
+  /// This string is primarily meant for use as a debugging tool.  The string
+  /// may be quite long.  It begins and ends with lines consisting only of \c
+  /// ='s.
+  ///
+  /// \sa KIM_ModelComputeArgumentsCreate_ToString
+  ///
+  /// \since 2.0
   std::string const & ToString() const;
 
  private:
