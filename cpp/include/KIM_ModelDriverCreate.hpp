@@ -60,7 +60,7 @@ class ModelDriverCreateImplementation;
 /// \brief Provides the interface to a %KIM API Model object for use by models
 /// within their MODEL_ROUTINE_NAME::Create routine.
 ///
-/// \sa ModelCreate, KIM_ModelCreate, KIM_ModelDriverCreate
+/// \sa ModelCreate, KIM_ModelDriverCreate, KIM_ModelCreate
 ///
 /// \since 2.0
 class ModelDriverCreate
@@ -330,7 +330,7 @@ class ModelDriverCreate
   /// \brief Write a log entry into the log file.
   ///
   /// This results in a no-op if \c logVerbosity is LOG_VERBOSITY::silent or if
-  /// \c logVerbosity is greater-than the Log object's top LogVerbosity its
+  /// \c logVerbosity is greater-than the Log object's top LogVerbosity on its
   /// stack.
   ///
   /// \param[in] logVerbosity The LogVerbosity level for the entry.

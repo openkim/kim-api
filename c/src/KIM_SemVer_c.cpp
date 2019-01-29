@@ -47,12 +47,12 @@ char const * KIM_SEM_VER_GetSemVer()
   return KIM::SEM_VER::GetSemVer().c_str();
 }
 
-int KIM_SEM_VER_IsLessThan(char const * const versionA,
-                           char const * const versionB,
+int KIM_SEM_VER_IsLessThan(char const * const lhs,
+                           char const * const rhs,
                            int * const isLessThan)
 {
   return KIM::SEM_VER::IsLessThan(
-      std::string(versionA), std::string(versionB), isLessThan);
+      std::string(lhs), std::string(rhs), isLessThan);
 }
 
 int KIM_SEM_VER_ParseSemVer(char const * const version,

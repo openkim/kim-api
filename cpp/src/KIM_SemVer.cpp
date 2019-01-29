@@ -212,8 +212,8 @@ enum HAS_ANCILLARY {
 
 std::string const & GetSemVer() { return SEM_VER::version; }
 
-int IsLessThan(std::string const & versionA,
-               std::string const & versionB,
+int IsLessThan(std::string const & lhs,
+               std::string const & rhs,
                int * const isLessThan)
 {
   int majorA;
@@ -228,9 +228,9 @@ int IsLessThan(std::string const & versionA,
   std::string buildMetadataB;
 
   if ((ParseSemVer(
-           versionA, &majorA, &minorA, &patchA, &prereleaseA, &buildMetadataA)
+           lhs, &majorA, &minorA, &patchA, &prereleaseA, &buildMetadataA)
        || ParseSemVer(
-           versionB, &majorB, &minorB, &patchB, &prereleaseB, &buildMetadataB)))
+           rhs, &majorB, &minorB, &patchB, &prereleaseB, &buildMetadataB)))
   { return true; }
 
   if (majorA > majorB)
@@ -379,7 +379,6 @@ int ParseSemVer(std::string const & version,
   {
     return true;  // Not a valid integer
   }
-  if (major != NULL) { *major = verNumber; }
 
   // validate minor
   if ((minorStr[0] == '0') && (minorStr.length() > 1))
@@ -391,7 +390,6 @@ int ParseSemVer(std::string const & version,
   {
     return true;  // Not a valid integer
   }
-  if (minor != NULL) { *minor = verNumber; }
 
   // validate patch
   if ((patchStr[0] == '0') && (patchStr.length() > 1))
@@ -403,7 +401,6 @@ int ParseSemVer(std::string const & version,
   {
     return true;  // Not a valid integer
   }
-  if (patch != NULL) { *patch = verNumber; }
 
   // validate prerelease
   if ((hasAncillary == HAS_PRERELEASE_ONLY) || (hasAncillary == HAS_BOTH))
@@ -413,7 +410,6 @@ int ParseSemVer(std::string const & version,
       return true;  // Prerelease is invalid
     }
   }
-  if (prerelease != NULL) { *prerelease = prereleaseStr; }
 
   // validate buildMetadata
   if ((hasAncillary == HAS_BUILD_METADATA_ONLY) || (hasAncillary == HAS_BOTH))
@@ -423,6 +419,11 @@ int ParseSemVer(std::string const & version,
       return true;  // Build Metadata is invalid
     }
   }
+
+  if (major != NULL) { *major = verNumber; }
+  if (minor != NULL) { *minor = verNumber; }
+  if (patch != NULL) { *patch = verNumber; }
+  if (prerelease != NULL) { *prerelease = prereleaseStr; }
   if (buildMetadata != NULL) { *buildMetadata = buildMetadataStr; }
 
   return false;

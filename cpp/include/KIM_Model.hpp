@@ -55,6 +55,8 @@ class ModelImplementation;
 /// \brief Provides the primary interface to a %KIM API Model object and is
 /// meant to be used by simulators.
 ///
+/// \sa KIM_Model
+///
 /// \since 2.0
 class Model
 {

@@ -37,8 +37,8 @@
 #define KIM_SEM_VER_H_
 
 char const * KIM_SEM_VER_GetSemVer();
-int KIM_SEM_VER_IsLessThan(char const * const versionA,
-                           char const * const versionB,
+int KIM_SEM_VER_IsLessThan(char const * const lhs,
+                           char const * const rhs,
                            int * const isLessThan);
 int KIM_SEM_VER_ParseSemVer(char const * const version,
                             int const prereleaseLength,

@@ -43,25 +43,110 @@ namespace KIM
 class LogVerbosity;
 class LogImplementation;
 
+/// \brief This class provides the logging interface for the %KIM API.
+///
+/// \sa KIM_Log
+///
+/// \since 2.0
 class Log
 {
  public:
+  /// \brief Create a new %KIM API Log object.
+  ///
+  /// \param[out] log Pointer to the newly created Log object.
+  ///
+  /// \return \c false
+  ///
+  /// \sa KIM_Log
+  ///
+  /// \since 2.0
   static int Create(Log ** const log);
+
+  /// \brief Destroy a previously Log::Create'd object.
+  ///
+  /// \param[inout] log Pointer to the Model ojbect.
+  ///
+  /// \pre \c log points to a previously created %KIM API Log object.
+  ///
+  /// \post `log == NULL`.
+  ///
+  /// \sa KIM_Log_Destroy
+  ///
+  /// \since 2.0
   static void Destroy(Log ** const log);
 
+  /// \brief Push a new default LogVerbosity onto the %KIM API global default
+  /// verbosity stack.
+  ///
+  /// The default LogVerbosity is used when creating new Log objects.
+  ///
+  /// \param[in] logVerbosity A LogVerbosity value.
+  ///
+  /// \sa KIM_Log_PushDefaultVerbosity
+  ///
+  /// \since 2.0
   static void PushDefaultVerbosity(LogVerbosity const logVerbosity);
+
+  /// \brief Pop a LogVerbosity from the %KIM API global default verbosity
+  /// stack.
+  ///
+  /// \sa KIM_Log_PopDefaultVerbosity
+  ///
+  /// \since 2.0
   static void PopDefaultVerbosity();
 
+  /// \brief Get the identity of the Log object.
+  ///
+  /// \sa KIM_Log_GetID
+  ///
+  /// \since 2.0
   std::string const & GetID() const;
+
+  /// \brief Set the identity of the Log object.
+  ///
+  /// \param[in] id String identifying the Log object.
+  ///
+  /// \sa KIM_Log_SetID
+  ///
+  /// \since 2.0
   void SetID(std::string const & id);
 
+  /// \brief Push a new LogVerbosity onto the Log object's verbosity stack.
+  ///
+  /// \param[in] logVerbosity A LogVerbosity value.
+  ///
+  /// \sa KIM_Log_PushVerbosity
+  ///
+  /// \since 2.0
   void PushVerbosity(LogVerbosity const logVerbosity);
+
+  /// \brief Pop a LogVerbosity from the Log ojbect's verbosity stack.
+  ///
+  /// \sa KIM_Log_PopVerbosity
+  ///
+  /// \since 2.0
   void PopVerbosity();
 
+  /// \brief Write a log entry into the log file.
+  ///
+  /// This results in a no-op if \c logVerbosity is LOG_VERBOSITY::silent or if
+  /// \c logVerbosity is greater-than the Log object's top LogVerbosity on its
+  /// stack.
+  ///
+  /// \param[in] logVerbosity The LogVerbosity level for the entry.
+  /// \param[in] message The body text of the log entry.
+  /// \param[in] lineNumber The source code file line number.
+  /// \param[in] fileName The source code file name.
+  ///
+  /// \sa KIM_Log_LogEntry
+  ///
+  /// \since 2.0
   void LogEntry(LogVerbosity const logVerbosity,
                 std::string const & message,
                 int const lineNumber,
                 std::string const & fileName) const;
+
+  /// \overload
   void LogEntry(LogVerbosity const logVerbosity,
                 std::stringstream const & message,
                 int const lineNumber,

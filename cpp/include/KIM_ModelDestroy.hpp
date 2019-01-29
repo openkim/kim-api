@@ -47,6 +47,8 @@ class ModelDestroyImplementation;
 /// \brief Provides the interface to a %KIM API Model object for use by models
 /// within their MODEL_ROUTINE_NAME::Destroy routine.
 ///
+/// \sa KIM_ModelDestroy
+///
 /// \since 2.0
 class ModelDestroy
 {
@@ -71,7 +73,7 @@ class ModelDestroy
   /// \brief Write a log entry into the log file.
   ///
   /// This results in a no-op if \c logVerbosity is LOG_VERBOSITY::silent or if
-  /// \c logVerbosity is greater-than the Log object's top LogVerbosity its
+  /// \c logVerbosity is greater-than the Log object's top LogVerbosity on its
   /// stack.
   ///
   /// \param[in] logVerbosity The LogVerbosity level for the entry.

@@ -62,26 +62,26 @@ contains
     call kim_convert_c_char_ptr_to_string(p, version)
   end subroutine kim_get_sem_ver
 
-  recursive subroutine kim_is_less_than(version_a, version_b, is_less_than, &
+  recursive subroutine kim_is_less_than(lhs, rhs, is_less_than, &
     ierr)
     implicit none
     interface
-      integer(c_int) recursive function is_less_than_func(version_a, &
-        version_b, is_less_than) bind(c, name="KIM_SEM_VER_IsLessThan")
+      integer(c_int) recursive function is_less_than_func(lhs, rhs, &
+        is_less_than) bind(c, name="KIM_SEM_VER_IsLessThan")
         use, intrinsic :: iso_c_binding
         implicit none
-        character(c_char), intent(in) :: version_a(*)
-        character(c_char), intent(in) :: version_b(*)
+        character(c_char), intent(in) :: lhs(*)
+        character(c_char), intent(in) :: rhs(*)
         integer(c_int), intent(out) :: is_less_than
       end function is_less_than_func
     end interface
-    character(len=*, kind=c_char), intent(in) :: version_a
-    character(len=*, kind=c_char), intent(in) :: version_b
+    character(len=*, kind=c_char), intent(in) :: lhs
+    character(len=*, kind=c_char), intent(in) :: rhs
     integer(c_int), intent(out) :: is_less_than
     integer(c_int), intent(out) :: ierr
 
-    ierr = is_less_than_func(trim(version_a)//c_null_char, &
-      trim(version_b)//c_null_char, is_less_than)
+    ierr = is_less_than_func(trim(lhs)//c_null_char, trim(rhs)//c_null_char, &
+      is_less_than)
   end subroutine kim_is_less_than
 
   recursive subroutine kim_parse_sem_ver(version, major, minor, patch, &

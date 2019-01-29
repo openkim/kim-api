@@ -55,6 +55,8 @@ class ComputeArgumentsImplementation;
 /// \brief Provides the primary interface to a %KIM API ComputeArguments object
 /// and is meant to be used by simulators.
 ///
+/// \sa KIM_ComputeArguments
+///
 /// \since 2.0
 class ComputeArguments
 {

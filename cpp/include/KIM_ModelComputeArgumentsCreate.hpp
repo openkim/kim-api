@@ -50,6 +50,8 @@ class ModelComputeArgumentsCreateImplementation;
 /// \brief Provides the interface to a %KIM API ComputeArguments object for use
 /// by models within their MODEL_ROUTINE_NAME::ComputeArgumentsCreate routine.
 ///
+/// \sa KIM_ModelComputeArgumentsCreate
+///
 /// \since 2.0
 class ModelComputeArgumentsCreate
 {
@@ -67,7 +69,7 @@ class ModelComputeArgumentsCreate
   /// \sa KIM_ModelComputeArgumentsCreate_SetArgumentSupportStatus
   ///
   /// \since 2.0
-  int SetArgumentSupportStatus(ComputeArgumentName const clomputeArgumentName,
+  int SetArgumentSupportStatus(ComputeArgumentName const computeArgumentName,
                                SupportStatus const supportStatus);
 
   /// \overload
@@ -90,7 +92,7 @@ class ModelComputeArgumentsCreate
   /// \brief Write a log entry into the log file.
   ///
   /// This results in a no-op if \c logVerbosity is LOG_VERBOSITY::silent or if
-  /// \c logVerbosity is greater-than the Log object's top LogVerbosity its
+  /// \c logVerbosity is greater-than the Log object's top LogVerbosity on its
   /// stack.
   ///
   /// \param[in] logVerbosity The LogVerbosity level for the entry.

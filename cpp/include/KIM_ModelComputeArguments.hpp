@@ -49,6 +49,8 @@ class ModelComputeArgumentsImplementation;
 /// \brief Provides the interface to a %KIM API ComputeArguments object for use
 /// by models within their MODEL_ROUTINE_NAME::Compute routine.
 ///
+/// \sa KIM_ModelComputeArguments
+///
 /// \since 2.0
 class ModelComputeArguments
 {
@@ -221,7 +223,7 @@ class ModelComputeArguments
   /// \brief Write a log entry into the log file.
   ///
   /// This results in a no-op if \c logVerbosity is LOG_VERBOSITY::silent or if
-  /// \c logVerbosity is greater-than the Log object's top LogVerbosity its
+  /// \c logVerbosity is greater-than the Log object's top LogVerbosity on its
   /// stack.
   ///
   /// \param[in] logVerbosity The LogVerbosity level for the entry.
