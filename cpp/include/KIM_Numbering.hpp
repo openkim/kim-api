@@ -120,8 +120,8 @@ class Numbering
   std::string const & ToString() const;
 };  // class Numbering
 
-/// Contains the enumeration constants and the discovery routines for the
-/// Numbering \ref extensible_enumeration "Extensible Enumeration".
+/// \brief Contains the enumeration constants and the discovery routines for
+/// the Numbering \ref extensible_enumeration "Extensible Enumeration".
 namespace NUMBERING
 {
 /// \brief The standard \c zeroBased numbering.

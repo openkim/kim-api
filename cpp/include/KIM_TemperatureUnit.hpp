@@ -122,8 +122,8 @@ class TemperatureUnit
   std::string const & ToString() const;
 };  // class TemperatureUnit
 
-/// Contains the enumeration constants and the discovery routines for the
-/// TemperatureUnit \ref extensible_enumeration "Extensible Enumeration".
+/// \brief Contains the enumeration constants and the discovery routines for
+/// the TemperatureUnit \ref extensible_enumeration "Extensible Enumeration".
 namespace TEMPERATURE_UNIT
 {
 /// \brief Indicates that a TemperatureUnit is not used.

@@ -153,8 +153,8 @@ class LogVerbosity
   std::string const & ToString() const;
 };  // class LogVerbosity
 
-/// Contains the enumeration constants and the discovery routines for the
-/// LogVerbosity \ref extensible_enumeration "Extensible Enumeration".
+/// \brief Contains the enumeration constants and the discovery routines for
+/// the LogVerbosity \ref extensible_enumeration "Extensible Enumeration".
 namespace LOG_VERBOSITY
 {
 /// \brief The standard \c silent verbosity.

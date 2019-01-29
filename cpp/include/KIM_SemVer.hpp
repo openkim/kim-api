@@ -38,7 +38,7 @@
 
 namespace KIM
 {
-/// Contains routines related to the %KIM API Semantic Version.
+/// \brief Contains routines related to the %KIM API Semantic Version.
 namespace SEM_VER
 {
 /// \brief Get the %KIM API complete Semantic Version string.

@@ -121,8 +121,8 @@ class EnergyUnit
   std::string const & ToString() const;
 };  // class EnergyUnit
 
-/// Contains the enumeration constants and the discovery routines for the
-/// EnergyUnit \ref extensible_enumeration "Extensible Enumeration".
+/// \brief Contains the enumeration constants and the discovery routines for
+/// the EnergyUnit \ref extensible_enumeration "Extensible Enumeration".
 namespace ENERGY_UNIT
 {
 /// \brief Indicates that a EnergyUnit is not used.

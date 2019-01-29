@@ -120,8 +120,8 @@ class DataType
   std::string const & ToString() const;
 };  // class DataType
 
-/// Contains the enumeration constants and the discovery routines for the
-/// DataType \ref extensible_enumeration "Extensible Enumeration".
+/// \brief Contains the enumeration constants and the discovery routines for
+/// the DataType \ref extensible_enumeration "Extensible Enumeration".
 namespace DATA_TYPE
 {
 /// \brief The standard \c Integer data type.

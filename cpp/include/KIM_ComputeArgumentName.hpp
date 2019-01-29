@@ -126,8 +126,9 @@ class ComputeArgumentName
   std::string const & ToString() const;
 };  // class ComputeArgumentName
 
-/// Contains the enumeration constants and the discovery routines for the
-/// ComputeArgumentName \ref extensible_enumeration "Extensible Enumeration".
+/// \brief Contains the enumeration constants and the discovery routines for
+/// the ComputeArgumentName \ref extensible_enumeration
+/// "Extensible Enumeration".
 namespace COMPUTE_ARGUMENT_NAME
 {
 /// \brief The standard \c numberOfParticles argument.

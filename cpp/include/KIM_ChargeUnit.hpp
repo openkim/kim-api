@@ -121,8 +121,8 @@ class ChargeUnit
   std::string const & ToString() const;
 };  // class ChargeUnit
 
-/// Contains the enumeration constants and the discovery routines for the
-/// ChargeUnit \ref extensible_enumeration "Extensible Enumeration".
+/// \brief Contains the enumeration constants and the discovery routines for
+/// the ChargeUnit \ref extensible_enumeration "Extensible Enumeration".
 namespace CHARGE_UNIT
 {
 /// \brief Indicates that a ChargeUnit is not used.

@@ -121,8 +121,8 @@ class SupportStatus
   std::string const & ToString() const;
 };  // class SupportStatus
 
-/// Contains the enumeration constants and the discovery routines for the
-/// SupportStatus \ref extensible_enumeration "Extensible Enumeration".
+/// \brief Contains the enumeration constants and the discovery routines for
+/// the SupportStatus \ref extensible_enumeration "Extensible Enumeration".
 namespace SUPPORT_STATUS
 {
 /// \brief The standard \c requiredByAPI status.

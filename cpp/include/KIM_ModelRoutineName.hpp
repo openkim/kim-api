@@ -123,8 +123,8 @@ class ModelRoutineName
   std::string const & ToString() const;
 };  // class ModelRoutineName
 
-/// Contains the enumeration constants and the discovery routines for the
-/// ModelRoutineName \ref extensible_enumeration "Extensible Enumeration".
+/// \brief Contains the enumeration constants and the discovery routines for
+/// the ModelRoutineName \ref extensible_enumeration "Extensible Enumeration".
 namespace MODEL_ROUTINE_NAME
 {
 /// \brief The standard \c Create routine.

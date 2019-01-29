@@ -121,8 +121,8 @@ class LanguageName
   std::string const & ToString() const;
 };  // class LanguageName
 
-/// Contains the enumeration constants and the discovery routines for the
-/// LanguageName \ref extensible_enumeration "Extensible Enumeration".
+/// \brief Contains the enumeration constants and the discovery routines for
+/// the LanguageName \ref extensible_enumeration "Extensible Enumeration".
 namespace LANGUAGE_NAME
 {
 /// \brief The standard \c cpp language.

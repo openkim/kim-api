@@ -123,8 +123,9 @@ class ComputeCallbackName
   std::string const & ToString() const;
 };  // class ComputeCallbackName
 
-/// Contains the enumeration constants and the discovery routines for the
-/// ComputeCallbackName \ref extensible_enumeration "Extensible Enumeration".
+/// \brief Contains the enumeration constants and the discovery routines for
+/// the ComputeCallbackName \ref extensible_enumeration
+/// "Extensible Enumeration".
 namespace COMPUTE_CALLBACK_NAME
 {
 /// \brief The standard \c GetNeighborList callback.
