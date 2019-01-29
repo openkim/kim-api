@@ -63,8 +63,8 @@ class ModelWriteParameterizedModel
 
   /// \brief Get the name of the new parameterized model.
   ///
-  /// The model name is available as a convenience.  It is not required for the
-  /// model to use this name in any way.
+  /// The model name is a valid C identifier and is available as a convenience.
+  /// It is not required for the model to use this name in any way.
   ///
   /// \param[out] modelName The parameterized model name.
   ///
@@ -76,7 +76,7 @@ class ModelWriteParameterizedModel
   /// \brief Set the file name for the next parameter file.
   ///
   /// This routine must be called once for each parameter file.  The order of
-  /// these calls important and determines the order in which the parameter
+  /// these calls is important and determines the order in which the parameter
   /// files will be listed in the automatically generated CMakeLists.txt file.
   ///
   /// \param[in] fileName File name (basename and extension, without path).

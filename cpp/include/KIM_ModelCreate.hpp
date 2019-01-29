@@ -60,18 +60,22 @@ class ModelCreateImplementation;
 /// \brief Provides the interface to a %KIM API Model object for use by models
 /// within their MODEL_ROUTINE_NAME::Create routine.
 ///
+/// \sa ModelDriverCreate, KIM_ModelCreate, KIM_ModelDriverCreate
+///
 /// \since 2.0
 class ModelCreate
 {
  public:
-  /// \brief Set the Model's Numbering.
+  /// \brief Set the Model's particle Numbering.
   ///
-  /// \param[in] numbering The Model's Numbering.
+  /// \param[in] numbering The Model's particle Numbering.
   ///
   /// \return \c true if \c numbering is unknown.
   /// \return \c false otherwise.
   ///
-  /// \sa KIM_ModelCreate_SetModelNumbering
+  /// \sa ModelDriverCreate::SetModelNumbering,
+  /// KIM_ModelCreate_SetModelNumbering,
+  /// KIM_ModelDriverCreate_SetModelNumbering
   ///
   /// \since 2.0
   int SetModelNumbering(Numbering const numbering);
@@ -88,7 +92,9 @@ class ModelCreate
   /// cache_buffer_pointers "Model's buffer pointer" to retain access to this
   /// memory location and avoid a memory leak.
   ///
-  /// \sa KIM_ModelCreate_SetInfluenceDistancePointer
+  /// \sa ModelDriverCreate::SetInfluenceDistancePointer,
+  /// KIM_ModelCreate_SetInfluenceDistancePointer,
+  /// KIM_ModelDriverCreate_SetInfluenceDistancePointer
   ///
   /// \since 2.0
   void SetInfluenceDistancePointer(double const * const influenceDistance);
@@ -111,7 +117,9 @@ class ModelCreate
   /// must use the \ref cache_buffer_pointers "Model's buffer pointer" to
   /// retain access to this memory location and avoid a memory leak.
   ///
-  /// \sa KIM_ModelCreate_SetNeighborListPointers
+  /// \sa ModelDriverCreate::SetNeighborListPointers,
+  /// KIM_ModelCreate_SetNeighborListPointers,
+  /// KIM_ModelDriverCreate_SetNeighborListPointers
   ///
   /// \since 2.0
   void SetNeighborListPointers(
@@ -131,11 +139,13 @@ class ModelCreate
   ///            routine.
   ///
   /// \return \c true if \c modelRoutineName or \c langaugeName are unknown.
-  /// \return \c true if `required == false` and \cmodelRoutineName has
+  /// \return \c true if `required == false` and \c modelRoutineName has
   ///         SupportStatus SUPPORT_STATUS::requiredByAPI.
   /// \return \c false otherwise.
   ///
-  /// \sa KIM_ModelCreate_SetRoutinePointer
+  /// \sa ModelDriverCreate::SetRoutinePointer,
+  /// KIM_ModelCreate_SetRoutinePointer,
+  /// KIM_ModelDriverCreate_SetRoutinePointer
   ///
   /// \since 2.0
   int SetRoutinePointer(ModelRoutineName const modelRoutineName,
@@ -143,25 +153,137 @@ class ModelCreate
                         int const required,
                         Function * const fptr);
 
+  /// \brief Set integer code for supported SpeciesName.
+  ///
+  /// A call to this routin adds/updates the list of SpeciesName's supported by
+  /// the Model and associates the specified SpeciesName with the integer code
+  /// to be used within the COMPUTE_ARGUMENT_NAME::particleSpeciesCodes
+  /// argument.
+  ///
+  /// \param[in] speciesName The SpeciesName of interest.
+  /// \param[in] code The associated code.
+  ///
+  /// \return \c true if \c speciesName is unknown.
+  /// \return \c false otherwise.
+  ///
+  /// \sa ModelDriverCreate::SetSpeciesCode, KIM_ModelCreate_SetSpeciesCode,
+  /// KIM_ModelDriverCreate_SetSpeciesCode
+  ///
+  /// \since 2.0
   int SetSpeciesCode(SpeciesName const speciesName, int const code);
 
+  /// \brief Set the next parameter data pointer to be provided by the model.
+  ///
+  /// This routine is called once for each parameter array to be provided by
+  /// the model.  The order of these calls is important and determines the
+  /// index assigned to each parameter array for use in the Model::GetParameter
+  /// and related routines.
+  ///
+  /// \param[in] extent The number of entries in the parameter array.
+  /// \param[in] ptr The parameter array data pointer.
+  /// \param[in] name A brief unique name for the parameter array.  This name
+  ///            must be a valid C identifier.
+  /// \param[in] description A free-form text description of the parameter
+  ///            array.  This should include details about the data layout
+  ///            (e.g., the array corresponds to a square upper-triangular
+  ///            matrix in row-major storage).
+  ///
+  /// \note The model is responsible for allocating the memory associated with
+  /// the parameter array data.  The model must use the \ref
+  /// cache_buffer_pointers "Model's buffer pointer" to retain access to this
+  /// memory location and avoid a memory leak.
+  ///
+  /// \sa ModelDriverCreate::SetParameterPointer,
+  /// KIM_ModelCreate_SetParameterPointerInteger,
+  /// KIM_ModelCreate_SetParameterPointerDouble,
+  /// KIM_ModelDriverCreate_SetParameterPointerInteger,
+  /// KIM_ModelDriverCreate_SetParameterPointerDouble
+  ///
+  /// \since 2.0
   int SetParameterPointer(int const extent,
                           int * const ptr,
                           std::string const & name,
                           std::string const & description);
+
+  /// \overload
   int SetParameterPointer(int const extent,
                           double * const ptr,
                           std::string const & name,
                           std::string const & description);
 
+  /// \brief Set the \ref cache_buffer_pointers "Model's buffer pointer"
+  /// within the Model object.
+  ///
+  /// The model buffer pointer may be used by the Model to associate
+  /// a memory buffer with the Model object.
+  ///
+  /// \param[in] ptr The model buffer data pointer.
+  ///
+  /// \sa ModelDriverCreate::SetModelBufferPointer,
+  /// KIM_ModelCreate_SetModelBufferPointer,
+  /// KIM_ModelDriverCreate_SetModelBufferPointer
+  ///
+  /// \since 2.0
   void SetModelBufferPointer(void * const ptr);
 
+  /// \brief Set the Model's base unit values.
+  ///
+  /// \param[in] lengthUnit The Model's base LengthUnit.
+  /// \param[in] energyUnit The Model's base EnergyUnit.
+  /// \param[in] chargeUnit The Model's base ChargeUnit.
+  /// \param[in] temperatureUnit The Model's base TemperatureUnit.
+  /// \param[in] timeUnit The Model's base TimeUnit.
+  ///
+  /// \note A unit of \c unused indicates the the Model does not deal with any
+  /// quantities whose derived unit involves the corresponding base unit.  For
+  /// example, many models only deal with quantities that are derived from just
+  /// the energy and length base units (such as force, virial, etc.), and thus
+  /// should set \c chargeUnit, \c temperatureUnit, and \c timeUnit to \c
+  /// unused.
+  ///
+  /// \return \c true if any of the base units are unknown.
+  /// \return \c true if \c lengthUnit or \c energyUnit are unused.
+  /// \return \c false otherwise.
+  ///
+  /// \sa ModelDriverCreate::SetUnits, KIM_ModelCreate_SetUnits,
+  /// KIM_ModelDriverCreate_SetUnits
+  ///
+  /// \since 2.0
   int SetUnits(LengthUnit const lengthUnit,
                EnergyUnit const energyUnit,
                ChargeUnit const chargeUnit,
                TemperatureUnit const temperatureUnit,
                TimeUnit const timeUnit);
 
+  /// \brief Get the multiplicative factor to convert between a derived unit
+  /// represented in two different sets of base units.
+  ///
+  /// \param[in] fromLengthUnit The "from" base length unit.
+  /// \param[in] fromEnergyUnit The "from" base energy unit.
+  /// \param[in] fromChargeUnit The "from" base charge unit.
+  /// \param[in] fromTemperatureUnit The "from" base temperature unit.
+  /// \param[in] fromTimeUnit The "from" base time unit.
+  /// \param[in] toLengthUnit The "to" base length unit.
+  /// \param[in] toEnergyUnit The "to" base energy unit.
+  /// \param[in] toChargeUnit The "to" base charge unit.
+  /// \param[in] toTemperatureUnit The "to" base temperature unit.
+  /// \param[in] toTimeUnit The "to" base time unit.
+  /// \param[in] lengthExponent The derived unit's length exponent.
+  /// \param[in] energyExponent The derived unit's energy exponent.
+  /// \param[in] chargeExponent The derived unit's charge exponent.
+  /// \param[in] temperatureExponent The derived unit's temperature exponent.
+  /// \param[in] timeExponent The derived unit's time exponent.
+  /// \param[out] conversionFactor The desired conversion factor.
+  ///
+  /// \return \c true if any of the base units are unknown.
+  /// \return \c true if any of the base units are \c unused and the
+  ///         corresponding exponent is nonzero.
+  /// \return \c false otherwise.
+  ///
+  /// \sa ModelDriverCreate::ConvertUnit, KIM_ModelCreate_ConvertUnit,
+  /// KIM_ModelDriverCreate_ConvertUnit
+  ///
+  /// \since 2.0
   static int ConvertUnit(LengthUnit const fromLengthUnit,
                          EnergyUnit const fromEnergyUnit,
                          ChargeUnit const fromChargeUnit,

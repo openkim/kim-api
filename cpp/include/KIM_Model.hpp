@@ -199,7 +199,7 @@ class Model
       int const ** const modelWillNotRequestNeighborsOfNoncontributingParticles)
       const;
 
-  /// \brief Get the Model's unit values.
+  /// \brief Get the Model's base unit values.
   ///
   /// \param[out] lengthUnit The Model's base LengthUnit.
   /// \param[out] energyUnit The Model's base EnergyUnit.
