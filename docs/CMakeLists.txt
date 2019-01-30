@@ -67,6 +67,10 @@ set(DOXYGEN_MATHJAX_RELPATH      "https://cdnjs.cloudflare.com/ajax/libs/mathjax
 set(DOXYGEN_EXTRA_PACKAGES       "amsmath")
 set(DOXYGEN_GENERATE_LATEX       YES)
 
+if(READTHEDOCS)
+  set(DOXYGEN_HTML_FOOTER "readthedocs/footer.html")
+endif(READTHEDOCS)
+
 set(SOURCES
   "src/introduction.txt"
   "src/features.txt"

@@ -1,8 +1,27 @@
 import subprocess
 
+analyticsScript = '''\
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async
+src="https://www.googletagmanager.com/gtag/js?id=UA-25481110-7"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-25481110-7');
+</script>
+'''
+
+script=open('script.html', 'w')
+script.write(analyticsScript)
+script.close()
+
 subprocess.call('conda install -y cmake', shell=True)
 subprocess.call('conda env export -n root', shell=True)
-subprocess.call('rm -rf build; mkdir build; cd build; FC=true cmake ../../../; make docs', shell=True)
+subprocess.call('doxygen -w html orig_header.html orig_footer.html orig_stylesheet.css', shell=True)
+subprocess.call('cat script.html orig_footer.html > footer.html', shell=True)
+subprocess.call('rm -rf build; mkdir build; cd build; FC=true cmake ../../../ -DREADTHEDOCS=ON; make docs', shell=True)
 html_extra_path = ['./build/docs/html']
 
 
