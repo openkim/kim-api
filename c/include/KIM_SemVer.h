@@ -36,10 +36,33 @@
 #ifndef KIM_SEM_VER_H_
 #define KIM_SEM_VER_H_
 
+/**
+ ** \brief \copybrief KIM::SEM_VER::GetSemVer
+ **
+ ** \sa KIM::SEM_VER::GetSemVer
+ **
+ ** \since 2.0
+ **/
 char const * KIM_SEM_VER_GetSemVer();
+
+/**
+ ** \brief \copybrief KIM::SEM_VER::IsLessThan
+ **
+ ** \sa KIM::SEM_VER::IsLessThan
+ **
+ ** \since 2.0
+ **/
 int KIM_SEM_VER_IsLessThan(char const * const lhs,
                            char const * const rhs,
                            int * const isLessThan);
+
+/**
+ ** \brief \copybrief KIM::SEM_VER::ParseSemVer
+ **
+ ** \sa KIM::SEM_VER::ParseSemVer
+ **
+ ** \since 2.0
+ **/
 int KIM_SEM_VER_ParseSemVer(char const * const version,
                             int const prereleaseLength,
                             int const buildMetadataLength,

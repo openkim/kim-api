@@ -1028,7 +1028,7 @@ extern SpeciesName const user09;
 /// \since 2.0
 extern SpeciesName const user10;
 
-/// \brief The standard \c user1 species.
+/// \brief The standard \c user11 species.
 ///
 /// \sa KIM_SPECIES_NAME_user11
 ///

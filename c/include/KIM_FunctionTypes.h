@@ -115,8 +115,22 @@ typedef struct KIM_ModelDestroy KIM_ModelDestroy;
 #endif
 
 
+/**
+ ** \brief \copybrief KIM::Function
+ **
+ ** \sa KIM::Function
+ **
+ ** \since 2.0
+ **/
 typedef void(KIM_Function)(void); /* Generic function pointer */
 
+/**
+ ** \brief \copybrief KIM::ModelCreateFunction
+ **
+ ** \sa KIM::ModelCreateFunction
+ **
+ ** \since 2.0
+ **/
 typedef int
 KIM_ModelCreateFunction(KIM_ModelCreate * const modelCreate,
                         KIM_LengthUnit const requestedLengthUnit,
@@ -125,6 +139,13 @@ KIM_ModelCreateFunction(KIM_ModelCreate * const modelCreate,
                         KIM_TemperatureUnit const requestedTemperatureUnit,
                         KIM_TimeUnit const requestedTimeUnit);
 
+/**
+ ** \brief \copybrief KIM::ModelDriverCreateFunction
+ **
+ ** \sa KIM::ModelDriverCreateFunction
+ **
+ ** \since 2.0
+ **/
 typedef int KIM_ModelDriverCreateFunction(
     KIM_ModelDriverCreate * const modelDriverCreate,
     KIM_LengthUnit const requestedLengthUnit,
@@ -133,14 +154,35 @@ typedef int KIM_ModelDriverCreateFunction(
     KIM_TemperatureUnit const requestedTemperatureUnit,
     KIM_TimeUnit const requestedTimeUnit);
 
+/**
+ ** \brief \copybrief KIM::ModelComputeArgumentsCreateFunction
+ **
+ ** \sa KIM::ModelComputeArgumentsCreateFunction
+ **
+ ** \since 2.0
+ **/
 typedef int KIM_ModelComputeArgumentsCreateFunction(
     KIM_ModelCompute const * const modelCompute,
     KIM_ModelComputeArgumentsCreate * const modelComputeArgumentsCreate);
 
+/**
+ ** \brief \copybrief KIM::ModelComputeFunction
+ **
+ ** \sa KIM::ModelComputeFunction
+ **
+ ** \since 2.0
+ **/
 typedef int KIM_ModelComputeFunction(
     KIM_ModelCompute const * const modelCompute,
     KIM_ModelComputeArguments const * const modelComputeArguments);
 
+/**
+ ** \brief \copybrief KIM::GetNeighborListFunction
+ **
+ ** \sa KIM::GetNeighborListFunction
+ **
+ ** \since 2.0
+ **/
 typedef int KIM_GetNeighborListFunction(void * const dataObject,
                                         int const numberOfNeighborLists,
                                         double const * const cutoffs,
@@ -149,6 +191,13 @@ typedef int KIM_GetNeighborListFunction(void * const dataObject,
                                         int * const numberOfNeighbors,
                                         int const ** const neighborsOfParticle);
 
+/**
+ ** \brief \copybrief KIM::ProcessDEDrTermFunction
+ **
+ ** \sa KIM::ProcessDEDrTermFunction
+ **
+ ** \since 2.0
+ **/
 typedef int KIM_ProcessDEDrTermFunction(void * const dataObject,
                                         double const de,
                                         double const r,
@@ -156,6 +205,13 @@ typedef int KIM_ProcessDEDrTermFunction(void * const dataObject,
                                         int const i,
                                         int const j);
 
+/**
+ ** \brief \copybrief KIM::ProcessD2EDr2TermFunction
+ **
+ ** \sa KIM::ProcessD2EDr2TermFunction
+ **
+ ** \since 2.0
+ **/
 typedef int KIM_ProcessD2EDr2TermFunction(void * const dataObject,
                                           double const de,
                                           double const * const r,
@@ -163,20 +219,55 @@ typedef int KIM_ProcessD2EDr2TermFunction(void * const dataObject,
                                           int const * const i,
                                           int const * const j);
 
+/**
+ ** \brief \copybrief KIM::ModelExtensionFunction
+ **
+ ** \sa KIM::ModelExtensionFunction
+ **
+ ** \since 2.0
+ **/
 typedef int
 KIM_ModelExtensionFunction(KIM_ModelExtension * const modelExtension,
                            void * const extensionStructure);
 
+/**
+ ** \brief \copybrief KIM::ModelRefreshFunction
+ **
+ ** \sa KIM::ModelRefreshFunction
+ **
+ ** \since 2.0
+ **/
 typedef int KIM_ModelRefreshFunction(KIM_ModelRefresh * const modelRefresh);
 
+/**
+ ** \brief \copybrief KIM::ModelWriteParameterizedModelFunction
+ **
+ ** \sa KIM::ModelWriteParameterizedModelFunction
+ **
+ ** \since 2.0
+ **/
 typedef int KIM_ModelWriteParameterizedModelFunction(
     KIM_ModelWriteParameterizedModel const * const
         modelWriteParameterizedModel);
 
+/**
+ ** \brief \copybrief KIM::ModelComputeArgumentsDestroyFunction
+ **
+ ** \sa KIM::ModelComputeArgumentsDestroyFunction
+ **
+ ** \since 2.0
+ **/
 typedef int KIM_ModelComputeArgumentsDestroyFunction(
     KIM_ModelCompute const * const modelCompute,
     KIM_ModelComputeArgumentsDestroy * const modelComputeArgumentsDestroy);
 
+/**
+ ** \brief \copybrief KIM::ModelDestroyFunction
+ **
+ ** \sa KIM::ModelDestroyFunction
+ **
+ ** \since 2.0
+ **/
 typedef int KIM_ModelDestroyFunction(KIM_ModelDestroy * const modelDestroy);
 
 #endif /* KIM_FUNCTION_TYPES_H_ */

@@ -96,23 +96,58 @@ struct KIM_ModelCreate;
 
 #ifndef KIM_MODEL_CREATE_DEFINED_
 #define KIM_MODEL_CREATE_DEFINED_
+/**
+ ** \brief \copybrief KIM::ModelCreate
+ **
+ ** \sa KIM::ModelCreate
+ **
+ ** \since 2.0
+ **/
 typedef struct KIM_ModelCreate KIM_ModelCreate;
 #endif
 
 
+/**
+ ** \brief \copybrief KIM::ModelCreate::SetModelNumbering
+ **
+ ** \sa KIM::ModelCreate::SetModelNumbering
+ **
+ ** \since 2.0
+ **/
 int KIM_ModelCreate_SetModelNumbering(KIM_ModelCreate * const modelCreate,
                                       KIM_Numbering const numbering);
 
+/**
+ ** \brief \copybrief KIM::ModelCreate::SetInfluenceDistancePointer
+ **
+ ** \sa KIM::ModelCreate::SetInfluenceDistancePointer
+ **
+ ** \since 2.0
+ **/
 void KIM_ModelCreate_SetInfluenceDistancePointer(
     KIM_ModelCreate * const modelCreate,
     double const * const influenceDistance);
 
+/**
+ ** \brief \copybrief KIM::ModelCreate::SetNeighborListPointers
+ **
+ ** \sa KIM::ModelCreate::SetNeighborListPointers
+ **
+ ** \since 2.0
+ **/
 void KIM_ModelCreate_SetNeighborListPointers(
     KIM_ModelCreate * const modelCreate,
     int const numberOfNeighborLists,
     double const * const cutoffs,
     int const * const modelWillNotRequestNeighborsOfNoncontributingParticles);
 
+/**
+ ** \brief \copybrief KIM::ModelCreate::SetRoutinePointer
+ **
+ ** \sa KIM::ModelCreate::SetRoutinePointer
+ **
+ ** \since 2.0
+ **/
 int KIM_ModelCreate_SetRoutinePointer(
     KIM_ModelCreate * const modelCreate,
     KIM_ModelRoutineName const modelRoutineName,
@@ -120,16 +155,38 @@ int KIM_ModelCreate_SetRoutinePointer(
     int const required,
     KIM_Function * const fptr);
 
+/**
+ ** \brief \copybrief KIM::ModelCreate::SetSpeciesCode
+ **
+ ** \sa KIM::ModelCreate::SetSpeciesCode
+ **
+ ** \since 2.0
+ **/
 int KIM_ModelCreate_SetSpeciesCode(KIM_ModelCreate * const modelCreate,
                                    KIM_SpeciesName const speciesName,
                                    int const code);
 
+/**
+ ** \brief \copybrief KIM::ModelCreate::SetParameterPointer
+ **
+ ** \sa KIM::ModelCreate::SetParameterPointer
+ **
+ ** \since 2.0
+ **/
 int KIM_ModelCreate_SetParameterPointerInteger(
     KIM_ModelCreate * const modelCreate,
     int const extent,
     int * const ptr,
     char const * const name,
     char const * const description);
+
+/**
+ ** \brief \copybrief KIM::ModelCreate::SetParameterPointer
+ **
+ ** \sa KIM::ModelCreate::SetParameterPointer
+ **
+ ** \since 2.0
+ **/
 int KIM_ModelCreate_SetParameterPointerDouble(
     KIM_ModelCreate * const modelCreate,
     int const extent,
@@ -137,9 +194,23 @@ int KIM_ModelCreate_SetParameterPointerDouble(
     char const * const name,
     char const * const description);
 
+/**
+ ** \brief \copybrief KIM::ModelCreate::SetModelBufferPointer
+ **
+ ** \sa KIM::ModelCreate::SetModelBufferPointer
+ **
+ ** \since 2.0
+ **/
 void KIM_ModelCreate_SetModelBufferPointer(KIM_ModelCreate * const modelCreate,
                                            void * const ptr);
 
+/**
+ ** \brief \copybrief KIM::ModelCreate::SetUnits
+ **
+ ** \sa KIM::ModelCreate::SetUnits
+ **
+ ** \since 2.0
+ **/
 int KIM_ModelCreate_SetUnits(KIM_ModelCreate * const modelCreate,
                              KIM_LengthUnit const lengthUnit,
                              KIM_EnergyUnit const energyUnit,
@@ -147,6 +218,13 @@ int KIM_ModelCreate_SetUnits(KIM_ModelCreate * const modelCreate,
                              KIM_TemperatureUnit const temperatureUnit,
                              KIM_TimeUnit const timeUnit);
 
+/**
+ ** \brief \copybrief KIM::ModelCreate::ConvertUnit
+ **
+ ** \sa KIM::ModelCreate::ConvertUnit
+ **
+ ** \since 2.0
+ **/
 int KIM_ModelCreate_ConvertUnit(KIM_LengthUnit const fromLengthUnit,
                                 KIM_EnergyUnit const fromEnergyUnit,
                                 KIM_ChargeUnit const fromChargeUnit,
@@ -164,12 +242,26 @@ int KIM_ModelCreate_ConvertUnit(KIM_LengthUnit const fromLengthUnit,
                                 double const timeExponent,
                                 double * const conversionFactor);
 
+/**
+ ** \brief \copybrief KIM::ModelCreate::LogEntry
+ **
+ ** \sa KIM::ModelCreate::LogEntry
+ **
+ ** \since 2.0
+ **/
 void KIM_ModelCreate_LogEntry(KIM_ModelCreate const * const modelCreate,
                               KIM_LogVerbosity const logVerbosity,
                               char const * const message,
                               int const lineNumber,
                               char const * const fileName);
 
+/**
+ ** \brief \copybrief KIM::ModelCreate::ToString
+ **
+ ** \sa KIM::ModelCreate::ToString
+ **
+ ** \since 2.0
+ **/
 char const *
 KIM_ModelCreate_ToString(KIM_ModelCreate const * const modelCreate);
 

@@ -78,7 +78,7 @@ class LanguageName
   /// \sa KIM_LanguageName_FromString
   ///
   /// \since 2.0
-  LanguageName(std::string const str);
+  LanguageName(std::string const & str);
 
   /// \brief Determines if the object is a quantity known to the %KIM API.
   ///

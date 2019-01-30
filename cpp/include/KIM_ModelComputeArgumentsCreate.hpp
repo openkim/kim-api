@@ -72,7 +72,19 @@ class ModelComputeArgumentsCreate
   int SetArgumentSupportStatus(ComputeArgumentName const computeArgumentName,
                                SupportStatus const supportStatus);
 
-  /// \overload
+  /// \brief Set the SupportStatus of a ComputeCallbackName.
+  ///
+  /// \param[in] computeCallbackName The ComputeCallbackName of interest.
+  /// \param[in] supportStatus The corresponding SupportStatus.
+  ///
+  /// \return \c true if \c computeCallbackName is unknown.
+  /// \return \c true if \c computeCallbackName is SUPPORT_STATUS::requiredByAPI
+  ///         and \c supportStatus is not SUPPORT_STATUS::requiredByAPI.
+  /// \return \c false otherwise.
+  ///
+  /// \sa KIM_ModelComputeArgumentsCreate_SetCallbackSupportStatus
+  ///
+  /// \since 2.0
   int SetCallbackSupportStatus(ComputeCallbackName const computeCallbackName,
                                SupportStatus const supportStatus);
 

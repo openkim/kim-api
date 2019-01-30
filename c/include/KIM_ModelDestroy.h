@@ -47,18 +47,46 @@ struct KIM_ModelDestroy;
 
 #ifndef KIM_MODEL_DESTROY_DEFINED_
 #define KIM_MODEL_DESTROY_DEFINED_
+/**
+ ** \brief \copybrief KIM::ModelDestroy
+ **
+ ** \sa KIM::ModelDestroy
+ **
+ ** \since 2.0
+ **/
 typedef struct KIM_ModelDestroy KIM_ModelDestroy;
 #endif
 
+/**
+ ** \brief \copybrief KIM::ModelDestroy::GetModelBufferPointer
+ **
+ ** \sa KIM::ModelDestroy::GetModelBufferPointer
+ **
+ ** \since 2.0
+ **/
 void KIM_ModelDestroy_GetModelBufferPointer(
     KIM_ModelDestroy const * const modelDestroy, void ** const ptr);
 
+/**
+ ** \brief \copybrief KIM::ModelDestroy::LogEntry
+ **
+ ** \sa KIM::ModelDestroy::LogEntry
+ **
+ ** \since 2.0
+ **/
 void KIM_ModelDestroy_LogEntry(KIM_ModelDestroy const * const modelDestroy,
                                KIM_LogVerbosity const logVerbosity,
                                char const * const message,
                                int const lineNumber,
                                char const * const fileName);
 
+/**
+ ** \brief \copybrief KIM::ModelDestroy::ToString
+ **
+ ** \sa KIM::ModelDestroy::ToString
+ **
+ ** \since 2.0
+ **/
 char const *
 KIM_ModelDestroy_ToString(KIM_ModelDestroy const * const modelDestroy);
 

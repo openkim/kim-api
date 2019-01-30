@@ -62,24 +62,59 @@ struct KIM_ModelComputeArgumentsCreate;
 
 #ifndef KIM_MODEL_COMPUTE_ARGUMENTS_CREATE_DEFINED_
 #define KIM_MODEL_COMPUTE_ARGUMENTS_CREATE_DEFINED_
+/**
+ ** \brief \copybrief KIM::ModelComputeArgumentsCreate
+ **
+ ** \sa KIM::ModelComputeArgumentsCreate
+ **
+ ** \since 2.0
+ **/
 typedef struct KIM_ModelComputeArgumentsCreate KIM_ModelComputeArgumentsCreate;
 #endif
 
 
+/**
+ ** \brief \copybrief KIM::ModelComputeArgumentsCreate::SetArgumentSupportStatus
+ **
+ ** \sa KIM::ModelComputeArgumentsCreate::SetArgumentSupportStatus
+ **
+ ** \since 2.0
+ **/
 int KIM_ModelComputeArgumentsCreate_SetArgumentSupportStatus(
     KIM_ModelComputeArgumentsCreate * const modelComputeArgumentsCreate,
     KIM_ComputeArgumentName const computeArgumentName,
     KIM_SupportStatus const supportStatus);
 
+/**
+ ** \brief \copybrief KIM::ModelComputeArgumentsCreate::SetCallbackSupportStatus
+ **
+ ** \sa KIM::ModelComputeArgumentsCreate::SetCallbackSupportStatus
+ **
+ ** \since 2.0
+ **/
 int KIM_ModelComputeArgumentsCreate_SetCallbackSupportStatus(
     KIM_ModelComputeArgumentsCreate * const modelComputeArgumentsCreate,
     KIM_ComputeCallbackName const computeCallbackName,
     KIM_SupportStatus const supportStatus);
 
+/**
+ ** \brief \copybrief KIM::ModelComputeArgumentsCreate::SetModelBufferPointer
+ **
+ ** \sa KIM::ModelComputeArgumentsCreate::SetModelBufferPointer
+ **
+ ** \since 2.0
+ **/
 void KIM_ModelComputeArgumentsCreate_SetModelBufferPointer(
     KIM_ModelComputeArgumentsCreate * const modelComputeArgumentsCreate,
     void * const ptr);
 
+/**
+ ** \brief \copybrief KIM::ModelComputeArgumentsCreate::LogEntry
+ **
+ ** \sa KIM::ModelComputeArgumentsCreate::LogEntry
+ **
+ ** \since 2.0
+ **/
 void KIM_ModelComputeArgumentsCreate_LogEntry(
     KIM_ModelComputeArgumentsCreate const * const modelComputeArgumentsCreate,
     KIM_LogVerbosity const logVerbosity,
@@ -87,6 +122,13 @@ void KIM_ModelComputeArgumentsCreate_LogEntry(
     int const lineNumber,
     char const * const fileName);
 
+/**
+ ** \brief \copybrief KIM::ModelComputeArgumentsCreate::ToString
+ **
+ ** \sa KIM::ModelComputeArgumentsCreate::ToString
+ **
+ ** \since 2.0
+ **/
 char const * KIM_ModelComputeArgumentsCreate_ToString(
     KIM_ModelComputeArgumentsCreate const * const modelComputeArgumentsCreate);
 

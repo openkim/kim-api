@@ -47,18 +47,46 @@ struct KIM_ModelCompute;
 
 #ifndef KIM_MODEL_COMPUTE_DEFINED_
 #define KIM_MODEL_COMPUTE_DEFINED_
+/**
+ ** \brief \copybrief KIM::ModelCompute
+ **
+ ** \sa KIM::ModelCompute
+ **
+ ** \since 2.0
+ **/
 typedef struct KIM_ModelCompute KIM_ModelCompute;
 #endif
 
+/**
+ ** \brief \copybrief KIM::ModelCompute::GetModelBufferPointer
+ **
+ ** \sa KIM::ModelCompute::GetModelBufferPointer
+ **
+ ** \since 2.0
+ **/
 void KIM_ModelCompute_GetModelBufferPointer(
     KIM_ModelCompute const * const modelCompute, void ** const ptr);
 
+/**
+ ** \brief \copybrief KIM::ModelCompute::LogEntry
+ **
+ ** \sa KIM::ModelCompute::LogEntry
+ **
+ ** \since 2.0
+ **/
 void KIM_ModelCompute_LogEntry(KIM_ModelCompute const * const modelCompute,
                                KIM_LogVerbosity const logVerbosity,
                                char const * const message,
                                int const lineNumber,
                                char const * const fileName);
 
+/**
+ ** \brief \copybrief KIM::ModelCompute::ToString
+ **
+ ** \sa KIM::ModelCompute::ToString
+ **
+ ** \since 2.0
+ **/
 char const *
 KIM_ModelCompute_ToString(KIM_ModelCompute const * const modelCompute);
 

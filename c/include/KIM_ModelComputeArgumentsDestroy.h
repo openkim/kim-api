@@ -47,14 +47,35 @@ struct KIM_ModelComputeArgumentsDestroy;
 
 #ifndef KIM_MODEL_COMPUTE_ARGUMENTS_DESTROY_DEFINED_
 #define KIM_MODEL_COMPUTE_ARGUMENTS_DESTROY_DEFINED_
+/**
+ ** \brief \copybrief KIM::ModelComputeArgumentsDestroy
+ **
+ ** \sa KIM::ModelComputeArgumentsDestroy
+ **
+ ** \since 2.0
+ **/
 typedef struct KIM_ModelComputeArgumentsDestroy
     KIM_ModelComputeArgumentsDestroy;
 #endif
 
+/**
+ ** \brief \copybrief KIM::ModelComputeArgumentsDestroy::GetModelBufferPointer
+ **
+ ** \sa KIM::ModelComputeArgumentsDestroy::GetModelBufferPointer
+ **
+ ** \since 2.0
+ **/
 void KIM_ModelComputeArgumentsDestroy_GetModelBufferPointer(
     KIM_ModelComputeArgumentsDestroy const * const modelComputeArgumentsDestroy,
     void ** const ptr);
 
+/**
+ ** \brief \copybrief KIM::ModelComputeArgumentsDestroy::LogEntry
+ **
+ ** \sa KIM::ModelComputeArgumentsDestroy::LogEntry
+ **
+ ** \since 2.0
+ **/
 void KIM_ModelComputeArgumentsDestroy_LogEntry(
     KIM_ModelComputeArgumentsDestroy const * const modelComputeArgumentsDestroy,
     KIM_LogVerbosity const logVerbosity,
@@ -62,6 +83,13 @@ void KIM_ModelComputeArgumentsDestroy_LogEntry(
     int const lineNumber,
     char const * const fileName);
 
+/**
+ ** \brief \copybrief KIM::ModelComputeArgumentsDestroy::ToString
+ **
+ ** \sa KIM::ModelComputeArgumentsDestroy::ToString
+ **
+ ** \since 2.0
+ **/
 char const * KIM_ModelComputeArgumentsDestroy_ToString(
     KIM_ModelComputeArgumentsDestroy const * const
         modelComputeArgumentsDestroy);

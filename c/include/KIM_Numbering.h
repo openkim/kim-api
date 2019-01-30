@@ -36,8 +36,22 @@
 #ifndef KIM_NUMBERING_H_
 #define KIM_NUMBERING_H_
 
+/**
+ ** \brief \copybrief KIM::Numbering
+ **
+ ** \sa KIM::Numbering
+ **
+ ** \since 2.0
+ **/
 struct KIM_Numbering
 {
+  /**
+   ** \brief \copybrief KIM::Numbering::numberingID
+   **
+   ** \sa KIM::Numbering::numberingID
+   **
+   ** \since 2.0
+   **/
   int numberingID;
 };
 #ifndef KIM_NUMBERING_DEFINED_
@@ -45,16 +59,85 @@ struct KIM_Numbering
 typedef struct KIM_Numbering KIM_Numbering;
 #endif
 
+/**
+ ** \brief \copybrief KIM::Numbering::Numbering(std::string const &)
+ **
+ ** \sa KIM::Numbering::Numbering(std::string const &)
+ **
+ ** \since 2.0
+ **/
 KIM_Numbering KIM_Numbering_FromString(char const * const str);
+
+/**
+ ** \brief \copybrief KIM::Numbering::Known
+ **
+ ** \sa KIM::Numbering::Known
+ **
+ ** \since 2.0
+ **/
 int KIM_Numbering_Known(KIM_Numbering const numbering);
+
+/**
+ ** \brief \copybrief KIM::Numbering::operator==()
+ **
+ ** \sa KIM::Numbering::operator==()
+ **
+ ** \since 2.0
+ **/
 int KIM_Numbering_Equal(KIM_Numbering const lhs, KIM_Numbering const rhs);
+
+/**
+ ** \brief \copybrief KIM::Numbering::operator!=()
+ **
+ ** \sa KIM::Numbering::operator!=()
+ **
+ ** \since 2.0
+ **/
 int KIM_Numbering_NotEqual(KIM_Numbering const lhs, KIM_Numbering const rhs);
+
+/**
+ ** \brief \copybrief KIM::Numbering::ToString
+ **
+ ** \sa KIM::Numbering::ToString
+ **
+ ** \since 2.0
+ **/
 char const * KIM_Numbering_ToString(KIM_Numbering const numbering);
 
+/**
+ ** \brief \copybrief KIM::NUMBERING::zeroBased
+ **
+ ** \sa KIM::NUMBERING::zeroBased
+ **
+ ** \since 2.0
+ **/
 extern KIM_Numbering const KIM_NUMBERING_zeroBased;
+
+/**
+ ** \brief \copybrief KIM::NUMBERING::oneBased
+ **
+ ** \sa KIM::NUMBERING::oneBased
+ **
+ ** \since 2.0
+ **/
 extern KIM_Numbering const KIM_NUMBERING_oneBased;
 
+/**
+ ** \brief \copybrief KIM::NUMBERING::GetNumberOfNumberings
+ **
+ ** \sa KIM::NUMBERING::GetNumberOfNumberings
+ **
+ ** \since 2.0
+ **/
 void KIM_NUMBERING_GetNumberOfNumberings(int * const numberOfNumberings);
+
+/**
+ ** \brief \copybrief KIM::NUMBERING::GetNumbering
+ **
+ ** \sa KIM::NUMBERING::GetNumbering
+ **
+ ** \since 2.0
+ **/
 int KIM_NUMBERING_GetNumbering(int const index,
                                KIM_Numbering * const numbering);
 

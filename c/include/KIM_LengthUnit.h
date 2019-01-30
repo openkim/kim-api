@@ -36,8 +36,22 @@
 #ifndef KIM_LENGTH_UNIT_H_
 #define KIM_LENGTH_UNIT_H_
 
+/**
+ ** \brief \copybrief KIM::LengthUnit
+ **
+ ** \sa KIM::LengthUnit
+ **
+ ** \since 2.0
+ **/
 struct KIM_LengthUnit
 {
+  /**
+   ** \brief \copybrief KIM::LengthUnit::lengthUnitID
+   **
+   ** \sa KIM::LengthUnit::lengthUnitID
+   **
+   ** \since 2.0
+   **/
   int lengthUnitID;
 };
 #ifndef KIM_LENGTH_UNIT_DEFINED_
@@ -45,20 +59,121 @@ struct KIM_LengthUnit
 typedef struct KIM_LengthUnit KIM_LengthUnit;
 #endif
 
+/**
+ ** \brief \copybrief KIM::LengthUnit::LengthUnit(std::string const &)
+ **
+ ** \sa KIM::LengthUnit::LengthUnit(std::string const &)
+ **
+ ** \since 2.0
+ **/
 KIM_LengthUnit KIM_LengthUnit_FromString(char const * const str);
+
+/**
+ ** \brief \copybrief KIM::LengthUnit::Known
+ **
+ ** \sa KIM::LengthUnit::Known
+ **
+ ** \since 2.0
+ **/
 int KIM_LengthUnit_Known(KIM_LengthUnit const lengthUnit);
+
+/**
+ ** \brief \copybrief KIM::LengthUnit::operator==()
+ **
+ ** \sa KIM::LengthUnit::operator==()
+ **
+ ** \since 2.0
+ **/
 int KIM_LengthUnit_Equal(KIM_LengthUnit const lhs, KIM_LengthUnit const rhs);
+
+/**
+ ** \brief \copybrief KIM::LengthUnit::operator!=()
+ **
+ ** \sa KIM::LengthUnit::operator!=()
+ **
+ ** \since 2.0
+ **/
 int KIM_LengthUnit_NotEqual(KIM_LengthUnit const lhs, KIM_LengthUnit const rhs);
+
+/**
+ ** \brief \copybrief KIM::LengthUnit::ToString
+ **
+ ** \sa KIM::LengthUnit::ToString
+ **
+ ** \since 2.0
+ **/
 char const * KIM_LengthUnit_ToString(KIM_LengthUnit const lengthUnit);
 
+/**
+ ** \brief \copybrief KIM::LENGTH_UNIT::unused
+ **
+ ** \sa KIM::LENGTH_UNIT::unused
+ **
+ ** \since 2.0
+ **/
 extern KIM_LengthUnit const KIM_LENGTH_UNIT_unused;
+
+/**
+ ** \brief \copybrief KIM::LENGTH_UNIT::A
+ **
+ ** \sa KIM::LENGTH_UNIT::A
+ **
+ ** \since 2.0
+ **/
 extern KIM_LengthUnit const KIM_LENGTH_UNIT_A;
+
+/**
+ ** \brief \copybrief KIM::LENGTH_UNIT::Bohr
+ **
+ ** \sa KIM::LENGTH_UNIT::Bohr
+ **
+ ** \since 2.0
+ **/
 extern KIM_LengthUnit const KIM_LENGTH_UNIT_Bohr;
+
+/**
+ ** \brief \copybrief KIM::LENGTH_UNIT::cm
+ **
+ ** \sa KIM::LENGTH_UNIT::cm
+ **
+ ** \since 2.0
+ **/
 extern KIM_LengthUnit const KIM_LENGTH_UNIT_cm;
+
+/**
+ ** \brief \copybrief KIM::LENGTH_UNIT::m
+ **
+ ** \sa KIM::LENGTH_UNIT::m
+ **
+ ** \since 2.0
+ **/
 extern KIM_LengthUnit const KIM_LENGTH_UNIT_m;
+
+/**
+ ** \brief \copybrief KIM::LENGTH_UNIT::nm
+ **
+ ** \sa KIM::LENGTH_UNIT::nm
+ **
+ ** \since 2.0
+ **/
 extern KIM_LengthUnit const KIM_LENGTH_UNIT_nm;
 
+/**
+ ** \brief \copybrief KIM::LENGTH_UNIT::GetNumberOfLengthUnits
+ **
+ ** \sa KIM::LENGTH_UNIT::GetNumberOfLengthUnits
+ **
+ ** \since 2.0
+ **/
 void KIM_LENGTH_UNIT_GetNumberOfLengthUnits(int * const numberOfLengthUnits);
+
+/**
+ ** \brief \copybrief KIM::LENGTH_UNIT::GetLengthUnit
+ **
+ ** \sa KIM::LENGTH_UNIT::GetLengthUnit
+ **
+ ** \since 2.0
+ **/
 int KIM_LENGTH_UNIT_GetLengthUnit(int const index,
                                   KIM_LengthUnit * const lengthUnit);
 

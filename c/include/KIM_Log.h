@@ -42,6 +42,13 @@
 typedef struct KIM_LogVerbosity KIM_LogVerbosity;
 #endif
 
+/**
+ ** \brief \copybrief KIM::Log
+ **
+ ** \sa KIM::Log
+ **
+ ** \since 2.0
+ **/
 struct KIM_Log;
 
 #ifndef KIM_LOG_DEFINED_
@@ -49,19 +56,86 @@ struct KIM_Log;
 typedef struct KIM_Log KIM_Log;
 #endif
 
+/**
+ ** \brief \copybrief KIM::Log::Create
+ **
+ ** \sa KIM::Log::Create
+ **
+ ** \since 2.0
+ **/
 int KIM_Log_Create(KIM_Log ** const log);
+
+/**
+ ** \brief \copybrief KIM::Log::Destroy
+ **
+ ** \sa KIM::Log::Destroy
+ **
+ ** \since 2.0
+ **/
 void KIM_Log_Destroy(KIM_Log ** const log);
 
+/**
+ ** \brief \copybrief KIM::Log::PushDefaultVerbosity
+ **
+ ** \sa KIM::Log::PushDefaultVerbosity
+ **
+ ** \since 2.0
+ **/
 void KIM_Log_PushDefaultVerbosity(KIM_LogVerbosity const logVerbosity);
+
+/**
+ ** \brief \copybrief KIM::Log::PopDefaultVerbosity
+ **
+ ** \sa KIM::Log::PopDefaultVerbosity
+ **
+ ** \since 2.0
+ **/
 void KIM_Log_PopDefaultVerbosity();
 
+/**
+ ** \brief \copybrief KIM::Log::GetID
+ **
+ ** \sa KIM::Log::GetID
+ **
+ ** \since 2.0
+ **/
 char const * KIM_Log_GetID(KIM_Log const * const log);
+
+/**
+ ** \brief \copybrief KIM::Log::SetID
+ **
+ ** \sa KIM::Log::SetID
+ **
+ ** \since 2.0
+ **/
 void KIM_Log_SetID(KIM_Log * const log, char const * const id);
 
+/**
+ ** \brief \copybrief KIM::Log::PushVerbosity
+ **
+ ** \sa KIM::Log::PushVerbosity
+ **
+ ** \since 2.0
+ **/
 void KIM_Log_PushVerbosity(KIM_Log * const log,
                            KIM_LogVerbosity const logVerbosity);
+
+/**
+ ** \brief \copybrief KIM::Log::PopVerbosity
+ **
+ ** \sa KIM::Log::PopVerbosity
+ **
+ ** \since 2.0
+ **/
 void KIM_Log_PopVerbosity(KIM_Log * const log);
 
+/**
+ ** \brief \copybrief KIM::Log::LogEntry
+ **
+ ** \sa KIM::Log::LogEntry
+ **
+ ** \since 2.0
+ **/
 void KIM_Log_LogEntry(KIM_Log const * const log,
                       KIM_LogVerbosity const logVerbosity,
                       char const * const message,

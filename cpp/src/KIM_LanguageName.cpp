@@ -86,7 +86,7 @@ int GetLanguageName(int const index, LanguageName * const languageName)
 // implementation of LanguageName
 LanguageName::LanguageName() {}
 LanguageName::LanguageName(int const id) : languageNameID(id) {}
-LanguageName::LanguageName(std::string const str)
+LanguageName::LanguageName(std::string const & str)
 {
   languageNameID = -1;
   for (LANGUAGE_NAME::StringMap::const_iterator iter

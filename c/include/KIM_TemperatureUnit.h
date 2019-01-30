@@ -36,8 +36,22 @@
 #ifndef KIM_TEMPERATURE_UNIT_H_
 #define KIM_TEMPERATURE_UNIT_H_
 
+/**
+ ** \brief \copybrief KIM::TemperatureUnit
+ **
+ ** \sa KIM::TemperatureUnit
+ **
+ ** \since 2.0
+ **/
 struct KIM_TemperatureUnit
 {
+  /**
+   ** \brief \copybrief KIM::TemperatureUnit::temperatureUnitID
+   **
+   ** \sa KIM::TemperatureUnit::temperatureUnitID
+   **
+   ** \since 2.0
+   **/
   int temperatureUnitID;
 };
 #ifndef KIM_TEMPERATURE_UNIT_DEFINED_
@@ -45,20 +59,89 @@ struct KIM_TemperatureUnit
 typedef struct KIM_TemperatureUnit KIM_TemperatureUnit;
 #endif
 
+/**
+ ** \brief \copybrief KIM::TemperatureUnit::TemperatureUnit(std::string const &)
+ **
+ ** \sa KIM::TemperatureUnit::TemperatureUnit(std::string const &)
+ **
+ ** \since 2.0
+ **/
 KIM_TemperatureUnit KIM_TemperatureUnit_FromString(char const * const str);
+
+/**
+ ** \brief \copybrief KIM::TemperatureUnit::Known
+ **
+ ** \sa KIM::TemperatureUnit::Known
+ **
+ ** \since 2.0
+ **/
 int KIM_TemperatureUnit_Known(KIM_TemperatureUnit const temperatureUnit);
+
+/**
+ ** \brief \copybrief KIM::TemperatureUnit::operator==()
+ **
+ ** \sa KIM::TemperatureUnit::operator==()
+ **
+ ** \since 2.0
+ **/
 int KIM_TemperatureUnit_Equal(KIM_TemperatureUnit const lhs,
                               KIM_TemperatureUnit const rhs);
+
+/**
+ ** \brief \copybrief KIM::TemperatureUnit::operator!=()
+ **
+ ** \sa KIM::TemperatureUnit::operator!=()
+ **
+ ** \since 2.0
+ **/
 int KIM_TemperatureUnit_NotEqual(KIM_TemperatureUnit const lhs,
                                  KIM_TemperatureUnit const rhs);
+
+/**
+ ** \brief \copybrief KIM::TemperatureUnit::ToString
+ **
+ ** \sa KIM::TemperatureUnit::ToString
+ **
+ ** \since 2.0
+ **/
 char const *
 KIM_TemperatureUnit_ToString(KIM_TemperatureUnit const temperatureUnit);
 
+/**
+ ** \brief \copybrief KIM::TEMPERATURE_UNIT::unused
+ **
+ ** \sa KIM::TEMPERATURE_UNIT::unused
+ **
+ ** \since 2.0
+ **/
 extern KIM_TemperatureUnit const KIM_TEMPERATURE_UNIT_unused;
+
+/**
+ ** \brief \copybrief KIM::TEMPERATURE_UNIT::K
+ **
+ ** \sa KIM::TEMPERATURE_UNIT::K
+ **
+ ** \since 2.0
+ **/
 extern KIM_TemperatureUnit const KIM_TEMPERATURE_UNIT_K;
 
+/**
+ ** \brief \copybrief KIM::TEMPERATURE_UNIT::GetNumberOfTemperatureUnits
+ **
+ ** \sa KIM::TEMPERATURE_UNIT::GetNumberOfTemperatureUnits
+ **
+ ** \since 2.0
+ **/
 void KIM_TEMPERATURE_UNIT_GetNumberOfTemperatureUnits(
     int * const numberOfTemperatureUnits);
+
+/**
+ ** \brief \copybrief KIM::TEMPERATURE_UNIT::GetTemperatureUnit
+ **
+ ** \sa KIM::TEMPERATURE_UNIT::GetTemperatureUnit
+ **
+ ** \since 2.0
+ **/
 int KIM_TEMPERATURE_UNIT_GetTemperatureUnit(
     int const index, KIM_TemperatureUnit * const temperatureUnit);
 

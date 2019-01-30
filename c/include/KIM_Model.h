@@ -93,6 +93,10 @@ typedef struct KIM_ComputeArguments KIM_ComputeArguments;
 #endif
 
 
+struct KIM_Model;
+
+#ifndef KIM_MODEL_DEFINED_
+#define KIM_MODEL_DEFINED_
 /**
  ** \brief \copybrief KIM::Model
  **
@@ -100,10 +104,6 @@ typedef struct KIM_ComputeArguments KIM_ComputeArguments;
  **
  ** \since 2.0
  **/
-struct KIM_Model;
-
-#ifndef KIM_MODEL_DEFINED_
-#define KIM_MODEL_DEFINED_
 typedef struct KIM_Model KIM_Model;
 #endif
 

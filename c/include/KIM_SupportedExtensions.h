@@ -40,11 +40,40 @@
 #define KIM_MAX_EXTENSION_ID_LENGTH 128
 #define KIM_MAX_NUMBER_OF_EXTENSIONS 64
 
+/**
+ ** \brief \copybrief KIM::SupportedExtensions
+ **
+ ** \sa KIM::SupportedExtensions
+ **
+ ** \since 2.0
+ **/
 struct KIM_SupportedExtensions
 {
+  /**
+   ** \brief \copybrief KIM::SupportedExtensions::numberOfSupportedExtensions
+   **
+   ** \sa KIM::SupportedExtensions::numberOfSupportedExtensions
+   **
+   ** \since 2.0
+   **/
   int numberOfSupportedExtensions;
+  /**
+   ** \brief \copybrief KIM::SupportedExtensions::supportedExtensionID
+   **
+   ** \sa KIM::SupportedExtensions::supportedExtensionID
+   **
+   ** \since 2.0
+   **/
   char supportedExtensionID[KIM_MAX_NUMBER_OF_EXTENSIONS]
                            [KIM_MAX_EXTENSION_ID_LENGTH];
+
+  /**
+   ** \brief \copybrief KIM::SupportedExtensions::supportedExtensionRequired
+   **
+   ** \sa KIM::SupportedExtensions::supportedExtensionRequired
+   **
+   ** \since 2.0
+   **/
   int supportedExtensionRequired[KIM_MAX_NUMBER_OF_EXTENSIONS];
 };
 

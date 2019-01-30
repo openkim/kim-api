@@ -57,15 +57,37 @@ struct KIM_ModelComputeArguments;
 
 #ifndef KIM_MODEL_COMPUTE_ARGUMENTS_DEFINED_
 #define KIM_MODEL_COMPUTE_ARGUMENTS_DEFINED_
+/**
+ ** \brief \copybrief KIM::ModelComputeArguments
+ **
+ ** \sa KIM::ModelComputeArguments
+ **
+ ** \since 2.0
+ **/
 typedef struct KIM_ModelComputeArguments KIM_ModelComputeArguments;
 #endif
 
+/**
+ ** \brief \copybrief KIM::ModelComputeArguments::GetNeighborList
+ **
+ ** \sa KIM::ModelComputeArguments::GetNeighborList
+ **
+ ** \since 2.0
+ **/
 int KIM_ModelComputeArguments_GetNeighborList(
     KIM_ModelComputeArguments const * const modelComputeArguments,
     int const neighborListIndex,
     int const particleNumber,
     int * const numberOfNeighbors,
     int const ** const neighborsOfParticle);
+
+/**
+ ** \brief \copybrief KIM::ModelComputeArguments::ProcessDEDrTerm
+ **
+ ** \sa KIM::ModelComputeArguments::ProcessDEDrTerm
+ **
+ ** \since 2.0
+ **/
 int KIM_ModelComputeArguments_ProcessDEDrTerm(
     KIM_ModelComputeArguments const * const modelComputeArguments,
     double const de,
@@ -73,6 +95,14 @@ int KIM_ModelComputeArguments_ProcessDEDrTerm(
     double const * const dx,
     int const i,
     int const j);
+
+/**
+ ** \brief \copybrief KIM::ModelComputeArguments::ProcessD2EDr2Term
+ **
+ ** \sa KIM::ModelComputeArguments::ProcessD2EDr2Term
+ **
+ ** \since 2.0
+ **/
 int KIM_ModelComputeArguments_ProcessD2EDr2Term(
     KIM_ModelComputeArguments const * const modelComputeArguments,
     double const de,
@@ -81,26 +111,70 @@ int KIM_ModelComputeArguments_ProcessD2EDr2Term(
     int const * const i,
     int const * const j);
 
+/**
+ ** \brief \copybrief KIM::ModelComputeArguments::GetArgumentPointer
+ **
+ ** \sa KIM::ModelComputeArguments::GetArgumentPointer
+ **
+ ** \since 2.0
+ **/
 int KIM_ModelComputeArguments_GetArgumentPointerInteger(
     KIM_ModelComputeArguments const * const modelComputeArguments,
     KIM_ComputeArgumentName const computeArgumentName,
     int ** const ptr);
+
+/**
+ ** \brief \copybrief KIM::ModelComputeArguments::GetArgumentPointer
+ **
+ ** \sa KIM::ModelComputeArguments::GetArgumentPointer
+ **
+ ** \since 2.0
+ **/
 int KIM_ModelComputeArguments_GetArgumentPointerDouble(
     KIM_ModelComputeArguments const * const modelComputeArguments,
     KIM_ComputeArgumentName const computeArgumentName,
     double ** const ptr);
 
+/**
+ ** \brief \copybrief KIM::ModelComputeArguments::IsCallbackPresent
+ **
+ ** \sa KIM::ModelComputeArguments::IsCallbackPresent
+ **
+ ** \since 2.0
+ **/
 int KIM_ModelComputeArguments_IsCallbackPresent(
     KIM_ModelComputeArguments const * const modelComputeArguments,
     KIM_ComputeCallbackName const computeCallbackName,
     int * const present);
 
+/**
+ ** \brief \copybrief KIM::ModelComputeArguments::SetModelBufferPointer
+ **
+ ** \sa KIM::ModelComputeArguments::SetModelBufferPointer
+ **
+ ** \since 2.0
+ **/
 void KIM_ModelComputeArguments_SetModelBufferPointer(
     KIM_ModelComputeArguments * const modelComputeArguments, void * const ptr);
+
+/**
+ ** \brief \copybrief KIM::ModelComputeArguments::GetModelBufferPointer
+ **
+ ** \sa KIM::ModelComputeArguments::GetModelBufferPointer
+ **
+ ** \since 2.0
+ **/
 void KIM_ModelComputeArguments_GetModelBufferPointer(
     KIM_ModelComputeArguments const * const modelComputeArguments,
     void ** const ptr);
 
+/**
+ ** \brief \copybrief KIM::ModelComputeArguments::LogEntry
+ **
+ ** \sa KIM::ModelComputeArguments::LogEntry
+ **
+ ** \since 2.0
+ **/
 void KIM_ModelComputeArguments_LogEntry(
     KIM_ModelComputeArguments const * const modelComputeArguments,
     KIM_LogVerbosity const logVerbosity,
@@ -108,6 +182,13 @@ void KIM_ModelComputeArguments_LogEntry(
     int const lineNumber,
     char const * const fileName);
 
+/**
+ ** \brief \copybrief KIM::ModelComputeArguments::ToString
+ **
+ ** \sa KIM::ModelComputeArguments::ToString
+ **
+ ** \since 2.0
+ **/
 char const * KIM_ModelComputeArguments_ToString(
     KIM_ModelComputeArguments const * const modelComputeArguments);
 

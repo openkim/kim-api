@@ -36,8 +36,22 @@
 #ifndef KIM_LANGUAGE_NAME_H_
 #define KIM_LANGUAGE_NAME_H_
 
+/**
+ ** \brief \copybrief KIM::LanguageName
+ **
+ ** \sa KIM::LanguageName
+ **
+ ** \since 2.0
+ **/
 struct KIM_LanguageName
 {
+  /**
+   ** \brief \copybrief KIM::LanguageName::languageNameID
+   **
+   ** \sa KIM::LanguageName::languageNameID
+   **
+   ** \since 2.0
+   **/
   int languageNameID;
 };
 #ifndef KIM_LANGUAGE_NAME_DEFINED_
@@ -45,20 +59,97 @@ struct KIM_LanguageName
 typedef struct KIM_LanguageName KIM_LanguageName;
 #endif
 
+/**
+ ** \brief \copybrief KIM::LanguageName::LanguageName(std::string const &)
+ **
+ ** \sa KIM::LanguageName::LanguageName(std::string const &)
+ **
+ ** \since 2.0
+ **/
 KIM_LanguageName KIM_LanguageName_FromString(char const * const str);
+
+/**
+ ** \brief \copybrief KIM::LanguageName::Known
+ **
+ ** \sa KIM::LanguageName::Known
+ **
+ ** \since 2.0
+ **/
 int KIM_LanguageName_Known(KIM_LanguageName const languageName);
+
+/**
+ ** \brief \copybrief KIM::LanguageName::operator==()
+ **
+ ** \sa KIM::LanguageName::operator==()
+ **
+ ** \since 2.0
+ **/
 int KIM_LanguageName_Equal(KIM_LanguageName const lhs,
                            KIM_LanguageName const rhs);
+
+/**
+ ** \brief \copybrief KIM::LanguageName::operator!=()
+ **
+ ** \sa KIM::LanguageName::operator!=()
+ **
+ ** \since 2.0
+ **/
 int KIM_LanguageName_NotEqual(KIM_LanguageName const lhs,
                               KIM_LanguageName const rhs);
+
+/**
+ ** \brief \copybrief KIM::LanguageName::ToString
+ **
+ ** \sa KIM::LanguageName::ToString
+ **
+ ** \since 2.0
+ **/
 char const * KIM_LanguageName_ToString(KIM_LanguageName const languageName);
 
+/**
+ ** \brief \copybrief KIM::LANGUAGE_NAME::cpp
+ **
+ ** \sa KIM::LANGUAGE_NAME::cpp
+ **
+ ** \since 2.0
+ **/
 extern KIM_LanguageName const KIM_LANGUAGE_NAME_cpp;
+
+/**
+ ** \brief \copybrief KIM::LANGUAGE_NAME::c
+ **
+ ** \sa KIM::LANGUAGE_NAME::c
+ **
+ ** \since 2.0
+ **/
 extern KIM_LanguageName const KIM_LANGUAGE_NAME_c;
+
+/**
+ ** \brief \copybrief KIM::LANGUAGE_NAME::fortran
+ **
+ ** \sa KIM::LANGUAGE_NAME::fortran
+ **
+ ** \since 2.0
+ **/
 extern KIM_LanguageName const KIM_LANGUAGE_NAME_fortran;
 
+/**
+ ** \brief \copybrief KIM::LANGUAGE_NAME::GetNumberOfLanguageNames
+ **
+ ** \sa KIM::LANGUAGE_NAME::GetNumberOfLanguageNames
+ **
+ ** \since 2.0
+ **/
 void KIM_LANGUAGE_NAME_GetNumberOfLanguageNames(
     int * const numberOfLanguageNames);
+
+/**
+ ** \brief \copybrief KIM::LANGUAGE_NAME::GetLanguageName
+ **
+ ** \sa KIM::LANGUAGE_NAME::GetLanguageName
+ **
+ ** \since 2.0
+ **/
 int KIM_LANGUAGE_NAME_GetLanguageName(int const index,
                                       KIM_LanguageName * const languageName);
 

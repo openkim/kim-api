@@ -47,26 +47,68 @@ struct KIM_ModelWriteParameterizedModel;
 
 #ifndef KIM_MODEL_WRITE_PARAMETERIZED_MODEL_DEFINED_
 #define KIM_MODEL_WRITE_PARAMETERIZED_MODEL_DEFINED_
+/**
+ ** \brief \copybrief KIM::ModelWriteParameterizedModel
+ **
+ ** \sa KIM::ModelWriteParameterizedModel
+ **
+ ** \since 2.0
+ **/
 typedef struct KIM_ModelWriteParameterizedModel
     KIM_ModelWriteParameterizedModel;
 #endif
 
+/**
+ ** \brief \copybrief KIM::ModelWriteParameterizedModel::GetPath
+ **
+ ** \sa KIM::ModelWriteParameterizedModel::GetPath
+ **
+ ** \since 2.0
+ **/
 void KIM_ModelWriteParameterizedModel_GetPath(
     KIM_ModelWriteParameterizedModel const * const modelWriteParameterizedModel,
     char const ** const path);
 
+/**
+ ** \brief \copybrief KIM::ModelWriteParameterizedModel::GetModelName
+ **
+ ** \sa KIM::ModelWriteParameterizedModel::GetModelName
+ **
+ ** \since 2.0
+ **/
 void KIM_ModelWriteParameterizedModel_GetModelName(
     KIM_ModelWriteParameterizedModel const * const modelWriteParameterizedModel,
     char const ** const modelName);
 
+/**
+ ** \brief \copybrief KIM::ModelWriteParameterizedModel::SetParameterFileName
+ **
+ ** \sa KIM::ModelWriteParameterizedModel::SetParameterFileName
+ **
+ ** \since 2.0
+ **/
 void KIM_ModelWriteParameterizedModel_SetParameterFileName(
     KIM_ModelWriteParameterizedModel const * const modelWriteParameterizedModel,
     char const * const fileName);
 
+/**
+ ** \brief \copybrief KIM::ModelWriteParameterizedModel::GetModelBufferPointer
+ **
+ ** \sa KIM::ModelWriteParameterizedModel::GetModelBufferPointer
+ **
+ ** \since 2.0
+ **/
 void KIM_ModelWriteParameterizedModel_GetModelBufferPointer(
     KIM_ModelWriteParameterizedModel const * const modelWriteParameterizedModel,
     void ** const ptr);
 
+/**
+ ** \brief \copybrief KIM::ModelWriteParameterizedModel::LogEntry
+ **
+ ** \sa KIM::ModelWriteParameterizedModel::LogEntry
+ **
+ ** \since 2.0
+ **/
 void KIM_ModelWriteParameterizedModel_LogEntry(
     KIM_ModelWriteParameterizedModel const * const modelWriteParameterizedModel,
     KIM_LogVerbosity const logVerbosity,
@@ -74,6 +116,13 @@ void KIM_ModelWriteParameterizedModel_LogEntry(
     int const lineNumber,
     char const * const fileName);
 
+/**
+ ** \brief \copybrief KIM::ModelWriteParameterizedModel::ToString
+ **
+ ** \sa KIM::ModelWriteParameterizedModel::ToString
+ **
+ ** \since 2.0
+ **/
 char const * KIM_ModelWriteParameterizedModel_ToString(
     KIM_ModelWriteParameterizedModel const * const
         modelWriteParameterizedModel);

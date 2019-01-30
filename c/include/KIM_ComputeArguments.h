@@ -67,6 +67,13 @@ typedef struct KIM_SupportStatus KIM_SupportStatus;
 #endif
 
 
+/**
+ ** \brief \copybrief KIM::ComputeArguments
+ **
+ ** \sa KIM::ComputeArguments
+ **
+ ** \since 2.0
+ **/
 struct KIM_ComputeArguments;
 
 #ifndef KIM_COMPUTE_ARGUMENTS_DEFINED_
@@ -74,24 +81,61 @@ struct KIM_ComputeArguments;
 typedef struct KIM_ComputeArguments KIM_ComputeArguments;
 #endif
 
+/**
+ ** \brief \copybrief KIM::ComputeArguments::GetArgumentSupportStatus
+ **
+ ** \sa KIM::ComputeArguments::GetArgumentSupportStatus
+ **
+ ** \since 2.0
+ **/
 int KIM_ComputeArguments_GetArgumentSupportStatus(
     KIM_ComputeArguments const * const computeArguments,
     KIM_ComputeArgumentName const computeArgumentName,
     KIM_SupportStatus * const supportStatus);
+
+/**
+ ** \brief \copybrief KIM::ComputeArguments::GetCallbackSupportStatus
+ **
+ ** \sa KIM::ComputeArguments::GetCallbackSupportStatus
+ **
+ ** \since 2.0
+ **/
 int KIM_ComputeArguments_GetCallbackSupportStatus(
     KIM_ComputeArguments const * const computeArguments,
     KIM_ComputeCallbackName const computeCallbackName,
     KIM_SupportStatus * const supportStatus);
 
+/**
+ ** \brief \copybrief KIM::ComputeArguments::SetArgumentPointer
+ **
+ ** \sa KIM::ComputeArguments::SetArgumentPointer
+ **
+ ** \since 2.0
+ **/
 int KIM_ComputeArguments_SetArgumentPointerInteger(
     KIM_ComputeArguments * const computeArguments,
     KIM_ComputeArgumentName const computeArgumentName,
     int const * const ptr);
+
+/**
+ ** \brief \copybrief KIM::ComputeArguments::SetArgumentPointer
+ **
+ ** \sa KIM::ComputeArguments::SetArgumentPointer
+ **
+ ** \since 2.0
+ **/
 int KIM_ComputeArguments_SetArgumentPointerDouble(
     KIM_ComputeArguments * const computeArguments,
     KIM_ComputeArgumentName const computeArgumentName,
     double const * const ptr);
 
+/**
+ ** \brief \copybrief KIM::ComputeArguments::SetCallbackPointer
+ **
+ ** \sa KIM::ComputeArguments::SetCallbackPointer
+ **
+ ** \since 2.0
+ **/
 int KIM_ComputeArguments_SetCallbackPointer(
     KIM_ComputeArguments * const computeArguments,
     KIM_ComputeCallbackName const computeCallbackName,
@@ -99,22 +143,75 @@ int KIM_ComputeArguments_SetCallbackPointer(
     KIM_Function * const fptr,
     void * const dataObject);
 
+/**
+ ** \brief \copybrief <!--
+ ** --> KIM::ComputeArguments::AreAllRequiredArgumentsAndCallbacksPresent
+ **
+ ** \sa KIM::ComputeArguments::AreAllRequiredArgumentsAndCallbacksPresent
+ **
+ ** \since 2.0
+ **/
 void KIM_ComputeArguments_AreAllRequiredArgumentsAndCallbacksPresent(
     KIM_ComputeArguments const * const computeArguments, int * const result);
 
+/**
+ ** \brief \copybrief KIM::ComputeArguments::SetSimulatorBufferPointer
+ **
+ ** \sa KIM::ComputeArguments::SetSimulatorBufferPointer
+ **
+ ** \since 2.0
+ **/
 void KIM_ComputeArguments_SetSimulatorBufferPointer(
     KIM_ComputeArguments * const computeArguments, void * const ptr);
+
+/**
+ ** \brief \copybrief KIM::ComputeArguments::GetSimulatorBufferPointer
+ **
+ ** \sa KIM::ComputeArguments::GetSimulatorBufferPointer
+ **
+ ** \since 2.0
+ **/
 void KIM_ComputeArguments_GetSimulatorBufferPointer(
     KIM_ComputeArguments const * const computeArguments, void ** const ptr);
 
+/**
+ ** \brief \copybrief KIM::ComputeArguments::ToString
+ **
+ ** \sa KIM::ComputeArguments::ToString
+ **
+ ** \since 2.0
+ **/
 char const * KIM_ComputeArguments_ToString(
     KIM_ComputeArguments const * const computeArguments);
 
+/**
+ ** \brief \copybrief KIM::ComputeArguments::SetLogID
+ **
+ ** \sa KIM::ComputeArguments::SetLogID
+ **
+ ** \since 2.0
+ **/
 void KIM_ComputeArguments_SetLogID(
     KIM_ComputeArguments * const computeArguments, char const * const logID);
+
+/**
+ ** \brief \copybrief KIM::ComputeArguments::PushLogVerbosity
+ **
+ ** \sa KIM::ComputeArguments::PushLogVerbosity
+ **
+ ** \since 2.0
+ **/
 void KIM_ComputeArguments_PushLogVerbosity(
     KIM_ComputeArguments * const computeArguments,
     KIM_LogVerbosity const logVerbosity);
+
+/**
+ ** \brief \copybrief KIM::ComputeArguments::PopLogVerbosity
+ **
+ ** \sa KIM::ComputeArguments::PopLogVerbosity
+ **
+ ** \since 2.0
+ **/
 void KIM_ComputeArguments_PopLogVerbosity(
     KIM_ComputeArguments * const computeArguments);
 

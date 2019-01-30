@@ -47,28 +47,70 @@ struct KIM_ModelRefresh;
 
 #ifndef KIM_MODEL_REFRESH_DEFINED_
 #define KIM_MODEL_REFRESH_DEFINED_
+/**
+ ** \brief \copybrief KIM::ModelRefresh
+ **
+ ** \sa KIM::ModelRefresh
+ **
+ ** \since 2.0
+ **/
 typedef struct KIM_ModelRefresh KIM_ModelRefresh;
 #endif
 
+/**
+ ** \brief \copybrief KIM::ModelRefresh::SetInfluenceDistancePointer
+ **
+ ** \sa KIM::ModelRefresh::SetInfluenceDistancePointer
+ **
+ ** \since 2.0
+ **/
 void KIM_ModelRefresh_SetInfluenceDistancePointer(
     KIM_ModelRefresh * const modelRefresh,
     double const * const influenceDistance);
 
+/**
+ ** \brief \copybrief KIM::ModelRefresh::SetNeighborListPointers
+ **
+ ** \sa KIM::ModelRefresh::SetNeighborListPointers
+ **
+ ** \since 2.0
+ **/
 void KIM_ModelRefresh_SetNeighborListPointers(
     KIM_ModelRefresh * const modelRefresh,
     int const numberOfNeighborLists,
     double const * const cutoffs,
     int const * const modelWillNotRequestNeighborsOfNoncontributingParticles);
 
+/**
+ ** \brief \copybrief KIM::ModelRefresh::GetModelBufferPointer
+ **
+ ** \sa KIM::ModelRefresh::GetModelBufferPointer
+ **
+ ** \since 2.0
+ **/
 void KIM_ModelRefresh_GetModelBufferPointer(
     KIM_ModelRefresh const * const modelRefresh, void ** const ptr);
 
+/**
+ ** \brief \copybrief KIM::ModelRefresh::LogEntry
+ **
+ ** \sa KIM::ModelRefresh::LogEntry
+ **
+ ** \since 2.0
+ **/
 void KIM_ModelRefresh_LogEntry(KIM_ModelRefresh const * const modelRefresh,
                                KIM_LogVerbosity const logVerbosity,
                                char const * const message,
                                int const lineNumber,
                                char const * const fileName);
 
+/**
+ ** \brief \copybrief KIM::ModelRefresh::ToString
+ **
+ ** \sa KIM::ModelRefresh::ToString
+ **
+ ** \since 2.0
+ **/
 char const *
 KIM_ModelRefresh_ToString(KIM_ModelRefresh const * const modelRefresh);
 

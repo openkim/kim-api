@@ -43,8 +43,22 @@ typedef struct KIM_DataType KIM_DataType;
 #endif
 
 
+/**
+ ** \brief \copybrief KIM::ComputeArgumentName
+ **
+ ** \sa KIM::ComputeArgumentName
+ **
+ ** \since 2.0
+ **/
 struct KIM_ComputeArgumentName
 {
+  /**
+   ** \brief \copybrief KIM::ComputeArgumentName::computeArgumentNameID
+   **
+   ** \sa KIM::ComputeArgumentName::computeArgumentNameID
+   **
+   ** \since 2.0
+   **/
   int computeArgumentNameID;
 };
 #ifndef KIM_COMPUTE_ARGUMENT_NAME_DEFINED_
@@ -52,36 +66,171 @@ struct KIM_ComputeArgumentName
 typedef struct KIM_ComputeArgumentName KIM_ComputeArgumentName;
 #endif
 
+/**
+ ** \brief \copybrief <!--
+ ** --> KIM::ComputeArgumentName::ComputeArgumentName(std::string const &)
+ **
+ ** \sa KIM::ComputeArgumentName::ComputeArgumentName(std::string const &)
+ **
+ ** \since 2.0
+ **/
 KIM_ComputeArgumentName
 KIM_ComputeArgumentName_FromString(char const * const str);
+
+/**
+ ** \brief \copybrief KIM::ComputeArgumentName::Known
+ **
+ ** \sa KIM::ComputeArgumentName::Known
+ **
+ ** \since 2.0
+ **/
 int KIM_ComputeArgumentName_Known(
     KIM_ComputeArgumentName const computeArgumentName);
+
+/**
+ ** \brief \copybrief KIM::ComputeArgumentName::operator==()
+ **
+ ** \sa KIM::ComputeArgumentName::operator==()
+ **
+ ** \since 2.0
+ **/
 int KIM_ComputeArgumentName_Equal(KIM_ComputeArgumentName const lhs,
                                   KIM_ComputeArgumentName const rhs);
+
+/**
+ ** \brief \copybrief KIM::ComputeArgumentName::operator!=()
+ **
+ ** \sa KIM::ComputeArgumentName::operator!=()
+ **
+ ** \since 2.0
+ **/
 int KIM_ComputeArgumentName_NotEqual(KIM_ComputeArgumentName const lhs,
                                      KIM_ComputeArgumentName const rhs);
+
+/**
+ ** \brief \copybrief KIM::ComputeArgumentName::ToString
+ **
+ ** \sa KIM::ComputeArgumentName::ToString
+ **
+ ** \since 2.0
+ **/
 char const * KIM_ComputeArgumentName_ToString(
     KIM_ComputeArgumentName const computeArgumentName);
 
+/**
+ ** \brief \copybrief KIM::COMPUTE_ARGUMENT_NAME::numberOfParticles
+ **
+ ** \sa KIM::COMPUTE_ARGUMENT_NAME::numberOfParticles
+ **
+ ** \since 2.0
+ **/
 extern KIM_ComputeArgumentName const
     KIM_COMPUTE_ARGUMENT_NAME_numberOfParticles;
+
+/**
+ ** \brief \copybrief KIM::COMPUTE_ARGUMENT_NAME::particleSpeciesCodes
+ **
+ ** \sa KIM::COMPUTE_ARGUMENT_NAME::particleSpeciesCodes
+ **
+ ** \since 2.0
+ **/
 extern KIM_ComputeArgumentName const
     KIM_COMPUTE_ARGUMENT_NAME_particleSpeciesCodes;
+
+/**
+ ** \brief \copybrief KIM::COMPUTE_ARGUMENT_NAME::particleContributing
+ **
+ ** \sa KIM::COMPUTE_ARGUMENT_NAME::particleContributing
+ **
+ ** \since 2.0
+ **/
 extern KIM_ComputeArgumentName const
     KIM_COMPUTE_ARGUMENT_NAME_particleContributing;
+
+/**
+ ** \brief \copybrief KIM::COMPUTE_ARGUMENT_NAME::coordinates
+ **
+ ** \sa KIM::COMPUTE_ARGUMENT_NAME::coordinates
+ **
+ ** \since 2.0
+ **/
 extern KIM_ComputeArgumentName const KIM_COMPUTE_ARGUMENT_NAME_coordinates;
+
+/**
+ ** \brief \copybrief KIM::COMPUTE_ARGUMENT_NAME::partialEnergy
+ **
+ ** \sa KIM::COMPUTE_ARGUMENT_NAME::partialEnergy
+ **
+ ** \since 2.0
+ **/
 extern KIM_ComputeArgumentName const KIM_COMPUTE_ARGUMENT_NAME_partialEnergy;
+
+/**
+ ** \brief \copybrief KIM::COMPUTE_ARGUMENT_NAME::partialForces
+ **
+ ** \sa KIM::COMPUTE_ARGUMENT_NAME::partialForces
+ **
+ ** \since 2.0
+ **/
 extern KIM_ComputeArgumentName const KIM_COMPUTE_ARGUMENT_NAME_partialForces;
+
+/**
+ ** \brief \copybrief KIM::COMPUTE_ARGUMENT_NAME::partialParticleEnergy
+ **
+ ** \sa KIM::COMPUTE_ARGUMENT_NAME::partialParticleEnergy
+ **
+ ** \since 2.0
+ **/
 extern KIM_ComputeArgumentName const
     KIM_COMPUTE_ARGUMENT_NAME_partialParticleEnergy;
+
+/**
+ ** \brief \copybrief KIM::COMPUTE_ARGUMENT_NAME::partialVirial
+ **
+ ** \sa KIM::COMPUTE_ARGUMENT_NAME::partialVirial
+ **
+ ** \since 2.0
+ **/
 extern KIM_ComputeArgumentName const KIM_COMPUTE_ARGUMENT_NAME_partialVirial;
+
+/**
+ ** \brief \copybrief KIM::COMPUTE_ARGUMENT_NAME::partialParticleVirial
+ **
+ ** \sa KIM::COMPUTE_ARGUMENT_NAME::partialParticleVirial
+ **
+ ** \since 2.0
+ **/
 extern KIM_ComputeArgumentName const
     KIM_COMPUTE_ARGUMENT_NAME_partialParticleVirial;
 
+/**
+ ** \brief \copybrief <!--
+ ** --> KIM::COMPUTE_ARGUMENT_NAME::GetNumberOfComputeArgumentNames
+ **
+ ** \sa KIM::COMPUTE_ARGUMENT_NAME::GetNumberOfComputeArgumentNames
+ **
+ ** \since 2.0
+ **/
 void KIM_COMPUTE_ARGUMENT_NAME_GetNumberOfComputeArgumentNames(
     int * const numberOfComputeArgumentNames);
+
+/**
+ ** \brief \copybrief KIM::COMPUTE_ARGUMENT_NAME::GetComputeArgumentName
+ **
+ ** \sa KIM::COMPUTE_ARGUMENT_NAME::GetComputeArgumentName
+ **
+ ** \since 2.0
+ **/
 int KIM_COMPUTE_ARGUMENT_NAME_GetComputeArgumentName(
     int const index, KIM_ComputeArgumentName * const computeArgumentName);
+
+/**
+ ** \brief \copybrief KIM::COMPUTE_ARGUMENT_NAME::GetComputeArgumentDataType
+ **
+ ** \sa KIM::COMPUTE_ARGUMENT_NAME::GetComputeArgumentDataType
+ **
+ ** \since 2.0
+ **/
 int KIM_COMPUTE_ARGUMENT_NAME_GetComputeArgumentDataType(
     KIM_ComputeArgumentName const computeArgumentName,
     KIM_DataType * const dataType);
