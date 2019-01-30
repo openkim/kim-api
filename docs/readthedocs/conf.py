@@ -1,7 +1,8 @@
 import subprocess
 
-subprocess.call('conda install -y gcc cmake', shell=True)
-subprocess.call('mkdir build; cd build; cmake ../../../; make docs', shell=True)
+subprocess.call('conda install -y cmake', shell=True)
+subprocess.call('conda env export -n root', shell=True)
+subprocess.call('rm -rf build; mkdir build; cd build; FC=true cmake ../../../; make docs', shell=True)
 html_extra_path = ['./build/docs/html']
 
 
