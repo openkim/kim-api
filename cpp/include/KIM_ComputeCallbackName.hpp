@@ -38,9 +38,8 @@
 
 namespace KIM
 {
-/// \brief This class is an \ref extensible_enumeration
-/// "Extensible Enumeration" for the ComputeCallbackName's supported by the
-/// %KIM API.
+/// \brief An \ref extensible_enumeration "Extensible Enumeration" for the
+/// ComputeCallbackName's supported by the %KIM API.
 ///
 /// The enumeration constants are contained in the COMPUTE_CALLBACK_NAME
 /// namespace.

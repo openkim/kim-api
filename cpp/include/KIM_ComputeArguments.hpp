@@ -225,7 +225,7 @@ class ComputeArguments
   void PopLogVerbosity();
 
   /// \brief Allows Model objects to directly access private member data of a
-  /// ComptueArguments object.
+  /// ComputeArguments object.
   ///
   /// \note This has no practical effect on \e users of the %KIM API.
   ///

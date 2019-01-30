@@ -43,7 +43,7 @@ namespace KIM
 class LogVerbosity;
 class LogImplementation;
 
-/// \brief This class provides the logging interface for the %KIM API.
+/// \brief Provides the logging interface for the %KIM API.
 ///
 /// \sa KIM_Log
 ///

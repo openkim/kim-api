@@ -42,8 +42,8 @@
 
 namespace KIM
 {
-/// \brief This class is an \ref extensible_enumeration
-/// "Extensible Enumeration" for the LogVerbosity's supported by the %KIM API.
+/// \brief An \ref extensible_enumeration "Extensible Enumeration" for the
+/// LogVerbosity's supported by the %KIM API.
 ///
 /// The enumeration constants are contained in the LOG_VERBOSITY namespace.
 ///

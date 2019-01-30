@@ -38,8 +38,7 @@
 
 namespace KIM
 {
-/// \brief This class is an
-/// \ref extensible_enumeration "Extensible Enumeration" for the
+/// \brief An \ref extensible_enumeration "Extensible Enumeration" for the
 /// TemperatureUnit's supported by the %KIM API.
 ///
 /// The enumeration constants are contained in the TEMPERATURE_UNIT namespace.
