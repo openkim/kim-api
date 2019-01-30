@@ -56,6 +56,11 @@ struct KIM_SupportStatus
 };
 #ifndef KIM_SUPPORT_STATUS_DEFINED_
 #define KIM_SUPPORT_STATUS_DEFINED_
+/**
+ ** \brief Convenience typedef.
+ **
+ ** \since 2.0
+ **/
 typedef struct KIM_SupportStatus KIM_SupportStatus;
 #endif
 

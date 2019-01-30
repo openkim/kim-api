@@ -57,6 +57,11 @@ struct KIM_SpeciesName
 
 #ifndef KIM_SPECIES_NAME_DEFINED_
 #define KIM_SPECIES_NAME_DEFINED_
+/**
+ ** \brief Forward declaration.
+ **
+ ** \since 2.0
+ **/
 typedef struct KIM_SpeciesName KIM_SpeciesName;
 #endif
 

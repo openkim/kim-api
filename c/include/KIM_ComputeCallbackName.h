@@ -56,6 +56,11 @@ struct KIM_ComputeCallbackName
 };
 #ifndef KIM_COMPUTE_CALLBACK_NAME_DEFINED_
 #define KIM_COMPUTE_CALLBACK_NAME_DEFINED_
+/**
+ ** \brief Convenience typedef.
+ **
+ ** \since 2.0
+ **/
 typedef struct KIM_ComputeCallbackName KIM_ComputeCallbackName;
 #endif
 

@@ -56,6 +56,11 @@ struct KIM_TemperatureUnit
 };
 #ifndef KIM_TEMPERATURE_UNIT_DEFINED_
 #define KIM_TEMPERATURE_UNIT_DEFINED_
+/**
+ ** \brief Convenience typedef.
+ **
+ ** \since 2.0
+ **/
 typedef struct KIM_TemperatureUnit KIM_TemperatureUnit;
 #endif
 

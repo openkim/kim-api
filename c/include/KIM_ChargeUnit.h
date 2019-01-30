@@ -56,6 +56,11 @@ struct KIM_ChargeUnit
 };
 #ifndef KIM_CHARGE_UNIT_DEFINED_
 #define KIM_CHARGE_UNIT_DEFINED_
+/**
+ ** \brief Convenience typedef.
+ **
+ ** \since 2.0
+ **/
 typedef struct KIM_ChargeUnit KIM_ChargeUnit;
 #endif
 

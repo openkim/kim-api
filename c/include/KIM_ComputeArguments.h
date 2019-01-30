@@ -43,30 +43,57 @@
 /* Forward declarations */
 #ifndef KIM_LOG_VERBOSITY_DEFINED_
 #define KIM_LOG_VERBOSITY_DEFINED_
+/**
+ ** \brief Forward declaration.
+ **
+ ** \since 2.0
+ **/
 typedef struct KIM_LogVerbosity KIM_LogVerbosity;
 #endif
 
 #ifndef KIM_LANGUAGE_NAME_DEFINED_
 #define KIM_LANGUAGE_NAME_DEFINED_
+/**
+ ** \brief Forward declaration.
+ **
+ ** \since 2.0
+ **/
 typedef struct KIM_LanguageName KIM_LanguageName;
 #endif
 
 #ifndef KIM_COMPUTE_ARGUMENT_NAME_DEFINED_
 #define KIM_COMPUTE_ARGUMENT_NAME_DEFINED_
+/**
+ ** \brief Forward declaration.
+ **
+ ** \since 2.0
+ **/
 typedef struct KIM_ComputeArgumentName KIM_ComputeArgumentName;
 #endif
 
 #ifndef KIM_COMPUTE_CALLBACK_NAME_DEFINED_
 #define KIM_COMPUTE_CALLBACK_NAME_DEFINED_
+/**
+ ** \brief Forward declaration.
+ **
+ ** \since 2.0
+ **/
 typedef struct KIM_ComputeCallbackName KIM_ComputeCallbackName;
 #endif
 
 #ifndef KIM_SUPPORT_STATUS_DEFINED_
 #define KIM_SUPPORT_STATUS_DEFINED_
+/**
+ ** \brief Forward declaration.
+ **
+ ** \since 2.0
+ **/
 typedef struct KIM_SupportStatus KIM_SupportStatus;
 #endif
 
 
+#ifndef KIM_COMPUTE_ARGUMENTS_DEFINED_
+#define KIM_COMPUTE_ARGUMENTS_DEFINED_
 /**
  ** \brief \copybrief KIM::ComputeArguments
  **
@@ -74,10 +101,6 @@ typedef struct KIM_SupportStatus KIM_SupportStatus;
  **
  ** \since 2.0
  **/
-struct KIM_ComputeArguments;
-
-#ifndef KIM_COMPUTE_ARGUMENTS_DEFINED_
-#define KIM_COMPUTE_ARGUMENTS_DEFINED_
 typedef struct KIM_ComputeArguments KIM_ComputeArguments;
 #endif
 

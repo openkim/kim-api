@@ -56,6 +56,11 @@ struct KIM_EnergyUnit
 };
 #ifndef KIM_ENERGY_UNIT_DEFINED_
 #define KIM_ENERGY_UNIT_DEFINED_
+/**
+ ** \brief Convenience typedef.
+ **
+ ** \since 2.0
+ **/
 typedef struct KIM_EnergyUnit KIM_EnergyUnit;
 #endif
 

@@ -34,13 +34,17 @@
 
 
 #undef FATAL_VERBOSITY
-/// \brief Defined if FATAL Log entries are to be compiled.
+/**
+ ** \brief Defined if FATAL Log entries are to be compiled.
+ **/
 #define FATAL_VERBOSITY (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_FATAL_)
 #undef LOG_FATAL
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_FATAL_)
-/// \def LOG_FATAL(message)
-/// \brief Convenience macro for FATAL Log entries with compile-time
-/// optimization.
+/**
+ ** \def LOG_FATAL(message)
+ ** \brief Convenience macro for FATAL Log entries with compile-time
+ ** optimization.
+ **/
 #define LOG_FATAL(message)                          \
   KIM_LOGGER_FUNCTION_NAME(KIM_LOGGER_OBJECT_NAME,  \
                            KIM_LOG_VERBOSITY_fatal, \
@@ -52,13 +56,17 @@
 #endif
 
 #undef ERROR_VERBOSITY
-/// \brief Defined if ERROR Log entries are to be compiled.
+/**
+ ** \brief Defined if ERROR Log entries are to be compiled.
+ **/
 #define ERROR_VERBOSITY (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_ERROR_)
 #undef LOG_ERROR
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_ERROR_)
-/// \def LOG_ERROR(message)
-/// \brief Convenience macro for ERROR Log entries with compile-time
-/// optimization.
+/**
+ ** \def LOG_ERROR(message)
+ ** \brief Convenience macro for ERROR Log entries with compile-time
+ ** optimization.
+ **/
 #define LOG_ERROR(message)                          \
   KIM_LOGGER_FUNCTION_NAME(KIM_LOGGER_OBJECT_NAME,  \
                            KIM_LOG_VERBOSITY_error, \
@@ -70,13 +78,17 @@
 #endif
 
 #undef WARNING_VERBOSITY
-/// \brief Defined if WARNING Log entries are to be compiled.
+/**
+ ** \brief Defined if WARNING Log entries are to be compiled.
+ **/
 #define WARNING_VERBOSITY (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_WARNING_)
 #undef LOG_WARNING
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_WARNING_)
-/// \def LOG_WARNING(message)
-/// \brief Convenience macro for WARNING Log entries with compile-time
-/// optimization.
+/**
+ ** \def LOG_WARNING(message)
+ ** \brief Convenience macro for WARNING Log entries with compile-time
+ ** optimization.
+ **/
 #define LOG_WARNING(message)                          \
   KIM_LOGGER_FUNCTION_NAME(KIM_LOGGER_OBJECT_NAME,    \
                            KIM_LOG_VERBOSITY_warning, \
@@ -88,14 +100,18 @@
 #endif
 
 #undef INFORMATION_VERBOSITY
-/// \brief Defined if INFORMATION Log entries are to be compiled.
+/**
+ ** \brief Defined if INFORMATION Log entries are to be compiled.
+ **/
 #define INFORMATION_VERBOSITY \
   (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_INFORMATION_)
 #undef LOG_INFORMATION
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_INFORMATION_)
-/// \def LOG_INFORMATION(message)
-/// \brief Convenience macro for INFORMATION Log entries with compile-time
-/// optimization.
+/**
+ ** \def LOG_INFORMATION(message)
+ ** \brief Convenience macro for INFORMATION Log entries with compile-time
+ ** optimization.
+ **/
 #define LOG_INFORMATION(message)                          \
   KIM_LOGGER_FUNCTION_NAME(KIM_LOGGER_OBJECT_NAME,        \
                            KIM_LOG_VERBOSITY_information, \
@@ -107,13 +123,17 @@
 #endif
 
 #undef DEBUG_VERBOSITY
-/// \brief Defined if DEBUG Log entries are to be compiled.
+/**
+ ** \brief Defined if DEBUG Log entries are to be compiled.
+ **/
 #define DEBUG_VERBOSITY (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_DEBUG_)
 #undef LOG_DEBUG
 #if (KIM_LOG_MAXIMUM_LEVEL >= KIM_LOG_VERBOSITY_DEBUG_)
-/// \def LOG_DEBUG(message)
-/// \brief Convenience macro for DEBUG Log entries with compile-time
-/// optimization.
+/**
+ ** \def LOG_DEBUG(message)
+ ** \brief Convenience macro for DEBUG Log entries with compile-time
+ ** optimization.
+ **/
 #define LOG_DEBUG(message)                          \
   KIM_LOGGER_FUNCTION_NAME(KIM_LOGGER_OBJECT_NAME,  \
                            KIM_LOG_VERBOSITY_debug, \

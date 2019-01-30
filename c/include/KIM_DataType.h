@@ -56,6 +56,11 @@ struct KIM_DataType
 };
 #ifndef KIM_DATA_TYPE_DEFINED_
 #define KIM_DATA_TYPE_DEFINED_
+/**
+ ** \brief Convenience typedef.
+ **
+ ** \since 2.0
+ **/
 typedef struct KIM_DataType KIM_DataType;
 #endif
 

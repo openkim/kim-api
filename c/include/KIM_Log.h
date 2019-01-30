@@ -39,9 +39,17 @@
 /* Forward declarations */
 #ifndef KIM_LOG_VERBOSITY_DEFINED_
 #define KIM_LOG_VERBOSITY_DEFINED_
+/**
+ ** \brief Forward declaration.
+ **
+ ** \since 2.0
+ **/
 typedef struct KIM_LogVerbosity KIM_LogVerbosity;
 #endif
 
+
+#ifndef KIM_LOG_DEFINED_
+#define KIM_LOG_DEFINED_
 /**
  ** \brief \copybrief KIM::Log
  **
@@ -49,10 +57,6 @@ typedef struct KIM_LogVerbosity KIM_LogVerbosity;
  **
  ** \since 2.0
  **/
-struct KIM_Log;
-
-#ifndef KIM_LOG_DEFINED_
-#define KIM_LOG_DEFINED_
 typedef struct KIM_Log KIM_Log;
 #endif
 

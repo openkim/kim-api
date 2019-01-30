@@ -56,6 +56,11 @@ struct KIM_Numbering
 };
 #ifndef KIM_NUMBERING_DEFINED_
 #define KIM_NUMBERING_DEFINED_
+/**
+ ** \brief Forward declaration.
+ **
+ ** \since 2.0
+ **/
 typedef struct KIM_Numbering KIM_Numbering;
 #endif
 

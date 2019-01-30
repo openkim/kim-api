@@ -56,6 +56,11 @@ struct KIM_ModelRoutineName
 };
 #ifndef KIM_MODEL_ROUTINE_NAME_DEFINED_
 #define KIM_MODEL_ROUTINE_NAME_DEFINED_
+/**
+ ** \brief Convenience typedef.
+ **
+ ** \since 2.0
+ **/
 typedef struct KIM_ModelRoutineName KIM_ModelRoutineName;
 #endif
 

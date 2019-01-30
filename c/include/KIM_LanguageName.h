@@ -56,6 +56,11 @@ struct KIM_LanguageName
 };
 #ifndef KIM_LANGUAGE_NAME_DEFINED_
 #define KIM_LANGUAGE_NAME_DEFINED_
+/**
+ ** \brief Convenience typedef.
+ **
+ ** \since 2.0
+ **/
 typedef struct KIM_LanguageName KIM_LanguageName;
 #endif
 

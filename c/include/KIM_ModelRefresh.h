@@ -39,11 +39,14 @@
 /* Forward declarations */
 #ifndef KIM_LOG_VERBOSITY_DEFINED_
 #define KIM_LOG_VERBOSITY_DEFINED_
+/**
+ ** \brief Forward declaration.
+ **
+ ** \since 2.0
+ **/
 typedef struct KIM_LogVerbosity KIM_LogVerbosity;
 #endif
 
-
-struct KIM_ModelRefresh;
 
 #ifndef KIM_MODEL_REFRESH_DEFINED_
 #define KIM_MODEL_REFRESH_DEFINED_

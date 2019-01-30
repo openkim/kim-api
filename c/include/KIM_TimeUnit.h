@@ -56,6 +56,11 @@ struct KIM_TimeUnit
 };
 #ifndef KIM_TIME_UNIT_DEFINED_
 #define KIM_TIME_UNIT_DEFINED_
+/**
+ ** \brief Convenience typedef.
+ **
+ ** \since 2.0
+ **/
 typedef struct KIM_TimeUnit KIM_TimeUnit;
 #endif
 

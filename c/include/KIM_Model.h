@@ -39,61 +39,114 @@
 /* Forward declarations */
 #ifndef KIM_LOG_VERBOSITY_DEFINED_
 #define KIM_LOG_VERBOSITY_DEFINED_
+/**
+ ** \brief Forward declaration.
+ **
+ ** \since 2.0
+ **/
 typedef struct KIM_LogVerbosity KIM_LogVerbosity;
 #endif
 
 #ifndef KIM_DATA_TYPE_DEFINED_
 #define KIM_DATA_TYPE_DEFINED_
+/**
+ ** \brief Forward declaration.
+ **
+ ** \since 2.0
+ **/
 typedef struct KIM_DataType KIM_DataType;
 #endif
 
 #ifndef KIM_MODEL_ROUTINE_NAME_DEFINED_
 #define KIM_MODEL_ROUTINE_NAME_DEFINED_
+/**
+ ** \brief Forward declaration.
+ **
+ ** \since 2.0
+ **/
 typedef struct KIM_ModelRoutineName KIM_ModelRoutineName;
 #endif
 
 #ifndef KIM_SPECIES_NAME_DEFINED_
 #define KIM_SPECIES_NAME_DEFINED_
+/**
+ ** \brief Forward declaration.
+ **
+ ** \since 2.0
+ **/
 typedef struct KIM_SpeciesName KIM_SpeciesName;
 #endif
 
 #ifndef KIM_NUMBERING_DEFINED_
 #define KIM_NUMBERING_DEFINED_
+/**
+ ** \brief Forward declaration.
+ **
+ ** \since 2.0
+ **/
 typedef struct KIM_Numbering KIM_Numbering;
 #endif
 
 #ifndef KIM_LENGTH_UNIT_DEFINED_
 #define KIM_LENGTH_UNIT_DEFINED_
+/**
+ ** \brief Forward declaration.
+ **
+ ** \since 2.0
+ **/
 typedef struct KIM_LengthUnit KIM_LengthUnit;
 #endif
 
 #ifndef KIM_ENERGY_UNIT_DEFINED_
 #define KIM_ENERGY_UNIT_DEFINED_
+/**
+ ** \brief Forward declaration.
+ **
+ ** \since 2.0
+ **/
 typedef struct KIM_EnergyUnit KIM_EnergyUnit;
 #endif
 
 #ifndef KIM_CHARGE_UNIT_DEFINED_
 #define KIM_CHARGE_UNIT_DEFINED_
+/**
+ ** \brief Forward declaration.
+ **
+ ** \since 2.0
+ **/
 typedef struct KIM_ChargeUnit KIM_ChargeUnit;
 #endif
 
 #ifndef KIM_TEMPERATURE_UNIT_DEFINED_
 #define KIM_TEMPERATURE_UNIT_DEFINED_
+/**
+ ** \brief Forward declaration.
+ **
+ ** \since 2.0
+ **/
 typedef struct KIM_TemperatureUnit KIM_TemperatureUnit;
 #endif
 
 #ifndef KIM_TIME_UNIT_DEFINED_
 #define KIM_TIME_UNIT_DEFINED_
+/**
+ ** \brief Forward declaration.
+ **
+ ** \since 2.0
+ **/
 typedef struct KIM_TimeUnit KIM_TimeUnit;
 #endif
 
 #ifndef KIM_COMPUTE_ARGUMENTS_DEFINED_
 #define KIM_COMPUTE_ARGUMENTS_DEFINED_
+/**
+ ** \brief Forward declaration.
+ **
+ ** \since 2.0
+ **/
 typedef struct KIM_ComputeArguments KIM_ComputeArguments;
 #endif
 
-
-struct KIM_Model;
 
 #ifndef KIM_MODEL_DEFINED_
 #define KIM_MODEL_DEFINED_

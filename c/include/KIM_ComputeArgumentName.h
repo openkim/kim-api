@@ -39,6 +39,11 @@
 /* Forward declarations */
 #ifndef KIM_DATA_TYPE_DEFINED_
 #define KIM_DATA_TYPE_DEFINED_
+/**
+ ** \brief Forward declaration.
+ **
+ ** \since 2.0
+ **/
 typedef struct KIM_DataType KIM_DataType;
 #endif
 
@@ -63,6 +68,11 @@ struct KIM_ComputeArgumentName
 };
 #ifndef KIM_COMPUTE_ARGUMENT_NAME_DEFINED_
 #define KIM_COMPUTE_ARGUMENT_NAME_DEFINED_
+/**
+ ** \brief Convenience typedef.
+ **
+ ** \since 2.0
+ **/
 typedef struct KIM_ComputeArgumentName KIM_ComputeArgumentName;
 #endif
 

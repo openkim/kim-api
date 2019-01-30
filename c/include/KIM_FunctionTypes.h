@@ -39,78 +39,153 @@
 /* Forward declarations */
 #ifndef KIM_LENGTH_UNIT_DEFINED_
 #define KIM_LENGTH_UNIT_DEFINED_
+/**
+ ** \brief Forward declaration.
+ **
+ ** \since 2.0
+ **/
 typedef struct KIM_LengthUnit KIM_LengthUnit;
 #endif
 
 #ifndef KIM_ENERGY_UNIT_DEFINED_
 #define KIM_ENERGY_UNIT_DEFINED_
+/**
+ ** \brief Forward declaration.
+ **
+ ** \since 2.0
+ **/
 typedef struct KIM_EnergyUnit KIM_EnergyUnit;
 #endif
 
 #ifndef KIM_CHARGE_UNIT_DEFINED_
 #define KIM_CHARGE_UNIT_DEFINED_
+/**
+ ** \brief Forward declaration.
+ **
+ ** \since 2.0
+ **/
 typedef struct KIM_ChargeUnit KIM_ChargeUnit;
 #endif
 
 #ifndef KIM_TEMPERATURE_UNIT_DEFINED_
 #define KIM_TEMPERATURE_UNIT_DEFINED_
+/**
+ ** \brief Forward declaration.
+ **
+ ** \since 2.0
+ **/
 typedef struct KIM_TemperatureUnit KIM_TemperatureUnit;
 #endif
 
 #ifndef KIM_TIME_UNIT_DEFINED_
 #define KIM_TIME_UNIT_DEFINED_
+/**
+ ** \brief Forward declaration.
+ **
+ ** \since 2.0
+ **/
 typedef struct KIM_TimeUnit KIM_TimeUnit;
 #endif
 
 #ifndef KIM_MODEL_CREATE_DEFINED_
 #define KIM_MODEL_CREATE_DEFINED_
+/**
+ ** \brief Forward declaration.
+ **
+ ** \since 2.0
+ **/
 typedef struct KIM_ModelCreate KIM_ModelCreate;
 #endif
 
 #ifndef KIM_MODEL_DRIVER_CREATE_DEFINED_
 #define KIM_MODEL_DRIVER_CREATE_DEFINED_
+/**
+ ** \brief Forward declaration.
+ **
+ ** \since 2.0
+ **/
 typedef struct KIM_ModelDriverCreate KIM_ModelDriverCreate;
 #endif
 
 #ifndef KIM_MODEL_COMPUTE_DEFINED_
 #define KIM_MODEL_COMPUTE_DEFINED_
+/**
+ ** \brief Forward declaration.
+ **
+ ** \since 2.0
+ **/
 typedef struct KIM_ModelCompute KIM_ModelCompute;
 #endif
 
 #ifndef KIM_MODEL_EXTENSION_DEFINED_
 #define KIM_MODEL_EXTENSION_DEFINED_
+/**
+ ** \brief Forward declaration.
+ **
+ ** \since 2.0
+ **/
 typedef struct KIM_ModelExtension KIM_ModelExtension;
 #endif
 
 #ifndef KIM_MODEL_COMPUTE_ARGUMENTS_CREATE_DEFINED_
 #define KIM_MODEL_COMPUTE_ARGUMENTS_CREATE_DEFINED_
+/**
+ ** \brief Forward declaration.
+ **
+ ** \since 2.0
+ **/
 typedef struct KIM_ModelComputeArgumentsCreate KIM_ModelComputeArgumentsCreate;
 #endif
 
 #ifndef KIM_MODEL_COMPUTE_ARGUMENTS_DEFINED_
 #define KIM_MODEL_COMPUTE_ARGUMENTS_DEFINED_
+/**
+ ** \brief Forward declaration.
+ **
+ ** \since 2.0
+ **/
 typedef struct KIM_ModelComputeArguments KIM_ModelComputeArguments;
 #endif
 
 #ifndef KIM_MODEL_REFRESH_DEFINED_
 #define KIM_MODEL_REFRESH_DEFINED_
+/**
+ ** \brief Forward declaration.
+ **
+ ** \since 2.0
+ **/
 typedef struct KIM_ModelRefresh KIM_ModelRefresh;
 #endif
 
 #ifndef KIM_MODEL_WRITE_PARAMETERIZED_MODEL_DEFINED_
 #define KIM_MODEL_WRITE_PARAMETERIZED_MODEL_DEFINED_
+/**
+ ** \brief Forward declaration.
+ **
+ ** \since 2.0
+ **/
 typedef struct KIM_ModelWriteParameterizedModel
     KIM_ModelWriteParameterizedModel;
 #endif
 
 #ifndef KIM_MODEL_COMPUTE_ARGUMENTS_DESTROY_DEFINED_
 #define KIM_MODEL_COMPUTE_ARGUMENTS_DESTROY_DEFINED_
+/**
+ ** \brief Forward declaration.
+ **
+ ** \since 2.0
+ **/
 typedef struct KIM_ModelComputeArgumentsDestroy
     KIM_ModelComputeArgumentsDestroy;
 #endif
 
 #ifndef KIM_MODEL_DESTROY_DEFINED_
 #define KIM_MODEL_DESTROY_DEFINED_
+/**
+ ** \brief Forward declaration.
+ **
+ ** \since 2.0
+ **/
 typedef struct KIM_ModelDestroy KIM_ModelDestroy;
 #endif
 

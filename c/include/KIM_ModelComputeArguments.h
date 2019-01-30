@@ -39,21 +39,34 @@
 /* Forward declarations */
 #ifndef KIM_LOG_VERBOSITY_DEFINED_
 #define KIM_LOG_VERBOSITY_DEFINED_
+/**
+ ** \brief Forward declaration.
+ **
+ ** \since 2.0
+ **/
 typedef struct KIM_LogVerbosity KIM_LogVerbosity;
 #endif
 
 #ifndef KIM_COMPUTE_ARGUMENT_NAME_DEFINED_
 #define KIM_COMPUTE_ARGUMENT_NAME_DEFINED_
+/**
+ ** \brief Forward declaration.
+ **
+ ** \since 2.0
+ **/
 typedef struct KIM_ComputeArgumentName KIM_ComputeArgumentName;
 #endif
 
 #ifndef KIM_COMPUTE_CALLBACK_NAME_DEFINED_
 #define KIM_COMPUTE_CALLBACK_NAME_DEFINED_
+/**
+ ** \brief Forward declaration.
+ **
+ ** \since 2.0
+ **/
 typedef struct KIM_ComputeCallbackName KIM_ComputeCallbackName;
 #endif
 
-
-struct KIM_ModelComputeArguments;
 
 #ifndef KIM_MODEL_COMPUTE_ARGUMENTS_DEFINED_
 #define KIM_MODEL_COMPUTE_ARGUMENTS_DEFINED_

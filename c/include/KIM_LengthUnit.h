@@ -56,6 +56,11 @@ struct KIM_LengthUnit
 };
 #ifndef KIM_LENGTH_UNIT_DEFINED_
 #define KIM_LENGTH_UNIT_DEFINED_
+/**
+ ** \brief Convenience typedef.
+ **
+ ** \since 2.0
+ **/
 typedef struct KIM_LengthUnit KIM_LengthUnit;
 #endif
 
