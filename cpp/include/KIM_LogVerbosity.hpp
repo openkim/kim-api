@@ -159,7 +159,8 @@ namespace LOG_VERBOSITY
 {
 /// \brief The standard \c silent verbosity.
 ///
-/// \todo Add more detailed description of verbosity.
+/// The \c silent verbosity level should be used when absolutely no messages
+/// should be written into the log file.
 ///
 /// \sa KIM_LOG_VERBOSITY_silent
 ///
@@ -168,7 +169,10 @@ extern LogVerbosity const silent;
 
 /// \brief The standard \c fatal verbosity.
 ///
-/// \todo Add more detailed description of verbosity.
+/// The \c fatal verbosity level should be used when the execution of the
+/// program cannot continue in any way and \c exit will be called.  Generic
+/// examples of a \c fatal condition include: failure to allocate requested
+/// memory, etc.
 ///
 /// \sa KIM_LOG_VERBOSITY_fatal
 ///
@@ -177,7 +181,10 @@ extern LogVerbosity const fatal;
 
 /// \brief The standard \c error verbosity.
 ///
-/// \todo Add more detailed description of verbosity.
+/// The \c error verbosity level should be used when the execution of some task
+/// could not be completed.  Generic examples of an \c error condition include:
+/// an email could not be sent, a page could not be rendered, some data could
+/// not be stored to a database, etc.  Something has definitively gone wrong.
 ///
 /// \sa KIM_LOG_VERBOSITY_error
 ///
@@ -186,7 +193,13 @@ extern LogVerbosity const error;
 
 /// \brief The standard \c warning verbosity.
 ///
-/// \todo Add more detailed description of verbosity.
+/// The \c warning verbosity level should be used when something unexpected
+/// happened, but that execution can continue, perhaps in a degraded mode.
+/// Generic examples of a \c warning condition include: a configuration file
+/// was missing but defaults were used, a price was calculated as negative, so
+/// it was clamped to zero, etc.  Something is not right, but it has not gone
+/// properly wrong yet - warnings are often a sign that there will be an error
+/// very soon.
 ///
 /// \sa KIM_LOG_VERBOSITY_warning
 ///
@@ -195,7 +208,11 @@ extern LogVerbosity const warning;
 
 /// \brief The standard \c information verbosity.
 ///
-/// \todo Add more detailed description of verbosity.
+/// The \c information verbosity level should be used when something normal but
+/// significant happened.  Generic examples of an \c information condition
+/// include: the system started, the system stopped, the daily inventory update
+/// job ran, etc.  There should not be a continual torrent of these, otherwise
+/// there is just too much to read.
 ///
 /// \sa KIM_LOG_VERBOSITY_information
 ///
@@ -204,7 +221,11 @@ extern LogVerbosity const information;
 
 /// \brief The standard \c debug verbosity.
 ///
-/// \todo Add more detailed description of verbosity.
+/// The \c debug verbosity level should be used when something normal and
+/// insignificant happened.  Generic examples of a \c debug condition include:
+/// a new user came to the site, a page was rendered, an order was taken, a
+/// price was updated.  This is the stuff excluded from \c info because there
+/// would be too much of it.
 ///
 /// \sa KIM_LOG_VERBOSITY_debug
 ///
