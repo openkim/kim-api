@@ -3251,9 +3251,9 @@ and comparison routines are listed in the table below.
   <td>
     KIM::ChargeUnit::ChargeUnit()
     <br>
-    KIM::ChargeUnit::ChargeUnit() -- int
+    KIM::ChargeUnit::ChargeUnit(int const)
     <br>
-    KIM::ChargeUnit::ChargeUnit() -- std::string
+    KIM::ChargeUnit::ChargeUnit(std::string const &)
   </td><td>
     <br>
     <br>
@@ -3327,9 +3327,9 @@ and comparison routines are listed in the table below.
   <td>
     KIM::ModelRoutineName::ModelRoutineName()
     <br>
-    KIM::ModelRoutineName::ModelRoutineName() -- int
+    KIM::ModelRoutineName::ModelRoutineName(int const)
     <br>
-    KIM::ModelRoutineName::ModelRoutineName() -- std::string
+    KIM::ModelRoutineName::ModelRoutineName(std::string const &)
   </td><td>
     <br>
     <br>
@@ -3403,9 +3403,9 @@ and comparison routines are listed in the table below.
   <td>
     KIM::ComputeArgumentName::ComputeArgumentName()
     <br>
-    KIM::ComputeArgumentName::ComputeArgumentName() -- int
+    KIM::ComputeArgumentName::ComputeArgumentName(int const)
     <br>
-    KIM::ComputeArgumentName::ComputeArgumentName() -- std::string
+    KIM::ComputeArgumentName::ComputeArgumentName(std::string const &)
   </td><td>
     <br>
     <br>
@@ -3488,9 +3488,9 @@ and comparison routines are listed in the table below.
   <td>
     KIM::ComputeCallbackName::ComputeCallbackName()
     <br>
-    KIM::ComputeCallbackName::ComputeCallbackName() -- int
+    KIM::ComputeCallbackName::ComputeCallbackName(int const)
     <br>
-    KIM::ComputeCallbackName::ComputeCallbackName() -- std::string
+    KIM::ComputeCallbackName::ComputeCallbackName(std::string const &)
   </td><td>
     <br>
     <br>
@@ -3564,9 +3564,9 @@ and comparison routines are listed in the table below.
   <td>
     KIM::DataType::DataType()
     <br>
-    KIM::DataType::DataType() -- int
+    KIM::DataType::DataType(int const)
     <br>
-    KIM::DataType::DataType() -- std::string
+    KIM::DataType::DataType(std::string const &)
   </td><td>
     <br>
     <br>
@@ -3640,9 +3640,9 @@ and comparison routines are listed in the table below.
   <td>
     KIM::EnergyUnit::EnergyUnit()
     <br>
-    KIM::EnergyUnit::EnergyUnit() -- int
+    KIM::EnergyUnit::EnergyUnit(int const)
     <br>
-    KIM::EnergyUnit::EnergyUnit() -- std::string
+    KIM::EnergyUnit::EnergyUnit(std::string const &)
   </td><td>
     <br>
     <br>
@@ -3716,9 +3716,9 @@ and comparison routines are listed in the table below.
   <td>
     KIM::LanguageName::LanguageName()
     <br>
-    KIM::LanguageName::LanguageName() -- int
+    KIM::LanguageName::LanguageName(int const)
     <br>
-    KIM::LanguageName::LanguageName() -- std::string
+    KIM::LanguageName::LanguageName(std::string const &)
   </td><td>
     <br>
     <br>
@@ -3792,9 +3792,9 @@ and comparison routines are listed in the table below.
   <td>
     KIM::LengthUnit::LengthUnit()
     <br>
-    KIM::LengthUnit::LengthUnit() -- int
+    KIM::LengthUnit::LengthUnit(int const)
     <br>
-    KIM::LengthUnit::LengthUnit() -- std::string
+    KIM::LengthUnit::LengthUnit(std::string const &)
   </td><td>
     <br>
     <br>
@@ -3868,9 +3868,9 @@ and comparison routines are listed in the table below.
   <td>
     KIM::LogVerbosity::LogVerbosity()
     <br>
-    KIM::LogVerbosity::LogVerbosity() -- int
+    KIM::LogVerbosity::LogVerbosity(int const)
     <br>
-    KIM::LogVerbosity::LogVerbosity() -- std::string
+    KIM::LogVerbosity::LogVerbosity(std::string const &)
   </td><td>
     <br>
     <br>
@@ -3988,9 +3988,9 @@ and comparison routines are listed in the table below.
   <td>
     KIM::Numbering::Numbering()
     <br>
-    KIM::Numbering::Numbering() -- int
+    KIM::Numbering::Numbering(int const)
     <br>
-    KIM::Numbering::Numbering() -- std::string
+    KIM::Numbering::Numbering(std::string const &)
   </td><td>
     <br>
     <br>
@@ -4064,9 +4064,9 @@ and comparison routines are listed in the table below.
   <td>
     KIM::SpeciesName::SpeciesName()
     <br>
-    KIM::SpeciesName::SpeciesName() -- int
+    KIM::SpeciesName::SpeciesName(int const)
     <br>
-    KIM::SpeciesName::SpeciesName() -- std::string
+    KIM::SpeciesName::SpeciesName(std::string const &)
   </td><td>
     <br>
     <br>
@@ -4140,9 +4140,9 @@ and comparison routines are listed in the table below.
   <td>
     KIM::SupportStatus::SupportStatus()
     <br>
-    KIM::SupportStatus::SupportStatus() -- int
+    KIM::SupportStatus::SupportStatus(int const)
     <br>
-    KIM::SupportStatus::SupportStatus() -- std::string
+    KIM::SupportStatus::SupportStatus(std::string const &)
   </td><td>
     <br>
     <br>
@@ -4216,9 +4216,9 @@ and comparison routines are listed in the table below.
   <td>
     KIM::TemperatureUnit::TemperatureUnit()
     <br>
-    KIM::TemperatureUnit::TemperatureUnit() -- int
+    KIM::TemperatureUnit::TemperatureUnit(int const)
     <br>
-    KIM::TemperatureUnit::TemperatureUnit() -- std::string
+    KIM::TemperatureUnit::TemperatureUnit(std::string const &)
   </td><td>
     <br>
     <br>
@@ -4292,9 +4292,9 @@ and comparison routines are listed in the table below.
   <td>
     KIM::TimeUnit::TimeUnit()
     <br>
-    KIM::TimeUnit::TimeUnit() -- int
+    KIM::TimeUnit::TimeUnit(int cont)
     <br>
-    KIM::TimeUnit::TimeUnit() -- std::string
+    KIM::TimeUnit::TimeUnit(std::string const &)
   </td><td>
     <br>
     <br>
