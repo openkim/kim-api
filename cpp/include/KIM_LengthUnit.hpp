@@ -71,7 +71,7 @@ class LengthUnit
   /// \since 2.0
   LengthUnit(int const id);
 
-  /// \brief Create a EnergyUnit object corresponding to the provided string.
+  /// \brief Create a LengthUnit object corresponding to the provided string.
   /// If the string does not match one of the values defined by the %KIM API,
   /// then an "unknown" object is generated.
   ///

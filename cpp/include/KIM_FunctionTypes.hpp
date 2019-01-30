@@ -58,7 +58,7 @@ class ModelDestroy;
 /// \sa KIM_Function
 ///
 /// \since 2.0
-typedef void(Function)(void);  // Generic funciton pointer
+typedef void(Function)(void);  // Generic function pointer
 
 /// \brief Prototype for MODEL_ROUTINE_NAME::Create routine.
 ///

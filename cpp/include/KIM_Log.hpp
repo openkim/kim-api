@@ -64,7 +64,7 @@ class Log
 
   /// \brief Destroy a previously Log::Create'd object.
   ///
-  /// \param[inout] log Pointer to the Model ojbect.
+  /// \param[inout] log Pointer to the Model object.
   ///
   /// \pre \c log points to a previously created %KIM API Log object.
   ///
@@ -120,7 +120,7 @@ class Log
   /// \since 2.0
   void PushVerbosity(LogVerbosity const logVerbosity);
 
-  /// \brief Pop a LogVerbosity from the Log ojbect's verbosity stack.
+  /// \brief Pop a LogVerbosity from the Log object's verbosity stack.
   ///
   /// \sa KIM_Log_PopVerbosity
   ///

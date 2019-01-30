@@ -181,9 +181,9 @@ class ModelDriverCreate
 
   /// \brief Set integer code for supported SpeciesName.
   ///
-  /// A call to this routin adds/updates the list of SpeciesName's supported by
-  /// the Model and associates the specified SpeciesName with the integer code
-  /// to be used within the COMPUTE_ARGUMENT_NAME::particleSpeciesCodes
+  /// A call to this routine adds/updates the list of SpeciesName's supported
+  /// by the Model and associates the specified SpeciesName with the integer
+  /// code to be used within the COMPUTE_ARGUMENT_NAME::particleSpeciesCodes
   /// argument.
   ///
   /// \param[in] speciesName The SpeciesName of interest.

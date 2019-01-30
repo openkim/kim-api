@@ -85,7 +85,7 @@ class Model
   ///             requested by the Simulator.
   /// \param[out] model Pointer to the newly created Model object.
   ///
-  /// \note A requsted unit of \c unused indicates that the Simulator will not
+  /// \note A requested unit of \c unused indicates that the Simulator will not
   /// employ any derived units connected to the associated base unit.  This
   /// avoids the need for the Simulator to make an arbitrary choice that could
   /// cause the Model to not accept its requested base units.
@@ -100,7 +100,7 @@ class Model
   ///         not set the Model's (1) numbering, (2) base units, (3) influence
   ///         distance, (4) numberOfNeighborLists, (5) cutoff values, (6)
   ///         modelWillNotRequesNeighborsOfNoncontributingParticles, (7)
-  ///         required ModelRoutineName pointers, or (8) supported sepecies
+  ///         required ModelRoutineName pointers, or (8) supported species
   ///         codes.
   /// \return \c true if `max(cutoffs) > influenceDistance`.
   /// \return \c true if parameters are registered but not a
@@ -132,7 +132,7 @@ class Model
   /// Call the Model's MODEL_ROUTINE_NAME::Destroy routine and deallocate
   /// the Model object.
   ///
-  /// \param[inout] model Pointer to the Model obejct.
+  /// \param[inout] model Pointer to the Model object.
   ///
   /// \pre \c model points to a previously created %KIM API Model object.
   ///
@@ -179,7 +179,7 @@ class Model
   /// \brief Get the Model's neighbor list information.
   ///
   /// Each neighbor list has a cutoff value and a flag indicating if the Model
-  /// will request the neighbors of noncontributing particles.
+  /// will request the neighbors of non-contributing particles.
   ///
   /// \param[out] numberOfNeighborLists The number of neighbor lists required
   ///             by the Model.

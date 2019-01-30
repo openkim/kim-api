@@ -4292,7 +4292,7 @@ and comparison routines are listed in the table below.
   <td>
     KIM::TimeUnit::TimeUnit()
     <br>
-    KIM::TimeUnit::TimeUnit(int cont)
+    KIM::TimeUnit::TimeUnit(int const)
     <br>
     KIM::TimeUnit::TimeUnit(std::string const &)
   </td><td>
@@ -4408,6 +4408,15 @@ LocalWords:  GetLanguageName LengthUnit GetNumberOfLengthUnits GetLengthUnit
 LocalWords:  LogVerbosity LessThan GreaterThan LessThanEqual GreaterThanEqual
 LocalWords:  GetNumberOfLogVerbosities GetLogVerbosity GetNumberOfNumberings
 LocalWords:  GetNumbering SpeciesName GetNumberOfSpeciesNames GetSpeciesName
-LocalWords:  SupportStatus GetNumberOfSupportStatuses GetSupportStatus
+LocalWords:  SupportStatus GetNumberOfSupportStatuses GetSupportStatus ToModel
 LocalWords:  TemperatureUnit GetNumberOfTemperatureUnits GetTemperatureUnit
-LocalWords:  TimeUnit GetNumberOfTimeUnits GetTimeUnit
+LocalWords:  TimeUnit GetNumberOfTimeUnits GetTimeUnit IsRoutinePresent const
+LocalWords:  ModelExtension WriteParameterizedModel SetRoutinePointer GetPath
+LocalWords:  PushDefaultVerbosity PopDefaultVerbosity GetExtensionID
+LocalWords:  ToModelCompute ToModelCreate ToModelDestroy ToModelDriverCreate
+LocalWords:  ToModelRefresh ToModelWriteParameterizedModel GetModelName
+LocalWords:  ToModelComputeArguments ToModelComputeArgumentsCreate
+LocalWords:  ToModelComputeArgumentsDestroy ModelWriteParameterizedModel
+LocalWords:  SetParameterFileName ModelExtensionFunction ModelRoutineName
+LocalWords:  ModelWriteParameterizedModelFunction GetNumberOfModelRoutineNames
+LocalWords:  GetModelRoutineName

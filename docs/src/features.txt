@@ -159,4 +159,4 @@ LocalWords:  CDDL yyyy Ellad Tadmor Karls kim api pimpl discoverable const ref
 LocalWords:  DataType LanguageName SpeciesName LengthUnit EnergyUnit TimeUnit
 LocalWords:  ChargeUnit TemperatureUnit ArgumentName CallbackName interatomic
 LocalWords:  SupportStatus atomistic Versioning ComputeArgumentName
-LocalWords:  ComputeCallbackName
+LocalWords:  ComputeCallbackName ModelBufferPointer SimulatorBufferPointer

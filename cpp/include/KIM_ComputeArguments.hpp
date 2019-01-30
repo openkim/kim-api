@@ -148,7 +148,7 @@ class ComputeArguments
   /// ComputeArgumentName's and ComputeCallbackName's with SupportStatus
   /// values of SUPPORT_STATUS::requiredByAPI or SUPPORT_STATUS::required.
   ///
-  /// \param[out] result Is \c ture if all such arguments and callbacks have
+  /// \param[out] result Is \c true if all such arguments and callbacks have
   ///             non-NULL pointers, and is \c false otherwise.
   ///
   /// \sa KIM_ComputeArguments_AreAllRequiredArgumentsAndCallbacksPresent

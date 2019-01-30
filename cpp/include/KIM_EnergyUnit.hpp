@@ -146,7 +146,7 @@ extern EnergyUnit const amu_A2_per_ps2;
 /// \since 2.0
 extern EnergyUnit const erg;
 
-/// \brief The standard electronvold unit of energy.
+/// \brief The standard electronvolt unit of energy.
 ///
 /// \sa KIM_ENERGY_UNIT_eV
 ///
