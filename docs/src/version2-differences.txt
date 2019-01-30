@@ -691,7 +691,7 @@ kim-api-v2 package, we have taken "simplicity" as a guiding principle.
   </td><td>
     kim_set_argument_support_status() -- overloaded
     <br>
-    kim_model_compute_arguments_create_module::kim_model_compute_arguments_create_set_support_status()
+    kim_model_compute_arguments_create_module::kim_model_compute_arguments_create_set_argument_support_status()
   </td>
 </tr>
 <tr>
@@ -1294,7 +1294,7 @@ kim-api-v2 package, we have taken "simplicity" as a guiding principle.
   </td><td>
     KIM_ModelComputeArguments_GetNeighborList()
   </td><td>
-    kim_get_neighbor_list()
+    kim_get_neighbor_list() -- overloaded
     <br>
     kim_model_compute_arguments_module::kim_model_compute_arguments_get_neighbor_list()
   </td>
@@ -1555,7 +1555,7 @@ kim-api-v2 package, we have taken "simplicity" as a guiding principle.
     <br>
     KIM_ComputeArguments_PopLogVerbosity()
   </td><td>
-    kim_pop_log_verbosity()
+    kim_pop_log_verbosity() -- overloaded
     <br>
     kim_model_module::kim_model_pop_log_verbosity()
     <br>
