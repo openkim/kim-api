@@ -43,7 +43,7 @@ namespace KIM
 ///
 /// The enumeration constants are contained in the CHARGE_UNIT namespace.
 ///
-/// \sa KIM_ChargeUnit
+/// \sa KIM_ChargeUnit, kim_charge_unit_module
 ///
 /// \since 2.0
 class ChargeUnit
@@ -54,7 +54,7 @@ class ChargeUnit
   /// \note This should not be directly accessed and is only public for
   /// cross-language reasons.
   ///
-  /// \sa KIM_ChargeUnit::chargeUnitID
+  /// \sa KIM_ChargeUnit::chargeUnitID, kim_charge_unit_module::charge_unit_id
   ///
   /// \since 2.0
   int chargeUnitID;
@@ -75,7 +75,7 @@ class ChargeUnit
   /// If the string does not match one of the values defined by the %KIM API,
   /// then an "unknown" object is generated.
   ///
-  /// \sa KIM_ChargeUnit_FromString
+  /// \sa KIM_ChargeUnit_FromString, kim_charge_unit_module::kim_from_string
   ///
   /// \since 2.0
   ChargeUnit(std::string const & str);
@@ -85,7 +85,7 @@ class ChargeUnit
   /// ChargeUnit's known to the %KIM API are found in the CHARGE_UNIT
   /// namespace.
   ///
-  /// \sa KIM_ChargeUnit_Known
+  /// \sa KIM_ChargeUnit_Known, kim_charge_unit_module::kim_known
   ///
   /// \since 2.0
   bool Known() const;
@@ -94,7 +94,7 @@ class ChargeUnit
   ///
   /// \note Not all "unknown" objects are equal.
   ///
-  /// \sa KIM_ChargeUnit_Equal
+  /// \sa KIM_ChargeUnit_Equal, kim_charge_unit_module::operator(.eq.)
   ///
   /// \since 2.0
   bool operator==(ChargeUnit const & rhs) const;
@@ -103,7 +103,7 @@ class ChargeUnit
   ///
   /// \note It is possible for two "unknown" objects to be not equal.
   ///
-  /// \sa KIM_ChargeUnit_NotEqual
+  /// \sa KIM_ChargeUnit_NotEqual, kim_charge_unit_module::operator(.ne.)
   ///
   /// \since 2.0
   bool operator!=(ChargeUnit const & rhs) const;
@@ -115,7 +115,7 @@ class ChargeUnit
   /// \note If the ChargeUnit object does not correspond to a value defined by
   /// the %KIM API, then the string "unknown" is returned.
   ///
-  /// \sa KIM_ChargeUnit_ToString
+  /// \sa KIM_ChargeUnit_ToString, kim_charge_unit_module::kim_to_string
   ///
   /// \since 2.0
   std::string const & ToString() const;
@@ -127,28 +127,28 @@ namespace CHARGE_UNIT
 {
 /// \brief Indicates that a ChargeUnit is not used.
 ///
-/// \sa KIM_CHARGE_UNIT_unused
+/// \sa KIM_CHARGE_UNIT_unused, kim_charge_unit_module::kim_charge_unit_unused
 ///
 /// \since 2.0
 extern ChargeUnit const unused;
 
 /// \brief The standard Coulomb unit of charge.
 ///
-/// \sa KIM_CHARGE_UNIT_C
+/// \sa KIM_CHARGE_UNIT_C, kim_charge_unit_module::kim_charge_unit_c
 ///
 /// \since 2.0
 extern ChargeUnit const C;
 
 /// \brief The standard electron unit of charge.
 ///
-/// \sa KIM_CHARGE_UNIT_e
+/// \sa KIM_CHARGE_UNIT_e, kim_charge_unit_module::kim_charge_unit_e
 ///
 /// \since 2.0
 extern ChargeUnit const e;
 
 /// \brief The standard statcoulomb unit of charge.
 ///
-/// \sa KIM_CHARGE_UNIT_statC
+/// \sa KIM_CHARGE_UNIT_statC, kim_charge_unit_module::kim_charge_unit_statc
 ///
 /// \since 2.0
 extern ChargeUnit const statC;
@@ -159,7 +159,8 @@ extern ChargeUnit const statC;
 /// \param[out] numberOfChargeUnits The number of standard ChargeUnit's defined
 ///             by the %KIM API.
 ///
-/// \sa KIM_CHARGE_UNIT_GetNumberOfChargeUnits
+/// \sa KIM_CHARGE_UNIT_GetNumberOfChargeUnits,
+/// kim_charge_unit_module::kim_get_number_of_charge_units
 ///
 /// \since 2.0
 void GetNumberOfChargeUnits(int * const numberOfChargeUnits);
@@ -174,7 +175,8 @@ void GetNumberOfChargeUnits(int * const numberOfChargeUnits);
 /// \return \c true if `index < 0` or `index >= numberOfChargeUnits`.
 /// \return \c false otherwise.
 ///
-/// \sa KIM_CHARGE_UNIT_GetChargeUnit
+/// \sa KIM_CHARGE_UNIT_GetChargeUnit,
+/// kim_charge_unit_module::kim_get_charge_unit
 ///
 /// \since 2.0
 int GetChargeUnit(int const index, ChargeUnit * const chargeUnit);

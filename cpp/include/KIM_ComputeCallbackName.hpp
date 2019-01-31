@@ -44,7 +44,8 @@ namespace KIM
 /// The enumeration constants are contained in the COMPUTE_CALLBACK_NAME
 /// namespace.
 ///
-/// \sa KIM_ComputeCallbackName
+/// \sa KIM_ComputeCallbackName,
+/// kim_compute_callback_name_module::kim_compute_callback_name_type
 ///
 /// \since 2.0
 class ComputeCallbackName
@@ -55,7 +56,9 @@ class ComputeCallbackName
   /// \note This should not be directly accessed and is only public for
   /// cross-language reasons.
   ///
-  /// \sa KIM_ComputeCallbackName::computeCallbackNameID
+  /// \sa KIM_ComputeCallbackName::computeCallbackNameID,
+  /// kim_compute_callback_name_module::kim_compute_callback_name_type::<!--
+  /// -->compute_callback_name_id
   ///
   /// \since 2.0
   int computeCallbackNameID;
@@ -76,7 +79,8 @@ class ComputeCallbackName
   /// string.  If the string does not match one of the values defined by the
   /// %KIM API, then an "unknown" object is generated.
   ///
-  /// \sa KIM_ComputeCallbackName_FromString
+  /// \sa KIM_ComputeCallbackName_FromString,
+  /// kim_compute_callback_name_module::kim_from_string
   ///
   /// \since 2.0
   ComputeCallbackName(std::string const & str);
@@ -86,7 +90,8 @@ class ComputeCallbackName
   /// ComputeCallbackName's known to the %KIM API are found in the
   /// COMPUTE_CALLBACK_NAME namespace.
   ///
-  /// \sa KIM_ComputeCallbackName_Known
+  /// \sa KIM_ComputeCallbackName_Known,
+  /// kim_compute_callback_name_module::kim_known
   ///
   /// \since 2.0
   bool Known() const;
@@ -95,7 +100,8 @@ class ComputeCallbackName
   ///
   /// \note Not all "unknown" objects are equal.
   ///
-  /// \sa KIM_ComputeCallbackName_Equal
+  /// \sa KIM_ComputeCallbackName_Equal,
+  /// kim_compute_callback_name_module::operator(.eq.)
   ///
   /// \since 2.0
   bool operator==(ComputeCallbackName const & rhs) const;
@@ -104,7 +110,8 @@ class ComputeCallbackName
   ///
   /// \note It is possible for two "unknown" objects to be not equal.
   ///
-  /// \sa KIM_ComputeCallbackName_NotEqual
+  /// \sa KIM_ComputeCallbackName_NotEqual,
+  /// kim_compute_callback_name_module::operator(.ne.)
   ///
   /// \since 2.0
   bool operator!=(ComputeCallbackName const & rhs) const;
@@ -116,7 +123,8 @@ class ComputeCallbackName
   /// \note If the ComputeCallbackName object does not correspond to a value
   /// defined by the %KIM API, then the string "unknown" is returned.
   ///
-  /// \sa KIM_ComputeCallbackName_ToString
+  /// \sa KIM_ComputeCallbackName_ToString,
+  /// kim_compute_callback_name_module::kim_to_string
   ///
   /// \since 2.0
   std::string const & ToString() const;
@@ -134,7 +142,9 @@ namespace COMPUTE_CALLBACK_NAME
 ///
 /// \todo Add more detailed description of callback.
 ///
-/// \sa KIM_COMPUTE_CALLBACK_NAME_GetNeighborList
+/// \sa KIM_COMPUTE_CALLBACK_NAME_GetNeighborList,
+/// kim_compute_callback_name_module::<!--
+/// -->kim_compute_callback_name_get_neighbor_list
 ///
 /// \since 2.0
 extern ComputeCallbackName const GetNeighborList;
@@ -146,7 +156,9 @@ extern ComputeCallbackName const GetNeighborList;
 ///
 /// \todo Add more detailed description of callback.
 ///
-/// \sa KIM_COMPUTE_CALLBACK_NAME_ProcessDEDrTerm
+/// \sa KIM_COMPUTE_CALLBACK_NAME_ProcessDEDrTerm,
+/// kim_compute_callback_name_module::<!--
+/// -->kim_compute_callback_name_process_dedr_term
 ///
 /// \since 2.0
 extern ComputeCallbackName const ProcessDEDrTerm;
@@ -158,7 +170,9 @@ extern ComputeCallbackName const ProcessDEDrTerm;
 ///
 /// \todo Add more detailed description of callback.
 ///
-/// \sa KIM_COMPUTE_CALLBACK_NAME_ProcessD2EDr2Term
+/// \sa KIM_COMPUTE_CALLBACK_NAME_ProcessD2EDr2Term,
+/// kim_compute_callback_name_module::<!--
+/// -->kim_compute_callback_name_process_d2edr2_term
 ///
 /// \since 2.0
 extern ComputeCallbackName const ProcessD2EDr2Term;
@@ -170,7 +184,8 @@ extern ComputeCallbackName const ProcessD2EDr2Term;
 /// \param[out] numberOfComputeCallbackNames The number of standard
 ///             ComputeCallbackName's defined by the %KIM API.
 ///
-/// \sa KIM_COMPUTE_CALLBACK_NAME_GetNumberOfComputeCallbackNames
+/// \sa KIM_COMPUTE_CALLBACK_NAME_GetNumberOfComputeCallbackNames,
+/// kim_compute_callback_name_module::kim_get_number_of_compute_callback_names
 ///
 /// \since 2.0
 void GetNumberOfComputeCallbackNames(int * const numberOfComputeCallbackNames);
@@ -186,7 +201,8 @@ void GetNumberOfComputeCallbackNames(int * const numberOfComputeCallbackNames);
 /// \return \c true if `index < 0` or `index >= numberOfComputeCallbackNames`.
 /// \return \c false otherwise.
 ///
-/// \sa KIM_COMPUTE_CALLBACK_NAME_GetComputeCallbackName
+/// \sa KIM_COMPUTE_CALLBACK_NAME_GetComputeCallbackName,
+/// kim_compute_callback_name_module::kim_get_compute_callback_name
 ///
 /// \since 2.0
 int GetComputeCallbackName(int const index,

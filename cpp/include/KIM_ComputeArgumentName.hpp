@@ -47,7 +47,8 @@ class DataType;
 /// The enumeration constants are contained in the COMPUTE_ARGUMENT_NAME
 /// namespace.
 ///
-/// \sa KIM_ComputeArgumentName
+/// \sa KIM_ComputeArgumentName,
+/// kim_compute_argument_name_module::kim_compute_argument_name_type
 ///
 /// \since 2.0
 class ComputeArgumentName
@@ -58,7 +59,9 @@ class ComputeArgumentName
   /// \note This should not be directly accessed and is only public for
   /// cross-language reasons.
   ///
-  /// \sa KIM_ComputeArgumentName::computeArgumentNameID
+  /// \sa KIM_ComputeArgumentName::computeArgumentNameID,
+  /// kim_compute_argument_name_module::kim_compute_argument_name_type::<!--
+  /// -->compute_argument_name_id
   ///
   /// \since 2.0
   int computeArgumentNameID;
@@ -79,7 +82,8 @@ class ComputeArgumentName
   /// string.  If the string does not match one of the values defined by the
   /// %KIM API, then an "unknown" object is generated.
   ///
-  /// \sa KIM_ComputeArgumentName_FromString
+  /// \sa KIM_ComputeArgumentName_FromString,
+  /// kim_compute_argument_name_module::kim_from_string
   ///
   /// \since 2.0
   ComputeArgumentName(std::string const & str);
@@ -89,7 +93,8 @@ class ComputeArgumentName
   /// ComputeArgumentName's known to the %KIM API are found in the
   /// COMPUTE_ARGUMENT_NAME namespace.
   ///
-  /// \sa KIM_ComputeArgumentName_Known
+  /// \sa KIM_ComputeArgumentName_Known,
+  /// kim_compute_argument_name_module::kim_known
   ///
   /// \since 2.0
   bool Known() const;
@@ -98,7 +103,8 @@ class ComputeArgumentName
   ///
   /// \note Not all "unknown" objects are equal.
   ///
-  /// \sa KIM_ComputeArgumentName_Equal
+  /// \sa KIM_ComputeArgumentName_Equal,
+  /// kim_compute_argument_name_module::operator(.eq.)
   ///
   /// \since 2.0
   bool operator==(ComputeArgumentName const & rhs) const;
@@ -107,7 +113,8 @@ class ComputeArgumentName
   ///
   /// \note It is possible for two "unknown" objects to be not equal.
   ///
-  /// \sa KIM_ComputeArgumentName_NotEqual
+  /// \sa KIM_ComputeArgumentName_NotEqual,
+  /// kim_compute_argument_name_module::operator(.ne.)
   ///
   /// \since 2.0
   bool operator!=(ComputeArgumentName const & rhs) const;
@@ -119,7 +126,8 @@ class ComputeArgumentName
   /// \note If the ComputeArgumentName object does not correspond to a value
   /// defined by the %KIM API, then the string "unknown" is returned.
   ///
-  /// \sa KIM_ComputeArgumentName_ToString
+  /// \sa KIM_ComputeArgumentName_ToString,
+  /// kim_compute_argument_name_module::kim_to_string
   ///
   /// \since 2.0
   std::string const & ToString() const;
@@ -134,7 +142,9 @@ namespace COMPUTE_ARGUMENT_NAME
 ///
 /// \todo Add more detailed description of argument.
 ///
-/// \sa KIM_COMPUTE_ARGUMENT_NAME_numberOfParticles
+/// \sa KIM_COMPUTE_ARGUMENT_NAME_numberOfParticles,
+/// kim_compute_argument_name_module::<!--
+/// -->kim_compute_argument_name_number_of_particles
 ///
 /// \since 2.0
 extern ComputeArgumentName const numberOfParticles;
@@ -143,7 +153,9 @@ extern ComputeArgumentName const numberOfParticles;
 ///
 /// \todo Add more detailed description of argument.
 ///
-/// \sa KIM_COMPUTE_ARGUMENT_NAME_particleSpeciesCodes
+/// \sa KIM_COMPUTE_ARGUMENT_NAME_particleSpeciesCodes,
+/// kim_compute_argument_name_module::<!--
+/// -->kim_compute_argument_name_particle_species_codes
 ///
 /// \since 2.0
 extern ComputeArgumentName const particleSpeciesCodes;
@@ -152,7 +164,9 @@ extern ComputeArgumentName const particleSpeciesCodes;
 ///
 /// \todo Add more detailed description of argument.
 ///
-/// \sa KIM_COMPUTE_ARGUMENT_NAME_particleContributing
+/// \sa KIM_COMPUTE_ARGUMENT_NAME_particleContributing,
+/// kim_compute_argument_name_module::<!--
+/// -->kim_compute_argument_name_particle_contributing
 ///
 /// \since 2.0
 extern ComputeArgumentName const particleContributing;
@@ -161,7 +175,8 @@ extern ComputeArgumentName const particleContributing;
 ///
 /// \todo Add more detailed description of argument.
 ///
-/// \sa KIM_COMPUTE_ARGUMENT_NAME_coordinates
+/// \sa KIM_COMPUTE_ARGUMENT_NAME_coordinates,
+/// kim_compute_argument_name_module::kim_compute_argument_name_coordinates
 ///
 /// \since 2.0
 extern ComputeArgumentName const coordinates;
@@ -170,7 +185,8 @@ extern ComputeArgumentName const coordinates;
 ///
 /// \todo Add more detailed description of argument.
 ///
-/// \sa KIM_COMPUTE_ARGUMENT_NAME_partialEnergy
+/// \sa KIM_COMPUTE_ARGUMENT_NAME_partialEnergy,
+/// kim_compute_argument_name_module::kim_compute_argument_name_partial_energy
 ///
 /// \since 2.0
 extern ComputeArgumentName const partialEnergy;
@@ -179,7 +195,8 @@ extern ComputeArgumentName const partialEnergy;
 ///
 /// \todo Add more detailed description of argument.
 ///
-/// \sa KIM_COMPUTE_ARGUMENT_NAME_partialForces
+/// \sa KIM_COMPUTE_ARGUMENT_NAME_partialForces,
+/// kim_compute_argument_name_module::kim_compute_argument_name_partial_forces
 ///
 /// \since 2.0
 extern ComputeArgumentName const partialForces;
@@ -188,7 +205,9 @@ extern ComputeArgumentName const partialForces;
 ///
 /// \todo Add more detailed description of argument.
 ///
-/// \sa KIM_COMPUTE_ARGUMENT_NAME_partialParticleEnergy
+/// \sa KIM_COMPUTE_ARGUMENT_NAME_partialParticleEnergy,
+/// kim_compute_argument_name_module::<!--
+/// -->kim_compute_argument_name_partial_particle_energy
 ///
 /// \since 2.0
 extern ComputeArgumentName const partialParticleEnergy;
@@ -197,7 +216,8 @@ extern ComputeArgumentName const partialParticleEnergy;
 ///
 /// \todo Add more detailed description of argument.
 ///
-/// \sa KIM_COMPUTE_ARGUMENT_NAME_partialVirial
+/// \sa KIM_COMPUTE_ARGUMENT_NAME_partialVirial,
+/// kim_compute_argument_name_module::kim_compute_argument_name_partial_virial
 ///
 /// \since 2.0
 extern ComputeArgumentName const partialVirial;
@@ -206,7 +226,9 @@ extern ComputeArgumentName const partialVirial;
 ///
 /// \todo Add more detailed description of argument.
 ///
-/// \sa KIM_COMPUTE_ARGUMENT_NAME_partialParticleVirial
+/// \sa KIM_COMPUTE_ARGUMENT_NAME_partialParticleVirial,
+/// kim_compute_argument_name_module::<!--
+/// -->kim_compute_argument_name_partial_particle_virial
 ///
 /// \since 2.0
 extern ComputeArgumentName const partialParticleVirial;
@@ -218,7 +240,8 @@ extern ComputeArgumentName const partialParticleVirial;
 /// \param[out] numberOfComputeArgumentNames The number of standard
 ///             ComputeArgumentName's defined by the %KIM API.
 ///
-/// \sa KIM_COMPUTE_ARGUMENT_NAME_GetNumberOfComputeArgumentNames
+/// \sa KIM_COMPUTE_ARGUMENT_NAME_GetNumberOfComputeArgumentNames,
+/// kim_compute_argument_name_module::kim_get_number_of_compute_argument_names
 ///
 /// \since 2.0
 void GetNumberOfComputeArgumentNames(int * const numberOfComputeArgumentNames);
@@ -234,7 +257,8 @@ void GetNumberOfComputeArgumentNames(int * const numberOfComputeArgumentNames);
 /// \return \c true if `index < 0` or `index >= numberOfComputeArgumentNames`.
 /// \return \c false otherwise.
 ///
-/// \sa KIM_COMPUTE_ARGUMENT_NAME_GetComputeArgumentName
+/// \sa KIM_COMPUTE_ARGUMENT_NAME_GetComputeArgumentName,
+/// kim_compute_argument_name_module::kim_get_compute_argument_name
 ///
 /// \since 2.0
 int GetComputeArgumentName(int const index,
@@ -248,7 +272,8 @@ int GetComputeArgumentName(int const index,
 /// \return \c true if \p computeArgumentName is "unknown".
 /// \return \c false otherwise.
 ///
-/// \sa KIM_COMPUTE_ARGUMENT_NAME_GetComputeArgumentDataType
+/// \sa KIM_COMPUTE_ARGUMENT_NAME_GetComputeArgumentDataType,
+/// kim_compute_argument_name_module::kim_get_compute_argument_data_type
 ///
 /// \since 2.0
 int GetComputeArgumentDataType(ComputeArgumentName const computeArgumentName,

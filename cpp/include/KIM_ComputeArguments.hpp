@@ -55,7 +55,8 @@ class ComputeArgumentsImplementation;
 /// \brief Provides the primary interface to a %KIM API ComputeArguments object
 /// and is meant to be used by simulators.
 ///
-/// \sa KIM_ComputeArguments
+/// \sa KIM_ComputeArguments,
+/// kim_compute_arguments_module::kim_compute_arguments_handle_type
 ///
 /// \since 2.0
 class ComputeArguments
@@ -69,7 +70,8 @@ class ComputeArguments
   /// \return \c true if \c computeArgumentName is unknown.
   /// \return \c false otherwise.
   ///
-  /// \sa KIM_ComputeArguments_GetArgumentSupportStatus
+  /// \sa KIM_ComputeArguments_GetArgumentSupportStatus,
+  /// kim_compute_arguments_module::kim_get_argument_support_status
   ///
   /// \since 2.0
   int GetArgumentSupportStatus(ComputeArgumentName const computeArgumentName,
@@ -83,7 +85,8 @@ class ComputeArguments
   /// \return \c true if \c computeCallbackName is unknown.
   /// \return \c false otherwise.
   ///
-  /// \sa KIM_ComputeArguments_GetCallbackSupportStatus
+  /// \sa KIM_ComputeArguments_GetCallbackSupportStatus,
+  /// kim_compute_arguments_module::kim_get_callback_support_status
   ///
   /// \since 2.0
   int GetCallbackSupportStatus(ComputeCallbackName const computeCallbackName,
@@ -103,7 +106,8 @@ class ComputeArguments
   /// \return \c false otherwise.
   ///
   /// \sa KIM_ComputeArguments_SetArgumentPointerInteger,
-  ///     KIM_ComputeArguments_SetArgumentPointerDouble
+  ///     KIM_ComputeArguments_SetArgumentPointerDouble,
+  ///     kim_compute_arguments_module::kim_set_argument_pointer
   ///
   /// \since 2.0
   int SetArgumentPointer(ComputeArgumentName const computeArgumentName,
@@ -136,7 +140,8 @@ class ComputeArguments
   ///         SUPPORT_STATUS::notSupported`.
   /// \return \c false otherwise.
   ///
-  /// \sa KIM_ComputeArguments_SetCallbackPointer
+  /// \sa KIM_ComputeArguments_SetCallbackPointer,
+  /// kim_compute_arguments_module::kim_set_callback_pointer
   ///
   /// \since 2.0
   int SetCallbackPointer(ComputeCallbackName const computeCallbackName,
@@ -151,7 +156,8 @@ class ComputeArguments
   /// \param[out] result Is \c true if all such arguments and callbacks have
   ///             non-NULL pointers, and is \c false otherwise.
   ///
-  /// \sa KIM_ComputeArguments_AreAllRequiredArgumentsAndCallbacksPresent
+  /// \sa KIM_ComputeArguments_AreAllRequiredArgumentsAndCallbacksPresent,
+  /// kim_compute_arguments_module::kim_are_all_required_present
   ///
   /// \since 2.0
   void AreAllRequiredArgumentsAndCallbacksPresent(int * const result) const;
@@ -164,7 +170,8 @@ class ComputeArguments
   ///
   /// \param[in] ptr The simulator buffer data pointer.
   ///
-  /// \sa KIM_ComputeArguments_SetSimulatorBufferPointer
+  /// \sa KIM_ComputeArguments_SetSimulatorBufferPointer,
+  /// kim_compute_arguments_module::kim_set_simulator_buffer_pointer
   ///
   /// \since 2.0
   void SetSimulatorBufferPointer(void * const ptr);
@@ -178,7 +185,8 @@ class ComputeArguments
   /// \note `ptr == NULL` if the simulator has not previously called
   ///       ComputeArguments::SetSimulatorBufferPointer.
   ///
-  /// \sa KIM_ComputeArguments_GetSimulatorBufferPointer
+  /// \sa KIM_ComputeArguments_GetSimulatorBufferPointer,
+  /// kim_compute_arguments_module::kim_get_simulator_buffer_pointer
   ///
   /// \since 2.0
   void GetSimulatorBufferPointer(void ** const ptr) const;
@@ -190,7 +198,8 @@ class ComputeArguments
   /// may be quite long.  It begins and ends with lines consisting only of \c
   /// ='s.
   ///
-  /// \sa KIM_ComputeArguments_ToString
+  /// \sa KIM_ComputeArguments_ToString,
+  /// kim_compute_arguments_module::kim_to_string
   ///
   /// \since 2.0
   std::string const & ToString() const;
@@ -201,7 +210,8 @@ class ComputeArguments
   /// \param[in] logID String identifying the ComputeArguments object's Log
   /// object.
   ///
-  /// \sa KIM_ComputeArguments_SetLogID
+  /// \sa KIM_ComputeArguments_SetLogID,
+  /// kim_compute_arguments_module::kim_set_log_id
   ///
   /// \since 2.0
   void SetLogID(std::string const & logID);
@@ -211,7 +221,8 @@ class ComputeArguments
   ///
   /// \param[in] logVerbosity A LogVerbosity value.
   ///
-  /// \sa KIM_ComputeArguments_PushLogVerbosity
+  /// \sa KIM_ComputeArguments_PushLogVerbosity,
+  /// kim_compute_arguments_module::kim_push_log_verbosity
   ///
   /// \since 2.0
   void PushLogVerbosity(LogVerbosity const logVerbosity);
@@ -219,7 +230,8 @@ class ComputeArguments
   /// \brief Pop a LogVerbosity from the ComputeArguments object's Log object
   /// verbosity stack.
   ///
-  /// \sa KIM_ComputeArguments_PopLogVerbosity
+  /// \sa KIM_ComputeArguments_PopLogVerbosity,
+  /// kim_compute_arguments_module::kim_pop_log_verbosity
   ///
   /// \since 2.0
   void PopLogVerbosity();
