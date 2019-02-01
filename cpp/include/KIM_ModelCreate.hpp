@@ -60,7 +60,8 @@ class ModelCreateImplementation;
 /// \brief Provides the interface to a %KIM API Model object for use by models
 /// within their MODEL_ROUTINE_NAME::Create routine.
 ///
-/// \sa ModelDriverCreate, KIM_ModelCreate, KIM_ModelDriverCreate
+/// \sa ModelDriverCreate, KIM_ModelCreate, KIM_ModelDriverCreate,
+/// kim_model_driver_create_module::kim_model_driver_create_handle_type
 ///
 /// \since 2.0
 class ModelCreate
@@ -75,7 +76,8 @@ class ModelCreate
   ///
   /// \sa ModelDriverCreate::SetModelNumbering,
   /// KIM_ModelCreate_SetModelNumbering,
-  /// KIM_ModelDriverCreate_SetModelNumbering
+  /// KIM_ModelDriverCreate_SetModelNumbering,
+  /// kim_model_driver_create_module::kim_set_model_numbering
   ///
   /// \since 2.0
   int SetModelNumbering(Numbering const numbering);
@@ -94,7 +96,8 @@ class ModelCreate
   ///
   /// \sa ModelDriverCreate::SetInfluenceDistancePointer,
   /// KIM_ModelCreate_SetInfluenceDistancePointer,
-  /// KIM_ModelDriverCreate_SetInfluenceDistancePointer
+  /// KIM_ModelDriverCreate_SetInfluenceDistancePointer,
+  /// kim_model_driver_create_module::kim_set_influence_distance_pointer
   ///
   /// \since 2.0
   void SetInfluenceDistancePointer(double const * const influenceDistance);
@@ -119,7 +122,8 @@ class ModelCreate
   ///
   /// \sa ModelDriverCreate::SetNeighborListPointers,
   /// KIM_ModelCreate_SetNeighborListPointers,
-  /// KIM_ModelDriverCreate_SetNeighborListPointers
+  /// KIM_ModelDriverCreate_SetNeighborListPointers,
+  /// kim_model_driver_create_module::kim_set_neighbor_list_pointers
   ///
   /// \since 2.0
   void SetNeighborListPointers(
@@ -145,7 +149,8 @@ class ModelCreate
   ///
   /// \sa ModelDriverCreate::SetRoutinePointer,
   /// KIM_ModelCreate_SetRoutinePointer,
-  /// KIM_ModelDriverCreate_SetRoutinePointer
+  /// KIM_ModelDriverCreate_SetRoutinePointer,
+  /// kim_model_driver_create_module::kim_set_routine_pointer
   ///
   /// \since 2.0
   int SetRoutinePointer(ModelRoutineName const modelRoutineName,
@@ -167,7 +172,8 @@ class ModelCreate
   /// \return \c false otherwise.
   ///
   /// \sa ModelDriverCreate::SetSpeciesCode, KIM_ModelCreate_SetSpeciesCode,
-  /// KIM_ModelDriverCreate_SetSpeciesCode
+  /// KIM_ModelDriverCreate_SetSpeciesCode,
+  /// kim_model_driver_create_module::kim_set_species_code
   ///
   /// \since 2.0
   int SetSpeciesCode(SpeciesName const speciesName, int const code);
@@ -197,7 +203,8 @@ class ModelCreate
   /// KIM_ModelCreate_SetParameterPointerInteger,
   /// KIM_ModelCreate_SetParameterPointerDouble,
   /// KIM_ModelDriverCreate_SetParameterPointerInteger,
-  /// KIM_ModelDriverCreate_SetParameterPointerDouble
+  /// KIM_ModelDriverCreate_SetParameterPointerDouble,
+  /// kim_model_driver_create_module::kim_set_parameter_pointer
   ///
   /// \since 2.0
   int SetParameterPointer(int const extent,
@@ -221,7 +228,8 @@ class ModelCreate
   ///
   /// \sa ModelDriverCreate::SetModelBufferPointer,
   /// KIM_ModelCreate_SetModelBufferPointer,
-  /// KIM_ModelDriverCreate_SetModelBufferPointer
+  /// KIM_ModelDriverCreate_SetModelBufferPointer,
+  /// kim_model_driver_create_module::kim_set_model_buffer_pointer
   ///
   /// \since 2.0
   void SetModelBufferPointer(void * const ptr);
@@ -246,7 +254,8 @@ class ModelCreate
   /// \return \c false otherwise.
   ///
   /// \sa ModelDriverCreate::SetUnits, KIM_ModelCreate_SetUnits,
-  /// KIM_ModelDriverCreate_SetUnits
+  /// KIM_ModelDriverCreate_SetUnits,
+  /// kim_model_driver_create_module::kim_set_units
   ///
   /// \since 2.0
   int SetUnits(LengthUnit const lengthUnit,
@@ -281,7 +290,8 @@ class ModelCreate
   /// \return \c false otherwise.
   ///
   /// \sa ModelDriverCreate::ConvertUnit, KIM_ModelCreate_ConvertUnit,
-  /// KIM_ModelDriverCreate_ConvertUnit
+  /// KIM_ModelDriverCreate_ConvertUnit,
+  /// kim_model_driver_create_module::kim_convert_unit
   ///
   /// \since 2.0
   static int ConvertUnit(LengthUnit const fromLengthUnit,
@@ -312,7 +322,8 @@ class ModelCreate
   /// \param[in] lineNumber The source code file line number.
   /// \param[in] fileName The source code file name.
   ///
-  /// \sa KIM_ModelCreate_LogEntry
+  /// \sa KIM_ModelCreate_LogEntry,
+  /// kim_model_driver_create_module::kim_log_entry
   ///
   /// \since 2.0
   void LogEntry(LogVerbosity const logVerbosity,
@@ -332,7 +343,8 @@ class ModelCreate
   /// may be quite long.  It begins and ends with lines consisting only of \c
   /// ='s.
   ///
-  /// \sa KIM_ModelCreate_ToString
+  /// \sa KIM_ModelCreate_ToString,
+  /// kim_model_driver_create_module::kim_to_string
   ///
   /// \since 2.0
   std::string const & ToString() const;

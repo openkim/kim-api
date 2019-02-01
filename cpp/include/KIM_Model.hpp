@@ -55,7 +55,7 @@ class ModelImplementation;
 /// \brief Provides the primary interface to a %KIM API Model object and is
 /// meant to be used by simulators.
 ///
-/// \sa KIM_Model
+/// \sa KIM_Model, kim_model_module::kim_model_handle_type
 ///
 /// \since 2.0
 class Model
@@ -114,7 +114,7 @@ class Model
   /// \post \c requestedUnitsAccepted is unchanged and `model == NULL` if an
   ///       error occurs.
   ///
-  /// \sa KIM_Model_Create
+  /// \sa KIM_Model_Create, kim_model_module::kim_model_create
   ///
   /// \since 2.0
   static int Create(Numbering const numbering,
@@ -138,7 +138,7 @@ class Model
   ///
   /// \post `model == NULL`.
   ///
-  /// \sa KIM_Model_Destroy
+  /// \sa KIM_Model_Destroy, kim_model_module::kim_model_destroy
   ///
   // \since 2.0
   static void Destroy(Model ** const model);
@@ -157,7 +157,7 @@ class Model
   ///
   /// \post \c present and \c required are unchanged if an error occurs.
   ///
-  /// \sa KIM_Model_IsRoutinePresent
+  /// \sa KIM_Model_IsRoutinePresent, kim_model_module::kim_is_routine_present
   ///
   /// \since 2.0
   int IsRoutinePresent(ModelRoutineName const modelRoutineName,
@@ -171,7 +171,8 @@ class Model
   /// \todo Add more detailed description of \c influenceDistance. (or link to
   /// docs elsewhere?)
   ///
-  /// \sa KIM_Model_GetInfluenceDistance
+  /// \sa KIM_Model_GetInfluenceDistance,
+  /// kim_model_module::kim_get_influence_distance
   ///
   /// \since 2.0
   void GetInfluenceDistance(double * const influenceDistance) const;
@@ -192,7 +193,9 @@ class Model
   ///      \c modelWillNotRequestNeighborsOfNoncontributingParticles may be
   ///      \c NULL if the corresponding value is not needed.
   ///
-  /// \sa KIM_Model_GetNeighborListPointers
+  /// \sa KIM_Model_GetNeighborListPointers,
+  /// kim_model_module::kim_get_number_of_neighbor_lists,
+  /// kim_model_module::kim_get_neighbor_list_values
   ///
   /// \since 2.0
   void GetNeighborListPointers(
@@ -219,7 +222,7 @@ class Model
   /// \pre \c lengthUnit, \c energyUnit, \c chargeUnit, \c temperatureUnit, or
   ///      \c timeUnit may be \c NULL if the corresponding value is not needed.
   ///
-  /// \sa KIM_Model_GetUnits
+  /// \sa KIM_Model_GetUnits, kim_model_module::kim_get_units
   ///
   /// \since 2.0
   void GetUnits(LengthUnit * const lengthUnit,
@@ -244,7 +247,8 @@ class Model
   ///
   /// \post `computeArguments == NULL` if an error occurs.
   ///
-  /// \sa KIM_Model_ComputeArgumentsCreate
+  /// \sa KIM_Model_ComputeArgumentsCreate,
+  /// kim_model_module::kim_compute_arguments_create
   ///
   /// \since 2.0
   int ComputeArgumentsCreate(ComputeArguments ** const computeArguments) const;
@@ -266,7 +270,8 @@ class Model
   /// \post \c computeArguments is unchanged if an error occurs, otherwise
   ///       `computeArguments == NULL`.
   ///
-  /// \sa KIM_Model_ComputeArgumentsDestroy
+  /// \sa KIM_Model_ComputeArgumentsDestroy,
+  /// kim_model_module::kim_compute_arguments_destroy
   ///
   /// \since 2.0
   int ComputeArgumentsDestroy(ComputeArguments ** const computeArguments) const;
@@ -284,7 +289,7 @@ class Model
   ///         returns \c true.
   /// \return \c false otherwise.
   ///
-  /// \sa KIM_Model_Compute
+  /// \sa KIM_Model_Compute, kim_model_module::kim_compute
   ///
   /// \since 2.0
   int Compute(ComputeArguments const * const computeArguments) const;
@@ -302,7 +307,7 @@ class Model
   ///         returns \c true.
   /// \return \c false otherwise.
   ///
-  /// \sa KIM_Model_Extension
+  /// \sa KIM_Model_Extension, kim_model_module::kim_extension
   ///
   /// \since 2.0
   int Extension(std::string const & extensionID,
@@ -324,7 +329,7 @@ class Model
   ///         modelWillNotRequestNeighborsOfNoncontributingParticles pointer.
   /// \return \c false otherwise.
   ///
-  /// \sa KIM_Model_ClearThenRefresh
+  /// \sa KIM_Model_ClearThenRefresh, kim_model_module::kim_clear_then_refresh
   ///
   /// \since 2.0
   int ClearThenRefresh();
@@ -346,7 +351,8 @@ class Model
   ///         file.
   /// \return \c false otherwise.
   ///
-  /// \sa KIM_Model_WriteParameterizedModel
+  /// \sa KIM_Model_WriteParameterizedModel,
+  /// kim_model_module::kim_write_parameterized_model
   ///
   /// \since 2.0
   int WriteParameterizedModel(std::string const & path,
@@ -368,7 +374,8 @@ class Model
   /// \post \c speciesIsSupported and \c code are unchanged if an error occurs.
   ///       \c code is unchanged if `speciesIsSupported == false`.
   ///
-  /// \sa KIM_Model_GetSpeciesSupportAndCode
+  /// \sa KIM_Model_GetSpeciesSupportAndCode,
+  /// kim_model_module::kim_get_species_support_and_code
   ///
   /// \since 2.0
   int GetSpeciesSupportAndCode(SpeciesName const speciesName,
@@ -402,7 +409,8 @@ class Model
   /// \pre \c dataType, \c extent, \c name, or \c description may be \c NULL if
   ///      the corresponding value is not needed.
   ///
-  /// \sa KIM_Model_GetParameterMetadata
+  /// \sa KIM_Model_GetParameterMetadata,
+  /// kim_model_module::kim_get_parameter_metadata
   ///
   /// \since 2.0
   int GetParameterMetadata(int const parameterIndex,
@@ -423,7 +431,8 @@ class Model
   /// \return \c true if \c arrayIndex is invalid.
   /// \return \c false otherwise.
   ///
-  /// \sa KIM_Model_GetParameterInteger, KIM_Model_GetParameterDouble
+  /// \sa KIM_Model_GetParameterInteger, KIM_Model_GetParameterDouble,
+  /// kim_model_module::kim_get_parameter
   ///
   /// \since 2.0
   int GetParameter(int const parameterIndex,
@@ -447,7 +456,8 @@ class Model
   /// \return \c true if \c arrayIndex is invalid.
   /// \return \c false otherwise.
   ///
-  /// \sa KIM_Model_SetParameterInteger, KIM_Model_SetParameterDouble
+  /// \sa KIM_Model_SetParameterInteger, KIM_Model_SetParameterDouble,
+  /// kim_model_module::kim_set_parameter
   ///
   /// \since 2.0
   int SetParameter(int const parameterIndex,
@@ -467,7 +477,8 @@ class Model
   ///
   /// \param[in] ptr The simulator buffer data pointer.
   ///
-  /// \sa KIM_Model_SetSimulatorBufferPointer
+  /// \sa KIM_Model_SetSimulatorBufferPointer,
+  /// kim_model_module::kim_set_simulator_buffer_pointer
   ///
   /// \since 2.0
   void SetSimulatorBufferPointer(void * const ptr);
@@ -480,7 +491,8 @@ class Model
   /// \note `ptr == NULL` if the simulator has not previously called
   ///       Model::SetSimulatorBufferPointer.
   ///
-  /// \sa KIM_Model_GetSimulatorBufferPointer
+  /// \sa KIM_Model_GetSimulatorBufferPointer,
+  /// kim_model_module::kim_get_simulator_buffer_pointer
   ///
   /// \since 2.0
   void GetSimulatorBufferPointer(void ** const ptr) const;
@@ -491,7 +503,7 @@ class Model
   /// may be quite long.  It begins and ends with lines consisting only of \c
   /// ='s.
   ///
-  /// \sa KIM_Model_ToString
+  /// \sa KIM_Model_ToString, kim_model_module::kim_to_string
   ///
   /// \since 2.0
   std::string const & ToString() const;
@@ -501,7 +513,7 @@ class Model
   ///
   /// \param[in] logID String identifying the Model object's Log object.
   ///
-  /// \sa KIM_Model_SetLogID
+  /// \sa KIM_Model_SetLogID, kim_model_module::kim_set_log_id
   ///
   /// \since 2.0
   void SetLogID(std::string const & logID);
@@ -511,7 +523,7 @@ class Model
   ///
   /// \param[in] logVerbosity A LogVerbosity value.
   ///
-  /// \sa KIM_Model_PushLogVerbosity
+  /// \sa KIM_Model_PushLogVerbosity, kim_model_module::kim_push_log_verbosity
   ///
   /// \since 2.0
   void PushLogVerbosity(LogVerbosity const logVerbosity);
@@ -519,7 +531,7 @@ class Model
   /// \brief Pop a LogVerbosity from the Model object's Log object verbosity
   /// stack.
   ///
-  /// \sa KIM_Model_PopLogVerbosity
+  /// \sa KIM_Model_PopLogVerbosity, kim_model_module::kim_pop_log_verbosity
   ///
   /// \since 2.0
   void PopLogVerbosity();

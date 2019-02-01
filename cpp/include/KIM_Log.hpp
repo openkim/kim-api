@@ -45,7 +45,7 @@ class LogImplementation;
 
 /// \brief Provides the logging interface for the %KIM API.
 ///
-/// \sa KIM_Log
+/// \sa KIM_Log, kim_log_module::kim_log_handle_type
 ///
 /// \since 2.0
 class Log
@@ -57,7 +57,7 @@ class Log
   ///
   /// \return \c false
   ///
-  /// \sa KIM_Log
+  /// \sa KIM_Log_Create, kim_log_module::kim_log_create
   ///
   /// \since 2.0
   static int Create(Log ** const log);
@@ -70,7 +70,7 @@ class Log
   ///
   /// \post `log == NULL`.
   ///
-  /// \sa KIM_Log_Destroy
+  /// \sa KIM_Log_Destroy, kim_log_module::kim_log_destroy
   ///
   /// \since 2.0
   static void Destroy(Log ** const log);
@@ -82,7 +82,8 @@ class Log
   ///
   /// \param[in] logVerbosity A LogVerbosity value.
   ///
-  /// \sa KIM_Log_PushDefaultVerbosity
+  /// \sa KIM_Log_PushDefaultVerbosity,
+  /// kim_log_module::kim_push_default_verbosity
   ///
   /// \since 2.0
   static void PushDefaultVerbosity(LogVerbosity const logVerbosity);
@@ -90,14 +91,15 @@ class Log
   /// \brief Pop a LogVerbosity from the %KIM API global default verbosity
   /// stack.
   ///
-  /// \sa KIM_Log_PopDefaultVerbosity
+  /// \sa KIM_Log_PopDefaultVerbosity,
+  /// kim_log_module::kim_pop_default_verbosity
   ///
   /// \since 2.0
   static void PopDefaultVerbosity();
 
   /// \brief Get the identity of the Log object.
   ///
-  /// \sa KIM_Log_GetID
+  /// \sa KIM_Log_GetID, kim_log_module::kim_get_id
   ///
   /// \since 2.0
   std::string const & GetID() const;
@@ -106,7 +108,7 @@ class Log
   ///
   /// \param[in] id String identifying the Log object.
   ///
-  /// \sa KIM_Log_SetID
+  /// \sa KIM_Log_SetID, kim_log_module::kim_set_id
   ///
   /// \since 2.0
   void SetID(std::string const & id);
@@ -115,14 +117,14 @@ class Log
   ///
   /// \param[in] logVerbosity A LogVerbosity value.
   ///
-  /// \sa KIM_Log_PushVerbosity
+  /// \sa KIM_Log_PushVerbosity, kim_log_module::kim_push_verbosity
   ///
   /// \since 2.0
   void PushVerbosity(LogVerbosity const logVerbosity);
 
   /// \brief Pop a LogVerbosity from the Log object's verbosity stack.
   ///
-  /// \sa KIM_Log_PopVerbosity
+  /// \sa KIM_Log_PopVerbosity, kim_log_module::kim_pop_verbosity
   ///
   /// \since 2.0
   void PopVerbosity();
@@ -138,7 +140,7 @@ class Log
   /// \param[in] lineNumber The source code file line number.
   /// \param[in] fileName The source code file name.
   ///
-  /// \sa KIM_Log_LogEntry
+  /// \sa KIM_Log_LogEntry, kim_log_module::kim_log_entry
   ///
   /// \since 2.0
   void LogEntry(LogVerbosity const logVerbosity,

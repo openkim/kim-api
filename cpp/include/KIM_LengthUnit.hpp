@@ -43,7 +43,7 @@ namespace KIM
 ///
 /// The enumeration constants are contained in the LENGTH_UNIT namespace.
 ///
-/// \sa KIM_LengthUnit
+/// \sa KIM_LengthUnit, kim_length_unit_module::kim_length_unit_type
 ///
 /// \since 2.0
 class LengthUnit
@@ -54,7 +54,8 @@ class LengthUnit
   /// \note This should not be directly accessed and is only public for
   /// cross-language reasons.
   ///
-  /// \sa KIM_LengthUnit::lengthUnitID
+  /// \sa KIM_LengthUnit::lengthUnitID,
+  /// kim_length_unit_module::kim_length_unit_type::length_unit_id
   ///
   /// \since 2.0
   int lengthUnitID;
@@ -75,7 +76,7 @@ class LengthUnit
   /// If the string does not match one of the values defined by the %KIM API,
   /// then an "unknown" object is generated.
   ///
-  /// \sa KIM_LengthUnit_FromString
+  /// \sa KIM_LengthUnit_FromString, kim_length_unit_module::kim_from_string
   ///
   /// \since 2.0
   LengthUnit(std::string const & str);
@@ -85,7 +86,7 @@ class LengthUnit
   /// LengthUnit's known to the %KIM API are found in the LENGTH_UNIT
   /// namespace.
   ///
-  /// \sa KIM_LengthUnit_Known
+  /// \sa KIM_LengthUnit_Known, kim_length_unit_module::kim_known
   ///
   /// \since 2.0
   bool Known() const;
@@ -94,7 +95,7 @@ class LengthUnit
   ///
   /// \note Not all "unknown" objects are equal.
   ///
-  /// \sa KIM_LengthUnit_Equal
+  /// \sa KIM_LengthUnit_Equal, kim_length_unit_module::operator(.eq.)
   ///
   /// \since 2.0
   bool operator==(LengthUnit const & rhs) const;
@@ -103,7 +104,7 @@ class LengthUnit
   ///
   /// \note It is possible for two "unknown" objects to be not equal.
   ///
-  /// \sa KIM_LengthUnit_NotEqual
+  /// \sa KIM_LengthUnit_NotEqual, kim_length_unit_module::operator(.ne.)
   ///
   /// \since 2.0
   bool operator!=(LengthUnit const & rhs) const;
@@ -115,7 +116,7 @@ class LengthUnit
   /// \note If the LengthUnit object does not correspond to a value defined by
   /// the %KIM API, then the string "unknown" is returned.
   ///
-  /// \sa KIM_LengthUnit_ToString
+  /// \sa KIM_LengthUnit_ToString, kim_length_unit_module::kim_to_string
   ///
   /// \since 2.0
   std::string const & ToString() const;
@@ -127,42 +128,42 @@ namespace LENGTH_UNIT
 {
 /// \brief Indicates that a LengthUnit is not used.
 ///
-/// \sa KIM_ENERGY_UNIT_unused
+/// \sa KIM_LENGTH_UNIT_unused, kim_length_unit_module::kim_length_unit_unused
 ///
 /// \since 2.0
 extern LengthUnit const unused;
 
 /// \brief The standard angstrom unit of length.
 ///
-/// \sa KIM_LENGTH_UNIT_A
+/// \sa KIM_LENGTH_UNIT_A, kim_length_unit_module::kim_length_unit_a
 ///
 /// \since 2.0
 extern LengthUnit const A;
 
 /// \brief The standard Bohr unit of length.
 ///
-/// \sa KIM_LENGTH_UNIT_Bohr
+/// \sa KIM_LENGTH_UNIT_Bohr, kim_length_unit_module::kim_length_unit_bohr
 ///
 /// \since 2.0
 extern LengthUnit const Bohr;
 
 /// \brief The standard centimeter unit of length.
 ///
-/// \sa KIM_LENGTH_UNIT_cm
+/// \sa KIM_LENGTH_UNIT_cm, kim_length_unit_module::kim_length_unit_cm
 ///
 /// \since 2.0
 extern LengthUnit const cm;
 
 /// \brief The standard meter unit of length.
 ///
-/// \sa KIM_LENGTH_UNIT_m
+/// \sa KIM_LENGTH_UNIT_m, kim_length_unit_module::kim_length_unit_m
 ///
 /// \since 2.0
 extern LengthUnit const m;
 
 /// \brief The standard nanometer unit of length.
 ///
-/// \sa KIM_LENGTH_UNIT_nm
+/// \sa KIM_LENGTH_UNIT_nm, kim_length_unit_module::kim_length_unit_nm
 ///
 /// \since 2.0
 extern LengthUnit const nm;
@@ -172,7 +173,8 @@ extern LengthUnit const nm;
 /// \param[out] numberOfLengthUnits The number of standard LengthUnit's defined
 ///             by the %KIM API.
 ///
-/// \sa KIM_LENGTH_UNIT_GetNumberOfLengthUnits
+/// \sa KIM_LENGTH_UNIT_GetNumberOfLengthUnits,
+/// kim_length_unit_module::kim_get_number_of_length_units
 ///
 /// \since 2.0
 void GetNumberOfLengthUnits(int * const numberOfLengthUnits);
@@ -187,7 +189,8 @@ void GetNumberOfLengthUnits(int * const numberOfLengthUnits);
 /// \return \c true if `index < 0` or `index >= numberOfLengthUnits`.
 /// \return \c false otherwise.
 ///
-/// \sa KIM_LENGTH_UNIT_GetLengthUnit
+/// \sa KIM_LENGTH_UNIT_GetLengthUnit,
+/// kim_length_unit_module::kim_get_length_unit
 ///
 /// \since 2.0
 int GetLengthUnit(int const index, LengthUnit * const lengthUnit);

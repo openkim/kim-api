@@ -49,7 +49,8 @@ class ModelComputeArgumentsImplementation;
 /// \brief Provides the interface to a %KIM API ComputeArguments object for use
 /// by models within their MODEL_ROUTINE_NAME::Compute routine.
 ///
-/// \sa KIM_ModelComputeArguments
+/// \sa KIM_ModelComputeArguments,
+/// kim_model_compute_arguments_module::kim_model_compute_arguments_handle_type
 ///
 /// \since 2.0
 class ModelComputeArguments
@@ -75,7 +76,8 @@ class ModelComputeArguments
   ///         routine returns \c true.
   /// \return \c false otherwise.
   ///
-  /// \sa KIM_ModelComputeArguments_GetNeighborList
+  /// \sa KIM_ModelComputeArguments_GetNeighborList,
+  /// kim_model_compute_arguments_module::kim_get_neighbor_list
   ///
   /// \since 2.0
   int GetNeighborList(int const neighborListIndex,
@@ -106,7 +108,8 @@ class ModelComputeArguments
   ///          COMPUTE_CALLBACK_NAME::ProcessDEDrTerm routine returns \c true.
   /// \returns \c false otherwise.
   ///
-  /// \sa KIM_ModelComputeArguments_ProcessDEDrTerm
+  /// \sa KIM_ModelComputeArguments_ProcessDEDrTerm,
+  /// kim_model_compute_arguments_module::kim_process_dedr_term
   ///
   /// \since 2.0
   int ProcessDEDrTerm(double const de,
@@ -135,7 +138,8 @@ class ModelComputeArguments
   ///          true.
   /// \returns \c false otherwise.
   ///
-  /// \sa KIM_ModelComputeArguments_ProcessD2EDr2Term
+  /// \sa KIM_ModelComputeArguments_ProcessD2EDr2Term,
+  /// kim_model_compute_arguments_module::kim_process_d2edr2_term
   ///
   /// \since 2.0
   int ProcessD2EDr2Term(double const de,
@@ -154,7 +158,8 @@ class ModelComputeArguments
   /// \return \c false otherwise.
   ///
   /// \sa KIM_ModelComputeArguments_GetArgumentPointerInteger,
-  ///     KIM_ModelComputeArguments_GetArgumentPointerDouble
+  ///     KIM_ModelComputeArguments_GetArgumentPointerDouble,
+  ///     kim_model_compute_arguments_module::kim_get_argument_pointer
   ///
   /// \since 2.0
   int GetArgumentPointer(ComputeArgumentName const computeArgumentName,
@@ -185,7 +190,8 @@ class ModelComputeArguments
   ///
   /// \post \c present is unchanged in an error occurs.
   ///
-  /// \sa KIM_ModelComputeArguments_IsCallbackPresent
+  /// \sa KIM_ModelComputeArguments_IsCallbackPresent,
+  /// kim_model_compute_arguments_module::kim_is_callback_present
   ///
   /// \since 2.0
   int IsCallbackPresent(ComputeCallbackName const computeCallbackName,
@@ -199,7 +205,8 @@ class ModelComputeArguments
   ///
   /// \param[in] ptr The model buffer data pointer.
   ///
-  /// \sa KIM_ModelComputeArguments_SetModelBufferPointer
+  /// \sa KIM_ModelComputeArguments_SetModelBufferPointer,
+  /// kim_model_compute_arguments_module::kim_set_model_buffer_pointer
   ///
   /// \since 2.0
   void SetModelBufferPointer(void * const ptr);
@@ -215,7 +222,8 @@ class ModelComputeArguments
   /// \note `ptr == NULL` if the model has not previously called
   ///       ModelComputeArguments::SetModelBufferPointer.
   ///
-  /// \sa KIM_ModelComputeArguments_GetModelBufferPointer
+  /// \sa KIM_ModelComputeArguments_GetModelBufferPointer,
+  /// kim_model_compute_arguments_module::kim_get_model_buffer_pointer
   ///
   /// \since 2.0
   void GetModelBufferPointer(void ** const ptr) const;
@@ -231,7 +239,8 @@ class ModelComputeArguments
   /// \param[in] lineNumber The source code file line number.
   /// \param[in] fileName The source code file name.
   ///
-  /// \sa KIM_ModelComputeArguments_LogEntry
+  /// \sa KIM_ModelComputeArguments_LogEntry,
+  /// kim_model_compute_arguments_module::kim_log_entry
   ///
   /// \since 2.0
   void LogEntry(LogVerbosity const logVerbosity,
@@ -252,7 +261,8 @@ class ModelComputeArguments
   /// may be quite long.  It begins and ends with lines consisting only of \c
   /// ='s.
   ///
-  /// \sa KIM_ModelComputeArguments_ToString
+  /// \sa KIM_ModelComputeArguments_ToString,
+  /// kim_model_compute_arguments_module::kim_to_string
   ///
   /// \since 2.0
   std::string const & ToString() const;
@@ -266,7 +276,7 @@ class ModelComputeArguments
   ~ModelComputeArguments();
 
   ModelComputeArgumentsImplementation * pimpl;
-};  // class ModelCompute
+};  // class ModelComputeArguments
 }  // namespace KIM
 
 #endif  // KIM_MODEL_COMPUTE_ARGUMENTS_HPP_

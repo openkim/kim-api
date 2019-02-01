@@ -43,7 +43,7 @@ namespace KIM
 ///
 /// The enumeration constants are contained in the TIME_UNIT namespace.
 ///
-/// \sa KIM_TimeUnit
+/// \sa KIM_TimeUnit, kim_time_unit_module::kim_time_unit_type
 ///
 /// \since 2.0
 class TimeUnit
@@ -54,7 +54,8 @@ class TimeUnit
   /// \note This should not be directly accessed and is only public for
   /// cross-language reasons.
   ///
-  /// \sa KIM_TimeUnit::timeUnitID
+  /// \sa KIM_TimeUnit::timeUnitID,
+  /// kim_time_unit_module::kim_time_unit_type::time_unit_id
   ///
   /// \since 2.0
   int timeUnitID;
@@ -75,7 +76,7 @@ class TimeUnit
   /// the string does not match one of the values defined by the %KIM API, then
   /// an "unknown" object is generated.
   ///
-  /// \sa KIM_TimeUnit_FromString
+  /// \sa KIM_TimeUnit_FromString, kim_time_unit_module::kim_from_string
   ///
   /// \since 2.0
   TimeUnit(std::string const & str);
@@ -84,7 +85,7 @@ class TimeUnit
   ///
   /// TimeUnit's known to the %KIM API are found in the TIME_UNIT namespace.
   ///
-  /// \sa KIM_TimeUnit_Known
+  /// \sa KIM_TimeUnit_Known, kim_time_unit_module::kim_known
   ///
   /// \since 2.0
   bool Known() const;
@@ -93,7 +94,7 @@ class TimeUnit
   ///
   /// \note Not all "unknown" objects are equal.
   ///
-  /// \sa KIM_TimeUnit_Equal
+  /// \sa KIM_TimeUnit_Equal, kim_time_unit_module::operator(.eq.)
   ///
   /// \since 2.0
   bool operator==(TimeUnit const & rhs) const;
@@ -102,7 +103,7 @@ class TimeUnit
   ///
   /// \note It is possible for two "unknown" objects to be not equal.
   ///
-  /// \sa KIM_TimeUnit_NotEqual
+  /// \sa KIM_TimeUnit_NotEqual, kim_time_unit_module::operator(.ne.)
   ///
   /// \since 2.0
   bool operator!=(TimeUnit const & rhs) const;
@@ -114,7 +115,7 @@ class TimeUnit
   /// \note If the TimeUnit object does not correspond to a value defined by
   /// the %KIM API, then the string "unknown" is returned.
   ///
-  /// \sa KIM_TimeUnit_ToString
+  /// \sa KIM_TimeUnit_ToString, kim_time_unit_module::kim_to_string
   ///
   /// \since 2.0
   std::string const & ToString() const;
@@ -126,35 +127,35 @@ namespace TIME_UNIT
 {
 /// \brief Indicates that a TimeUnit is not used.
 ///
-/// \sa KIM_TIME_UNIT_unused
+/// \sa KIM_TIME_UNIT_unused, kim_time_unit_module::kim_time_unit_unused
 ///
 /// \since 2.0
 extern TimeUnit const unused;
 
 /// \brief The standard femtosecond unit of time.
 ///
-/// \sa KIM_TIME_UNIT_fs
+/// \sa KIM_TIME_UNIT_fs, kim_time_unit_module::kim_time_unit_fs
 ///
 /// \since 2.0
 extern TimeUnit const fs;
 
 /// \brief The standard picosecond unit of time.
 ///
-/// \sa KIM_TIME_UNIT_ps
+/// \sa KIM_TIME_UNIT_ps, kim_time_unit_module::kim_time_unit_ps
 ///
 /// \since 2.0
 extern TimeUnit const ps;
 
 /// \brief The standard nanosecond unit of time.
 ///
-/// \sa KIM_TIME_UNIT_ns
+/// \sa KIM_TIME_UNIT_ns, kim_time_unit_module::kim_time_unit_ns
 ///
 /// \since 2.0
 extern TimeUnit const ns;
 
 /// \brief The standard second unit of time.
 ///
-/// \sa KIM_TIME_UNIT_s
+/// \sa KIM_TIME_UNIT_s, kim_time_unit_module::kim_time_unit_s
 ///
 /// \since 2.0
 extern TimeUnit const s;
@@ -164,7 +165,8 @@ extern TimeUnit const s;
 /// \param[out] numberOfTimeUnits The number of standard TimeUnit's defined by
 ///             the %KIM API.
 ///
-/// \sa KIM_TIME_UNIT_GetNumberOfTimeUnits
+/// \sa KIM_TIME_UNIT_GetNumberOfTimeUnits,
+/// kim_time_unit_module::kim_get_number_of_time_units
 ///
 /// \since 2.0
 void GetNumberOfTimeUnits(int * const numberOfTimeUnits);
@@ -179,7 +181,7 @@ void GetNumberOfTimeUnits(int * const numberOfTimeUnits);
 /// \return \c true if `index < 0` or `index >= numberOfTimeUnits`.
 /// \return \c false otherwise.
 ///
-/// \sa KIM_TIME_UNIT_GetTimeUnit
+/// \sa KIM_TIME_UNIT_GetTimeUnit, kim_time_unit_module::kim_get_time_unit
 ///
 /// \since 2.0
 int GetTimeUnit(int const index, TimeUnit * const timeUnit);

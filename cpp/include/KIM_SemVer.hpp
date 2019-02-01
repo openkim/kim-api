@@ -43,7 +43,7 @@ namespace SEM_VER
 {
 /// \brief Get the %KIM API complete Semantic Version string.
 ///
-/// \sa KIM_SEM_VER_GetSemVer
+/// \sa KIM_SEM_VER_GetSemVer, kim_sem_ver_module::kim_get_sem_ver
 ///
 /// \since 2.0
 std::string const & GetSemVer();
@@ -62,7 +62,7 @@ std::string const & GetSemVer();
 /// \return \c true if ParseSemVer returns \c true for \c lhs or \c rhs.
 /// \return \c false otherwise.
 ///
-/// \sa KIM_SEM_VER_IsLessThan
+/// \sa KIM_SEM_VER_IsLessThan, kim_sem_ver_module::kim_is_less_than
 ///
 /// \since 2.0
 int IsLessThan(std::string const & lhs,
@@ -97,7 +97,7 @@ int IsLessThan(std::string const & lhs,
 ///
 /// \post All output arguments are unchanged if an error occurs.
 ///
-/// \sa KIM_SEM_VER_ParseSemVer
+/// \sa KIM_SEM_VER_ParseSemVer, kim_sem_ver_module::kim_parse_sem_ver
 ///
 /// \since 2.0
 int ParseSemVer(std::string const & version,

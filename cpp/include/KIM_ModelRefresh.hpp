@@ -47,7 +47,8 @@ class ModelRefreshImplementation;
 /// \brief Provides the interface to a %KIM API Model object for use by models
 /// within their MODEL_ROUTINE_NAME::Refresh routine.
 ///
-/// \sa KIM_ModelRefresh
+/// \sa KIM_ModelRefresh,
+/// kim_model_refresh_module::kim_model_refresh_handle_type
 ///
 /// \since 2.0
 class ModelRefresh
@@ -65,7 +66,8 @@ class ModelRefresh
   /// cache_buffer_pointers "Model's buffer pointer" to retain access to this
   /// memory location and avoid a memory leak.
   ///
-  /// \sa KIM_ModelRefresh_SetInfluenceDistancePointer
+  /// \sa KIM_ModelRefresh_SetInfluenceDistancePointer,
+  /// kim_model_refresh_module::kim_set_influence_distance_pointer
   ///
   /// \since 2.0
   void SetInfluenceDistancePointer(double const * const influenceDistance);
@@ -88,7 +90,8 @@ class ModelRefresh
   /// must use the \ref cache_buffer_pointers "Model's buffer pointer" to
   /// retain access to this memory location and avoid a memory leak.
   ///
-  /// \sa KIM_ModelRefresh_SetNeighborListPointers
+  /// \sa KIM_ModelRefresh_SetNeighborListPointers,
+  /// kim_model_refresh_module::kim_set_neighbor_list_pointers
   ///
   /// \since 2.0
   void SetNeighborListPointers(
@@ -108,7 +111,8 @@ class ModelRefresh
   ///       ModelCreate::SetModelBufferPointer or
   ///       ModelDriverCreate::SetModelBufferPointer.
   ///
-  /// \sa KIM_ModelRefresh_GetModelBufferPointer
+  /// \sa KIM_ModelRefresh_GetModelBufferPointer,
+  /// kim_model_refresh_module::kim_get_model_buffer_pointer
   ///
   /// \since 2.0
   void GetModelBufferPointer(void ** const ptr) const;
@@ -124,7 +128,7 @@ class ModelRefresh
   /// \param[in] lineNumber The source code file line number.
   /// \param[in] fileName The source code file name.
   ///
-  /// \sa KIM_ModelRefresh_LogEntry
+  /// \sa KIM_ModelRefresh_LogEntry, kim_model_refresh_module::kim_log_entry
   ///
   /// \since 2.0
   void LogEntry(LogVerbosity const logVerbosity,
@@ -144,7 +148,7 @@ class ModelRefresh
   /// may be quite long.  It begins and ends with lines consisting only of \c
   /// ='s.
   ///
-  /// \sa KIM_ModelRefresh_ToString
+  /// \sa KIM_ModelRefresh_ToString, kim_model_refresh_module::kim_to_string
   ///
   /// \since 2.0
   std::string const & ToString() const;

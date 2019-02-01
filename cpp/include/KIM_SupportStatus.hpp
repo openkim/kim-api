@@ -43,7 +43,7 @@ namespace KIM
 ///
 /// The enumeration constants are contained in the SUPPORT_STATUS namespace.
 ///
-/// \sa KIM_SupportStatus
+/// \sa KIM_SupportStatus, kim_support_status_module::kim_support_status_type
 ///
 /// \since 2.0
 class SupportStatus
@@ -54,7 +54,8 @@ class SupportStatus
   /// \note This should not be directly accessed and is only public for
   /// cross-language reasons.
   ///
-  /// \sa KIM_SupportStatus::supportStatusID
+  /// \sa KIM_SupportStatus::supportStatusID,
+  /// kim_support_status_module::kim_support_status_type::support_status_id
   ///
   /// \since 2.0
   int supportStatusID;
@@ -75,7 +76,8 @@ class SupportStatus
   /// string.  If the string does not match one of the values defined by the
   /// %KIM API, then an "unknown" object is generated.
   ///
-  /// \sa KIM_SupportStatus_FromString
+  /// \sa KIM_SupportStatus_FromString,
+  /// kim_support_status_module::kim_from_string
   ///
   /// \since 2.0
   SupportStatus(std::string const & str);
@@ -85,7 +87,7 @@ class SupportStatus
   /// SupportStatus's known to the %KIM API are found in the SUPPORT_STATUS
   /// namespace.
   ///
-  /// \sa KIM_SupportStatus_Known
+  /// \sa KIM_SupportStatus_Known, kim_support_status_module::kim_known
   ///
   /// \since 2.0
   bool Known() const;
@@ -94,7 +96,7 @@ class SupportStatus
   ///
   /// \note Not all "unknown" objects are equal.
   ///
-  /// \sa KIM_SupportStatus_Equal
+  /// \sa KIM_SupportStatus_Equal, kim_support_status_module::operator(.eq.)
   ///
   /// \since 2.0
   bool operator==(SupportStatus const & rhs) const;
@@ -103,7 +105,7 @@ class SupportStatus
   ///
   /// \note It is possible for two "unknown" objects to be not equal.
   ///
-  /// \sa KIM_SupportStatus_NotEqual
+  /// \sa KIM_SupportStatus_NotEqual, kim_support_status_module::operator(.ne.)
   ///
   /// \since 2.0
   bool operator!=(SupportStatus const & rhs) const;
@@ -115,7 +117,7 @@ class SupportStatus
   /// \note If the SupportStatus object does not correspond to a value defined
   /// by the %KIM API, then the string "unknown" is returned.
   ///
-  /// \sa KIM_SupportStatus_ToString
+  /// \sa KIM_SupportStatus_ToString, kim_support_status_module::kim_to_string
   ///
   /// \since 2.0
   std::string const & ToString() const;
@@ -129,7 +131,8 @@ namespace SUPPORT_STATUS
 ///
 /// \todo Add more detailed description of status.
 ///
-/// \sa KIM_SUPPORT_STATUS_requiredByAPI
+/// \sa KIM_SUPPORT_STATUS_requiredByAPI,
+/// kim_support_status_module::kim_support_status_required_by_api
 ///
 /// \since 2.0
 extern SupportStatus const requiredByAPI;
@@ -138,7 +141,8 @@ extern SupportStatus const requiredByAPI;
 ///
 /// \todo Add more detailed description of status.
 ///
-/// \sa KIM_SUPPORT_STATUS_notSupported
+/// \sa KIM_SUPPORT_STATUS_notSupported,
+/// kim_support_status_module::kim_support_status_not_supported
 ///
 /// \since 2.0
 extern SupportStatus const notSupported;
@@ -147,7 +151,8 @@ extern SupportStatus const notSupported;
 ///
 /// \todo Add more detailed description of status.
 ///
-/// \sa KIM_SUPPORT_STATUS_required
+/// \sa KIM_SUPPORT_STATUS_required,
+/// kim_support_status_module::kim_support_status_required
 ///
 /// \since 2.0
 extern SupportStatus const required;
@@ -156,7 +161,8 @@ extern SupportStatus const required;
 ///
 /// \todo Add more detailed description of status.
 ///
-/// \sa KIM_SUPPORT_STATUS_optional
+/// \sa KIM_SUPPORT_STATUS_optional,
+/// kim_support_status_module::kim_support_status_optional
 ///
 /// \since 2.0
 extern SupportStatus const optional;
@@ -168,7 +174,8 @@ extern SupportStatus const optional;
 /// \param[out] numberOfSupportStatuses The number of standard SupportStatus's
 ///             defined by the %KIM API.
 ///
-/// \sa KIM_SUPPORT_STATUS_GetNumberOfSupportStatuses
+/// \sa KIM_SUPPORT_STATUS_GetNumberOfSupportStatuses,
+/// kim_support_status_module::kim_get_number_of_support_statuses
 ///
 /// \since 2.0
 void GetNumberOfSupportStatuses(int * const numberOfSupportStatuses);
@@ -183,7 +190,8 @@ void GetNumberOfSupportStatuses(int * const numberOfSupportStatuses);
 /// \return \c true if `index < 0` or `index >= numberOfSupportStatuses`.
 /// \return \c false otherwise.
 ///
-/// \sa KIM_SUPPORT_STATUS_GetSupportStatus
+/// \sa KIM_SUPPORT_STATUS_GetSupportStatus,
+/// kim_support_status_module::kim_get_support_status
 ///
 /// \since 2.0
 int GetSupportStatus(int const index, SupportStatus * const supportStatus);

@@ -43,7 +43,7 @@ namespace KIM
 ///
 /// The enumeration constants are contained in the ENERGY_UNIT namespace.
 ///
-/// \sa KIM_EnergyUnit
+/// \sa KIM_EnergyUnit, kim_energy_unit_module::kim_energy_unit_type
 ///
 /// \since 2.0
 class EnergyUnit
@@ -54,7 +54,8 @@ class EnergyUnit
   /// \note This should not be directly accessed and is only public for
   /// cross-language reasons.
   ///
-  /// \sa KIM_EnergyUnit::energyUnitID
+  /// \sa KIM_EnergyUnit::energyUnitID,
+  /// kim_energy_unit_module::kim_energy_unit_type::energy_unit_id
   ///
   /// \since 2.0
   int energyUnitID;
@@ -75,7 +76,8 @@ class EnergyUnit
   /// If the string does not match one of the values defined by the %KIM API,
   /// then an "unknown" object is generated.
   ///
-  /// \sa KIM_EnergyUnit_FromString
+  /// \sa KIM_EnergyUnit_FromString,
+  /// kim_energy_unit_module::kim_from_string
   ///
   /// \since 2.0
   EnergyUnit(std::string const & str);
@@ -85,7 +87,8 @@ class EnergyUnit
   /// EnergyUnit's known to the %KIM API are found in the ENERGY_UNIT
   /// namespace.
   ///
-  /// \sa KIM_EnergyUnit_Known
+  /// \sa KIM_EnergyUnit_Known,
+  /// kim_energy_unit_module::kim_known
   ///
   /// \since 2.0
   bool Known() const;
@@ -94,7 +97,8 @@ class EnergyUnit
   ///
   /// \note Not all "unknown" objects are equal.
   ///
-  /// \sa KIM_EnergyUnit_Equal
+  /// \sa KIM_EnergyUnit_Equal,
+  /// kim_energy_unit_module::operator(.eq.)
   ///
   /// \since 2.0
   bool operator==(EnergyUnit const & rhs) const;
@@ -103,7 +107,8 @@ class EnergyUnit
   ///
   /// \note It is possible for two "unknown" objects to be not equal.
   ///
-  /// \sa KIM_EnergyUnit_NotEqual
+  /// \sa KIM_EnergyUnit_NotEqual,
+  /// kim_energy_unit_module::operator(.ne.)
   ///
   /// \since 2.0
   bool operator!=(EnergyUnit const & rhs) const;
@@ -115,7 +120,8 @@ class EnergyUnit
   /// \note If the EnergyUnit object does not correspond to a value defined by
   /// the %KIM API, then the string "unknown" is returned.
   ///
-  /// \sa KIM_EnergyUnit_ToString
+  /// \sa KIM_EnergyUnit_ToString,
+  /// kim_energy_unit_module::kim_to_string
   ///
   /// \since 2.0
   std::string const & ToString() const;
@@ -127,49 +133,56 @@ namespace ENERGY_UNIT
 {
 /// \brief Indicates that a EnergyUnit is not used.
 ///
-/// \sa KIM_ENERGY_UNIT_unused
+/// \sa KIM_ENERGY_UNIT_unused,
+/// kim_energy_unit_module::kim_energy_unit_unused
 ///
 /// \since 2.0
 extern EnergyUnit const unused;
 
 /// \brief The standard `amu*A`\f$^2\f$`/ps`\f$^2\f$ unit of energy.
 ///
-/// \sa KIM_ENERGY_UNIT_amu_A2_per_ps2
+/// \sa KIM_ENERGY_UNIT_amu_A2_per_ps2,
+/// kim_energy_unit_module::kim_energy_unit_amu_a2_per_ps2
 ///
 /// \since 2.0
 extern EnergyUnit const amu_A2_per_ps2;
 
 /// \brief The standard erg unit of energy.
 ///
-/// \sa KIM_ENERGY_UNIT_erg
+/// \sa KIM_ENERGY_UNIT_erg,
+/// kim_energy_unit_module::kim_energy_unit_erg
 ///
 /// \since 2.0
 extern EnergyUnit const erg;
 
 /// \brief The standard electronvolt unit of energy.
 ///
-/// \sa KIM_ENERGY_UNIT_eV
+/// \sa KIM_ENERGY_UNIT_eV,
+/// kim_energy_unit_module::kim_energy_unit_ev
 ///
 /// \since 2.0
 extern EnergyUnit const eV;
 
 /// \brief The standard Hartree unit of energy.
 ///
-/// \sa KIM_ENERGY_UNIT_Hartree
+/// \sa KIM_ENERGY_UNIT_Hartre,
+/// kim_energy_unit_module::kim_energy_unit_hartree
 ///
 /// \since 2.0
 extern EnergyUnit const Hartree;
 
 /// \brief The standard Joule unit of energy.
 ///
-/// \sa KIM_ENERGY_UNIT_J
+/// \sa KIM_ENERGY_UNIT_J,
+/// kim_energy_unit_module::kim_energy_unit_j
 ///
 /// \since 2.0
 extern EnergyUnit const J;
 
 /// \brief The standard kilocalorie per mole unit of energy.
 ///
-/// \sa KIM_ENERGY_UNIT_kcal_mol
+/// \sa KIM_ENERGY_UNIT_kcal_mol,
+/// kim_energy_unit_module::kim_energy_unit_kcal_mol
 ///
 /// \since 2.0
 extern EnergyUnit const kcal_mol;
@@ -179,7 +192,8 @@ extern EnergyUnit const kcal_mol;
 /// \param[out] numberOfEnergyUnits The number of standard EnergyUnit's defined
 ///             by the %KIM API.
 ///
-/// \sa KIM_ENERGY_UNIT_GetNumberOfEnergyUnits
+/// \sa KIM_ENERGY_UNIT_GetNumberOfEnergyUnits,
+/// kim_energy_unit_module::kim_get_number_of_energy_units
 ///
 /// \since 2.0
 void GetNumberOfEnergyUnits(int * const numberOfEnergyUnits);
@@ -194,7 +208,8 @@ void GetNumberOfEnergyUnits(int * const numberOfEnergyUnits);
 /// \return \c true if `index < 0` or `index >= numberOfEnergyUnits`.
 /// \return \c false otherwise.
 ///
-/// \sa KIM_ENERGY_UNIT_GetEnergyUnit
+/// \sa KIM_ENERGY_UNIT_GetEnergyUnit,
+/// kim_energy_unit_module::kim_get_energy_unit
 ///
 /// \since 2.0
 int GetEnergyUnit(int const index, EnergyUnit * const energyUnit);

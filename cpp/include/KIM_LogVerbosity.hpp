@@ -47,7 +47,8 @@ namespace KIM
 ///
 /// The enumeration constants are contained in the LOG_VERBOSITY namespace.
 ///
-/// \sa KIM_LogVerbosity
+/// \sa KIM_LogVerbosity,
+/// kim_log_verbosity_module::kim_log_verbosity_type
 ///
 /// \since 2.0
 class LogVerbosity
@@ -58,7 +59,8 @@ class LogVerbosity
   /// \note This should not be directly accessed and is only public for
   /// cross-language reasons.
   ///
-  /// \sa KIM_LogVerbosity::logVerbosityID
+  /// \sa KIM_LogVerbosity::logVerbosityID,
+  /// kim_log_verbosity_module::kim_log_verbosity_type::log_verbosity_id
   ///
   /// \since 2.0
   int logVerbosityID;
@@ -79,7 +81,8 @@ class LogVerbosity
   /// If the string does not match one of the values defined by the %KIM API,
   /// then an "unknown" object is generated.
   ///
-  /// \sa KIM_LogVerbosity_FromString
+  /// \sa KIM_LogVerbosity_FromString,
+  /// kim_log_verbosity_module::kim_from_string
   ///
   /// \since 2.0
   LogVerbosity(std::string const & str);
@@ -89,35 +92,38 @@ class LogVerbosity
   /// LogVerbosity's known to the %KIM API are found in the LOG_VERBOSITY
   /// namespace.
   ///
-  /// \sa KIM_LogVerbosity_Known
+  /// \sa KIM_LogVerbosity_Known, kim_log_verbosity_module::kim_known
   ///
   /// \since 2.0
   bool Known() const;
 
   /// \brief Compares LogVerbosity objects for less-than.
   ///
-  /// \sa KIM_LogVerbosity_LessThan
+  /// \sa KIM_LogVerbosity_LessThan, kim_log_verbosity_module::operator(.lt.)
   ///
   /// \since 2.0
   bool operator<(LogVerbosity const & rhs) const;
 
   /// \brief Compares LogVerbosity objects for greater-than.
   ///
-  /// \sa KIM_LogVerbosity_GreaterThan
+  /// \sa KIM_LogVerbosity_GreaterThan,
+  /// kim_log_verbosity_module::operator(.gt.)
   ///
   /// \since 2.0
   bool operator>(LogVerbosity const & rhs) const;
 
   /// \brief Compares LogVerbosity objects for less-than-equal.
   ///
-  /// \sa KIM_LogVerbosity_LessThanEqual
+  /// \sa KIM_LogVerbosity_LessThanEqual,
+  /// kim_log_verbosity_module::operator(.le.)
   ///
   /// \since 2.0
   bool operator<=(LogVerbosity const & rhs) const;
 
   /// \brief Compares LogVerbosity objects for greater-than-equal.
   ///
-  /// \sa KIM_LogVerbosity_GreaterThanEqual
+  /// \sa KIM_LogVerbosity_GreaterThanEqual,
+  /// kim_log_verbosity_module::operator(.ge.)
   ///
   /// \since 2.0
   bool operator>=(LogVerbosity const & rhs) const;
@@ -126,7 +132,7 @@ class LogVerbosity
   ///
   /// \note Not all "unknown" objects are equal.
   ///
-  /// \sa KIM_LogVerbosity_Equal
+  /// \sa KIM_LogVerbosity_Equal, kim_log_verbosity_module::operator(.eq.)
   ///
   /// \since 2.0
   bool operator==(LogVerbosity const & rhs) const;
@@ -135,7 +141,7 @@ class LogVerbosity
   ///
   /// \note It is possible for two "unknown" objects to be not equal.
   ///
-  /// \sa KIM_LogVerbosity_NotEqual
+  /// \sa KIM_LogVerbosity_NotEqual, kim_log_verbosity_module::operator(.ne.)
   ///
   /// \since 2.0
   bool operator!=(LogVerbosity const & rhs) const;
@@ -147,7 +153,7 @@ class LogVerbosity
   /// \note If the LogVerbosity object does not correspond to a value defined
   /// by the %KIM API, then the string "unknown" is returned.
   ///
-  /// \sa KIM_LogVerbosity_ToString
+  /// \sa KIM_LogVerbosity_ToString, kim_log_verbosity_module::kim_to_string
   ///
   /// \since 2.0
   std::string const & ToString() const;
@@ -162,7 +168,8 @@ namespace LOG_VERBOSITY
 /// The \c silent verbosity level should be used when absolutely no messages
 /// should be written into the log file.
 ///
-/// \sa KIM_LOG_VERBOSITY_silent
+/// \sa KIM_LOG_VERBOSITY_silent,
+/// kim_log_verbosity_module::kim_log_verbosity_silent
 ///
 /// \since 2.0
 extern LogVerbosity const silent;
@@ -174,7 +181,8 @@ extern LogVerbosity const silent;
 /// examples of a \c fatal condition include: failure to allocate requested
 /// memory, etc.
 ///
-/// \sa KIM_LOG_VERBOSITY_fatal
+/// \sa KIM_LOG_VERBOSITY_fatal,
+/// kim_log_verbosity_module::kim_log_verbosity_fatal
 ///
 /// \since 2.0
 extern LogVerbosity const fatal;
@@ -186,7 +194,8 @@ extern LogVerbosity const fatal;
 /// an email could not be sent, a page could not be rendered, some data could
 /// not be stored to a database, etc.  Something has definitively gone wrong.
 ///
-/// \sa KIM_LOG_VERBOSITY_error
+/// \sa KIM_LOG_VERBOSITY_error,
+/// kim_log_verbosity_module::kim_log_verbosity_error
 ///
 /// \since 2.0
 extern LogVerbosity const error;
@@ -201,7 +210,8 @@ extern LogVerbosity const error;
 /// properly wrong yet - warnings are often a sign that there will be an error
 /// very soon.
 ///
-/// \sa KIM_LOG_VERBOSITY_warning
+/// \sa KIM_LOG_VERBOSITY_warning,
+/// kim_log_verbosity_module::kim_log_verbosity_warning
 ///
 /// \since 2.0
 extern LogVerbosity const warning;
@@ -214,7 +224,8 @@ extern LogVerbosity const warning;
 /// job ran, etc.  There should not be a continual torrent of these, otherwise
 /// there is just too much to read.
 ///
-/// \sa KIM_LOG_VERBOSITY_information
+/// \sa KIM_LOG_VERBOSITY_information,
+/// kim_log_verbosity_module::kim_log_verbosity_information
 ///
 /// \since 2.0
 extern LogVerbosity const information;
@@ -227,7 +238,8 @@ extern LogVerbosity const information;
 /// price was updated.  This is the stuff excluded from \c info because there
 /// would be too much of it.
 ///
-/// \sa KIM_LOG_VERBOSITY_debug
+/// \sa KIM_LOG_VERBOSITY_debug,
+/// kim_log_verbosity_module::kim_log_verbosity_debug
 ///
 /// \since 2.0
 extern LogVerbosity const debug;
@@ -239,7 +251,8 @@ extern LogVerbosity const debug;
 /// \param[out] numberOfLogVerbosities The number of standard LogVerbosity's
 ///             defined by the %KIM API.
 ///
-/// \sa KIM_LOG_VERBOSITY_GetNumberOfLogVerbosities
+/// \sa KIM_LOG_VERBOSITY_GetNumberOfLogVerbosities,
+/// kim_log_verbosity_module::kim_get_number_of_log_verbosities
 ///
 /// \since 2.0
 void GetNumberOfLogVerbosities(int * const numberOfLogVerbosities);
@@ -254,7 +267,8 @@ void GetNumberOfLogVerbosities(int * const numberOfLogVerbosities);
 /// \return \c true if `index < 0` or `index >= numberOfLogVerbosities`.
 /// \return \c false otherwise.
 ///
-/// \sa KIM_LOG_VERBOSITY_GetLogVerbosity
+/// \sa KIM_LOG_VERBOSITY_GetLogVerbosity,
+/// kim_log_verbosity_module::kim_get_log_verbosity
 ///
 /// \since 2.0
 int GetLogVerbosity(int const index, LogVerbosity * const logVerbosity);

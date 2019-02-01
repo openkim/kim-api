@@ -60,7 +60,8 @@ class ModelDriverCreateImplementation;
 /// \brief Provides the interface to a %KIM API Model object for use by models
 /// within their MODEL_ROUTINE_NAME::Create routine.
 ///
-/// \sa ModelCreate, KIM_ModelDriverCreate, KIM_ModelCreate
+/// \sa ModelCreate, KIM_ModelDriverCreate, KIM_ModelCreate,
+/// kim_model_driver_create_module::kim_model_driver_create_handle_type
 ///
 /// \since 2.0
 class ModelDriverCreate
@@ -71,7 +72,8 @@ class ModelDriverCreate
   ///
   /// \param[out] numberOfParameterFiles The number of parameter files.
   ///
-  /// \sa KIM_ModelDriverCreate_GetNumberOfParameterFiles
+  /// \sa KIM_ModelDriverCreate_GetNumberOfParameterFiles,
+  /// kim_model_driver_create_module::kim_get_number_of_parameter_files
   ///
   /// \since 2.0
   void GetNumberOfParameterFiles(int * const numberOfParameterFiles) const;
@@ -87,7 +89,8 @@ class ModelDriverCreate
   /// \return \c true if `parameterFileName == NULL`.
   /// \return \c false otherwise.
   ///
-  /// \sa KIM_ModelDriverCreate_GetParameterFileName
+  /// \sa KIM_ModelDriverCreate_GetParameterFileName,
+  /// kim_model_driver_create_module::kim_get_parameter_file_name
   ///
   /// \since 2.0
   int GetParameterFileName(int const index,
@@ -102,7 +105,8 @@ class ModelDriverCreate
   ///
   /// \sa ModelCreate::SetModelNumbering,
   /// KIM_ModelDriverCreate_SetModelNumbering,
-  /// KIM_ModelCreate_SetModelNumbering
+  /// KIM_ModelCreate_SetModelNumbering,
+  /// kim_model_driver_create_module::kim_set_model_numbering
   ///
   /// \since 2.0
   int SetModelNumbering(Numbering const numbering);
@@ -121,7 +125,8 @@ class ModelDriverCreate
   ///
   /// \sa ModelCreate::SetInfluenceDistancePointer,
   /// KIM_ModelDriverCreate_SetInfluenceDistancePointer,
-  /// KIM_ModelCreate_SetInfluenceDistancePointer
+  /// KIM_ModelCreate_SetInfluenceDistancePointer,
+  /// kim_model_driver_create_module::kim_set_influence_distance_pointer
   ///
   /// \since 2.0
   void SetInfluenceDistancePointer(double const * const influenceDistance);
@@ -146,7 +151,8 @@ class ModelDriverCreate
   ///
   /// \sa ModelCreate::SetNeighborListPointers,
   /// KIM_ModelDriverCreate_SetNeighborListPointers,
-  /// KIM_ModelCreate_SetNeighborListPointers
+  /// KIM_ModelCreate_SetNeighborListPointers,
+  /// kim_model_driver_create_module::kim_set_neighbor_list_pointers
   ///
   /// \since 2.0
   void SetNeighborListPointers(
@@ -171,7 +177,8 @@ class ModelDriverCreate
   /// \return \c false otherwise.
   ///
   /// \sa ModelCreate::SetRoutinePointer, KIM_ModelCreate_SetRoutinePointer,
-  /// KIM_ModelDriverCreate_SetRoutinePointer
+  /// KIM_ModelDriverCreate_SetRoutinePointer,
+  /// kim_model_driver_create_module::kim_set_routine_pointer
   ///
   /// \since 2.0
   int SetRoutinePointer(ModelRoutineName const modelRoutineName,
@@ -193,7 +200,8 @@ class ModelDriverCreate
   /// \return \c false otherwise.
   ///
   /// \sa ModelCreate::SetSpeciesCode, KIM_ModelDriverCreate_SetSpeciesCode,
-  /// KIM_ModelCreate_SetSpeciesCode
+  /// KIM_ModelCreate_SetSpeciesCode,
+  /// kim_model_driver_create_module::kim_set_species_code
   ///
   /// \since 2.0
   int SetSpeciesCode(SpeciesName const speciesName, int const code);
@@ -223,7 +231,8 @@ class ModelDriverCreate
   /// KIM_ModelDriverCreate_SetParameterPointerInteger,
   /// KIM_ModelDriverCreate_SetParameterPointerDouble,
   /// KIM_ModelCreate_SetParameterPointerInteger,
-  /// KIM_ModelCreate_SetParameterPointerDouble
+  /// KIM_ModelCreate_SetParameterPointerDouble,
+  /// kim_model_driver_create_module::kim_set_parameter_pointer
   ///
   /// \since 2.0
   int SetParameterPointer(int const extent,
@@ -247,7 +256,8 @@ class ModelDriverCreate
   ///
   /// \sa ModelCreate::SetModelBufferPointer,
   /// KIM_ModelDriverCreate_SetModelBufferPointer,
-  /// KIM_ModelCreate_SetModelBufferPointer
+  /// KIM_ModelCreate_SetModelBufferPointer,
+  /// kim_model_driver_create_module::kim_set_model_buffer_pointer
   ///
   /// \since 2.0
   void SetModelBufferPointer(void * const ptr);
@@ -272,7 +282,7 @@ class ModelDriverCreate
   /// \return \c false otherwise.
   ///
   /// \sa ModelCreate::SetUnits, KIM_ModelDriverCreate_SetUnits,
-  /// KIM_ModelCreate_SetUnits
+  /// KIM_ModelCreate_SetUnits, kim_model_driver_create_module::kim_set_units
   ///
   /// \since 2.0
   int SetUnits(LengthUnit const lengthUnit,
@@ -307,7 +317,8 @@ class ModelDriverCreate
   /// \return \c false otherwise.
   ///
   /// \sa ModelCreate::ConvertUnit, KIM_ModelDriverCreate_ConvertUnit,
-  /// KIM_ModelCreate_ConvertUnit
+  /// KIM_ModelCreate_ConvertUnit,
+  /// kim_model_driver_create_module::kim_convert_unit
   ///
   /// \since 2.0
   static int ConvertUnit(LengthUnit const fromLengthUnit,
@@ -338,7 +349,8 @@ class ModelDriverCreate
   /// \param[in] lineNumber The source code file line number.
   /// \param[in] fileName The source code file name.
   ///
-  /// \sa KIM_ModelDriverCreate_LogEntry
+  /// \sa KIM_ModelDriverCreate_LogEntry,
+  /// kim_model_driver_create_module::kim_log_entry
   ///
   /// \since 2.0
   void LogEntry(LogVerbosity const logVerbosity,
@@ -358,7 +370,8 @@ class ModelDriverCreate
   /// may be quite long.  It begins and ends with lines consisting only of \c
   /// ='s.
   ///
-  /// \sa KIM_ModelCreate_ToString
+  /// \sa KIM_ModelCreate_ToString,
+  /// kim_model_driver_create_module::kim_to_string
   ///
   /// \since 2.0
   std::string const & ToString() const;

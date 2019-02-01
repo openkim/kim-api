@@ -47,7 +47,9 @@ class ModelWriteParameterizedModelImplementation;
 /// \brief Provides the interface to a %KIM API Model object for use by models
 /// within their MODEL_ROUTINE_NAME::WriteParameterizedModel routine.
 ///
-/// \sa KIM_ModelWriteParameterizedModel
+/// \sa KIM_ModelWriteParameterizedModel,
+/// kim_model_write_parameterized_model_module::<!--
+/// -->kim_model_write_parameterized_model_handle_type
 ///
 /// \since 2.0
 class ModelWriteParameterizedModel
@@ -58,7 +60,8 @@ class ModelWriteParameterizedModel
   ///
   /// \param[out] path Path string.
   ///
-  /// \sa KIM_ModelWriteParameterizedModel_GetPath
+  /// \sa KIM_ModelWriteParameterizedModel_GetPath,
+  /// kim_model_write_parameterized_model_module::kim_get_path
   ///
   /// \since 2.0
   void GetPath(std::string const ** const path) const;
@@ -70,7 +73,8 @@ class ModelWriteParameterizedModel
   ///
   /// \param[out] modelName The parameterized model name.
   ///
-  /// \sa KIM_ModelWriteParameterizedModel_GetModelName
+  /// \sa KIM_ModelWriteParameterizedModel_GetModelName,
+  /// kim_model_write_parameterized_model_module::kim_get_model_name
   ///
   /// \since 2.0
   void GetModelName(std::string const ** const modelName) const;
@@ -83,7 +87,8 @@ class ModelWriteParameterizedModel
   ///
   /// \param[in] fileName File name (basename and extension, without path).
   ///
-  /// \sa KIM_ModelWriteParameterizedModel_SetParameterFileName
+  /// \sa KIM_ModelWriteParameterizedModel_SetParameterFileName,
+  /// kim_model_write_parameterized_model_module::kim_set_parameter_file_name
   ///
   /// \since 2.0
   void SetParameterFileName(std::string const & fileName) const;
@@ -100,7 +105,8 @@ class ModelWriteParameterizedModel
   ///       ModelCreate::SetModelBufferPointer or
   ///       ModelDriverCreate::SetModelBufferPointer.
   ///
-  /// \sa KIM_ModelWriteParameterizedModel_GetModelBufferPointer
+  /// \sa KIM_ModelWriteParameterizedModel_GetModelBufferPointer,
+  /// kim_model_write_parameterized_model_module::kim_get_model_buffer_pointer
   ///
   /// \since 2.0
   void GetModelBufferPointer(void ** const ptr) const;
@@ -116,7 +122,8 @@ class ModelWriteParameterizedModel
   /// \param[in] lineNumber The source code file line number.
   /// \param[in] fileName The source code file name.
   ///
-  /// \sa KIM_ModelWriteParameterizedModel_LogEntry
+  /// \sa KIM_ModelWriteParameterizedModel_LogEntry,
+  /// kim_model_write_parameterized_model_module::kim_log_entry
   ///
   /// \since 2.0
   void LogEntry(LogVerbosity const logVerbosity,
@@ -136,7 +143,8 @@ class ModelWriteParameterizedModel
   /// may be quite long.  It begins and ends with lines consisting only of \c
   /// ='s.
   ///
-  /// \sa KIM_ModelWriteParameterizedModel_ToString
+  /// \sa KIM_ModelWriteParameterizedModel_ToString,
+  /// kim_model_write_parameterized_model_module::kim_to_string
   ///
   /// \since 2.0
   std::string const & ToString() const;

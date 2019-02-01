@@ -43,7 +43,8 @@ namespace KIM
 ///
 /// The enumeration constants are contained in the TEMPERATURE_UNIT namespace.
 ///
-/// \sa KIM_TemperatureUnit
+/// \sa KIM_TemperatureUnit,
+/// kim_temperature_unit_module::kim_temperature_unit_type
 ///
 /// \since 2.0
 class TemperatureUnit
@@ -54,7 +55,9 @@ class TemperatureUnit
   /// \note This should not be directly accessed and is only public for
   /// cross-language reasons.
   ///
-  /// \sa KIM_TemperatureUnit::temperatureUnitID
+  /// \sa KIM_TemperatureUnit::temperatureUnitID,
+  /// kim_temperature_unit_module::kim_temperature_unit_type::<!--
+  /// -->temperature_unit_id
   ///
   /// \since 2.0
   int temperatureUnitID;
@@ -75,7 +78,8 @@ class TemperatureUnit
   /// string.  If the string does not match one of the values defined by the
   /// %KIM API, then an "unknown" object is generated.
   ///
-  /// \sa KIM_TemperatureUnit_FromString
+  /// \sa KIM_TemperatureUnit_FromString,
+  /// kim_temperature_unit_module::kim_from_string
   ///
   /// \since 2.0
   TemperatureUnit(std::string const & str);
@@ -85,7 +89,7 @@ class TemperatureUnit
   /// TemperatureUnit's known to the %KIM API are found in the TEMPERATURE_UNIT
   /// namespace.
   ///
-  /// \sa KIM_TemperatureUnit_Known
+  /// \sa KIM_TemperatureUnit_Known, kim_temperature_unit_module::kim_known
   ///
   /// \since 2.0
   bool Known() const;
@@ -94,7 +98,8 @@ class TemperatureUnit
   ///
   /// \note Not all "unknown" objects are equal.
   ///
-  /// \sa KIM_TemperatureUnit_Equal
+  /// \sa KIM_TemperatureUnit_Equal,
+  /// kim_temperature_unit_module::operator(.eq.)
   ///
   /// \since 2.0
   bool operator==(TemperatureUnit const & rhs) const;
@@ -103,7 +108,8 @@ class TemperatureUnit
   ///
   /// \note It is possible for two "unknown" objects to be not equal.
   ///
-  /// \sa KIM_TemperatureUnit_NotEqual
+  /// \sa KIM_TemperatureUnit_NotEqual,
+  /// kim_temperature_unit_module::operator(.ne.)
   ///
   /// \since 2.0
   bool operator!=(TemperatureUnit const & rhs) const;
@@ -115,7 +121,8 @@ class TemperatureUnit
   /// \note If the TemperatureUnit object does not correspond to a value
   /// defined by the %KIM API, then the string "unknown" is returned.
   ///
-  /// \sa KIM_TemperatureUnit_ToString
+  /// \sa KIM_TemperatureUnit_ToString,
+  /// kim_temperature_unit_module::kim_to_string
   ///
   /// \since 2.0
   std::string const & ToString() const;
@@ -127,14 +134,16 @@ namespace TEMPERATURE_UNIT
 {
 /// \brief Indicates that a TemperatureUnit is not used.
 ///
-/// \sa KIM_TEMPERATURE_UNIT_unused
+/// \sa KIM_TEMPERATURE_UNIT_unused,
+/// kim_temperature_unit_module::kim_temperature_unit_unused
 ///
 /// \since 2.0
 extern TemperatureUnit const unused;
 
 /// \brief The standard Kelvin unit of temperature.
 ///
-/// \sa KIM_TEMPERATURE_UNIT_K
+/// \sa KIM_TEMPERATURE_UNIT_K,
+/// kim_temperature_unit_module::kim_temperature_unit_k
 ///
 /// \since 2.0
 extern TemperatureUnit const K;
@@ -146,7 +155,8 @@ extern TemperatureUnit const K;
 /// \param[out] numberOfTemperatureUnits The number of standard
 ///             TemperatureUnit's defined by the %KIM API.
 ///
-/// \sa KIM_TEMPERATURE_UNIT_GetNumberOfTemperatureUnits
+/// \sa KIM_TEMPERATURE_UNIT_GetNumberOfTemperatureUnits,
+/// kim_temperature_unit_module::kim_get_number_of_temperature_units
 ///
 /// \since 2.0
 void GetNumberOfTemperatureUnits(int * const numberOfTemperatureUnits);
@@ -162,7 +172,8 @@ void GetNumberOfTemperatureUnits(int * const numberOfTemperatureUnits);
 /// \return \c true if `index < 0` or `index >= numberOfTemperatureUnits`.
 /// \return \c false otherwise.
 ///
-/// \sa KIM_TEMPERATURE_UNIT_GetTemperatureUnit
+/// \sa KIM_TEMPERATURE_UNIT_GetTemperatureUnit,
+/// kim_temperature_unit_module::kim_get_temperature_unit
 ///
 /// \since 2.0
 int GetTemperatureUnit(int const index,

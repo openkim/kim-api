@@ -45,7 +45,8 @@ namespace KIM
 /// This structure provides a standard mechanism for extensions to be
 /// discovered at run time.
 ///
-/// \sa KIM_SupportedExtensions
+/// \sa KIM_SupportedExtensions,
+/// kim_supported_extensions_module::kim_supported_extensions_type
 ///
 /// \since 2.0
 struct SupportedExtensions

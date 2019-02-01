@@ -47,7 +47,9 @@ class ModelComputeArgumentsDestroyImplementation;
 /// \brief Provides the interface to a %KIM API ComputeArguments object for use
 /// by models within their MODEL_ROUTINE_NAME::ComputeArgumentsDestroy routine.
 ///
-/// \sa KIM_ModelComputeArgumentsDestroy
+/// \sa KIM_ModelComputeArgumentsDestroy,
+/// kim_model_compute_arguments_destroy_module::<!--
+/// -->kim_model_compute_arguments_destroy_handle_type
 ///
 /// \since 2.0
 class ModelComputeArgumentsDestroy
@@ -64,7 +66,8 @@ class ModelComputeArgumentsDestroy
   /// \note `ptr == NULL` if the model has not previously called
   ///       ModelComputeArguments::SetModelBufferPointer.
   ///
-  /// \sa KIM_ModelComputeArgumentsDestroy_GetModelBufferPointer
+  /// \sa KIM_ModelComputeArgumentsDestroy_GetModelBufferPointer,
+  /// kim_model_compute_arguments_destroy_module::kim_get_model_buffer_pointer
   ///
   /// \since 2.0
   void GetModelBufferPointer(void ** const ptr) const;
@@ -80,7 +83,8 @@ class ModelComputeArgumentsDestroy
   /// \param[in] lineNumber The source code file line number.
   /// \param[in] fileName The source code file name.
   ///
-  /// \sa KIM_ModelComputeArgumentsDestroy_LogEntry
+  /// \sa KIM_ModelComputeArgumentsDestroy_LogEntry,
+  /// kim_model_compute_arguments_destroy_module::kim_log_entry
   ///
   /// \since 2.0
   void LogEntry(LogVerbosity const logVerbosity,
@@ -101,7 +105,8 @@ class ModelComputeArgumentsDestroy
   /// may be quite long.  It begins and ends with lines consisting only of \c
   /// ='s.
   ///
-  /// \sa KIM_ModelComputeArgumentsDestroy_ToString
+  /// \sa KIM_ModelComputeArgumentsDestroy_ToString,
+  /// kim_model_compute_arguments_destroy_module::kim_to_string
   ///
   /// \since 2.0
   std::string const & ToString() const;

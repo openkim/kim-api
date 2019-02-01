@@ -47,7 +47,8 @@ class ModelComputeImplementation;
 /// \brief Provides the interface to a %KIM API Model object for use by models
 /// within their MODEL_ROUTINE_NAME::Compute routine.
 ///
-/// \sa KIM_ModelCompute
+/// \sa KIM_ModelCompute,
+/// kim_model_compute_module::kim_model_compute_handle_type
 ///
 /// \since 2.0
 class ModelCompute
@@ -65,7 +66,8 @@ class ModelCompute
   ///       ModelCreate::SetModelBufferPointer or
   ///       ModelDriverCreate::SetModelBufferPointer.
   ///
-  /// \sa KIM_ModelCompute_GetModelBufferPointer
+  /// \sa KIM_ModelCompute_GetModelBufferPointer,
+  /// kim_model_compute_module::kim_get_model_buffer_pointer
   ///
   /// \since 2.0
   void GetModelBufferPointer(void ** const ptr) const;
@@ -81,7 +83,7 @@ class ModelCompute
   /// \param[in] lineNumber The source code file line number.
   /// \param[in] fileName The source code file name.
   ///
-  /// \sa KIM_ModelCompute_LogEntry
+  /// \sa KIM_ModelCompute_LogEntry, kim_model_compute_module::kim_log_entry
   ///
   /// \since 2.0
   void LogEntry(LogVerbosity const logVerbosity,
@@ -101,7 +103,7 @@ class ModelCompute
   /// may be quite long.  It begins and ends with lines consisting only of \c
   /// ='s.
   ///
-  /// \sa KIM_ModelCompute_ToString
+  /// \sa KIM_ModelCompute_ToString, kim_model_compute_module::kim_to_string
   ///
   /// \since 2.0
   std::string const & ToString() const;

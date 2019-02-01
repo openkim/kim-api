@@ -44,7 +44,8 @@ namespace KIM
 /// The enumeration constants are contained in the MODEL_ROUTINE_NAME
 /// namespace.
 ///
-/// \sa KIM_ModelRoutineName
+/// \sa KIM_ModelRoutineName,
+/// kim_model_routine_name_module::kim_model_routine_name_type
 ///
 /// \since 2.0
 class ModelRoutineName
@@ -55,7 +56,9 @@ class ModelRoutineName
   /// \note This should not be directly accessed and is only public for
   /// cross-language reasons.
   ///
-  /// \sa KIM_ModelRoutineName::modelRoutineNameID
+  /// \sa KIM_ModelRoutineName::modelRoutineNameID,
+  /// kim_model_routine_name_module::kim_model_routine_name_type::<!--
+  /// -->model_routine_name_id
   ///
   /// \since 2.0
   int modelRoutineNameID;
@@ -76,7 +79,8 @@ class ModelRoutineName
   /// string.  If the string does not match one of the values defined by the
   /// %KIM API, then an "unknown" object is generated.
   ///
-  /// \sa KIM_ModelRoutineName_FromString
+  /// \sa KIM_ModelRoutineName_FromString,
+  /// kim_model_routine_name_module::kim_from_string
   ///
   /// \since 2.0
   ModelRoutineName(std::string const & str);
@@ -86,7 +90,7 @@ class ModelRoutineName
   /// ModelRoutineName's known to the %KIM API are found in the
   /// MODEL_ROUTINE_NAME namespace.
   ///
-  /// \sa KIM_ModelRoutineName_Known
+  /// \sa KIM_ModelRoutineName_Known, kim_model_routine_name_module::kim_known
   ///
   /// \since 2.0
   bool Known() const;
@@ -95,7 +99,8 @@ class ModelRoutineName
   ///
   /// \note Not all "unknown" objects are equal.
   ///
-  /// \sa KIM_ModelRoutineName_Equal
+  /// \sa KIM_ModelRoutineName_Equal,
+  /// kim_model_routine_name_module::operator(.eq.)
   ///
   /// \since 2.0
   bool operator==(ModelRoutineName const & rhs) const;
@@ -104,7 +109,8 @@ class ModelRoutineName
   ///
   /// \note It is possible for two "unknown" objects to be not equal.
   ///
-  /// \sa KIM_ModelRoutineName_NotEqual
+  /// \sa KIM_ModelRoutineName_NotEqual,
+  /// kim_model_routine_name_module::operator(.ne.)
   ///
   /// \since 2.0
   bool operator!=(ModelRoutineName const & rhs) const;
@@ -116,7 +122,8 @@ class ModelRoutineName
   /// \note If the ModelRoutineName object does not correspond to a value
   /// defined by the %KIM API, then the string "unknown" is returned.
   ///
-  /// \sa KIM_ModelRoutineName_ToString
+  /// \sa KIM_ModelRoutineName_ToString,
+  /// kim_model_routine_name_module::kim_to_string
   ///
   /// \since 2.0
   std::string const & ToString() const;
@@ -133,7 +140,8 @@ namespace MODEL_ROUTINE_NAME
 ///
 /// \todo Add more detailed description of routine.
 ///
-/// \sa KIM_MODEL_ROUTINE_NAME_Create
+/// \sa KIM_MODEL_ROUTINE_NAME_Create,
+/// kim_model_routine_name_module::kim_model_routine_name_create
 ///
 /// \since 2.0
 extern ModelRoutineName const Create;
@@ -146,7 +154,9 @@ extern ModelRoutineName const Create;
 ///
 /// \todo Add more detailed description of routine.
 ///
-/// \sa KIM_MODEL_ROUTINE_NAME_ComputeArgumentsCreate
+/// \sa KIM_MODEL_ROUTINE_NAME_ComputeArgumentsCreate,
+/// kim_model_routine_name_module::<!--
+/// -->kim_model_routine_name_compute_arguments_create
 ///
 /// \since 2.0
 extern ModelRoutineName const ComputeArgumentsCreate;
@@ -158,7 +168,8 @@ extern ModelRoutineName const ComputeArgumentsCreate;
 ///
 /// \todo Add more detailed description of routine.
 ///
-/// \sa KIM_MODEL_ROUTINE_NAME_Compute
+/// \sa KIM_MODEL_ROUTINE_NAME_Compute,
+/// kim_model_routine_name_module::kim_model_routine_name_compute
 ///
 /// \since 2.0
 extern ModelRoutineName const Compute;
@@ -170,7 +181,8 @@ extern ModelRoutineName const Compute;
 ///
 /// \todo Add more detailed description of routine.
 ///
-/// \sa KIM_MODEL_ROUTINE_NAME_Extension
+/// \sa KIM_MODEL_ROUTINE_NAME_Extension,
+/// kim_model_routine_name_module::kim_model_routine_name_extension
 ///
 /// \since 2.0
 extern ModelRoutineName const Extension;
@@ -182,7 +194,8 @@ extern ModelRoutineName const Extension;
 ///
 /// \todo Add more detailed description of routine.
 ///
-/// \sa KIM_MODEL_ROUTINE_NAME_Refresh
+/// \sa KIM_MODEL_ROUTINE_NAME_Refresh,
+/// kim_model_routine_name_module::kim_model_routine_name_refresh
 ///
 /// \since 2.0
 extern ModelRoutineName const Refresh;
@@ -195,7 +208,9 @@ extern ModelRoutineName const Refresh;
 ///
 /// \todo Add more detailed description of routine.
 ///
-/// \sa KIM_MODEL_ROUTINE_NAME_WriteParameterizedModel
+/// \sa KIM_MODEL_ROUTINE_NAME_WriteParameterizedModel,
+/// kim_model_routine_name_module::<!--
+/// -->kim_model_routine_name_write_parameterized_model
 ///
 /// \since 2.0
 extern ModelRoutineName const WriteParameterizedModel;
@@ -208,7 +223,9 @@ extern ModelRoutineName const WriteParameterizedModel;
 ///
 /// \todo Add more detailed description of routine.
 ///
-/// \sa KIM_MODEL_ROUTINE_NAME_ComputeArgumentsDestroy
+/// \sa KIM_MODEL_ROUTINE_NAME_ComputeArgumentsDestroy,
+/// kim_model_routine_name_module::<!--
+/// -->kim_model_routine_name_compute_arguments_destroy
 ///
 /// \since 2.0
 extern ModelRoutineName const ComputeArgumentsDestroy;
@@ -220,7 +237,8 @@ extern ModelRoutineName const ComputeArgumentsDestroy;
 ///
 /// \todo Add more detailed description of routine.
 ///
-/// \sa KIM_MODEL_ROUTINE_NAME_Destroy
+/// \sa KIM_MODEL_ROUTINE_NAME_Destroy,
+/// kim_model_routine_name_module::kim_model_routine_name_destroy
 ///
 /// \since 2.0
 extern ModelRoutineName const Destroy;
@@ -232,7 +250,8 @@ extern ModelRoutineName const Destroy;
 /// \param[out] numberOfModelRoutineNames The number of standard
 ///             ModelRoutineName's defined by the %KIM API.
 ///
-/// \sa KIM_MODEL_ROUTINE_NAME_GetNumberOfModelRoutineNames
+/// \sa KIM_MODEL_ROUTINE_NAME_GetNumberOfModelRoutineNames,
+/// kim_model_routine_name_module::kim_get_number_of_model_routine_names
 ///
 /// \since 2.0
 void GetNumberOfModelRoutineNames(int * const numberOfModelRoutineNames);
@@ -248,7 +267,8 @@ void GetNumberOfModelRoutineNames(int * const numberOfModelRoutineNames);
 /// \return \c true if `index < 0` or `index >= numberOfModelRoutineNames`.
 /// \return \c false otherwise.
 ///
-/// \sa KIM_MODEL_ROUTINE_NAME_GetModelRoutineName
+/// \sa KIM_MODEL_ROUTINE_NAME_GetModelRoutineName,
+/// kim_model_routine_name_module::kim_get_model_routine_name
 ///
 /// \since 2.0
 int GetModelRoutineName(int const index,

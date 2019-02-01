@@ -47,7 +47,8 @@ class ModelDestroyImplementation;
 /// \brief Provides the interface to a %KIM API Model object for use by models
 /// within their MODEL_ROUTINE_NAME::Destroy routine.
 ///
-/// \sa KIM_ModelDestroy
+/// \sa KIM_ModelDestroy,
+/// kim_model_destroy_module::kim_model_destroy_handle_type
 ///
 /// \since 2.0
 class ModelDestroy
@@ -65,7 +66,8 @@ class ModelDestroy
   ///       ModelCreate::SetModelBufferPointer or
   ///       ModelDriverCreate::SetModelBufferPointer.
   ///
-  /// \sa KIM_ModelDestroy_GetModelBufferPointer
+  /// \sa KIM_ModelDestroy_GetModelBufferPointer,
+  /// kim_model_destroy_module::kim_get_model_buffer_pointer
   ///
   /// \since 2.0
   void GetModelBufferPointer(void ** const ptr) const;
@@ -81,7 +83,7 @@ class ModelDestroy
   /// \param[in] lineNumber The source code file line number.
   /// \param[in] fileName The source code file name.
   ///
-  /// \sa KIM_ModelDestroy_LogEntry
+  /// \sa KIM_ModelDestroy_LogEntry, kim_model_destroy_module::kim_log_entry
   ///
   /// \since 2.0
   void LogEntry(LogVerbosity const logVerbosity,
@@ -101,7 +103,7 @@ class ModelDestroy
   /// may be quite long.  It begins and ends with lines consisting only of \c
   /// ='s.
   ///
-  /// \sa KIM_ModelDestroy_ToString
+  /// \sa KIM_ModelDestroy_ToString, kim_model_destroy_module::kim_to_string
   ///
   /// \since 2.0
   std::string const & ToString() const;

@@ -43,7 +43,7 @@ namespace KIM
 ///
 /// The enumeration constants are contained in the DATA_TYPE namespace.
 ///
-/// \sa KIM_DataType
+/// \sa KIM_DataType, kim_data_type_module::kim_data_type_type
 ///
 /// \since 2.0
 class DataType
@@ -54,7 +54,8 @@ class DataType
   /// \note This should not be directly accessed and is only public for
   /// cross-language reasons.
   ///
-  /// \sa KIM_DataType::dataTypeID
+  /// \sa KIM_DataType::dataTypeID,
+  /// kim_data_type_module::kim_data_type_type::data_type_id
   ///
   /// \since 2.0
   int dataTypeID;
@@ -75,7 +76,7 @@ class DataType
   /// the string does not match one of the values defined by the %KIM API, then
   /// an "unknown" object is generated.
   ///
-  /// \sa KIM_DataType_FromString
+  /// \sa KIM_DataType_FromString, kim_data_type_module::kim_from_string
   ///
   /// \since 2.0
   DataType(std::string const & str);
@@ -84,7 +85,7 @@ class DataType
   ///
   /// DataType's known to the %KIM API are found in the DATA_TYPE namespace.
   ///
-  /// \sa KIM_DataType_Known
+  /// \sa KIM_DataType_Known, kim_data_type_module::kim_known
   ///
   /// \since 2.0
   bool Known() const;
@@ -93,7 +94,7 @@ class DataType
   ///
   /// \note Not all "unknown" objects are equal.
   ///
-  /// \sa KIM_DataType_Equal
+  /// \sa KIM_DataType_Equal, kim_data_type_module::operator(.eq.)
   ///
   /// \since 2.0
   bool operator==(DataType const & rhs) const;
@@ -102,7 +103,7 @@ class DataType
   ///
   /// \note It is possible for two "unknown" objects to be not equal.
   ///
-  /// \sa KIM_DataType_NotEqual
+  /// \sa KIM_DataType_NotEqual, kim_data_type_module::operator(.ne.)
   ///
   /// \since 2.0
   bool operator!=(DataType const & rhs) const;
@@ -114,7 +115,7 @@ class DataType
   /// \note If the DataType object does not correspond to a value defined by
   /// the %KIM API, then the string "unknown" is returned.
   ///
-  /// \sa KIM_DataType_ToString
+  /// \sa KIM_DataType_ToString, kim_data_type_module::kim_to_string()
   ///
   /// \since 2.0
   std::string const & ToString() const;
@@ -128,7 +129,7 @@ namespace DATA_TYPE
 ///
 /// \todo Add more detailed description of data type.
 ///
-/// \sa KIM_DATA_TYPE_Integer
+/// \sa KIM_DATA_TYPE_Integer, kim_data_type_module::kim_data_type_integer
 ///
 /// \since 2.0
 extern DataType const Integer;
@@ -137,7 +138,7 @@ extern DataType const Integer;
 ///
 /// \todo Add more detailed description of data type.
 ///
-/// \sa KIM_DATA_TYPE_Double
+/// \sa KIM_DATA_TYPE_Double, kim_data_type_module::kim_data_type_double
 ///
 /// \since 2.0
 extern DataType const Double;
@@ -149,7 +150,8 @@ extern DataType const Double;
 /// \param[out] numberOfDataTypes The number of standard DataType's defined by
 ///             the %KIM API.
 ///
-/// \sa KIM_DATA_TYPE_GetNumberOfDataTypes
+/// \sa KIM_DATA_TYPE_GetNumberOfDataTypes,
+/// kim_data_type_module::kim_get_number_of_data_types
 ///
 /// \since 2.0
 void GetNumberOfDataTypes(int * const numberOfDataTypes);
@@ -164,7 +166,7 @@ void GetNumberOfDataTypes(int * const numberOfDataTypes);
 /// \return \c true if `index < 0` or `index >= numberOfDataTypes`.
 /// \return \c false otherwise.
 ///
-/// \sa KIM_DATA_TYPE_GetDataType
+/// \sa KIM_DATA_TYPE_GetDataType, kim_data_type_module::kim_get_data_type
 ///
 /// \since 2.0
 int GetDataType(int const index, DataType * const dataType);

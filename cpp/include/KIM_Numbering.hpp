@@ -43,7 +43,7 @@ namespace KIM
 ///
 /// The enumeration constants are contained in the NUMBERING namespace.
 ///
-/// \sa KIM_Numbering
+/// \sa KIM_Numbering, kim_numbering_module::kim_numbering_type
 ///
 /// \since 2.0
 class Numbering
@@ -54,7 +54,8 @@ class Numbering
   /// \note This should not be directly accessed and is only public for
   /// cross-language reasons.
   ///
-  /// \sa KIM_Numbering::numberingID
+  /// \sa KIM_Numbering::numberingID,
+  /// kim_numbering_module::kim_numbering_type::numbering_id
   ///
   /// \since 2.0
   int numberingID;
@@ -75,7 +76,7 @@ class Numbering
   /// If the string does not match one of the values defined by the %KIM API,
   /// then an "unknown" object is generated.
   ///
-  /// \sa KIM_Numbering_FromString
+  /// \sa KIM_Numbering_FromString, kim_numbering_module::kim_from_string
   ///
   /// \since 2.0
   Numbering(std::string const & str);
@@ -84,7 +85,7 @@ class Numbering
   ///
   /// Numbering's known to the %KIM API are found in the NUMBERING namespace.
   ///
-  /// \sa KIM_Numbering_Known
+  /// \sa KIM_Numbering_Known, kim_numbering_module::kim_known
   ///
   /// \since 2.0
   bool Known() const;
@@ -93,7 +94,7 @@ class Numbering
   ///
   /// \note Not all "unknown" objects are equal.
   ///
-  /// \sa KIM_Numbering_Equal
+  /// \sa KIM_Numbering_Equal, kim_numbering_module::operator(.eq.)
   ///
   /// \since 2.0
   bool operator==(Numbering const & rhs) const;
@@ -102,7 +103,7 @@ class Numbering
   ///
   /// \note It is possible for two "unknown" objects to be not equal.
   ///
-  /// \sa KIM_Numbering_NotEqual
+  /// \sa KIM_Numbering_NotEqual, kim_numbering_module::operator(.ne.)
   ///
   /// \since 2.0
   bool operator!=(Numbering const & rhs) const;
@@ -114,7 +115,7 @@ class Numbering
   /// \note If the Numbering object does not correspond to a value defined by
   /// the %KIM API, then the string "unknown" is returned.
   ///
-  /// \sa KIM_Numbering_ToString
+  /// \sa KIM_Numbering_ToString, kim_numbering_module::kim_to_string
   ///
   /// \since 2.0
   std::string const & ToString() const;
@@ -128,7 +129,7 @@ namespace NUMBERING
 ///
 /// Quantities are numbered starting from zero.
 ///
-/// \sa KIM_NUMBERING_zeroBased
+/// \sa KIM_NUMBERING_zeroBased, kim_numbering_module::kim_numbering_zero_based
 ///
 /// \since 2.0
 extern Numbering const zeroBased;
@@ -137,7 +138,7 @@ extern Numbering const zeroBased;
 ///
 /// Quantities are numbered starting from one.
 ///
-/// \sa KIM_NUMBERING_oneBased
+/// \sa KIM_NUMBERING_oneBased, kim_numbering_module::kim_numbering_one_based
 ///
 /// \since 2.0
 extern Numbering const oneBased;
@@ -149,7 +150,8 @@ extern Numbering const oneBased;
 /// \param[out] numberOfNumberings The number of standard Numbering's defined
 ///             by the %KIM API.
 ///
-/// \sa KIM_NUMBERING_GetNumberOfNumberings
+/// \sa KIM_NUMBERING_GetNumberOfNumberings,
+/// kim_numbering_module::kim_get_number_of_numberings
 ///
 /// \since 2.0
 void GetNumberOfNumberings(int * const numberOfNumberings);
@@ -164,7 +166,7 @@ void GetNumberOfNumberings(int * const numberOfNumberings);
 /// \return \c true if `index < 0` or `index >= numberOfNumberings`.
 /// \return \c false otherwise.
 ///
-/// \sa KIM_NUMBERING_GetNumbering
+/// \sa KIM_NUMBERING_GetNumbering, kim_numbering_module::kim_get_numbering
 ///
 /// \since 2.0
 int GetNumbering(int const index, Numbering * const numbering);

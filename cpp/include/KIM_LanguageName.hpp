@@ -43,7 +43,7 @@ namespace KIM
 ///
 /// The enumeration constants are contained in the LANGUAGE_NAME namespace.
 ///
-/// \sa KIM_LanguageName
+/// \sa KIM_LanguageName, kim_language_name_module::kim_language_name_type
 ///
 /// \since 2.0
 class LanguageName
@@ -54,7 +54,8 @@ class LanguageName
   /// \note This should not be directly accessed and is only public for
   /// cross-language reasons.
   ///
-  /// \sa KIM_LanguageName::languageNameID
+  /// \sa KIM_LanguageName::languageNameID,
+  /// kim_language_name_module::kim_language_name_type::language_name_id
   ///
   /// \since 2.0
   int languageNameID;
@@ -75,7 +76,8 @@ class LanguageName
   /// If the string does not match one of the values defined by the %KIM API,
   /// then an "unknown" object is generated.
   ///
-  /// \sa KIM_LanguageName_FromString
+  /// \sa KIM_LanguageName_FromString,
+  /// kim_language_name_module::kim_from_string
   ///
   /// \since 2.0
   LanguageName(std::string const & str);
@@ -85,7 +87,7 @@ class LanguageName
   /// LanguageName's known to the %KIM API are found in the LANGUAGE_NAME
   /// namespace.
   ///
-  /// \sa KIM_LanguageName_Known
+  /// \sa KIM_LanguageName_Known, kim_language_name_module::kim_known
   ///
   /// \since 2.0
   bool Known() const;
@@ -94,7 +96,7 @@ class LanguageName
   ///
   /// \note Not all "unknown" objects are equal.
   ///
-  /// \sa KIM_LanguageName_Equal
+  /// \sa KIM_LanguageName_Equal, kim_language_name_module::operator(.eq.)
   ///
   /// \since 2.0
   bool operator==(LanguageName const & rhs) const;
@@ -103,7 +105,7 @@ class LanguageName
   ///
   /// \note It is possible for two "unknown" objects to be not equal.
   ///
-  /// \sa KIM_LanguageName_NotEqual
+  /// \sa KIM_LanguageName_NotEqual, kim_language_name_module::operator(.ne.)
   ///
   /// \since 2.0
   bool operator!=(LanguageName const & rhs) const;
@@ -115,7 +117,7 @@ class LanguageName
   /// \note If the LanguageName object does not correspond to a value defined
   /// by the %KIM API, then the string "unknown" is returned.
   ///
-  /// \sa KIM_LanguageName_ToString
+  /// \sa KIM_LanguageName_ToString, kim_language_name_module::kim_to_string
   ///
   /// \since 2.0
   std::string const & ToString() const;
@@ -129,7 +131,7 @@ namespace LANGUAGE_NAME
 ///
 /// \todo Add more detailed description of the language.
 ///
-/// \sa KIM_LANGUAGE_NAME_cpp
+/// \sa KIM_LANGUAGE_NAME_cpp, kim_language_name_module::kim_language_name_cpp
 ///
 /// \since 2.0
 extern LanguageName const cpp;
@@ -138,7 +140,7 @@ extern LanguageName const cpp;
 ///
 /// \todo Add more detailed description of the language.
 ///
-/// \sa KIM_LANGUAGE_NAME_c
+/// \sa KIM_LANGUAGE_NAME_c, kim_language_name_module::kim_language_name_c
 ///
 /// \since 2.0
 extern LanguageName const c;
@@ -147,7 +149,8 @@ extern LanguageName const c;
 ///
 /// \todo Add more detailed description of the language.
 ///
-/// \sa KIM_LANGUAGE_NAME_fortran
+/// \sa KIM_LANGUAGE_NAME_fortran,
+/// kim_language_name_module::kim_language_name_fortran
 ///
 /// \since 2.0
 extern LanguageName const fortran;
@@ -159,7 +162,8 @@ extern LanguageName const fortran;
 /// \param[out] numberOfLanguageNames The number of standard LanguageName's
 ///             defined by the %KIM API.
 ///
-/// \sa KIM_LANGUAGE_NAME_GetNumberOfLanguageNames
+/// \sa KIM_LANGUAGE_NAME_GetNumberOfLanguageNames,
+/// kim_language_name_module::kim_get_number_of_language_names
 ///
 /// \since 2.0
 void GetNumberOfLanguageNames(int * const numberOfLanguageNames);
@@ -174,7 +178,8 @@ void GetNumberOfLanguageNames(int * const numberOfLanguageNames);
 /// \return \c true if `index < 0` or `index >= numberOfLanguageNames`.
 /// \return \c false otherwise.
 ///
-/// \sa KIM_LANGUAGE_NAME_GetLanguageName
+/// \sa KIM_LANGUAGE_NAME_GetLanguageName,
+/// kim_language_name_module::kim_get_language_name
 ///
 /// \since 2.0
 int GetLanguageName(int const index, LanguageName * const languageName);

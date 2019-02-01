@@ -50,7 +50,9 @@ class ModelComputeArgumentsCreateImplementation;
 /// \brief Provides the interface to a %KIM API ComputeArguments object for use
 /// by models within their MODEL_ROUTINE_NAME::ComputeArgumentsCreate routine.
 ///
-/// \sa KIM_ModelComputeArgumentsCreate
+/// \sa KIM_ModelComputeArgumentsCreate,
+/// kim_model_compute_arguments_create_module::<!--
+/// -->kim_model_compute_arguments_create_handle_type
 ///
 /// \since 2.0
 class ModelComputeArgumentsCreate
@@ -66,7 +68,8 @@ class ModelComputeArgumentsCreate
   ///         and \c supportStatus is not SUPPORT_STATUS::requiredByAPI.
   /// \return \c false otherwise.
   ///
-  /// \sa KIM_ModelComputeArgumentsCreate_SetArgumentSupportStatus
+  /// \sa KIM_ModelComputeArgumentsCreate_SetArgumentSupportStatus,
+  /// kim_model_compute_arguments_create_module::kim_set_argument_support_status
   ///
   /// \since 2.0
   int SetArgumentSupportStatus(ComputeArgumentName const computeArgumentName,
@@ -82,7 +85,8 @@ class ModelComputeArgumentsCreate
   ///         and \c supportStatus is not SUPPORT_STATUS::requiredByAPI.
   /// \return \c false otherwise.
   ///
-  /// \sa KIM_ModelComputeArgumentsCreate_SetCallbackSupportStatus
+  /// \sa KIM_ModelComputeArgumentsCreate_SetCallbackSupportStatus,
+  /// kim_model_compute_arguments_create_module::kim_set_callback_support_status
   ///
   /// \since 2.0
   int SetCallbackSupportStatus(ComputeCallbackName const computeCallbackName,
@@ -96,7 +100,8 @@ class ModelComputeArgumentsCreate
   ///
   /// \param[in] ptr The model buffer data pointer.
   ///
-  /// \sa KIM_ModelComputeArguments_SetModelBufferPointer
+  /// \sa KIM_ModelComputeArguments_SetModelBufferPointer,
+  /// kim_model_compute_arguments_create_module::kim_set_model_buffer_pointer
   ///
   /// \since 2.0
   void SetModelBufferPointer(void * const ptr);
@@ -112,7 +117,8 @@ class ModelComputeArgumentsCreate
   /// \param[in] lineNumber The source code file line number.
   /// \param[in] fileName The source code file name.
   ///
-  /// \sa KIM_ModelComputeArgumentsCreate_LogEntry
+  /// \sa KIM_ModelComputeArgumentsCreate_LogEntry,
+  /// kim_model_compute_arguments_create_module::kim_log_entry
   ///
   /// \since 2.0
   void LogEntry(LogVerbosity const logVerbosity,
@@ -133,7 +139,8 @@ class ModelComputeArgumentsCreate
   /// may be quite long.  It begins and ends with lines consisting only of \c
   /// ='s.
   ///
-  /// \sa KIM_ModelComputeArgumentsCreate_ToString
+  /// \sa KIM_ModelComputeArgumentsCreate_ToString,
+  /// kim_model_compute_arguments_create_module::kim_to_string
   ///
   /// \since 2.0
   std::string const & ToString() const;
