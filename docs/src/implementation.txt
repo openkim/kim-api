@@ -42,31 +42,31 @@ Previous Section: \ref theory.
 In code, a model (or model driver) consists of up to eight routines which
 perform specific tasks:
 
-1. The *ModelCreate* (or \em ModelDriverCreate ) routine (required), which
+-# The *ModelCreate* (or \em ModelDriverCreate ) routine (required), which
    performs initialization tasks for the model object.
 
-2. The *ModelComputeArgumentsCreate* routine (required), which performs
+-# The *ModelComputeArgumentsCreate* routine (required), which performs
    initialization tasks for a compute-arguments object.
 
-3. The \em ModelCompute routine (required), which uses the configuration
+-# The \em ModelCompute routine (required), which uses the configuration
    information stored in a compute-arguments object to perform the
    model's core computational tasks.
 
-4. The *ModelExtension* routine (optional), which provides a mechanism for
+-# The *ModelExtension* routine (optional), which provides a mechanism for
    creating and using non-standard extensions to the %KIM API.
 
-5. The *ModelRefresh* routine (required if parameter pointers are set,
+-# The *ModelRefresh* routine (required if parameter pointers are set,
    otherwise should not be provided), which performs updates after a simulator
    makes changes to the model's parameters (if this is supported).
 
-6. The *ModelWriteParameterizedModel* (optional) routine, which can be used to
+-# The *ModelWriteParameterizedModel* (optional) routine, which can be used to
    write the parameter files and CMake file necessary to create a new
    parameterized model from the current set of in-memory parameters.
 
-7. The \em ModelComputeArgumentsDestroy routine (required), which performs
+-# The \em ModelComputeArgumentsDestroy routine (required), which performs
    finalization tasks for a compute-arguments object.
 
-8. The *ModelDestroy* routine (required), which performs finalization
+-# The *ModelDestroy* routine (required), which performs finalization
    tasks for the model object.
 
 These are summarized in the following table.
@@ -86,7 +86,7 @@ The above table indicates which routines must be provided by a model.  For
 optional routines, each model must indicate that the routine is required or
 optional for use by the simulator, as described below.
 
-The interfaction between the simulator and a model involves the following
+The interaction between the simulator and a model involves the following
 steps:
 
 - A simulator creates a *model object* that will be used to exchange pointers
@@ -101,20 +101,20 @@ steps:
   the model requires the use of routines that are not supported by the
   simulator it should exit.
 
-- Next, the simulator creates a *compute-arguments object* that will be used
-  to exchange pointers to data and functions related to the atomic configuration
-  and values being computed for it. Creating this object includes execution of
+- Next, the simulator creates a *compute-arguments object* that will be used to
+  exchange pointers to data and functions related to the atomic configuration
+  and values being computed for it.  Creating this object includes execution of
   the model's *ModelComputeArgumentsCreate* routine.
 
 - Then, to perform a computation, the simulator provides a compute-arguments
   object to the model's *ModelCompute* function.
-  + There are input compute-arguments that include the various components that
+  - There are input compute-arguments that include the various components that
     make up a configuration (number of particles, particle position vectors,
     etc.).
-  + There are output compute-arguments that include the quantities (like partial
+  - There are output compute-arguments that include the quantities (like partial
     energy and partial forces), defined in Section \ref theory, associated with
     the configuration.
-  + There are also compute-callback functions (such as a function to get a
+  - There are also compute-callback functions (such as a function to get a
     particle's neighbor list) that the simulator provides for use by the
     model.
 
@@ -198,17 +198,16 @@ Compute-callback table:
   GetNeighborList callback function must support the return of the appropriate
   list of neighbors.  The returned list of neighbors consists of a
   contiguous-in-memory list of integers corresponding to an unordered full list
-  of a particle's neighbors (not including itself).
-  Each such neighbor list must contain at least all
-  particles within the corresponding cutoff distance of the specified particle.
-  (However, the returned list may contain particles beyond the cutoff
-  distance.)  Neighbor lists provided by the simulator must be consistent with
-  the configuration coordinates and the model's cutoff values.  In particular,
-  the model must, in principle, be able to independently construct its own
-  equivalent neighbor list using just the particle coordinates.  Further, the
-  GetNeighborList callback routine must check to ensure that the neighbor list
-  data (provided, via the simulator, by the compute-arguments object) is
-  consistent with the model's cutoff values.
+  of a particle's neighbors (not including itself).  Each such neighbor list
+  must contain at least all particles within the corresponding cutoff distance
+  of the specified particle.  (However, the returned list may contain particles
+  beyond the cutoff distance.)  Neighbor lists provided by the simulator must
+  be consistent with the configuration coordinates and the model's cutoff
+  values.  In particular, the model must, in principle, be able to
+  independently construct its own equivalent neighbor list using just the
+  particle coordinates.  Further, the GetNeighborList callback routine must
+  check to ensure that the neighbor list data (provided, via the simulator, by
+  the compute-arguments object) is consistent with the model's cutoff values.
 
   <b>CAUTION - SIMULATOR DEVELOPERS:</b> In general, it is important that
   neighbor lists provided by a simulator are "efficient" in the sense that the
@@ -218,8 +217,8 @@ Compute-callback table:
   models that request multiple neighbor lists with a wide range of cutoff
   distances.
 
-  \anchor neighbor_list_hint <b>Neighbor List Hint:</b> The above describes the
-  default behavior and all models must work correctly when provided with
+  <b>Neighbor List Hint \anchor neighbor_list_hint :</b> The above describes
+  the default behavior and all models must work correctly when provided with
   neighbor lists of this type.  However, based on the *neighbor list hint*
   provided by the model a simulator may provide the model with a modified
   neighbor list that is more efficient.  If the model sets its

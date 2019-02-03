@@ -41,17 +41,16 @@ Previous Section: \ref implementation.
 Experience with using and supporting the kim-api-v1 package has shown that the
 package's complexity (in terms of the number of different "modes of operation";
 e.g., neighbor lists: half, full, iterator, locator; Neighbor-list Boundary
-Counditions (NBCs): cluster, miopbc,
-neigh_pure, neigh_rvec; etc.) makes it difficult for new users to become
-competent kim-api-v1 code developers.  This also means that %KIM Models will
-only work with KIM-compliant codes that support the same modes of operation,
-thereby limiting the utility of the kim-api as a standard.  Further, the
-kim-api's complexity results in model implementations that are convoluted due
-to developers' desire to support *all* modes of operation.  This experience has
-led us to an approach that gives kim-api-v2 a dramatically simplified form,
-while still retaining a high degree of flexibility.  Thus, in regard to feature
-design and selection for the kim-api-v2 package, we have taken "simplicity" as
-a guiding principle.
+Counditions (NBCs): cluster, miopbc, neigh_pure, neigh_rvec; etc.) makes it
+difficult for new users to become competent kim-api-v1 code developers.  This
+also means that %KIM Models will only work with KIM-compliant codes that
+support the same modes of operation, thereby limiting the utility of the
+kim-api as a standard.  Further, the kim-api's complexity results in model
+implementations that are convoluted due to developers' desire to support *all*
+modes of operation.  This experience has led us to an approach that gives
+kim-api-v2 a dramatically simplified form, while still retaining a high degree
+of flexibility.  Thus, in regard to feature design and selection for the
+kim-api-v2 package, we have taken "simplicity" as a guiding principle.
 
 ## High-level changes between kim-api-v1 and kim-api-v2
 
@@ -85,11 +84,11 @@ a guiding principle.
     parameter set, which can be very wasteful since (in particular, for
     "machine learning" models) a model's parameter set can be very large.
 
-- **KIM Descriptor Files Have Been Eliminated**: kim-api-v2 does not use *%KIM
+- **%KIM Descriptor Files Have Been Eliminated**: kim-api-v2 does not use *%KIM
   descriptor files*.  Instead, kim-api-v2 models register their units,
   conventions, and parameters in their *ModelCreate* initialization routine,
-  and they register their arguments and callbacks in their
-  * *ModelComputeArgumentsCreate* initialization routine.  Simulator--model
+  and they register their arguments and callbacks in their *
+  *ModelComputeArgumentsCreate* initialization routine.  Simulator--model
   matching is now the responsibility of the simulator.  This is facilitated by
   kim-api-v2 through the availability of routines for obtaining the model's
   registered values of all necessary quantities at run-time.
@@ -166,7 +165,7 @@ a guiding principle.
   argument shape and extent has been eliminated from kim-api-v2.  These values
   are defined as part of the api documentation.  All arguments must have fixed
   shape and extent values that are either given numbers or defined in terms of
-  * *numberOfParticles*.
+  <b>numberOfParticles</b>.
 
   Published model parameters are always taken to be one-dimensional arrays with
   a specified extent that must be defined by the model and communicated to the
@@ -175,19 +174,31 @@ a guiding principle.
   one-dimensional arrays with extent equal to the total number of values in the
   multidimensional array.
 
-- **Extensible Strongly-Typed Enumerations**: kim-api-v2 uses "extensible
-  strongly-typed enumerations" as identifiers for quantities as opposed to
-  kim-api-v1 which uses character arrays (strings) or "index" values.  Thus,
-  all "index" values and the associated routines (such as KIM_API_get_index())
-  have been eliminated.
+- **Extensible Strongly-Typed Enumerations**: kim-api-v2 uses \ref
+  extensible_enumeration "extensible strongly-typed enumerations" as
+  identifiers for quantities as opposed to kim-api-v1 which uses character
+  arrays (strings) or "index" values.  Thus, all "index" values and the
+  associated routines (such as KIM_API_get_index()) have been eliminated.  Each
+  of the extensible enumerations in kim-api-v2 has an interface for discovering
+  and comparing all of the members of the enumeration.  Discovery is
+  implemented using two functions.  One provides the number of members in the
+  enumeration, and the other provides a copy of the \f$i\f$-th enumeration
+  member.  (The ordering is undefined, but guaranteed to be stable during any
+  single run-time program execution using the %KIM API.)  The various discovery
+  and comparison routines are listed in the table below.
+
 
 - **Consistent and Descriptive Identifier Names**: The entire set of kim-api-v2
   identifier names (namespace, module, object, subroutine, function,
   enumerations) have been reviewed and selected for clarity and consistency.
   As a result many of the identifier names from kim-api-v1 have changed in
-  kim-api-v2.  Here we provide a complete translation table.
+  kim-api-v2.  Here we provide complete tables of \ref routine_id_table
+  "routine names", \ref external_enum_id_table "external enumeration <!--
+  -->constants", and \ref external_enum_discovery_table "external <!--
+  -->enumeration discovery routines".
 
-<table><caption align=top>Routine identifier name table:</caption>
+  <b>Routine identifier name table \anchor routine_id_table :</b>
+<table><caption align=top></caption>
 <tr>
   <th>
     kim-api-v1
@@ -2113,9 +2124,10 @@ a guiding principle.
 </tr>
 </table>
 
-<br><br>
+  <br><br>
 
-<table><caption align=top>Extensible enumeration identifier name table:</caption>
+  <b>Extensible enumeration identifier name table \anchor external_enum_id_table :</b>
+<table><caption align=top></caption>
 <tr>
   <th>
     kim-api-v1
@@ -3230,15 +3242,10 @@ a guiding principle.
 </tr>
 </table>
 
-Each of the extensible enumerations in kim-api-v2 has an interface for
-discovering and comparing all of the members of the enumeration.  Discovery is
-implemented using two functions.  One provides the number of members in the
-enumeration, and the other provides a copy of the \f$i\f$-th enumeration
-member.  (The ordering is undefined, but guaranteed to be stable during any
-single run-time program execution using the %KIM API.)  The various discovery
-and comparison routines are listed in the table below.
+  <br><br>
 
-<table><caption>Extensible enumeration discovery and comparison routine identifier name table:</caption>
+  <b>Extensible enumeration discovery and comparison routine identifier name table \anchor external_enum_discovery_table :</b>
+<table><caption></caption>
 <tr>
   <th>
     kim-api-v2 C++ Binding

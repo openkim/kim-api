@@ -39,7 +39,7 @@
 
 Previous Section: \ref features.
 
-\anchor energy_per_particle The KIM API is concerned with "simulators" and
+\anchor energy_per_particle The %KIM API is concerned with "simulators" and
 "models".  Conceptually, a %KIM Model is a subprogram that defines an
 energy-per-particle function, \f$E_i\f$, and an "influence distance",
 \f$r_{\text{infl}}\f$, that identifies the particle separation range over which
@@ -53,32 +53,31 @@ to compute other quantities related to the energy-per-particle, such as the
 force on a particle or the particle's virial.
 
 Conceptually, a KIM-compliant simulator is a computer program that is
-compatible with the KIM API and performs a numerical simulation based on the
-energy, forces, etc. of a set of particles.  This could
-be a molecular dynamics simulation, a Monte Carlo simulation, or other similar
-simulation technique.  Such a simulator treats a %KIM Model as a black box.  It
-constructs an atomistic "Configuration" of interest and passes this
-configuration to a %KIM Model along with a list of quantities (energy, force,
-virial, etc.) to be computed.  The model then performs the requested
-computation and passes the results back to the simulator.  Once the simulator
-has received the model's results it may use these values to advance its
-simulation and update the atomistic configuration.  Typically, this sequence of
-events is repeated in an iterative process until the simulator determines it
-has reached convergence or some other stopping condition is achieved.
+compatible with the %KIM API and performs a numerical simulation based on the
+energy, forces, etc. of a set of particles.  This could be a molecular dynamics
+simulation, a Monte Carlo simulation, or other similar simulation technique.
+Such a simulator treats a %KIM Model as a black box.  It constructs an
+atomistic "Configuration" of interest and passes this configuration to a %KIM
+Model along with a list of quantities (energy, force, virial, etc.) to be
+computed.  The model then performs the requested computation and passes the
+results back to the simulator.  Once the simulator has received the model's
+results it may use these values to advance its simulation and update the
+atomistic configuration.  Typically, this sequence of events is repeated in an
+iterative process until the simulator determines it has reached convergence or
+some other stopping condition is achieved.
 
 The purpose of the %KIM API is to coordinate the information exchange between
-KIM-compliant simulators and %KIM Models.  It does this through the definition of various
-concepts and quantities, and by providing a set of subroutines that facilitate
-the necessary communication between simulators and models. A simulator
-supporting the %KIM API can work with all %KIM Models (as long as they
-can agree on units and the necessary species are supported by the model)
+KIM-compliant simulators and %KIM Models.  It does this through the definition
+of various concepts and quantities, and by providing a set of subroutines that
+facilitate the necessary communication between simulators and models.  A
+simulator supporting the %KIM API can work with all %KIM Models (as long as
+they can agree on units and the necessary species are supported by the model)
 and vice versa.
 
-Of central importance to the information exchange process is the definition
-of an atomistic
-"Configuration", \f$\mathcal{C}\f$.  Abstractly, a configuration consists of a
-set of particles \f$C_p\f$ and their associated data.  For each particle \f$i
-\in C_p\f$, the following additional data must be defined.
+Of central importance to the information exchange process is the definition of
+an atomistic "Configuration", \f$\mathcal{C}\f$.  Abstractly, a configuration
+consists of a set of particles \f$C_p\f$ and their associated data.  For each
+particle \f$i \in C_p\f$, the following additional data must be defined.
 
   -# The particle's species (H, He, Li, etc.).
 

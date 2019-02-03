@@ -125,9 +125,9 @@ The current version of the %KIM API package supports the following features:
 
 - **Model Drivers**: The %KIM API package provides the ability to create model
   driver routines.  A model driver is an implementation of an interatomic
-  potential class. A model for a given material can be created which uses an
-  existing model driver by providing a file or files with the appropriate
-  parameter values for the material system of interest.
+  potential functional-form.  A model for a given material can be created which
+  uses an existing model driver by providing a file or files with the
+  appropriate parameter values for the material system of interest.
 
 - **Logging capabilities**: The %KIM API package provides a full-featured
   logging capability that facilitates the identification and debugging of
