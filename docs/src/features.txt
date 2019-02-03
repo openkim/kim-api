@@ -52,7 +52,7 @@ The current version of the %KIM API package supports the following features:
   practices* have been used.  These include: implementation hiding (pimpl
   idiom), loose coupling, minimal-completeness, ease of use (discoverable,
   difficult to misuse, consistent, orthogonal), static factory methods, use of
-  namespaces, const-correctness, avoiding the use of abbreviations, etc.
+  namespaces, const-correctness, and avoiding the use of abbreviations.
 
 - **Language Idiom Support**: Wherever it makes sense and is possible the %KIM
   API supports common idioms of the native language.  For example, all C API
@@ -75,13 +75,13 @@ The current version of the %KIM API package supports the following features:
   one-based numbering (Fortran-style numbering beginning with one).
 
 - **Data Communication**: Communication of an arbitrary number of *arguments*
-  and *callback* routines between a *Model* (interatomic potential) and
-  a *Simulator* (simulation code that uses a Model).
+  and *callback* routines between a *model* (interatomic potential) and
+  a *simulator* (simulation code that uses a model).
 
 - **Data types**: integer and double.
 
   Each of the data types can be used to create multi-dimensional array
-  arguments that are exchanged between Models and Simulators.  The %KIM API
+  arguments that are exchanged between models and simulators.  The %KIM API
   standard defines the dimension and extent of these arrays for each argument.
   However, this information is not discoverable at run-time.  Thus, it is left
   to the programmer to ensure that the correct values are used.
@@ -92,13 +92,13 @@ The current version of the %KIM API package supports the following features:
   structures may be introduced.
 
 - **Physical Units**: The %KIM API standard defines the physical units for each
-  argument exchanged between a Model and Simulator.  A simulator provides a set
+  argument exchanged between a model and simulator.  A simulator provides a set
   of *requested units* to define a unit system and a model either accepts this
   unit system (and performs appropriate unit conversions for its parameters),
   or it rejects the request and reports the unit system to be used.
 
 - **Neighbor lists**: Neighbor list routines are expected to be provided by the
-  calling Simulator.  All neighbor lists are full, unsorted lists that must
+  calling simulator.  All neighbor lists are full, unsorted lists that must
   contain all particles within the specified cutoff distance (but may contain
   additional particles).  A model must request one or more neighbor lists, each
   with an associated cutoff distance.  (Cutoff distances are typically
@@ -113,35 +113,36 @@ The current version of the %KIM API package supports the following features:
 - **Particle Species**: The %KIM API provides the ability to designate the
   physical species of each particle in a simulation.  Currently, only one
   identifier is provided for each element in the periodic table.  In the future
-  support for Models that require multiple types of each element may be added.
+  support for models that require multiple types of each element may be added.
 
-- **Model Parameters**: The %KIM philosophy views a *Model* as a well-defined
+- **Model Parameters**: The %KIM philosophy views a *model* as a well-defined
   computational code that includes specific values for all parameters needed to
   perform an actual computation.  However, it is often useful to explore how a
-  Model's predictions vary as the values of its parameters are varied.  For
-  this reason, the %KIM API allows a Model to (optionally) "publish" its
-  parameters so that a Simulator may modify them during the course of a
+  model's predictions vary as the values of its parameters are varied.  For
+  this reason, the %KIM API allows a model to (optionally) "publish" its
+  parameters so that a simulator may modify them during the course of a
   simulation.
 
-- **Model Drivers**: The %KIM API package provides the ability to create Model
-  Driver routines.  A Model for a given material can be created which uses an
-  existing Model Driver by providing a file or files with the appropriate
-  parameter values for the material of interest.
+- **Model Drivers**: The %KIM API package provides the ability to create model
+  driver routines.  A model driver is an implementation of an interatomic
+  potential class. A model for a given material can be created which uses an
+  existing model driver by providing a file or files with the appropriate
+  parameter values for the material system of interest.
 
 - **Logging capabilities**: The %KIM API package provides a full-featured
   logging capability that facilitates the identification and debugging of
-  errors.  In addition to built-in support for logging within Model codes, the
+  errors.  In addition to built-in support for logging within model codes, the
   %KIM API also provides access to logging capabilities for general use by
-  Simulator codes.
+  simulator codes.
 
 - **Caching capabilities**: \anchor cache_buffer_pointers The %KIM API package
   provides a mechanism to store a pointer to a memory (cache) buffer in the
   main API objects (KIM::Model and KIM::ComputeArguments).  In each case there
   is a "ModelBufferPointer" which is for use by the model's routines and a
-  "SimulatorBufferPointer" which is for use by the Simulator.  (These buffer
+  "SimulatorBufferPointer" which is for use by the simulator.  (These buffer
   pointers are not to be used for communication between the simulator and
   model, and therefore the ModelBufferPointer is not accessible to the
-  Simulator and vise-versa.)
+  simulator and vise-versa.)
 
 - **Semantic Versioning**: The %KIM API package conforms to the [Semantic
   Versioning 2.0.0](https://semver.org) standard.  This standard is useful

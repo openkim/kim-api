@@ -39,8 +39,8 @@
 
 Previous Section: \ref features.
 
-\anchor energy_per_particle At the highest level there are "Simulators" and
-"Models".  Conceptually, a %KIM Model is something that defines an
+\anchor energy_per_particle The KIM API is concerned with "simulators" and
+"models".  Conceptually, a %KIM Model is a subprogram that defines an
 energy-per-particle function, \f$E_i\f$, and an "influence distance",
 \f$r_{\text{infl}}\f$, that identifies the particle separation range over which
 \f$E_i\f$ depends on the position of its neighboring particles.  (Note, this is
@@ -52,10 +52,11 @@ of the supported species.  A %KIM Model will, typically, also have the ability
 to compute other quantities related to the energy-per-particle, such as the
 force on a particle or the particle's virial.
 
-Conceptually, a %KIM Simulator is something that performs a numerical
-simulation based on the energy, forces, etc. of a set of particles.  This could
-be a molecular dynamics simulation, a monte carlo simulation, or other similar
-simulation technique.  A %KIM Simulator treats a %KIM Model as a black box.  It
+Conceptually, a KIM-compliant simulator is a computer program that is
+compatible with the KIM API and performs a numerical simulation based on the
+energy, forces, etc. of a set of particles.  This could
+be a molecular dynamics simulation, a Monte Carlo simulation, or other similar
+simulation technique.  Such a simulator treats a %KIM Model as a black box.  It
 constructs an atomistic "Configuration" of interest and passes this
 configuration to a %KIM Model along with a list of quantities (energy, force,
 virial, etc.) to be computed.  The model then performs the requested
@@ -66,11 +67,15 @@ events is repeated in an iterative process until the simulator determines it
 has reached convergence or some other stopping condition is achieved.
 
 The purpose of the %KIM API is to coordinate the information exchange between
-%KIM Simulators and %KIM Models.  It does this through the definition of various
+KIM-compliant simulators and %KIM Models.  It does this through the definition of various
 concepts and quantities, and by providing a set of subroutines that facilitate
-the necessary communication between simulators and models.
+the necessary communication between simulators and models. A simulator
+supporting the %KIM API can work with all %KIM Models (as long as they
+can agree on units and the necessary species are supported by the model)
+and vice versa.
 
-Of central importance to this process is the definition of an atomistic
+Of central importance to the information exchange process is the definition
+of an atomistic
 "Configuration", \f$\mathcal{C}\f$.  Abstractly, a configuration consists of a
 set of particles \f$C_p\f$ and their associated data.  For each particle \f$i
 \in C_p\f$, the following additional data must be defined.
@@ -90,9 +95,9 @@ set of particles \f$C_p\f$ and their associated data.  For each particle \f$i
      "padding" particles) can be thought of as providing the appropriate
      boundary conditions for the configuration.
 
-Before proceeding further, introduce the notation \f$\mathbf{r}^{(i,j)} \equiv
-\mathbf{r}^{(j)} - \mathbf{r}^{(i)}\f$ for the relative position vector <b>from
-particle \f$i\f$ to particle \f$j\f$</b>, and the notation \f$r^{(i,j)}\f$ for
+Before proceeding further, we introduce the notation \f$\mathbf{r}^{(i,j)} \equiv
+\mathbf{r}^{(j)} - \mathbf{r}^{(i)}\f$ for the relative position vector from
+particle \f$i\f$ to particle \f$j\f$, and the notation \f$r^{(i,j)}\f$ for
 the magnitude of the vector \f$\mathbf{r}^{(i,j)}\f$.  Note that \f$r^{(j,i)} =
 r^{(i,j)}\f$ and these are simply two different notations for the same
 quantity.
@@ -195,8 +200,10 @@ non-contributing) has a partial force.
 \mathbf{f}^{\mathcal{C}(i)} \otimes \mathbf{r}^{(i)}
 =
 \sum_{i \in C_{p}} \frac{\partial E^{\mathcal{C}}}{\partial \mathbf{r}^{(i)}}
-\otimes \mathbf{r}^{(i)}.
+\otimes \mathbf{r}^{(i)},
 \f]
+
+where \f$\otimes\f$ is the tensor product operation.
 
 Although the partial virial tensor is given in terms of the absolute particle
 positions, \f$\mathbf{r}^{(i)}\f$, it can be shown to be independent of the
@@ -313,8 +320,8 @@ particle energy \f$E^{\mathcal{C}}_i\f$ of particle \f$i\f$ is used.  Further,
 it is obvious by inspection that with these definitions the sum of partial
 particle virial tensors equals the partial virial tensor.
 
-Thus, the %KIM API does not impose a specific definition for a Model's partial
-particle virial tensor.  It simply requires that the Model's definition
+Thus, the %KIM API does not impose a specific definition for a model's partial
+particle virial tensor.  It simply requires that the model's definition
 satisfies the summation formula \f$\mathbf{V}^{\mathcal{C}} = \sum_{i \in
 C_{p}} \mathbf{V}^{\mathcal{C}(i)}\f$.
 
@@ -343,7 +350,7 @@ particle energy is \f$E_i=E^{\mathcal{T}}_i\f$, the total force is
 \f$\mathbf{V}^{(i)} = \mathbf{V}^{\mathcal{T}(i)}\f$.  Next, it is shown how to
 compute \f$E\f$, \f$E_i\f$, \f$\mathbf{f}^{(i)}\f$, \f$\mathbf{V}\f$,
 and \f$\mathbf{V}^{(i)}\f$
-using a two-domain decomposition.
+using a decomposition into two domains.
 
 Partition \f$T_p\f$ into two disjoint subsets, \f$A_p\f$ and \f$B_p\f$. That
 is, \f$A_p \cap B_p = \emptyset\f$ and \f$A_p \cup B_p = T_p\f$.
@@ -371,7 +378,7 @@ E &= E^\mathcal{C} + E^\mathcal{D},\\
 \f}
 
 Here it becomes clear why the %KIM API prepends the term "Partial" to all of
-its standard quantity names.  In general, the quantities computed by a Model
+its standard quantity names.  In general, the quantities computed by a model
 are only one "partial" contribution to a total.  For example, here we can say
 that the force on particle \f$i\f$, \f$\mathbf{f}^{(i)}\f$, is the sum of
 \f$\mathcal{C}\f$'s partial force \f$\mathbf{f}^{\mathcal{C}(i)}\f$ and

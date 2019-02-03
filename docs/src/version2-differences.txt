@@ -40,12 +40,13 @@ Previous Section: \ref implementation.
 
 Experience with using and supporting the kim-api-v1 package has shown that the
 package's complexity (in terms of the number of different "modes of operation";
-e.g., neighbor lists: half, full, iterator, locator; NBCs: cluster, miopbc,
+e.g., neighbor lists: half, full, iterator, locator; Neighbor-list Boundary
+Counditions (NBCs): cluster, miopbc,
 neigh_pure, neigh_rvec; etc.) makes it difficult for new users to become
 competent kim-api-v1 code developers.  This also means that %KIM Models will
 only work with KIM-compliant codes that support the same modes of operation,
 thereby limiting the utility of the kim-api as a standard.  Further, the
-kim-api's complexity results in Model implementations that are convoluted due
+kim-api's complexity results in model implementations that are convoluted due
 to developers' desire to support *all* modes of operation.  This experience has
 led us to an approach that gives kim-api-v2 a dramatically simplified form,
 while still retaining a high degree of flexibility.  Thus, in regard to feature
@@ -84,11 +85,11 @@ a guiding principle.
     parameter set, which can be very wasteful since (in particular, for
     "machine learning" models) a model's parameter set can be very large.
 
-- **%KIM Descriptor Files Have Been Eliminated**: kim-api-v2 does not use *%KIM
+- **KIM Descriptor Files Have Been Eliminated**: kim-api-v2 does not use *%KIM
   descriptor files*.  Instead, kim-api-v2 models register their units,
   conventions, and parameters in their *ModelCreate* initialization routine,
   and they register their arguments and callbacks in their
-  * *ModelComputeArgumentsCreate* initialization routine.  Simulator--Model
+  * *ModelComputeArgumentsCreate* initialization routine.  Simulator--model
   matching is now the responsibility of the simulator.  This is facilitated by
   kim-api-v2 through the availability of routines for obtaining the model's
   registered values of all necessary quantities at run-time.
@@ -99,7 +100,7 @@ a guiding principle.
   determine if the desired computation can be successfully performed with the
   model, and third, if possible, perform the desired computation.
 
-  This scheme for Simulator--Model matching places a larger burden (as compared
+  This scheme for simulator--model matching places a larger burden (as compared
   to kim-api-v1) on the simulator.  However, it has been determined that a
   full-featured "KIM descriptor file"--based matching specification (covering
   all possibilities) is too complex.  Thus, it is best to perform this matching
@@ -141,7 +142,7 @@ a guiding principle.
 - **Explicit Definitions**: Clear definitions for all concepts used by the
   kim-api-v2 package are provided in Section \ref theory.
 
-  In many cases, these are the same concepts and definitions employed by
+  In most cases, these are the same concepts and definitions employed by
   kim-api-v1.  However, they were not explicitly stated in the kim-api-v1
   documentation.
 

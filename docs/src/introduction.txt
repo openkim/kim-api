@@ -37,20 +37,20 @@
 \mainpage Table of Contents
 
 The Knowledgebase of Interatomic Models (%KIM) Application Programming
-Interface (API) defines a standard for how molecular Simulators interface with
-interatomic Models (also called potentials or force-fields).  This allows a
-single computer implementation of a Model to be used (without modification)
-within multiple Simulator codes.  See [openkim.org](https://openkim.org) to
-find hundreds of Model implementations,
+Interface (API) defines a standard for how molecular simulators interface with
+interatomic models (also called potentials or force-fields).  This allows a
+single computer implementation of a model to be used (without modification)
+within multiple simulator codes.  See [openkim.org](https://openkim.org) to
+find hundreds of model implementations,
 [openkim.org/projects-using-kim](https://openkim.org/projects-using-kim) to
-learn which Simulators support the %KIM API, and
+learn which simulators support the %KIM API, and
 [openkim.org/kim-api](https://openkim.org/kim-api) to learn how to use %KIM
-Models with those Simulators.
+models with those simulators.
 
 This documentation describes the specifications and official implementation of
 the %KIM API as a system-level software library that gives computer programmers
-the ability to write Models and/or Simulators in the programming language (C,
-C++, FORTRAN 77, Fortran 90/95/2003, Python, etc.) of their choice.
+the ability to write models and/or simulators in supported programming language
+(C, C++, FORTRAN 77, Fortran 90/95/2003).
 
 Table of Contents:
 
