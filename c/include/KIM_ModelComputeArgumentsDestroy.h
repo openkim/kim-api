@@ -53,7 +53,9 @@ typedef struct KIM_LogVerbosity KIM_LogVerbosity;
 /**
  ** \brief \copybrief KIM::ModelComputeArgumentsDestroy
  **
- ** \sa KIM::ModelComputeArgumentsDestroy
+ ** \sa KIM::ModelComputeArgumentsDestroy,
+ ** kim_model_compute_arguments_destroy_module::<!--
+ ** -->kim_model_compute_arguments_destroy_handle_type
  **
  ** \since 2.0
  **/
@@ -64,7 +66,8 @@ typedef struct KIM_ModelComputeArgumentsDestroy
 /**
  ** \brief \copybrief KIM::ModelComputeArgumentsDestroy::GetModelBufferPointer
  **
- ** \sa KIM::ModelComputeArgumentsDestroy::GetModelBufferPointer
+ ** \sa KIM::ModelComputeArgumentsDestroy::GetModelBufferPointer,
+ ** kim_model_compute_arguments_destroy_module::kim_get_model_buffer_pointer
  **
  ** \since 2.0
  **/
@@ -75,7 +78,8 @@ void KIM_ModelComputeArgumentsDestroy_GetModelBufferPointer(
 /**
  ** \brief \copybrief KIM::ModelComputeArgumentsDestroy::LogEntry
  **
- ** \sa KIM::ModelComputeArgumentsDestroy::LogEntry
+ ** \sa KIM::ModelComputeArgumentsDestroy::LogEntry,
+ ** kim_model_compute_arguments_destroy_module::kim_log_entry
  **
  ** \since 2.0
  **/
@@ -89,7 +93,8 @@ void KIM_ModelComputeArgumentsDestroy_LogEntry(
 /**
  ** \brief \copybrief KIM::ModelComputeArgumentsDestroy::ToString
  **
- ** \sa KIM::ModelComputeArgumentsDestroy::ToString
+ ** \sa KIM::ModelComputeArgumentsDestroy::ToString,
+ ** kim_model_compute_arguments_destroy_module::kim_to_string
  **
  ** \since 2.0
  **/

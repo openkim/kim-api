@@ -83,7 +83,9 @@ typedef struct KIM_ComputeCallbackName KIM_ComputeCallbackName;
 /**
  ** \brief \copybrief KIM::ModelComputeArgumentsCreate
  **
- ** \sa KIM::ModelComputeArgumentsCreate
+ ** \sa KIM::ModelComputeArgumentsCreate,
+ ** kim_model_compute_arguments_create_module::<!--
+ ** -->kim_model_compute_arguments_create_handle_type
  **
  ** \since 2.0
  **/
@@ -94,7 +96,8 @@ typedef struct KIM_ModelComputeArgumentsCreate KIM_ModelComputeArgumentsCreate;
 /**
  ** \brief \copybrief KIM::ModelComputeArgumentsCreate::SetArgumentSupportStatus
  **
- ** \sa KIM::ModelComputeArgumentsCreate::SetArgumentSupportStatus
+ ** \sa KIM::ModelComputeArgumentsCreate::SetArgumentSupportStatus,
+ ** kim_model_compute_arguments_create_module::kim_set_argument_support_status
  **
  ** \since 2.0
  **/
@@ -106,7 +109,8 @@ int KIM_ModelComputeArgumentsCreate_SetArgumentSupportStatus(
 /**
  ** \brief \copybrief KIM::ModelComputeArgumentsCreate::SetCallbackSupportStatus
  **
- ** \sa KIM::ModelComputeArgumentsCreate::SetCallbackSupportStatus
+ ** \sa KIM::ModelComputeArgumentsCreate::SetCallbackSupportStatus,
+ ** kim_model_compute_arguments_create_module::kim_set_callback_support_status
  **
  ** \since 2.0
  **/
@@ -118,7 +122,8 @@ int KIM_ModelComputeArgumentsCreate_SetCallbackSupportStatus(
 /**
  ** \brief \copybrief KIM::ModelComputeArgumentsCreate::SetModelBufferPointer
  **
- ** \sa KIM::ModelComputeArgumentsCreate::SetModelBufferPointer
+ ** \sa KIM::ModelComputeArgumentsCreate::SetModelBufferPointer,
+ ** kim_model_compute_arguments_module::kim_set_model_buffer_pointer
  **
  ** \since 2.0
  **/
@@ -129,7 +134,8 @@ void KIM_ModelComputeArgumentsCreate_SetModelBufferPointer(
 /**
  ** \brief \copybrief KIM::ModelComputeArgumentsCreate::LogEntry
  **
- ** \sa KIM::ModelComputeArgumentsCreate::LogEntry
+ ** \sa KIM::ModelComputeArgumentsCreate::LogEntry,
+ ** kim_model_compute_arguments_module::kim_log_entry
  **
  ** \since 2.0
  **/
@@ -143,7 +149,8 @@ void KIM_ModelComputeArgumentsCreate_LogEntry(
 /**
  ** \brief \copybrief KIM::ModelComputeArgumentsCreate::ToString
  **
- ** \sa KIM::ModelComputeArgumentsCreate::ToString
+ ** \sa KIM::ModelComputeArgumentsCreate::ToString,
+ ** kim_model_compute_arguments_module::kim_to_string
  **
  ** \since 2.0
  **/

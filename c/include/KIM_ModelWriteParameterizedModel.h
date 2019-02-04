@@ -53,7 +53,9 @@ typedef struct KIM_LogVerbosity KIM_LogVerbosity;
 /**
  ** \brief \copybrief KIM::ModelWriteParameterizedModel
  **
- ** \sa KIM::ModelWriteParameterizedModel
+ ** \sa KIM::ModelWriteParameterizedModel,
+ ** kim_model_write_parameterized_model_module::<!--
+ ** -->kim_model_write_parameterized_model_handle_type
  **
  ** \since 2.0
  **/
@@ -64,7 +66,8 @@ typedef struct KIM_ModelWriteParameterizedModel
 /**
  ** \brief \copybrief KIM::ModelWriteParameterizedModel::GetPath
  **
- ** \sa KIM::ModelWriteParameterizedModel::GetPath
+ ** \sa KIM::ModelWriteParameterizedModel::GetPath,
+ ** kim_model_write_parameterized_model_module::kim_get_path
  **
  ** \since 2.0
  **/
@@ -75,7 +78,8 @@ void KIM_ModelWriteParameterizedModel_GetPath(
 /**
  ** \brief \copybrief KIM::ModelWriteParameterizedModel::GetModelName
  **
- ** \sa KIM::ModelWriteParameterizedModel::GetModelName
+ ** \sa KIM::ModelWriteParameterizedModel::GetModelName,
+ ** kim_model_write_parameterized_model_module::kim_get_model_name
  **
  ** \since 2.0
  **/
@@ -86,7 +90,8 @@ void KIM_ModelWriteParameterizedModel_GetModelName(
 /**
  ** \brief \copybrief KIM::ModelWriteParameterizedModel::SetParameterFileName
  **
- ** \sa KIM::ModelWriteParameterizedModel::SetParameterFileName
+ ** \sa KIM::ModelWriteParameterizedModel::SetParameterFileName,
+ ** kim_model_write_parameterized_model_module::kim_set_parameter_file_name
  **
  ** \since 2.0
  **/
@@ -97,7 +102,8 @@ void KIM_ModelWriteParameterizedModel_SetParameterFileName(
 /**
  ** \brief \copybrief KIM::ModelWriteParameterizedModel::GetModelBufferPointer
  **
- ** \sa KIM::ModelWriteParameterizedModel::GetModelBufferPointer
+ ** \sa KIM::ModelWriteParameterizedModel::GetModelBufferPointer,
+ ** kim_model_write_parameterized_model_module::kim_get_model_buffer_pointer
  **
  ** \since 2.0
  **/
@@ -108,7 +114,8 @@ void KIM_ModelWriteParameterizedModel_GetModelBufferPointer(
 /**
  ** \brief \copybrief KIM::ModelWriteParameterizedModel::LogEntry
  **
- ** \sa KIM::ModelWriteParameterizedModel::LogEntry
+ ** \sa KIM::ModelWriteParameterizedModel::LogEntry,
+ ** kim_model_write_parameterized_model_module::kim_log_entry
  **
  ** \since 2.0
  **/
@@ -122,7 +129,8 @@ void KIM_ModelWriteParameterizedModel_LogEntry(
 /**
  ** \brief \copybrief KIM::ModelWriteParameterizedModel::ToString
  **
- ** \sa KIM::ModelWriteParameterizedModel::ToString
+ ** \sa KIM::ModelWriteParameterizedModel::ToString,
+ ** kim_model_write_parameterized_model_module::kim_to_string
  **
  ** \since 2.0
  **/

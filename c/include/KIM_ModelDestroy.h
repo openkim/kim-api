@@ -53,7 +53,8 @@ typedef struct KIM_LogVerbosity KIM_LogVerbosity;
 /**
  ** \brief \copybrief KIM::ModelDestroy
  **
- ** \sa KIM::ModelDestroy
+ ** \sa KIM::ModelDestroy,
+ ** kim_model_destroy_module::kim_model_destroy_handle_type
  **
  ** \since 2.0
  **/
@@ -63,7 +64,8 @@ typedef struct KIM_ModelDestroy KIM_ModelDestroy;
 /**
  ** \brief \copybrief KIM::ModelDestroy::GetModelBufferPointer
  **
- ** \sa KIM::ModelDestroy::GetModelBufferPointer
+ ** \sa KIM::ModelDestroy::GetModelBufferPointer,
+ ** kim_model_destroy_module::kim_get_model_buffer_pointer
  **
  ** \since 2.0
  **/
@@ -73,7 +75,7 @@ void KIM_ModelDestroy_GetModelBufferPointer(
 /**
  ** \brief \copybrief KIM::ModelDestroy::LogEntry
  **
- ** \sa KIM::ModelDestroy::LogEntry
+ ** \sa KIM::ModelDestroy::LogEntry, kim_model_destroy_module::kim_log_entry
  **
  ** \since 2.0
  **/
@@ -86,7 +88,7 @@ void KIM_ModelDestroy_LogEntry(KIM_ModelDestroy const * const modelDestroy,
 /**
  ** \brief \copybrief KIM::ModelDestroy::ToString
  **
- ** \sa KIM::ModelDestroy::ToString
+ ** \sa KIM::ModelDestroy::ToString, kim_model_destroy_module::kim_to_string
  **
  ** \since 2.0
  **/

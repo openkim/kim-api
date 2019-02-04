@@ -97,7 +97,8 @@ typedef struct KIM_SupportStatus KIM_SupportStatus;
 /**
  ** \brief \copybrief KIM::ComputeArguments
  **
- ** \sa KIM::ComputeArguments
+ ** \sa KIM::ComputeArguments,
+ ** kim_compute_arguments_module::kim_compute_arguments_handle_type
  **
  ** \since 2.0
  **/
@@ -107,7 +108,8 @@ typedef struct KIM_ComputeArguments KIM_ComputeArguments;
 /**
  ** \brief \copybrief KIM::ComputeArguments::GetArgumentSupportStatus
  **
- ** \sa KIM::ComputeArguments::GetArgumentSupportStatus
+ ** \sa KIM::ComputeArguments::GetArgumentSupportStatus,
+ ** kim_compute_arguments_module::kim_get_argument_support_status
  **
  ** \since 2.0
  **/
@@ -119,7 +121,8 @@ int KIM_ComputeArguments_GetArgumentSupportStatus(
 /**
  ** \brief \copybrief KIM::ComputeArguments::GetCallbackSupportStatus
  **
- ** \sa KIM::ComputeArguments::GetCallbackSupportStatus
+ ** \sa KIM::ComputeArguments::GetCallbackSupportStatus,
+ ** kim_compute_arguments_module::kim_get_callback_support_status
  **
  ** \since 2.0
  **/
@@ -131,7 +134,8 @@ int KIM_ComputeArguments_GetCallbackSupportStatus(
 /**
  ** \brief \copybrief KIM::ComputeArguments::SetArgumentPointer
  **
- ** \sa KIM::ComputeArguments::SetArgumentPointer
+ ** \sa KIM::ComputeArguments::SetArgumentPointer,
+ ** kim_compute_arguments_module::kim_set_argument_pointer
  **
  ** \since 2.0
  **/
@@ -143,7 +147,8 @@ int KIM_ComputeArguments_SetArgumentPointerInteger(
 /**
  ** \brief \copybrief KIM::ComputeArguments::SetArgumentPointer
  **
- ** \sa KIM::ComputeArguments::SetArgumentPointer
+ ** \sa KIM::ComputeArguments::SetArgumentPointer,
+ ** kim_compute_arguments_module::kim_set_argument_pointer
  **
  ** \since 2.0
  **/
@@ -155,7 +160,8 @@ int KIM_ComputeArguments_SetArgumentPointerDouble(
 /**
  ** \brief \copybrief KIM::ComputeArguments::SetCallbackPointer
  **
- ** \sa KIM::ComputeArguments::SetCallbackPointer
+ ** \sa KIM::ComputeArguments::SetCallbackPointer,
+ ** kim_compute_arguments_module::kim_set_callback_pointer
  **
  ** \since 2.0
  **/
@@ -170,7 +176,8 @@ int KIM_ComputeArguments_SetCallbackPointer(
  ** \brief \copybrief <!--
  ** --> KIM::ComputeArguments::AreAllRequiredArgumentsAndCallbacksPresent
  **
- ** \sa KIM::ComputeArguments::AreAllRequiredArgumentsAndCallbacksPresent
+ ** \sa KIM::ComputeArguments::AreAllRequiredArgumentsAndCallbacksPresent,
+ ** kim_compute_arguments_module::kim_are_all_required_present
  **
  ** \since 2.0
  **/
@@ -180,7 +187,8 @@ void KIM_ComputeArguments_AreAllRequiredArgumentsAndCallbacksPresent(
 /**
  ** \brief \copybrief KIM::ComputeArguments::SetSimulatorBufferPointer
  **
- ** \sa KIM::ComputeArguments::SetSimulatorBufferPointer
+ ** \sa KIM::ComputeArguments::SetSimulatorBufferPointer,
+ ** kim_compute_arguments_module::kim_set_simulator_buffer_pointer
  **
  ** \since 2.0
  **/
@@ -190,7 +198,8 @@ void KIM_ComputeArguments_SetSimulatorBufferPointer(
 /**
  ** \brief \copybrief KIM::ComputeArguments::GetSimulatorBufferPointer
  **
- ** \sa KIM::ComputeArguments::GetSimulatorBufferPointer
+ ** \sa KIM::ComputeArguments::GetSimulatorBufferPointer,
+ ** kim_compute_arguments_module::kim_get_simulator_buffer_pointer
  **
  ** \since 2.0
  **/
@@ -200,7 +209,8 @@ void KIM_ComputeArguments_GetSimulatorBufferPointer(
 /**
  ** \brief \copybrief KIM::ComputeArguments::ToString
  **
- ** \sa KIM::ComputeArguments::ToString
+ ** \sa KIM::ComputeArguments::ToString,
+ ** kim_compute_arguments_module::kim_to_string
  **
  ** \since 2.0
  **/
@@ -210,7 +220,8 @@ char const * KIM_ComputeArguments_ToString(
 /**
  ** \brief \copybrief KIM::ComputeArguments::SetLogID
  **
- ** \sa KIM::ComputeArguments::SetLogID
+ ** \sa KIM::ComputeArguments::SetLogID,
+ ** kim_compute_arguments_module::kim_set_log_id
  **
  ** \since 2.0
  **/
@@ -220,7 +231,8 @@ void KIM_ComputeArguments_SetLogID(
 /**
  ** \brief \copybrief KIM::ComputeArguments::PushLogVerbosity
  **
- ** \sa KIM::ComputeArguments::PushLogVerbosity
+ ** \sa KIM::ComputeArguments::PushLogVerbosity,
+ ** kim_compute_arguments_module::kim_push_log_verbosity
  **
  ** \since 2.0
  **/
@@ -231,7 +243,8 @@ void KIM_ComputeArguments_PushLogVerbosity(
 /**
  ** \brief \copybrief KIM::ComputeArguments::PopLogVerbosity
  **
- ** \sa KIM::ComputeArguments::PopLogVerbosity
+ ** \sa KIM::ComputeArguments::PopLogVerbosity,
+ ** kim_compute_arguments_module::kim_pop_log_verbosity
  **
  ** \since 2.0
  **/

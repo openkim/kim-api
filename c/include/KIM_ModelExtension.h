@@ -165,7 +165,8 @@ typedef struct KIM_ModelComputeArgumentsDestroy
 /**
  ** \brief \copybrief KIM::ModelExtension
  **
- ** \sa KIM::ModelExtension
+ ** \sa KIM::ModelExtension,
+ ** kim_model_extension_module::kim_model_extension_handle_type
  **
  ** \since 2.0
  **/
@@ -175,7 +176,8 @@ typedef struct KIM_ModelExtension KIM_ModelExtension;
 /**
  ** \brief \copybrief KIM::ModelExtension::GetExtensionID
  **
- ** \sa KIM::ModelExtension::GetExtensionID
+ ** \sa KIM::ModelExtension::GetExtensionID,
+ ** kim_model_extension_module::kim_get_extension_id
  **
  ** \since 2.0
  **/
@@ -186,7 +188,7 @@ void KIM_ModelExtension_GetExtensionID(
 /**
  ** \brief \copybrief KIM::ModelExtension::Model
  **
- ** \sa KIM::ModelExtension::Model
+ ** \sa KIM::ModelExtension::Model, kim_model_extension_module::kim_to_model
  **
  ** \since 2.0
  **/
@@ -196,7 +198,8 @@ KIM_ModelExtension_ToModel(KIM_ModelExtension * const modelExtension);
 /**
  ** \brief \copybrief KIM::ModelExtension::ModelCompute
  **
- ** \sa KIM::ModelExtension::ModelCompute
+ ** \sa KIM::ModelExtension::ModelCompute,
+ ** kim_model_extension_module::kim_to_model_compute
  **
  ** \since 2.0
  **/
@@ -206,7 +209,8 @@ KIM_ModelExtension_ToModelCompute(KIM_ModelExtension * const modelExtension);
 /**
  ** \brief \copybrief KIM::ModelExtension::ModelCreate
  **
- ** \sa KIM::ModelExtension::ModelCreate
+ ** \sa KIM::ModelExtension::ModelCreate,
+ ** kim_model_extension_module::kim_to_model_create
  **
  ** \since 2.0
  **/
@@ -216,7 +220,8 @@ KIM_ModelExtension_ToModelCreate(KIM_ModelExtension * const modelExtension);
 /**
  ** \brief \copybrief KIM::ModelExtension::ModelDestroy
  **
- ** \sa KIM::ModelExtension::ModelDestroy
+ ** \sa KIM::ModelExtension::ModelDestroy,
+ ** kim_model_extension_module::kim_to_model_destroy
  **
  ** \since 2.0
  **/
@@ -226,7 +231,8 @@ KIM_ModelExtension_ToModelDestroy(KIM_ModelExtension * const modelExtension);
 /**
  ** \brief \copybrief KIM::ModelExtension::ModelDriverCreate
  **
- ** \sa KIM::ModelExtension::ModelDriverCreate
+ ** \sa KIM::ModelExtension::ModelDriverCreate,
+ ** kim_model_extension_module::kim_to_model_driver_create
  **
  ** \since 2.0
  **/
@@ -236,7 +242,8 @@ KIM_ModelDriverCreate * KIM_ModelExtension_ToModelDriverCreate(
 /**
  ** \brief \copybrief KIM::ModelExtension::ModelRefresh
  **
- ** \sa KIM::ModelExtension::ModelRefresh
+ ** \sa KIM::ModelExtension::ModelRefresh,
+ ** kim_model_extension_module::kim_to_model_refresh
  **
  ** \since 2.0
  **/
@@ -246,7 +253,8 @@ KIM_ModelExtension_ToModelRefresh(KIM_ModelExtension * const modelExtension);
 /**
  ** \brief \copybrief KIM::ModelExtension::ModelWriteParameterizedModel
  **
- ** \sa KIM::ModelExtension::ModelWriteParameterizedModel
+ ** \sa KIM::ModelExtension::ModelWriteParameterizedModel,
+ ** kim_model_extension_module::kim_to_model_write_parameterized_model
  **
  ** \since 2.0
  **/
@@ -257,7 +265,8 @@ KIM_ModelExtension_ToModelWriteParameterizedModel(
 /**
  ** \brief \copybrief KIM::ModelExtension::ModelComputeArguments
  **
- ** \sa KIM::ModelExtension::ModelComputeArguments
+ ** \sa KIM::ModelExtension::ModelComputeArguments,
+ ** kim_model_extension_module::kim_to_model_compute_arguments
  **
  ** \since 2.0
  **/
@@ -269,7 +278,8 @@ KIM_ModelComputeArgumentsCreate *
 /**
  ** \brief \copybrief KIM::ModelExtension::ModelComputeArgumentsCreate
  **
- ** \sa KIM::ModelExtension::ModelComputeArgumentsCreate
+ ** \sa KIM::ModelExtension::ModelComputeArgumentsCreate,
+ ** kim_model_extension_module::kim_to_model_compute_arguments_create
  **
  ** \since 2.0
  **/
@@ -280,7 +290,8 @@ KIM_ModelExtension_ToModelComputeArgumentsCreate(
 /**
  ** \brief \copybrief KIM::ModelExtension::ModelComputeArgumentsDestroy
  **
- ** \sa KIM::ModelExtension::ModelComputeArgumentsDestroy
+ ** \sa KIM::ModelExtension::ModelComputeArgumentsDestroy,
+ ** kim_model_extension_module::kim_to_model_compute_arguments_destroy
  **
  ** \since 2.0
  **/
@@ -292,7 +303,8 @@ KIM_ModelExtension_ToModelComputeArgumentsDestroy(
 /**
  ** \brief \copybrief KIM::ModelExtension::GetModelBufferPointer
  **
- ** \sa KIM::ModelExtension::GetModelBufferPointer
+ ** \sa KIM::ModelExtension::GetModelBufferPointer,
+ ** kim_model_extension_module::kim_get_model_buffer_pointer
  **
  ** \since 2.0
  **/
@@ -302,7 +314,8 @@ void KIM_ModelExtension_GetModelBufferPointer(
 /**
  ** \brief \copybrief KIM::ModelExtension::LogEntry
  **
- ** \sa KIM::ModelExtension::LogEntry
+ ** \sa KIM::ModelExtension::LogEntry,
+ ** kim_model_extension_module::kim_log_entry
  **
  ** \since 2.0
  **/
@@ -315,7 +328,8 @@ void KIM_ModelExtension_LogEntry(KIM_ModelExtension const * const modelCompute,
 /**
  ** \brief \copybrief KIM::ModelExtension::ToString
  **
- ** \sa KIM::ModelExtension::ToString
+ ** \sa KIM::ModelExtension::ToString,
+ ** kim_model_extension_module::kim_to_string
  **
  ** \since 2.0
  **/

@@ -73,7 +73,8 @@ typedef struct KIM_ComputeCallbackName KIM_ComputeCallbackName;
 /**
  ** \brief \copybrief KIM::ModelComputeArguments
  **
- ** \sa KIM::ModelComputeArguments
+ ** \sa KIM::ModelComputeArguments,
+ ** kim_model_compute_arguments_module::kim_model_compute_arguments_handle_type
  **
  ** \since 2.0
  **/
@@ -83,7 +84,8 @@ typedef struct KIM_ModelComputeArguments KIM_ModelComputeArguments;
 /**
  ** \brief \copybrief KIM::ModelComputeArguments::GetNeighborList
  **
- ** \sa KIM::ModelComputeArguments::GetNeighborList
+ ** \sa KIM::ModelComputeArguments::GetNeighborList,
+ ** kim_model_compute_arguments_module::kim_get_neighbor_list
  **
  ** \since 2.0
  **/
@@ -97,7 +99,8 @@ int KIM_ModelComputeArguments_GetNeighborList(
 /**
  ** \brief \copybrief KIM::ModelComputeArguments::ProcessDEDrTerm
  **
- ** \sa KIM::ModelComputeArguments::ProcessDEDrTerm
+ ** \sa KIM::ModelComputeArguments::ProcessDEDrTerm,
+ ** kim_model_compute_arguments_module::kim_process_dedr_term
  **
  ** \since 2.0
  **/
@@ -112,7 +115,8 @@ int KIM_ModelComputeArguments_ProcessDEDrTerm(
 /**
  ** \brief \copybrief KIM::ModelComputeArguments::ProcessD2EDr2Term
  **
- ** \sa KIM::ModelComputeArguments::ProcessD2EDr2Term
+ ** \sa KIM::ModelComputeArguments::ProcessD2EDr2Term,
+ ** kim_model_compute_arguments_module::kim_process_d2edr2_term
  **
  ** \since 2.0
  **/
@@ -127,7 +131,8 @@ int KIM_ModelComputeArguments_ProcessD2EDr2Term(
 /**
  ** \brief \copybrief KIM::ModelComputeArguments::GetArgumentPointer
  **
- ** \sa KIM::ModelComputeArguments::GetArgumentPointer
+ ** \sa KIM::ModelComputeArguments::GetArgumentPointer,
+ ** kim_model_compute_arguments_module::kim_get_argument_pointer
  **
  ** \since 2.0
  **/
@@ -139,7 +144,8 @@ int KIM_ModelComputeArguments_GetArgumentPointerInteger(
 /**
  ** \brief \copybrief KIM::ModelComputeArguments::GetArgumentPointer
  **
- ** \sa KIM::ModelComputeArguments::GetArgumentPointer
+ ** \sa KIM::ModelComputeArguments::GetArgumentPointer,
+ ** kim_model_compute_arguments_module::kim_get_argument_pointer
  **
  ** \since 2.0
  **/
@@ -151,7 +157,8 @@ int KIM_ModelComputeArguments_GetArgumentPointerDouble(
 /**
  ** \brief \copybrief KIM::ModelComputeArguments::IsCallbackPresent
  **
- ** \sa KIM::ModelComputeArguments::IsCallbackPresent
+ ** \sa KIM::ModelComputeArguments::IsCallbackPresent,
+ ** kim_model_compute_arguments_module::kim_is_callback_present
  **
  ** \since 2.0
  **/
@@ -163,7 +170,8 @@ int KIM_ModelComputeArguments_IsCallbackPresent(
 /**
  ** \brief \copybrief KIM::ModelComputeArguments::SetModelBufferPointer
  **
- ** \sa KIM::ModelComputeArguments::SetModelBufferPointer
+ ** \sa KIM::ModelComputeArguments::SetModelBufferPointer,
+ ** kim_model_compute_arguments_module::kim_set_model_buffer_pointer
  **
  ** \since 2.0
  **/
@@ -173,7 +181,8 @@ void KIM_ModelComputeArguments_SetModelBufferPointer(
 /**
  ** \brief \copybrief KIM::ModelComputeArguments::GetModelBufferPointer
  **
- ** \sa KIM::ModelComputeArguments::GetModelBufferPointer
+ ** \sa KIM::ModelComputeArguments::GetModelBufferPointer,
+ ** kim_model_compute_arguments_module::kim_get_model_buffer_pointer
  **
  ** \since 2.0
  **/
@@ -184,7 +193,8 @@ void KIM_ModelComputeArguments_GetModelBufferPointer(
 /**
  ** \brief \copybrief KIM::ModelComputeArguments::LogEntry
  **
- ** \sa KIM::ModelComputeArguments::LogEntry
+ ** \sa KIM::ModelComputeArguments::LogEntry,
+ ** kim_model_compute_arguments_module::kim_log_entry
  **
  ** \since 2.0
  **/
@@ -198,7 +208,8 @@ void KIM_ModelComputeArguments_LogEntry(
 /**
  ** \brief \copybrief KIM::ModelComputeArguments::ToString
  **
- ** \sa KIM::ModelComputeArguments::ToString
+ ** \sa KIM::ModelComputeArguments::ToString,
+ ** kim_model_compute_arguments_module::kim_to_string
  **
  ** \since 2.0
  **/

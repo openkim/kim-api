@@ -147,7 +147,7 @@ typedef struct KIM_TimeUnit KIM_TimeUnit;
 /**
  ** \brief \copybrief KIM::ModelCreate
  **
- ** \sa KIM::ModelCreate
+ ** \sa KIM::ModelCreate, kim_model_create_module::kim_model_create_handle_type
  **
  ** \since 2.0
  **/
@@ -158,7 +158,8 @@ typedef struct KIM_ModelCreate KIM_ModelCreate;
 /**
  ** \brief \copybrief KIM::ModelCreate::SetModelNumbering
  **
- ** \sa KIM::ModelCreate::SetModelNumbering
+ ** \sa KIM::ModelCreate::SetModelNumbering,
+ ** kim_model_create_module::kim_set_model_numbering
  **
  ** \since 2.0
  **/
@@ -168,7 +169,8 @@ int KIM_ModelCreate_SetModelNumbering(KIM_ModelCreate * const modelCreate,
 /**
  ** \brief \copybrief KIM::ModelCreate::SetInfluenceDistancePointer
  **
- ** \sa KIM::ModelCreate::SetInfluenceDistancePointer
+ ** \sa KIM::ModelCreate::SetInfluenceDistancePointer,
+ ** kim_model_create_module::kim_set_influence_distance_pointer
  **
  ** \since 2.0
  **/
@@ -179,7 +181,8 @@ void KIM_ModelCreate_SetInfluenceDistancePointer(
 /**
  ** \brief \copybrief KIM::ModelCreate::SetNeighborListPointers
  **
- ** \sa KIM::ModelCreate::SetNeighborListPointers
+ ** \sa KIM::ModelCreate::SetNeighborListPointers,
+ ** kim_model_create_module::kim_set_neighbor_list_pointers
  **
  ** \since 2.0
  **/
@@ -192,7 +195,8 @@ void KIM_ModelCreate_SetNeighborListPointers(
 /**
  ** \brief \copybrief KIM::ModelCreate::SetRoutinePointer
  **
- ** \sa KIM::ModelCreate::SetRoutinePointer
+ ** \sa KIM::ModelCreate::SetRoutinePointer,
+ ** kim_model_create_module::kim_set_routine_pointer
  **
  ** \since 2.0
  **/
@@ -206,7 +210,8 @@ int KIM_ModelCreate_SetRoutinePointer(
 /**
  ** \brief \copybrief KIM::ModelCreate::SetSpeciesCode
  **
- ** \sa KIM::ModelCreate::SetSpeciesCode
+ ** \sa KIM::ModelCreate::SetSpeciesCode,
+ ** kim_model_create_module::kim_set_species_code
  **
  ** \since 2.0
  **/
@@ -217,7 +222,8 @@ int KIM_ModelCreate_SetSpeciesCode(KIM_ModelCreate * const modelCreate,
 /**
  ** \brief \copybrief KIM::ModelCreate::SetParameterPointer
  **
- ** \sa KIM::ModelCreate::SetParameterPointer
+ ** \sa KIM::ModelCreate::SetParameterPointer,
+ ** kim_model_create_module::kim_set_parameter_pointer
  **
  ** \since 2.0
  **/
@@ -231,7 +237,8 @@ int KIM_ModelCreate_SetParameterPointerInteger(
 /**
  ** \brief \copybrief KIM::ModelCreate::SetParameterPointer
  **
- ** \sa KIM::ModelCreate::SetParameterPointer
+ ** \sa KIM::ModelCreate::SetParameterPointer,
+ ** kim_model_create_module::kim_set_parameter_pointer
  **
  ** \since 2.0
  **/
@@ -245,7 +252,8 @@ int KIM_ModelCreate_SetParameterPointerDouble(
 /**
  ** \brief \copybrief KIM::ModelCreate::SetModelBufferPointer
  **
- ** \sa KIM::ModelCreate::SetModelBufferPointer
+ ** \sa KIM::ModelCreate::SetModelBufferPointer,
+ ** kim_model_create_module::kim_set_model_buffer_pointer
  **
  ** \since 2.0
  **/
@@ -255,7 +263,7 @@ void KIM_ModelCreate_SetModelBufferPointer(KIM_ModelCreate * const modelCreate,
 /**
  ** \brief \copybrief KIM::ModelCreate::SetUnits
  **
- ** \sa KIM::ModelCreate::SetUnits
+ ** \sa KIM::ModelCreate::SetUnits, kim_model_create_module::kim_set_units
  **
  ** \since 2.0
  **/
@@ -269,7 +277,8 @@ int KIM_ModelCreate_SetUnits(KIM_ModelCreate * const modelCreate,
 /**
  ** \brief \copybrief KIM::ModelCreate::ConvertUnit
  **
- ** \sa KIM::ModelCreate::ConvertUnit
+ ** \sa KIM::ModelCreate::ConvertUnit,
+ ** kim_model_create_module::kim_convert_unit
  **
  ** \since 2.0
  **/
@@ -293,7 +302,7 @@ int KIM_ModelCreate_ConvertUnit(KIM_LengthUnit const fromLengthUnit,
 /**
  ** \brief \copybrief KIM::ModelCreate::LogEntry
  **
- ** \sa KIM::ModelCreate::LogEntry
+ ** \sa KIM::ModelCreate::LogEntry, kim_model_create_module::kim_log_entry
  **
  ** \since 2.0
  **/
@@ -306,7 +315,7 @@ void KIM_ModelCreate_LogEntry(KIM_ModelCreate const * const modelCreate,
 /**
  ** \brief \copybrief KIM::ModelCreate::ToString
  **
- ** \sa KIM::ModelCreate::ToString
+ ** \sa KIM::ModelCreate::ToString, kim_model_create_module::kim_to_string
  **
  ** \since 2.0
  **/

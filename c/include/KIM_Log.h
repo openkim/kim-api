@@ -53,7 +53,7 @@ typedef struct KIM_LogVerbosity KIM_LogVerbosity;
 /**
  ** \brief \copybrief KIM::Log
  **
- ** \sa KIM::Log
+ ** \sa KIM::Log, kim_log_module::kim_log_handle_type
  **
  ** \since 2.0
  **/
@@ -63,7 +63,7 @@ typedef struct KIM_Log KIM_Log;
 /**
  ** \brief \copybrief KIM::Log::Create
  **
- ** \sa KIM::Log::Create
+ ** \sa KIM::Log::Create, kim_log_module::kim_log_create
  **
  ** \since 2.0
  **/
@@ -72,7 +72,7 @@ int KIM_Log_Create(KIM_Log ** const log);
 /**
  ** \brief \copybrief KIM::Log::Destroy
  **
- ** \sa KIM::Log::Destroy
+ ** \sa KIM::Log::Destroy, kim_log_module::kim_log_destroy
  **
  ** \since 2.0
  **/
@@ -81,7 +81,8 @@ void KIM_Log_Destroy(KIM_Log ** const log);
 /**
  ** \brief \copybrief KIM::Log::PushDefaultVerbosity
  **
- ** \sa KIM::Log::PushDefaultVerbosity
+ ** \sa KIM::Log::PushDefaultVerbosity,
+ ** kim_log_module::kim_push_default_verbosity
  **
  ** \since 2.0
  **/
@@ -90,7 +91,8 @@ void KIM_Log_PushDefaultVerbosity(KIM_LogVerbosity const logVerbosity);
 /**
  ** \brief \copybrief KIM::Log::PopDefaultVerbosity
  **
- ** \sa KIM::Log::PopDefaultVerbosity
+ ** \sa KIM::Log::PopDefaultVerbosity,
+ ** kim_log_module::kim_pop_default_verbosity
  **
  ** \since 2.0
  **/
@@ -99,7 +101,7 @@ void KIM_Log_PopDefaultVerbosity();
 /**
  ** \brief \copybrief KIM::Log::GetID
  **
- ** \sa KIM::Log::GetID
+ ** \sa KIM::Log::GetID, kim_log_module::kim_get_id
  **
  ** \since 2.0
  **/
@@ -108,7 +110,7 @@ char const * KIM_Log_GetID(KIM_Log const * const log);
 /**
  ** \brief \copybrief KIM::Log::SetID
  **
- ** \sa KIM::Log::SetID
+ ** \sa KIM::Log::SetID, kim_log_module::kim_set_id
  **
  ** \since 2.0
  **/
@@ -117,7 +119,7 @@ void KIM_Log_SetID(KIM_Log * const log, char const * const id);
 /**
  ** \brief \copybrief KIM::Log::PushVerbosity
  **
- ** \sa KIM::Log::PushVerbosity
+ ** \sa KIM::Log::PushVerbosity, kim_log_module::kim_push_verbosity
  **
  ** \since 2.0
  **/
@@ -127,7 +129,7 @@ void KIM_Log_PushVerbosity(KIM_Log * const log,
 /**
  ** \brief \copybrief KIM::Log::PopVerbosity
  **
- ** \sa KIM::Log::PopVerbosity
+ ** \sa KIM::Log::PopVerbosity, kim_log_module::kim_pop_verbosity
  **
  ** \since 2.0
  **/
@@ -136,7 +138,7 @@ void KIM_Log_PopVerbosity(KIM_Log * const log);
 /**
  ** \brief \copybrief KIM::Log::LogEntry
  **
- ** \sa KIM::Log::LogEntry
+ ** \sa KIM::Log::LogEntry, kim_log_module::kim_log_entry
  **
  ** \since 2.0
  **/

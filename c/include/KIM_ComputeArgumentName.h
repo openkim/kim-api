@@ -51,7 +51,8 @@ typedef struct KIM_DataType KIM_DataType;
 /**
  ** \brief \copybrief KIM::ComputeArgumentName
  **
- ** \sa KIM::ComputeArgumentName
+ ** \sa KIM::ComputeArgumentName,
+ ** kim_compute_argument_name_module::kim_compute_argument_name_type
  **
  ** \since 2.0
  **/
@@ -60,7 +61,9 @@ struct KIM_ComputeArgumentName
   /**
    ** \brief \copybrief KIM::ComputeArgumentName::computeArgumentNameID
    **
-   ** \sa KIM::ComputeArgumentName::computeArgumentNameID
+   ** \sa KIM::ComputeArgumentName::computeArgumentNameID,
+   ** kim_compute_argument_name_module::kim_compute_argument_name_type::<!--
+   ** -->compute_argument_name_id
    **
    ** \since 2.0
    **/
@@ -80,7 +83,8 @@ typedef struct KIM_ComputeArgumentName KIM_ComputeArgumentName;
  ** \brief \copybrief <!--
  ** --> KIM::ComputeArgumentName::ComputeArgumentName(std::string const &)
  **
- ** \sa KIM::ComputeArgumentName::ComputeArgumentName(std::string const &)
+ ** \sa KIM::ComputeArgumentName::ComputeArgumentName(std::string const &),
+ ** kim_compute_argument_name_module::kim_from_string
  **
  ** \since 2.0
  **/
@@ -90,7 +94,8 @@ KIM_ComputeArgumentName_FromString(char const * const str);
 /**
  ** \brief \copybrief KIM::ComputeArgumentName::Known
  **
- ** \sa KIM::ComputeArgumentName::Known
+ ** \sa KIM::ComputeArgumentName::Known,
+ ** kim_compute_argument_name_module::kim_known
  **
  ** \since 2.0
  **/
@@ -100,7 +105,8 @@ int KIM_ComputeArgumentName_Known(
 /**
  ** \brief \copybrief KIM::ComputeArgumentName::operator==()
  **
- ** \sa KIM::ComputeArgumentName::operator==()
+ ** \sa KIM::ComputeArgumentName::operator==(),
+ ** kim_compute_argument_name_module::operator(.eq.)
  **
  ** \since 2.0
  **/
@@ -110,7 +116,8 @@ int KIM_ComputeArgumentName_Equal(KIM_ComputeArgumentName const lhs,
 /**
  ** \brief \copybrief KIM::ComputeArgumentName::operator!=()
  **
- ** \sa KIM::ComputeArgumentName::operator!=()
+ ** \sa KIM::ComputeArgumentName::operator!=(),
+ ** kim_compute_argument_name_module::operator(.ne.)
  **
  ** \since 2.0
  **/
@@ -120,7 +127,8 @@ int KIM_ComputeArgumentName_NotEqual(KIM_ComputeArgumentName const lhs,
 /**
  ** \brief \copybrief KIM::ComputeArgumentName::ToString
  **
- ** \sa KIM::ComputeArgumentName::ToString
+ ** \sa KIM::ComputeArgumentName::ToString,
+ ** kim_compute_argument_name_module::kim_to_string
  **
  ** \since 2.0
  **/
@@ -130,7 +138,9 @@ char const * KIM_ComputeArgumentName_ToString(
 /**
  ** \brief \copybrief KIM::COMPUTE_ARGUMENT_NAME::numberOfParticles
  **
- ** \sa KIM::COMPUTE_ARGUMENT_NAME::numberOfParticles
+ ** \sa KIM::COMPUTE_ARGUMENT_NAME::numberOfParticles,
+ ** kim_compute_argument_name_module::<!--
+ ** -->kim_compute_argument_name_number_of_particles
  **
  ** \since 2.0
  **/
@@ -140,7 +150,9 @@ extern KIM_ComputeArgumentName const
 /**
  ** \brief \copybrief KIM::COMPUTE_ARGUMENT_NAME::particleSpeciesCodes
  **
- ** \sa KIM::COMPUTE_ARGUMENT_NAME::particleSpeciesCodes
+ ** \sa KIM::COMPUTE_ARGUMENT_NAME::particleSpeciesCodes,
+ ** kim_compute_argument_name_module::<!--
+ ** -->kim_compute_argument_name_particle_species_codes
  **
  ** \since 2.0
  **/
@@ -150,7 +162,9 @@ extern KIM_ComputeArgumentName const
 /**
  ** \brief \copybrief KIM::COMPUTE_ARGUMENT_NAME::particleContributing
  **
- ** \sa KIM::COMPUTE_ARGUMENT_NAME::particleContributing
+ ** \sa KIM::COMPUTE_ARGUMENT_NAME::particleContributing,
+ ** kim_compute_argument_name_module::<!--
+ ** -->kim_compute_argument_name_particle_contributing
  **
  ** \since 2.0
  **/
@@ -160,7 +174,8 @@ extern KIM_ComputeArgumentName const
 /**
  ** \brief \copybrief KIM::COMPUTE_ARGUMENT_NAME::coordinates
  **
- ** \sa KIM::COMPUTE_ARGUMENT_NAME::coordinates
+ ** \sa KIM::COMPUTE_ARGUMENT_NAME::coordinates,
+ ** kim_compute_argument_name_module::kim_compute_argument_name_coordinates
  **
  ** \since 2.0
  **/
@@ -169,7 +184,8 @@ extern KIM_ComputeArgumentName const KIM_COMPUTE_ARGUMENT_NAME_coordinates;
 /**
  ** \brief \copybrief KIM::COMPUTE_ARGUMENT_NAME::partialEnergy
  **
- ** \sa KIM::COMPUTE_ARGUMENT_NAME::partialEnergy
+ ** \sa KIM::COMPUTE_ARGUMENT_NAME::partialEnergy,
+ ** kim_compute_argument_name_module::kim_compute_argument_name_partial_energy
  **
  ** \since 2.0
  **/
@@ -178,7 +194,8 @@ extern KIM_ComputeArgumentName const KIM_COMPUTE_ARGUMENT_NAME_partialEnergy;
 /**
  ** \brief \copybrief KIM::COMPUTE_ARGUMENT_NAME::partialForces
  **
- ** \sa KIM::COMPUTE_ARGUMENT_NAME::partialForces
+ ** \sa KIM::COMPUTE_ARGUMENT_NAME::partialForces,
+ ** kim_compute_argument_name_module::kim_compute_argument_name_partial_forces
  **
  ** \since 2.0
  **/
@@ -187,7 +204,9 @@ extern KIM_ComputeArgumentName const KIM_COMPUTE_ARGUMENT_NAME_partialForces;
 /**
  ** \brief \copybrief KIM::COMPUTE_ARGUMENT_NAME::partialParticleEnergy
  **
- ** \sa KIM::COMPUTE_ARGUMENT_NAME::partialParticleEnergy
+ ** \sa KIM::COMPUTE_ARGUMENT_NAME::partialParticleEnergy,
+ ** kim_compute_argument_name_module::<!--
+ ** -->kim_compute_argument_name_partial_particle_energy
  **
  ** \since 2.0
  **/
@@ -197,7 +216,8 @@ extern KIM_ComputeArgumentName const
 /**
  ** \brief \copybrief KIM::COMPUTE_ARGUMENT_NAME::partialVirial
  **
- ** \sa KIM::COMPUTE_ARGUMENT_NAME::partialVirial
+ ** \sa KIM::COMPUTE_ARGUMENT_NAME::partialVirial,
+ ** kim_compute_argument_name_module::kim_compute_argument_name_partial_virial
  **
  ** \since 2.0
  **/
@@ -206,7 +226,9 @@ extern KIM_ComputeArgumentName const KIM_COMPUTE_ARGUMENT_NAME_partialVirial;
 /**
  ** \brief \copybrief KIM::COMPUTE_ARGUMENT_NAME::partialParticleVirial
  **
- ** \sa KIM::COMPUTE_ARGUMENT_NAME::partialParticleVirial
+ ** \sa KIM::COMPUTE_ARGUMENT_NAME::partialParticleVirial,
+ ** kim_compute_argument_name_module::<!--
+ ** -->kim_compute_argument_name_partial_particle_virial
  **
  ** \since 2.0
  **/
@@ -217,7 +239,8 @@ extern KIM_ComputeArgumentName const
  ** \brief \copybrief <!--
  ** --> KIM::COMPUTE_ARGUMENT_NAME::GetNumberOfComputeArgumentNames
  **
- ** \sa KIM::COMPUTE_ARGUMENT_NAME::GetNumberOfComputeArgumentNames
+ ** \sa KIM::COMPUTE_ARGUMENT_NAME::GetNumberOfComputeArgumentNames,
+ ** kim_compute_argument_name_module::kim_get_number_of_compute_argument_names
  **
  ** \since 2.0
  **/
@@ -227,7 +250,8 @@ void KIM_COMPUTE_ARGUMENT_NAME_GetNumberOfComputeArgumentNames(
 /**
  ** \brief \copybrief KIM::COMPUTE_ARGUMENT_NAME::GetComputeArgumentName
  **
- ** \sa KIM::COMPUTE_ARGUMENT_NAME::GetComputeArgumentName
+ ** \sa KIM::COMPUTE_ARGUMENT_NAME::GetComputeArgumentName,
+ ** kim_compute_argument_name_module::kim_get_compute_argument_name
  **
  ** \since 2.0
  **/
@@ -237,7 +261,8 @@ int KIM_COMPUTE_ARGUMENT_NAME_GetComputeArgumentName(
 /**
  ** \brief \copybrief KIM::COMPUTE_ARGUMENT_NAME::GetComputeArgumentDataType
  **
- ** \sa KIM::COMPUTE_ARGUMENT_NAME::GetComputeArgumentDataType
+ ** \sa KIM::COMPUTE_ARGUMENT_NAME::GetComputeArgumentDataType,
+ ** kim_compute_argument_name_module::kim_get_compute_argument_data_type
  **
  ** \since 2.0
  **/

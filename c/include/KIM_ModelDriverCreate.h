@@ -147,7 +147,8 @@ typedef struct KIM_TimeUnit KIM_TimeUnit;
 /**
  ** \brief \copybrief KIM::ModelDriverCreate
  **
- ** \sa KIM::ModelDriverCreate
+ ** \sa KIM::ModelDriverCreate,
+ ** kim_model_driver_create_module::kim_model_driver_create_handle_type
  **
  ** \since 2.0
  **/
@@ -158,7 +159,8 @@ typedef struct KIM_ModelDriverCreate KIM_ModelDriverCreate;
 /**
  ** \brief \copybrief KIM::ModelDriverCreate::GetNumberOfParameterFiles
  **
- ** \sa KIM::ModelDriverCreate::GetNumberOfParameterFiles
+ ** \sa KIM::ModelDriverCreate::GetNumberOfParameterFiles,
+ ** kim_model_driver_create_module::kim_get_number_of_parameter_files
  **
  ** \since 2.0
  **/
@@ -169,7 +171,8 @@ void KIM_ModelDriverCreate_GetNumberOfParameterFiles(
 /**
  ** \brief \copybrief KIM::ModelDriverCreate::GetParameterFileName
  **
- ** \sa KIM::ModelDriverCreate::GetParameterFileName
+ ** \sa KIM::ModelDriverCreate::GetParameterFileName,
+ ** kim_model_driver_create_module::kim_get_parameter_file_name
  **
  ** \since 2.0
  **/
@@ -181,7 +184,8 @@ int KIM_ModelDriverCreate_GetParameterFileName(
 /**
  ** \brief \copybrief KIM::ModelDriverCreate::SetModelNumbering
  **
- ** \sa KIM::ModelDriverCreate::SetModelNumbering
+ ** \sa KIM::ModelDriverCreate::SetModelNumbering,
+ ** kim_model_driver_create_module::kim_set_model_numbering
  **
  ** \since 2.0
  **/
@@ -192,7 +196,8 @@ int KIM_ModelDriverCreate_SetModelNumbering(
 /**
  ** \brief \copybrief KIM::ModelDriverCreate::SetInfluenceDistancePointer
  **
- ** \sa KIM::ModelDriverCreate::SetInfluenceDistancePointer
+ ** \sa KIM::ModelDriverCreate::SetInfluenceDistancePointer,
+ ** kim_model_driver_create_module::kim_set_influence_distance_pointer
  **
  ** \since 2.0
  **/
@@ -203,7 +208,8 @@ void KIM_ModelDriverCreate_SetInfluenceDistancePointer(
 /**
  ** \brief \copybrief KIM::ModelDriverCreate::SetNeighborListPointers
  **
- ** \sa KIM::ModelDriverCreate::SetNeighborListPointers
+ ** \sa KIM::ModelDriverCreate::SetNeighborListPointers,
+ ** kim_model_driver_create_module::kim_set_neighbor_list_pointers
  **
  ** \since 2.0
  **/
@@ -216,7 +222,8 @@ void KIM_ModelDriverCreate_SetNeighborListPointers(
 /**
  ** \brief \copybrief KIM::ModelDriverCreate::SetRoutinePointer
  **
- ** \sa KIM::ModelDriverCreate::SetRoutinePointer
+ ** \sa KIM::ModelDriverCreate::SetRoutinePointer,
+ ** kim_model_driver_create_module::kim_set_routine_pointer
  **
  ** \since 2.0
  **/
@@ -230,7 +237,8 @@ int KIM_ModelDriverCreate_SetRoutinePointer(
 /**
  ** \brief \copybrief KIM::ModelDriverCreate::SetSpeciesCode
  **
- ** \sa KIM::ModelDriverCreate::SetSpeciesCode
+ ** \sa KIM::ModelDriverCreate::SetSpeciesCode,
+ ** kim_model_driver_create_module::kim_set_species_code
  **
  ** \since 2.0
  **/
@@ -242,7 +250,8 @@ int KIM_ModelDriverCreate_SetSpeciesCode(
 /**
  ** \brief \copybrief KIM::ModelDriverCreate::SetParameterPointer
  **
- ** \sa KIM::ModelDriverCreate::SetParameterPointer
+ ** \sa KIM::ModelDriverCreate::SetParameterPointer,
+ ** kim_model_driver_create_module::kim_set_parameter_pointer
  **
  ** \since 2.0
  **/
@@ -256,7 +265,8 @@ int KIM_ModelDriverCreate_SetParameterPointerInteger(
 /**
  ** \brief \copybrief KIM::ModelDriverCreate::SetParameterPointer
  **
- ** \sa KIM::ModelDriverCreate::SetParameterPointer
+ ** \sa KIM::ModelDriverCreate::SetParameterPointer,
+ ** kim_model_driver_create_module::kim_set_parameter_pointer
  **
  ** \since 2.0
  **/
@@ -270,7 +280,8 @@ int KIM_ModelDriverCreate_SetParameterPointerDouble(
 /**
  ** \brief \copybrief KIM::ModelDriverCreate::SetModelBufferPointer
  **
- ** \sa KIM::ModelDriverCreate::SetModelBufferPointer
+ ** \sa KIM::ModelDriverCreate::SetModelBufferPointer,
+ ** kim_model_driver_create_module::kim_set_model_buffer_pointer
  **
  ** \since 2.0
  **/
@@ -280,7 +291,8 @@ void KIM_ModelDriverCreate_SetModelBufferPointer(
 /**
  ** \brief \copybrief KIM::ModelDriverCreate::SetUnits
  **
- ** \sa KIM::ModelDriverCreate::SetUnits
+ ** \sa KIM::ModelDriverCreate::SetUnits,
+ ** kim_model_driver_create_module::kim_set_units
  **
  ** \since 2.0
  **/
@@ -295,7 +307,8 @@ int KIM_ModelDriverCreate_SetUnits(
 /**
  ** \brief \copybrief KIM::ModelDriverCreate::ConvertUnit
  **
- ** \sa KIM::ModelDriverCreate::ConvertUnit
+ ** \sa KIM::ModelDriverCreate::ConvertUnit,
+ ** kim_model_driver_create_module::kim_convert_unit
  **
  ** \since 2.0
  **/
@@ -320,7 +333,8 @@ int KIM_ModelDriverCreate_ConvertUnit(
 /**
  ** \brief \copybrief KIM::ModelDriverCreate::LogEntry
  **
- ** \sa KIM::ModelDriverCreate::LogEntry
+ ** \sa KIM::ModelDriverCreate::LogEntry,
+ ** kim_model_driver_create_module::kim_log_entry
  **
  ** \since 2.0
  **/
@@ -334,7 +348,8 @@ void KIM_ModelDriverCreate_LogEntry(
 /**
  ** \brief \copybrief KIM::ModelDriverCreate::ToString
  **
- ** \sa KIM::ModelDriverCreate::ToString
+ ** \sa KIM::ModelDriverCreate::ToString,
+ ** kim_model_driver_create_module::kim_to_string
  **
  ** \since 2.0
  **/

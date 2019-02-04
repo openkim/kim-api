@@ -43,7 +43,8 @@
 /**
  ** \brief \copybrief KIM::SupportedExtensions
  **
- ** \sa KIM::SupportedExtensions
+ ** \sa KIM::SupportedExtensions,
+ ** kim_supported_extensions_module::kim_supported_extensions_type
  **
  ** \since 2.0
  **/
@@ -52,7 +53,9 @@ struct KIM_SupportedExtensions
   /**
    ** \brief \copybrief KIM::SupportedExtensions::numberOfSupportedExtensions
    **
-   ** \sa KIM::SupportedExtensions::numberOfSupportedExtensions
+   ** \sa KIM::SupportedExtensions::numberOfSupportedExtensions,
+   ** kim_supported_extensions_module::kim_supported_extensions_type::<!--
+   ** -->number_of_supported_extensions
    **
    ** \since 2.0
    **/
@@ -60,7 +63,9 @@ struct KIM_SupportedExtensions
   /**
    ** \brief \copybrief KIM::SupportedExtensions::supportedExtensionID
    **
-   ** \sa KIM::SupportedExtensions::supportedExtensionID
+   ** \sa KIM::SupportedExtensions::supportedExtensionID,
+   ** kim_supported_extensions_module::kim_supported_extensions_type::<!--
+   ** -->supported_extension_id
    **
    ** \since 2.0
    **/
@@ -70,7 +75,9 @@ struct KIM_SupportedExtensions
   /**
    ** \brief \copybrief KIM::SupportedExtensions::supportedExtensionRequired
    **
-   ** \sa KIM::SupportedExtensions::supportedExtensionRequired
+   ** \sa KIM::SupportedExtensions::supportedExtensionRequired,
+   ** kim_supported_extensions_module::kim_supported_extensions_type::<!--
+   ** -->supported_extension_required
    **
    ** \since 2.0
    **/

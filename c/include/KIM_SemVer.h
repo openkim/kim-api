@@ -39,7 +39,7 @@
 /**
  ** \brief \copybrief KIM::SEM_VER::GetSemVer
  **
- ** \sa KIM::SEM_VER::GetSemVer
+ ** \sa KIM::SEM_VER::GetSemVer, kim_sem_ver_module::kim_get_sem_ver
  **
  ** \since 2.0
  **/
@@ -48,7 +48,7 @@ char const * KIM_SEM_VER_GetSemVer();
 /**
  ** \brief \copybrief KIM::SEM_VER::IsLessThan
  **
- ** \sa KIM::SEM_VER::IsLessThan
+ ** \sa KIM::SEM_VER::IsLessThan, kim_sem_ver_module::kim_is_less_than
  **
  ** \since 2.0
  **/
@@ -59,7 +59,7 @@ int KIM_SEM_VER_IsLessThan(char const * const lhs,
 /**
  ** \brief \copybrief KIM::SEM_VER::ParseSemVer
  **
- ** \sa KIM::SEM_VER::ParseSemVer
+ ** \sa KIM::SEM_VER::ParseSemVer, kim_sem_ver_module::kim_parse_sem_ver
  **
  ** \since 2.0
  **/

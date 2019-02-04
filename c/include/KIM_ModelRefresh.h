@@ -53,7 +53,8 @@ typedef struct KIM_LogVerbosity KIM_LogVerbosity;
 /**
  ** \brief \copybrief KIM::ModelRefresh
  **
- ** \sa KIM::ModelRefresh
+ ** \sa KIM::ModelRefresh,
+ ** kim_model_refresh_module::kim_model_refresh_handle_type
  **
  ** \since 2.0
  **/
@@ -63,7 +64,8 @@ typedef struct KIM_ModelRefresh KIM_ModelRefresh;
 /**
  ** \brief \copybrief KIM::ModelRefresh::SetInfluenceDistancePointer
  **
- ** \sa KIM::ModelRefresh::SetInfluenceDistancePointer
+ ** \sa KIM::ModelRefresh::SetInfluenceDistancePointer,
+ ** kim_model_refresh_module::kim_set_influence_distance_pointer
  **
  ** \since 2.0
  **/
@@ -74,7 +76,8 @@ void KIM_ModelRefresh_SetInfluenceDistancePointer(
 /**
  ** \brief \copybrief KIM::ModelRefresh::SetNeighborListPointers
  **
- ** \sa KIM::ModelRefresh::SetNeighborListPointers
+ ** \sa KIM::ModelRefresh::SetNeighborListPointers,
+ ** kim_model_refresh_module::kim_set_neighbor_list_pointers
  **
  ** \since 2.0
  **/
@@ -87,7 +90,8 @@ void KIM_ModelRefresh_SetNeighborListPointers(
 /**
  ** \brief \copybrief KIM::ModelRefresh::GetModelBufferPointer
  **
- ** \sa KIM::ModelRefresh::GetModelBufferPointer
+ ** \sa KIM::ModelRefresh::GetModelBufferPointer,
+ ** kim_model_refresh_module::kim_get_model_buffer_pointer
  **
  ** \since 2.0
  **/
@@ -97,7 +101,7 @@ void KIM_ModelRefresh_GetModelBufferPointer(
 /**
  ** \brief \copybrief KIM::ModelRefresh::LogEntry
  **
- ** \sa KIM::ModelRefresh::LogEntry
+ ** \sa KIM::ModelRefresh::LogEntry, kim_model_refresh_module::kim_log_entry
  **
  ** \since 2.0
  **/
@@ -110,7 +114,7 @@ void KIM_ModelRefresh_LogEntry(KIM_ModelRefresh const * const modelRefresh,
 /**
  ** \brief \copybrief KIM::ModelRefresh::ToString
  **
- ** \sa KIM::ModelRefresh::ToString
+ ** \sa KIM::ModelRefresh::ToString, kim_model_refresh_module::kim_to_string
  **
  ** \since 2.0
  **/

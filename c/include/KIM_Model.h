@@ -153,7 +153,7 @@ typedef struct KIM_ComputeArguments KIM_ComputeArguments;
 /**
  ** \brief \copybrief KIM::Model
  **
- ** \sa KIM::Model
+ ** \sa KIM::Model, kim_model_module::kim_model_handle_type
  **
  ** \since 2.0
  **/
@@ -163,7 +163,7 @@ typedef struct KIM_Model KIM_Model;
 /**
  ** \brief \copybrief KIM::Model::Create
  **
- ** \sa KIM::Model::Create
+ ** \sa KIM::Model::Create, kim_model_module::kim_model_create
  **
  ** \since 2.0
  **/
@@ -180,7 +180,7 @@ int KIM_Model_Create(KIM_Numbering const numbering,
 /**
  ** \brief \copybrief KIM::Model::Destroy
  **
- ** \sa KIM::Model::Destroy
+ ** \sa KIM::Model::Destroy, kim_model_module::kim_model_destroy
  **
  ** \since 2.0
  **/
@@ -189,7 +189,7 @@ void KIM_Model_Destroy(KIM_Model ** const model);
 /**
  ** \brief \copybrief KIM::Model::IsRoutinePresent
  **
- ** \sa KIM::Model::IsRoutinePresent
+ ** \sa KIM::Model::IsRoutinePresent, kim_model_module::kim_is_routine_present
  **
  ** \since 2.0
  **/
@@ -201,7 +201,8 @@ int KIM_Model_IsRoutinePresent(KIM_Model const * const model,
 /**
  ** \brief \copybrief KIM::Model::GetInfluenceDistance
  **
- ** \sa KIM::Model::GetInfluenceDistance
+ ** \sa KIM::Model::GetInfluenceDistance,
+ ** kim_model_module::kim_get_influence_distance
  **
  ** \since 2.0
  **/
@@ -211,7 +212,9 @@ void KIM_Model_GetInfluenceDistance(KIM_Model const * const model,
 /**
  ** \brief \copybrief KIM::Model::GetNeighborListPointers
  **
- ** \sa KIM::Model::GetNeighborListPointers
+ ** \sa KIM::Model::GetNeighborListPointers,
+ ** kim_model_module::kim_get_number_of_neighbor_lists,
+ ** kim_model_module::kim_get_neighbor_list_values
  **
  ** \since 2.0
  **/
@@ -224,7 +227,7 @@ void KIM_Model_GetNeighborListPointers(
 /**
  ** \brief \copybrief KIM::Model::GetUnits
  **
- ** \sa KIM::Model::GetUnits
+ ** \sa KIM::Model::GetUnits, kim_model_module::kim_get_units
  **
  ** \since 2.0
  **/
@@ -238,7 +241,8 @@ void KIM_Model_GetUnits(KIM_Model const * const model,
 /**
  ** \brief \copybrief KIM::Model::ComputeArgumentsCreate
  **
- ** \sa KIM::Model::ComputeArgumentsCreate
+ ** \sa KIM::Model::ComputeArgumentsCreate,
+ ** kim_model_module::kim_compute_arguments_create
  **
  ** \since 2.0
  **/
@@ -249,7 +253,8 @@ int KIM_Model_ComputeArgumentsCreate(
 /**
  ** \brief \copybrief KIM::Model::ComputeArgumentsDestroy
  **
- ** \sa KIM::Model::ComputeArgumentsDestroy
+ ** \sa KIM::Model::ComputeArgumentsDestroy,
+ ** kim_model_module::kim_compute_arguments_destroy
  **
  ** \since 2.0
  **/
@@ -260,7 +265,7 @@ int KIM_Model_ComputeArgumentsDestroy(
 /**
  ** \brief \copybrief KIM::Model::Compute
  **
- ** \sa KIM::Model::Compute
+ ** \sa KIM::Model::Compute, kim_model_module::kim_compute
  **
  ** \since 2.0
  **/
@@ -270,7 +275,7 @@ int KIM_Model_Compute(KIM_Model const * const model,
 /**
  ** \brief \copybrief KIM::Model::Extension
  **
- ** \sa KIM::Model::Extension
+ ** \sa KIM::Model::Extension, kim_model_module::kim_extension
  **
  ** \since 2.0
  **/
@@ -281,7 +286,7 @@ int KIM_Model_Extension(KIM_Model * const model,
 /**
  ** \brief \copybrief KIM::Model::ClearThenRefresh
  **
- ** \sa KIM::Model::ClearThenRefresh
+ ** \sa KIM::Model::ClearThenRefresh, kim_model_module::kim_clear_then_refresh
  **
  ** \since 2.0
  **/
@@ -290,7 +295,8 @@ int KIM_Model_ClearThenRefresh(KIM_Model * const model);
 /**
  ** \brief \copybrief KIM::Model::WriteParameterizedModel
  **
- ** \sa KIM::Model::WriteParameterizedModel
+ ** \sa KIM::Model::WriteParameterizedModel,
+ ** kim_model_module::kim_write_parameterized_model
  **
  ** \since 2.0
  **/
@@ -301,7 +307,8 @@ int KIM_Model_WriteParameterizedModel(KIM_Model const * const model,
 /**
  ** \brief \copybrief KIM::Model::GetSpeciesSupportAndCode
  **
- ** \sa KIM::Model::GetSpeciesSupportAndCode
+ ** \sa KIM::Model::GetSpeciesSupportAndCode,
+ ** kim_model_module::kim_get_species_support_and_code
  **
  ** \since 2.0
  **/
@@ -313,7 +320,8 @@ int KIM_Model_GetSpeciesSupportAndCode(KIM_Model const * const model,
 /**
  ** \brief \copybrief KIM::Model::GetNumberOfParameters
  **
- ** \sa KIM::Model::GetNumberOfParameters
+ ** \sa KIM::Model::GetNumberOfParameters,
+ ** kim_model_module::kim_get_number_of_parameters
  **
  ** \since 2.0
  **/
@@ -323,7 +331,8 @@ void KIM_Model_GetNumberOfParameters(KIM_Model const * const model,
 /**
  ** \brief \copybrief KIM::Model::GetParameterMetadata
  **
- ** \sa KIM::Model::GetParameterMetadata
+ ** \sa KIM::Model::GetParameterMetadata,
+ ** kim_model_module::kim_get_parameter_metadata
  **
  ** \since 2.0
  **/
@@ -338,7 +347,8 @@ int KIM_Model_GetParameterMetadata(KIM_Model const * const model,
  ** \brief \copybrief KIM::Model::GetParameter(int const, int const,
  **                                            int * const) const
  **
- ** \sa KIM::Model::GetParameter(int const,int const, int * const) const
+ ** \sa KIM::Model::GetParameter(int const,int const, int * const) const,
+ ** kim_model_module::kim_get_parameter
  **
  ** \since 2.0
  **/
@@ -351,7 +361,8 @@ int KIM_Model_GetParameterInteger(KIM_Model const * const model,
  ** \brief \copybrief KIM::Model::GetParameter(int const, int const,
  **                                            int * const) const
  **
- ** \sa KIM::Model::GetParameter(int const,int const, double * const) const
+ ** \sa KIM::Model::GetParameter(int const,int const, double * const) const,
+ ** kim_model_module::kim_get_parameter
  **
  ** \since 2.0
  **/
@@ -363,7 +374,8 @@ int KIM_Model_GetParameterDouble(KIM_Model const * const model,
 /**
  ** \brief \copybrief KIM::Model::SetParameter(int const, int const, int const)
  **
- ** \sa KIM::Model::SetParameter(int const, int const, int const)
+ ** \sa KIM::Model::SetParameter(int const, int const, int const),
+ ** kim_model_module::kim_set_parameter
  **
  ** \since 2.0
  **/
@@ -375,7 +387,8 @@ int KIM_Model_SetParameterInteger(KIM_Model * const model,
 /**
  ** \brief \copybrief KIM::Model::SetParameter(int const, int const, int const)
  **
- ** \sa KIM::Model::SetParameter(int const, int const, double const)
+ ** \sa KIM::Model::SetParameter(int const, int const, double const),
+ ** kim_model_module::kim_set_parameter
  **
  ** \since 2.0
  **/
@@ -387,7 +400,8 @@ int KIM_Model_SetParameterDouble(KIM_Model * const model,
 /**
  ** \brief \copybrief KIM::Model::SetSimulatorBufferPointer
  **
- ** \sa KIM::Model::SetSimulatorBufferPointer
+ ** \sa KIM::Model::SetSimulatorBufferPointer,
+ ** kim_model_module::kim_set_simulator_buffer_pointer
  **
  ** \since 2.0
  **/
@@ -397,7 +411,8 @@ void KIM_Model_SetSimulatorBufferPointer(KIM_Model * const model,
 /**
  ** \brief \copybrief KIM::Model::GetSimulatorBufferPointer
  **
- ** \sa KIM::Model::GetSimulatorBufferPointer
+ ** \sa KIM::Model::GetSimulatorBufferPointer,
+ ** kim_model_module::kim_get_simulator_buffer_pointer
  **
  ** \since 2.0
  **/
@@ -407,7 +422,7 @@ void KIM_Model_GetSimulatorBufferPointer(KIM_Model const * const model,
 /**
  ** \brief \copybrief KIM::Model::ToString
  **
- ** \sa KIM::Model::ToString
+ ** \sa KIM::Model::ToString, kim_model_module::kim_to_string
  **
  ** \since 2.0
  **/
@@ -416,7 +431,7 @@ char const * KIM_Model_ToString(KIM_Model const * const model);
 /**
  ** \brief \copybrief KIM::Model::SetLogID
  **
- ** \sa KIM::Model::SetLogID
+ ** \sa KIM::Model::SetLogID, kim_model_module::kim_set_log_id
  **
  ** \since 2.0
  **/
@@ -425,7 +440,7 @@ void KIM_Model_SetLogID(KIM_Model * const model, char const * const logID);
 /**
  ** \brief \copybrief KIM::Model::PushLogVerbosity
  **
- ** \sa KIM::Model::PushLogVerbosity
+ ** \sa KIM::Model::PushLogVerbosity, kim_model_module::kim_push_log_verbosity
  **
  ** \since 2.0
  **/
@@ -435,7 +450,7 @@ void KIM_Model_PushLogVerbosity(KIM_Model * const model,
 /**
  ** \brief \copybrief KIM::Model::PopLogVerbosity
  **
- ** \sa KIM::Model::PopLogVerbosity
+ ** \sa KIM::Model::PopLogVerbosity, kim_model_module::kim_pop_log_verbosity
  **
  ** \since 2.0
  **/
