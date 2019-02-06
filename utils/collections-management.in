@@ -263,8 +263,10 @@ get_build_install_item () {
 
   # make changes for installing to CWD collection, if necessary
   if test x"${install_collection}" = x"CWD"; then
-    export KIM_API_MODEL_DRIVERS_DIR=${PWD}
-    export KIM_API_MODELS_DIR=${PWD}
+    drivers_env_name="`${collections_info} env env | sed -e 's/^[^ ]* //'`"; if test $? -ne 0; then return 1; fi
+    models_env_name="`${collections_info} env env | sed -e 's/ .*//'`"; if test $? -ne 0; then return 1; fi
+    export ${drivers_env_name}=${PWD}
+    export ${models_env_name}=${PWD}
     install_collection="environment"
   fi
 
@@ -681,7 +683,7 @@ print_list_of_drivers_and_models () {
   print_separator_line "-"
   printf "Drivers: %s\n" "${drivers_usr}"
   if test $number_drivers_usr -gt 0; then
-    printf -- "%s" "${drivers_usr_collection}"
+    printf -- "${drivers_usr_collection}"  # expected to have control characters
   else
     printf "\t--empty--\n"
   fi
