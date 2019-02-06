@@ -141,7 +141,7 @@ E_i = \bar{E}_i(\mathbf{r}^{(j)} \;|\; j \in
 \f]
 
 In fact, due to the principle of material frame indifference, this function can
-only be a function of the *distances* between these particles:
+only be a function of the <em>distances</em> between these particles:
 
 \f[
 E_i = \tilde{E}_i( r^{(j,k)} \;|\; j,k \in
@@ -188,7 +188,7 @@ position vector:
 \mathbf{r}^{(j)}}, \quad j \in C_{p}.
 \f]
 
-Note that, in general, *every* particle (both contributing and
+Note that, in general, <em>every</em> particle (both contributing and
 non-contributing) has a partial force.
 
 \anchor partial_virial Third, the configuration's "Partial Virial" tensor,
@@ -381,7 +381,7 @@ its standard quantity names.  In general, the quantities computed by a model
 are only one "partial" contribution to a total.  For example, here we can say
 that the force on particle \f$i\f$, \f$\mathbf{f}^{(i)}\f$, is the sum of
 \f$\mathcal{C}\f$'s partial force \f$\mathbf{f}^{\mathcal{C}(i)}\f$ and
-\f$\mathcal{D}\f$'s partial force \f$f^{\mathcal{D}(i)}\f$.
+\f$\mathcal{D}\f$'s partial force \f$\mathbf{f}^{\mathcal{D}(i)}\f$.
 
 For the particle energies, we can just take the value from the (only) domain
 where the particle is contributing
@@ -400,4 +400,4 @@ Next Section: \ref implementation.
 
 LocalWords:  CDDL yyyy Ellad Tadmor Karls kim api infl Ni Cu virial monte Li
 LocalWords:  carlo atomistic mathcal mathbf equiv ac cp ncp emptyset le otimes
-LocalWords:  unaccented html jpg pdf np ref
+LocalWords:  unaccented html jpg pdf np ref em

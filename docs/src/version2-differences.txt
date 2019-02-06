@@ -41,20 +41,20 @@ Previous Section: \ref implementation.
 Experience with using and supporting the kim-api-v1 package has shown that the
 package's complexity (in terms of the number of different "modes of operation";
 e.g., neighbor lists: half, full, iterator, locator; Neighbor-list Boundary
-Counditions (NBCs): cluster, miopbc, neigh_pure, neigh_rvec; etc.) makes it
+Conditions (NBCs): cluster, miopbc, neigh_pure, neigh_rvec; etc.) makes it
 difficult for new users to become competent kim-api-v1 code developers.  This
 also means that %KIM Models will only work with KIM-compliant codes that
 support the same modes of operation, thereby limiting the utility of the
 kim-api as a standard.  Further, the kim-api's complexity results in model
-implementations that are convoluted due to developers' desire to support *all*
-modes of operation.  This experience has led us to an approach that gives
-kim-api-v2 a dramatically simplified form, while still retaining a high degree
-of flexibility.  Thus, in regard to feature design and selection for the
-kim-api-v2 package, we have taken "simplicity" as a guiding principle.
+implementations that are convoluted due to developers' desire to support
+<em>all</em> modes of operation.  This experience has led us to an approach
+that gives kim-api-v2 a dramatically simplified form, while still retaining a
+high degree of flexibility.  Thus, in regard to feature design and selection
+for the kim-api-v2 package, we have taken "simplicity" as a guiding principle.
 
 ## High-level changes between kim-api-v1 and kim-api-v2
 
-- **NBCs Have Been Eliminated**: kim-api-v2 supports only one type of
+- <b>NBCs Have Been Eliminated</b>: kim-api-v2 supports only one type of
   configuration (as described in Section \ref theory).  This corresponds,
   roughly, to the kim-api-v1 NEIGH_PURE_F NBC.  Additionally:
 
@@ -62,36 +62,38 @@ kim-api-v2 package, we have taken "simplicity" as a guiding principle.
     (However, see \ref neighbor_list_hint "Neighbor List Hint".)
 
   - Particle Contributing (a.k.a., padding or ghost-atom) status (contributing
-    or non-contributing) is explicitly specified in the *particleContributing*
-    argument.  A particle with zero neighbors in (one of) its neighbor lists
-    has no special meaning in kim-api-v2, as opposed to in kim-api-v1 where
-    this indicates the particle is non-contributing.
+    or non-contributing) is explicitly specified in the
+    <em>particleContributing</em> argument.  A particle with zero neighbors in
+    (one of) its neighbor lists has no special meaning in kim-api-v2, as
+    opposed to in kim-api-v1 where this indicates the particle is
+    non-contributing.
 
-- **Compute Routine Arguments and Callbacks Have Been Separated From the Model
-    Object**: kim-api-v2 separates the arguments and callbacks of the compute
-    routine from the model object.  These items are now stored in a separate
-    compute-arguments object that must be provided to the model's compute
-    routine.  This new approach provides a cleaner conceptual distinction
-    between things the model is responsible for (influence distance, cutoffs,
-    parameters, and create / compute / destroy routines), and things that the
-    simulator is responsible for (the configuration, compute-arguments, and
-    compute-callback routines).  One practical advantage of this separation
-    occurs for multi-threaded simulators.  Such a simulator can use a single
-    model object with multiple compute-arguments objects to compute (energy,
-    forces, etc.) for many different configurations simultaneously.  Without
-    the model/compute-arguments separation multiple model objects would be
-    necessary.  This would require multiple in-memory copies of the model's
-    parameter set, which can be very wasteful since (in particular, for
-    "machine learning" models) a model's parameter set can be very large.
+- <b>Compute Routine Arguments and Callbacks Have Been Separated From the Model
+  Object</b>: kim-api-v2 separates the arguments and callbacks of the compute
+  routine from the model object.  These items are now stored in a separate
+  compute-arguments object that must be provided to the model's compute
+  routine.  This new approach provides a cleaner conceptual distinction between
+  things the model is responsible for (influence distance, cutoffs, parameters,
+  and create / compute / destroy routines), and things that the simulator is
+  responsible for (the configuration, compute-arguments, and compute-callback
+  routines).  One practical advantage of this separation occurs for
+  multi-threaded simulators.  Such a simulator can use a single model object
+  with multiple compute-arguments objects to compute (energy, forces, etc.) for
+  many different configurations simultaneously.  Without the
+  model/compute-arguments separation multiple model objects would be necessary.
+  This would require multiple in-memory copies of the model's parameter set,
+  which can be very wasteful since (in particular, for "machine learning"
+  models) a model's parameter set can be very large.
 
-- **%KIM Descriptor Files Have Been Eliminated**: kim-api-v2 does not use *%KIM
-  descriptor files*.  Instead, kim-api-v2 models register their units,
-  conventions, and parameters in their *ModelCreate* initialization routine,
-  and they register their arguments and callbacks in their *
-  *ModelComputeArgumentsCreate* initialization routine.  Simulator--model
-  matching is now the responsibility of the simulator.  This is facilitated by
-  kim-api-v2 through the availability of routines for obtaining the model's
-  registered values of all necessary quantities at run-time.
+- <b>%KIM Descriptor Files Have Been Eliminated</b>: kim-api-v2 does not use
+  <em>%KIM descriptor files</em>.  Instead, kim-api-v2 models register their
+  units, conventions, and parameters in their <em>ModelCreate</em>
+  initialization routine, and they register their arguments and callbacks in
+  their <em>ModelComputeArgumentsCreate</em> initialization routine.
+  Simulator--model matching is now the responsibility of the simulator.  This
+  is facilitated by kim-api-v2 through the availability of routines for
+  obtaining the model's registered values of all necessary quantities at
+  run-time.
 
   Best practice for kim-api-v2 simulators is to, first create a model object
   and an associated compute-arguments object (which also execute the model's
@@ -104,14 +106,14 @@ kim-api-v2 package, we have taken "simplicity" as a guiding principle.
   full-featured "KIM descriptor file"--based matching specification (covering
   all possibilities) is too complex.  Thus, it is best to perform this matching
   process in the simulator's code at run-time.  In the worst-case, a simulator
-  can simply *assume* that it matches with the model and attempt to perform the
-  desired computation.  As long as the simulator carefully checks for any and
-  all errors reported by the %KIM API, it should detect an error at some point
-  during its processing if the simulator, in fact, does not match with the
-  model.
+  can simply <em>assume</em> that it matches with the model and attempt to
+  perform the desired computation.  As long as the simulator carefully checks
+  for any and all errors reported by the %KIM API, it should detect an error at
+  some point during its processing if the simulator, in fact, does not match
+  with the model.
 
-- **A New Memory Management Scheme**: kim-api-v2 requires the simulator to be
-  responsible for storage memory associated with all input and output
+- <b>A New Memory Management Scheme</b>: kim-api-v2 requires the simulator to
+  be responsible for storage memory associated with all input and output
   compute-arguments communicated between the simulator and the model via a
   compute-arguments object.  Similarly, kim-api-v2 requires the model to be
   responsible for storage memory associated with its influence distance, its
@@ -122,9 +124,9 @@ kim-api-v2 package, we have taken "simplicity" as a guiding principle.
   the memory management model employed in kim-api-v1.  Thus, it is best not to
   provide such a capability as part of kim-api-v2.
 
-- **Language Consistency**: kim-api-v2 aims to conform to standard practice and
-  idioms of the native code language, as opposed to kim-api-v1 which aimed to
-  maintain consistency of the api across languages.
+- <b>Language Consistency</b>: kim-api-v2 aims to conform to standard practice
+  and idioms of the native code language, as opposed to kim-api-v1 which aimed
+  to maintain consistency of the api across languages.
 
   This means that using the kim-api-v2 in your preferred language feels more
   natural.  For example, the C++ api bindings extensively use namespaces,
@@ -138,14 +140,14 @@ kim-api-v2 package, we have taken "simplicity" as a guiding principle.
   language binding.  Abbreviations have been avoided to make names easier to
   remember.
 
-- **Explicit Definitions**: Clear definitions for all concepts used by the
+- <b>Explicit Definitions</b>: Clear definitions for all concepts used by the
   kim-api-v2 package are provided in Section \ref theory.
 
   In most cases, these are the same concepts and definitions employed by
   kim-api-v1.  However, they were not explicitly stated in the kim-api-v1
   documentation.
 
-- **Improved Logging Facilities and Error Messages**: kim-api-v2 has been
+- <b>Improved Logging Facilities and Error Messages</b>: kim-api-v2 has been
   redesigned and rewritten from the ground up.  Significantly improved
   facilities for logging events and execution progress have been included.
   Along with these general enhancements, all error messages have been rewritten
@@ -154,14 +156,14 @@ kim-api-v2 package, we have taken "simplicity" as a guiding principle.
 
 ## Lower-level changes between kim-api-v2 and kim-api-v1
 
-- **FIXED Parameters Have Been Eliminated**: kim-api-v2 defines only one type
-  of "published" parameters for a model.  These are all changeable, and thus,
-  would correspond to the "FREE" parameters of kim-api-v1.
+- <b>FIXED Parameters Have Been Eliminated</b>: kim-api-v2 defines only one
+  type of "published" parameters for a model.  These are all changeable, and
+  thus, would correspond to the "FREE" parameters of kim-api-v1.
 
   The FIXED parameters of kim-api-v1 must now be stored in the model buffer and
   are inaccessible to the simulator.
 
-- **Argument Shape and Extent**: For simplicity, explicit api tracking of
+- <b>Argument Shape and Extent</b>: For simplicity, explicit api tracking of
   argument shape and extent has been eliminated from kim-api-v2.  These values
   are defined as part of the api documentation.  All arguments must have fixed
   shape and extent values that are either given numbers or defined in terms of
@@ -174,7 +176,7 @@ kim-api-v2 package, we have taken "simplicity" as a guiding principle.
   one-dimensional arrays with extent equal to the total number of values in the
   multidimensional array.
 
-- **Extensible Strongly-Typed Enumerations**: kim-api-v2 uses \ref
+- <b>Extensible Strongly-Typed Enumerations</b>: kim-api-v2 uses \ref
   extensible_enumeration "extensible strongly-typed enumerations" as
   identifiers for quantities as opposed to kim-api-v1 which uses character
   arrays (strings) or "index" values.  Thus, all "index" values and the
@@ -188,8 +190,8 @@ kim-api-v2 package, we have taken "simplicity" as a guiding principle.
   and comparison routines are listed in the table below.
 
 
-- **Consistent and Descriptive Identifier Names**: The entire set of kim-api-v2
-  identifier names (namespace, module, object, subroutine, function,
+- <b>Consistent and Descriptive Identifier Names</b>: The entire set of
+  kim-api-v2 identifier names (namespace, module, object, subroutine, function,
   enumerations) have been reviewed and selected for clarity and consistency.
   As a result many of the identifier names from kim-api-v1 have changed in
   kim-api-v2.  Here we provide complete tables of \ref routine_id_table
@@ -4131,7 +4133,7 @@ LocalWords:  ModelRefreshFunction ModelComputeArgumentsDestroyFunction gt le
 LocalWords:  ModelDestroyFunction FromString GetNumberOfChargeUnits DataType
 LocalWords:  GetChargeUnit ComputeArgumentName GetNumberOfComputeArgumentNames
 LocalWords:  GetComputeArgumentName GetComputeArgumentDataType GetDataType ge
-LocalWords:  ComputeCallbackName GetNumberOfComputeCallbackNames EnergyUnit
+LocalWords:  ComputeCallbackName GetNumberOfComputeCallbackNames EnergyUnit em
 LocalWords:  GetComputeCallbackName GetNumberOfDataTypes GetEnergyUnit Seciton
 LocalWords:  GetNumberOfEnergyUnits LanguageName GetNumberOfLanguageNames html
 LocalWords:  GetLanguageName LengthUnit GetNumberOfLengthUnits GetLengthUnit
@@ -4142,7 +4144,7 @@ LocalWords:  SupportStatus GetNumberOfSupportStatuses GetSupportStatus ToModel
 LocalWords:  TemperatureUnit GetNumberOfTemperatureUnits GetTemperatureUnit
 LocalWords:  TimeUnit GetNumberOfTimeUnits GetTimeUnit IsRoutinePresent const
 LocalWords:  ModelExtension WriteParameterizedModel SetRoutinePointer GetPath
-LocalWords:  PushDefaultVerbosity PopDefaultVerbosity GetExtensionID
+LocalWords:  PushDefaultVerbosity PopDefaultVerbosity GetExtensionID enum
 LocalWords:  ToModelCompute ToModelCreate ToModelDestroy ToModelDriverCreate
 LocalWords:  ToModelRefresh ToModelWriteParameterizedModel GetModelName
 LocalWords:  ToModelComputeArguments ToModelComputeArgumentsCreate
