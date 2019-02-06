@@ -70,7 +70,7 @@ mark_as_advanced(KIM_API_ENABLE_COVERAGE)
 #
 # Define main project
 #
-project(${PROJECT_PREFIX}-v2 VERSION 2.0.0 LANGUAGES CXX C Fortran)  # must remain a single line for create-pacakge script
+project(${PROJECT_PREFIX}-v2 VERSION 2.0.1 LANGUAGES CXX C Fortran)  # must remain a single line for create-pacakge script
 set(PROJECT_DESCRIPTION "An Application Programming Interface (API) for the Knowledgebase of Interatomic Models (KIM).")
 include(GNUInstallDirs)  # needs to come after call to project()
 include(Bash-CompletionConfig)  # set install dirs for bash completions
