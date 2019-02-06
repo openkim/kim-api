@@ -89,34 +89,66 @@ optional for use by the simulator, as described below.
 The interaction between the simulator and a model involves the following
 steps:
 
-- A simulator creates a *model object* that will be used to exchange pointers
-  to data and functions related to the model between the simulator and model.
-  Creating this object includes execution of the model's *ModelCreate*
-  routine).
+- A simulator creates a *model object*, by calling KIM::Model::Create, that
+  will be used to exchange pointers to data and functions related to the model
+  between the simulator and model.  Creating this object includes the
+  specification of how the simulator will number particles (zero-based or
+  one-based), determination of the physical base units that the model will use,
+  and execution of the model's *ModelCreate* routine.
+
+  When calling KIM::Model::Create to create a *model object* the simulator
+  provides a set of "requested" base units that it would prefer to use.  The
+  %KIM API gives the model final authority to decide on the base units it will
+  use.  Best practice for models is to respect the request of the simulator and
+  to use the requested base units.  The \c requestedUnitsAccepted output
+  argument of the KIM::Model::Create routine is a convenience that allows the
+  simulator a short-cut (as opposed to having to make a call to
+  KIM::Model::GetUnits and comparing the results to the requested units) to
+  know if its request for base units was accepted.
+
+  If a base unit is not relevant to the simulator (e.g., a unit of time need
+  not be specified for static equilibrium computations), then the simulator
+  should specify that the corresponding base unit(s) is/are "unused".  A model
+  should specify "unused" values for all base units that are appropriate
+  (regardless of the simulator's requested values).  Additionally, the model
+  should select its preferred (non-"unused") base unit value when the simulator
+  provides an "unused" request for a base unit of importance to the model.
 
 - Once a model object is obtained, the simulator should use
-  KIM::Model::IsRoutinePresent() to determine which routines the model has
+  KIM::Model::IsRoutinePresent to determine which routines the model has
   provided and if they are required or optional.  From this information the
   simulator should determine if it can proceed to work with the model, or if
   the model requires the use of routines that are not supported by the
   simulator it should exit.
 
-- Next, the simulator creates a *compute-arguments object* that will be used to
-  exchange pointers to data and functions related to the atomic configuration
-  and values being computed for it.  Creating this object includes execution of
-  the model's *ModelComputeArgumentsCreate* routine.
+- Next, the simulator creates a *compute-arguments object*, by calling
+  KIM::Model::ComputeArgumentsCreate, that will be used to exchange pointers to
+  data and functions related to the atomic configuration and values being
+  computed for it.  Creating this object includes execution of the model's
+  <em>ModelComputeArgumentsCreate</em> routine.
 
 - Then, to perform a computation, the simulator provides a compute-arguments
-  object to the model's *ModelCompute* function.
+  object to the KIM::Model::Compute routine (which, in part, executes the
+  model's <em>ModelCompute</em> function).
+
   - There are input compute-arguments that include the various components that
     make up a configuration (number of particles, particle position vectors,
     etc.).
+
   - There are output compute-arguments that include the quantities (like partial
     energy and partial forces), defined in Section \ref theory, associated with
     the configuration.
+
   - There are also compute-callback functions (such as a function to get a
     particle's neighbor list) that the simulator provides for use by the
     model.
+
+- When a simulator is finished working with a model, it needs to clean up by
+  calling KIM::Model::ComputeArgumentsDestroy (which, in part, executes the
+  model's <em>ModelComputeArgumentsDestroy</em> routine) to delete each of the
+  compute-arguments objects that were created, and finally calling
+  KIM::Model::Destroy (which, in part, executes the model's
+  <em>ModelDestroy</em> routine) to delete the model object.
 
 The %KIM API provides a list of all compute-arguments and compute-callbacks
 defined as part of the official API.  Each argument and callback has a
@@ -272,4 +304,4 @@ LocalWords:  virial GetNeighborList ProcessDEDrTerm ProcessD ac infl otimes em
 LocalWords:  ModelComputeArgumentsCreate ModelComputeArgumentsDestroy ge cdot
 LocalWords:  Modelcompureargumentsdestroy ModelExtension CMake
 LocalWords:  modelWillNotRequestNeighborsOfNoncontributingParticles
-LocalWords:  ModelWriteParameterizedModel
+LocalWords:  ModelWriteParameterizedModel requestedUnitsAccepted
