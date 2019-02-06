@@ -31,6 +31,11 @@
 !
 
 
+!> \brief \copybrief KIM::Numbering
+!!
+!! \sa KIM::Numbering, KIM_Numbering
+!!
+!! \since 2.0
 module kim_numbering_module
   use, intrinsic :: iso_c_binding
   implicit none

@@ -31,6 +31,11 @@
 !
 
 
+!> \brief \copybrief KIM::LengthUnit
+!!
+!! \sa KIM::LengthUnit, KIM_LengthUnit
+!!
+!! \since 2.0
 module kim_length_unit_module
   use, intrinsic :: iso_c_binding
   implicit none

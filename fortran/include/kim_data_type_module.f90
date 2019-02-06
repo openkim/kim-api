@@ -31,6 +31,11 @@
 !
 
 
+!> \brief \copybrief KIM::DataType
+!!
+!! \sa KIM::DataType, KIM_DataType
+!!
+!! \since 2.0
 module kim_data_type_module
   use, intrinsic :: iso_c_binding
   implicit none

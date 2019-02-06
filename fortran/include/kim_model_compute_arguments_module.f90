@@ -31,6 +31,11 @@
 !
 
 
+!> \brief \copybrief KIM::ModelComputeArguments
+!!
+!! \sa KIM::ModelComputeArguments, KIM_ModelComputeArguments
+!!
+!! \since 2.0
 module kim_model_compute_arguments_module
   use, intrinsic :: iso_c_binding
   implicit none

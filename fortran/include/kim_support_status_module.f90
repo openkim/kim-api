@@ -31,6 +31,11 @@
 !
 
 
+!> \brief \copybrief KIM::SupportStatus
+!!
+!! \sa KIM::SupportStatus, KIM_SupportStatus
+!!
+!! \since 2.0
 module kim_support_status_module
   use, intrinsic :: iso_c_binding
   implicit none

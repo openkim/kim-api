@@ -31,6 +31,11 @@
 !
 
 
+!> \brief \copybrief KIM::SpeciesName
+!!
+!! \sa KIM::SpeciesName, KIM_SpeciesName
+!!
+!! \since 2.0
 module kim_species_name_module
   use, intrinsic :: iso_c_binding
   implicit none

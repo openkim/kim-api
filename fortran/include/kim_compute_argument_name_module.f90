@@ -31,6 +31,11 @@
 !
 
 
+!> \brief \copybrief KIM::ComputeArgumentName
+!!
+!! \sa KIM::ComputeArgumentName, KIM_ComputeArgumentName
+!!
+!! \since 2.0
 module kim_compute_argument_name_module
   use, intrinsic :: iso_c_binding
   implicit none

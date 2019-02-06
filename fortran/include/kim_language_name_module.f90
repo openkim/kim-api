@@ -31,6 +31,11 @@
 !
 
 
+!> \brief \copybrief KIM::LanguageName
+!!
+!! \sa KIM::LanguageName, KIM_LanguageName
+!!
+!! \since 2.0
 module kim_language_name_module
   use, intrinsic :: iso_c_binding
   implicit none

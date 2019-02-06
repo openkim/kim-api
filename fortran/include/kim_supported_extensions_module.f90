@@ -31,6 +31,11 @@
 !
 
 
+!> \brief \copybrief KIM::SupportedExtensions
+!!
+!! \sa KIM::SupportedExtensions, KIM_SupportedExtensions
+!!
+!! \since 2.0
 module kim_supported_extensions_module
   use, intrinsic :: iso_c_binding
   implicit none

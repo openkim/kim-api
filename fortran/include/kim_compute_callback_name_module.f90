@@ -31,6 +31,11 @@
 !
 
 
+!> \brief \copybrief KIM::ComputeCallbackName
+!!
+!! \sa KIM::ComputeCallbackName, KIM_ComputeCallbackName
+!!
+!! \since 2.0
 module kim_compute_callback_name_module
   use, intrinsic :: iso_c_binding
   implicit none

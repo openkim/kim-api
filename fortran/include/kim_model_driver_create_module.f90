@@ -31,6 +31,11 @@
 !
 
 
+!> \brief \copybrief KIM::ModelDriverCreate
+!!
+!! \sa KIM::ModelDriverCreate, KIM_ModelDriverCreate
+!!
+!! \since 2.0
 module kim_model_driver_create_module
   use, intrinsic :: iso_c_binding
   implicit none

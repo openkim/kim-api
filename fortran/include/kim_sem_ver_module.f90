@@ -31,6 +31,11 @@
 !
 
 
+!> \brief \copybrief KIM::SEM_VER
+!!
+!! \sa KIM::SEM_VER
+!!
+!! \since 2.0
 module kim_sem_ver_module
   use, intrinsic :: iso_c_binding
   implicit none

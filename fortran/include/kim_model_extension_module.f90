@@ -31,6 +31,11 @@
 !
 
 
+!> \brief \copybrief KIM::ModelExtension
+!!
+!! \sa KIM::ModelExtension, KIM_ModelExtension
+!!
+!! \since 2.0
 module kim_model_extension_module
   use, intrinsic :: iso_c_binding
   implicit none

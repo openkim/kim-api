@@ -31,6 +31,11 @@
 !
 
 
+!> \brief \copybrief KIM::ModelCreate
+!!
+!! \sa KIM::ModelCreate, KIM_ModelCreate
+!!
+!! \since 2.0
 module kim_model_create_module
   use, intrinsic :: iso_c_binding
   implicit none

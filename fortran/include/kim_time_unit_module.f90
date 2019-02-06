@@ -31,6 +31,11 @@
 !
 
 
+!> \brief \copybrief KIM::TimeUnit
+!!
+!! \sa KIM::TimeUnit, KIM_TimeUnit
+!!
+!! \since 2.0
 module kim_time_unit_module
   use, intrinsic :: iso_c_binding
   implicit none

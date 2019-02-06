@@ -31,6 +31,11 @@
 !
 
 
+!> \brief \copybrief KIM::ModelDestroy
+!!
+!! \sa KIM::ModelDestroy, KIM_ModelDestroy
+!!
+!! \since 2.0
 module kim_model_destroy_module
   use, intrinsic :: iso_c_binding
   implicit none

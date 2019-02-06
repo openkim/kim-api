@@ -31,6 +31,11 @@
 !
 
 
+!> \brief \copybrief KIM::ChargeUnit
+!!
+!! \sa KIM::ChargeUnit, KIM_ChargeUnit
+!!
+!! \since 2.0
 module kim_charge_unit_module
   use, intrinsic :: iso_c_binding
   implicit none

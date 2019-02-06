@@ -31,6 +31,11 @@
 !
 
 
+!> \brief \copybrief KIM::ModelRefresh
+!!
+!! \sa KIM::ModelRefresh, KIM_ModelRefresh
+!!
+!! \since 2.0
 module kim_model_refresh_module
   use, intrinsic :: iso_c_binding
   implicit none

@@ -31,6 +31,11 @@
 !
 
 
+!> \brief \copybrief KIM::EnergyUnit
+!!
+!! \sa KIM::EnergyUnit, KIM_EnergyUnit
+!!
+!! \since 2.0
 module kim_energy_unit_module
   use, intrinsic :: iso_c_binding
   implicit none

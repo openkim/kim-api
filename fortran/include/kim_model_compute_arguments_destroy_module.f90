@@ -31,6 +31,11 @@
 !
 
 
+!> \brief \copybrief KIM::ModelComputeArgumentsDestroy
+!!
+!! \sa KIM::ModelComputeArgumentsDestroy, KIM_ModelComputeArgumentsDestroy
+!!
+!! \since 2.0
 module kim_model_compute_arguments_destroy_module
   use, intrinsic :: iso_c_binding
   implicit none

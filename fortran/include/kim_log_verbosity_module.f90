@@ -31,6 +31,11 @@
 !
 
 
+!> \brief \copybrief KIM::LogVerbosity
+!!
+!! \sa KIM::LogVerbosity, KIM_LogVerbosity
+!!
+!! \since 2.0
 module kim_log_verbosity_module
   use, intrinsic :: iso_c_binding
   implicit none

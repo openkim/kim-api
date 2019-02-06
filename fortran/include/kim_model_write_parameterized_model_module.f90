@@ -31,6 +31,11 @@
 !
 
 
+!> \brief \copybrief KIM::ModelWriteParameterizedModel
+!!
+!! \sa KIM::ModelWriteParameterizedModel, KIM_ModelWriteParameterizedModel
+!!
+!! \since 2.0
 module kim_model_write_parameterized_model_module
   use, intrinsic :: iso_c_binding
   implicit none

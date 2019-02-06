@@ -31,6 +31,11 @@
 !
 
 
+!> \brief \copybrief KIM::Log
+!!
+!! \sa KIM::Log, KIM_Log
+!!
+!! \since 2.0
 module kim_log_module
   use, intrinsic :: iso_c_binding
   implicit none

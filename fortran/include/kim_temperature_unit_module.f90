@@ -31,6 +31,11 @@
 !
 
 
+!> \brief \copybrief KIM::TemperatureUnit
+!!
+!! \sa KIM::TemperatureUnit, KIM_TemperatureUnit
+!!
+!! \since 2.0
 module kim_temperature_unit_module
   use, intrinsic :: iso_c_binding
   implicit none

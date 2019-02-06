@@ -31,6 +31,11 @@
 !
 
 
+!> \brief \copybrief KIM::ModelCompute
+!!
+!! \sa KIM::ModelCompute, KIM_ModelCompute
+!!
+!! \since 2.0
 module kim_model_compute_module
   use, intrinsic :: iso_c_binding
   implicit none

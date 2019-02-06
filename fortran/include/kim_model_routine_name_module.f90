@@ -31,6 +31,11 @@
 !
 
 
+!> \brief \copybrief KIM::ModelRoutineName
+!!
+!! \sa KIM::ModelRoutineName, KIM_ModelRoutineName
+!!
+!! \since 2.0
 module kim_model_routine_name_module
   use, intrinsic :: iso_c_binding
   implicit none
