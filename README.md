@@ -33,7 +33,7 @@
 #
 -->
 
-[![Build Status](https://travis-ci.org/openkim/kim-api.svg?branch=master-v2)](https://travis-ci.org/openkim/kim-api)
+[![Build Status](https://travis-ci.org/openkim/kim-api.svg?branch=master)](https://travis-ci.org/openkim/kim-api)
 [![Documentation Status](https://readthedocs.org/projects/kim-api/badge/?version=latest)](https://kim-api.readthedocs.io/en/latest/?badge=latest)
 
 ============================= The KIM API package =============================

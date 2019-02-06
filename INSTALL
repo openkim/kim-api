@@ -78,7 +78,7 @@ To install and run the KIM API package you need the following:
 
 1. A Unix/Linux/macOS system.
 
-2. CMake (3.4 or later).  (CMake 3.8 or later is required for building the
+2. CMake (3.4 or later).  (CMake 3.9 or later is required for building the
    Doxygen documentation.)
 
 3. GNU compilers (gcc, g++, gfortran) version 4.8.x or higher or the
@@ -189,7 +189,7 @@ execute the command
 $ export KIM_API_VX_MODELS_DIR=/my-kim-stuff/models-i-am-developing:/my-kim-stuff/misc-models
 
 to have the KIM API look for Models in /my-kim-stuff/models-i-am-developing
-first and then look in /my-kim-stuff/misc-models.  Similarly for Model
+first and then look in /my-kim-stuff/misc-models.  (Similarly for Model
 Drivers.)  The environment-variable-collection may be populated with Models and
 Model Drivers after the KIM API has been built and installed.
 
@@ -243,9 +243,9 @@ Here we assume that "/usr/local/bin" is included as part of the system's
 standard PATH setting.
 
 $ cd "${HOME}"
-$ wget https://s3.openkim.org/kim-api/kim-api-vX.Y.Z.txz  # replace X.Y.Z with the current version number
-$ tar Jxvf kim-api-vX.Y.Z.txz
-$ cd kim-api-vX.Y.Z
+$ wget https://s3.openkim.org/kim-api/kim-api-vX-X.Y.Z.txz  # replace X. Y, and Z with the current version numbers
+$ tar Jxvf kim-api-vX-X.Y.Z.txz
+$ cd kim-api-vX-X.Y.Z
 $ mkdir build
 $ cd build
 $ cmake .. -DCMAKE_BUILD_TYPE=Release
@@ -270,7 +270,7 @@ If you want, you can now delete the source and build tree.  However, you may
 also want to preserve the "install_manifest.txt" file which would be needed for
 uninstalling the KIM API package (see D.3 below).
 
-$ rm -r kim-api-vX.Y.Z kim-api-vX.Y.Z.txz # replace X.Y.Z with the current version number
+$ rm -r kim-api-vX-X.Y.Z kim-api-vX-X.Y.Z.txz # replace X, Y, and Z with the current version numbers
 
 Now, we can build the simulator using the KIM API library that we have just
 installed.
@@ -285,9 +285,8 @@ Try it with one of the example models:
 $ printf "ex_model_Ar_P_LJ" | ./utility_forces_numer_deriv
 
 Next, we can try it with a model installed from https://openkim.org:
-** NOTE: until openkim.org switches over to kim-api-v2, the next lines will fail.
-$ kim-api-vX-collections-management install system --sudo EDIP_BOP_Bazant_Kaxiras_Si__MO_958932894036_001
-$ printf "EDIP_BOP_Bazant_Kaxiras_Si__MO_958932894036_001" | ./utility_forces_numer_deriv
+$ kim-api-vX-collections-management install system --sudo EDIP_JustoBazantKaxiras_1998_Si__MO_958932894036_002
+$ printf "EDIP_JustoBazantKaxiras_1998_Si__MO_958932894036_002" | ./utility_forces_numer_deriv
 
 Congratulations, you have now successfully installed the KIM API.  If you would
 like to learn more about the KIM API, read the documentation in the docs
@@ -384,7 +383,7 @@ D.3 Uninstall the KIM API
 
 When the KIM API package is installed, CMake creates a file in the build tree
 named "install_manifest.txt".  For the above commands this file would be
-located at "${HOME}/kim-api-vX.Y.Z/build/install_manifest.txt".  The manifest
+located at "${HOME}/kim-api-vX-X.Y.Z/build/install_manifest.txt".  The manifest
 file contains the absolute file name of every file installed as part of the KIM
 API package.  The contents of the install_manifest.txt file can be used to
 remove these files and, thus, uninstall the KIM API package.  Thus, the
@@ -415,9 +414,6 @@ Here we describe how to add Models and/or Model Drivers to the
 system-collection, user-collection, environment-variable-collection, and the
 CWD-collection.
 
-** NOTE: until openkim.org switches over to kim-api-v2, the below lines
-   installing models will fail.
-
 E.1 ADDING MODELS AND/OR MODEL DRIVERS TO THE SYSTEM-COLLECTION
 
 Once you have the KIM API installed, it is easy to add additional Models and/or
@@ -425,7 +421,7 @@ Model Drivers to the system-collection.
 
 $ cd "${HOME}
 
-$ kim-api-vX-collections-management install system --sudo Pair_Morse_Shifted_Jelinek_Ar__MO_831902330215_001
+$ kim-api-vX-collections-management install system --sudo Morse_Shifted_Jelinek_1972_Ar__MO_831902330215_002
 
 The kim-api-vX-collections-management utility automatically installs the
 necessary Model Driver.  You can see the items in the various collections by
@@ -436,7 +432,7 @@ $ kim-api-vX-collections-management list
 Now we can test the newly installed Model.
 
 $ cd "${HOME}/utility_forces_numer_deriv/build"  # we'll assume this is already built
-$ printf "Pair_Morse_Shifted_Jelinek_Ar__MO_831902330215_001" | ./utility_forces_numer_deriv
+$ printf "Morse_Shifted_Jelinek_1972_Ar__MO_831902330215_002" | ./utility_forces_numer_deriv
 
 E.2 ADDING MODELS AND/OR MODEL DRIVERS TO THE USER-COLLECTION
 
@@ -444,10 +440,10 @@ Adding Models and/or Model Drivers to the user-collection is similar.
 
 $ cd "${HOME}"
 
-$ kim-api-vX-collections-management install user Pair_Lennard_Jones_Shifted_Bernardes_HighCutoff_Ar__MO_242741380554_001
+$ kim-api-vX-collections-management install user LJ_Shifted_Bernardes_1958HighCutoff_Ar__MO_242741380554_003
 $ kim-api-vX-collections-management list
 $ cd "${HOME}/utility_forces_numer_deriv/build"  # we'll assume this is already built
-$ printf "Pair_Lennard_Jones_Shifted_Bernardes_HighCutoff_Ar__MO_242741380554_001" | ./utility_forces_numer_deriv
+$ printf "LJ_Shifted_Bernardes_1958HighCutoff_Ar__MO_242741380554_003" | ./utility_forces_numer_deriv
 
 E.3 ADDING MODELS AND/OR MODEL DRIVERS TO THE ENVIRONMENT-VARIABLE-COLLECTION
 
@@ -460,10 +456,10 @@ $ mkdir -p "${HOME}/my-env-collection/model-drivers"
 $ export KIM_API_VX_MODEL_DRIVERS_DIR="${HOME}/my-env-collection/model-drivers"
 $ mkdir -p "${HOME}/my-env-collection/models"
 $ export KIM_API_VX_MODELS_DIR="${HOME}/my-env-collection/models"
-$ kim-api-vX-collections-management install environment Pair_Morse_Shifted_GirifalcoWeizer_HighCutoff_Cu__MO_151002396060_001
+$ kim-api-vX-collections-management install environment Morse_Shifted_GirifalcoWeizer_1959HighCutoff_Cu__MO_151002396060_002
 $ kim-api-vX-collections-management list
 $ cd "${HOME}/utility_forces_numer_deriv/build"  # we'll assume this is already built
-$ printf "Pair_Morse_Shifted_GirifalcoWeizer_HighCutoff_Cu__MO_151002396060_001" | ./utility_forces_numer_deriv
+$ printf "Morse_Shifted_GirifalcoWeizer_1959HighCutoff_Cu__MO_151002396060_002" | ./utility_forces_numer_deriv
 
 E.4 ADDING MODELS AND/OR MODEL DRIVERS TO THE CWD-COLLECTION
 
@@ -471,10 +467,10 @@ Adding Models and/or Model Drivers to the CWD-collection is, again, similar.
 
 $ cd "${HOME}"
 
-$ kim-api-vX-collections-management install CWD Pair_Exp6_Hogervorst_Mixing_Kong_Chakrabarty_ArNe__MO_946046425752_001
+$ kim-api-vX-collections-management install CWD Exp6_KongChakrabarty_1973_ArNe__MO_946046425752_002
 $ kim-api-vX-collections-management list
 $ cd "${HOME}/utility_forces_numer_deriv/build"  # we'll assume this is already built
-$ printf "Pair_Exp6_Hogervorst_Mixing_Kong_Chakrabarty_ArNe__MO_946046425752_001" | ./utility_forces_numer_deriv
+$ printf "Exp6_KongChakrabarty_1973_ArNe__MO_946046425752_002" | ./utility_forces_numer_deriv
 
 E.5 Manually adding Models and/or Model Drivers
 
