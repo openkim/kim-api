@@ -44,6 +44,11 @@ module kim_sem_ver_module
 
 
 contains
+  !> \brief \copybrief KIM::SEM_VER::GetSemVer
+  !!
+  !! \sa KIM::SEM_VER::GetSemVer, KIM_SEM_VER_GetSemVer
+  !!
+  !! \since 2.0
   recursive subroutine kim_get_sem_ver(version)
     use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
     implicit none
@@ -62,6 +67,11 @@ contains
     call kim_convert_c_char_ptr_to_string(p, version)
   end subroutine kim_get_sem_ver
 
+  !> \brief \copybrief KIM::SEM_VER::IsLessThan
+  !!
+  !! \sa KIM::SEM_VER::IsLessThan, KIM_SEM_VER_IsLessThan
+  !!
+  !! \since 2.0
   recursive subroutine kim_is_less_than(lhs, rhs, is_less_than, &
     ierr)
     implicit none
@@ -84,6 +94,11 @@ contains
       is_less_than)
   end subroutine kim_is_less_than
 
+  !> \brief \copybrief KIM::SEM_VER::ParseSemVer
+  !!
+  !! \sa KIM::SEM_VER::ParseSemVer, KIM_SEM_VER_ParseSemVer
+  !!
+  !! \since 2.0
   recursive subroutine kim_parse_sem_ver(version, major, minor, patch, &
     prerelease, build_metadata, ierr)
     use kim_convert_string_module, only : kim_convert_c_char_array_to_string

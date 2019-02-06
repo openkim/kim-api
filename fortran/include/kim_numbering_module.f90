@@ -54,38 +54,85 @@ module kim_numbering_module
     kim_get_numbering
 
 
+  !> \brief \copybrief KIM::Numbering
+  !!
+  !! \sa KIM::Numbering, KIM_Numbering
+  !!
+  !! \since 2.0
   type, bind(c) :: kim_numbering_type
     integer(c_int) :: numbering_id
   end type kim_numbering_type
 
+  !> \brief \copybrief KIM::NUMBERING::zeroBased
+  !!
+  !! \sa KIM::NUMBERING::zeroBased, KIM_NUMBERING_zeroBased
+  !!
+  !! \since 2.0
   type(kim_numbering_type), protected, save, &
     bind(c, name="KIM_NUMBERING_zeroBased") &
     :: KIM_NUMBERING_ZERO_BASED
+
+  !> \brief \copybrief KIM::NUMBERING::oneBased
+  !!
+  !! \sa KIM::NUMBERING::oneBased, KIM_NUMBERING_oneBased
+  !!
+  !! \since 2.0
   type(kim_numbering_type), protected, save, &
     bind(c, name="KIM_NUMBERING_oneBased") &
     :: KIM_NUMBERING_ONE_BASED
 
+  !> \brief \copybrief KIM::Numbering::Known
+  !!
+  !! \sa KIM::Numbering::Known, KIM_Numbering_Known
+  !!
+  !! \since 2.0
   interface kim_known
     module procedure kim_numbering_known
   end interface kim_known
 
+  !> \brief \copybrief KIM::Numbering::operator==()
+  !!
+  !! \sa KIM::Numbering::operator==(), KIM_Numbering_Equal
+  !!
+  !! \since 2.0
   interface operator (.eq.)
     module procedure kim_numbering_equal
   end interface operator (.eq.)
 
+  !> \brief \copybrief KIM::Numbering::operator!=()
+  !!
+  !! \sa KIM::Numbering::operator!=(), KIM_Numbering_NotEqual
+  !!
+  !! \since 2.0
   interface operator (.ne.)
     module procedure kim_numbering_not_equal
   end interface operator (.ne.)
 
+  !> \brief \copybrief KIM::Numbering::Numbering(std::string const &)
+  !!
+  !! \sa KIM::Numbering::Numbering(std::string const &),
+  !! KIM_Numbering_FromString
+  !!
+  !! \since 2.0
   interface kim_from_string
     module procedure kim_numbering_from_string
   end interface kim_from_string
 
+  !> \brief \copybrief KIM::Numbering::ToString
+  !!
+  !! \sa KIM::Numbering::ToString, KIM_Numbering_ToString
+  !!
+  !! \since 2.0
   interface kim_to_string
     module procedure kim_numbering_to_string
   end interface kim_to_string
 
 contains
+  !> \brief \copybrief KIM::Numbering::Known
+  !!
+  !! \sa KIM::Numbering::Known, KIM_Numbering_Known
+  !!
+  !! \since 2.0
   logical recursive function kim_numbering_known(numbering)
     implicit none
     interface
@@ -102,6 +149,11 @@ contains
     kim_numbering_known = (known(numbering) /= 0)
   end function kim_numbering_known
 
+  !> \brief \copybrief KIM::Numbering::operator==()
+  !!
+  !! \sa KIM::Numbering::operator==(), KIM_Numbering_Equal
+  !!
+  !! \since 2.0
   logical recursive function kim_numbering_equal(lhs, rhs)
     implicit none
     type(kim_numbering_type), intent(in) :: lhs
@@ -111,6 +163,11 @@ contains
       = (lhs%numbering_id .eq. rhs%numbering_id)
   end function kim_numbering_equal
 
+  !> \brief \copybrief KIM::Numbering::operator!=()
+  !!
+  !! \sa KIM::Numbering::operator!=(), KIM_Numbering_NotEqual
+  !!
+  !! \since 2.0
   logical recursive function kim_numbering_not_equal(lhs, rhs)
     implicit none
     type(kim_numbering_type), intent(in) :: lhs
@@ -119,6 +176,12 @@ contains
     kim_numbering_not_equal = .not. (lhs .eq. rhs)
   end function kim_numbering_not_equal
 
+  !> \brief \copybrief KIM::Numbering::Numbering(std::string const &)
+  !!
+  !! \sa KIM::Numbering::Numbering(std::string const &),
+  !! KIM_Numbering_FromString
+  !!
+  !! \since 2.0
   recursive subroutine kim_numbering_from_string(string, numbering)
     implicit none
     interface
@@ -136,6 +199,11 @@ contains
     numbering = from_string(trim(string)//c_null_char)
   end subroutine kim_numbering_from_string
 
+  !> \brief \copybrief KIM::Numbering::ToString
+  !!
+  !! \sa KIM::Numbering::ToString, KIM_Numbering_ToString
+  !!
+  !! \since 2.0
   recursive subroutine kim_numbering_to_string(numbering, string)
     use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
     implicit none
@@ -157,6 +225,12 @@ contains
     call kim_convert_c_char_ptr_to_string(p, string)
   end subroutine kim_numbering_to_string
 
+  !> \brief \copybrief KIM::NUMBERING::GetNumberOfNumberings
+  !!
+  !! \sa KIM::NUMBERING::GetNumberOfNumberings,
+  !! KIM_NUMBERING_GetNumberOfNumberings
+  !!
+  !! \since 2.0
   recursive subroutine kim_get_number_of_numberings(number_of_numberings)
     implicit none
     interface
@@ -172,6 +246,11 @@ contains
     call get_number_of_numberings(number_of_numberings)
   end subroutine kim_get_number_of_numberings
 
+  !> \brief \copybrief KIM::NUMBERING::GetNumbering
+  !!
+  !! \sa KIM::NUMBERING::GetNumbering, KIM_NUMBERING_GetNumbering
+  !!
+  !! \since 2.0
   recursive subroutine kim_get_numbering(index, numbering, ierr)
     implicit none
     interface

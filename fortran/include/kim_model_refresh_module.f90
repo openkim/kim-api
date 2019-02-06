@@ -53,42 +53,87 @@ module kim_model_refresh_module
     kim_to_string
 
 
+  !> \brief \copybrief KIM::ModelRefresh
+  !!
+  !! \sa KIM::ModelRefresh, KIM_ModelRefresh
+  !!
+  !! \since 2.0
   type, bind(c) :: kim_model_refresh_handle_type
     type(c_ptr) :: p = c_null_ptr
   end type kim_model_refresh_handle_type
 
+  !> \brief NULL handle for use in comparisons.
+  !!
+  !! \since 2.0
   type(kim_model_refresh_handle_type), protected, save &
     :: KIM_MODEL_REFRESH_NULL_HANDLE
 
+  !> \brief Compares kim_model_refresh_handle_type's for equality.
+  !!
+  !! \since 2.0
   interface operator (.eq.)
     module procedure kim_model_refresh_handle_equal
   end interface operator (.eq.)
 
+  !> \brief Compares kim_model_refresh_handle_type's for inequality.
+  !!
+  !! \since 2.0
   interface operator (.ne.)
     module procedure kim_model_refresh_handle_not_equal
   end interface operator (.ne.)
 
+  !> \brief \copybrief KIM::ModelRefresh::SetInfluenceDistancePointer
+  !!
+  !! \sa KIM::ModelRefresh::SetInfluenceDistancePointer,
+  !! KIM_ModelRefresh_SetInfluenceDistancePointer
+  !!
+  !! \since 2.0
   interface kim_set_influence_distance_pointer
     module procedure kim_model_refresh_set_influence_distance_pointer
   end interface kim_set_influence_distance_pointer
 
+  !> \brief \copybrief KIM::ModelRefresh::SetNeighborListPointers
+  !!
+  !! \sa KIM::ModelRefresh::SetNeighborListPointers,
+  !! KIM_ModelRefresh_SetNeighborListPointers
+  !!
+  !! \since 2.0
   interface kim_set_neighbor_list_pointers
     module procedure kim_model_refresh_set_neighbor_list_pointers
   end interface kim_set_neighbor_list_pointers
 
+  !> \brief \copybrief KIM::ModelRefresh::GetModelBufferPointer
+  !!
+  !! \sa KIM::ModelRefresh::GetModelBufferPointer,
+  !! KIM_ModelRefresh_GetModelBufferPointer
+  !!
+  !! \since 2.0
   interface kim_get_model_buffer_pointer
     module procedure kim_model_refresh_get_model_buffer_pointer
   end interface kim_get_model_buffer_pointer
 
+  !> \brief \copybrief KIM::ModelRefresh::LogEntry
+  !!
+  !! \sa KIM::ModelRefresh::LogEntry, KIM_ModelRefresh_LogEntry
+  !!
+  !! \since 2.0
   interface kim_log_entry
     module procedure kim_model_refresh_log_entry
   end interface kim_log_entry
 
+  !> \brief \copybrief KIM::ModelRefresh::ToString
+  !!
+  !! \sa KIM::ModelRefresh::ToString, KIM_ModelRefresh_ToString
+  !!
+  !! \since 2.0
   interface kim_to_string
     module procedure kim_model_refresh_to_string
   end interface kim_to_string
 
 contains
+  !> \brief Compares kim_model_refresh_handle_type's for equality.
+  !!
+  !! \since 2.0
   logical recursive function kim_model_refresh_handle_equal(lhs, rhs)
     implicit none
     type(kim_model_refresh_handle_type), intent(in) :: lhs
@@ -101,6 +146,9 @@ contains
     end if
   end function kim_model_refresh_handle_equal
 
+  !> \brief Compares kim_model_refresh_handle_type's for inequality.
+  !!
+  !! \since 2.0
   logical recursive function kim_model_refresh_handle_not_equal(lhs, rhs)
     implicit none
     type(kim_model_refresh_handle_type), intent(in) :: lhs
@@ -109,6 +157,12 @@ contains
     kim_model_refresh_handle_not_equal = .not. (lhs .eq. rhs)
   end function kim_model_refresh_handle_not_equal
 
+  !> \brief \copybrief KIM::ModelRefresh::SetInfluenceDistancePointer
+  !!
+  !! \sa KIM::ModelRefresh::SetInfluenceDistancePointer,
+  !! KIM_ModelRefresh_SetInfluenceDistancePointer
+  !!
+  !! \since 2.0
   recursive subroutine kim_model_refresh_set_influence_distance_pointer( &
     model_refresh_handle, influence_distance)
     use kim_interoperable_types_module, only : kim_model_refresh_type
@@ -134,6 +188,12 @@ contains
       c_loc(influence_distance))
   end subroutine kim_model_refresh_set_influence_distance_pointer
 
+  !> \brief \copybrief KIM::ModelRefresh::SetNeighborListPointers
+  !!
+  !! \sa KIM::ModelRefresh::SetNeighborListPointers,
+  !! KIM_ModelRefresh_SetNeighborListPointers
+  !!
+  !! \since 2.0
   recursive subroutine kim_model_refresh_set_neighbor_list_pointers( &
     model_refresh_handle, number_of_neighbor_lists, cutoffs, &
     modelWillNotRequestNeighborsOfNoncontributingParticles)
@@ -169,6 +229,12 @@ contains
       c_loc(modelWillNotRequestNeighborsOfNoncontributingParticles))
   end subroutine kim_model_refresh_set_neighbor_list_pointers
 
+  !> \brief \copybrief KIM::ModelRefresh::GetModelBufferPointer
+  !!
+  !! \sa KIM::ModelRefresh::GetModelBufferPointer,
+  !! KIM_ModelRefresh_GetModelBufferPointer
+  !!
+  !! \since 2.0
   recursive subroutine kim_model_refresh_get_model_buffer_pointer( &
     model_refresh_handle, ptr)
     use kim_interoperable_types_module, only : kim_model_refresh_type
@@ -192,6 +258,11 @@ contains
     call get_model_buffer_pointer(model_refresh, ptr)
   end subroutine kim_model_refresh_get_model_buffer_pointer
 
+  !> \brief \copybrief KIM::ModelRefresh::LogEntry
+  !!
+  !! \sa KIM::ModelRefresh::LogEntry, KIM_ModelRefresh_LogEntry
+  !!
+  !! \since 2.0
   recursive subroutine kim_model_refresh_log_entry(model_refresh_handle, &
     log_verbosity, message)
     use kim_log_verbosity_module, only : kim_log_verbosity_type
@@ -222,6 +293,11 @@ contains
       0, ""//c_null_char)
   end subroutine kim_model_refresh_log_entry
 
+  !> \brief \copybrief KIM::ModelRefresh::ToString
+  !!
+  !! \sa KIM::ModelRefresh::ToString, KIM_ModelRefresh_ToString
+  !!
+  !! \since 2.0
   recursive subroutine kim_model_refresh_to_string(model_refresh_handle, string)
     use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
     use kim_interoperable_types_module, only : kim_model_refresh_type

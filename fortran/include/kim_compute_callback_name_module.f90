@@ -55,41 +55,105 @@ module kim_compute_callback_name_module
     kim_get_compute_callback_name
 
 
+  !> \brief \copybrief KIM::ComputeCallbackName
+  !!
+  !! \sa KIM::ComputeCallbackName, KIM_ComputeCallbackName
+  !!
+  !! \since 2.0
   type, bind(c) :: kim_compute_callback_name_type
+     !> \brief \copybrief KIM::ComputeCallbackName::computeCallbackNameID
+     !!
+     !! \sa KIM::ComputeCallbackName::computeCallbackNameID,
+     !! KIM_ComputeCallbackName::computeCallbackNameID
+     !!
+     !! \since 2.0
     integer(c_int) compute_callback_name_id
   end type kim_compute_callback_name_type
 
+  !> \brief \copybrief KIM::COMPUTE_CALLBACK_NAME::GetNeighborList
+  !!
+  !! \sa KIM::COMPUTE_CALLBACK_NAME::GetNeighborList,
+  !! KIM_COMPUTE_CALLBACK_NAME_GetNeighborList
+  !!
+  !! \since 2.0
   type(kim_compute_callback_name_type), protected, save, &
     bind(c, name="KIM_COMPUTE_CALLBACK_NAME_GetNeighborList") &
     :: KIM_COMPUTE_CALLBACK_NAME_GET_NEIGHBOR_LIST
+
+  !> \brief \copybrief KIM::COMPUTE_CALLBACK_NAME::ProcessDEDrTerm
+  !!
+  !! \sa KIM::COMPUTE_CALLBACK_NAME::ProcessDEDrTerm,
+  !! KIM_COMPUTE_CALLBACK_NAME_ProcessDEDrTerm
+  !!
+  !! \since 2.0
   type(kim_compute_callback_name_type), protected, save, &
     bind(c, name="KIM_COMPUTE_CALLBACK_NAME_ProcessDEDrTerm") &
     :: KIM_COMPUTE_CALLBACK_NAME_PROCESS_DEDR_TERM
+
+  !> \brief \copybrief KIM::COMPUTE_CALLBACK_NAME::ProcessD2EDr2Term
+  !!
+  !! \sa KIM::COMPUTE_CALLBACK_NAME::ProcessD2EDr2Term,
+  !! KIM_COMPUTE_CALLBACK_NAME_ProcessD2EDr2Term
+  !!
+  !! \since 2.0
   type(kim_compute_callback_name_type), protected, save, &
     bind(c, name="KIM_COMPUTE_CALLBACK_NAME_ProcessD2EDr2Term") &
     :: KIM_COMPUTE_CALLBACK_NAME_PROCESS_D2EDR2_TERM
 
+  !> \brief \copybrief KIM::ComputeCallbackName::Known
+  !!
+  !! \sa KIM::ComputeCallbackName::Known, KIM_ComputeCallbackName_Known
+  !!
+  !! \since 2.0
   interface kim_known
     module procedure kim_compute_callback_name_known
   end interface kim_known
 
+  !> \brief \copybrief KIM::ComputeCallbackName::operator==()
+  !!
+  !! \sa KIM::ComputeCallbackName::operator==(), KIM_ComputeCallbackName_Equal
+  !!
+  !! \since 2.0
   interface operator (.eq.)
     module procedure kim_compute_callback_name_equal
   end interface operator (.eq.)
 
+  !> \brief \copybrief KIM::ComputeCallbackName::operator!=()
+  !!
+  !! \sa KIM::ComputeCallbackName::operator!=(),
+  !! KIM_ComputeCallbackName_NotEqual
+  !!
+  !! \since 2.0
   interface operator (.ne.)
     module procedure kim_compute_callback_name_not_equal
   end interface operator (.ne.)
 
+  !> \brief \copybrief KIM::ComputeCallbackName::<!--
+  !! -->ComputeCallbackName(std::string const &)
+  !!
+  !! \sa KIM::ComputeCallbackName::ComputeCallbackName(std::string const &),
+  !! KIM_ComputeCallbackName_FromString
+  !!
+  !! \since 2.0
   interface kim_from_string
     module procedure kim_compute_callback_name_from_string
   end interface kim_from_string
 
+  !> \brief \copybrief KIM::ComputeCallbackName::ToString
+  !!
+  !! \sa KIM::ComputeCallbackName::ToString, KIM_ComputeCallbackName_ToString
+  !!
+  !! \since 2.0
   interface kim_to_string
     module procedure kim_compute_callback_name_to_string
   end interface kim_to_string
 
 contains
+  !> \brief \copybrief KIM::ComputeCallbackName::Known
+  !!
+  !! \sa KIM::ComputeCallbackName::Known, KIM_ComputeCallbackName_Known
+  !!
+  !! \since 2.0
   logical recursive function kim_compute_callback_name_known( &
     compute_callback_name)
     implicit none
@@ -108,6 +172,11 @@ contains
     kim_compute_callback_name_known = (known(compute_callback_name) /= 0)
   end function kim_compute_callback_name_known
 
+  !> \brief \copybrief KIM::ComputeCallbackName::operator==()
+  !!
+  !! \sa KIM::ComputeCallbackName::operator==(), KIM_ComputeCallbackName_Equal
+  !!
+  !! \since 2.0
   logical recursive function kim_compute_callback_name_equal(lhs, rhs)
     implicit none
     type(kim_compute_callback_name_type), intent(in) :: lhs
@@ -117,6 +186,12 @@ contains
       = (lhs%compute_callback_name_id .eq. rhs%compute_callback_name_id)
   end function kim_compute_callback_name_equal
 
+  !> \brief \copybrief KIM::ComputeCallbackName::operator!=()
+  !!
+  !! \sa KIM::ComputeCallbackName::operator!=(),
+  !! KIM_ComputeCallbackName_NotEqual
+  !!
+  !! \since 2.0
   logical recursive function kim_compute_callback_name_not_equal(lhs, rhs)
     implicit none
     type(kim_compute_callback_name_type), intent(in) :: lhs
@@ -125,6 +200,13 @@ contains
     kim_compute_callback_name_not_equal = .not. (lhs .eq. rhs)
   end function kim_compute_callback_name_not_equal
 
+  !> \brief \copybrief KIM::ComputeCallbackName::<!--
+  !! -->ComputeCallbackName(std::string const &)
+  !!
+  !! \sa KIM::ComputeCallbackName::ComputeCallbackName(std::string const &),
+  !! KIM_ComputeCallbackName_FromString
+  !!
+  !! \since 2.0
   recursive subroutine kim_compute_callback_name_from_string(string, &
     compute_callback_name)
     implicit none
@@ -143,6 +225,11 @@ contains
     compute_callback_name = from_string(trim(string)//c_null_char)
   end subroutine kim_compute_callback_name_from_string
 
+  !> \brief \copybrief KIM::ComputeCallbackName::ToString
+  !!
+  !! \sa KIM::ComputeCallbackName::ToString, KIM_ComputeCallbackName_ToString
+  !!
+  !! \since 2.0
   recursive subroutine kim_compute_callback_name_to_string( &
     compute_callback_name, string)
     use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
@@ -167,6 +254,13 @@ contains
     call kim_convert_c_char_ptr_to_string(p, string)
   end subroutine kim_compute_callback_name_to_string
 
+  !> \brief \copybrief KIM::COMPUTE_CALLBACK_NAME::<!--
+  !! -->GetNumberOfComputeCallbackNames
+  !!
+  !! \sa KIM::COMPUTE_CALLBACK_NAME::GetNumberOfComputeCallbackNames,
+  !! KIM_COMPUTE_CALLBACK_NAME_GetNumberOfComputeCallbackNames
+  !!
+  !! \since 2.0
   recursive subroutine kim_get_number_of_compute_callback_names( &
     number_of_compute_callback_names)
     implicit none
@@ -184,6 +278,12 @@ contains
     call get_number_of_compute_callback_names(number_of_compute_callback_names)
   end subroutine kim_get_number_of_compute_callback_names
 
+  !> \brief \copybrief KIM::COMPUTE_CALLBACK_NAME::GetComputeCallbackName
+  !!
+  !! \sa KIM::COMPUTE_CALLBACK_NAME::GetComputeCallbackName,
+  !! KIM_COMPUTE_CALLBACK_NAME_GetComputeCallbackName
+  !!
+  !! \since 2.0
   recursive subroutine kim_get_compute_callback_name(index, &
     compute_callback_name, ierr)
     implicit none

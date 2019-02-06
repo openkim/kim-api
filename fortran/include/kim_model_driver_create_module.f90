@@ -61,75 +61,167 @@ module kim_model_driver_create_module
     kim_to_string
 
 
+  !> \brief \copybrief KIM::ModelDriverCreate
+  !!
+  !! \sa KIM::ModelDriverCreate, KIM_ModelDriverCreate
+  !!
+  !! \since 2.0
   type, bind(c) :: kim_model_driver_create_handle_type
     type(c_ptr) :: p = c_null_ptr
   end type kim_model_driver_create_handle_type
 
+  !> \brief NULL handle for use in comparisons.
+  !!
+  !! \since 2.0
   type(kim_model_driver_create_handle_type), protected, save &
     :: KIM_MODEL_DRIVER_CREATE_NULL_HANDLE
 
+  !> \brief Compares kim_model_driver_create_handle_type's for equality.
+  !!
+  !! \since 2.0
   interface operator (.eq.)
     module procedure kim_model_driver_create_handle_equal
   end interface operator (.eq.)
 
+  !> \brief Compares kim_model_driver_create_handle_type's for inequality.
+  !!
+  !! \since 2.0
   interface operator (.ne.)
     module procedure kim_model_driver_create_handle_not_equal
   end interface operator (.ne.)
 
+  !> \brief \copybrief KIM::ModelDriverCreate::GetNumberOfParameterFiles
+  !!
+  !! \sa KIM::ModelDriverCreate::GetNumberOfParameterFiles,
+  !! KIM_ModelDriverCreate_GetNumberOfParameterFiles
+  !!
+  !! \since 2.0
   interface kim_get_number_of_parameter_files
     module procedure kim_model_driver_create_get_number_of_parameter_files
   end interface kim_get_number_of_parameter_files
 
+  !> \brief \copybrief KIM::ModelDriverCreate::GetParameterFileName
+  !!
+  !! \sa KIM::ModelDriverCreate::GetParameterFileName,
+  !! KIM_ModelDriverCreate_GetParameterFileName
+  !!
+  !! \since 2.0
   interface kim_get_parameter_file_name
     module procedure kim_model_driver_create_get_parameter_file_name
   end interface kim_get_parameter_file_name
 
+  !> \brief \copybrief KIM::ModelDriverCreate::SetModelNumbering
+  !!
+  !! \sa KIM::ModelDriverCreate::SetModelNumbering,
+  !! KIM_ModelDriverCreate_SetModelNumbering
+  !!
+  !! \since 2.0
   interface kim_set_model_numbering
     module procedure kim_model_driver_create_set_model_numbering
   end interface kim_set_model_numbering
 
+  !> \brief \copybrief KIM::ModelDriverCreate::SetInfluenceDistancePointer
+  !!
+  !! \sa KIM::ModelDriverCreate::SetInfluenceDistancePointer,
+  !! KIM_ModelDriverCreate_SetInfluenceDistancePointer
+  !!
+  !! \since 2.0
   interface kim_set_influence_distance_pointer
     module procedure kim_model_driver_create_set_influence_distance_pointer
   end interface kim_set_influence_distance_pointer
 
+  !> \brief \copybrief KIM::ModelDriverCreate::SetNeighborListPointers
+  !!
+  !! \sa KIM::ModelDriverCreate::SetNeighborListPointers,
+  !! KIM_ModelDriverCreate_SetNeighborListPointers
+  !!
+  !! \since 2.0
   interface kim_set_neighbor_list_pointers
     module procedure kim_model_driver_create_set_neighbor_list_pointers
   end interface kim_set_neighbor_list_pointers
 
+  !> \brief \copybrief KIM::ModelDriverCreate::SetRoutinePointer
+  !!
+  !! \sa KIM::ModelDriverCreate::SetRoutinePointer,
+  !! KIM_ModelDriverCreate_SetRoutinePointer
+  !!
+  !! \since 2.0
   interface kim_set_routine_pointer
     module procedure kim_model_driver_create_set_routine_pointer
   end interface kim_set_routine_pointer
 
+  !> \brief \copybrief KIM::ModelDriverCreate::SetSpeciesCode
+  !!
+  !! \sa KIM::ModelDriverCreate::SetSpeciesCode,
+  !! KIM_ModelDriverCreate_SetSpeciesCode
+  !!
+  !! \since 2.0
   interface kim_set_species_code
     module procedure kim_model_driver_create_set_species_code
   end interface kim_set_species_code
 
+  !> \brief \copybrief KIM::ModelDriverCreate::SetParameterPointer
+  !!
+  !! \sa KIM::ModelDriverCreate::SetParameterPointer,
+  !! KIM_ModelDriverCreate_SetParameterPointerInteger,
+  !! KIM_ModelDriverCreate_SetParameterPointerDouble
+  !!
+  !! \since 2.0
   interface kim_set_parameter_pointer
     module procedure kim_model_driver_create_set_parameter_pointer_integer
     module procedure kim_model_driver_create_set_parameter_pointer_double
   end interface kim_set_parameter_pointer
 
+  !> \brief \copybrief KIM::ModelDriverCreate::SetModelBufferPointer
+  !!
+  !! \sa KIM::ModelDriverCreate::SetModelBufferPointer,
+  !! KIM_ModelDriverCreate_SetModelBufferPointer
+  !!
+  !! \since 2.0
   interface kim_set_model_buffer_pointer
     module procedure kim_model_driver_create_set_model_buffer_pointer
   end interface kim_set_model_buffer_pointer
 
+  !> \brief \copybrief KIM::ModelDriverCreate::SetUnits
+  !!
+  !! \sa KIM::ModelDriverCreate::SetUnits, KIM_ModelDriverCreate_SetUnits
+  !!
+  !! \since 2.0
   interface kim_set_units
     module procedure kim_model_driver_create_set_units
   end interface kim_set_units
 
+  !> \brief \copybrief KIM::ModelDriverCreate::ConvertUnit
+  !!
+  !! \sa KIM::ModelDriverCreate::ConvertUnit, KIM_ModelDriverCreate_ConvertUnit
+  !!
+  !! \since 2.0
   interface kim_convert_unit
     module procedure kim_model_driver_create_convert_unit
   end interface kim_convert_unit
 
+  !> \brief \copybrief KIM::ModelDriverCreate::LogEntry
+  !!
+  !! \sa KIM::ModelDriverCreate::LogEntry, KIM_ModelDriverCreate_LogEntry
+  !!
+  !! \since 2.0
   interface kim_log_entry
     module procedure kim_model_driver_create_log_entry
   end interface kim_log_entry
 
+  !> \brief \copybrief KIM::ModelDriverCreate::ToString
+  !!
+  !! \sa KIM::ModelDriverCreate::ToString, KIM_ModelDriverCreate_ToString
+  !!
+  !! \since 2.0
   interface kim_to_string
     module procedure kim_model_driver_create_to_string
   end interface kim_to_string
 
 contains
+  !> \brief Compares kim_model_driver_create_handle_type's for equality.
+  !!
+  !! \since 2.0
   logical recursive function kim_model_driver_create_handle_equal(lhs, rhs)
     implicit none
     type(kim_model_driver_create_handle_type), intent(in) :: lhs
@@ -142,6 +234,9 @@ contains
     end if
   end function kim_model_driver_create_handle_equal
 
+  !> \brief Compares kim_model_driver_create_handle_type's for inequality.
+  !!
+  !! \since 2.0
   logical recursive function kim_model_driver_create_handle_not_equal(lhs, rhs)
     implicit none
     type(kim_model_driver_create_handle_type), intent(in) :: lhs
@@ -150,6 +245,12 @@ contains
     kim_model_driver_create_handle_not_equal = .not. (lhs .eq. rhs)
   end function kim_model_driver_create_handle_not_equal
 
+  !> \brief \copybrief KIM::ModelDriverCreate::GetNumberOfParameterFiles
+  !!
+  !! \sa KIM::ModelDriverCreate::GetNumberOfParameterFiles,
+  !! KIM_ModelDriverCreate_GetNumberOfParameterFiles
+  !!
+  !! \since 2.0
   recursive subroutine kim_model_driver_create_get_number_of_parameter_files( &
     model_driver_create_handle, number_of_parameter_files)
     use kim_interoperable_types_module, only : kim_model_driver_create_type
@@ -176,6 +277,12 @@ contains
       number_of_parameter_files)
   end subroutine kim_model_driver_create_get_number_of_parameter_files
 
+  !> \brief \copybrief KIM::ModelDriverCreate::GetParameterFileName
+  !!
+  !! \sa KIM::ModelDriverCreate::GetParameterFileName,
+  !! KIM_ModelDriverCreate_GetParameterFileName
+  !!
+  !! \since 2.0
   recursive subroutine kim_model_driver_create_get_parameter_file_name( &
     model_driver_create_handle, index, parameter_file_name, ierr)
     use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
@@ -209,6 +316,12 @@ contains
     call kim_convert_c_char_ptr_to_string(p, parameter_file_name)
   end subroutine kim_model_driver_create_get_parameter_file_name
 
+  !> \brief \copybrief KIM::ModelDriverCreate::SetModelNumbering
+  !!
+  !! \sa KIM::ModelDriverCreate::SetModelNumbering,
+  !! KIM_ModelDriverCreate_SetModelNumbering
+  !!
+  !! \since 2.0
   recursive subroutine kim_model_driver_create_set_model_numbering( &
     model_driver_create_handle, numbering, ierr)
     use kim_numbering_module, only : kim_numbering_type
@@ -237,6 +350,12 @@ contains
     ierr = set_model_numbering(model_driver_create, numbering)
   end subroutine kim_model_driver_create_set_model_numbering
 
+  !> \brief \copybrief KIM::ModelDriverCreate::SetInfluenceDistancePointer
+  !!
+  !! \sa KIM::ModelDriverCreate::SetInfluenceDistancePointer,
+  !! KIM_ModelDriverCreate_SetInfluenceDistancePointer
+  !!
+  !! \since 2.0
   recursive subroutine kim_model_driver_create_set_influence_distance_pointer( &
     model_driver_create_handle, influence_distance)
     use kim_interoperable_types_module, only : kim_model_driver_create_type
@@ -263,6 +382,12 @@ contains
       c_loc(influence_distance))
   end subroutine kim_model_driver_create_set_influence_distance_pointer
 
+  !> \brief \copybrief KIM::ModelDriverCreate::SetNeighborListPointers
+  !!
+  !! \sa KIM::ModelDriverCreate::SetNeighborListPointers,
+  !! KIM_ModelDriverCreate_SetNeighborListPointers
+  !!
+  !! \since 2.0
   recursive subroutine kim_model_driver_create_set_neighbor_list_pointers( &
     model_driver_create_handle, number_of_neighbor_lists, cutoffs, &
     model_will_not_request_neighbors_of_noncontributing_particles)
@@ -300,6 +425,12 @@ contains
       c_loc(model_will_not_request_neighbors_of_noncontributing_particles))
   end subroutine kim_model_driver_create_set_neighbor_list_pointers
 
+  !> \brief \copybrief KIM::ModelDriverCreate::SetRoutinePointer
+  !!
+  !! \sa KIM::ModelDriverCreate::SetRoutinePointer,
+  !! KIM_ModelDriverCreate_SetRoutinePointer
+  !!
+  !! \since 2.0
   recursive subroutine kim_model_driver_create_set_routine_pointer( &
     model_driver_create_handle, model_routine_name, language_name, required, &
     fptr, ierr)
@@ -339,6 +470,12 @@ contains
       language_name, required, fptr)
   end subroutine kim_model_driver_create_set_routine_pointer
 
+  !> \brief \copybrief KIM::ModelDriverCreate::SetSpeciesCode
+  !!
+  !! \sa KIM::ModelDriverCreate::SetSpeciesCode,
+  !! KIM_ModelDriverCreate_SetSpeciesCode
+  !!
+  !! \since 2.0
   recursive subroutine kim_model_driver_create_set_species_code( &
     model_driver_create_handle, species_name, code, ierr)
     use kim_species_name_module, only : kim_species_name_type
@@ -369,6 +506,12 @@ contains
     ierr = set_species_code(model_driver_create, species_name, code)
   end subroutine kim_model_driver_create_set_species_code
 
+  !> \brief \copybrief KIM::ModelDriverCreate::SetParameterPointer
+  !!
+  !! \sa KIM::ModelDriverCreate::SetParameterPointer,
+  !! KIM_ModelDriverCreate_SetParameterPointerInteger
+  !!
+  !! \since 2.0
   recursive subroutine kim_model_driver_create_set_parameter_pointer_integer( &
     model_driver_create_handle, int1, name, description, ierr)
     use kim_interoperable_types_module, only : kim_model_driver_create_type
@@ -421,6 +564,12 @@ contains
     end subroutine set_parameter
   end subroutine kim_model_driver_create_set_parameter_pointer_integer
 
+  !> \brief \copybrief KIM::ModelDriverCreate::SetParameterPointer
+  !!
+  !! \sa KIM::ModelDriverCreate::SetParameterPointer,
+  !! KIM_ModelDriverCreate_SetParameterPointerDouble
+  !!
+  !! \since 2.0
   recursive subroutine kim_model_driver_create_set_parameter_pointer_double( &
     model_driver_create_handle, double1, name, description, ierr)
     use kim_interoperable_types_module, only : kim_model_driver_create_type
@@ -473,6 +622,12 @@ contains
     end subroutine set_parameter
   end subroutine kim_model_driver_create_set_parameter_pointer_double
 
+  !> \brief \copybrief KIM::ModelDriverCreate::SetModelBufferPointer
+  !!
+  !! \sa KIM::ModelDriverCreate::SetModelBufferPointer,
+  !! KIM_ModelDriverCreate_SetModelBufferPointer
+  !!
+  !! \since 2.0
   recursive subroutine kim_model_driver_create_set_model_buffer_pointer( &
     model_driver_create_handle, ptr)
     use kim_interoperable_types_module, only : kim_model_driver_create_type
@@ -497,6 +652,11 @@ contains
     call set_model_buffer_pointer(model_driver_create, ptr)
   end subroutine kim_model_driver_create_set_model_buffer_pointer
 
+  !> \brief \copybrief KIM::ModelDriverCreate::SetUnits
+  !!
+  !! \sa KIM::ModelDriverCreate::SetUnits, KIM_ModelDriverCreate_SetUnits
+  !!
+  !! \since 2.0
   recursive subroutine kim_model_driver_create_set_units( &
     model_driver_create_handle, length_unit, energy_unit, charge_unit, &
     temperature_unit, time_unit, ierr)
@@ -545,6 +705,11 @@ contains
       charge_unit, temperature_unit, time_unit)
   end subroutine kim_model_driver_create_set_units
 
+  !> \brief \copybrief KIM::ModelDriverCreate::ConvertUnit
+  !!
+  !! \sa KIM::ModelDriverCreate::ConvertUnit, KIM_ModelDriverCreate_ConvertUnit
+  !!
+  !! \since 2.0
   recursive subroutine kim_model_driver_create_convert_unit( &
     from_length_unit, from_energy_unit, &
     from_charge_unit, from_temperature_unit, from_time_unit, &
@@ -617,6 +782,11 @@ contains
       charge_exponent, temperature_exponent, time_exponent, conversion_factor)
   end subroutine kim_model_driver_create_convert_unit
 
+  !> \brief \copybrief KIM::ModelDriverCreate::LogEntry
+  !!
+  !! \sa KIM::ModelDriverCreate::LogEntry, KIM_ModelDriverCreate_LogEntry
+  !!
+  !! \since 2.0
   recursive subroutine kim_model_driver_create_log_entry( &
     model_driver_create_handle, log_verbosity, message)
     use kim_log_verbosity_module, only : kim_log_verbosity_type
@@ -649,6 +819,11 @@ contains
       trim(message)//c_null_char, 0, ""//c_null_char)
   end subroutine kim_model_driver_create_log_entry
 
+  !> \brief \copybrief KIM::ModelDriverCreate::ToString
+  !!
+  !! \sa KIM::ModelDriverCreate::ToString, KIM_ModelDriverCreate_ToString
+  !!
+  !! \since 2.0
   recursive subroutine kim_model_driver_create_to_string( &
     model_driver_create_handle, string)
     use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string

@@ -54,38 +54,92 @@ module kim_temperature_unit_module
     kim_get_temperature_unit
 
 
+  !> \brief \copybrief KIM::TemperatureUnit
+  !!
+  !! \sa KIM::TemperatureUnit, KIM_TemperatureUnit
+  !!
+  !! \since 2.0
   type, bind(c) :: kim_temperature_unit_type
+     !> \brief \copybrief KIM::TemperatureUnit::temperatureUnitID
+     !!
+     !! \sa KIM::TemperatureUnit::temperatureUnitID,
+     !! KIM_TemperatureUnit::temperatureUnitID
+     !!
+     !! \since 2.0
     integer(c_int) temperature_unit_id
   end type kim_temperature_unit_type
 
+  !> \brief \copybrief KIM::TEMPERATURE_UNIT::unused
+  !!
+  !! \sa KIM::TEMPERATURE_UNIT::, KIM_TEMPERATURE_UNIT_unused
+  !!
+  !! \since 2.0
   type(kim_temperature_unit_type), protected, save, &
     bind(c, name="KIM_TEMPERATURE_UNIT_unused") &
     :: KIM_TEMPERATURE_UNIT_UNUSED
+
+  !> \brief \copybrief KIM::TEMPERATURE_UNIT::K
+  !!
+  !! \sa KIM::TEMPERATURE_UNIT::K, KIM_TEMPERATURE_UNIT_K
+  !!
+  !! \since 2.0
   type(kim_temperature_unit_type), protected, save, &
     bind(c, name="KIM_TEMPERATURE_UNIT_K") &
     :: KIM_TEMPERATURE_UNIT_K
 
+  !> \brief \copybrief KIM::TemperatureUnit::Known
+  !!
+  !! \sa KIM::TemperatureUnit::Known, KIM_TemperatureUnit_Known
+  !!
+  !! \since 2.0
   interface kim_known
     module procedure kim_temperature_unit_known
   end interface kim_known
 
+  !> \brief \copybrief KIM::TemperatureUnit::operator==()
+  !!
+  !! \sa KIM::TemperatureUnit::operator==(), KIM_TemperatureUnit_Equal
+  !!
+  !! \since 2.0
   interface operator (.eq.)
     module procedure kim_temperature_unit_equal
   end interface operator (.eq.)
 
+  !> \brief \copybrief KIM::TemperatureUnit::operator!=()
+  !!
+  !! \sa KIM::TemperatureUnit::operator!=(), KIM_TemperatureUnit_NotEqual
+  !!
+  !! \since 2.0
   interface operator (.ne.)
     module procedure kim_temperature_unit_not_equal
   end interface operator (.ne.)
 
+  !> \brief \copybrief KIM::TemperatureUnit::<!--
+  !! -->TemperatureUnit(std::string const &)
+  !!
+  !! \sa KIM::TemperatureUnit::TemperatureUnit(std::string const &),
+  !! KIM_TemperatureUnit_FromString
+  !!
+  !! \since 2.0
   interface kim_from_string
     module procedure kim_temperature_unit_from_string
   end interface kim_from_string
 
+  !> \brief \copybrief KIM::TemperatureUnit::ToString
+  !!
+  !! \sa KIM::TemperatureUnit::ToString, KIM_TemperatureUnit_ToString
+  !!
+  !! \since 2.0
   interface kim_to_string
     module procedure kim_temperature_unit_to_string
   end interface kim_to_string
 
 contains
+  !> \brief \copybrief KIM::ChargeUnit::Known
+  !!
+  !! \sa KIM::ChargeUnit::Known, KIM_ChargeUnit_Known
+  !!
+  !! \since 2.0
   logical recursive function kim_temperature_unit_known(temperature_unit)
     implicit none
     interface
@@ -102,6 +156,11 @@ contains
     kim_temperature_unit_known = (known(temperature_unit) /= 0)
   end function kim_temperature_unit_known
 
+  !> \brief \copybrief KIM::ChargeUnit::operator==()
+  !!
+  !! \sa KIM::ChargeUnit::operator==(), KIM_ChargeUnit_Equal
+  !!
+  !! \since 2.0
   logical recursive function kim_temperature_unit_equal(lhs, rhs)
     implicit none
     type(kim_temperature_unit_type), intent(in) :: lhs
@@ -111,6 +170,11 @@ contains
       = (lhs%temperature_unit_id .eq. rhs%temperature_unit_id)
   end function kim_temperature_unit_equal
 
+  !> \brief \copybrief KIM::ChargeUnit::operator!=()
+  !!
+  !! \sa KIM::ChargeUnit::operator!=(), KIM_ChargeUnit_NotEqual
+  !!
+  !! \since 2.0
   logical recursive function kim_temperature_unit_not_equal(lhs, rhs)
     implicit none
     type(kim_temperature_unit_type), intent(in) :: lhs
@@ -119,6 +183,12 @@ contains
     kim_temperature_unit_not_equal = .not. (lhs .eq. rhs)
   end function kim_temperature_unit_not_equal
 
+  !> \brief \copybrief KIM::ChargeUnit::ChargeUnit(std::string const &)
+  !!
+  !! \sa KIM::ChargeUnit::ChargeUnit(std::string const &),
+  !! KIM_ChargeUnit_FromString
+  !!
+  !! \since 2.0
   recursive subroutine kim_temperature_unit_from_string(string, &
     temperature_unit)
     implicit none
@@ -137,6 +207,11 @@ contains
     temperature_unit = from_string(trim(string)//c_null_char)
   end subroutine kim_temperature_unit_from_string
 
+  !> \brief \copybrief KIM::ChargeUnit::ToString
+  !!
+  !! \sa KIM::ChargeUnit::ToString, KIM_ChargeUnit_ToString
+  !!
+  !! \since 2.0
   recursive subroutine kim_temperature_unit_to_string(temperature_unit, string)
     use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
     implicit none
@@ -158,6 +233,12 @@ contains
     call kim_convert_c_char_ptr_to_string(p, string)
   end subroutine kim_temperature_unit_to_string
 
+  !> \brief \copybrief KIM::TEMPERATURE_UNIT::GetNumberOfTemperatureUnits
+  !!
+  !! \sa KIM::TEMPERATURE_UNIT::GetNumberOfTemperatureUnits,
+  !! KIM_TEMPERATURE_UNIT_GetNumberOfTemperatureUnits
+  !!
+  !! \since 2.0
   recursive subroutine kim_get_number_of_temperature_units( &
     number_of_temperature_units)
     implicit none
@@ -175,6 +256,12 @@ contains
     call get_number_of_temperature_units(number_of_temperature_units)
   end subroutine kim_get_number_of_temperature_units
 
+  !> \brief \copybrief KIM::TEMPERATURE_UNIT::GetTemperatureUnit
+  !!
+  !! \sa KIM::TEMPERATURE_UNIT::GetTemperatureUnit,
+  !! KIM_TEMPERATURE_UNIT_GetTemperatureUnit
+  !!
+  !! \since 2.0
   recursive subroutine kim_get_temperature_unit(index, &
     temperature_unit, ierr)
     implicit none

@@ -72,112 +72,244 @@ module kim_model_module
     kim_pop_log_verbosity
 
 
+  !> \brief \copybrief KIM::Model
+  !!
+  !! \sa KIM::Model, KIM_Model
+  !!
+  !! \since 2.0
   type, bind(c) :: kim_model_handle_type
     type(c_ptr) :: p = c_null_ptr
   end type kim_model_handle_type
 
+  !> \brief NULL handle for use in comparisons.
+  !!
+  !! \since 2.0
   type(kim_model_handle_type), protected, save &
     :: KIM_MODEL_NULL_HANDLE
 
+  !> \brief Compares kim_model_handle_type's for equality.
+  !!
+  !! \since 2.0
   interface operator (.eq.)
     module procedure kim_model_handle_equal
   end interface operator (.eq.)
 
+  !> \brief Compares kim_model_handle_type's for inequality.
+  !!
+  !! \since 2.0
   interface operator (.ne.)
     module procedure kim_model_handle_not_equal
   end interface operator (.ne.)
 
+  !> \brief \copybrief KIM::Model::IsRoutinePresent
+  !!
+  !! \sa KIM::Model::IsRoutinePresent, KIM_Model_IsRoutinePresent
+  !!
+  !! \since 2.0
   interface kim_is_routine_present
     module procedure kim_model_is_routine_present
   end interface kim_is_routine_present
 
+  !> \brief \copybrief KIM::Model::GetInfluenceDistance
+  !!
+  !! \sa KIM::Model::GetInfluenceDistance, KIM_Model_GetInfluenceDistance
+  !!
+  !! \since 2.0
   interface kim_get_influence_distance
     module procedure kim_model_get_influence_distance
   end interface kim_get_influence_distance
 
+  !> \brief Get Model's number of neighbor lists.
+  !!
+  !! \sa KIM::Model::GetNeighborListPointers, KIM_Model_GetNeighborListPointers
+  !!
+  !! \since 2.0
   interface kim_get_number_of_neighbor_lists
     module procedure kim_model_get_number_of_neighbor_lists
   end interface kim_get_number_of_neighbor_lists
 
+  !> \brief Get Model's neighbor list values
+  !!
+  !! \sa KIM::Model::GetNeighborListPointers, KIM_Model_GetNeighborListPointers
+  !!
+  !! \since 2.0
   interface kim_get_neighbor_list_values
     module procedure kim_model_get_neighbor_list_values
   end interface kim_get_neighbor_list_values
 
+  !> \brief \copybrief KIM::Model::GetUnits
+  !!
+  !! \sa KIM::Model::GetUnits, KIM_Model_GetUnits
+  !!
+  !! \since 2.0
   interface kim_get_units
     module procedure kim_model_get_units
   end interface kim_get_units
 
+  !> \brief \copybrief KIM::Model::ComputeArgumentsCreate
+  !!
+  !! \sa KIM::Model::ComputeArgumentsCreate, KIM_Model_ComputeArgumentsCreate
+  !!
+  !! \since 2.0
   interface kim_compute_arguments_create
     module procedure kim_model_compute_arguments_create
   end interface kim_compute_arguments_create
 
+  !> \brief \copybrief KIM::Model::ComputeArgumentsDestroy
+  !!
+  !! \sa KIM::Model::ComputeArgumentsDestroy, KIM_Model_ComputeArgumentsDestroy
+  !!
+  !! \since 2.0
   interface kim_compute_arguments_destroy
     module procedure kim_model_compute_arguments_destroy
   end interface kim_compute_arguments_destroy
 
+  !> \brief \copybrief KIM::Model::Compute
+  !!
+  !! \sa KIM::Model::Compute, KIM_Model_Compute
+  !!
+  !! \since 2.0
   interface kim_compute
     module procedure kim_model_compute
   end interface kim_compute
 
+  !> \brief \copybrief KIM::Model::Extension
+  !!
+  !! \sa KIM::Model::Extension, KIM_Model_Extension
+  !!
+  !! \since 2.0
   interface kim_extension
     module procedure kim_model_extension
   end interface kim_extension
 
+  !> \brief \copybrief KIM::Model::ClearThenRefresh
+  !!
+  !! \sa KIM::Model::ClearThenRefresh, KIM_Model_ClearThenRefresh
+  !!
+  !! \since 2.0
   interface kim_clear_then_refresh
     module procedure kim_model_clear_then_refresh
   end interface kim_clear_then_refresh
 
+  !> \brief \copybrief KIM::Model::WriteParameterizedModel
+  !!
+  !! \sa KIM::Model::WriteParameterizedModel, KIM_Model_WriteParameterizedModel
+  !!
+  !! \since 2.0
   interface kim_write_parameterized_model
     module procedure kim_model_write_parameterized_model
   end interface kim_write_parameterized_model
 
+  !> \brief \copybrief KIM::Model::GetSpeciesSupportAndCode
+  !!
+  !! \sa KIM::Model::GetSpeciesSupportAndCode,
+  !! KIM_Model_GetSpeciesSupportAndCode
+  !!
+  !! \since 2.0
   interface kim_get_species_support_and_code
     module procedure kim_model_get_species_support_and_code
   end interface kim_get_species_support_and_code
 
+  !> \brief \copybrief KIM::Model::GetNumberOfParameters
+  !!
+  !! \sa KIM::Model::GetNumberOfParameters, KIM_Model_GetNumberOfParameters
+  !!
+  !! \since 2.0
   interface kim_get_number_of_parameters
     module procedure kim_model_get_number_of_parameters
   end interface kim_get_number_of_parameters
 
+  !> \brief \copybrief KIM::Model::GetParameterMetadata
+  !!
+  !! \sa KIM::Model::GetParameterMetadata, KIM_Model_GetParameterMetadata
+  !!
+  !! \since 2.0
   interface kim_get_parameter_metadata
     module procedure kim_model_get_parameter_metadata
   end interface kim_get_parameter_metadata
 
+  !> \brief \copybrief KIM::Model::GetParameter
+  !!
+  !! \sa KIM::Model::GetParameter, KIM_Model_GetParameterInteger,
+  !! KIM_Model_GetParameterDouble
+  !!
+  !! \since 2.0
   interface kim_get_parameter
     module procedure kim_model_get_parameter_integer
     module procedure kim_model_get_parameter_double
   end interface kim_get_parameter
 
+  !> \brief \copybrief KIM::Model::SetParameter
+  !!
+  !! \sa KIM::Model::SetParameter, KIM_Model_SetParameterInteger,
+  !! KIM_Model_SetParameterDouble
+  !!
+  !! \since 2.0
   interface kim_set_parameter
     module procedure kim_model_set_parameter_integer
     module procedure kim_model_set_parameter_double
   end interface kim_set_parameter
 
+  !> \brief \copybrief KIM::Model::SetSimulatorBufferPointer
+  !!
+  !! \sa KIM::Model::SetSimulatorBufferPointer,
+  !! KIM_Model_SetSimulatorBufferPointer
+  !!
+  !! \since 2.0
   interface kim_set_simulator_buffer_pointer
     module procedure kim_model_set_simulator_buffer_pointer
   end interface kim_set_simulator_buffer_pointer
 
+  !> \brief \copybrief KIM::Model::GetSimulatorBufferPointer
+  !!
+  !! \sa KIM::Model::GetSimulatorBufferPointer,
+  !! KIM_Model_GetSimulatorBufferPointer
+  !!
+  !! \since 2.0
   interface kim_get_simulator_buffer_pointer
     module procedure kim_model_get_simulator_buffer_pointer
   end interface kim_get_simulator_buffer_pointer
 
+  !> \brief \copybrief KIM::Model::ToString
+  !!
+  !! \sa KIM::Model::ToString, KIM_Model_ToString
+  !!
+  !! \since 2.0
   interface kim_to_string
     module procedure kim_model_to_string
   end interface kim_to_string
 
+  !> \brief \copybrief KIM::Model::SetLogID
+  !!
+  !! \sa KIM::Model::SetLogID, KIM_Model_SetLogID
+  !!
+  !! \since 2.0
   interface kim_set_log_id
     module procedure kim_model_set_log_id
   end interface kim_set_log_id
 
+  !> \brief \copybrief KIM::Model::PushLogVerbosity
+  !!
+  !! \sa KIM::Model::PushLogVerbosity, KIM_Model_PushLogVerbosity
+  !!
+  !! \since 2.0
   interface kim_push_log_verbosity
     module procedure kim_model_push_log_verbosity
   end interface kim_push_log_verbosity
 
+  !> \brief \copybrief KIM::Model::PopLogVerbosity
+  !!
+  !! \sa KIM::Model::, KIM_Model_PopLogVerbosity
+  !!
+  !! \since 2.0
   interface kim_pop_log_verbosity
     module procedure kim_model_pop_log_verbosity
   end interface kim_pop_log_verbosity
 
 contains
+  !> \brief Compares kim_model_handle_type's for equality.
+  !!
+  !! \since 2.0
   logical recursive function kim_model_handle_equal(lhs, rhs)
     implicit none
     type(kim_model_handle_type), intent(in) :: lhs
@@ -190,6 +322,9 @@ contains
     end if
   end function kim_model_handle_equal
 
+  !> \brief Compares kim_model_handle_type's for inequality.
+  !!
+  !! \since 2.0
   logical recursive function kim_model_handle_not_equal(lhs, rhs)
     implicit none
     type(kim_model_handle_type), intent(in) :: lhs
@@ -198,6 +333,11 @@ contains
     kim_model_handle_not_equal = .not. (lhs .eq. rhs)
   end function kim_model_handle_not_equal
 
+  !> \brief \copybrief KIM::Model::Create
+  !!
+  !! \sa KIM::Model::Create, KIM_Model_Create
+  !!
+  !! \since 2.0
   recursive subroutine kim_model_create(numbering, requested_length_unit, &
     requested_energy_unit, requested_charge_unit, &
     requested_temperature_unit, requested_time_unit, model_name, &
@@ -250,6 +390,11 @@ contains
     model_handle%p = pmodel
   end subroutine kim_model_create
 
+  !> \brief \copybrief KIM::Model::Destroy
+  !!
+  !! \sa KIM::Model::Destroy, KIM_Model_Destroy
+  !!
+  !! \since 2.0
   recursive subroutine kim_model_destroy(model_handle)
     implicit none
     interface
@@ -267,6 +412,11 @@ contains
     model_handle%p = c_null_ptr
   end subroutine kim_model_destroy
 
+  !> \brief \copybrief KIM::Model::IsRoutinePresent
+  !!
+  !! \sa KIM::Model::IsRoutinePresent, KIM_Model_IsRoutinePresent
+  !!
+  !! \since 2.0
   recursive subroutine kim_model_is_routine_present(model_handle, &
     model_routine_name, present, required, ierr)
     use kim_interoperable_types_module, only : kim_model_type
@@ -298,6 +448,11 @@ contains
     ierr = is_routine_present(model, model_routine_name, present, required)
   end subroutine kim_model_is_routine_present
 
+  !> \brief \copybrief KIM::Model::GetInfluenceDistance
+  !!
+  !! \sa KIM::Model::GetInfluenceDistance, KIM_Model_GetInfluenceDistance
+  !!
+  !! \since 2.0
   recursive subroutine kim_model_get_influence_distance(model_handle, &
     influence_distance)
     use kim_interoperable_types_module, only : kim_model_type
@@ -320,6 +475,11 @@ contains
     call get_influence_distance(model, influence_distance)
   end subroutine kim_model_get_influence_distance
 
+  !> \brief Get Model's number of neighbor lists.
+  !!
+  !! \sa KIM::Model::GetNeighborListPointers, KIM_Model_GetNeighborListPointers
+  !!
+  !! \since 2.0
   recursive subroutine kim_model_get_number_of_neighbor_lists(model_handle, &
     number_of_neighbor_lists)
     use kim_interoperable_types_module, only : kim_model_type
@@ -350,6 +510,11 @@ contains
       cutoffs_ptr, hint_ptr)
   end subroutine kim_model_get_number_of_neighbor_lists
 
+  !> \brief Get Model's neighbor list values
+  !!
+  !! \sa KIM::Model::GetNeighborListPointers, KIM_Model_GetNeighborListPointers
+  !!
+  !! \since 2.0
   recursive subroutine kim_model_get_neighbor_list_values(model_handle, &
     cutoffs, model_will_not_request_neighbors_of_noncontributing_particles, &
     ierr)
@@ -423,6 +588,11 @@ contains
     end if
   end subroutine kim_model_get_neighbor_list_values
 
+  !> \brief \copybrief KIM::Model::GetUnits
+  !!
+  !! \sa KIM::Model::GetUnits, KIM_Model_GetUnits
+  !!
+  !! \since 2.0
   recursive subroutine kim_model_get_units(model_handle, length_unit, &
     energy_unit, charge_unit, temperature_unit, time_unit)
     use kim_unit_system_module, only : kim_length_unit_type, &
@@ -460,6 +630,11 @@ contains
       temperature_unit, time_unit)
   end subroutine kim_model_get_units
 
+  !> \brief \copybrief KIM::Model::ComputeArgumentsCreate
+  !!
+  !! \sa KIM::Model::ComputeArgumentsCreate, KIM_Model_ComputeArgumentsCreate
+  !!
+  !! \since 2.0
   recursive subroutine kim_model_compute_arguments_create(model_handle, &
     compute_arguments_handle, ierr)
     use kim_compute_arguments_module, only : &
@@ -491,6 +666,11 @@ contains
     end if
   end subroutine kim_model_compute_arguments_create
 
+  !> \brief \copybrief KIM::Model::ComputeArgumentsDestroy
+  !!
+  !! \sa KIM::Model::ComputeArgumentsDestroy, KIM_Model_ComputeArgumentsDestroy
+  !!
+  !! \since 2.0
   recursive subroutine kim_model_compute_arguments_destroy(model_handle, &
     compute_arguments_handle, ierr)
     use kim_compute_arguments_module, only : &
@@ -522,6 +702,11 @@ contains
     end if
   end subroutine kim_model_compute_arguments_destroy
 
+  !> \brief \copybrief KIM::Model::Compute
+  !!
+  !! \sa KIM::Model::Compute, KIM_Model_Compute
+  !!
+  !! \since 2.0
   recursive subroutine kim_model_compute(model_handle, &
     compute_arguments_handle, ierr)
     use kim_compute_arguments_module, only : kim_compute_arguments_handle_type
@@ -551,6 +736,11 @@ contains
     ierr = compute(model, compute_arguments)
   end subroutine kim_model_compute
 
+  !> \brief \copybrief KIM::Model::Extension
+  !!
+  !! \sa KIM::Model::Extension, KIM_Model_Extension
+  !!
+  !! \since 2.0
   recursive subroutine kim_model_extension(model_handle, extension_id, &
     extension_structure, ierr)
     use kim_interoperable_types_module, only : kim_model_type
@@ -577,6 +767,11 @@ contains
       extension_structure)
   end subroutine kim_model_extension
 
+  !> \brief \copybrief KIM::Model::ClearThenRefresh
+  !!
+  !! \sa KIM::Model::ClearThenRefresh, KIM_Model_ClearThenRefresh
+  !!
+  !! \since 2.0
   recursive subroutine kim_model_clear_then_refresh(model_handle, ierr)
     use kim_interoperable_types_module, only : kim_model_type
     implicit none
@@ -597,6 +792,11 @@ contains
     ierr = clear_then_refresh(model)
   end subroutine kim_model_clear_then_refresh
 
+  !> \brief \copybrief KIM::Model::WriteParameterizedModel
+  !!
+  !! \sa KIM::Model::WriteParameterizedModel, KIM_Model_WriteParameterizedModel
+  !!
+  !! \since 2.0
   recursive subroutine kim_model_write_parameterized_model(model_handle, &
     path, model_name, ierr)
     use kim_interoperable_types_module, only : kim_model_type
@@ -623,6 +823,12 @@ contains
       trim(model_name)//c_null_char)
   end subroutine kim_model_write_parameterized_model
 
+  !> \brief \copybrief KIM::Model::GetSpeciesSupportAndCode
+  !!
+  !! \sa KIM::Model::GetSpeciesSupportAndCode,
+  !! KIM_Model_GetSpeciesSupportAndCode
+  !!
+  !! \since 2.0
   recursive subroutine kim_model_get_species_support_and_code(model_handle, &
     species_name, species_is_supported, code, ierr)
     use kim_species_name_module, only : kim_species_name_type
@@ -654,6 +860,11 @@ contains
       species_is_supported, code)
   end subroutine kim_model_get_species_support_and_code
 
+  !> \brief \copybrief KIM::Model::GetNumberOfParameters
+  !!
+  !! \sa KIM::Model::GetNumberOfParameters, KIM_Model_GetNumberOfParameters
+  !!
+  !! \since 2.0
   recursive subroutine kim_model_get_number_of_parameters(model_handle, &
     number_of_parameters)
     use kim_interoperable_types_module, only : kim_model_type
@@ -676,6 +887,11 @@ contains
     call get_number_of_parameters(model, number_of_parameters)
   end subroutine kim_model_get_number_of_parameters
 
+  !> \brief \copybrief KIM::Model::GetParameterMetadata
+  !!
+  !! \sa KIM::Model::GetParameterMetadata, KIM_Model_GetParameterMetadata
+  !!
+  !! \since 2.0
   recursive subroutine kim_model_get_parameter_metadata(model_handle, &
     parameter_index, data_type, extent, name, description, ierr)
     use kim_data_type_module, only : kim_data_type_type
@@ -716,6 +932,11 @@ contains
     call kim_convert_c_char_ptr_to_string(pdesc, description)
   end subroutine kim_model_get_parameter_metadata
 
+  !> \brief \copybrief KIM::Model::GetParameter
+  !!
+  !! \sa KIM::Model::GetParameter, KIM_Model_GetParameterInteger
+  !!
+  !! \since 2.0
   recursive subroutine kim_model_get_parameter_integer(model_handle, &
     parameter_index, array_index, parameter_value, ierr)
     use kim_interoperable_types_module, only : kim_model_type
@@ -745,6 +966,11 @@ contains
       parameter_value)
   end subroutine kim_model_get_parameter_integer
 
+  !> \brief \copybrief KIM::Model::GetParameter
+  !!
+  !! \sa KIM::Model::GetParameter, KIM_Model_GetParameterDouble
+  !!
+  !! \since 2.0
   recursive subroutine kim_model_get_parameter_double(model_handle, &
     parameter_index, array_index, parameter_value, ierr)
     use kim_interoperable_types_module, only : kim_model_type
@@ -774,6 +1000,11 @@ contains
       parameter_value)
   end subroutine kim_model_get_parameter_double
 
+  !> \brief \copybrief KIM::Model::SetParameter
+  !!
+  !! \sa KIM::Model::SetParameter, KIM_Model_SetParameterInteger
+  !!
+  !! \since 2.0
   recursive subroutine kim_model_set_parameter_integer(model_handle, &
     parameter_index, array_index, parameter_value, ierr)
     use kim_interoperable_types_module, only : kim_model_type
@@ -803,6 +1034,11 @@ contains
       parameter_value)
   end subroutine kim_model_set_parameter_integer
 
+  !> \brief \copybrief KIM::Model::SetParameter
+  !!
+  !! \sa KIM::Model::SetParameter, KIM_Model_SetParameterDouble
+  !!
+  !! \since 2.0
   recursive subroutine kim_model_set_parameter_double(model_handle, &
     parameter_index, array_index, parameter_value, ierr)
     use kim_interoperable_types_module, only : kim_model_type
@@ -832,6 +1068,12 @@ contains
       parameter_value)
   end subroutine kim_model_set_parameter_double
 
+  !> \brief \copybrief KIM::Model::SetSimulatorBufferPointer
+  !!
+  !! \sa KIM::Model::SetSimulatorBufferPointer,
+  !! KIM_Model_SetSimulatorBufferPointer
+  !!
+  !! \since 2.0
   recursive subroutine kim_model_set_simulator_buffer_pointer(model_handle, ptr)
     use kim_interoperable_types_module, only : kim_model_type
     implicit none
@@ -853,6 +1095,12 @@ contains
     call set_simulator_buffer_pointer(model, ptr)
   end subroutine kim_model_set_simulator_buffer_pointer
 
+  !> \brief \copybrief KIM::Model::GetSimulatorBufferPointer
+  !!
+  !! \sa KIM::Model::GetSimulatorBufferPointer,
+  !! KIM_Model_GetSimulatorBufferPointer
+  !!
+  !! \since 2.0
   recursive subroutine kim_model_get_simulator_buffer_pointer(model_handle, ptr)
     use kim_interoperable_types_module, only : kim_model_type
     implicit none
@@ -874,6 +1122,11 @@ contains
     call get_simulator_buffer_pointer(model, ptr)
   end subroutine kim_model_get_simulator_buffer_pointer
 
+  !> \brief \copybrief KIM::Model::ToString
+  !!
+  !! \sa KIM::Model::ToString, KIM_Model_ToString
+  !!
+  !! \since 2.0
   recursive subroutine kim_model_to_string(model_handle, string)
     use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
     use kim_interoperable_types_module, only : kim_model_type
@@ -898,6 +1151,11 @@ contains
     call kim_convert_c_char_ptr_to_string(p, string)
   end subroutine kim_model_to_string
 
+  !> \brief \copybrief KIM::Model::SetLogID
+  !!
+  !! \sa KIM::Model::SetLogID, KIM_Model_SetLogID
+  !!
+  !! \since 2.0
   recursive subroutine kim_model_set_log_id(model_handle, log_id)
     use kim_interoperable_types_module, only : kim_model_type
     implicit none
@@ -919,6 +1177,11 @@ contains
     call set_log_id(model, trim(log_id)//c_null_char)
   end subroutine kim_model_set_log_id
 
+  !> \brief \copybrief KIM::Model::PushLogVerbosity
+  !!
+  !! \sa KIM::Model::PushLogVerbosity, KIM_Model_PushLogVerbosity
+  !!
+  !! \since 2.0
   recursive subroutine kim_model_push_log_verbosity(model_handle, log_verbosity)
     use kim_log_verbosity_module, only : kim_log_verbosity_type
     use kim_interoperable_types_module, only : kim_model_type
@@ -942,6 +1205,11 @@ contains
     call push_log_verbosity(model, log_verbosity)
   end subroutine kim_model_push_log_verbosity
 
+  !> \brief \copybrief KIM::Model::PopLogVerbosity
+  !!
+  !! \sa KIM::Model::, KIM_Model_PopLogVerbosity
+  !!
+  !! \since 2.0
   recursive subroutine kim_model_pop_log_verbosity(model_handle)
     use kim_log_verbosity_module, only : kim_log_verbosity_type
     use kim_interoperable_types_module, only : kim_model_type

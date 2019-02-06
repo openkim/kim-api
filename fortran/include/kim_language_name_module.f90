@@ -55,41 +55,99 @@ module kim_language_name_module
     kim_get_language_name
 
 
+  !> \brief \copybrief KIM::LanguageName
+  !!
+  !! \sa KIM::LanguageName, KIM_LanguageName
+  !!
+  !! \since 2.0
   type, bind(c) :: kim_language_name_type
+     !> \brief \copybrief KIM::LanguageName::languageNameID
+     !!
+     !! \sa KIM::LanguageName::languageNameID, KIM_LanguageName::languageNameID
+     !!
+     !! \since 2.0
     integer(c_int) :: language_name_id
   end type kim_language_name_type
 
+  !> \brief \copybrief KIM::LANGUAGE_NAME::cpp
+  !!
+  !! \sa KIM::LANGUAGE_NAME::cpp, KIM_LANGUAGE_NAME_cpp
+  !!
+  !! \since 2.0
   type(kim_language_name_type), protected, save, &
     bind(c, name="KIM_LANGUAGE_NAME_cpp") &
     :: KIM_LANGUAGE_NAME_CPP
+
+  !> \brief \copybrief KIM::LANGUAGE_NAME::c
+  !!
+  !! \sa KIM::LANGUAGE_NAME::c, KIM_LANGUAGE_NAME_c
+  !!
+  !! \since 2.0
   type(kim_language_name_type), protected, save, &
     bind(c, name="KIM_LANGUAGE_NAME_c") &
     :: KIM_LANGUAGE_NAME_C
+
+  !> \brief \copybrief KIM::LANGUAGE_NAME::fortran
+  !!
+  !! \sa KIM::LANGUAGE_NAME::fortran, KIM_LANGUAGE_NAME_fortran
+  !!
+  !! \since 2.0
   type(kim_language_name_type), protected, save, &
     bind(c, name="KIM_LANGUAGE_NAME_fortran") &
     :: KIM_LANGUAGE_NAME_FORTRAN
 
+  !> \brief \copybrief KIM::LanguageName::Known
+  !!
+  !! \sa KIM::LanguageName::Known, KIM_LanguageName_Known
+  !!
+  !! \since 2.0
   interface kim_known
     module procedure kim_language_name_known
   end interface kim_known
 
+  !> \brief \copybrief KIM::LanguageName::operator==()
+  !!
+  !! \sa KIM::LanguageName::operator==(), KIM_LanguageName_Equal
+  !!
+  !! \since 2.0
   interface operator (.eq.)
     module procedure kim_language_name_equal
   end interface operator (.eq.)
 
+  !> \brief \copybrief KIM::LanguageName::operator!=()
+  !!
+  !! \sa KIM::LanguageName::operator!=(), KIM_LanguageName_NotEqual
+  !!
+  !! \since 2.0
   interface operator (.ne.)
     module procedure kim_language_name_not_equal
   end interface operator (.ne.)
 
+  !> \brief \copybrief KIM::LanguageName::LanguageName(std::string const &)
+  !!
+  !! \sa KIM::LanguageName::LanguageName(std::string const &),
+  !! KIM_LanguageName_FromString
+  !!
+  !! \since 2.0
   interface kim_from_string
     module procedure kim_language_name_from_string
   end interface kim_from_string
 
+  !> \brief \copybrief KIM::LanguageName::ToString
+  !!
+  !! \sa KIM::LanguageName::ToString, KIM_LanguageName_ToString
+  !!
+  !! \since 2.0
   interface kim_to_string
     module procedure kim_language_name_to_string
   end interface kim_to_string
 
 contains
+  !> \brief \copybrief KIM::LanguageName::Known
+  !!
+  !! \sa KIM::LanguageName::Known, KIM_LanguageName_Known
+  !!
+  !! \since 2.0
   logical recursive function kim_language_name_known(language_name)
     implicit none
     interface
@@ -106,6 +164,11 @@ contains
     kim_language_name_known = (known(language_name) /= 0)
   end function kim_language_name_known
 
+  !> \brief \copybrief KIM::LanguageName::operator==()
+  !!
+  !! \sa KIM::LanguageName::operator==(), KIM_LanguageName_Equal
+  !!
+  !! \since 2.0
   logical recursive function kim_language_name_equal(lhs, rhs)
     implicit none
     type(kim_language_name_type), intent(in) :: lhs
@@ -115,6 +178,11 @@ contains
       = (lhs%language_name_id .eq. rhs%language_name_id)
   end function kim_language_name_equal
 
+  !> \brief \copybrief KIM::LanguageName::operator!=()
+  !!
+  !! \sa KIM::LanguageName::operator!=(), KIM_LanguageName_NotEqual
+  !!
+  !! \since 2.0
   logical recursive function kim_language_name_not_equal(lhs, rhs)
     implicit none
     type(kim_language_name_type), intent(in) :: lhs
@@ -123,6 +191,12 @@ contains
     kim_language_name_not_equal = .not. (lhs .eq. rhs)
   end function kim_language_name_not_equal
 
+  !> \brief \copybrief KIM::LanguageName::LanguageName(std::string const &)
+  !!
+  !! \sa KIM::LanguageName::LanguageName(std::string const &),
+  !! KIM_LanguageName_FromString
+  !!
+  !! \since 2.0
   recursive subroutine kim_language_name_from_string(string, language_name)
     implicit none
     interface
@@ -140,6 +214,11 @@ contains
     language_name = from_string(trim(string)//c_null_char)
   end subroutine kim_language_name_from_string
 
+  !> \brief \copybrief KIM::LanguageName::ToString
+  !!
+  !! \sa KIM::LanguageName::ToString, KIM_LanguageName_ToString
+  !!
+  !! \since 2.0
   recursive subroutine kim_language_name_to_string(language_name, string)
     use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
     implicit none
@@ -161,6 +240,12 @@ contains
     call kim_convert_c_char_ptr_to_string(p, string)
   end subroutine kim_language_name_to_string
 
+  !> \brief \copybrief KIM::LANGUAGE_NAME::GetNumberOfLanguageNames
+  !!
+  !! \sa KIM::LANGUAGE_NAME::GetNumberOfLanguageNames,
+  !! KIM_LANGUAGE_NAME_GetNumberOfLanguageNames
+  !!
+  !! \since 2.0
   recursive subroutine kim_get_number_of_language_names( &
     number_of_language_names)
     implicit none
@@ -177,6 +262,11 @@ contains
     call get_number_of_language_names(number_of_language_names)
   end subroutine kim_get_number_of_language_names
 
+  !> \brief \copybrief KIM::LANGUAGE_NAME::GetLanguageName
+  !!
+  !! \sa KIM::LANGUAGE_NAME::GetLanguageName, KIM_LANGUAGE_NAME_GetLanguageName
+  !!
+  !! \since 2.0
   recursive subroutine kim_get_language_name(index, language_name, ierr)
     implicit none
     interface

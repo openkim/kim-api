@@ -59,67 +59,144 @@ module kim_model_create_module
     kim_to_string
 
 
+  !> \brief \copybrief KIM::ModelCreate
+  !!
+  !! \sa KIM::ModelCreate, KIM_ModelCreate
+  !!
+  !! \since 2.0
   type, bind(c) :: kim_model_create_handle_type
     type(c_ptr) :: p = c_null_ptr
   end type kim_model_create_handle_type
 
+  !> \brief NULL handle for use in comparisons.
+  !!
+  !! \since 2.0
   type(kim_model_create_handle_type), protected, save &
     :: KIM_MODEL_CREATE_NULL_HANDLE
 
+  !> \brief Compares kim_model_create_handle_type's for equality.
+  !!
+  !! \since 2.0
   interface operator (.eq.)
     module procedure kim_model_create_handle_equal
   end interface operator (.eq.)
 
+  !> \brief Compares kim_model_create_handle_type's for inequality.
+  !!
+  !! \since 2.0
   interface operator (.ne.)
     module procedure kim_model_create_handle_not_equal
   end interface operator (.ne.)
 
+  !> \brief \copybrief KIM::ModelCreate::SetModelNumbering
+  !!
+  !! \sa KIM::ModelCreate::SetModelNumbering, KIM_ModelCreate_SetModelNumbering
+  !!
+  !! \since 2.0
   interface kim_set_model_numbering
     module procedure kim_model_create_set_model_numbering
   end interface kim_set_model_numbering
 
+  !> \brief \copybrief KIM::ModelCreate::SetInfluenceDistancePointer
+  !!
+  !! \sa KIM::ModelCreate::SetInfluenceDistancePointer,
+  !! KIM_ModelCreate_SetInfluenceDistancePointer
+  !!
+  !! \since 2.0
   interface kim_set_influence_distance_pointer
     module procedure kim_model_create_set_influence_distance_pointer
   end interface kim_set_influence_distance_pointer
 
+  !> \brief \copybrief KIM::ModelCreate::SetNeighborListPointers
+  !!
+  !! \sa KIM::ModelCreate::SetNeighborListPointers,
+  !! KIM_ModelCreate_SetNeighborListPointers
+  !!
+  !! \since 2.0
   interface kim_set_neighbor_list_pointers
     module procedure kim_model_create_set_neighbor_list_pointers
   end interface kim_set_neighbor_list_pointers
 
+  !> \brief \copybrief KIM::ModelCreate::SetRoutinePointer
+  !!
+  !! \sa KIM::ModelCreate::SetRoutinePointer, KIM_ModelCreate_SetRoutinePointer
+  !!
+  !! \since 2.0
   interface kim_set_routine_pointer
     module procedure kim_model_create_set_routine_pointer
   end interface kim_set_routine_pointer
 
+  !> \brief \copybrief KIM::ModelCreate::SetSpeciesCode
+  !!
+  !! \sa KIM::ModelCreate::SetSpeciesCode, KIM_ModelCreate_SetSpeciesCode
+  !!
+  !! \since 2.0
   interface kim_set_species_code
     module procedure kim_model_create_set_species_code
   end interface kim_set_species_code
 
+  !> \brief \copybrief KIM::ModelCreate::SetParameterPointer
+  !!
+  !! \sa KIM::ModelCreate::SetParameterPointer,
+  !! KIM_ModelCreate_SetParameterPointerInteger,
+  !! KIM_ModelCreate_SetParameterPointerDouble
+  !!
+  !! \since 2.0
   interface kim_set_parameter_pointer
     module procedure kim_model_create_set_parameter_pointer_integer
     module procedure kim_model_create_set_parameter_pointer_double
   end interface kim_set_parameter_pointer
 
+  !> \brief \copybrief KIM::ModelCreate::SetModelBufferPointer
+  !!
+  !! \sa KIM::ModelCreate::SetModelBufferPointer,
+  !! KIM_ModelCreate_SetModelBufferPointer
+  !!
+  !! \since 2.0
   interface kim_set_model_buffer_pointer
     module procedure kim_model_create_set_model_buffer_pointer
   end interface kim_set_model_buffer_pointer
 
+  !> \brief \copybrief KIM::ModelCreate::SetUnits
+  !!
+  !! \sa KIM::ModelCreate::SetUnits, KIM_ModelCreate_SetUnits
+  !!
+  !! \since 2.0
   interface kim_set_units
     module procedure kim_model_create_set_units
   end interface kim_set_units
 
+  !> \brief \copybrief KIM::ModelCreate::ConvertUnit
+  !!
+  !! \sa KIM::ModelCreate::ConvertUnit, KIM_ModelCreate_ConvertUnit
+  !!
+  !! \since 2.0
   interface kim_convert_unit
     module procedure kim_model_create_convert_unit
   end interface kim_convert_unit
 
+  !> \brief \copybrief KIM::ModelCreate::LogEntry
+  !!
+  !! \sa KIM::ModelCreate::LogEntry, KIM_ModelCreate_LogEntry
+  !!
+  !! \since 2.0
   interface kim_log_entry
     module procedure kim_model_create_log_entry
   end interface kim_log_entry
 
+  !> \brief \copybrief KIM::ModelCreate::ToString
+  !!
+  !! \sa KIM::ModelCreate::ToString, KIM_ModelCreate_ToString
+  !!
+  !! \since 2.0
   interface kim_to_string
     module procedure kim_model_create_to_string
   end interface kim_to_string
 
 contains
+  !> \brief Compares kim_model_create_handle_type's for equality.
+  !!
+  !! \since 2.0
   logical recursive function kim_model_create_handle_equal(lhs, rhs)
     implicit none
     type(kim_model_create_handle_type), intent(in) :: lhs
@@ -132,6 +209,9 @@ contains
     end if
   end function kim_model_create_handle_equal
 
+  !> \brief Compares kim_model_create_handle_type's for inequality.
+  !!
+  !! \since 2.0
   logical recursive function kim_model_create_handle_not_equal(lhs, rhs)
     implicit none
     type(kim_model_create_handle_type), intent(in) :: lhs
@@ -140,6 +220,11 @@ contains
     kim_model_create_handle_not_equal = .not. (lhs .eq. rhs)
   end function kim_model_create_handle_not_equal
 
+  !> \brief \copybrief KIM::ModelCreate::SetModelNumbering
+  !!
+  !! \sa KIM::ModelCreate::SetModelNumbering, KIM_ModelCreate_SetModelNumbering
+  !!
+  !! \since 2.0
   recursive subroutine kim_model_create_set_model_numbering( &
     model_create_handle, numbering, ierr)
     use kim_numbering_module, only : kim_numbering_type
@@ -165,6 +250,12 @@ contains
     ierr = set_model_numbering(model_create, numbering)
   end subroutine kim_model_create_set_model_numbering
 
+  !> \brief \copybrief KIM::ModelCreate::SetInfluenceDistancePointer
+  !!
+  !! \sa KIM::ModelCreate::SetInfluenceDistancePointer,
+  !! KIM_ModelCreate_SetInfluenceDistancePointer
+  !!
+  !! \since 2.0
   recursive subroutine kim_model_create_set_influence_distance_pointer( &
     model_create_handle, influence_distance)
     use kim_interoperable_types_module, only : kim_model_create_type
@@ -189,6 +280,12 @@ contains
       c_loc(influence_distance))
   end subroutine kim_model_create_set_influence_distance_pointer
 
+  !> \brief \copybrief KIM::ModelCreate::SetNeighborListPointers
+  !!
+  !! \sa KIM::ModelCreate::SetNeighborListPointers,
+  !! KIM_ModelCreate_SetNeighborListPointers
+  !!
+  !! \since 2.0
   recursive subroutine kim_model_create_set_neighbor_list_pointers( &
     model_create_handle, number_of_neighbor_lists, cutoffs, &
     model_will_not_request_neighbors_of_noncontributing_particles)
@@ -223,6 +320,11 @@ contains
       c_loc(model_will_not_request_neighbors_of_noncontributing_particles))
   end subroutine kim_model_create_set_neighbor_list_pointers
 
+  !> \brief \copybrief KIM::ModelCreate::SetRoutinePointer
+  !!
+  !! \sa KIM::ModelCreate::SetRoutinePointer, KIM_ModelCreate_SetRoutinePointer
+  !!
+  !! \since 2.0
   recursive subroutine kim_model_create_set_routine_pointer( &
     model_create_handle, model_routine_name, language_name, required, fptr, &
     ierr)
@@ -260,6 +362,11 @@ contains
       language_name, required, fptr)
   end subroutine kim_model_create_set_routine_pointer
 
+  !> \brief \copybrief KIM::ModelCreate::SetSpeciesCode
+  !!
+  !! \sa KIM::ModelCreate::SetSpeciesCode, KIM_ModelCreate_SetSpeciesCode
+  !!
+  !! \since 2.0
   recursive subroutine kim_model_create_set_species_code(model_create_handle, &
     species_name, code, ierr)
     use kim_species_name_module, only : kim_species_name_type
@@ -288,6 +395,12 @@ contains
     ierr = set_species_code(model_create, species_name, code)
   end subroutine kim_model_create_set_species_code
 
+  !> \brief \copybrief KIM::ModelCreate::SetParameterPointer
+  !!
+  !! \sa KIM::ModelCreate::SetParameterPointer,
+  !! KIM_ModelCreate_SetParameterPointerInteger
+  !!
+  !! \since 2.0
   recursive subroutine kim_model_create_set_parameter_pointer_integer( &
     model_create_handle, int1, name, description, ierr)
     use kim_interoperable_types_module, only : kim_model_create_type
@@ -336,6 +449,12 @@ contains
     end subroutine set_parameter
   end subroutine kim_model_create_set_parameter_pointer_integer
 
+  !> \brief \copybrief KIM::ModelCreate::SetParameterPointer
+  !!
+  !! \sa KIM::ModelCreate::SetParameterPointer,
+  !! KIM_ModelCreate_SetParameterPointerDouble
+  !!
+  !! \since 2.0
   recursive subroutine kim_model_create_set_parameter_pointer_double( &
     model_create_handle, double1, name, description, ierr)
     use kim_interoperable_types_module, only : kim_model_create_type
@@ -383,6 +502,12 @@ contains
     end subroutine set_parameter
   end subroutine kim_model_create_set_parameter_pointer_double
 
+  !> \brief \copybrief KIM::ModelCreate::SetModelBufferPointer
+  !!
+  !! \sa KIM::ModelCreate::SetModelBufferPointer,
+  !! KIM_ModelCreate_SetModelBufferPointer
+  !!
+  !! \since 2.0
   recursive subroutine kim_model_create_set_model_buffer_pointer( &
     model_create_handle, ptr)
     use kim_interoperable_types_module, only : kim_model_create_type
@@ -405,6 +530,11 @@ contains
     call set_model_buffer_pointer(model_create, ptr)
   end subroutine kim_model_create_set_model_buffer_pointer
 
+  !> \brief \copybrief KIM::ModelCreate::SetUnits
+  !!
+  !! \sa KIM::ModelCreate::SetUnits, KIM_ModelCreate_SetUnits
+  !!
+  !! \since 2.0
   recursive subroutine kim_model_create_set_units(model_create_handle, &
     length_unit, energy_unit, charge_unit, temperature_unit, time_unit, ierr)
     use kim_unit_system_module, only : &
@@ -450,6 +580,11 @@ contains
       charge_unit, temperature_unit, time_unit)
   end subroutine kim_model_create_set_units
 
+  !> \brief \copybrief KIM::ModelCreate::ConvertUnit
+  !!
+  !! \sa KIM::ModelCreate::ConvertUnit, KIM_ModelCreate_ConvertUnit
+  !!
+  !! \since 2.0
   recursive subroutine kim_model_create_convert_unit( &
     from_length_unit, from_energy_unit, &
     from_charge_unit, from_temperature_unit, from_time_unit, &
@@ -522,6 +657,11 @@ contains
       charge_exponent, temperature_exponent, time_exponent, conversion_factor)
   end subroutine kim_model_create_convert_unit
 
+  !> \brief \copybrief KIM::ModelCreate::LogEntry
+  !!
+  !! \sa KIM::ModelCreate::LogEntry, KIM_ModelCreate_LogEntry
+  !!
+  !! \since 2.0
   recursive subroutine kim_model_create_log_entry(model_create_handle, &
     log_verbosity, message)
     use kim_log_verbosity_module, only : kim_log_verbosity_type
@@ -551,6 +691,11 @@ contains
       0, ""//c_null_char)
   end subroutine kim_model_create_log_entry
 
+  !> \brief \copybrief KIM::ModelCreate::ToString
+  !!
+  !! \sa KIM::ModelCreate::ToString, KIM_ModelCreate_ToString
+  !!
+  !! \since 2.0
   recursive subroutine kim_model_create_to_string(model_create_handle, string)
     use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
     use kim_interoperable_types_module, only : kim_model_create_type
