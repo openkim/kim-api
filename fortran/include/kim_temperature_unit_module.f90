@@ -135,9 +135,9 @@ module kim_temperature_unit_module
   end interface kim_to_string
 
 contains
-  !> \brief \copybrief KIM::ChargeUnit::Known
+  !> \brief \copybrief KIM::TemperatureUnit::Known
   !!
-  !! \sa KIM::ChargeUnit::Known, KIM_ChargeUnit_Known
+  !! \sa KIM::TemperatureUnit::Known, KIM_TemperatureUnit_Known
   !!
   !! \since 2.0
   logical recursive function kim_temperature_unit_known(temperature_unit)
@@ -156,9 +156,9 @@ contains
     kim_temperature_unit_known = (known(temperature_unit) /= 0)
   end function kim_temperature_unit_known
 
-  !> \brief \copybrief KIM::ChargeUnit::operator==()
+  !> \brief \copybrief KIM::TemperatureUnit::operator==()
   !!
-  !! \sa KIM::ChargeUnit::operator==(), KIM_ChargeUnit_Equal
+  !! \sa KIM::TemperatureUnit::operator==(), KIM_TemperatureUnit_Equal
   !!
   !! \since 2.0
   logical recursive function kim_temperature_unit_equal(lhs, rhs)
@@ -170,9 +170,9 @@ contains
       = (lhs%temperature_unit_id .eq. rhs%temperature_unit_id)
   end function kim_temperature_unit_equal
 
-  !> \brief \copybrief KIM::ChargeUnit::operator!=()
+  !> \brief \copybrief KIM::TemperatureUnit::operator!=()
   !!
-  !! \sa KIM::ChargeUnit::operator!=(), KIM_ChargeUnit_NotEqual
+  !! \sa KIM::TemperatureUnit::operator!=(), KIM_TemperatureUnit_NotEqual
   !!
   !! \since 2.0
   logical recursive function kim_temperature_unit_not_equal(lhs, rhs)
@@ -183,10 +183,11 @@ contains
     kim_temperature_unit_not_equal = .not. (lhs .eq. rhs)
   end function kim_temperature_unit_not_equal
 
-  !> \brief \copybrief KIM::ChargeUnit::ChargeUnit(std::string const &)
+  !> \brief \copybrief KIM::TemperatureUnit::<!--
+  !! -->TemperatureUnit(std::string const &)
   !!
-  !! \sa KIM::ChargeUnit::ChargeUnit(std::string const &),
-  !! KIM_ChargeUnit_FromString
+  !! \sa KIM::TemperatureUnit::TemperatureUnit(std::string const &),
+  !! KIM_TemperatureUnit_FromString
   !!
   !! \since 2.0
   recursive subroutine kim_temperature_unit_from_string(string, &
@@ -207,9 +208,9 @@ contains
     temperature_unit = from_string(trim(string)//c_null_char)
   end subroutine kim_temperature_unit_from_string
 
-  !> \brief \copybrief KIM::ChargeUnit::ToString
+  !> \brief \copybrief KIM::TemperatureUnit::ToString
   !!
-  !! \sa KIM::ChargeUnit::ToString, KIM_ChargeUnit_ToString
+  !! \sa KIM::TemperatureUnit::ToString, KIM_TemperatureUnit_ToString
   !!
   !! \since 2.0
   recursive subroutine kim_temperature_unit_to_string(temperature_unit, string)

@@ -192,7 +192,7 @@ contains
     implicit none
     interface
       integer(c_int) recursive function known(energy_unit) &
-        bind(c, name="KIM_ChargeUnit_Known")
+        bind(c, name="KIM_EnergyUnit_Known")
         use, intrinsic :: iso_c_binding
         import kim_energy_unit_type
         implicit none
