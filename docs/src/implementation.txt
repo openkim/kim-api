@@ -96,23 +96,28 @@ steps:
   one-based), determination of the physical base units that the model will use,
   and execution of the model's <em>ModelCreate</em> routine.
 
-  When calling KIM::Model::Create to create a <em>model object</em> the
+  When calling KIM::Model::Create to create a <em>model object</em>, the
   simulator provides a set of "requested" base units that it would prefer to
-  use.  The %KIM API gives the model final authority to decide on the base
-  units it will use.  Best practice for models is to respect the request of the
-  simulator and to use the requested base units.  The \c requestedUnitsAccepted
-  output argument of the KIM::Model::Create routine is a convenience that
-  allows the simulator a short-cut (as opposed to having to make a call to
-  KIM::Model::GetUnits and comparing the results to the requested units) to
-  know if its request for base units was accepted.
+  use.  <em>The %KIM API gives the model final authority to decide on the base
+  units it will use.</em> Best practice for models is to respect the request of
+  the simulator and to use the requested base units by converting its
+  parameters appropriately.  The \c requestedUnitsAccepted output argument of
+  the KIM::Model::Create routine is a convenience that allows the simulator a
+  short-cut to determine if its request for base units was accepted.  (The
+  alternative is for the simulator to call to KIM::Model::GetUnits and compare
+  the results to the requested units.)
 
-  If a base unit is not relevant to the simulator (e.g., a unit of time need
-  not be specified for static equilibrium computations), then the simulator
-  should specify that the corresponding base unit(s) is/are "unused".  A model
-  should specify "unused" values for all base units that are appropriate
-  (regardless of the simulator's requested values).  Additionally, the model
-  should select its preferred (non-"unused") base unit value when the simulator
-  provides an "unused" request for a base unit of importance to the model.
+  If a base unit is not relevant to the simulator (e.g., a unit of time is not
+  necessary for static equilibrium computations), then the simulator should
+  specify that the corresponding requested base unit(s) is/are "unused".
+  Similarly, if a base unit is irrelevant to the model (e.g., many models only
+  require units of length and energy; Thus, units of charge, temperature, and
+  time are irrelevant), then the model should specify that the corresponding
+  base unit(s) is/are "unused" (regardless of the simulator's requested values)
+  when calling KIM::ModelCreate::SetUnits within its <em>ModelCreate</em>
+  routine.  Additionally, the model should select its preferred (non-"unused")
+  base unit value when the simulator provides a request of "unused" for a
+  relevant base unit.
 
 - Once a model object is obtained, the simulator should use
   KIM::Model::IsRoutinePresent to determine which routines the model has
