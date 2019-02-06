@@ -19,7 +19,7 @@
 !
 
 !
-! Copyright (c) 2016--2018, Regents of the University of Minnesota.
+! Copyright (c) 2016--2019, Regents of the University of Minnesota.
 ! All rights reserved.
 !
 ! Contributors:
@@ -27,10 +27,15 @@
 !
 
 !
-! Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
+! Release: This file is part of the kim-api-v2-2.0.0 package.
 !
 
 
+!> \brief \copybrief KIM::ModelCompute
+!!
+!! \sa KIM::ModelCompute, KIM_ModelCompute
+!!
+!! \since 2.0
 module kim_model_compute_module
   use, intrinsic :: iso_c_binding
   implicit none
@@ -51,35 +56,68 @@ module kim_model_compute_module
     kim_to_string
 
 
+  !> \brief \copybrief KIM::ModelCompute
+  !!
+  !! \sa KIM::ModelCompute, KIM_ModelCompute
+  !!
+  !! \since 2.0
   type, bind(c) :: kim_model_compute_handle_type
     type(c_ptr) :: p = c_null_ptr
   end type kim_model_compute_handle_type
 
+  !> \brief NULL handle for use in comparisons.
+  !!
+  !! \since 2.0
   type(kim_model_compute_handle_type), protected, save &
     :: KIM_MODEL_COMPUTE_NULL_HANDLE
 
+  !> \brief Compares kim_model_compute_handle_type's for equality.
+  !!
+  !! \since 2.0
   interface operator (.eq.)
     module procedure kim_model_compute_handle_equal
   end interface operator (.eq.)
 
+  !> \brief Compares kim_model_compute_handle_type's for inequality.
+  !!
+  !! \since 2.0
   interface operator (.ne.)
     module procedure kim_model_compute_handle_not_equal
   end interface operator (.ne.)
 
+  !> \brief \copybrief KIM::ModelCompute::GetModelBufferPointer
+  !!
+  !! \sa KIM::ModelCompute::GetModelBufferPointer,
+  !! KIM_ModelCompute_GetModelBufferPointer
+  !!
+  !! \since 2.0
   interface kim_get_model_buffer_pointer
     module procedure kim_model_compute_get_model_buffer_pointer
   end interface kim_get_model_buffer_pointer
 
+  !> \brief \copybrief KIM::ModelCompute::LogEntry
+  !!
+  !! \sa KIM::ModelCompute::LogEntry, KIM_ModelCompute_LogEntry
+  !!
+  !! \since 2.0
   interface kim_log_entry
     module procedure kim_model_compute_log_entry
   end interface kim_log_entry
 
+  !> \brief \copybrief KIM::ModelCompute::ToString
+  !!
+  !! \sa KIM::ModelCompute::ToString, KIM_ModelCompute_ToString
+  !!
+  !! \since 2.0
   interface kim_to_string
     module procedure kim_model_compute_to_string
   end interface kim_to_string
 
 contains
-  logical function kim_model_compute_handle_equal(lhs, rhs)
+  !> \brief Compares kim_model_compute_handle_type's for equality.
+  !!
+  !! \since 2.0
+  logical recursive function kim_model_compute_handle_equal(lhs, rhs)
     implicit none
     type(kim_model_compute_handle_type), intent(in) :: lhs
     type(kim_model_compute_handle_type), intent(in) :: rhs
@@ -91,7 +129,10 @@ contains
     end if
   end function kim_model_compute_handle_equal
 
-  logical function kim_model_compute_handle_not_equal(lhs, rhs)
+  !> \brief Compares kim_model_compute_handle_type's for inequality.
+  !!
+  !! \since 2.0
+  logical recursive function kim_model_compute_handle_not_equal(lhs, rhs)
     implicit none
     type(kim_model_compute_handle_type), intent(in) :: lhs
     type(kim_model_compute_handle_type), intent(in) :: rhs
@@ -99,12 +140,18 @@ contains
     kim_model_compute_handle_not_equal = .not. (lhs .eq. rhs)
   end function kim_model_compute_handle_not_equal
 
-  subroutine kim_model_compute_get_model_buffer_pointer(model_compute_handle, &
-    ptr)
+  !> \brief \copybrief KIM::ModelCompute::GetModelBufferPointer
+  !!
+  !! \sa KIM::ModelCompute::GetModelBufferPointer,
+  !! KIM_ModelCompute_GetModelBufferPointer
+  !!
+  !! \since 2.0
+  recursive subroutine kim_model_compute_get_model_buffer_pointer( &
+    model_compute_handle, ptr)
     use kim_interoperable_types_module, only : kim_model_compute_type
     implicit none
     interface
-      subroutine get_model_buffer_pointer(model_compute, ptr) &
+      recursive subroutine get_model_buffer_pointer(model_compute, ptr) &
         bind(c, name="KIM_ModelCompute_GetModelBufferPointer")
         use, intrinsic :: iso_c_binding
         use kim_interoperable_types_module, only : kim_model_compute_type
@@ -121,14 +168,19 @@ contains
     call get_model_buffer_pointer(model_compute, ptr)
   end subroutine kim_model_compute_get_model_buffer_pointer
 
-  subroutine kim_model_compute_log_entry(model_compute_handle, log_verbosity, &
-    message)
+  !> \brief \copybrief KIM::ModelCompute::LogEntry
+  !!
+  !! \sa KIM::ModelCompute::LogEntry, KIM_ModelCompute_LogEntry
+  !!
+  !! \since 2.0
+  recursive subroutine kim_model_compute_log_entry(model_compute_handle, &
+    log_verbosity, message)
     use kim_log_verbosity_module, only : kim_log_verbosity_type
     use kim_interoperable_types_module, only : kim_model_compute_type
     implicit none
     interface
-      subroutine log_entry(model_compute, log_verbosity, message, line_number, &
-        file_name) bind(c, name="KIM_ModelCompute_LogEntry")
+      recursive subroutine log_entry(model_compute, log_verbosity, message, &
+        line_number, file_name) bind(c, name="KIM_ModelCompute_LogEntry")
         use, intrinsic :: iso_c_binding
         use kim_log_verbosity_module, only : kim_log_verbosity_type
         use kim_interoperable_types_module, only : kim_model_compute_type
@@ -150,12 +202,17 @@ contains
       0, ""//c_null_char)
   end subroutine kim_model_compute_log_entry
 
-  subroutine kim_model_compute_to_string(model_compute_handle, string)
+  !> \brief \copybrief KIM::ModelCompute::ToString
+  !!
+  !! \sa KIM::ModelCompute::ToString, KIM_ModelCompute_ToString
+  !!
+  !! \since 2.0
+  recursive subroutine kim_model_compute_to_string(model_compute_handle, string)
     use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
     use kim_interoperable_types_module, only : kim_model_compute_type
     implicit none
     interface
-      type(c_ptr) function model_compute_string(model_compute) &
+      type(c_ptr) recursive function model_compute_string(model_compute) &
         bind(c, name="KIM_ModelCompute_ToString")
         use, intrinsic :: iso_c_binding
         use kim_interoperable_types_module, only : kim_model_compute_type

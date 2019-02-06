@@ -19,7 +19,7 @@
 !
 
 !
-! Copyright (c) 2016--2018, Regents of the University of Minnesota.
+! Copyright (c) 2016--2019, Regents of the University of Minnesota.
 ! All rights reserved.
 !
 ! Contributors:
@@ -27,10 +27,15 @@
 !
 
 !
-! Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
+! Release: This file is part of the kim-api-v2-2.0.0 package.
 !
 
 
+!> \brief \copybrief KIM::ModelComputeArguments
+!!
+!! \sa KIM::ModelComputeArguments, KIM_ModelComputeArguments
+!!
+!! \since 2.0
 module kim_model_compute_arguments_module
   use, intrinsic :: iso_c_binding
   implicit none
@@ -57,33 +62,74 @@ module kim_model_compute_arguments_module
     kim_to_string
 
 
+  !> \brief \copybrief KIM::ModelComputeArguments
+  !!
+  !! \sa KIM::ModelComputeArguments, KIM_ModelComputeArguments
+  !!
+  !! \since 2.0
   type, bind(c) :: kim_model_compute_arguments_handle_type
     type(c_ptr) :: p = c_null_ptr
   end type kim_model_compute_arguments_handle_type
 
+  !> \brief NULL handle for use in comparisons.
+  !!
+  !! \since 2.0
   type(kim_model_compute_arguments_handle_type), protected, save &
     :: KIM_MODEL_COMPUTE_ARGUMENTS_NULL_HANDLE
 
+  !> \brief Compares kim_model_compute_arguments_handle_type's for
+  !! equality.
+  !!
+  !! \since 2.0
   interface operator (.eq.)
     module procedure kim_model_compute_arguments_handle_equal
   end interface operator (.eq.)
 
+  !> \brief Compares kim_model_compute_arguments_handle_type's for
+  !! inequality.
+  !!
+  !! \since 2.0
   interface operator (.ne.)
     module procedure kim_model_compute_arguments_handle_not_equal
   end interface operator (.ne.)
 
+  !> \brief \copybrief KIM::ModelComputeArguments::GetNeighborList
+  !!
+  !! \sa KIM::ModelComputeArguments::GetNeighborList,
+  !! KIM_ModelComputeArguments_GetNeighborList
+  !!
+  !! \since 2.0
   interface kim_get_neighbor_list
     module procedure kim_model_compute_arguments_get_neighbor_list
   end interface kim_get_neighbor_list
 
+  !> \brief \copybrief KIM::ModelComputeArguments::ProcessDEDrTerm
+  !!
+  !! \sa KIM::ModelComputeArguments::ProcessDEDrTerm,
+  !! KIM_ModelComputeArguments_ProcessDEDrTerm
+  !!
+  !! \since 2.0
   interface kim_process_dedr_term
     module procedure kim_model_compute_arguments_process_dedr_term
   end interface kim_process_dedr_term
 
+  !> \brief \copybrief KIM::ModelComputeArguments::ProcessD2EDr2Term
+  !!
+  !! \sa KIM::ModelComputeArguments::ProcessD2EDr2Term,
+  !! KIM_ModelComputeArguments_ProcessD2EDr2Term
+  !!
+  !! \since 2.0
   interface kim_process_d2edr2_term
     module procedure kim_model_compute_arguments_process_d2edr2_term
   end interface kim_process_d2edr2_term
 
+  !> \brief \copybrief KIM::ModelComputeArguments::GetArgumentPointer
+  !!
+  !! \sa KIM::ModelComputeArguments::GetArgumentPointer,
+  !! KIM_ModelComputeArguments_GetArgumentPointerInteger,
+  !! KIM_ModelComputeArguments_GetArgumentPointerDouble
+  !!
+  !! \since 2.0
   interface kim_get_argument_pointer
     module procedure kim_model_compute_arguments_get_argument_pointer_int0
     module procedure kim_model_compute_arguments_get_argument_pointer_int1
@@ -93,28 +139,62 @@ module kim_model_compute_arguments_module
     module procedure kim_model_compute_arguments_get_argument_pointer_double2
   end interface kim_get_argument_pointer
 
+  !> \brief \copybrief KIM::ModelComputeArguments::IsCallbackPresent
+  !!
+  !! \sa KIM::ModelComputeArguments::IsCallbackPresent,
+  !! KIM_ModelComputeArguments_IsCallbackPresent
+  !!
+  !! \since 2.0
   interface kim_is_callback_present
     module procedure kim_model_compute_arguments_is_callback_present
   end interface kim_is_callback_present
 
+  !> \brief \copybrief KIM::ModelComputeArguments::SetModelBufferPointer
+  !!
+  !! \sa KIM::ModelComputeArguments::SetModelBufferPointer,
+  !! KIM_ModelComputeArguments_SetModelBufferPointer
+  !!
+  !! \since 2.0
   interface kim_set_model_buffer_pointer
     module procedure kim_model_compute_arguments_set_model_buffer_pointer
   end interface kim_set_model_buffer_pointer
 
+  !> \brief \copybrief KIM::ModelComputeArguments::GetModelBufferPointer
+  !!
+  !! \sa KIM::ModelComputeArguments::GetModelBufferPointer,
+  !! KIM_ModelComputeArguments_GetModelBufferPointer
+  !!
+  !! \since 2.0
   interface kim_get_model_buffer_pointer
     module procedure kim_model_compute_arguments_get_model_buffer_pointer
   end interface kim_get_model_buffer_pointer
 
+  !> \brief \copybrief KIM::ModelComputeArguments::LogEntry
+  !!
+  !! \sa KIM::ModelComputeArguments::LogEntry,
+  !! KIM_ModelComputeArguments_LogEntry
+  !!
+  !! \since 2.0
   interface kim_log_entry
     module procedure kim_model_compute_arguments_log_entry
   end interface kim_log_entry
 
+  !> \brief \copybrief KIM::ModelComputeArguments::ToString
+  !!
+  !! \sa KIM::ModelComputeArguments::ToString,
+  !! KIM_ModelComputeArguments_ToString
+  !!
+  !! \since 2.0
   interface kim_to_string
     module procedure kim_model_compute_arguments_to_string
   end interface kim_to_string
 
 contains
-  logical function kim_model_compute_arguments_handle_equal(lhs, rhs)
+  !> \brief Compares kim_model_compute_arguments_handle_type's for
+  !! equality.
+  !!
+  !! \since 2.0
+  logical recursive function kim_model_compute_arguments_handle_equal(lhs, rhs)
     implicit none
     type(kim_model_compute_arguments_handle_type), intent(in) :: lhs
     type(kim_model_compute_arguments_handle_type), intent(in) :: rhs
@@ -126,7 +206,12 @@ contains
     end if
   end function kim_model_compute_arguments_handle_equal
 
-  logical function kim_model_compute_arguments_handle_not_equal(lhs, rhs)
+  !> \brief Compares kim_model_compute_arguments_handle_type's for
+  !! inequality.
+  !!
+  !! \since 2.0
+  logical recursive function kim_model_compute_arguments_handle_not_equal(lhs, &
+    rhs)
     implicit none
     type(kim_model_compute_arguments_handle_type), intent(in) :: lhs
     type(kim_model_compute_arguments_handle_type), intent(in) :: rhs
@@ -134,15 +219,21 @@ contains
     kim_model_compute_arguments_handle_not_equal = .not. (lhs .eq. rhs)
   end function kim_model_compute_arguments_handle_not_equal
 
-  subroutine kim_model_compute_arguments_get_neighbor_list( &
+  !> \brief \copybrief KIM::ModelComputeArguments::GetNeighborList
+  !!
+  !! \sa KIM::ModelComputeArguments::GetNeighborList,
+  !! KIM_ModelComputeArguments_GetNeighborList
+  !!
+  !! \since 2.0
+  recursive subroutine kim_model_compute_arguments_get_neighbor_list( &
     model_compute_arguments_handle, neighbor_list_index, particle_number, &
     number_of_neighbors, neighbors_of_particle, ierr)
     use kim_interoperable_types_module, only : kim_model_compute_arguments_type
     implicit none
     interface
-      integer(c_int) function get_neighbor_list(model_compute_arguments, &
-        neighbor_list_index, particle_number, number_of_neighbors, &
-        neighbors_of_particle) &
+      integer(c_int) recursive function get_neighbor_list( &
+        model_compute_arguments, neighbor_list_index, particle_number, &
+        number_of_neighbors, neighbors_of_particle) &
         bind(c, name="KIM_ModelComputeArguments_GetNeighborList")
         use, intrinsic :: iso_c_binding
         use kim_interoperable_types_module, only : &
@@ -177,13 +268,19 @@ contains
     end if
   end subroutine kim_model_compute_arguments_get_neighbor_list
 
-  subroutine kim_model_compute_arguments_process_dedr_term( &
+  !> \brief \copybrief KIM::ModelComputeArguments::ProcessDEDrTerm
+  !!
+  !! \sa KIM::ModelComputeArguments::ProcessDEDrTerm,
+  !! KIM_ModelComputeArguments_ProcessDEDrTerm
+  !!
+  !! \since 2.0
+  recursive subroutine kim_model_compute_arguments_process_dedr_term( &
     model_compute_arguments_handle, de, r, dx, i, j, ierr)
     use kim_interoperable_types_module, only : kim_model_compute_arguments_type
     implicit none
     interface
-      integer(c_int) function process_dedr_term(model_compute_arguments, de, &
-        r, dx, i, j) &
+      integer(c_int) recursive function process_dedr_term( &
+        model_compute_arguments, de, r, dx, i, j) &
         bind(c, name="KIM_ModelComputeArguments_ProcessDEDrTerm")
         use, intrinsic :: iso_c_binding
         use kim_interoperable_types_module, only : &
@@ -212,13 +309,19 @@ contains
     ierr = process_dedr_term(model_compute_arguments, de, r, dx(1), i, j)
   end subroutine kim_model_compute_arguments_process_dedr_term
 
-  subroutine kim_model_compute_arguments_process_d2edr2_term( &
+  !> \brief \copybrief KIM::ModelComputeArguments::ProcessD2EDr2Term
+  !!
+  !! \sa KIM::ModelComputeArguments::ProcessD2EDr2Term,
+  !! KIM_ModelComputeArguments_ProcessD2EDr2Term
+  !!
+  !! \since 2.0
+  recursive subroutine kim_model_compute_arguments_process_d2edr2_term( &
     model_compute_arguments_handle, de, r, dx, i, j, ierr)
     use kim_interoperable_types_module, only : kim_model_compute_arguments_type
     implicit none
     interface
-      integer(c_int) function process_d2edr2_term(model_compute_arguments, &
-        de, r, dx, i, j) &
+      integer(c_int) recursive function process_d2edr2_term( &
+        model_compute_arguments, de, r, dx, i, j) &
         bind(c, name="KIM_ModelComputeArguments_ProcessD2EDr2Term")
         use, intrinsic :: iso_c_binding
         use kim_interoperable_types_module, only : &
@@ -248,13 +351,19 @@ contains
       de, r(1), dx(1,1), i(1), j(1))
   end subroutine kim_model_compute_arguments_process_d2edr2_term
 
-  subroutine kim_model_compute_arguments_get_argument_pointer_int0( &
+  !> \brief \copybrief KIM::ModelComputeArguments::GetArgumentPointer
+  !!
+  !! \sa KIM::ModelComputeArguments::GetArgumentPointer,
+  !! KIM_ModelComputeArguments_GetArgumentPointerInteger
+  !!
+  !! \since 2.0
+  recursive subroutine kim_model_compute_arguments_get_argument_pointer_int0( &
     model_compute_arguments_handle, compute_argument_name, int0, ierr)
     use kim_compute_argument_name_module, only : kim_compute_argument_name_type
     use kim_interoperable_types_module, only : kim_model_compute_arguments_type
     implicit none
     interface
-      integer(c_int) function get_argument_pointer_integer( &
+      integer(c_int) recursive function get_argument_pointer_integer( &
         model_compute_arguments, compute_argument_name, ptr) &
         bind(c, name="KIM_ModelComputeArguments_GetArgumentPointerInteger")
         use, intrinsic :: iso_c_binding
@@ -290,13 +399,19 @@ contains
     end if
   end subroutine kim_model_compute_arguments_get_argument_pointer_int0
 
-  subroutine kim_model_compute_arguments_get_argument_pointer_int1( &
+  !> \brief \copybrief KIM::ModelComputeArguments::GetArgumentPointer
+  !!
+  !! \sa KIM::ModelComputeArguments::GetArgumentPointer,
+  !! KIM_ModelComputeArguments_GetArgumentPointerInteger
+  !!
+  !! \since 2.0
+  recursive subroutine kim_model_compute_arguments_get_argument_pointer_int1( &
     model_compute_arguments_handle, compute_argument_name, extent1, int1, ierr)
     use kim_compute_argument_name_module, only : kim_compute_argument_name_type
     use kim_interoperable_types_module, only : kim_model_compute_arguments_type
     implicit none
     interface
-      integer(c_int) function get_argument_pointer_integer( &
+      integer(c_int) recursive function get_argument_pointer_integer( &
         model_compute_arguments, compute_argument_name, ptr) &
         bind(c, name="KIM_ModelComputeArguments_GetArgumentPointerInteger")
         use, intrinsic :: iso_c_binding
@@ -334,14 +449,20 @@ contains
 
   end subroutine kim_model_compute_arguments_get_argument_pointer_int1
 
-  subroutine kim_model_compute_arguments_get_argument_pointer_int2( &
+  !> \brief \copybrief KIM::ModelComputeArguments::GetArgumentPointer
+  !!
+  !! \sa KIM::ModelComputeArguments::GetArgumentPointer,
+  !! KIM_ModelComputeArguments_GetArgumentPointerInteger
+  !!
+  !! \since 2.0
+  recursive subroutine kim_model_compute_arguments_get_argument_pointer_int2( &
     model_compute_arguments_handle, compute_argument_name, extent1, extent2, &
     int2, ierr)
     use kim_compute_argument_name_module, only : kim_compute_argument_name_type
     use kim_interoperable_types_module, only : kim_model_compute_arguments_type
     implicit none
     interface
-      integer(c_int) function get_argument_pointer_integer( &
+      integer(c_int) recursive function get_argument_pointer_integer( &
         model_compute_arguments, compute_argument_name, ptr) &
         bind(c, name="KIM_ModelComputeArguments_GetArgumentPointerInteger")
         use, intrinsic :: iso_c_binding
@@ -379,13 +500,20 @@ contains
     end if
   end subroutine kim_model_compute_arguments_get_argument_pointer_int2
 
-  subroutine kim_model_compute_arguments_get_argument_pointer_double0( &
+  !> \brief \copybrief KIM::ModelComputeArguments::GetArgumentPointer
+  !!
+  !! \sa KIM::ModelComputeArguments::GetArgumentPointer,
+  !! KIM_ModelComputeArguments_GetArgumentPointerDouble
+  !!
+  !! \since 2.0
+  recursive subroutine &
+    kim_model_compute_arguments_get_argument_pointer_double0( &
     model_compute_arguments_handle, compute_argument_name, double0, ierr)
     use kim_compute_argument_name_module, only : kim_compute_argument_name_type
     use kim_interoperable_types_module, only : kim_model_compute_arguments_type
     implicit none
     interface
-      integer(c_int) function get_argument_pointer_double( &
+      integer(c_int) recursive function get_argument_pointer_double( &
         model_compute_arguments, compute_argument_name, ptr) &
         bind(c, name="KIM_ModelComputeArguments_GetArgumentPointerDouble")
         use, intrinsic :: iso_c_binding
@@ -421,14 +549,21 @@ contains
     end if
   end subroutine kim_model_compute_arguments_get_argument_pointer_double0
 
-  subroutine kim_model_compute_arguments_get_argument_pointer_double1( &
+  !> \brief \copybrief KIM::ModelComputeArguments::GetArgumentPointer
+  !!
+  !! \sa KIM::ModelComputeArguments::GetArgumentPointer,
+  !! KIM_ModelComputeArguments_GetArgumentPointerDouble
+  !!
+  !! \since 2.0
+  recursive subroutine &
+    kim_model_compute_arguments_get_argument_pointer_double1( &
     model_compute_arguments_handle, compute_argument_name, extent1, double1, &
     ierr)
     use kim_compute_argument_name_module, only : kim_compute_argument_name_type
     use kim_interoperable_types_module, only : kim_model_compute_arguments_type
     implicit none
     interface
-      integer(c_int) function get_argument_pointer_double( &
+      integer(c_int) recursive function get_argument_pointer_double( &
         model_compute_arguments, compute_argument_name, ptr) &
         bind(c, name="KIM_ModelComputeArguments_GetArgumentPointerDouble")
         use, intrinsic :: iso_c_binding
@@ -465,14 +600,21 @@ contains
     end if
   end subroutine kim_model_compute_arguments_get_argument_pointer_double1
 
-  subroutine kim_model_compute_arguments_get_argument_pointer_double2( &
+  !> \brief \copybrief KIM::ModelComputeArguments::GetArgumentPointer
+  !!
+  !! \sa KIM::ModelComputeArguments::GetArgumentPointer,
+  !! KIM_ModelComputeArguments_GetArgumentPointerDouble
+  !!
+  !! \since 2.0
+  recursive subroutine &
+    kim_model_compute_arguments_get_argument_pointer_double2( &
     model_compute_arguments_handle, compute_argument_name, extent1, extent2, &
     double2, ierr)
     use kim_compute_argument_name_module, only : kim_compute_argument_name_type
     use kim_interoperable_types_module, only : kim_model_compute_arguments_type
     implicit none
     interface
-      integer(c_int) function get_argument_pointer_double( &
+      integer(c_int) recursive function get_argument_pointer_double( &
         model_compute_arguments, compute_argument_name, ptr) &
         bind(c, name="KIM_ModelComputeArguments_GetArgumentPointerDouble")
         use, intrinsic :: iso_c_binding
@@ -510,14 +652,20 @@ contains
     end if
   end subroutine kim_model_compute_arguments_get_argument_pointer_double2
 
-  subroutine kim_model_compute_arguments_is_callback_present( &
+  !> \brief \copybrief KIM::ModelComputeArguments::IsCallbackPresent
+  !!
+  !! \sa KIM::ModelComputeArguments::IsCallbackPresent,
+  !! KIM_ModelComputeArguments_IsCallbackPresent
+  !!
+  !! \since 2.0
+  recursive subroutine kim_model_compute_arguments_is_callback_present( &
     model_compute_arguments_handle, compute_callback_name, present, ierr)
     use kim_compute_callback_name_module, only : kim_compute_callback_name_type
     use kim_interoperable_types_module, only : kim_model_compute_arguments_type
     implicit none
     interface
-      integer(c_int) function is_callback_present(model_compute_arguments, &
-        compute_callback_name, present) &
+      integer(c_int) recursive function is_callback_present( &
+        model_compute_arguments, compute_callback_name, present) &
         bind(c, name="KIM_ModelComputeArguments_IsCallbackPresent")
         use, intrinsic :: iso_c_binding
         use kim_compute_callback_name_module, only : &
@@ -545,13 +693,19 @@ contains
       present)
   end subroutine kim_model_compute_arguments_is_callback_present
 
-  subroutine kim_model_compute_arguments_set_model_buffer_pointer( &
+  !> \brief \copybrief KIM::ModelComputeArguments::SetModelBufferPointer
+  !!
+  !! \sa KIM::ModelComputeArguments::SetModelBufferPointer,
+  !! KIM_ModelComputeArguments_SetModelBufferPointer
+  !!
+  !! \since 2.0
+  recursive subroutine kim_model_compute_arguments_set_model_buffer_pointer( &
     model_compute_arguments_handle, ptr)
     use kim_interoperable_types_module, only : kim_model_compute_arguments_type
     implicit none
     interface
-      subroutine set_model_buffer_pointer(model_compute_arguments, ptr) &
-        bind(c, name="KIM_ModelComputeArguments_SetModelBufferPointer")
+      recursive subroutine set_model_buffer_pointer(model_compute_arguments, &
+        ptr) bind(c, name="KIM_ModelComputeArguments_SetModelBufferPointer")
         use, intrinsic :: iso_c_binding
         use kim_interoperable_types_module, only : &
           kim_model_compute_arguments_type
@@ -570,13 +724,19 @@ contains
     call set_model_buffer_pointer(model_compute_arguments, ptr)
   end subroutine kim_model_compute_arguments_set_model_buffer_pointer
 
-  subroutine kim_model_compute_arguments_get_model_buffer_pointer( &
+  !> \brief \copybrief KIM::ModelComputeArguments::GetModelBufferPointer
+  !!
+  !! \sa KIM::ModelComputeArguments::GetModelBufferPointer,
+  !! KIM_ModelComputeArguments_GetModelBufferPointer
+  !!
+  !! \since 2.0
+  recursive subroutine kim_model_compute_arguments_get_model_buffer_pointer( &
     model_compute_arguments_handle, ptr)
     use kim_interoperable_types_module, only : kim_model_compute_arguments_type
     implicit none
     interface
-      subroutine get_model_buffer_pointer(model_compute_arguments, ptr) &
-        bind(c, name="KIM_ModelComputeArguments_GetModelBufferPointer")
+      recursive subroutine get_model_buffer_pointer(model_compute_arguments, &
+        ptr) bind(c, name="KIM_ModelComputeArguments_GetModelBufferPointer")
         use, intrinsic :: iso_c_binding
         use kim_interoperable_types_module, only : &
           kim_model_compute_arguments_type
@@ -595,14 +755,20 @@ contains
     call get_model_buffer_pointer(model_compute_arguments, ptr)
   end subroutine kim_model_compute_arguments_get_model_buffer_pointer
 
-  subroutine kim_model_compute_arguments_log_entry( &
+  !> \brief \copybrief KIM::ModelComputeArguments::LogEntry
+  !!
+  !! \sa KIM::ModelComputeArguments::LogEntry,
+  !! KIM_ModelComputeArguments_LogEntry
+  !!
+  !! \since 2.0
+  recursive subroutine kim_model_compute_arguments_log_entry( &
     model_compute_arguments_handle, log_verbosity, message)
     use kim_log_verbosity_module, only : kim_log_verbosity_type
     use kim_interoperable_types_module, only : kim_model_compute_arguments_type
     implicit none
     interface
-      subroutine log_entry(model_compute_arguments, log_verbosity, message, &
-        line_number, file_name) bind(c, &
+      recursive subroutine log_entry(model_compute_arguments, log_verbosity, &
+        message, line_number, file_name) bind(c, &
         name="KIM_ModelComputeArguments_LogEntry")
         use, intrinsic :: iso_c_binding
         use kim_log_verbosity_module, only : kim_log_verbosity_type
@@ -628,13 +794,20 @@ contains
       trim(message)//c_null_char, 0, ""//c_null_char)
   end subroutine kim_model_compute_arguments_log_entry
 
-  subroutine kim_model_compute_arguments_to_string( &
+  !> \brief \copybrief KIM::ModelComputeArguments::ToString
+  !!
+  !! \sa KIM::ModelComputeArguments::ToString,
+  !! KIM_ModelComputeArguments_ToString
+  !!
+  !! \since 2.0
+  recursive subroutine kim_model_compute_arguments_to_string( &
     model_compute_arguments_handle, string)
     use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
     use kim_interoperable_types_module, only : kim_model_compute_arguments_type
     implicit none
     interface
-      type(c_ptr) function model_compute_string(model_compute_arguments) &
+      type(c_ptr) recursive function model_compute_string( &
+        model_compute_arguments) &
         bind(c, name="KIM_ModelComputeArguments_ToString")
         use, intrinsic :: iso_c_binding
         use kim_interoperable_types_module, only : &

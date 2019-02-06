@@ -19,7 +19,7 @@
 !
 
 !
-! Copyright (c) 2013--2018, Regents of the University of Minnesota.
+! Copyright (c) 2013--2019, Regents of the University of Minnesota.
 ! All rights reserved.
 !
 ! Contributors:
@@ -35,7 +35,7 @@ module error
   public
 
 contains
-  subroutine my_error(message)
+  recursive subroutine my_error(message)
     implicit none
     character(len=*, kind=c_char), intent(in) :: message
 
@@ -43,7 +43,7 @@ contains
     stop
   end subroutine my_error
 
-  subroutine my_warning(message)
+  recursive subroutine my_warning(message)
     implicit none
     character(len=*, kind=c_char), intent(in) :: message
 
@@ -87,7 +87,7 @@ contains
 ! This function implements Locator and Iterator mode
 !
 !-------------------------------------------------------------------------------
-subroutine get_neigh(data_object, number_of_neighbor_lists, cutoffs, &
+recursive subroutine get_neigh(data_object, number_of_neighbor_lists, cutoffs, &
   neighbor_list_index, request, numnei, pnei1part, ierr) bind(c)
   use error
   implicit none
@@ -149,7 +149,7 @@ contains
 !  Check if we are compatible with the model
 !
 !-------------------------------------------------------------------------------
-subroutine check_model_compatibility(compute_arguments_handle, &
+recursive subroutine check_model_compatibility(compute_arguments_handle, &
   forces_optional, model_is_compatible, ierr)
   use, intrinsic :: iso_c_binding
   use error
@@ -263,7 +263,7 @@ end subroutine Check_Model_Compatibility
 !  KIM Model `modelname'
 !
 !-------------------------------------------------------------------------------
-subroutine Get_Model_Supported_Species(model_handle, max_species, &
+recursive subroutine Get_Model_Supported_Species(model_handle, max_species, &
   model_species, num_species, ier)
 use, intrinsic :: iso_c_binding
 implicit none
@@ -305,7 +305,7 @@ return
 
 end subroutine Get_Model_Supported_Species
 
-subroutine update_neighborlist(DIM,N,coords,cutoff,cutpad, &
+recursive subroutine update_neighborlist(DIM,N,coords,cutoff,cutpad, &
                                do_update_list,coordsave, &
                                neighObject,ierr)
 use, intrinsic :: iso_c_binding
@@ -379,8 +379,8 @@ end subroutine update_neighborlist
 ! NEIGH_PURE_cluster_neighborlist
 !
 !-------------------------------------------------------------------------------
-subroutine NEIGH_PURE_cluster_neighborlist(half, numberOfParticles, coords, &
-                                           cutoff, neighObject)
+recursive subroutine NEIGH_PURE_cluster_neighborlist(half, numberOfParticles, &
+  coords, cutoff, neighObject)
   use, intrinsic :: iso_c_binding
   use mod_neighborlist
   implicit none
@@ -445,8 +445,8 @@ end subroutine NEIGH_PURE_cluster_neighborlist
 !  (this particle will have the most neighbors.)
 !
 !-------------------------------------------------------------------------------
-subroutine create_FCC_configuration(FCCspacing, nCellsPerSide, periodic, &
-                                    coords, MiddlePartId)
+recursive subroutine create_FCC_configuration(FCCspacing, nCellsPerSide, &
+  periodic, coords, MiddlePartId)
   use, intrinsic :: iso_c_binding
   implicit none
   integer(c_int), parameter :: cd = c_double ! used for literal constants
@@ -544,10 +544,9 @@ subroutine create_FCC_configuration(FCCspacing, nCellsPerSide, periodic, &
 
 end subroutine create_FCC_configuration
 
-subroutine compute_numer_deriv(partnum,dir,model_handle, &
-                               compute_arguments_handle,DIM,N,coords,&
-                               cutoff,cutpad,energy, do_update_list,    &
-                               coordsave,neighObject,deriv,deriv_err,ierr)
+recursive subroutine compute_numer_deriv(partnum,dir,model_handle, &
+  compute_arguments_handle,DIM,N,coords,cutoff,cutpad,energy,do_update_list, &
+  coordsave,neighObject,deriv,deriv_err,ierr)
 use, intrinsic :: iso_c_binding
 use error
 use mod_neighborlist
@@ -623,7 +622,7 @@ contains
    ! grad_err().
    !
    !----------------------------------------------------------------------------
-   real(c_double) function dfridr(h,err)
+   real(c_double) recursive function dfridr(h,err)
    implicit none
 
    !-- Transferred variables

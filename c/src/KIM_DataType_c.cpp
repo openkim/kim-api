@@ -21,7 +21,7 @@
 //
 
 //
-// Copyright (c) 2016--2018, Regents of the University of Minnesota.
+// Copyright (c) 2016--2019, Regents of the University of Minnesota.
 // All rights reserved.
 //
 // Contributors:
@@ -29,7 +29,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
+// Release: This file is part of the kim-api-v2-2.0.0 package.
 //
 
 #ifndef KIM_DATA_TYPE_HPP_
@@ -65,6 +65,11 @@ KIM_DataType KIM_DataType_FromString(char const * const str)
   return makeDataTypeC(KIM::DataType(std::string(str)));
 }
 
+int KIM_DataType_Known(KIM_DataType const dataType)
+{
+  return makeDataTypeCpp(dataType).Known();
+}
+
 int KIM_DataType_Equal(KIM_DataType const lhs, KIM_DataType const rhs)
 {
   return (lhs.dataTypeID == rhs.dataTypeID);
@@ -77,7 +82,7 @@ int KIM_DataType_NotEqual(KIM_DataType const lhs, KIM_DataType const rhs)
 
 char const * KIM_DataType_ToString(KIM_DataType const dataType)
 {
-  return makeDataTypeCpp(dataType).String().c_str();
+  return makeDataTypeCpp(dataType).ToString().c_str();
 }
 
 #include "KIM_DataType.inc"

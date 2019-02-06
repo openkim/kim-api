@@ -21,7 +21,7 @@
 /*                                                                            */
 
 /*                                                                            */
-/* Copyright (c) 2016--2018, Regents of the University of Minnesota.          */
+/* Copyright (c) 2016--2019, Regents of the University of Minnesota.          */
 /* All rights reserved.                                                       */
 /*                                                                            */
 /* Contributors:                                                              */
@@ -29,7 +29,7 @@
 /*                                                                            */
 
 /*                                                                            */
-/* Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.         */
+/* Release: This file is part of the kim-api-v2-2.0.0 package.                */
 /*                                                                            */
 
 
@@ -40,11 +40,47 @@
 #define KIM_MAX_EXTENSION_ID_LENGTH 128
 #define KIM_MAX_NUMBER_OF_EXTENSIONS 64
 
+/**
+ ** \brief \copybrief KIM::SupportedExtensions
+ **
+ ** \sa KIM::SupportedExtensions,
+ ** kim_supported_extensions_module::kim_supported_extensions_type
+ **
+ ** \since 2.0
+ **/
 struct KIM_SupportedExtensions
 {
+  /**
+   ** \brief \copybrief KIM::SupportedExtensions::numberOfSupportedExtensions
+   **
+   ** \sa KIM::SupportedExtensions::numberOfSupportedExtensions,
+   ** kim_supported_extensions_module::kim_supported_extensions_type::<!--
+   ** -->number_of_supported_extensions
+   **
+   ** \since 2.0
+   **/
   int numberOfSupportedExtensions;
+  /**
+   ** \brief \copybrief KIM::SupportedExtensions::supportedExtensionID
+   **
+   ** \sa KIM::SupportedExtensions::supportedExtensionID,
+   ** kim_supported_extensions_module::kim_supported_extensions_type::<!--
+   ** -->supported_extension_id
+   **
+   ** \since 2.0
+   **/
   char supportedExtensionID[KIM_MAX_NUMBER_OF_EXTENSIONS]
                            [KIM_MAX_EXTENSION_ID_LENGTH];
+
+  /**
+   ** \brief \copybrief KIM::SupportedExtensions::supportedExtensionRequired
+   **
+   ** \sa KIM::SupportedExtensions::supportedExtensionRequired,
+   ** kim_supported_extensions_module::kim_supported_extensions_type::<!--
+   ** -->supported_extension_required
+   **
+   ** \since 2.0
+   **/
   int supportedExtensionRequired[KIM_MAX_NUMBER_OF_EXTENSIONS];
 };
 

@@ -19,7 +19,7 @@
 //
 
 //
-// Copyright (c) 2016--2018, Regents of the University of Minnesota.
+// Copyright (c) 2016--2019, Regents of the University of Minnesota.
 // All rights reserved.
 //
 // Contributors:
@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
+// Release: This file is part of the kim-api-v2-2.0.0 package.
 //
 
 
@@ -105,7 +105,10 @@ void ComputeArguments::GetSimulatorBufferPointer(void ** const ptr) const
   pimpl->GetSimulatorBufferPointer(ptr);
 }
 
-std::string const & ComputeArguments::String() const { return pimpl->String(); }
+std::string const & ComputeArguments::ToString() const
+{
+  return pimpl->ToString();
+}
 
 void ComputeArguments::SetLogID(std::string const & logID)
 {

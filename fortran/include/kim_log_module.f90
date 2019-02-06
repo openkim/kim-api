@@ -19,7 +19,7 @@
 !
 
 !
-! Copyright (c) 2016--2018, Regents of the University of Minnesota.
+! Copyright (c) 2016--2019, Regents of the University of Minnesota.
 ! All rights reserved.
 !
 ! Contributors:
@@ -27,10 +27,15 @@
 !
 
 !
-! Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
+! Release: This file is part of the kim-api-v2-2.0.0 package.
 !
 
 
+!> \brief \copybrief KIM::Log
+!!
+!! \sa KIM::Log, KIM_Log
+!!
+!! \since 2.0
 module kim_log_module
   use, intrinsic :: iso_c_binding
   implicit none
@@ -57,51 +62,103 @@ module kim_log_module
     kim_log_entry
 
 
+  !> \brief \copybrief KIM::Log
+  !!
+  !! \sa KIM::Log, KIM_Log
+  !!
+  !! \since 2.0
   type, bind(c) :: kim_log_handle_type
     type(c_ptr) :: p = c_null_ptr
   end type kim_log_handle_type
 
+  !> \brief NULL handle for use in comparisons.
+  !!
+  !! \since 2.0
   type(kim_log_handle_type), protected, save &
     :: KIM_LOG_NULL_HANDLE
 
+  !> \brief Compares kim_log_handle_type's for equality.
+  !!
+  !! \since 2.0
   interface operator (.eq.)
     module procedure kim_log_handle_equal
   end interface operator (.eq.)
 
+  !> \brief Compares kim_log_handle_type's for inequality.
+  !!
+  !! \since 2.0
   interface operator (.ne.)
     module procedure kim_log_handle_not_equal
   end interface operator (.ne.)
 
+  !> \brief \copybrief KIM::Log::PushDefaultVerbosity
+  !!
+  !! \sa KIM::Log::PushDefaultVerbosity, KIM_Log_PushDefaultVerbosity
+  !!
+  !! \since 2.0
   interface kim_push_default_verbosity
     module procedure kim_log_push_default_verbosity
   end interface kim_push_default_verbosity
 
+  !> \brief \copybrief KIM::Log::PopDefaultVerbosity
+  !!
+  !! \sa KIM::Log::PopDefaultVerbosity, KIM_Log_PopDefaultVerbosity
+  !!
+  !! \since 2.0
   interface kim_pop_default_verbosity
     module procedure kim_log_pop_default_verbosity
   end interface kim_pop_default_verbosity
 
+  !> \brief \copybrief KIM::Log::GetID
+  !!
+  !! \sa KIM::Log::GetID, KIM_Log_GetID
+  !!
+  !! \since 2.0
   interface kim_get_id
     module procedure kim_log_get_id
   end interface kim_get_id
 
+  !> \brief \copybrief KIM::Log::SetID
+  !!
+  !! \sa KIM::Log::SetID, KIM_Log_SetID
+  !!
+  !! \since 2.0
   interface kim_set_id
     module procedure kim_log_set_id
   end interface kim_set_id
 
+  !> \brief \copybrief KIM::Log::PushVerbosity
+  !!
+  !! \sa KIM::Log::PushVerbosity, KIM_Log_PushVerbosity
+  !!
+  !! \since 2.0
   interface kim_push_verbosity
     module procedure kim_log_push_verbosity
   end interface kim_push_verbosity
 
+  !> \brief \copybrief KIM::Log::PopVerbosity
+  !!
+  !! \sa KIM::Log::PopVerbosity, KIM_Log_PopVerbosity
+  !!
+  !! \since 2.0
   interface kim_pop_verbosity
     module procedure kim_log_pop_verbosity
   end interface kim_pop_verbosity
 
+  !> \brief \copybrief KIM::Log::LogEntry
+  !!
+  !! \sa KIM::Log::LogEntry, KIM_Log_LogEntry
+  !!
+  !! \since 2.0
   interface kim_log_entry
     module procedure kim_log_log_entry
   end interface kim_log_entry
 
 contains
-  logical function kim_log_handle_equal(lhs, rhs)
+  !> \brief Compares kim_log_handle_type's for equality.
+  !!
+  !! \since 2.0
+  logical recursive function kim_log_handle_equal(lhs, rhs)
     implicit none
     type(kim_log_handle_type), intent(in) :: lhs
     type(kim_log_handle_type), intent(in) :: rhs
@@ -113,7 +170,10 @@ contains
     end if
   end function kim_log_handle_equal
 
-  logical function kim_log_handle_not_equal(lhs, rhs)
+  !> \brief Compares kim_log_handle_type's for inequality.
+  !!
+  !! \since 2.0
+  logical recursive function kim_log_handle_not_equal(lhs, rhs)
     implicit none
     type(kim_log_handle_type), intent(in) :: lhs
     type(kim_log_handle_type), intent(in) :: rhs
@@ -121,10 +181,16 @@ contains
     kim_log_handle_not_equal = .not. (lhs .eq. rhs)
   end function kim_log_handle_not_equal
 
-  subroutine kim_log_create(log_handle, ierr)
+  !> \brief \copybrief KIM::Log::Create
+  !!
+  !! \sa KIM::Log::Create, KIM_Log_Create
+  !!
+  !! \since 2.0
+  recursive subroutine kim_log_create(log_handle, ierr)
     implicit none
     interface
-      integer(c_int) function create(log) bind(c, name="KIM_Log_Create")
+      integer(c_int) recursive function create(log) &
+        bind(c, name="KIM_Log_Create")
         use, intrinsic :: iso_c_binding
         implicit none
         type(c_ptr), intent(out) :: log
@@ -139,10 +205,15 @@ contains
     log_handle%p = plog
   end subroutine kim_log_create
 
-  subroutine kim_log_destroy(log_handle)
+  !> \brief \copybrief KIM::Log::Destroy
+  !!
+  !! \sa KIM::Log::Destroy, KIM_Log_Destroy
+  !!
+  !! \since 2.0
+  recursive subroutine kim_log_destroy(log_handle)
     implicit none
     interface
-      subroutine destroy(log) bind(c, name="KIM_Log_Destroy")
+      recursive subroutine destroy(log) bind(c, name="KIM_Log_Destroy")
         use, intrinsic :: iso_c_binding
         implicit none
         type(c_ptr), intent(inout) :: log
@@ -156,11 +227,16 @@ contains
     log_handle%p = c_null_ptr
   end subroutine kim_log_destroy
 
-  subroutine kim_log_push_default_verbosity(log_verbosity)
+  !> \brief \copybrief KIM::Log::PushDefaultVerbosity
+  !!
+  !! \sa KIM::Log::PushDefaultVerbosity, KIM_Log_PushDefaultVerbosity
+  !!
+  !! \since 2.0
+  recursive subroutine kim_log_push_default_verbosity(log_verbosity)
     use kim_log_verbosity_module, only : kim_log_verbosity_type
     implicit none
     interface
-      subroutine push_default_verbosity(log_verbosity) &
+      recursive subroutine push_default_verbosity(log_verbosity) &
         bind(c, name="KIM_Log_PushDefaultVerbosity")
         use, intrinsic :: iso_c_binding
         use kim_log_verbosity_module, only : kim_log_verbosity_type
@@ -173,10 +249,15 @@ contains
     call push_default_verbosity(log_verbosity)
   end subroutine kim_log_push_default_verbosity
 
-  subroutine kim_log_pop_default_verbosity()
+  !> \brief \copybrief KIM::Log::PopDefaultVerbosity
+  !!
+  !! \sa KIM::Log::PopDefaultVerbosity, KIM_Log_PopDefaultVerbosity
+  !!
+  !! \since 2.0
+  recursive subroutine kim_log_pop_default_verbosity()
     implicit none
     interface
-      subroutine pop_default_verbosity() &
+      recursive subroutine pop_default_verbosity() &
         bind(c, name="KIM_Log_PopDefaultVerbosity")
         use, intrinsic :: iso_c_binding
         implicit none
@@ -186,12 +267,17 @@ contains
     call pop_default_verbosity()
   end subroutine kim_log_pop_default_verbosity
 
-  subroutine kim_log_get_id(log_handle, id_string)
+  !> \brief \copybrief KIM::Log::GetID
+  !!
+  !! \sa KIM::Log::GetID, KIM_Log_GetID
+  !!
+  !! \since 2.0
+  recursive subroutine kim_log_get_id(log_handle, id_string)
     use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
     use kim_interoperable_types_module, only : kim_log_type
     implicit none
     interface
-      type(c_ptr) function get_id(log) bind(c, name="KIM_Log_GetID")
+      type(c_ptr) recursive function get_id(log) bind(c, name="KIM_Log_GetID")
         use, intrinsic :: iso_c_binding
         use kim_interoperable_types_module, only : kim_log_type
         implicit none
@@ -209,11 +295,16 @@ contains
     call kim_convert_c_char_ptr_to_string(p, id_string)
   end subroutine kim_log_get_id
 
-  subroutine kim_log_set_id(log_handle, id_string)
+  !> \brief \copybrief KIM::Log::SetID
+  !!
+  !! \sa KIM::Log::SetID, KIM_Log_SetID
+  !!
+  !! \since 2.0
+  recursive subroutine kim_log_set_id(log_handle, id_string)
     use kim_interoperable_types_module, only : kim_log_type
     implicit none
     interface
-      subroutine set_id(log, id_string) bind(c, name="KIM_Log_SetID")
+      recursive subroutine set_id(log, id_string) bind(c, name="KIM_Log_SetID")
         use, intrinsic :: iso_c_binding
         use kim_interoperable_types_module, only : kim_log_type
         implicit none
@@ -229,12 +320,17 @@ contains
     call set_id(log, trim(id_string)//c_null_char)
   end subroutine kim_log_set_id
 
-  subroutine kim_log_push_verbosity(log_handle, log_verbosity)
+  !> \brief \copybrief KIM::Log::PushVerbosity
+  !!
+  !! \sa KIM::Log::PushVerbosity, KIM_Log_PushVerbosity
+  !!
+  !! \since 2.0
+  recursive subroutine kim_log_push_verbosity(log_handle, log_verbosity)
     use kim_log_verbosity_module, only : kim_log_verbosity_type
     use kim_interoperable_types_module, only : kim_log_type
     implicit none
     interface
-      subroutine push_verbosity(log, log_verbosity) &
+      recursive subroutine push_verbosity(log, log_verbosity) &
         bind(c, name="KIM_Log_PushVerbosity")
         use, intrinsic :: iso_c_binding
         use kim_log_verbosity_module, only : kim_log_verbosity_type
@@ -252,11 +348,17 @@ contains
     call push_verbosity(log, log_verbosity)
   end subroutine kim_log_push_verbosity
 
-  subroutine kim_log_pop_verbosity(log_handle)
+  !> \brief \copybrief KIM::Log::PopVerbosity
+  !!
+  !! \sa KIM::Log::PopVerbosity, KIM_Log_PopVerbosity
+  !!
+  !! \since 2.0
+  recursive subroutine kim_log_pop_verbosity(log_handle)
     use kim_interoperable_types_module, only : kim_log_type
     implicit none
     interface
-      subroutine pop_verbosity(log) bind(c, name="KIM_Log_PopVerbosity")
+      recursive subroutine pop_verbosity(log) &
+        bind(c, name="KIM_Log_PopVerbosity")
         use, intrinsic :: iso_c_binding
         use kim_interoperable_types_module, only : kim_log_type
         implicit none
@@ -270,12 +372,17 @@ contains
     call pop_verbosity(log)
   end subroutine kim_log_pop_verbosity
 
-  subroutine kim_log_log_entry(log_handle, log_verbosity, message)
+  !> \brief \copybrief KIM::Log::LogEntry
+  !!
+  !! \sa KIM::Log::LogEntry, KIM_Log_LogEntry
+  !!
+  !! \since 2.0
+  recursive subroutine kim_log_log_entry(log_handle, log_verbosity, message)
     use kim_log_verbosity_module, only : kim_log_verbosity_type
     use kim_interoperable_types_module, only : kim_log_type
     implicit none
     interface
-      subroutine log_entry(log, log_verbosity, message, line_number, &
+      recursive subroutine log_entry(log, log_verbosity, message, line_number, &
         file_name) bind(c, name="KIM_Log_LogEntry")
         use, intrinsic :: iso_c_binding
         use kim_log_verbosity_module, only : kim_log_verbosity_type

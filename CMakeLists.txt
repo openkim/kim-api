@@ -19,7 +19,7 @@
 #
 
 #
-# Copyright (c) 2013--2018, Regents of the University of Minnesota.
+# Copyright (c) 2013--2019, Regents of the University of Minnesota.
 # All rights reserved.
 #
 # Contributors:
@@ -29,7 +29,7 @@
 #
 
 #
-# Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
+# Release: This file is part of the kim-api-v2-2.0.0 package.
 #
 
 
@@ -70,7 +70,8 @@ mark_as_advanced(KIM_API_ENABLE_COVERAGE)
 #
 # Define main project
 #
-project(${PROJECT_PREFIX}-v2 VERSION 2.0.0 LANGUAGES CXX C Fortran)
+project(${PROJECT_PREFIX}-v2 VERSION 2.0.0 LANGUAGES CXX C Fortran)  # must remain a single line for create-pacakge script
+set(PROJECT_DESCRIPTION "An Application Programming Interface (API) for the Knowledgebase of Interatomic Models (KIM).")
 include(GNUInstallDirs)  # needs to come after call to project()
 include(Bash-CompletionConfig)  # set install dirs for bash completions
 include(DefaultRPATHSettings)

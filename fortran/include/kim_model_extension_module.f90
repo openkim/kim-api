@@ -19,7 +19,7 @@
 !
 
 !
-! Copyright (c) 2016--2018, Regents of the University of Minnesota.
+! Copyright (c) 2016--2019, Regents of the University of Minnesota.
 ! All rights reserved.
 !
 ! Contributors:
@@ -27,10 +27,15 @@
 !
 
 !
-! Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
+! Release: This file is part of the kim-api-v2-2.0.0 package.
 !
 
 
+!> \brief \copybrief KIM::ModelExtension
+!!
+!! \sa KIM::ModelExtension, KIM_ModelExtension
+!!
+!! \since 2.0
 module kim_model_extension_module
   use, intrinsic :: iso_c_binding
   implicit none
@@ -65,91 +70,193 @@ module kim_model_extension_module
     kim_to_string
 
 
+  !> \brief \copybrief KIM::ModelExtension
+  !!
+  !! \sa KIM::ModelExtension, KIM_ModelExtension
+  !!
+  !! \since 2.0
   type, bind(c) :: kim_model_extension_handle_type
     type(c_ptr) :: p = c_null_ptr
   end type kim_model_extension_handle_type
 
+  !> \brief NULL handle for use in comparisons.
+  !!
+  !! \since 2.0
   type(kim_model_extension_handle_type), protected, save &
     :: KIM_MODEL_EXTENSION_NULL_HANDLE
 
+  !> \brief Compares kim_model_extension_handle_type's for equality.
+  !!
+  !! \since 2.0
   interface operator (.eq.)
     module procedure kim_model_extension_handle_equal
   end interface operator (.eq.)
 
+  !> \brief Compares kim_model_extension_handle_type's for inequality.
+  !!
+  !! \since 2.0
   interface operator (.ne.)
     module procedure kim_model_extension_handle_not_equal
   end interface operator (.ne.)
 
+  !> \brief \copybrief KIM::ModelExtension::GetExtensionID
+  !!
+  !! \sa KIM::ModelExtension::GetExtensionID, KIM_ModelExtension_GetExtensionID
+  !!
+  !! \since 2.0
   interface kim_get_extension_id
     module procedure kim_model_extension_get_extension_id
   end interface kim_get_extension_id
 
+  !> \brief \copybrief KIM::ModelExtension::Model
+  !!
+  !! \sa KIM::ModelExtension::Model, KIM_ModelExtension_ToModel
+  !!
+  !! \since 2.0
   interface kim_to_model
     module procedure kim_model_extension_to_model
   end interface kim_to_model
 
+  !> \brief \copybrief KIM::ModelExtension::ModelCompute
+  !!
+  !! \sa KIM::ModelExtension::ModelCompute, KIM_ModelExtension_ToModelCompute
+  !!
+  !! \since 2.0
   interface kim_to_model_compute
     module procedure kim_model_extension_to_model_compute
   end interface kim_to_model_compute
 
+  !> \brief \copybrief KIM::ModelExtension::ModelCompute
+  !!
+  !! \sa KIM::ModelExtension::ModelCompute, KIM_ModelExtension_ToModelCompute
+  !!
+  !! \since 2.0
   interface kim_to_model_create
     module procedure kim_model_extension_to_model_create
   end interface kim_to_model_create
 
+  !> \brief \copybrief KIM::ModelExtension::ModelDestroy
+  !!
+  !! \sa KIM::ModelExtension::ModelDestroy, KIM_ModelExtension_ToModelDestroy
+  !!
+  !! \since 2.0
   interface kim_to_model_destroy
     module procedure kim_model_extension_to_model_destroy
   end interface kim_to_model_destroy
 
+  !> \brief \copybrief KIM::ModelExtension::ModelDriverCreate
+  !!
+  !! \sa KIM::ModelExtension::ModelDriverCreate,
+  !! KIM_ModelExtension_ToModelDriverCreate
+  !!
+  !! \since 2.0
   interface kim_to_model_driver_create
     module procedure kim_model_extension_to_model_driver_create
   end interface kim_to_model_driver_create
 
+  !> \brief \copybrief KIM::ModelExtension::ModelRefresh
+  !!
+  !! \sa KIM::ModelExtension::ModelRefresh, KIM_ModelExtension_ToModelRefresh
+  !!
+  !! \since 2.0
   interface kim_to_model_refresh
     module procedure kim_model_extension_to_model_refresh
   end interface kim_to_model_refresh
 
+  !> \brief \copybrief KIM::ModelExtension::ModelWriteParameterizedModel
+  !!
+  !! \sa KIM::ModelExtension::ModelWriteParameterizedModel,
+  !! KIM_ModelExtension_ToModelWriteParameterizedModel
+  !!
+  !! \since 2.0
   interface kim_to_model_write_parameterized_model
     module procedure kim_model_extension_to_model_write_parameterized_model
   end interface kim_to_model_write_parameterized_model
 
+  !> \brief \copybrief KIM::ModelExtension::ModelComputeArguments
+  !!
+  !! \sa KIM::ModelExtension::ModelComputeArguments,
+  !! KIM_ModelExtension_ToModelComputeArguments
+  !!
+  !! \since 2.0
   interface kim_to_model_compute_arguments
     module procedure kim_model_extension_to_model_compute_arguments
   end interface kim_to_model_compute_arguments
 
+  !> \brief \copybrief KIM::ModelExtension::ModelComputeArgumentsCreate
+  !!
+  !! \sa KIM::ModelExtension::ModelComputeArgumentsCreate,
+  !! KIM_ModelExtension_ToModelComputeArgumentsCreate
+  !!
+  !! \since 2.0
   interface kim_to_model_compute_arguments_create
     module procedure kim_model_extension_to_model_compute_arguments_create
   end interface kim_to_model_compute_arguments_create
 
+  !> \brief \copybrief KIM::ModelExtension::ModelComputeArgumentsDestroy
+  !!
+  !! \sa KIM::ModelExtension::ModelComputeArgumentsDestroy,
+  !! KIM_ModelExtension_ToModelComputeArgumentsDestroy
+  !!
+  !! \since 2.0
   interface kim_to_model_compute_arguments_destroy
     module procedure kim_model_extension_to_model_compute_arguments_destroy
   end interface kim_to_model_compute_arguments_destroy
 
+  !> \brief Copy C character array to Fortran string
+  !!
+  !! \since 2.0
   interface kim_c_char_array_to_string
     module procedure kim_model_extension_convert_c_char_array_to_string
   end interface kim_c_char_array_to_string
 
+  !> \brief Copy C character pointer to Fortran string
+  !!
+  !! \since 2.0
   interface kim_c_char_ptr_to_string
     module procedure kim_model_extension_convert_c_char_ptr_to_string
   end interface kim_c_char_ptr_to_string
 
+  !> \brief Convert Fortran string to C character array
+  !!
+  !! \since 2.0
   interface kim_string_to_c_char_array
     module procedure kim_model_extension_convert_string_to_c_char_array
   end interface kim_string_to_c_char_array
 
+  !> \brief \copybrief KIM::ModelExtension::GetModelBufferPointer
+  !!
+  !! \sa KIM::ModelExtension::GetModelBufferPointer,
+  !! KIM_ModelExtension_GetModelBufferPointer
+  !!
+  !! \since 2.0
   interface kim_get_model_buffer_pointer
     module procedure kim_model_extension_get_model_buffer_pointer
   end interface kim_get_model_buffer_pointer
 
+  !> \brief \copybrief KIM::ModelExtension::LogEntry
+  !!
+  !! \sa KIM::ModelExtension::LogEntry, KIM_ModelExtension_LogEntry
+  !!
+  !! \since 2.0
   interface kim_log_entry
     module procedure kim_model_extension_log_entry
   end interface kim_log_entry
 
+  !> \brief \copybrief KIM::ModelExtension::ToString
+  !!
+  !! \sa KIM::ModelExtension::ToString, KIM_ModelExtension_ToString
+  !!
+  !! \since 2.0
   interface kim_to_string
     module procedure kim_model_extension_to_string
   end interface kim_to_string
 
 contains
-  logical function kim_model_extension_handle_equal(lhs, rhs)
+  !> \brief Compares kim_model_extension_handle_type's for equality.
+  !!
+  !! \since 2.0
+  logical recursive function kim_model_extension_handle_equal(lhs, rhs)
     implicit none
     type(kim_model_extension_handle_type), intent(in) :: lhs
     type(kim_model_extension_handle_type), intent(in) :: rhs
@@ -161,7 +268,10 @@ contains
     end if
   end function kim_model_extension_handle_equal
 
-  logical function kim_model_extension_handle_not_equal(lhs, rhs)
+  !> \brief Compares kim_model_extension_handle_type's for inequality.
+  !!
+  !! \since 2.0
+  logical recursive function kim_model_extension_handle_not_equal(lhs, rhs)
     implicit none
     type(kim_model_extension_handle_type), intent(in) :: lhs
     type(kim_model_extension_handle_type), intent(in) :: rhs
@@ -169,13 +279,18 @@ contains
     kim_model_extension_handle_not_equal = .not. (lhs .eq. rhs)
   end function kim_model_extension_handle_not_equal
 
-  subroutine kim_model_extension_get_extension_id(model_extension_handle, &
-    extension_id)
+  !> \brief \copybrief KIM::ModelExtension::GetExtensionID
+  !!
+  !! \sa KIM::ModelExtension::GetExtensionID, KIM_ModelExtension_GetExtensionID
+  !!
+  !! \since 2.0
+  recursive subroutine kim_model_extension_get_extension_id( &
+    model_extension_handle, extension_id)
     use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
     use kim_interoperable_types_module, only : kim_model_extension_type
     implicit none
     interface
-      subroutine get_extension_id(model_extension, extension_id) &
+      recursive subroutine get_extension_id(model_extension, extension_id) &
         bind(c, name="KIM_ModelExtension_GetExtensionID")
         use, intrinsic :: iso_c_binding
         use kim_interoperable_types_module, only : kim_model_extension_type
@@ -195,7 +310,13 @@ contains
     call kim_convert_c_char_ptr_to_string(p, extension_id)
   end subroutine kim_model_extension_get_extension_id
 
-  subroutine kim_model_extension_to_model(model_extension_handle, model_handle)
+  !> \brief \copybrief KIM::ModelExtension::Model
+  !!
+  !! \sa KIM::ModelExtension::Model, KIM_ModelExtension_ToModel
+  !!
+  !! \since 2.0
+  recursive subroutine kim_model_extension_to_model(model_extension_handle, &
+    model_handle)
     use kim_model_module
     implicit none
     type(kim_model_extension_handle_type), intent(in) :: model_extension_handle
@@ -204,8 +325,13 @@ contains
     model_handle%p = model_extension_handle%p
   end subroutine kim_model_extension_to_model
 
-  subroutine kim_model_extension_to_model_compute(model_extension_handle, &
-    model_compute_handle)
+  !> \brief \copybrief KIM::ModelExtension::ModelCompute
+  !!
+  !! \sa KIM::ModelExtension::ModelCompute, KIM_ModelExtension_ToModelCompute
+  !!
+  !! \since 2.0
+  recursive subroutine kim_model_extension_to_model_compute( &
+    model_extension_handle, model_compute_handle)
     use kim_model_compute_module
     implicit none
     type(kim_model_extension_handle_type), intent(in) :: model_extension_handle
@@ -214,8 +340,13 @@ contains
     model_compute_handle%p = model_extension_handle%p
   end subroutine kim_model_extension_to_model_compute
 
-  subroutine kim_model_extension_to_model_create(model_extension_handle, &
-    model_create_handle)
+  !> \brief \copybrief KIM::ModelExtension::ModelCompute
+  !!
+  !! \sa KIM::ModelExtension::ModelCompute, KIM_ModelExtension_ToModelCompute
+  !!
+  !! \since 2.0
+  recursive subroutine kim_model_extension_to_model_create( &
+    model_extension_handle, model_create_handle)
     use kim_model_create_module
     implicit none
     type(kim_model_extension_handle_type), intent(in) :: model_extension_handle
@@ -224,8 +355,13 @@ contains
     model_create_handle%p = model_extension_handle%p
   end subroutine kim_model_extension_to_model_create
 
-  subroutine kim_model_extension_to_model_destroy(model_extension_handle, &
-    model_destroy_handle)
+  !> \brief \copybrief KIM::ModelExtension::ModelDestroy
+  !!
+  !! \sa KIM::ModelExtension::ModelDestroy, KIM_ModelExtension_ToModelDestroy
+  !!
+  !! \since 2.0
+  recursive subroutine kim_model_extension_to_model_destroy( &
+    model_extension_handle, model_destroy_handle)
     use kim_model_destroy_module
     implicit none
     type(kim_model_extension_handle_type), intent(in) :: model_extension_handle
@@ -234,7 +370,13 @@ contains
     model_destroy_handle%p = model_extension_handle%p
   end subroutine kim_model_extension_to_model_destroy
 
-  subroutine kim_model_extension_to_model_driver_create( &
+  !> \brief \copybrief KIM::ModelExtension::ModelDriverCreate
+  !!
+  !! \sa KIM::ModelExtension::ModelDriverCreate,
+  !! KIM_ModelExtension_ToModelDriverCreate
+  !!
+  !! \since 2.0
+  recursive subroutine kim_model_extension_to_model_driver_create( &
     model_extension_handle, model_driver_create_handle)
     use kim_model_driver_create_module
     implicit none
@@ -245,8 +387,13 @@ contains
     model_driver_create_handle%p = model_extension_handle%p
   end subroutine kim_model_extension_to_model_driver_create
 
-  subroutine kim_model_extension_to_model_refresh(model_extension_handle, &
-    model_refresh_handle)
+  !> \brief \copybrief KIM::ModelExtension::ModelRefresh
+  !!
+  !! \sa KIM::ModelExtension::ModelRefresh, KIM_ModelExtension_ToModelRefresh
+  !!
+  !! \since 2.0
+  recursive subroutine kim_model_extension_to_model_refresh( &
+    model_extension_handle, model_refresh_handle)
     use kim_model_refresh_module
     implicit none
     type(kim_model_extension_handle_type), intent(in) :: model_extension_handle
@@ -255,7 +402,13 @@ contains
     model_refresh_handle%p = model_extension_handle%p
   end subroutine kim_model_extension_to_model_refresh
 
-  subroutine kim_model_extension_to_model_write_parameterized_model( &
+  !> \brief \copybrief KIM::ModelExtension::ModelWriteParameterizedModel
+  !!
+  !! \sa KIM::ModelExtension::ModelWriteParameterizedModel,
+  !! KIM_ModelExtension_ToModelWriteParameterizedModel
+  !!
+  !! \since 2.0
+  recursive subroutine kim_model_extension_to_model_write_parameterized_model( &
     model_extension_handle, model_write_parameterized_model_handle)
     use kim_model_write_parameterized_model_module
     implicit none
@@ -266,7 +419,13 @@ contains
     model_write_parameterized_model_handle%p = model_extension_handle%p
   end subroutine kim_model_extension_to_model_write_parameterized_model
 
-  subroutine kim_model_extension_to_model_compute_arguments( &
+  !> \brief \copybrief KIM::ModelExtension::ModelComputeArguments
+  !!
+  !! \sa KIM::ModelExtension::ModelComputeArguments,
+  !! KIM_ModelExtension_ToModelComputeArguments
+  !!
+  !! \since 2.0
+  recursive subroutine kim_model_extension_to_model_compute_arguments( &
     model_extension_handle, compute_arguments_c_ptr, &
     model_compute_arguments_handle)
     use kim_model_compute_arguments_module
@@ -282,7 +441,13 @@ contains
     model_compute_arguments_handle%p = compute_arguments_c_ptr
   end subroutine kim_model_extension_to_model_compute_arguments
 
-  subroutine kim_model_extension_to_model_compute_arguments_create( &
+  !> \brief \copybrief KIM::ModelExtension::ModelComputeArgumentsCreate
+  !!
+  !! \sa KIM::ModelExtension::ModelComputeArgumentsCreate,
+  !! KIM_ModelExtension_ToModelComputeArgumentsCreate
+  !!
+  !! \since 2.0
+  recursive subroutine kim_model_extension_to_model_compute_arguments_create( &
     model_extension_handle, compute_arguments_c_ptr, &
     model_compute_arguments_create_handle)
     use kim_model_compute_arguments_create_module
@@ -298,7 +463,13 @@ contains
     model_compute_arguments_create_handle%p = compute_arguments_c_ptr
   end subroutine kim_model_extension_to_model_compute_arguments_create
 
-  subroutine kim_model_extension_to_model_compute_arguments_destroy( &
+  !> \brief \copybrief KIM::ModelExtension::ModelComputeArgumentsDestroy
+  !!
+  !! \sa KIM::ModelExtension::ModelComputeArgumentsDestroy,
+  !! KIM_ModelExtension_ToModelComputeArgumentsDestroy
+  !!
+  !! \since 2.0
+  recursive subroutine kim_model_extension_to_model_compute_arguments_destroy( &
     model_extension_handle, compute_arguments_c_ptr, &
     model_compute_arguments_destroy_handle)
     use kim_model_compute_arguments_destroy_module
@@ -314,7 +485,10 @@ contains
     model_compute_arguments_destroy_handle%p = compute_arguments_c_ptr
   end subroutine kim_model_extension_to_model_compute_arguments_destroy
 
-  subroutine kim_model_extension_convert_c_char_array_to_string( &
+  !> \brief Copy C character array to Fortran string
+  !!
+  !! \since 2.0
+  recursive subroutine kim_model_extension_convert_c_char_array_to_string( &
     c_char_array, string)
     use kim_convert_string_module, only : kim_convert_c_char_array_to_string
     implicit none
@@ -324,7 +498,10 @@ contains
     call kim_convert_c_char_array_to_string(c_char_array, string)
   end subroutine kim_model_extension_convert_c_char_array_to_string
 
-  subroutine kim_model_extension_convert_c_char_ptr_to_string( &
+  !> \brief Copy C character pointer to Fortran string
+  !!
+  !! \since 2.0
+  recursive subroutine kim_model_extension_convert_c_char_ptr_to_string( &
     c_char_ptr, string)
     use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
     implicit none
@@ -334,7 +511,10 @@ contains
     call kim_convert_c_char_ptr_to_string(c_char_ptr, string)
   end subroutine kim_model_extension_convert_c_char_ptr_to_string
 
-  subroutine kim_model_extension_convert_string_to_c_char_array( &
+  !> \brief Convert Fortran string to C character array
+  !!
+  !! \since 2.0
+  recursive subroutine kim_model_extension_convert_string_to_c_char_array( &
     string, c_char_array)
     use kim_convert_string_module, only : kim_convert_string_to_c_char_array
     implicit none
@@ -344,12 +524,18 @@ contains
     call kim_convert_string_to_c_char_array(string, c_char_array)
   end subroutine kim_model_extension_convert_string_to_c_char_array
 
-  subroutine kim_model_extension_get_model_buffer_pointer( &
+  !> \brief \copybrief KIM::ModelExtension::GetModelBufferPointer
+  !!
+  !! \sa KIM::ModelExtension::GetModelBufferPointer,
+  !! KIM_ModelExtension_GetModelBufferPointer
+  !!
+  !! \since 2.0
+  recursive subroutine kim_model_extension_get_model_buffer_pointer( &
     model_extension_handle, ptr)
     use kim_interoperable_types_module, only : kim_model_extension_type
     implicit none
     interface
-      subroutine get_model_buffer_pointer(model_extension, ptr) &
+      recursive subroutine get_model_buffer_pointer(model_extension, ptr) &
         bind(c, name="KIM_ModelExtension_GetModelBufferPointer")
         use, intrinsic :: iso_c_binding
         use kim_interoperable_types_module, only : kim_model_extension_type
@@ -366,13 +552,18 @@ contains
     call get_model_buffer_pointer(model_extension, ptr)
   end subroutine kim_model_extension_get_model_buffer_pointer
 
-  subroutine kim_model_extension_log_entry(model_extension_handle, &
+  !> \brief \copybrief KIM::ModelExtension::LogEntry
+  !!
+  !! \sa KIM::ModelExtension::LogEntry, KIM_ModelExtension_LogEntry
+  !!
+  !! \since 2.0
+  recursive subroutine kim_model_extension_log_entry(model_extension_handle, &
     log_verbosity, message)
     use kim_log_verbosity_module, only : kim_log_verbosity_type
     use kim_interoperable_types_module, only : kim_model_extension_type
     implicit none
     interface
-      subroutine log_entry(model_extension, log_verbosity, message, &
+      recursive subroutine log_entry(model_extension, log_verbosity, message, &
         line_number, file_name) bind(c, name="KIM_ModelExtension_LogEntry")
         use, intrinsic :: iso_c_binding
         use kim_log_verbosity_module, only : kim_log_verbosity_type
@@ -395,12 +586,18 @@ contains
       0, ""//c_null_char)
   end subroutine kim_model_extension_log_entry
 
-  subroutine kim_model_extension_to_string(model_extension_handle, string)
+  !> \brief \copybrief KIM::ModelExtension::ToString
+  !!
+  !! \sa KIM::ModelExtension::ToString, KIM_ModelExtension_ToString
+  !!
+  !! \since 2.0
+  recursive subroutine kim_model_extension_to_string(model_extension_handle, &
+    string)
     use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
     use kim_interoperable_types_module, only : kim_model_extension_type
     implicit none
     interface
-      type(c_ptr) function model_extension_string(model_extension) &
+      type(c_ptr) recursive function model_extension_string(model_extension) &
         bind(c, name="KIM_ModelExtension_ToString")
         use, intrinsic :: iso_c_binding
         use kim_interoperable_types_module, only : kim_model_extension_type

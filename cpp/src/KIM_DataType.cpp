@@ -19,7 +19,7 @@
 //
 
 //
-// Copyright (c) 2016--2018, Regents of the University of Minnesota.
+// Copyright (c) 2016--2019, Regents of the University of Minnesota.
 // All rights reserved.
 //
 // Contributors:
@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
+// Release: This file is part of the kim-api-v2-2.0.0 package.
 //
 
 #include <map>
@@ -81,7 +81,7 @@ int GetDataType(int const index, DataType * const dataType)
 }  // namespace DATA_TYPE
 
 // implementation of DataType
-DataType::DataType() : dataTypeID(0) {}
+DataType::DataType() {}
 DataType::DataType(int const id) : dataTypeID(id) {}
 DataType::DataType(std::string const & str)
 {
@@ -99,6 +99,22 @@ DataType::DataType(std::string const & str)
   }
 }
 
+bool DataType::Known() const
+{
+  int numberOfDataTypes;
+  DATA_TYPE::GetNumberOfDataTypes(&numberOfDataTypes);
+
+  for (int i = 0; i < numberOfDataTypes; ++i)
+  {
+    DataType dType;
+    DATA_TYPE::GetDataType(i, &dType);
+
+    if (*this == dType) { return true; }
+  }
+
+  return false;
+}
+
 bool DataType::operator==(DataType const & rhs) const
 {
   return dataTypeID == rhs.dataTypeID;
@@ -108,7 +124,7 @@ bool DataType::operator!=(DataType const & rhs) const
   return dataTypeID != rhs.dataTypeID;
 }
 
-std::string const & DataType::String() const
+std::string const & DataType::ToString() const
 {
   DATA_TYPE::StringMap::const_iterator iter
       = DATA_TYPE::dataTypeToString.find(*this);

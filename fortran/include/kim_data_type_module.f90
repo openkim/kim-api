@@ -19,7 +19,7 @@
 !
 
 !
-! Copyright (c) 2016--2018, Regents of the University of Minnesota.
+! Copyright (c) 2016--2019, Regents of the University of Minnesota.
 ! All rights reserved.
 !
 ! Contributors:
@@ -27,10 +27,15 @@
 !
 
 !
-! Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
+! Release: This file is part of the kim-api-v2-2.0.0 package.
 !
 
 
+!> \brief \copybrief KIM::DataType
+!!
+!! \sa KIM::DataType, KIM_DataType
+!!
+!! \since 2.0
 module kim_data_type_module
   use, intrinsic :: iso_c_binding
   implicit none
@@ -45,6 +50,7 @@ module kim_data_type_module
     KIM_DATA_TYPE_DOUBLE, &
 
     ! Routines
+    kim_known, &
     operator (.eq.), &
     operator (.ne.), &
     kim_from_string, &
@@ -53,35 +59,111 @@ module kim_data_type_module
     kim_get_data_type
 
 
+  !> \brief \copybrief KIM::DataType
+  !!
+  !! \sa KIM::DataType, KIM_DataType
+  !!
+  !! \since 2.0
   type, bind(c) :: kim_data_type_type
+     !> \brief \copybrief KIM::DataType::dataTypeID
+     !!
+     !! \sa KIM::DataType::dataTypeID, KIM_DataType::dataTypeID
+     !!
+     !! \since 2.0
     integer(c_int) :: data_type_id
   end type kim_data_type_type
 
-  type(kim_data_type_type), protected, &
+  !> \brief \copybrief KIM::DATA_TYPE::Integer
+  !!
+  !! \sa KIM::DATA_TYPE::Integer, KIM_DATA_TYPE_Integer
+  !!
+  !! \since 2.0
+  type(kim_data_type_type), protected, save, &
     bind(c, name="KIM_DATA_TYPE_Integer") &
     :: KIM_DATA_TYPE_INTEGER
-  type(kim_data_type_type), protected, &
+
+  !> \brief \copybrief KIM::DATA_TYPE::Double
+  !!
+  !! \sa KIM::DATA_TYPE::Double, KIM_DATA_TYPE_Double
+  !!
+  !! \since 2.0
+  type(kim_data_type_type), protected, save, &
     bind(c, name="KIM_DATA_TYPE_Double") &
     :: KIM_DATA_TYPE_DOUBLE
 
+  !> \brief \copybrief KIM::DataType::Known
+  !!
+  !! \sa KIM::DataType::Known, KIM_DataType_Known
+  !!
+  !! \since 2.0
+  interface kim_known
+    module procedure kim_data_type_known
+  end interface kim_known
+
+  !> \brief \copybrief KIM::DataType::operator==()
+  !!
+  !! \sa KIM::DataType::operator==(), KIM_DataType_Equal
+  !!
+  !! \since 2.0
   interface operator (.eq.)
     module procedure kim_data_type_equal
   end interface operator (.eq.)
 
+  !> \brief \copybrief KIM::DataType::operator!=()
+  !!
+  !! \sa KIM::DataType::operator!=(), KIM_DataType_NotEqual
+  !!
+  !! \since 2.0
   interface operator (.ne.)
     module procedure kim_data_type_not_equal
   end interface operator (.ne.)
 
+  !> \brief \copybrief KIM::DataType::DataType(std::string const &)
+  !!
+  !! \sa KIM::DataType::DataType(std::string const &), KIM_DataType_FromString
+  !!
+  !! \since 2.0
   interface kim_from_string
     module procedure kim_data_type_from_string
   end interface kim_from_string
 
+  !> \brief \copybrief KIM::DataType::ToString
+  !!
+  !! \sa KIM::DataType::ToString, KIM_DataType_ToString
+  !!
+  !! \since 2.0
   interface kim_to_string
     module procedure kim_data_type_to_string
   end interface kim_to_string
 
 contains
-  logical function kim_data_type_equal(lhs, rhs)
+  !> \brief \copybrief KIM::DataType::Known
+  !!
+  !! \sa KIM::DataType::Known, KIM_DataType_Known
+  !!
+  !! \since 2.0
+  logical recursive function kim_data_type_known(data_type)
+    implicit none
+    interface
+      integer(c_int) recursive function known(data_type) &
+        bind(c, name="KIM_DataType_Known")
+        use, intrinsic :: iso_c_binding
+        import kim_data_type_type
+        implicit none
+        type(kim_data_type_type), intent(in), value :: data_type
+      end function known
+    end interface
+    type(kim_data_type_type), intent(in) :: data_type
+
+    kim_data_type_known = (known(data_type) /= 0)
+  end function kim_data_type_known
+
+  !> \brief \copybrief KIM::DataType::operator==()
+  !!
+  !! \sa KIM::DataType::operator==(), KIM_DataType_Equal
+  !!
+  !! \since 2.0
+  logical recursive function kim_data_type_equal(lhs, rhs)
     implicit none
     type(kim_data_type_type), intent(in) :: lhs
     type(kim_data_type_type), intent(in) :: rhs
@@ -90,7 +172,12 @@ contains
       = (lhs%data_type_id .eq. rhs%data_type_id)
   end function kim_data_type_equal
 
-  logical function kim_data_type_not_equal(lhs, rhs)
+  !> \brief \copybrief KIM::DataType::operator!=()
+  !!
+  !! \sa KIM::DataType::operator!=(), KIM_DataType_NotEqual
+  !!
+  !! \since 2.0
+  logical recursive function kim_data_type_not_equal(lhs, rhs)
     implicit none
     type(kim_data_type_type), intent(in) :: lhs
     type(kim_data_type_type), intent(in) :: rhs
@@ -98,10 +185,15 @@ contains
     kim_data_type_not_equal = .not. (lhs .eq. rhs)
   end function kim_data_type_not_equal
 
-  subroutine kim_data_type_from_string(string, data_type)
+  !> \brief \copybrief KIM::DataType::DataType(std::string const &)
+  !!
+  !! \sa KIM::DataType::DataType(std::string const &), KIM_DataType_FromString
+  !!
+  !! \since 2.0
+  recursive subroutine kim_data_type_from_string(string, data_type)
     implicit none
     interface
-      type(kim_data_type_type) function from_string(string) &
+      type(kim_data_type_type) recursive function from_string(string) &
         bind(c, name="KIM_DataType_FromString")
         use, intrinsic :: iso_c_binding
         import kim_data_type_type
@@ -115,11 +207,16 @@ contains
     data_type = from_string(trim(string)//c_null_char)
   end subroutine kim_data_type_from_string
 
-  subroutine kim_data_type_to_string(data_type, string)
+  !> \brief \copybrief KIM::DataType::ToString
+  !!
+  !! \sa KIM::DataType::ToString, KIM_DataType_ToString
+  !!
+  !! \since 2.0
+  recursive subroutine kim_data_type_to_string(data_type, string)
     use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
     implicit none
     interface
-      type(c_ptr) function get_string(data_type) &
+      type(c_ptr) recursive function get_string(data_type) &
         bind(c, name="KIM_DataType_ToString")
         use, intrinsic :: iso_c_binding
         import kim_data_type_type
@@ -136,10 +233,16 @@ contains
     call kim_convert_c_char_ptr_to_string(p, string)
   end subroutine kim_data_type_to_string
 
-  subroutine kim_get_number_of_data_types(number_of_data_types)
+  !> \brief \copybrief KIM::DATA_TYPE::GetNumberOfDataTypes
+  !!
+  !! \sa KIM::DATA_TYPE::GetNumberOfDataTypes,
+  !! KIM_DATA_TYPE_GetNumberOfDataTypes
+  !!
+  !! \since 2.0
+  recursive subroutine kim_get_number_of_data_types(number_of_data_types)
     implicit none
     interface
-      subroutine get_number_of_data_types(number_of_data_types) &
+      recursive subroutine get_number_of_data_types(number_of_data_types) &
         bind(c, name="KIM_DATA_TYPE_GetNumberOfDataTypes")
         use, intrinsic :: iso_c_binding
         implicit none
@@ -151,10 +254,15 @@ contains
     call get_number_of_data_types(number_of_data_types)
   end subroutine kim_get_number_of_data_types
 
-  subroutine kim_get_data_type(index, data_type, ierr)
+  !> \brief \copybrief KIM::DATA_TYPE::GetDataType
+  !!
+  !! \sa KIM::DATA_TYPE::GetDataType, KIM_DATA_TYPE_GetDataType
+  !!
+  !! \since 2.0
+  recursive subroutine kim_get_data_type(index, data_type, ierr)
     implicit none
     interface
-      integer(c_int) function get_data_type(index, data_type) &
+      integer(c_int) recursive function get_data_type(index, data_type) &
         bind(c, name="KIM_DATA_TYPE_GetDataType")
         use, intrinsic :: iso_c_binding
         import kim_data_type_type

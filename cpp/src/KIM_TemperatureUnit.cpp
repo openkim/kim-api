@@ -19,7 +19,7 @@
 //
 
 //
-// Copyright (c) 2016--2018, Regents of the University of Minnesota.
+// Copyright (c) 2016--2019, Regents of the University of Minnesota.
 // All rights reserved.
 //
 // Contributors:
@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
+// Release: This file is part of the kim-api-v2-2.0.0 package.
 //
 
 #include <map>
@@ -83,7 +83,7 @@ int GetTemperatureUnit(int const index, TemperatureUnit * const temperatureUnit)
 }  // namespace TEMPERATURE_UNIT
 
 // implementation of TemperatureUnit
-TemperatureUnit::TemperatureUnit() : temperatureUnitID(0) {}
+TemperatureUnit::TemperatureUnit() {}
 TemperatureUnit::TemperatureUnit(int const id) : temperatureUnitID(id) {}
 TemperatureUnit::TemperatureUnit(std::string const & str)
 {
@@ -101,6 +101,22 @@ TemperatureUnit::TemperatureUnit(std::string const & str)
   }
 }
 
+bool TemperatureUnit::Known() const
+{
+  int numberOfTemperatureUnits;
+  TEMPERATURE_UNIT::GetNumberOfTemperatureUnits(&numberOfTemperatureUnits);
+
+  for (int i = 0; i < numberOfTemperatureUnits; ++i)
+  {
+    TemperatureUnit tempUnit;
+    TEMPERATURE_UNIT::GetTemperatureUnit(i, &tempUnit);
+
+    if (*this == tempUnit) { return true; }
+  }
+
+  return false;
+}
+
 bool TemperatureUnit::operator==(TemperatureUnit const & rhs) const
 {
   return temperatureUnitID == rhs.temperatureUnitID;
@@ -110,7 +126,7 @@ bool TemperatureUnit::operator!=(TemperatureUnit const & rhs) const
   return temperatureUnitID != rhs.temperatureUnitID;
 }
 
-std::string const & TemperatureUnit::String() const
+std::string const & TemperatureUnit::ToString() const
 {
   TEMPERATURE_UNIT::StringMap::const_iterator iter
       = TEMPERATURE_UNIT::temperatureUnitToString.find(*this);

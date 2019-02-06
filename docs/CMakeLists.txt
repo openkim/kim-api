@@ -19,7 +19,7 @@
 #
 
 #
-# Copyright (c) 2013--2018, Regents of the University of Minnesota.
+# Copyright (c) 2013--2019, Regents of the University of Minnesota.
 # All rights reserved.
 #
 # Contributors:
@@ -29,7 +29,7 @@
 #
 
 #
-# Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
+# Release: This file is part of the kim-api-v2-2.0.0 package.
 #
 
 cmake_minimum_required(VERSION 3.9)
@@ -40,20 +40,24 @@ cmake_policy(SET CMP0054 NEW)
 find_package(Doxygen)
 
 set(DOXYGEN_PROJECT_NAME         "${PROJECT_NAME}")
+set(DOXYGEN_PROJECT_NUMBER       "${PROJECT_VERSION_STRING}")
 set(DOXYGEN_STRIP_FROM_PATH      "../../")
 set(DOXYGEN_TAB_SIZE             2)
+set(DOXYGEN_EXCLUDE_SYMBOLS      "*_DEFINED_" "*_HPP_" "*_H_")
+set(DOXYGEN_ENABLE_PREPROCESSING YES)
+set(DOXYGEN_SKIP_FUNCTION_MACROS NO)
 set(DOXYGEN_EXTRACT_ALL          YES)
 set(DOXYGEN_EXTRACT_STATIC       YES)
 set(DOXYGEN_EXTRACT_ANON_NSPACES YES)
 set(DOXYGEN_FILE_PATTERNS
-  "*.c" "*.cc" "*.cxx" "*.cpp" "*.c++" "*.java" "*.ii" "*.ixx" "*.ipp"
-  "*.i++" "*.inl" "*.idl" "*.ddl" "*.odl" "*.h" "*.hh" "*.hxx" "*.hpp" "*.h++"
-  "*.cs" "*.d" "*.php" "*.php4" "*.php5" "*.phtml" "*.inc" "*.m" "*.markdown"
-  "*.md" "*.mm" "*.dox" "*.py" "*.pyw" "*.f90" "*.f95" "*.f03" "*.f08" "*.f"
-  "*.for" "*.tcl" "*.vhd" "*.vhdl" "*.ucf" "*.qsf" "Makefile" "CMakeLists.txt"
-  "*.inc" "*.tpl" "*.sh" "*.fd" "*.params" "README"
-)
-
+  "*.c" "*.cc" "*.cxx" "*.cpp" "*.c++" "*.java" "*.ii" "*.ixx" "*.ipp" "*.i++"
+  "*.inl" "*.idl" "*.ddl" "*.odl" "*.h" "*.h.in" "*.hh" "*.hxx" "*.hpp"
+  "*.hpp.in" "*.h++" "*.cs" "*.d" "*.php" "*.php4" "*.php5" "*.phtml" "*.inc"
+  "*.m" "*.markdown" "*.md" "*.mm" "*.dox" "*.py" "*.pyw" "*.f90" "*.f95"
+  "*.f03" "*.f08" "*.f" "*.for" "*.tcl" "*.vhd" "*.vhdl" "*.ucf" "*.qsf"
+  "Makefile" "CMakeLists.txt" "*.tpl" "*.sh" "*.fd" "*.params" "README"
+  )
+set(DOXYGEN_EXTENSION_MAPPING    "in=C++")
 
 set(DOXYGEN_RECURSIVE            YES)
 set(DOXYGEN_IMAGE_PATH           "src/asymptote-figures")
@@ -62,6 +66,10 @@ set(DOXYGEN_USE_MATHJAX          YES)
 set(DOXYGEN_MATHJAX_RELPATH      "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.3")
 set(DOXYGEN_EXTRA_PACKAGES       "amsmath")
 set(DOXYGEN_GENERATE_LATEX       YES)
+
+if(READTHEDOCS)
+  set(DOXYGEN_HTML_FOOTER "readthedocs/footer.html")
+endif(READTHEDOCS)
 
 set(SOURCES
   "src/introduction.txt"

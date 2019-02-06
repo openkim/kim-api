@@ -19,7 +19,7 @@
 //
 
 //
-// Copyright (c) 2013--2018, Regents of the University of Minnesota.
+// Copyright (c) 2013--2019, Regents of the University of Minnesota.
 // All rights reserved.
 //
 // Contributors:
@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
+// Release: This file is part of the kim-api-v2-2.0.0 package.
 //
 
 #include "KIM_Configuration.hpp"
@@ -56,7 +56,7 @@ void usage(std::string name)
             << "number-of-parameter-files\n"
             << "  " << name << " "
             << "<simulator-model-name> "
-            << "(metadata-file | <parameter-file-index>) "
+            << "(metadata-file | <one-based-parameter-file-index>) "
             << "(data | name)\n";
   // note: this interface is likely to change in future kim-api releases
 }
@@ -170,19 +170,22 @@ int main(int argc, char * argv[])
         return 6;
       }
     }
-    else  // parameter file index provided
+    else  // one-based parameter file index provided
     {
       int number;
       error = sharedLib.GetNumberOfParameterFiles(&number);
       int index = atol(argv[2]);
-      if ((index < 0) || (index >= number))
+      if ((index < 1) || (index > number))
       {
         std::cout << "* Error: invalid index provided." << std::endl;
         return 7;
       }
       else
       {
-        error = sharedLib.GetParameterFile(index, &name, &len, &data);
+        // The command line interface uses a one-based index for compatibility
+        // with external scripts.  The SharedLibrary API uses a zero-based
+        // index consistent with standard C++ convention.
+        error = sharedLib.GetParameterFile(index - 1, &name, &len, &data);
         if (error)
         {
           std::cout << "* Error: unable to get parameter file." << std::endl;

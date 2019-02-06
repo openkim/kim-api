@@ -21,7 +21,7 @@
 #
 
 #
-# Copyright (c) 2013--2018, Regents of the University of Minnesota.
+# Copyright (c) 2013--2019, Regents of the University of Minnesota.
 # All rights reserved.
 #
 # Contributors:
@@ -47,8 +47,8 @@ fi
 cd "`git rev-parse --show-toplevel`"
 
 
-master_branch="master-v2"
-devel_branch="devel-v2"
+master_branch="master"
+devel_branch="devel"
 
 # check that we're on the right branch
 if test x"${devel_branch}" != x"`git rev-parse --abbrev-ref HEAD`"; then

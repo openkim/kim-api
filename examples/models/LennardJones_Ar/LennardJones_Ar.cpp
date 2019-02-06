@@ -19,7 +19,7 @@
 //
 
 //
-// Copyright (c) 2018, Regents of the University of Minnesota.
+// Copyright (c) 2018--2019, Regents of the University of Minnesota.
 // All rights reserved.
 //
 // Contributors:
@@ -83,20 +83,20 @@ class LennardJones_Ar
                  true,
                  reinterpret_cast<KIM::Function *>(CACreate))
              || modelCreate->SetRoutinePointer(
-                    KIM::MODEL_ROUTINE_NAME::Compute,
-                    KIM::LANGUAGE_NAME::cpp,
-                    true,
-                    reinterpret_cast<KIM::Function *>(compute))
+                 KIM::MODEL_ROUTINE_NAME::Compute,
+                 KIM::LANGUAGE_NAME::cpp,
+                 true,
+                 reinterpret_cast<KIM::Function *>(compute))
              || modelCreate->SetRoutinePointer(
-                    KIM::MODEL_ROUTINE_NAME::ComputeArgumentsDestroy,
-                    KIM::LANGUAGE_NAME::cpp,
-                    true,
-                    reinterpret_cast<KIM::Function *>(CADestroy))
+                 KIM::MODEL_ROUTINE_NAME::ComputeArgumentsDestroy,
+                 KIM::LANGUAGE_NAME::cpp,
+                 true,
+                 reinterpret_cast<KIM::Function *>(CADestroy))
              || modelCreate->SetRoutinePointer(
-                    KIM::MODEL_ROUTINE_NAME::Destroy,
-                    KIM::LANGUAGE_NAME::cpp,
-                    true,
-                    reinterpret_cast<KIM::Function *>(destroy));
+                 KIM::MODEL_ROUTINE_NAME::Destroy,
+                 KIM::LANGUAGE_NAME::cpp,
+                 true,
+                 reinterpret_cast<KIM::Function *>(destroy));
     if (*error) return;
 
     // everything is good
@@ -147,24 +147,23 @@ class LennardJones_Ar
     double const sigma = lj->sigma_;
     double const cutoffSq = lj->cutoffSq_;
 
-    int error
-        = modelComputeArguments->GetArgumentPointer(
-              KIM::COMPUTE_ARGUMENT_NAME::numberOfParticles,
-              &numberOfParticlesPointer)
-          || modelComputeArguments->GetArgumentPointer(
-                 KIM::COMPUTE_ARGUMENT_NAME::particleSpeciesCodes,
-                 &particleSpeciesCodes)
-          || modelComputeArguments->GetArgumentPointer(
-                 KIM::COMPUTE_ARGUMENT_NAME::particleContributing,
-                 &particleContributing)
-          || modelComputeArguments->GetArgumentPointer(
-                 KIM::COMPUTE_ARGUMENT_NAME::coordinates,
-                 (double const **) &coordinates)
-          || modelComputeArguments->GetArgumentPointer(
-                 KIM::COMPUTE_ARGUMENT_NAME::partialEnergy, &partialEnergy)
-          || modelComputeArguments->GetArgumentPointer(
-                 KIM::COMPUTE_ARGUMENT_NAME::partialForces,
-                 (double const **) &partialForces);
+    int error = modelComputeArguments->GetArgumentPointer(
+                    KIM::COMPUTE_ARGUMENT_NAME::numberOfParticles,
+                    &numberOfParticlesPointer)
+                || modelComputeArguments->GetArgumentPointer(
+                    KIM::COMPUTE_ARGUMENT_NAME::particleSpeciesCodes,
+                    &particleSpeciesCodes)
+                || modelComputeArguments->GetArgumentPointer(
+                    KIM::COMPUTE_ARGUMENT_NAME::particleContributing,
+                    &particleContributing)
+                || modelComputeArguments->GetArgumentPointer(
+                    KIM::COMPUTE_ARGUMENT_NAME::coordinates,
+                    (double const **) &coordinates)
+                || modelComputeArguments->GetArgumentPointer(
+                    KIM::COMPUTE_ARGUMENT_NAME::partialEnergy, &partialEnergy)
+                || modelComputeArguments->GetArgumentPointer(
+                    KIM::COMPUTE_ARGUMENT_NAME::partialForces,
+                    (double const **) &partialForces);
     if (error)
     {
       LOG_ERROR("Unable to get argument pointers");
@@ -262,8 +261,8 @@ class LennardJones_Ar
                     KIM::COMPUTE_ARGUMENT_NAME::partialEnergy,
                     KIM::SUPPORT_STATUS::required)
                 || modelComputeArgumentsCreate->SetArgumentSupportStatus(
-                       KIM::COMPUTE_ARGUMENT_NAME::partialForces,
-                       KIM::SUPPORT_STATUS::required);
+                    KIM::COMPUTE_ARGUMENT_NAME::partialForces,
+                    KIM::SUPPORT_STATUS::required);
 
     (void) modelCompute;  // avoid unused parameter warning
 

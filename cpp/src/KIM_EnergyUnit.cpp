@@ -19,7 +19,7 @@
 //
 
 //
-// Copyright (c) 2016--2018, Regents of the University of Minnesota.
+// Copyright (c) 2016--2019, Regents of the University of Minnesota.
 // All rights reserved.
 //
 // Contributors:
@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
+// Release: This file is part of the kim-api-v2-2.0.0 package.
 //
 
 #include <map>
@@ -93,7 +93,7 @@ int GetEnergyUnit(int const index, EnergyUnit * const energyUnit)
 }  // namespace ENERGY_UNIT
 
 // implementation of EnergyUnit
-EnergyUnit::EnergyUnit() : energyUnitID(0) {}
+EnergyUnit::EnergyUnit() {}
 EnergyUnit::EnergyUnit(int const id) : energyUnitID(id) {}
 EnergyUnit::EnergyUnit(std::string const & str)
 {
@@ -111,6 +111,22 @@ EnergyUnit::EnergyUnit(std::string const & str)
   }
 }
 
+bool EnergyUnit::Known() const
+{
+  int numberOfEnergyUnits;
+  ENERGY_UNIT::GetNumberOfEnergyUnits(&numberOfEnergyUnits);
+
+  for (int i = 0; i < numberOfEnergyUnits; ++i)
+  {
+    EnergyUnit eUnit;
+    ENERGY_UNIT::GetEnergyUnit(i, &eUnit);
+
+    if (*this == eUnit) { return true; }
+  }
+
+  return false;
+}
+
 bool EnergyUnit::operator==(EnergyUnit const & rhs) const
 {
   return energyUnitID == rhs.energyUnitID;
@@ -120,7 +136,7 @@ bool EnergyUnit::operator!=(EnergyUnit const & rhs) const
   return energyUnitID != rhs.energyUnitID;
 }
 
-std::string const & EnergyUnit::String() const
+std::string const & EnergyUnit::ToString() const
 {
   ENERGY_UNIT::StringMap::const_iterator iter
       = ENERGY_UNIT::energyUnitToString.find(*this);

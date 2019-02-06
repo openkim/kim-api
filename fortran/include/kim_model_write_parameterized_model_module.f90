@@ -19,7 +19,7 @@
 !
 
 !
-! Copyright (c) 2016--2018, Regents of the University of Minnesota.
+! Copyright (c) 2016--2019, Regents of the University of Minnesota.
 ! All rights reserved.
 !
 ! Contributors:
@@ -27,10 +27,15 @@
 !
 
 !
-! Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
+! Release: This file is part of the kim-api-v2-2.0.0 package.
 !
 
 
+!> \brief \copybrief KIM::ModelWriteParameterizedModel
+!!
+!! \sa KIM::ModelWriteParameterizedModel, KIM_ModelWriteParameterizedModel
+!!
+!! \since 2.0
 module kim_model_write_parameterized_model_module
   use, intrinsic :: iso_c_binding
   implicit none
@@ -54,48 +59,105 @@ module kim_model_write_parameterized_model_module
     kim_to_string
 
 
+  !> \brief \copybrief KIM::ModelWriteParameterizedModel
+  !!
+  !! \sa KIM::ModelWriteParameterizedModel, KIM_ModelWriteParameterizedModel
+  !!
+  !! \since 2.0
   type, bind(c) :: kim_model_write_parameterized_model_handle_type
     type(c_ptr) :: p = c_null_ptr
   end type kim_model_write_parameterized_model_handle_type
 
+  !> \brief NULL handle for use in comparisons.
+  !!
+  !! \since 2.0
   type(kim_model_write_parameterized_model_handle_type), protected, save &
     :: KIM_MODEL_WRITE_PARAMETERIZED_MODEL_NULL_HANDLE
 
+  !> \brief Compares kim_model_write_parameterized_model_handle_type's for
+  !! equality.
+  !!
+  !! \since 2.0
   interface operator (.eq.)
     module procedure kim_model_write_parameterized_model_handle_equal
   end interface operator (.eq.)
 
+  !> \brief Compares kim_model_write_parameterized_model_handle_type's for
+  !! inequality.
+  !!
+  !! \since 2.0
   interface operator (.ne.)
     module procedure kim_model_write_parameterized_model_handle_not_equal
   end interface operator (.ne.)
 
+  !> \brief \copybrief KIM::ModelWriteParameterizedModel::GetPath
+  !!
+  !! \sa KIM::ModelWriteParameterizedModel::GetPath,
+  !! KIM_ModelWriteParameterizedModel_GetPath
+  !!
+  !! \since 2.0
   interface kim_get_path
     module procedure kim_model_write_parameterized_model_get_path
   end interface kim_get_path
 
+  !> \brief \copybrief KIM::ModelWriteParameterizedModel::GetModelName
+  !!
+  !! \sa KIM::ModelWriteParameterizedModel::GetModelName,
+  !! KIM_ModelWriteParameterizedModel_GetModelName
+  !!
+  !! \since 2.0
   interface kim_get_model_name
     module procedure kim_model_write_parameterized_model_get_model_name
   end interface kim_get_model_name
 
+  !> \brief \copybrief KIM::ModelWriteParameterizedModel::SetParameterFileName
+  !!
+  !! \sa KIM::ModelWriteParameterizedModel::SetParameterFileName,
+  !! KIM_ModelWriteParameterizedModel_SetParameterFileName
+  !!
+  !! \since 2.0
   interface kim_set_parameter_file_name
     module procedure kim_model_write_parameterized_model_set_parameter_file_name
   end interface kim_set_parameter_file_name
 
+  !> \brief \copybrief KIM::ModelWriteParameterizedModel::GetModelBufferPointer
+  !!
+  !! \sa KIM::ModelWriteParameterizedModel::GetModelBufferPointer,
+  !! KIM_ModelWriteParameterizedModel_GetModelBufferPointer
+  !!
+  !! \since 2.0
   interface kim_get_model_buffer_pointer
     module procedure &
       kim_model_write_parameterized_model_get_model_buffer_pointer
   end interface kim_get_model_buffer_pointer
 
+  !> \brief \copybrief KIM::ModelWriteParameterizedModel::LogEntry
+  !!
+  !! \sa KIM::ModelWriteParameterizedModel::LogEntry,
+  !! KIM_ModelWriteParameterizedModel_LogEntry
+  !!
+  !! \since 2.0
   interface kim_log_entry
     module procedure kim_model_write_parameterized_model_log_entry
   end interface kim_log_entry
 
+  !> \brief \copybrief KIM::ModelWriteParameterizedModel::ToString
+  !!
+  !! \sa KIM::ModelWriteParameterizedModel::ToString,
+  !! KIM_ModelWriteParameterizedModel_ToString
+  !!
+  !! \since 2.0
   interface kim_to_string
     module procedure kim_model_write_parameterized_model_to_string
   end interface kim_to_string
 
 contains
-  logical function kim_model_write_parameterized_model_handle_equal(lhs, rhs)
+  !> \brief Compares kim_model_write_parameterized_model_handle_type's for
+  !! equality.
+  !!
+  !! \since 2.0
+  logical recursive function kim_model_write_parameterized_model_handle_equal( &
+    lhs, rhs)
     implicit none
     type(kim_model_write_parameterized_model_handle_type), intent(in) :: lhs
     type(kim_model_write_parameterized_model_handle_type), intent(in) :: rhs
@@ -108,8 +170,12 @@ contains
     end if
   end function kim_model_write_parameterized_model_handle_equal
 
-  logical function kim_model_write_parameterized_model_handle_not_equal(lhs, &
-    rhs)
+  !> \brief Compares kim_model_write_parameterized_model_handle_type's for
+  !! inequality.
+  !!
+  !! \since 2.0
+  logical recursive function &
+    kim_model_write_parameterized_model_handle_not_equal(lhs, rhs)
     implicit none
     type(kim_model_write_parameterized_model_handle_type), intent(in) :: lhs
     type(kim_model_write_parameterized_model_handle_type), intent(in) :: rhs
@@ -117,14 +183,20 @@ contains
     kim_model_write_parameterized_model_handle_not_equal = .not. (lhs .eq. rhs)
   end function kim_model_write_parameterized_model_handle_not_equal
 
-  subroutine kim_model_write_parameterized_model_get_path( &
+  !> \brief \copybrief KIM::ModelWriteParameterizedModel::GetPath
+  !!
+  !! \sa KIM::ModelWriteParameterizedModel::GetPath,
+  !! KIM_ModelWriteParameterizedModel_GetPath
+  !!
+  !! \since 2.0
+  recursive subroutine kim_model_write_parameterized_model_get_path( &
     model_write_parameterized_model_handle, path)
     use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
     use kim_interoperable_types_module, only : &
       kim_model_write_parameterized_model_type
     implicit none
     interface
-      subroutine get_path(model_write_parameterized_model, path) &
+      recursive subroutine get_path(model_write_parameterized_model, path) &
         bind(c, name="KIM_ModelWriteParameterizedModel_GetPath")
         use, intrinsic :: iso_c_binding
         use kim_interoperable_types_module, only : &
@@ -149,14 +221,21 @@ contains
     call kim_convert_c_char_ptr_to_string(ppath, path)
   end subroutine kim_model_write_parameterized_model_get_path
 
-  subroutine kim_model_write_parameterized_model_get_model_name( &
+  !> \brief \copybrief KIM::ModelWriteParameterizedModel::GetModelName
+  !!
+  !! \sa KIM::ModelWriteParameterizedModel::GetModelName,
+  !! KIM_ModelWriteParameterizedModel_GetModelName
+  !!
+  !! \since 2.0
+  recursive subroutine kim_model_write_parameterized_model_get_model_name( &
     model_write_parameterized_model_handle, model_name)
     use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
     use kim_interoperable_types_module, only : &
       kim_model_write_parameterized_model_type
     implicit none
     interface
-      subroutine get_model_name(model_write_parameterized_model, model_name) &
+      recursive subroutine get_model_name(model_write_parameterized_model, &
+        model_name) &
         bind(c, name="KIM_ModelWriteParameterizedModel_GetModelName")
         use, intrinsic :: iso_c_binding
         use kim_interoperable_types_module, only : &
@@ -181,14 +260,21 @@ contains
     call kim_convert_c_char_ptr_to_string(pmodel_name, model_name)
   end subroutine kim_model_write_parameterized_model_get_model_name
 
-  subroutine kim_model_write_parameterized_model_set_parameter_file_name( &
+  !> \brief \copybrief KIM::ModelWriteParameterizedModel::SetParameterFileName
+  !!
+  !! \sa KIM::ModelWriteParameterizedModel::SetParameterFileName,
+  !! KIM_ModelWriteParameterizedModel_SetParameterFileName
+  !!
+  !! \since 2.0
+  recursive subroutine &
+    kim_model_write_parameterized_model_set_parameter_file_name( &
     model_write_parameterized_model_handle, file_name)
     use kim_interoperable_types_module, only : &
       kim_model_write_parameterized_model_type
     implicit none
     interface
-      subroutine set_parameter_file_name(model_write_parameterized_model, &
-        file_name) &
+      recursive subroutine set_parameter_file_name( &
+        model_write_parameterized_model, file_name) &
         bind(c, name="KIM_ModelWriteParameterizedModel_SetParameterFileName")
         use, intrinsic :: iso_c_binding
         use kim_interoperable_types_module, only : &
@@ -211,14 +297,22 @@ contains
       trim(file_name)//c_null_char)
   end subroutine kim_model_write_parameterized_model_set_parameter_file_name
 
-  subroutine kim_model_write_parameterized_model_get_model_buffer_pointer( &
+  !> \brief \copybrief KIM::ModelWriteParameterizedModel::GetModelBufferPointer
+  !!
+  !! \sa KIM::ModelWriteParameterizedModel::GetModelBufferPointer,
+  !! KIM_ModelWriteParameterizedModel_GetModelBufferPointer
+  !!
+  !! \since 2.0
+  recursive subroutine &
+    kim_model_write_parameterized_model_get_model_buffer_pointer( &
     model_write_parameterized_model_handle, ptr)
     use kim_interoperable_types_module, only : &
       kim_model_write_parameterized_model_type
     implicit none
     interface
-      subroutine get_model_buffer_pointer(model_write_parameterized_model, &
-        ptr) bind(c, name="KIM_ModelCompute_GetModelBufferPointer")
+      recursive subroutine get_model_buffer_pointer( &
+        model_write_parameterized_model, ptr) &
+        bind(c, name="KIM_ModelCompute_GetModelBufferPointer")
         use, intrinsic :: iso_c_binding
         use kim_interoperable_types_module, only : &
           kim_model_write_parameterized_model_type
@@ -239,15 +333,21 @@ contains
     call get_model_buffer_pointer(model_write_parameterized_model, ptr)
   end subroutine kim_model_write_parameterized_model_get_model_buffer_pointer
 
-  subroutine kim_model_write_parameterized_model_log_entry( &
+  !> \brief \copybrief KIM::ModelWriteParameterizedModel::LogEntry
+  !!
+  !! \sa KIM::ModelWriteParameterizedModel::LogEntry,
+  !! KIM_ModelWriteParameterizedModel_LogEntry
+  !!
+  !! \since 2.0
+  recursive subroutine kim_model_write_parameterized_model_log_entry( &
     model_write_parameterized_model_handle, log_verbosity, message)
     use kim_log_verbosity_module, only : kim_log_verbosity_type
     use kim_interoperable_types_module, only : &
       kim_model_write_parameterized_model_type
     implicit none
     interface
-      subroutine log_entry(model_write_parameterized_model, log_verbosity, &
-        message, line_number, file_name) &
+      recursive subroutine log_entry(model_write_parameterized_model, &
+        log_verbosity, message, line_number, file_name) &
         bind(c, name="KIM_ModelCompute_LogEntry")
         use, intrinsic :: iso_c_binding
         use kim_log_verbosity_module, only : kim_log_verbosity_type
@@ -275,14 +375,20 @@ contains
       trim(message)//c_null_char, 0, ""//c_null_char)
   end subroutine kim_model_write_parameterized_model_log_entry
 
-  subroutine kim_model_write_parameterized_model_to_string( &
+  !> \brief \copybrief KIM::ModelWriteParameterizedModel::ToString
+  !!
+  !! \sa KIM::ModelWriteParameterizedModel::ToString,
+  !! KIM_ModelWriteParameterizedModel_ToString
+  !!
+  !! \since 2.0
+  recursive subroutine kim_model_write_parameterized_model_to_string( &
     model_write_parameterized_model_handle, string)
     use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
     use kim_interoperable_types_module, only : &
       kim_model_write_parameterized_model_type
     implicit none
     interface
-      type(c_ptr) function model_write_parameterized_model_string( &
+      type(c_ptr) recursive function model_write_parameterized_model_string( &
         model_write_parameterized_model) &
         bind(c, name="KIM_ModelCompute_ToString")
         use, intrinsic :: iso_c_binding

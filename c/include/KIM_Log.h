@@ -21,7 +21,7 @@
 /*                                                                            */
 
 /*                                                                            */
-/* Copyright (c) 2016--2018, Regents of the University of Minnesota.          */
+/* Copyright (c) 2016--2019, Regents of the University of Minnesota.          */
 /* All rights reserved.                                                       */
 /*                                                                            */
 /* Contributors:                                                              */
@@ -29,7 +29,7 @@
 /*                                                                            */
 
 /*                                                                            */
-/* Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.         */
+/* Release: This file is part of the kim-api-v2-2.0.0 package.                */
 /*                                                                            */
 
 
@@ -39,29 +39,109 @@
 /* Forward declarations */
 #ifndef KIM_LOG_VERBOSITY_DEFINED_
 #define KIM_LOG_VERBOSITY_DEFINED_
+/**
+ ** \brief Forward declaration.
+ **
+ ** \since 2.0
+ **/
 typedef struct KIM_LogVerbosity KIM_LogVerbosity;
 #endif
 
-struct KIM_Log;
 
 #ifndef KIM_LOG_DEFINED_
 #define KIM_LOG_DEFINED_
+/**
+ ** \brief \copybrief KIM::Log
+ **
+ ** \sa KIM::Log, kim_log_module::kim_log_handle_type
+ **
+ ** \since 2.0
+ **/
 typedef struct KIM_Log KIM_Log;
 #endif
 
+/**
+ ** \brief \copybrief KIM::Log::Create
+ **
+ ** \sa KIM::Log::Create, kim_log_module::kim_log_create
+ **
+ ** \since 2.0
+ **/
 int KIM_Log_Create(KIM_Log ** const log);
+
+/**
+ ** \brief \copybrief KIM::Log::Destroy
+ **
+ ** \sa KIM::Log::Destroy, kim_log_module::kim_log_destroy
+ **
+ ** \since 2.0
+ **/
 void KIM_Log_Destroy(KIM_Log ** const log);
 
+/**
+ ** \brief \copybrief KIM::Log::PushDefaultVerbosity
+ **
+ ** \sa KIM::Log::PushDefaultVerbosity,
+ ** kim_log_module::kim_push_default_verbosity
+ **
+ ** \since 2.0
+ **/
 void KIM_Log_PushDefaultVerbosity(KIM_LogVerbosity const logVerbosity);
+
+/**
+ ** \brief \copybrief KIM::Log::PopDefaultVerbosity
+ **
+ ** \sa KIM::Log::PopDefaultVerbosity,
+ ** kim_log_module::kim_pop_default_verbosity
+ **
+ ** \since 2.0
+ **/
 void KIM_Log_PopDefaultVerbosity();
 
+/**
+ ** \brief \copybrief KIM::Log::GetID
+ **
+ ** \sa KIM::Log::GetID, kim_log_module::kim_get_id
+ **
+ ** \since 2.0
+ **/
 char const * KIM_Log_GetID(KIM_Log const * const log);
+
+/**
+ ** \brief \copybrief KIM::Log::SetID
+ **
+ ** \sa KIM::Log::SetID, kim_log_module::kim_set_id
+ **
+ ** \since 2.0
+ **/
 void KIM_Log_SetID(KIM_Log * const log, char const * const id);
 
+/**
+ ** \brief \copybrief KIM::Log::PushVerbosity
+ **
+ ** \sa KIM::Log::PushVerbosity, kim_log_module::kim_push_verbosity
+ **
+ ** \since 2.0
+ **/
 void KIM_Log_PushVerbosity(KIM_Log * const log,
                            KIM_LogVerbosity const logVerbosity);
+
+/**
+ ** \brief \copybrief KIM::Log::PopVerbosity
+ **
+ ** \sa KIM::Log::PopVerbosity, kim_log_module::kim_pop_verbosity
+ **
+ ** \since 2.0
+ **/
 void KIM_Log_PopVerbosity(KIM_Log * const log);
 
+/**
+ ** \brief \copybrief KIM::Log::LogEntry
+ **
+ ** \sa KIM::Log::LogEntry, kim_log_module::kim_log_entry
+ **
+ ** \since 2.0
+ **/
 void KIM_Log_LogEntry(KIM_Log const * const log,
                       KIM_LogVerbosity const logVerbosity,
                       char const * const message,

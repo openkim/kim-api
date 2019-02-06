@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013--2018, Regents of the University of Minnesota.
+# Copyright (c) 2013--2019, Regents of the University of Minnesota.
 # All rights reserved.
 #
 # Contributors:
@@ -29,11 +29,12 @@
 #
 
 #
-# Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
+# Release: This file is part of the kim-api-v2-2.0.0 package.
 #
 -->
 
-[![Build Status](https://travis-ci.org/openkim/kim-api.svg?branch=master-v2)](https://travis-ci.org/openkim/kim-api)
+[![Build Status](https://travis-ci.org/openkim/kim-api.svg?branch=master)](https://travis-ci.org/openkim/kim-api)
+[![Documentation Status](https://readthedocs.org/projects/kim-api/badge/?version=latest)](https://kim-api.readthedocs.io/en/latest/?badge=latest)
 
 ============================= The KIM API package =============================
 
@@ -45,7 +46,7 @@ the codes are written.  It is part of the larger KIM project
 (https://openkim.org).
 
 
-See the INSTAL file for instructions on how to build and install the package
+See the INSTALL file for instructions on how to build and install the package
 and its documentation.
 
 *******************************************************************************

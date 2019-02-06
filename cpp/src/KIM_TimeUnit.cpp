@@ -19,7 +19,7 @@
 //
 
 //
-// Copyright (c) 2016--2018, Regents of the University of Minnesota.
+// Copyright (c) 2016--2019, Regents of the University of Minnesota.
 // All rights reserved.
 //
 // Contributors:
@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
+// Release: This file is part of the kim-api-v2-2.0.0 package.
 //
 
 #include <map>
@@ -86,7 +86,7 @@ int GetTimeUnit(int const index, TimeUnit * const timeUnit)
 }  // namespace TIME_UNIT
 
 // implementation of TimeUnit
-TimeUnit::TimeUnit() : timeUnitID(0) {}
+TimeUnit::TimeUnit() {}
 TimeUnit::TimeUnit(int const id) : timeUnitID(id) {}
 TimeUnit::TimeUnit(std::string const & str)
 {
@@ -104,6 +104,22 @@ TimeUnit::TimeUnit(std::string const & str)
   }
 }
 
+bool TimeUnit::Known() const
+{
+  int numberOfTimeUnits;
+  TIME_UNIT::GetNumberOfTimeUnits(&numberOfTimeUnits);
+
+  for (int i = 0; i < numberOfTimeUnits; ++i)
+  {
+    TimeUnit tmUnit;
+    TIME_UNIT::GetTimeUnit(i, &tmUnit);
+
+    if (*this == tmUnit) { return true; }
+  }
+
+  return false;
+}
+
 bool TimeUnit::operator==(TimeUnit const & rhs) const
 {
   return timeUnitID == rhs.timeUnitID;
@@ -113,7 +129,7 @@ bool TimeUnit::operator!=(TimeUnit const & rhs) const
   return timeUnitID != rhs.timeUnitID;
 }
 
-std::string const & TimeUnit::String() const
+std::string const & TimeUnit::ToString() const
 {
   TIME_UNIT::StringMap::const_iterator iter
       = TIME_UNIT::timeUnitToString.find(*this);

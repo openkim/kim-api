@@ -21,7 +21,7 @@
 /*                                                                            */
 
 /*                                                                            */
-/* Copyright (c) 2016--2018, Regents of the University of Minnesota.          */
+/* Copyright (c) 2016--2019, Regents of the University of Minnesota.          */
 /* All rights reserved.                                                       */
 /*                                                                            */
 /* Contributors:                                                              */
@@ -29,17 +29,40 @@
 /*                                                                            */
 
 /*                                                                            */
-/* Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.         */
+/* Release: This file is part of the kim-api-v2-2.0.0 package.                */
 /*                                                                            */
 
 
 #ifndef KIM_SEM_VER_H_
 #define KIM_SEM_VER_H_
 
+/**
+ ** \brief \copybrief KIM::SEM_VER::GetSemVer
+ **
+ ** \sa KIM::SEM_VER::GetSemVer, kim_sem_ver_module::kim_get_sem_ver
+ **
+ ** \since 2.0
+ **/
 char const * KIM_SEM_VER_GetSemVer();
-int KIM_SEM_VER_IsLessThan(char const * const versionA,
-                           char const * const versionB,
+
+/**
+ ** \brief \copybrief KIM::SEM_VER::IsLessThan
+ **
+ ** \sa KIM::SEM_VER::IsLessThan, kim_sem_ver_module::kim_is_less_than
+ **
+ ** \since 2.0
+ **/
+int KIM_SEM_VER_IsLessThan(char const * const lhs,
+                           char const * const rhs,
                            int * const isLessThan);
+
+/**
+ ** \brief \copybrief KIM::SEM_VER::ParseSemVer
+ **
+ ** \sa KIM::SEM_VER::ParseSemVer, kim_sem_ver_module::kim_parse_sem_ver
+ **
+ ** \since 2.0
+ **/
 int KIM_SEM_VER_ParseSemVer(char const * const version,
                             int const prereleaseLength,
                             int const buildMetadataLength,

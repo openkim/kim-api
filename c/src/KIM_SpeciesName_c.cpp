@@ -21,7 +21,7 @@
 //
 
 //
-// Copyright (c) 2016--2018, Regents of the University of Minnesota.
+// Copyright (c) 2016--2019, Regents of the University of Minnesota.
 // All rights reserved.
 //
 // Contributors:
@@ -29,7 +29,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
+// Release: This file is part of the kim-api-v2-2.0.0 package.
 //
 
 #ifndef KIM_SPECIES_NAME_HPP_
@@ -64,6 +64,11 @@ KIM_SpeciesName KIM_SpeciesName_FromString(char const * const str)
   return makeSpeciesNameC(KIM::SpeciesName(std::string(str)));
 }
 
+int KIM_SpeciesName_Known(KIM_SpeciesName const speciesName)
+{
+  return makeSpeciesNameCpp(speciesName).Known();
+}
+
 int KIM_SpeciesName_Equal(KIM_SpeciesName const lhs, KIM_SpeciesName const rhs)
 {
   return (lhs.speciesNameID == rhs.speciesNameID);
@@ -77,7 +82,7 @@ int KIM_SpeciesName_NotEqual(KIM_SpeciesName const lhs,
 
 char const * KIM_SpeciesName_ToString(KIM_SpeciesName const speciesName)
 {
-  return makeSpeciesNameCpp(speciesName).String().c_str();
+  return makeSpeciesNameCpp(speciesName).ToString().c_str();
 }
 
 

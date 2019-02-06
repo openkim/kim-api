@@ -19,7 +19,7 @@
 //
 
 //
-// Copyright (c) 2016--2018, Regents of the University of Minnesota.
+// Copyright (c) 2016--2019, Regents of the University of Minnesota.
 // All rights reserved.
 //
 // Contributors:
@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
+// Release: This file is part of the kim-api-v2-2.0.0 package.
 //
 
 
@@ -53,9 +53,19 @@ class ModelWriteParameterizedModel;
 class ModelComputeArgumentsDestroy;
 class ModelDestroy;
 
+/// \brief Generic function type.
+///
+/// \sa KIM_Function
+///
+/// \since 2.0
+typedef void(Function)(void);  // Generic function pointer
 
-typedef void(Function)(void);  // Generic funciton pointer
-
+/// \brief Prototype for MODEL_ROUTINE_NAME::Create routine.
+///
+/// \sa ModelDriverCreateFunction, KIM_ModelCreateFunction,
+/// KIM_ModelDriverCreateFunction
+///
+/// \since 2.0
 typedef int ModelCreateFunction(ModelCreate * const modelCreate,
                                 LengthUnit const requestedLengthUnit,
                                 EnergyUnit const requestedEnergyUnit,
@@ -63,6 +73,12 @@ typedef int ModelCreateFunction(ModelCreate * const modelCreate,
                                 TemperatureUnit const requestedTemperatureUnit,
                                 TimeUnit const requestedTimeUnit);
 
+/// \brief Prototype for MODEL_ROUTINE_NAME::Create routine.
+///
+/// \sa ModelCreateFunction, KIM_ModelDriverCreateFunction,
+/// KIM_ModelCreateFunction
+///
+/// \since 2.0
 typedef int
 ModelDriverCreateFunction(ModelDriverCreate * const modelDriverCreate,
                           LengthUnit const requestedLengthUnit,
@@ -71,14 +87,30 @@ ModelDriverCreateFunction(ModelDriverCreate * const modelDriverCreate,
                           TemperatureUnit const requestedTemperatureUnit,
                           TimeUnit const requestedTimeUnit);
 
+/// \brief Prototype for MODEL_ROUTINE_NAME::ComputeArgumentsCreate
+/// routine.
+///
+/// \sa KIM_ModelComputeArgumentsCreateFunction
+///
+/// \since 2.0
 typedef int ModelComputeArgumentsCreateFunction(
     ModelCompute const * const modelCompute,
     ModelComputeArgumentsCreate * const modelComputeArgumentsCreate);
 
+/// \brief Prototype for MODEL_ROUTINE_NAME::Compute routine.
+///
+/// \sa KIM_ModelComputeFunction
+///
+/// \since 2.0
 typedef int ModelComputeFunction(
     ModelCompute const * const modelCompute,
     ModelComputeArguments const * const modelComputeArgumentsCreate);
 
+/// \brief Prototype for COMPUTE_CALLBACK_NAME::GetNeighborList routine.
+///
+/// \sa KIM_GetNeighborListFunction
+///
+/// \since 2.0
 typedef int GetNeighborListFunction(void * const dataObject,
                                     int const numberOfNeighborLists,
                                     double const * const cutoffs,
@@ -87,6 +119,12 @@ typedef int GetNeighborListFunction(void * const dataObject,
                                     int * const numberOfNeighbors,
                                     int const ** const neighborsOfParticle);
 
+/// \brief Prototype for COMPUTE_CALLBACK_NAME::ProcessDEDrTerm
+/// routine.
+///
+/// \sa KIM_ProcessDEDrTermFunction
+///
+/// \since 2.0
 typedef int ProcessDEDrTermFunction(void * const dataObject,
                                     double const de,
                                     double const r,
@@ -94,6 +132,12 @@ typedef int ProcessDEDrTermFunction(void * const dataObject,
                                     int const i,
                                     int const j);
 
+/// \brief Prototype for COMPUTE_CALLBACK_NAME::ProcessD2EDr2Term
+/// routine.
+///
+/// \sa KIM_ProcessD2EDr2TermFunction
+///
+/// \since 2.0
 typedef int ProcessD2EDr2TermFunction(void * const dataObject,
                                       double const de,
                                       double const * const r,
@@ -101,18 +145,44 @@ typedef int ProcessD2EDr2TermFunction(void * const dataObject,
                                       int const * const i,
                                       int const * const j);
 
+/// \brief Prototype for MODEL_ROUTINE_NAME::Extension routine.
+///
+/// \sa KIM_ModelExtensionFunction
+///
+/// \since 2.0
 typedef int ModelExtensionFunction(ModelExtension * const modelExtension,
                                    void * const extensionStructure);
 
+/// \brief Prototype for MODEL_ROUTINE_NAME::Refresh routine.
+///
+/// \sa KIM_ModelRefreshFunction
+///
+/// \since 2.0
 typedef int ModelRefreshFunction(ModelRefresh * const modelRefresh);
 
+/// \brief Prototype for MODEL_ROUTINE_NAME::WriteParameterizedModel routine.
+///
+/// \sa KIM_ModelWriteParameterizedModelFunction
+///
+/// \since 2.0
 typedef int ModelWriteParameterizedModelFunction(
     ModelWriteParameterizedModel const * const modelWriteParameterizedModel);
 
+/// \brief Prototype for MODEL_ROUTINE_NAME::ComputeArgumentsDestroy
+/// routine.
+///
+/// \sa KIM_ModelComputeArgumentsDestroyFunction
+///
+/// \since 2.0
 typedef int ModelComputeArgumentsDestroyFunction(
     ModelCompute const * const modelCompute,
     ModelComputeArgumentsDestroy * const modelComputeArgumentsDestroy);
 
+/// \brief Prototype for MODEL_ROUTINE_NAME::Destroy routine.
+///
+/// \sa KIM_ModelDestroyFunction
+///
+/// \since 2.0
 typedef int ModelDestroyFunction(ModelDestroy * const modelDestroy);
 }  // namespace KIM
 

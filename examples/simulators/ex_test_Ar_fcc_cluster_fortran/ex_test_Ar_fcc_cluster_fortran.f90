@@ -19,7 +19,7 @@
 !
 
 !
-! Copyright (c) 2013--2018, Regents of the University of Minnesota.
+! Copyright (c) 2013--2019, Regents of the University of Minnesota.
 ! All rights reserved.
 !
 ! Contributors:
@@ -35,7 +35,7 @@ module error
   public
 
 contains
-  subroutine my_error(message)
+  recursive subroutine my_error(message)
     implicit none
     character(len=*, kind=c_char), intent(in) :: message
 
@@ -43,7 +43,7 @@ contains
     stop 1
   end subroutine my_error
 
-  subroutine my_warning(message)
+  recursive subroutine my_warning(message)
     implicit none
     character(len=*, kind=c_char), intent(in) :: message
 
@@ -80,7 +80,7 @@ contains
 ! This function implements Locator and Iterator mode
 !
 !-------------------------------------------------------------------------------
-subroutine get_neigh(data_object, number_of_neighbor_lists, cutoffs, &
+recursive subroutine get_neigh(data_object, number_of_neighbor_lists, cutoffs, &
   neighbor_list_index, request, numnei, pnei1part, ierr) bind(c)
   use error
   implicit none
@@ -154,8 +154,8 @@ contains
 ! NEIGH_PURE_cluster_neighborlist
 !
 !-------------------------------------------------------------------------------
-subroutine NEIGH_PURE_cluster_neighborlist(half, numberOfParticles, coords, &
-                                           cutoff, neighObject)
+recursive subroutine NEIGH_PURE_cluster_neighborlist(half, numberOfParticles, &
+  coords, cutoff, neighObject)
   use, intrinsic :: iso_c_binding
   use mod_neighborlist
   implicit none
@@ -220,8 +220,8 @@ end subroutine NEIGH_PURE_cluster_neighborlist
 !  (this particle will have the most neighbors.)
 !
 !-------------------------------------------------------------------------------
-subroutine create_FCC_configuration(FCCspacing, nCellsPerSide, periodic, &
-                                    coords, MiddlePartId)
+recursive subroutine create_FCC_configuration(FCCspacing, nCellsPerSide, &
+  periodic, coords, MiddlePartId)
   use, intrinsic :: iso_c_binding
   implicit none
   integer(c_int), parameter :: cd = c_double ! used for literal constants
@@ -390,8 +390,9 @@ program ex_test_ar_fcc_cluster_fortran
 
   integer :: middledum
 
-  ! Initialize error flag
+  ! Initialize
   ierr = 0
+  supported_extensions%number_of_supported_extensions = 0
 
   ! Get KIM Model name to use
   print '("Please enter a valid KIM model name: ")'

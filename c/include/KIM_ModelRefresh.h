@@ -21,7 +21,7 @@
 /*                                                                            */
 
 /*                                                                            */
-/* Copyright (c) 2016--2018, Regents of the University of Minnesota.          */
+/* Copyright (c) 2016--2019, Regents of the University of Minnesota.          */
 /* All rights reserved.                                                       */
 /*                                                                            */
 /* Contributors:                                                              */
@@ -29,7 +29,7 @@
 /*                                                                            */
 
 /*                                                                            */
-/* Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.         */
+/* Release: This file is part of the kim-api-v2-2.0.0 package.                */
 /*                                                                            */
 
 
@@ -39,36 +39,85 @@
 /* Forward declarations */
 #ifndef KIM_LOG_VERBOSITY_DEFINED_
 #define KIM_LOG_VERBOSITY_DEFINED_
+/**
+ ** \brief Forward declaration.
+ **
+ ** \since 2.0
+ **/
 typedef struct KIM_LogVerbosity KIM_LogVerbosity;
 #endif
 
 
-struct KIM_ModelRefresh;
-
 #ifndef KIM_MODEL_REFRESH_DEFINED_
 #define KIM_MODEL_REFRESH_DEFINED_
+/**
+ ** \brief \copybrief KIM::ModelRefresh
+ **
+ ** \sa KIM::ModelRefresh,
+ ** kim_model_refresh_module::kim_model_refresh_handle_type
+ **
+ ** \since 2.0
+ **/
 typedef struct KIM_ModelRefresh KIM_ModelRefresh;
 #endif
 
+/**
+ ** \brief \copybrief KIM::ModelRefresh::SetInfluenceDistancePointer
+ **
+ ** \sa KIM::ModelRefresh::SetInfluenceDistancePointer,
+ ** kim_model_refresh_module::kim_set_influence_distance_pointer
+ **
+ ** \since 2.0
+ **/
 void KIM_ModelRefresh_SetInfluenceDistancePointer(
     KIM_ModelRefresh * const modelRefresh,
     double const * const influenceDistance);
 
+/**
+ ** \brief \copybrief KIM::ModelRefresh::SetNeighborListPointers
+ **
+ ** \sa KIM::ModelRefresh::SetNeighborListPointers,
+ ** kim_model_refresh_module::kim_set_neighbor_list_pointers
+ **
+ ** \since 2.0
+ **/
 void KIM_ModelRefresh_SetNeighborListPointers(
     KIM_ModelRefresh * const modelRefresh,
     int const numberOfNeighborLists,
     double const * const cutoffs,
     int const * const modelWillNotRequestNeighborsOfNoncontributingParticles);
 
+/**
+ ** \brief \copybrief KIM::ModelRefresh::GetModelBufferPointer
+ **
+ ** \sa KIM::ModelRefresh::GetModelBufferPointer,
+ ** kim_model_refresh_module::kim_get_model_buffer_pointer
+ **
+ ** \since 2.0
+ **/
 void KIM_ModelRefresh_GetModelBufferPointer(
     KIM_ModelRefresh const * const modelRefresh, void ** const ptr);
 
+/**
+ ** \brief \copybrief KIM::ModelRefresh::LogEntry
+ **
+ ** \sa KIM::ModelRefresh::LogEntry, kim_model_refresh_module::kim_log_entry
+ **
+ ** \since 2.0
+ **/
 void KIM_ModelRefresh_LogEntry(KIM_ModelRefresh const * const modelRefresh,
                                KIM_LogVerbosity const logVerbosity,
                                char const * const message,
                                int const lineNumber,
                                char const * const fileName);
 
+/**
+ ** \brief \copybrief KIM::ModelRefresh::ToString
+ **
+ ** \sa KIM::ModelRefresh::ToString, kim_model_refresh_module::kim_to_string
+ **
+ ** \since 2.0
+ **/
 char const *
 KIM_ModelRefresh_ToString(KIM_ModelRefresh const * const modelRefresh);
 

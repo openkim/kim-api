@@ -19,7 +19,7 @@
 !
 
 !
-! Copyright (c) 2016--2018, Regents of the University of Minnesota.
+! Copyright (c) 2016--2019, Regents of the University of Minnesota.
 ! All rights reserved.
 !
 ! Contributors:
@@ -27,10 +27,15 @@
 !
 
 !
-! Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
+! Release: This file is part of the kim-api-v2-2.0.0 package.
 !
 
 
+!> \brief \copybrief KIM::SupportStatus
+!!
+!! \sa KIM::SupportStatus, KIM_SupportStatus
+!!
+!! \since 2.0
 module kim_support_status_module
   use, intrinsic :: iso_c_binding
   implicit none
@@ -47,6 +52,7 @@ module kim_support_status_module
     KIM_SUPPORT_STATUS_OPTIONAL, &
 
     ! Routines
+    kim_known, &
     operator (.eq.), &
     operator (.ne.), &
     kim_from_string, &
@@ -55,41 +61,131 @@ module kim_support_status_module
     kim_get_support_status
 
 
+  !> \brief \copybrief KIM::SupportStatus
+  !!
+  !! \sa KIM::SupportStatus, KIM_SupportStatus
+  !!
+  !! \since 2.0
   type, bind(c) :: kim_support_status_type
+     !> \brief \copybrief KIM::SupportStatus::supportStatusID
+     !!
+     !! \sa KIM::SupportStatus::supportStatusID,
+     !! KIM_SupportStatus::supportStatusID
+     !!
+     !! \since 2.0
     integer(c_int) :: support_status_id
   end type kim_support_status_type
 
-  type(kim_support_status_type), protected, &
+  !> \brief \copybrief KIM::SUPPORT_STATUS::requiredByAPI
+  !!
+  !! \sa KIM::SUPPORT_STATUS::requiredByAPI, KIM_SUPPORT_STATUS_requiredByAPI
+  !!
+  !! \since 2.0
+  type(kim_support_status_type), protected, save, &
     bind(c, name="KIM_SUPPORT_STATUS_requiredByAPI") &
     :: KIM_SUPPORT_STATUS_REQUIRED_BY_API
-  type(kim_support_status_type), protected, &
+
+  !> \brief \copybrief KIM::SUPPORT_STATUS::notSupported
+  !!
+  !! \sa KIM::SUPPORT_STATUS::notSupported, KIM_SUPPORT_STATUS_notSupported
+  !!
+  !! \since 2.0
+  type(kim_support_status_type), protected, save, &
     bind(c, name="KIM_SUPPORT_STATUS_notSupported") &
     :: KIM_SUPPORT_STATUS_NOT_SUPPORTED
-  type(kim_support_status_type), protected, &
+
+  !> \brief \copybrief KIM::SUPPORT_STATUS::requried
+  !!
+  !! \sa KIM::SUPPORT_STATUS::required, KIM_SUPPORT_STATUS_required
+  !!
+  !! \since 2.0
+  type(kim_support_status_type), protected, save, &
     bind(c, name="KIM_SUPPORT_STATUS_required") &
     :: KIM_SUPPORT_STATUS_REQUIRED
-  type(kim_support_status_type), protected, &
+
+  !> \brief \copybrief KIM::SUPPORT_STATUS::optional
+  !!
+  !! \sa KIM::SUPPORT_STATUS::optional, KIM_SUPPORT_STATUS_optional
+  !!
+  !! \since 2.0
+  type(kim_support_status_type), protected, save, &
     bind(c, name="KIM_SUPPORT_STATUS_optional") &
     :: KIM_SUPPORT_STATUS_OPTIONAL
 
+  !> \brief \copybrief KIM::SupportStatus::Known
+  !!
+  !! \sa KIM::SupportStatus::Known, KIM_SupportStatus_Known
+  !!
+  !! \since 2.0
+  interface kim_known
+    module procedure kim_support_status_known
+  end interface kim_known
+
+  !> \brief \copybrief KIM::SupportStatus::operator==()
+  !!
+  !! \sa KIM::SupportStatus::operator==(), KIM_SupportStatus_Equal
+  !!
+  !! \since 2.0
   interface operator (.eq.)
     module procedure kim_support_status_equal
   end interface operator (.eq.)
 
+  !> \brief \copybrief KIM::SupportStatus::operator!=()
+  !!
+  !! \sa KIM::SupportStatus::operator!=(), KIM_SupportStatus_NotEqual
+  !!
+  !! \since 2.0
   interface operator (.ne.)
     module procedure kim_support_status_not_equal
   end interface operator (.ne.)
 
+  !> \brief \copybrief KIM::SupportStatus::SupportStatus(std::string const &)
+  !!
+  !! \sa KIM::SupportStatus::SupportStatus(std::string const &),
+  !! KIM_SupportStatus_FromString
+  !!
+  !! \since 2.0
   interface kim_from_string
     module procedure kim_support_status_from_string
   end interface kim_from_string
 
+  !> \brief \copybrief KIM::SupportStatus::ToString
+  !!
+  !! \sa KIM::SupportStatus::ToString, KIM_SupportStatus_ToString
+  !!
+  !! \since 2.0
   interface kim_to_string
     module procedure kim_support_status_to_string
   end interface kim_to_string
 
 contains
-  logical function kim_support_status_equal(lhs, rhs)
+  !> \brief \copybrief KIM::SupportStatus::Known
+  !!
+  !! \sa KIM::SupportStatus::Known, KIM_SupportStatus_Known
+  !!
+  !! \since 2.0
+  logical recursive function kim_support_status_known(support_status)
+    implicit none
+    interface
+      integer(c_int) recursive function known(support_status) &
+        bind(c, name="KIM_SupportStatus_Known")
+        use, intrinsic :: iso_c_binding
+        import kim_support_status_type
+        implicit none
+        type(kim_support_status_type), intent(in), value :: support_status
+      end function known
+    end interface
+    type(kim_support_status_type), intent(in) :: support_status
+
+    kim_support_status_known = (known(support_status) /= 0)
+  end function kim_support_status_known
+
+  !> \brief \copybrief KIM::SupportStatus::operator==()
+  !!
+  !! \sa KIM::SupportStatus::operator==(), KIM_SupportStatus_Equal
+  !!
+  !! \since 2.0
+  logical recursive function kim_support_status_equal(lhs, rhs)
     implicit none
     type(kim_support_status_type), intent(in) :: lhs
     type(kim_support_status_type), intent(in) :: rhs
@@ -98,7 +194,12 @@ contains
       = (lhs%support_status_id .eq. rhs%support_status_id)
   end function kim_support_status_equal
 
-  logical function kim_support_status_not_equal(lhs, rhs)
+  !> \brief \copybrief KIM::SupportStatus::operator!=()
+  !!
+  !! \sa KIM::SupportStatus::operator!=(), KIM_SupportStatus_NotEqual
+  !!
+  !! \since 2.0
+  logical recursive function kim_support_status_not_equal(lhs, rhs)
     implicit none
     type(kim_support_status_type), intent(in) :: lhs
     type(kim_support_status_type), intent(in) :: rhs
@@ -106,10 +207,16 @@ contains
     kim_support_status_not_equal = .not. (lhs .eq. rhs)
   end function kim_support_status_not_equal
 
-  subroutine kim_support_status_from_string(string, support_status)
+  !> \brief \copybrief KIM::SupportStatus::SupportStatus(std::string const &)
+  !!
+  !! \sa KIM::SupportStatus::SupportStatus(std::string const &),
+  !! KIM_SupportStatus_FromString
+  !!
+  !! \since 2.0
+  recursive subroutine kim_support_status_from_string(string, support_status)
     implicit none
     interface
-      type(kim_support_status_type) function from_string(string) &
+      type(kim_support_status_type) recursive function from_string(string) &
         bind(c, name="KIM_SupportStatus_FromString")
         use, intrinsic :: iso_c_binding
         import kim_support_status_type
@@ -123,11 +230,16 @@ contains
     support_status = from_string(trim(string)//c_null_char)
   end subroutine kim_support_status_from_string
 
-  subroutine kim_support_status_to_string(support_status, string)
+  !> \brief \copybrief KIM::SupportStatus::ToString
+  !!
+  !! \sa KIM::SupportStatus::ToString, KIM_SupportStatus_ToString
+  !!
+  !! \since 2.0
+  recursive subroutine kim_support_status_to_string(support_status, string)
     use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
     implicit none
     interface
-      type(c_ptr) function get_string(support_status) &
+      type(c_ptr) recursive function get_string(support_status) &
         bind(c, name="KIM_SupportStatus_ToString")
         use, intrinsic :: iso_c_binding
         import kim_support_status_type
@@ -144,10 +256,18 @@ contains
     call kim_convert_c_char_ptr_to_string(p, string)
   end subroutine kim_support_status_to_string
 
-  subroutine kim_get_number_of_support_statuses(number_of_support_statuses)
+  !> \brief \copybrief KIM::SUPPORT_STATUS::GetNumberOfSupportStatuses
+  !!
+  !! \sa KIM::SUPPORT_STATUS::GetNumberOfSupportStatuses,
+  !! KIM_SUPPORT_STATUS_GetNumberOfSupportStatuses
+  !!
+  !! \since 2.0
+  recursive subroutine kim_get_number_of_support_statuses( &
+    number_of_support_statuses)
     implicit none
     interface
-      subroutine get_number_of_support_statuses(number_of_support_statuses) &
+      recursive subroutine get_number_of_support_statuses( &
+        number_of_support_statuses) &
         bind(c, name="KIM_SUPPORT_STATUS_GetNumberOfSupportStatuses")
         use, intrinsic :: iso_c_binding
         implicit none
@@ -159,11 +279,17 @@ contains
     call get_number_of_support_statuses(number_of_support_statuses)
   end subroutine kim_get_number_of_support_statuses
 
-  subroutine kim_get_support_status(index, support_status, ierr)
+  !> \brief \copybrief KIM::SUPPORT_STATUS::GetSupportStatus
+  !!
+  !! \sa KIM::SUPPORT_STATUS::GetSupportStatus,
+  !! KIM_SUPPORT_STATUS_GetSupportStatus
+  !!
+  !! \since 2.0
+  recursive subroutine kim_get_support_status(index, support_status, ierr)
     implicit none
     interface
-      integer(c_int) function get_support_status(index, support_status) &
-        bind(c, name="KIM_SUPPORT_STATUS_GetSupportStatus")
+      integer(c_int) recursive function get_support_status(index, &
+        support_status) bind(c, name="KIM_SUPPORT_STATUS_GetSupportStatus")
         use, intrinsic :: iso_c_binding
         import kim_support_status_type
         implicit none

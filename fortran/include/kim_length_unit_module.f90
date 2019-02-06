@@ -19,7 +19,7 @@
 !
 
 !
-! Copyright (c) 2016--2018, Regents of the University of Minnesota.
+! Copyright (c) 2016--2019, Regents of the University of Minnesota.
 ! All rights reserved.
 !
 ! Contributors:
@@ -27,10 +27,15 @@
 !
 
 !
-! Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
+! Release: This file is part of the kim-api-v2-2.0.0 package.
 !
 
 
+!> \brief \copybrief KIM::LengthUnit
+!!
+!! \sa KIM::LengthUnit, KIM_LengthUnit
+!!
+!! \since 2.0
 module kim_length_unit_module
   use, intrinsic :: iso_c_binding
   implicit none
@@ -49,6 +54,7 @@ module kim_length_unit_module
     KIM_LENGTH_UNIT_NM, &
 
     ! Routines
+    kim_known, &
     operator (.eq.), &
     operator (.ne.), &
     kim_from_string, &
@@ -57,47 +63,148 @@ module kim_length_unit_module
     kim_get_length_unit
 
 
+  !> \brief \copybrief KIM::LengthUnit
+  !!
+  !! \sa KIM::LengthUnit, KIM_LengthUnit
+  !!
+  !! \since 2.0
   type, bind(c) :: kim_length_unit_type
+     !> \brief \copybrief KIM::LengthUnit::lengthUnitID
+     !!
+     !! \sa KIM::LengthUnit::lengthUnitID, KIM_LengthUnit::lengthUnitID
+     !!
+     !! \since 2.0
     integer(c_int) length_unit_id
   end type kim_length_unit_type
 
-  type(kim_length_unit_type), protected, &
+  !> \brief \copybrief KIM::LENGTH_UNIT::unused
+  !!
+  !! \sa KIM::LENGTH_UNIT::unused, KIM_LENGTH_UNIT_unused
+  !!
+  !! \since 2.0
+  type(kim_length_unit_type), protected, save, &
     bind(c, name="KIM_LENGTH_UNIT_unused") &
     :: KIM_LENGTH_UNIT_UNUSED
-  type(kim_length_unit_type), protected, &
+
+  !> \brief \copybrief KIM::LENGTH_UNIT::A
+  !!
+  !! \sa KIM::LENGTH_UNIT::A, KIM_LENGTH_UNIT_A
+  !!
+  !! \since 2.0
+  type(kim_length_unit_type), protected, save, &
     bind(c, name="KIM_LENGTH_UNIT_A") &
     :: KIM_LENGTH_UNIT_A
-  type(kim_length_unit_type), protected, &
+
+  !> \brief \copybrief KIM::LENGTH_UNIT::Bhor
+  !!
+  !! \sa KIM::LENGTH_UNIT::Bhor, KIM_LENGTH_UNIT_Bhor
+  !!
+  !! \since 2.0
+  type(kim_length_unit_type), protected, save, &
     bind(c, name="KIM_LENGTH_UNIT_Bhor") &
     :: KIM_LENGTH_UNIT_BOHR
-  type(kim_length_unit_type), protected, &
+
+  !> \brief \copybrief KIM::LENGTH_UNIT::cm
+  !!
+  !! \sa KIM::LENGTH_UNIT::cm, KIM_LENGTH_UNIT_cm
+  !!
+  !! \since 2.0
+  type(kim_length_unit_type), protected, save, &
     bind(c, name="KIM_LENGTH_UNIT_cm") &
     :: KIM_LENGTH_UNIT_CM
-  type(kim_length_unit_type), protected, &
+
+  !> \brief \copybrief KIM::LENGTH_UNIT::m
+  !!
+  !! \sa KIM::LENGTH_UNIT::m, KIM_LENGTH_UNIT_m
+  !!
+  !! \since 2.0
+  type(kim_length_unit_type), protected, save, &
     bind(c, name="KIM_LENGTH_UNIT_m") &
     :: KIM_LENGTH_UNIT_M
-  type(kim_length_unit_type), protected, &
+
+  !> \brief \copybrief KIM::LENGTH_UNIT::nm
+  !!
+  !! \sa KIM::LENGTH_UNIT::nm, KIM_LENGTH_UNIT_nm
+  !!
+  !! \since 2.0
+  type(kim_length_unit_type), protected, save, &
     bind(c, name="KIM_LENGTH_UNIT_nm") &
     :: KIM_LENGTH_UNIT_NM
 
+  !> \brief \copybrief KIM::LengthUnit::Known
+  !!
+  !! \sa KIM::LengthUnit::Known, KIM_LengthUnit_Known
+  !!
+  !! \since 2.0
+  interface kim_known
+    module procedure kim_length_unit_known
+  end interface kim_known
+
+  !> \brief \copybrief KIM::LengthUnit::operator==()
+  !!
+  !! \sa KIM::LengthUnit::operator==(), KIM_LengthUnit_Equal
+  !!
+  !! \since 2.0
   interface operator (.eq.)
     module procedure kim_length_unit_equal
   end interface operator (.eq.)
 
+  !> \brief \copybrief KIM::LengthUnit::operator!=()
+  !!
+  !! \sa KIM::LengthUnit::operator!=(), KIM_LengthUnit_NotEqual
+  !!
+  !! \since 2.0
   interface operator (.ne.)
     module procedure kim_length_unit_not_equal
   end interface operator (.ne.)
 
+  !> \brief \copybrief KIM::LengthUnit::LengthUnit(std::string const &)
+  !!
+  !! \sa KIM::LengthUnit::LengthUnit(std::string const &),
+  !! KIM_LengthUnit_FromString
+  !!
+  !! \since 2.0
   interface kim_from_string
     module procedure kim_length_unit_from_string
   end interface kim_from_string
 
+  !> \brief \copybrief KIM::LengthUnit::ToString
+  !!
+  !! \sa KIM::LengthUnit::ToString, KIM_LengthUnit_ToString
+  !!
+  !! \since 2.0
   interface kim_to_string
     module procedure kim_length_unit_to_string
   end interface kim_to_string
 
 contains
-  logical function kim_length_unit_equal(lhs, rhs)
+  !> \brief \copybrief KIM::LengthUnit::Known
+  !!
+  !! \sa KIM::LengthUnit::Known, KIM_LengthUnit_Known
+  !!
+  !! \since 2.0
+  logical recursive function kim_length_unit_known(length_unit)
+    implicit none
+    interface
+      integer(c_int) recursive function known(length_unit) &
+        bind(c, name="KIM_LengthUnit_Known")
+        use, intrinsic :: iso_c_binding
+        import kim_length_unit_type
+        implicit none
+        type(kim_length_unit_type), intent(in), value :: length_unit
+      end function known
+    end interface
+    type(kim_length_unit_type), intent(in) :: length_unit
+
+    kim_length_unit_known = (known(length_unit) /= 0)
+  end function kim_length_unit_known
+
+  !> \brief \copybrief KIM::LengthUnit::operator==()
+  !!
+  !! \sa KIM::LengthUnit::operator==(), KIM_LengthUnit_Equal
+  !!
+  !! \since 2.0
+  logical recursive function kim_length_unit_equal(lhs, rhs)
     implicit none
     type(kim_length_unit_type), intent(in) :: lhs
     type(kim_length_unit_type), intent(in) :: rhs
@@ -106,7 +213,12 @@ contains
       = (lhs%length_unit_id .eq. rhs%length_unit_id)
   end function kim_length_unit_equal
 
-  logical function kim_length_unit_not_equal(lhs, rhs)
+  !> \brief \copybrief KIM::LengthUnit::operator!=()
+  !!
+  !! \sa KIM::LengthUnit::operator!=(), KIM_LengthUnit_NotEqual
+  !!
+  !! \since 2.0
+  logical recursive function kim_length_unit_not_equal(lhs, rhs)
     implicit none
     type(kim_length_unit_type), intent(in) :: lhs
     type(kim_length_unit_type), intent(in) :: rhs
@@ -114,10 +226,16 @@ contains
     kim_length_unit_not_equal = .not. (lhs .eq. rhs)
   end function kim_length_unit_not_equal
 
-  subroutine kim_length_unit_from_string(string, length_unit)
+  !> \brief \copybrief KIM::LengthUnit::LengthUnit(std::string const &)
+  !!
+  !! \sa KIM::LengthUnit::LengthUnit(std::string const &),
+  !! KIM_LengthUnit_FromString
+  !!
+  !! \since 2.0
+  recursive subroutine kim_length_unit_from_string(string, length_unit)
     implicit none
     interface
-      type(kim_length_unit_type) function from_string(string) &
+      type(kim_length_unit_type) recursive function from_string(string) &
         bind(c, name="KIM_LengthUnit_FromString")
         use, intrinsic :: iso_c_binding
         import kim_length_unit_type
@@ -131,11 +249,16 @@ contains
     length_unit = from_string(trim(string)//c_null_char)
   end subroutine kim_length_unit_from_string
 
-  subroutine kim_length_unit_to_string(length_unit, string)
+  !> \brief \copybrief KIM::LengthUnit::ToString
+  !!
+  !! \sa KIM::LengthUnit::ToString, KIM_LengthUnit_ToString
+  !!
+  !! \since 2.0
+  recursive subroutine kim_length_unit_to_string(length_unit, string)
     use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
     implicit none
     interface
-      type(c_ptr) function get_string(length_unit) &
+      type(c_ptr) recursive function get_string(length_unit) &
         bind(c, name="KIM_LengthUnit_ToString")
         use, intrinsic :: iso_c_binding
         import kim_length_unit_type
@@ -152,10 +275,16 @@ contains
     call kim_convert_c_char_ptr_to_string(p, string)
   end subroutine kim_length_unit_to_string
 
-  subroutine kim_get_number_of_length_units(number_of_length_units)
+  !> \brief \copybrief KIM::LENGTH_UNIT::GetNumberOfLengthUnits
+  !!
+  !! \sa KIM::LENGTH_UNIT::GetNumberOfLengthUnits,
+  !! KIM_LENGTH_UNIT_GetNumberOfLengthUnits
+  !!
+  !! \since 2.0
+  recursive subroutine kim_get_number_of_length_units(number_of_length_units)
     implicit none
     interface
-      subroutine get_number_of_length_units(number_of_length_units) &
+      recursive subroutine get_number_of_length_units(number_of_length_units) &
         bind(c, name="KIM_LENGTH_UNIT_GetNumberOfLengthUnits")
         use, intrinsic :: iso_c_binding
         integer(c_int), intent(out) :: number_of_length_units
@@ -166,10 +295,15 @@ contains
     call get_number_of_length_units(number_of_length_units)
   end subroutine kim_get_number_of_length_units
 
-  subroutine kim_get_length_unit(index, length_unit, ierr)
+  !> \brief \copybrief KIM::LENGTH_UNIT::GetLengthUnit
+  !!
+  !! \sa KIM::LENGTH_UNIT::GetLengthUnit, KIM_LENGTH_UNIT_GetLengthUnit
+  !!
+  !! \since 2.0
+  recursive subroutine kim_get_length_unit(index, length_unit, ierr)
     implicit none
     interface
-      integer(c_int) function get_length_unit(index, length_unit) &
+      integer(c_int) recursive function get_length_unit(index, length_unit) &
         bind(c, name="KIM_LENGTH_UNIT_GetLengthUnit")
         use, intrinsic :: iso_c_binding
         import kim_length_unit_type

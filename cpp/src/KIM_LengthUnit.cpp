@@ -19,7 +19,7 @@
 //
 
 //
-// Copyright (c) 2016--2018, Regents of the University of Minnesota.
+// Copyright (c) 2016--2019, Regents of the University of Minnesota.
 // All rights reserved.
 //
 // Contributors:
@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
+// Release: This file is part of the kim-api-v2-2.0.0 package.
 //
 
 #include <map>
@@ -90,7 +90,7 @@ int GetLengthUnit(int const index, LengthUnit * const lengthUnit)
 }  // namespace LENGTH_UNIT
 
 // implementation of LengthUnit
-LengthUnit::LengthUnit() : lengthUnitID(0) {}
+LengthUnit::LengthUnit() {}
 LengthUnit::LengthUnit(int const id) : lengthUnitID(id) {}
 LengthUnit::LengthUnit(std::string const & str)
 {
@@ -108,6 +108,22 @@ LengthUnit::LengthUnit(std::string const & str)
   }
 }
 
+bool LengthUnit::Known() const
+{
+  int numberOfLengthUnits;
+  LENGTH_UNIT::GetNumberOfLengthUnits(&numberOfLengthUnits);
+
+  for (int i = 0; i < numberOfLengthUnits; ++i)
+  {
+    LengthUnit lenUnit;
+    LENGTH_UNIT::GetLengthUnit(i, &lenUnit);
+
+    if (*this == lenUnit) { return true; }
+  }
+
+  return false;
+}
+
 bool LengthUnit::operator==(LengthUnit const & rhs) const
 {
   return lengthUnitID == rhs.lengthUnitID;
@@ -117,7 +133,7 @@ bool LengthUnit::operator!=(LengthUnit const & rhs) const
   return lengthUnitID != rhs.lengthUnitID;
 }
 
-std::string const & LengthUnit::String() const
+std::string const & LengthUnit::ToString() const
 {
   LENGTH_UNIT::StringMap::const_iterator iter
       = LENGTH_UNIT::lengthUnitToString.find(*this);

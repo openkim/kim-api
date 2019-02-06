@@ -21,7 +21,7 @@
 //
 
 //
-// Copyright (c) 2016--2018, Regents of the University of Minnesota.
+// Copyright (c) 2016--2019, Regents of the University of Minnesota.
 // All rights reserved.
 //
 // Contributors:
@@ -29,7 +29,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
+// Release: This file is part of the kim-api-v2-2.0.0 package.
 //
 
 #ifndef KIM_NUMBERING_HPP_
@@ -64,6 +64,11 @@ KIM_Numbering KIM_Numbering_FromString(char const * const str)
   return makeNumberingC(KIM::Numbering(std::string(str)));
 }
 
+int KIM_Numbering_Known(KIM_Numbering const numbering)
+{
+  return makeNumberingCpp(numbering).Known();
+}
+
 int KIM_Numbering_Equal(KIM_Numbering const lhs, KIM_Numbering const rhs)
 {
   return (lhs.numberingID == rhs.numberingID);
@@ -76,7 +81,7 @@ int KIM_Numbering_NotEqual(KIM_Numbering const lhs, KIM_Numbering const rhs)
 
 char const * KIM_Numbering_ToString(KIM_Numbering const numbering)
 {
-  return makeNumberingCpp(numbering).String().c_str();
+  return makeNumberingCpp(numbering).ToString().c_str();
 }
 
 #include "KIM_Numbering.inc"

@@ -19,7 +19,7 @@
 //
 
 //
-// Copyright (c) 2016--2018, Regents of the University of Minnesota.
+// Copyright (c) 2016--2019, Regents of the University of Minnesota.
 // All rights reserved.
 //
 // Contributors:
@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
+// Release: This file is part of the kim-api-v2-2.0.0 package.
 //
 
 #ifndef KIM_LOG_VERBOSITY_HPP_
@@ -174,7 +174,7 @@ KIM_ModelExtension_ToString(KIM_ModelExtension const * const modelExtension)
 {
   CONVERT_POINTER;
 
-  return pModelExtension->String().c_str();
+  return pModelExtension->ToString().c_str();
 }
 
 }  // extern "C"

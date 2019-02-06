@@ -9,69 +9,59 @@ env:
 matrix:
   include:
     - name: "osX Debug, Sanitize, Coverage"
+      if: branch != coverity_scan
       os: osx
       osx_image: xcode9.2
       env: CMAKE_BUILD_TYPE=Debug SANITIZE=true COVERAGE=true COVERITY=false
-    - name: "linux fedora, Debug, Sanitize, Dockehub"
-      os: linux
-      services: docker
-      env: DISTRO=fedora CMAKE_BUILD_TYPE=Debug SANITIZE=true COVERITY=false DOCKERHUB=true
-    - name: "Coverity Scan"
-      if: branch = coverity_scan
-      os: linux
-      services: docker
-      env: COVERITY=true
-
-before_script:
-  - if [[ "${COVERITY_SCAN_BRANCH}" != 1 && "${COVERITY}" == false ]]; then
-        if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
-          brew update &> /dev/null &&
+      before_script:
+        - brew update &> /dev/null &&
           brew install gcc@6 ccache&&
           export PATH="/usr/local/opt/ccache/libexec:$PATH" &&
           export CC=gcc-6 &&
           export CXX=g++-6 &&
-          export FC=gfortran-6;
-        else
-           mkdir ${HOME}/docker &&
-           cp -v docker/Dockerfile.${DISTRO} ${HOME}/docker/Dockerfile &&
-           cd ../../ &&
-           mv -v ${TRAVIS_REPO_SLUG} $HOME/docker &&
-           cp -r $HOME/.ccache ${HOME}/docker/ccache;
-        fi;
-    fi
-  - env
-
-script:
-  - if [[ "${COVERITY_SCAN_BRANCH}" != 1 && "$COVERITY" == false ]]; then
-      if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
-        mkdir build &&
-        cd build &&
-        ccache -z &&
-        cmake -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} ${SANITIZE:+-DKIM_API_ENABLE_SANITIZE=ON} ${COVERAGE:+-DKIM_API_ENABLE_COVERAGE=ON} .. &&
-        make -j2 &&
-        ccache -s &&
-        make test &&
-        if test x"${COVERAGE}" != x""; then bash <(curl -s https://codecov.io/bash) -x gcov-6; fi &&
-        mkdir ./destdir &&
-        make install DESTDIR=${PWD}/destdir &&
-        rm -rf ./destdir/usr/local/{bin,etc,include,lib,libexec,share} &&
-        rmdir ./destdir/usr/local &&
-        rmdir ./destdir/usr &&
-        rmdir ./destdir &&
-        cd ../ &&
-        rm -rf build &&
-        mkdir build &&
-        cd build &&
-        ccache -z &&
-        cmake -DCMAKE_INSTALL_PREFIX=${PWD}/test-install -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DKIM_API_BUILD_EXAMPLES=OFF ${SANITIZE:+-DKIM_API_ENABLE_SANITIZE=ON} ${COVERAGE:+-DKIM_API_ENABLE_COVERAGE=ON} .. &&
-        make -j2 install &&
-        ccache -s &&
-        source ./test-install/bin/kim-api-v2-activate &&
-        kim-api-v2-collections-management install system `find ../examples/model-drivers -type d -mindepth 1 -maxdepth 1` &&
-        kim-api-v2-collections-management install system `find ../examples/models -type d -mindepth 1 -maxdepth 1` &&
-        kim-api-v2-collections-management list;
-      else
-         travis_retry docker build -t ${TRAVIS_REPO_SLUG}:${DISTRO}
+          export FC=gfortran-6
+        - env
+      script:
+        - mkdir build &&
+          cd build &&
+          ccache -z &&
+          cmake -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} ${SANITIZE:+-DKIM_API_ENABLE_SANITIZE=ON} ${COVERAGE:+-DKIM_API_ENABLE_COVERAGE=ON} .. &&
+          make -j2 &&
+          ccache -s &&
+          make test &&
+          if test x"${COVERAGE}" != x""; then bash <(curl -s https://codecov.io/bash) -x gcov-6; fi &&
+          mkdir ./destdir &&
+          make install DESTDIR=${PWD}/destdir &&
+          rm -rf ./destdir/usr/local/{bin,etc,include,lib,libexec,share} &&
+          rmdir ./destdir/usr/local &&
+          rmdir ./destdir/usr &&
+          rmdir ./destdir &&
+          cd ../ &&
+          rm -rf build &&
+          mkdir build &&
+          cd build &&
+          ccache -z &&
+          cmake -DCMAKE_INSTALL_PREFIX=${PWD}/test-install -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DKIM_API_BUILD_EXAMPLES=OFF ${SANITIZE:+-DKIM_API_ENABLE_SANITIZE=ON} ${COVERAGE:+-DKIM_API_ENABLE_COVERAGE=ON} .. &&
+          make -j2 install &&
+          ccache -s &&
+          source ./test-install/bin/kim-api-v2-activate &&
+          kim-api-v2-collections-management install system `find ../examples/model-drivers -type d -mindepth 1 -maxdepth 1` &&
+          kim-api-v2-collections-management install system `find ../examples/models -type d -mindepth 1 -maxdepth 1` &&
+          kim-api-v2-collections-management list
+    - name: "linux fedora, Debug, Sanitize, Dockehub"
+      if: branch != coverity_scan
+      os: linux
+      services: docker
+      env: DISTRO=fedora CMAKE_BUILD_TYPE=Debug SANITIZE=true COVERITY=false DOCKERHUB=true
+      before_script:
+        - mkdir ${HOME}/docker &&
+          cp -v docker/Dockerfile.${DISTRO} ${HOME}/docker/Dockerfile &&
+          cd ../../ &&
+          mv -v ${TRAVIS_REPO_SLUG} $HOME/docker &&
+          cp -r $HOME/.ccache ${HOME}/docker/ccache
+        - env
+      script:
+        - travis_retry docker build -t ${TRAVIS_REPO_SLUG}:${DISTRO}
                    --build-arg CC=${CC}
                    --build-arg CXX=${CXX}
                    --build-arg FC=${FC}
@@ -90,17 +80,25 @@ script:
                    --build-arg TRAVIS_REPO_SLUG=${TRAVIS_REPO_SLUG}
                    --build-arg TRAVIS_COMMIT=${TRAVIS_COMMIT}
                    ${HOME}/docker/ &&
-        rm -rf $HOME/.ccache &&
-        CON=$(docker run -d ${TRAVIS_REPO_SLUG}:${DISTRO} /bin/bash) &&
-        docker cp ${CON}:/home/kim/.ccache ${HOME}/;
-      fi;
-    fi
-
-after_success:
-  - if [[ "$COVERITY" == false && ${DOCKERHUB} && ${DOCKER_USERNAME} && ${DOCKER_PASSWORD} && ${TRAVIS_BRANCH} == master-v2 && ${TRAVIS_PULL_REQUEST} == false && ${TRAVIS_OS_NAME} = "linux" ]]; then
-      docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
-      docker push "${TRAVIS_REPO_SLUG}:${DISTRO}";
-    fi
+          rm -rf $HOME/.ccache &&
+          CON=$(docker run -d ${TRAVIS_REPO_SLUG}:${DISTRO} /bin/bash) &&
+          docker cp ${CON}:/home/kim/.ccache ${HOME}/
+      after_success:
+        - if [[ ${DOCKERHUB} && ${DOCKER_USERNAME} && ${DOCKER_PASSWORD} && ${TRAVIS_BRANCH} == master-v2 && ${TRAVIS_PULL_REQUEST} == false ]]; then
+            docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
+            docker push "${TRAVIS_REPO_SLUG}:${DISTRO}";
+          fi
+    - name: "Coverity Scan"
+      if: branch = coverity_scan
+      os: linux
+      env: COVERITY=true
+      before_install:
+        - echo -n | openssl s_client -connect https://scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
+        - env
+      script:
+        - true
+      after_success:
+        - cat /home/travis/build/openkim/kim-api/cov-int/scm_log.txt
 
 cache:
   - ccache

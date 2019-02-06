@@ -19,7 +19,7 @@
 !
 
 !
-! Copyright (c) 2016--2018, Regents of the University of Minnesota.
+! Copyright (c) 2016--2019, Regents of the University of Minnesota.
 ! All rights reserved.
 !
 ! Contributors:
@@ -27,7 +27,7 @@
 !
 
 !
-! Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
+! Release: This file is part of the kim-api-v2-2.0.0 package.
 !
 
 
@@ -41,7 +41,7 @@ module kim_convert_string_module
     kim_convert_string_to_c_char_array
 
 contains
-  subroutine kim_convert_c_char_array_to_string(c_char_array, string)
+  recursive subroutine kim_convert_c_char_array_to_string(c_char_array, string)
     use, intrinsic :: iso_c_binding
     implicit none
     character(len=1, kind=c_char), intent(in) :: c_char_array(:)
@@ -66,7 +66,7 @@ contains
     end do
   end subroutine kim_convert_c_char_array_to_string
 
-  subroutine kim_convert_c_char_ptr_to_string(c_char_ptr, string)
+  recursive subroutine kim_convert_c_char_ptr_to_string(c_char_ptr, string)
     use, intrinsic :: iso_c_binding
     implicit none
     type(c_ptr), intent(in) :: c_char_ptr
@@ -84,7 +84,7 @@ contains
     end if
   end subroutine kim_convert_c_char_ptr_to_string
 
-  subroutine kim_convert_string_to_c_char_array(string, c_char_array)
+  recursive subroutine kim_convert_string_to_c_char_array(string, c_char_array)
     use, intrinsic :: iso_c_binding
     implicit none
     character(len=*, kind=c_char), intent(in) :: string

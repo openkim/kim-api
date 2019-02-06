@@ -19,7 +19,7 @@
 #
 
 #
-# Copyright (c) 2013--2018, Regents of the University of Minnesota.
+# Copyright (c) 2013--2019, Regents of the University of Minnesota.
 # All rights reserved.
 #
 # Contributors:
@@ -28,11 +28,39 @@
 #
 
 #
-# Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
+# Release: This file is part of the kim-api-v2-2.0.0 package.
 #
 
 
-=== kim-api-v2.0.0-beta.3 ======= 07Dec2018 ====================================
+=== kim-api-v2-2.0.0 ============ 06Feb2019 ====================================
+
+* Update main documentation.
+
+* Added function level documentation with cross-references and input/output
+  argument descriptions.
+
+* Added Known() member function to extensible enumerations.
+
+* Extensible enumeration default constructors now create uninitialized objects.
+
+* Rename C++ *.String() routines to *.ToString.
+
+* Added 'recursive' to all Fortran routines (for better thread safety).
+
+* Added support files for readthedocs.
+
+* Additions and fixes for collections-management utility.
+
+* Travis CI configuration updates.
+
+* Avoid some compiler warnings from clang.
+
+* Various CMake fixes/adjustments.
+
+* Various bug fixes in api code.
+
+
+=== kim-api-v2-2.0.0-beta.3 ===== 07Dec2018 ====================================
 
 * Updated and added examples to work with and demonstrate api changes/additions
 

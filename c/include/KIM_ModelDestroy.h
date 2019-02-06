@@ -21,7 +21,7 @@
 /*                                                                            */
 
 /*                                                                            */
-/* Copyright (c) 2016--2018, Regents of the University of Minnesota.          */
+/* Copyright (c) 2016--2019, Regents of the University of Minnesota.          */
 /* All rights reserved.                                                       */
 /*                                                                            */
 /* Contributors:                                                              */
@@ -29,7 +29,7 @@
 /*                                                                            */
 
 /*                                                                            */
-/* Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.         */
+/* Release: This file is part of the kim-api-v2-2.0.0 package.                */
 /*                                                                            */
 
 
@@ -39,26 +39,59 @@
 /* Forward declarations */
 #ifndef KIM_LOG_VERBOSITY_DEFINED_
 #define KIM_LOG_VERBOSITY_DEFINED_
+/**
+ ** \brief Forward declaration.
+ **
+ ** \since 2.0
+ **/
 typedef struct KIM_LogVerbosity KIM_LogVerbosity;
 #endif
 
 
-struct KIM_ModelDestroy;
-
 #ifndef KIM_MODEL_DESTROY_DEFINED_
 #define KIM_MODEL_DESTROY_DEFINED_
+/**
+ ** \brief \copybrief KIM::ModelDestroy
+ **
+ ** \sa KIM::ModelDestroy,
+ ** kim_model_destroy_module::kim_model_destroy_handle_type
+ **
+ ** \since 2.0
+ **/
 typedef struct KIM_ModelDestroy KIM_ModelDestroy;
 #endif
 
+/**
+ ** \brief \copybrief KIM::ModelDestroy::GetModelBufferPointer
+ **
+ ** \sa KIM::ModelDestroy::GetModelBufferPointer,
+ ** kim_model_destroy_module::kim_get_model_buffer_pointer
+ **
+ ** \since 2.0
+ **/
 void KIM_ModelDestroy_GetModelBufferPointer(
     KIM_ModelDestroy const * const modelDestroy, void ** const ptr);
 
+/**
+ ** \brief \copybrief KIM::ModelDestroy::LogEntry
+ **
+ ** \sa KIM::ModelDestroy::LogEntry, kim_model_destroy_module::kim_log_entry
+ **
+ ** \since 2.0
+ **/
 void KIM_ModelDestroy_LogEntry(KIM_ModelDestroy const * const modelDestroy,
                                KIM_LogVerbosity const logVerbosity,
                                char const * const message,
                                int const lineNumber,
                                char const * const fileName);
 
+/**
+ ** \brief \copybrief KIM::ModelDestroy::ToString
+ **
+ ** \sa KIM::ModelDestroy::ToString, kim_model_destroy_module::kim_to_string
+ **
+ ** \since 2.0
+ **/
 char const *
 KIM_ModelDestroy_ToString(KIM_ModelDestroy const * const modelDestroy);
 

@@ -19,7 +19,7 @@
 !
 
 !
-! Copyright (c) 2016--2018, Regents of the University of Minnesota.
+! Copyright (c) 2016--2019, Regents of the University of Minnesota.
 ! All rights reserved.
 !
 ! Contributors:
@@ -27,10 +27,16 @@
 !
 
 !
-! Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
+! Release: This file is part of the kim-api-v2-2.0.0 package.
 !
 
 
+!> \brief \copybrief KIM::ModelComputeArgumentsCreate
+!!
+!! \sa KIM::ModelComputeArgumentsCreate,
+!! KIM_ModelComputeArgumentsCreate
+!!
+!! \since 2.0
 module kim_model_compute_arguments_create_module
   use, intrinsic :: iso_c_binding
   implicit none
@@ -53,45 +59,99 @@ module kim_model_compute_arguments_create_module
     kim_to_string
 
 
+  !> \brief \copybrief KIM::ModelComputeArgumentsCreate
+  !!
+  !! \sa KIM::ModelComputeArgumentsCreate,
+  !! KIM_ModelComputeArgumentsCreate
+  !!
+  !! \since 2.0
   type, bind(c) :: kim_model_compute_arguments_create_handle_type
     type(c_ptr) :: p = c_null_ptr
   end type kim_model_compute_arguments_create_handle_type
 
+  !> \brief NULL handle for use in comparisons.
+  !!
+  !! \since 2.0
   type(kim_model_compute_arguments_create_handle_type), protected, save &
     :: KIM_MODEL_COMPUTE_ARGUMENTS_CREATE_NULL_HANDLE
 
+  !> \brief Compares kim_model_compute_arguments_create_handle_type's for
+  !! equality.
+  !!
+  !! \since 2.0
   interface operator (.eq.)
     module procedure kim_model_compute_arguments_create_handle_equal
   end interface operator (.eq.)
 
+  !> \brief Compares kim_model_compute_arguments_create_handle_type's for
+  !! inequality.
+  !!
+  !! \since 2.0
   interface operator (.ne.)
     module procedure kim_model_compute_arguments_create_handle_not_equal
   end interface operator (.ne.)
 
+  !> \brief \copybrief KIM::ModelComputeArgumentsCreate::<!--
+  !! -->SetArgumentSupportStatus
+  !!
+  !! \sa KIM::ModelComputeArgumentsCreate::SetArgumentSupportStatus,
+  !! KIM_ModelComputeArgumentsCreate_SetArgumentSupportStatus
+  !!
+  !! \since 2.0
   interface kim_set_argument_support_status
     module procedure &
       kim_model_compute_arguments_create_set_argument_support_status
   end interface kim_set_argument_support_status
 
+  !> \brief \copybrief KIM::ModelComputeArgumentsCreate::<!--
+  !! -->SetCallbackSupportStatus
+  !!
+  !! \sa KIM::ModelComputeArgumentsCreate::SetCallbackSupportStatus,
+  !! KIM_ModelComputeArgumentsCreate_SetCallbackSupportStatus
+  !!
+  !! \since 2.0
   interface kim_set_callback_support_status
     module procedure &
       kim_model_compute_arguments_create_set_callback_support_status
   end interface kim_set_callback_support_status
 
+  !> \brief \copybrief KIM::ModelComputeArgumentsCreate::SetModelBufferPointer
+  !!
+  !! \sa KIM::ModelComputeArgumentsCreate::SetModelBufferPointer,
+  !! KIM_ModelComputeArgumentsCreate_SetModelBufferPointer
+  !!
+  !! \since 2.0
   interface kim_set_model_buffer_pointer
     module procedure kim_model_compute_arguments_create_set_model_buffer_pointer
   end interface kim_set_model_buffer_pointer
 
+  !> \brief \copybrief KIM::ModelComputeArgumentsCreate::LogEntry
+  !!
+  !! \sa KIM::ModelComputeArgumentsCreate::LogEntry,
+  !! KIM_ModelComputeArgumentsCreate_LogEntry
+  !!
+  !! \since 2.0
   interface kim_log_entry
     module procedure kim_model_compute_arguments_create_log_entry
   end interface kim_log_entry
 
+  !> \brief \copybrief KIM::ModelComputeArgumentsCreate::ToString
+  !!
+  !! \sa KIM::ModelComputeArgumentsCreate::ToString,
+  !! KIM_ModelComputeArgumentsCreate_ToString
+  !!
+  !! \since 2.0
   interface kim_to_string
     module procedure kim_model_compute_arguments_create_to_string
   end interface kim_to_string
 
 contains
-  logical function kim_model_compute_arguments_create_handle_equal(lhs, rhs)
+  !> \brief Compares kim_model_compute_arguments_create_handle_type's for
+  !! equality.
+  !!
+  !! \since 2.0
+  logical recursive function kim_model_compute_arguments_create_handle_equal( &
+    lhs, rhs)
     implicit none
     type(kim_model_compute_arguments_create_handle_type), intent(in) :: lhs
     type(kim_model_compute_arguments_create_handle_type), intent(in) :: rhs
@@ -104,8 +164,12 @@ contains
     end if
   end function kim_model_compute_arguments_create_handle_equal
 
-  logical function kim_model_compute_arguments_create_handle_not_equal(lhs, &
-    rhs)
+  !> \brief Compares kim_model_compute_arguments_create_handle_type's for
+  !! inequality.
+  !!
+  !! \since 2.0
+  logical recursive function &
+    kim_model_compute_arguments_create_handle_not_equal(lhs, rhs)
     implicit none
     type(kim_model_compute_arguments_create_handle_type), intent(in) :: lhs
     type(kim_model_compute_arguments_create_handle_type), intent(in) :: rhs
@@ -114,7 +178,15 @@ contains
       .not. (lhs .eq. rhs)
   end function kim_model_compute_arguments_create_handle_not_equal
 
-  subroutine kim_model_compute_arguments_create_set_argument_support_status( &
+  !> \brief \copybrief KIM::ModelComputeArgumentsCreate::<!--
+  !! -->SetArgumentSupportStatus
+  !!
+  !! \sa KIM::ModelComputeArgumentsCreate::SetArgumentSupportStatus,
+  !! KIM_ModelComputeArgumentsCreate_SetArgumentSupportStatus
+  !!
+  !! \since 2.0
+  recursive subroutine &
+    kim_model_compute_arguments_create_set_argument_support_status( &
     model_commpute_arguments_create_handle, compute_argument_name, &
     support_status, ierr)
     use kim_compute_argument_name_module, only : kim_compute_argument_name_type
@@ -123,7 +195,7 @@ contains
       kim_model_compute_arguments_create_type
     implicit none
     interface
-      integer(c_int) function set_argument_support_status( &
+      integer(c_int) recursive function set_argument_support_status( &
         model_commpute_arguments_create, compute_argument_name, &
         support_status) &
         bind(c, name="KIM_ModelComputeArgumentsCreate_SetArgumentSupportStatus")
@@ -156,7 +228,15 @@ contains
       compute_argument_name, support_status)
   end subroutine kim_model_compute_arguments_create_set_argument_support_status
 
-  subroutine kim_model_compute_arguments_create_set_callback_support_status( &
+  !> \brief \copybrief KIM::ModelComputeArgumentsCreate::<!--
+  !! -->SetCallbackSupportStatus
+  !!
+  !! \sa KIM::ModelComputeArgumentsCreate::SetCallbackSupportStatus,
+  !! KIM_ModelComputeArgumentsCreate_SetCallbackSupportStatus
+  !!
+  !! \since 2.0
+  recursive subroutine &
+    kim_model_compute_arguments_create_set_callback_support_status( &
     model_commpute_arguments_create_handle, compute_callback_name, &
     support_status, ierr)
     use kim_compute_callback_name_module, only : kim_compute_callback_name_type
@@ -165,7 +245,7 @@ contains
       kim_model_compute_arguments_create_type
     implicit none
     interface
-      integer(c_int) function set_callback_support_status( &
+      integer(c_int) recursive function set_callback_support_status( &
         model_commpute_arguments_create, compute_callback_name, &
         support_status) &
         bind(c, name="KIM_ModelComputeArgumentsCreate_SetCallbackSupportStatus")
@@ -198,14 +278,21 @@ contains
       compute_callback_name, support_status)
   end subroutine kim_model_compute_arguments_create_set_callback_support_status
 
-  subroutine kim_model_compute_arguments_create_set_model_buffer_pointer( &
+  !> \brief \copybrief KIM::ModelComputeArgumentsCreate::SetModelBufferPointer
+  !!
+  !! \sa KIM::ModelComputeArgumentsCreate::SetModelBufferPointer,
+  !! KIM_ModelComputeArgumentsCreate_SetModelBufferPointer
+  !!
+  !! \since 2.0
+  recursive subroutine &
+    kim_model_compute_arguments_create_set_model_buffer_pointer( &
     model_commpute_arguments_create_handle, ptr)
     use kim_interoperable_types_module, only : &
       kim_model_compute_arguments_create_type
     implicit none
     interface
-      subroutine set_model_buffer_pointer(model_commpute_arguments_create, &
-        ptr) bind(c, &
+      recursive subroutine set_model_buffer_pointer( &
+        model_commpute_arguments_create, ptr) bind(c, &
         name="KIM_ModelComputeArgumentsCreate_SetModelBufferPointer")
         use, intrinsic :: iso_c_binding
         use kim_interoperable_types_module, only : &
@@ -227,15 +314,21 @@ contains
     call set_model_buffer_pointer(model_commpute_arguments_create, ptr)
   end subroutine kim_model_compute_arguments_create_set_model_buffer_pointer
 
-  subroutine kim_model_compute_arguments_create_log_entry( &
+  !> \brief \copybrief KIM::ModelComputeArgumentsCreate::LogEntry
+  !!
+  !! \sa KIM::ModelComputeArgumentsCreate::LogEntry,
+  !! KIM_ModelComputeArgumentsCreate_LogEntry
+  !!
+  !! \since 2.0
+  recursive subroutine kim_model_compute_arguments_create_log_entry( &
     model_commpute_arguments_create_handle, log_verbosity, message)
     use kim_log_verbosity_module, only : kim_log_verbosity_type
     use kim_interoperable_types_module, only : &
       kim_model_compute_arguments_create_type
     implicit none
     interface
-      subroutine log_entry(model_commpute_arguments_create, log_verbosity, &
-        message, line_number, file_name) &
+      recursive subroutine log_entry(model_commpute_arguments_create, &
+        log_verbosity, message, line_number, file_name) &
         bind(c, name="KIM_ModelComputeArgumentsCreate_LogEntry")
         use, intrinsic :: iso_c_binding
         use kim_log_verbosity_module, only : kim_log_verbosity_type
@@ -263,14 +356,20 @@ contains
       trim(message)//c_null_char, 0, ""//c_null_char)
   end subroutine kim_model_compute_arguments_create_log_entry
 
-  subroutine kim_model_compute_arguments_create_to_string( &
+  !> \brief \copybrief KIM::ModelComputeArgumentsCreate::ToString
+  !!
+  !! \sa KIM::ModelComputeArgumentsCreate::ToString,
+  !! KIM_ModelComputeArgumentsCreate_ToString
+  !!
+  !! \since 2.0
+  recursive subroutine kim_model_compute_arguments_create_to_string( &
     model_commpute_arguments_create_handle, string)
     use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
     use kim_interoperable_types_module, only : &
       kim_model_compute_arguments_create_type
     implicit none
     interface
-      type(c_ptr) function model_commpute_arguments_create_string( &
+      type(c_ptr) recursive function model_commpute_arguments_create_string( &
         model_commpute_arguments_create) &
         bind(c, name="KIM_ModelComputeArgumentsCreate_ToString")
         use, intrinsic :: iso_c_binding

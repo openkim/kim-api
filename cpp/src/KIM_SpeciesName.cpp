@@ -19,7 +19,7 @@
 //
 
 //
-// Copyright (c) 2016--2018, Regents of the University of Minnesota.
+// Copyright (c) 2016--2019, Regents of the University of Minnesota.
 // All rights reserved.
 //
 // Contributors:
@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
+// Release: This file is part of the kim-api-v2-2.0.0 package.
 //
 
 #include <map>
@@ -357,7 +357,7 @@ int GetSpeciesName(int const index, SpeciesName * const speciesName)
 }  // namespace SPECIES_NAME
 
 // implementation of SpeciesName
-SpeciesName::SpeciesName() : speciesNameID(0) {}
+SpeciesName::SpeciesName() {}
 SpeciesName::SpeciesName(int const id) : speciesNameID(id) {}
 SpeciesName::SpeciesName(std::string const & str)
 {
@@ -375,6 +375,22 @@ SpeciesName::SpeciesName(std::string const & str)
   }
 }
 
+bool SpeciesName::Known() const
+{
+  int numberOfSpeciesNames;
+  SPECIES_NAME::GetNumberOfSpeciesNames(&numberOfSpeciesNames);
+
+  for (int i = 0; i < numberOfSpeciesNames; ++i)
+  {
+    SpeciesName specName;
+    SPECIES_NAME::GetSpeciesName(i, &specName);
+
+    if (*this == specName) { return true; }
+  }
+
+  return false;
+}
+
 bool SpeciesName::operator==(SpeciesName const & rhs) const
 {
   return speciesNameID == rhs.speciesNameID;
@@ -384,7 +400,7 @@ bool SpeciesName::operator!=(SpeciesName const & rhs) const
   return speciesNameID != rhs.speciesNameID;
 }
 
-std::string const & SpeciesName::String() const
+std::string const & SpeciesName::ToString() const
 {
   SPECIES_NAME::StringMap::const_iterator iter
       = SPECIES_NAME::speciesNameToString.find(*this);

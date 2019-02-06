@@ -19,7 +19,7 @@
 //
 
 //
-// Copyright (c) 2016--2018, Regents of the University of Minnesota.
+// Copyright (c) 2016--2019, Regents of the University of Minnesota.
 // All rights reserved.
 //
 // Contributors:
@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
+// Release: This file is part of the kim-api-v2-2.0.0 package.
 //
 
 #ifndef KIM_MODEL_WRITE_PARAMETERIZED_MODEL_HPP_
@@ -95,11 +95,11 @@ void ModelWriteParameterizedModel::LogEntry(LogVerbosity const logVerbosity,
   pImpl->LogEntry(logVerbosity, message, lineNumber, fileName);
 }
 
-std::string const & ModelWriteParameterizedModel::String() const
+std::string const & ModelWriteParameterizedModel::ToString() const
 {
   CONVERT_POINTER;
 
-  return pImpl->String();
+  return pImpl->ToString();
 }
 
 ModelWriteParameterizedModel::ModelWriteParameterizedModel() : pimpl(NULL) {}

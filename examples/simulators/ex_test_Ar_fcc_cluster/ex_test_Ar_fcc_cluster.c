@@ -20,7 +20,7 @@
  *
 
  *
- * Copyright (c) 2013--2018, Regents of the University of Minnesota.
+ * Copyright (c) 2013--2019, Regents of the University of Minnesota.
  * All rights reserved.
  *
  * Contributors:
@@ -113,7 +113,7 @@ int main()
   int number_of_neighbor_lists_cluster_model;
   double influence_distance_cluster_model;
   double const * cutoff_cluster_model;
-  double energy_cluster_model;
+  double energy_cluster_model = 0.0;
   double forces_cluster[NCLUSTERPARTS * DIM];
 
   char modelname[NAMESTRLEN];
@@ -166,15 +166,14 @@ int main()
       if (!(KIM_ModelRoutineName_Equal(modelRoutineName,
                                        KIM_MODEL_ROUTINE_NAME_Create)
             || KIM_ModelRoutineName_Equal(
-                   modelRoutineName,
-                   KIM_MODEL_ROUTINE_NAME_ComputeArgumentsCreate)
+                modelRoutineName, KIM_MODEL_ROUTINE_NAME_ComputeArgumentsCreate)
             || KIM_ModelRoutineName_Equal(modelRoutineName,
                                           KIM_MODEL_ROUTINE_NAME_Compute)
             || KIM_ModelRoutineName_Equal(modelRoutineName,
                                           KIM_MODEL_ROUTINE_NAME_Refresh)
             || KIM_ModelRoutineName_Equal(
-                   modelRoutineName,
-                   KIM_MODEL_ROUTINE_NAME_ComputeArgumentsDestroy)
+                modelRoutineName,
+                KIM_MODEL_ROUTINE_NAME_ComputeArgumentsDestroy)
             || KIM_ModelRoutineName_Equal(modelRoutineName,
                                           KIM_MODEL_ROUTINE_NAME_Destroy)))
       { MY_ERROR("Unknown required ModelRoutineName found."); }
@@ -208,7 +207,7 @@ int main()
       if ((KIM_ComputeArgumentName_NotEqual(
               computeArgumentName, KIM_COMPUTE_ARGUMENT_NAME_partialEnergy))
           && (KIM_ComputeArgumentName_NotEqual(
-                 computeArgumentName, KIM_COMPUTE_ARGUMENT_NAME_partialForces)))
+              computeArgumentName, KIM_COMPUTE_ARGUMENT_NAME_partialForces)))
       { MY_ERROR("unsupported required argument"); }
     }
 
@@ -216,7 +215,7 @@ int main()
     if ((KIM_ComputeArgumentName_Equal(computeArgumentName,
                                        KIM_COMPUTE_ARGUMENT_NAME_partialEnergy))
         || (KIM_ComputeArgumentName_Equal(
-               computeArgumentName, KIM_COMPUTE_ARGUMENT_NAME_partialForces)))
+            computeArgumentName, KIM_COMPUTE_ARGUMENT_NAME_partialForces)))
     {
       if (!((KIM_SupportStatus_Equal(supportStatus,
                                      KIM_SUPPORT_STATUS_required))
@@ -250,25 +249,25 @@ int main()
               KIM_COMPUTE_ARGUMENT_NAME_numberOfParticles,
               &numberOfParticles_cluster)
           || KIM_ComputeArguments_SetArgumentPointerInteger(
-                 computeArguments,
-                 KIM_COMPUTE_ARGUMENT_NAME_particleSpeciesCodes,
-                 particleSpecies_cluster_model)
+              computeArguments,
+              KIM_COMPUTE_ARGUMENT_NAME_particleSpeciesCodes,
+              particleSpecies_cluster_model)
           || KIM_ComputeArguments_SetArgumentPointerInteger(
-                 computeArguments,
-                 KIM_COMPUTE_ARGUMENT_NAME_particleContributing,
-                 particleContributing_cluster_model)
+              computeArguments,
+              KIM_COMPUTE_ARGUMENT_NAME_particleContributing,
+              particleContributing_cluster_model)
           || KIM_ComputeArguments_SetArgumentPointerDouble(
-                 computeArguments,
-                 KIM_COMPUTE_ARGUMENT_NAME_coordinates,
-                 (double *) &coords_cluster)
+              computeArguments,
+              KIM_COMPUTE_ARGUMENT_NAME_coordinates,
+              (double *) &coords_cluster)
           || KIM_ComputeArguments_SetArgumentPointerDouble(
-                 computeArguments,
-                 KIM_COMPUTE_ARGUMENT_NAME_partialEnergy,
-                 &energy_cluster_model)
+              computeArguments,
+              KIM_COMPUTE_ARGUMENT_NAME_partialEnergy,
+              &energy_cluster_model)
           || KIM_ComputeArguments_SetArgumentPointerDouble(
-                 computeArguments,
-                 KIM_COMPUTE_ARGUMENT_NAME_partialForces,
-                 (double *) &forces_cluster);
+              computeArguments,
+              KIM_COMPUTE_ARGUMENT_NAME_partialForces,
+              (double *) &forces_cluster);
   if (error) MY_ERROR("KIM_setm_data");
   KIM_ComputeArguments_SetCallbackPointer(
       computeArguments,

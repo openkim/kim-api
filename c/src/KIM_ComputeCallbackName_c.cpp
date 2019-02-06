@@ -21,7 +21,7 @@
 //
 
 //
-// Copyright (c) 2016--2018, Regents of the University of Minnesota.
+// Copyright (c) 2016--2019, Regents of the University of Minnesota.
 // All rights reserved.
 //
 // Contributors:
@@ -29,7 +29,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
+// Release: This file is part of the kim-api-v2-2.0.0 package.
 //
 
 #ifndef KIM_COMPUTE_CALLBACK_NAME_HPP_
@@ -69,6 +69,12 @@ KIM_ComputeCallbackName_FromString(char const * const str)
   return makeComputeCallbackNameC(KIM::ComputeCallbackName(std::string(str)));
 }
 
+int KIM_ComputeCallbackName_Known(
+    KIM_ComputeCallbackName const computeCallbackName)
+{
+  return makeComputeCallbackNameCpp(computeCallbackName).Known();
+}
+
 int KIM_ComputeCallbackName_Equal(KIM_ComputeCallbackName const lhs,
                                   KIM_ComputeCallbackName const rhs)
 {
@@ -84,7 +90,7 @@ int KIM_ComputeCallbackNameNot_Equal(KIM_ComputeCallbackName const lhs,
 char const *
 KIM_ComputeCallbackName_ToString(KIM_ComputeCallbackName computeCallbackName)
 {
-  return makeComputeCallbackNameCpp(computeCallbackName).String().c_str();
+  return makeComputeCallbackNameCpp(computeCallbackName).ToString().c_str();
 }
 
 // Order doesn't matter as long as all values are unique

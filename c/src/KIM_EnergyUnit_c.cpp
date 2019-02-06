@@ -21,7 +21,7 @@
 //
 
 //
-// Copyright (c) 2016--2018, Regents of the University of Minnesota.
+// Copyright (c) 2016--2019, Regents of the University of Minnesota.
 // All rights reserved.
 //
 // Contributors:
@@ -29,7 +29,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
+// Release: This file is part of the kim-api-v2-2.0.0 package.
 //
 
 #ifndef KIM_ENERGY_UNIT_HPP_
@@ -65,6 +65,11 @@ KIM_EnergyUnit KIM_EnergyUnit_FromString(char const * const str)
   return makeEnergyUnitC(KIM::EnergyUnit(std::string(str)));
 }
 
+int KIM_EnergyUnit_Known(KIM_EnergyUnit const energyUnit)
+{
+  return makeEnergyUnitCpp(energyUnit).Known();
+}
+
 int KIM_EnergyUnit_Equal(KIM_EnergyUnit const lhs, KIM_EnergyUnit const rhs)
 {
   return (lhs.energyUnitID == rhs.energyUnitID);
@@ -77,7 +82,7 @@ int KIM_EnergyUnit_NotEqual(KIM_EnergyUnit const lhs, KIM_EnergyUnit const rhs)
 
 char const * KIM_EnergyUnit_ToString(KIM_EnergyUnit const energyUnit)
 {
-  return makeEnergyUnitCpp(energyUnit).String().c_str();
+  return makeEnergyUnitCpp(energyUnit).ToString().c_str();
 }
 
 #include "KIM_EnergyUnit.inc"

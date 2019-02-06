@@ -19,7 +19,7 @@
 //
 
 //
-// Copyright (c) 2016--2018, Regents of the University of Minnesota.
+// Copyright (c) 2016--2019, Regents of the University of Minnesota.
 // All rights reserved.
 //
 // Contributors:
@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
+// Release: This file is part of the kim-api-v2-2.0.0 package.
 //
 
 
@@ -40,11 +40,26 @@
 
 namespace KIM
 {
+/// \brief The only standard extension defined by the %KIM API.
+///
+/// This structure provides a standard mechanism for extensions to be
+/// discovered at run time.
+///
+/// \sa KIM_SupportedExtensions,
+/// kim_supported_extensions_module::kim_supported_extensions_type
+///
+/// \since 2.0
 struct SupportedExtensions
 {
+  /// The number of extensions supported by the Model.
   int numberOfSupportedExtensions;
+
+  /// The unique extension ID's of each supported extension.
   char supportedExtensionID[KIM_MAX_NUMBER_OF_EXTENSIONS]
                            [KIM_MAX_EXTENSION_ID_LENGTH];
+
+  /// \c true if the model requires the simulator to execute the corresponding
+  /// extension in order to be used correctly, \c false otherwise.
   int supportedExtensionRequired[KIM_MAX_NUMBER_OF_EXTENSIONS];
 };  // struct SupportedExtensions
 }  // namespace KIM

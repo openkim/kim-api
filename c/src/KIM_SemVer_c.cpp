@@ -19,7 +19,7 @@
 //
 
 //
-// Copyright (c) 2016--2018, Regents of the University of Minnesota.
+// Copyright (c) 2016--2019, Regents of the University of Minnesota.
 // All rights reserved.
 //
 // Contributors:
@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
+// Release: This file is part of the kim-api-v2-2.0.0 package.
 //
 
 #include "string.h"
@@ -47,12 +47,12 @@ char const * KIM_SEM_VER_GetSemVer()
   return KIM::SEM_VER::GetSemVer().c_str();
 }
 
-int KIM_SEM_VER_IsLessThan(char const * const versionA,
-                           char const * const versionB,
+int KIM_SEM_VER_IsLessThan(char const * const lhs,
+                           char const * const rhs,
                            int * const isLessThan)
 {
   return KIM::SEM_VER::IsLessThan(
-      std::string(versionA), std::string(versionB), isLessThan);
+      std::string(lhs), std::string(rhs), isLessThan);
 }
 
 int KIM_SEM_VER_ParseSemVer(char const * const version,

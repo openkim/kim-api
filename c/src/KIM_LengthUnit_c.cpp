@@ -21,7 +21,7 @@
 //
 
 //
-// Copyright (c) 2016--2018, Regents of the University of Minnesota.
+// Copyright (c) 2016--2019, Regents of the University of Minnesota.
 // All rights reserved.
 //
 // Contributors:
@@ -29,7 +29,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
+// Release: This file is part of the kim-api-v2-2.0.0 package.
 //
 
 #ifndef KIM_LENGTH_UNIT_HPP_
@@ -65,6 +65,11 @@ KIM_LengthUnit KIM_LengthUnit_FromString(char const * const str)
   return makeLengthUnitC(KIM::LengthUnit(std::string(str)));
 }
 
+int KIM_LengthUnit_Known(KIM_LengthUnit const lengthUnit)
+{
+  return makeLengthUnitCpp(lengthUnit).Known();
+}
+
 int KIM_LengthUnit_Equal(KIM_LengthUnit const lhs, KIM_LengthUnit const rhs)
 {
   return (lhs.lengthUnitID == rhs.lengthUnitID);
@@ -77,7 +82,7 @@ int KIM_LengthUnit_NotEqual(KIM_LengthUnit const lhs, KIM_LengthUnit const rhs)
 
 char const * KIM_LengthUnit_ToString(KIM_LengthUnit const lengthUnit)
 {
-  return makeLengthUnitCpp(lengthUnit).String().c_str();
+  return makeLengthUnitCpp(lengthUnit).ToString().c_str();
 }
 
 #include "KIM_LengthUnit.inc"

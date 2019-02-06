@@ -19,7 +19,7 @@
 //
 
 //
-// Copyright (c) 2016--2018, Regents of the University of Minnesota.
+// Copyright (c) 2016--2019, Regents of the University of Minnesota.
 // All rights reserved.
 //
 // Contributors:
@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
+// Release: This file is part of the kim-api-v2-2.0.0 package.
 //
 
 #include <map>
@@ -115,7 +115,7 @@ int GetModelRoutineName(int const index,
 }  // namespace MODEL_ROUTINE_NAME
 
 // implementation of ModelRoutineName
-ModelRoutineName::ModelRoutineName() : modelRoutineNameID(0) {}
+ModelRoutineName::ModelRoutineName() {}
 ModelRoutineName::ModelRoutineName(int const id) : modelRoutineNameID(id) {}
 ModelRoutineName::ModelRoutineName(std::string const & str)
 {
@@ -133,6 +133,22 @@ ModelRoutineName::ModelRoutineName(std::string const & str)
   }
 }
 
+bool ModelRoutineName::Known() const
+{
+  int numberOfModelRoutineNames;
+  MODEL_ROUTINE_NAME::GetNumberOfModelRoutineNames(&numberOfModelRoutineNames);
+
+  for (int i = 0; i < numberOfModelRoutineNames; ++i)
+  {
+    ModelRoutineName routine;
+    MODEL_ROUTINE_NAME::GetModelRoutineName(i, &routine);
+
+    if (*this == routine) { return true; }
+  }
+
+  return false;
+}
+
 bool ModelRoutineName::operator==(ModelRoutineName const & rhs) const
 {
   return modelRoutineNameID == rhs.modelRoutineNameID;
@@ -142,7 +158,7 @@ bool ModelRoutineName::operator!=(ModelRoutineName const & rhs) const
   return modelRoutineNameID != rhs.modelRoutineNameID;
 }
 
-std::string const & ModelRoutineName::String() const
+std::string const & ModelRoutineName::ToString() const
 {
   MODEL_ROUTINE_NAME::StringMap::const_iterator iter
       = MODEL_ROUTINE_NAME::modelRoutineNameToString.find(*this);

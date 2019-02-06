@@ -19,7 +19,7 @@
 //
 
 //
-// Copyright (c) 2016--2018, Regents of the University of Minnesota.
+// Copyright (c) 2016--2019, Regents of the University of Minnesota.
 // All rights reserved.
 //
 // Contributors:
@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
+// Release: This file is part of the kim-api-v2-2.0.0 package.
 //
 
 #include <map>
@@ -89,7 +89,7 @@ int GetLogVerbosity(int const index, LogVerbosity * const logVerbosity)
 }  // namespace LOG_VERBOSITY
 
 // implementation of LogVerbosity
-LogVerbosity::LogVerbosity() : logVerbosityID(0) {}
+LogVerbosity::LogVerbosity() {}
 LogVerbosity::LogVerbosity(int const id) : logVerbosityID(id) {}
 LogVerbosity::LogVerbosity(std::string const & str)
 {
@@ -105,6 +105,22 @@ LogVerbosity::LogVerbosity(std::string const & str)
       break;
     }
   }
+}
+
+bool LogVerbosity::Known() const
+{
+  int numberOfLogVerbosities;
+  LOG_VERBOSITY::GetNumberOfLogVerbosities(&numberOfLogVerbosities);
+
+  for (int i = 0; i < numberOfLogVerbosities; ++i)
+  {
+    LogVerbosity lv;
+    LOG_VERBOSITY::GetLogVerbosity(i, &lv);
+
+    if (*this == lv) { return true; }
+  }
+
+  return false;
 }
 
 bool LogVerbosity::operator<(LogVerbosity const & rhs) const
@@ -132,7 +148,7 @@ bool LogVerbosity::operator!=(LogVerbosity const & rhs) const
   return logVerbosityID != rhs.logVerbosityID;
 }
 
-std::string const & LogVerbosity::String() const
+std::string const & LogVerbosity::ToString() const
 {
   LOG_VERBOSITY::StringMap::const_iterator iter
       = LOG_VERBOSITY::logVerbosityToString.find(*this);

@@ -21,7 +21,7 @@
 //
 
 //
-// Copyright (c) 2016--2018, Regents of the University of Minnesota.
+// Copyright (c) 2016--2019, Regents of the University of Minnesota.
 // All rights reserved.
 //
 // Contributors:
@@ -29,7 +29,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
+// Release: This file is part of the kim-api-v2-2.0.0 package.
 //
 
 
@@ -68,6 +68,11 @@ KIM_ModelRoutineName KIM_ModelRoutineName_FromString(char const * const str)
   return makeModelRoutineNameC(KIM::ModelRoutineName(std::string(str)));
 }
 
+int KIM_ModelRoutineName_Known(KIM_ModelRoutineName const modelRoutineName)
+{
+  return makeModelRoutineNameCpp(modelRoutineName).Known();
+}
+
 int KIM_ModelRoutineName_Equal(KIM_ModelRoutineName const lhs,
                                KIM_ModelRoutineName const rhs)
 {
@@ -83,7 +88,7 @@ int KIM_ModelRoutineName_NotEqual(KIM_ModelRoutineName const lhs,
 char const *
 KIM_ModelRoutineName_ToString(KIM_ModelRoutineName modelRoutineName)
 {
-  return makeModelRoutineNameCpp(modelRoutineName).String().c_str();
+  return makeModelRoutineNameCpp(modelRoutineName).ToString().c_str();
 }
 
 // Order doesn't matter as long as all values are unique

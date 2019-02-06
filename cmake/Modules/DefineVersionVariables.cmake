@@ -19,7 +19,7 @@
 #
 
 #
-# Copyright (c) 2013--2018, Regents of the University of Minnesota.
+# Copyright (c) 2013--2019, Regents of the University of Minnesota.
 # All rights reserved.
 #
 # Contributors:
@@ -29,11 +29,11 @@
 #
 
 #
-# Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
+# Release: This file is part of the kim-api-v2-2.0.0 package.
 #
 
 
-set(PROJECT_VERSION_PRERELEASE "beta.3" CACHE STRING "Version prerelease value")
+set(PROJECT_VERSION_PRERELEASE "" CACHE STRING "Version prerelease value")
 
 find_package(Git)
 if((${GIT_FOUND}) AND (EXISTS "${CMAKE_SOURCE_DIR}/.git"))
@@ -49,7 +49,9 @@ if((${GIT_FOUND}) AND (EXISTS "${CMAKE_SOURCE_DIR}/.git"))
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     OUTPUT_VARIABLE _HAS_CHANGES OUTPUT_STRIP_TRAILING_WHITESPACE ERROR_QUIET
     )
-  if(NOT "${_HAS_CHANGES}" STREQUAL "")
+  string(REPLACE "docs/readthedocs/conf.py" "" _HAS_CHANGES_FILTERED "${_HAS_CHANGES}")
+  string(STRIP "${_HAS_CHANGES_FILTERED}" _HAS_CHANGES_FILTERED)
+  if(NOT "${_HAS_CHANGES_FILTERED}" STREQUAL "")
     set(KIM_API_GIT_COMMIT_ID "${KIM_API_GIT_COMMIT_ID}.dirty")
   endif()
   set(KIM_API_BUILD_METADATA "${KIM_API_GIT_COMMIT_ID}")

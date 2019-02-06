@@ -19,7 +19,7 @@
 !
 
 !
-! Copyright (c) 2013--2018, Regents of the University of Minnesota.
+! Copyright (c) 2013--2019, Regents of the University of Minnesota.
 ! All rights reserved.
 !
 ! Contributors:
@@ -106,7 +106,7 @@ contains
 !  Calculate pair potential phi(r)
 !
 !-------------------------------------------------------------------------------
-subroutine calc_phi(r,phi)
+recursive subroutine calc_phi(r,phi)
 implicit none
 
 !-- Transferred variables
@@ -135,7 +135,7 @@ end subroutine calc_phi
 !  Calculate pair potential phi(r) and its derivative dphi(r)
 !
 !-------------------------------------------------------------------------------
-subroutine calc_phi_dphi(r,phi,dphi)
+recursive subroutine calc_phi_dphi(r,phi,dphi)
 implicit none
 
 !-- Transferred variables
@@ -166,7 +166,7 @@ end subroutine calc_phi_dphi
 ! Compute energy and forces on particles from the positions.
 !
 !-------------------------------------------------------------------------------
-subroutine Compute_Energy_Forces(model_compute_handle, &
+recursive subroutine Compute_Energy_Forces(model_compute_handle, &
   model_compute_arguments_handle, ierr) bind(c)
 implicit none
 
@@ -372,7 +372,7 @@ end subroutine Compute_Energy_Forces
 ! Model destroy routine (REQUIRED)
 !
 !-------------------------------------------------------------------------------
-subroutine model_destroy_func(model_destroy_handle, ierr) bind(c)
+recursive subroutine model_destroy_func(model_destroy_handle, ierr) bind(c)
   use, intrinsic :: iso_c_binding
   implicit none
 
@@ -395,7 +395,7 @@ end subroutine model_destroy_func
 ! Model compute arguments create routine (REQUIRED)
 !
 !-------------------------------------------------------------------------------
-subroutine model_compute_arguments_create(model_compute_handle, &
+recursive subroutine model_compute_arguments_create(model_compute_handle, &
   model_compute_arguments_create_handle, ierr) bind(c)
   use, intrinsic :: iso_c_binding
   implicit none
@@ -455,7 +455,7 @@ end subroutine model_compute_arguments_create
 ! Model compute arguments destroy routine (REQUIRED)
 !
 !-------------------------------------------------------------------------------
-subroutine model_compute_arguments_destroy(model_compute_handle, &
+recursive subroutine model_compute_arguments_destroy(model_compute_handle, &
   model_compute_arguments_destroy_handle, ierr) bind(c)
   use, intrinsic :: iso_c_binding
   implicit none
@@ -482,9 +482,9 @@ end module ex_model_Ar_P_MLJ_F03
 ! Model create routine (REQUIRED)
 !
 !-------------------------------------------------------------------------------
-subroutine model_create_routine(model_create_handle, requested_length_unit, &
-  requested_energy_unit, requested_charge_unit, requested_temperature_unit, &
-  requested_time_unit, ierr) bind(c)
+recursive subroutine model_create_routine(model_create_handle, &
+  requested_length_unit, requested_energy_unit, requested_charge_unit, &
+  requested_temperature_unit, requested_time_unit, ierr) bind(c)
 use, intrinsic :: iso_c_binding
 use ex_model_Ar_P_MLJ_F03
 use kim_model_headers_module

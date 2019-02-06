@@ -21,7 +21,7 @@
 /*                                                                            */
 
 /*                                                                            */
-/* Copyright (c) 2016--2018, Regents of the University of Minnesota.          */
+/* Copyright (c) 2016--2019, Regents of the University of Minnesota.          */
 /* All rights reserved.                                                       */
 /*                                                                            */
 /* Contributors:                                                              */
@@ -29,7 +29,7 @@
 /*                                                                            */
 
 /*                                                                            */
-/* Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.         */
+/* Release: This file is part of the kim-api-v2-2.0.0 package.                */
 /*                                                                            */
 
 
@@ -39,26 +39,59 @@
 /* Forward declarations */
 #ifndef KIM_LOG_VERBOSITY_DEFINED_
 #define KIM_LOG_VERBOSITY_DEFINED_
+/**
+ ** \brief Forward declaration.
+ **
+ ** \since 2.0
+ **/
 typedef struct KIM_LogVerbosity KIM_LogVerbosity;
 #endif
 
 
-struct KIM_ModelCompute;
-
 #ifndef KIM_MODEL_COMPUTE_DEFINED_
 #define KIM_MODEL_COMPUTE_DEFINED_
+/**
+ ** \brief \copybrief KIM::ModelCompute
+ **
+ ** \sa KIM::ModelCompute,
+ *kim_model_compute_module::kim_model_compute_handle_type
+ **
+ ** \since 2.0
+ **/
 typedef struct KIM_ModelCompute KIM_ModelCompute;
 #endif
 
+/**
+ ** \brief \copybrief KIM::ModelCompute::GetModelBufferPointer
+ **
+ ** \sa KIM::ModelCompute::GetModelBufferPointer,
+ ** kim_model_compute_module::kim_get_model_buffer_pointer
+ **
+ ** \since 2.0
+ **/
 void KIM_ModelCompute_GetModelBufferPointer(
     KIM_ModelCompute const * const modelCompute, void ** const ptr);
 
+/**
+ ** \brief \copybrief KIM::ModelCompute::LogEntry
+ **
+ ** \sa KIM::ModelCompute::LogEntry, kim_model_compute_module::kim_log_entry
+ **
+ ** \since 2.0
+ **/
 void KIM_ModelCompute_LogEntry(KIM_ModelCompute const * const modelCompute,
                                KIM_LogVerbosity const logVerbosity,
                                char const * const message,
                                int const lineNumber,
                                char const * const fileName);
 
+/**
+ ** \brief \copybrief KIM::ModelCompute::ToString
+ **
+ ** \sa KIM::ModelCompute::ToString, kim_model_compute_module::kim_to_string
+ **
+ ** \since 2.0
+ **/
 char const *
 KIM_ModelCompute_ToString(KIM_ModelCompute const * const modelCompute);
 

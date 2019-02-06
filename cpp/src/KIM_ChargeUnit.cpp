@@ -19,7 +19,7 @@
 //
 
 //
-// Copyright (c) 2016--2018, Regents of the University of Minnesota.
+// Copyright (c) 2016--2019, Regents of the University of Minnesota.
 // All rights reserved.
 //
 // Contributors:
@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
+// Release: This file is part of the kim-api-v2-2.0.0 package.
 //
 
 #include <map>
@@ -86,7 +86,7 @@ int GetChargeUnit(int const index, ChargeUnit * const chargeUnit)
 }  // namespace CHARGE_UNIT
 
 // implementation of ChargeUnit
-ChargeUnit::ChargeUnit() : chargeUnitID(0) {}
+ChargeUnit::ChargeUnit() {}
 ChargeUnit::ChargeUnit(int const id) : chargeUnitID(id) {}
 ChargeUnit::ChargeUnit(std::string const & str)
 {
@@ -104,6 +104,22 @@ ChargeUnit::ChargeUnit(std::string const & str)
   }
 }
 
+bool ChargeUnit::Known() const
+{
+  int numberOfChargeUnits;
+  CHARGE_UNIT::GetNumberOfChargeUnits(&numberOfChargeUnits);
+
+  for (int i = 0; i < numberOfChargeUnits; ++i)
+  {
+    ChargeUnit cgUnit;
+    CHARGE_UNIT::GetChargeUnit(i, &cgUnit);
+
+    if (*this == cgUnit) { return true; }
+  }
+
+  return false;
+}
+
 bool ChargeUnit::operator==(ChargeUnit const & rhs) const
 {
   return chargeUnitID == rhs.chargeUnitID;
@@ -113,7 +129,7 @@ bool ChargeUnit::operator!=(ChargeUnit const & rhs) const
   return chargeUnitID != rhs.chargeUnitID;
 }
 
-std::string const & ChargeUnit::String() const
+std::string const & ChargeUnit::ToString() const
 {
   CHARGE_UNIT::StringMap::const_iterator iter
       = CHARGE_UNIT::chargeUnitToString.find(*this);

@@ -20,7 +20,7 @@
 //
 //
 //
-// Copyright (c) 2013--2018, Regents of the University of Minnesota.
+// Copyright (c) 2013--2019, Regents of the University of Minnesota.
 // All rights reserved.
 //
 // Contributors:
@@ -165,7 +165,7 @@ int main()
         modelRoutineName, &present, &required);
     if (error) { MY_ERROR("Unable to get routine present/required."); }
 
-    std::cout << "Model routine name \"" << modelRoutineName.String()
+    std::cout << "Model routine name \"" << modelRoutineName.ToString()
               << "\" has present = " << present
               << " and required = " << required << "." << std::endl;
 
@@ -178,7 +178,7 @@ int main()
             || (modelRoutineName == ComputeArgumentsDestroy)
             || (modelRoutineName == Destroy)))
       {
-        MY_ERROR("Unknown Routine \"" + modelRoutineName.String()
+        MY_ERROR("Unknown Routine \"" + modelRoutineName.ToString()
                  + "\" is required by model.");
       }
     }
@@ -194,12 +194,12 @@ int main()
   kim_cluster_model->GetUnits(
       &lengthUnit, &energyUnit, &chargeUnit, &temperatureUnit, &timeUnit);
 
-  std::cout << "LengthUnit is \"" << lengthUnit.String() << "\"" << std::endl
-            << "EnergyUnit is \"" << energyUnit.String() << "\"" << std::endl
-            << "ChargeUnit is \"" << chargeUnit.String() << "\"" << std::endl
-            << "TemperatureUnit is \"" << temperatureUnit.String() << "\""
+  std::cout << "LengthUnit is \"" << lengthUnit.ToString() << "\"" << std::endl
+            << "EnergyUnit is \"" << energyUnit.ToString() << "\"" << std::endl
+            << "ChargeUnit is \"" << chargeUnit.ToString() << "\"" << std::endl
+            << "TemperatureUnit is \"" << temperatureUnit.ToString() << "\""
             << std::endl
-            << "TimeUnit is \"" << timeUnit.String() << "\"" << std::endl;
+            << "TimeUnit is \"" << timeUnit.ToString() << "\"" << std::endl;
 
   // check species
   int speciesIsSupported;
@@ -229,10 +229,10 @@ int main()
                                                        &supportStatus);
     if (error) MY_ERROR("unable to get ComputeArgument SupportStatus");
 
-    std::cout << "ComputeArgument Name \"" << computeArgumentName.String()
+    std::cout << "ComputeArgument Name \"" << computeArgumentName.ToString()
               << "\""
-              << " is of type \"" << dataType.String() << "\""
-              << " and has supportStatus \"" << supportStatus.String() << "\""
+              << " is of type \"" << dataType.ToString() << "\""
+              << " and has supportStatus \"" << supportStatus.ToString() << "\""
               << std::endl;
 
     // can only handle energy and force as a required arg
@@ -265,9 +265,9 @@ int main()
     computeArguments->GetCallbackSupportStatus(computeCallbackName,
                                                &supportStatus);
 
-    std::cout << "ComputeCallback Name \"" << computeCallbackName.String()
+    std::cout << "ComputeCallback Name \"" << computeCallbackName.ToString()
               << "\""
-              << " has supportStatus \"" << supportStatus.String() << "\""
+              << " has supportStatus \"" << supportStatus.ToString() << "\""
               << std::endl;
 
     // cannot handle any "required" callbacks
@@ -286,7 +286,7 @@ int main()
     kim_cluster_model->GetParameterMetadata(
         i, &dataType, &extent, &strName, &strDesc);
     std::cout << "Parameter No. " << i << " has" << std::endl
-              << " data type   : \"" << dataType.String() << "\"" << std::endl
+              << " data type   : \"" << dataType.ToString() << "\"" << std::endl
               << " extent      : " << extent << std::endl
               << " name        : " << *strName << std::endl
               << " description : " << *strDesc << std::endl;
@@ -323,19 +323,18 @@ int main()
             KIM::COMPUTE_ARGUMENT_NAME::numberOfParticles,
             (int *) &numberOfParticles_cluster)
         || computeArguments->SetArgumentPointer(
-               KIM::COMPUTE_ARGUMENT_NAME::particleSpeciesCodes,
-               particleSpecies_cluster_model)
+            KIM::COMPUTE_ARGUMENT_NAME::particleSpeciesCodes,
+            particleSpecies_cluster_model)
         || computeArguments->SetArgumentPointer(
-               KIM::COMPUTE_ARGUMENT_NAME::particleContributing,
-               particleContributing_cluster_model)
+            KIM::COMPUTE_ARGUMENT_NAME::particleContributing,
+            particleContributing_cluster_model)
         || computeArguments->SetArgumentPointer(
-               KIM::COMPUTE_ARGUMENT_NAME::coordinates,
-               (double *) coords_cluster)
+            KIM::COMPUTE_ARGUMENT_NAME::coordinates, (double *) coords_cluster)
         || computeArguments->SetArgumentPointer(
-               KIM::COMPUTE_ARGUMENT_NAME::partialEnergy, &energy_cluster_model)
+            KIM::COMPUTE_ARGUMENT_NAME::partialEnergy, &energy_cluster_model)
         || computeArguments->SetArgumentPointer(
-               KIM::COMPUTE_ARGUMENT_NAME::partialForces,
-               (double *) forces_cluster);
+            KIM::COMPUTE_ARGUMENT_NAME::partialForces,
+            (double *) forces_cluster);
   if (error) MY_ERROR("KIM_API_set_data");
   error = computeArguments->SetCallbackPointer(
       KIM::COMPUTE_CALLBACK_NAME::GetNeighborList,

@@ -19,7 +19,7 @@
 //
 
 //
-// Copyright (c) 2016--2018, Regents of the University of Minnesota.
+// Copyright (c) 2016--2019, Regents of the University of Minnesota.
 // All rights reserved.
 //
 // Contributors:
@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
+// Release: This file is part of the kim-api-v2-2.0.0 package.
 //
 
 #include <map>
@@ -104,7 +104,7 @@ int GetComputeCallbackName(int const index,
 }  // namespace COMPUTE_CALLBACK_NAME
 
 // implementation of ComputeCallbackName
-ComputeCallbackName::ComputeCallbackName() : computeCallbackNameID(0) {}
+ComputeCallbackName::ComputeCallbackName() {}
 ComputeCallbackName::ComputeCallbackName(int const id) :
     computeCallbackNameID(id)
 {
@@ -125,6 +125,23 @@ ComputeCallbackName::ComputeCallbackName(std::string const & str)
   }
 }
 
+bool ComputeCallbackName::Known() const
+{
+  int numberOfComputeCallbackNames;
+  COMPUTE_CALLBACK_NAME::GetNumberOfComputeCallbackNames(
+      &numberOfComputeCallbackNames);
+
+  for (int i = 0; i < numberOfComputeCallbackNames; ++i)
+  {
+    ComputeCallbackName ccn;
+    COMPUTE_CALLBACK_NAME::GetComputeCallbackName(i, &ccn);
+
+    if (*this == ccn) { return true; }
+  }
+
+  return false;
+}
+
 bool ComputeCallbackName::operator==(ComputeCallbackName const & rhs) const
 {
   return computeCallbackNameID == rhs.computeCallbackNameID;
@@ -134,7 +151,7 @@ bool ComputeCallbackName::operator!=(ComputeCallbackName const & rhs) const
   return computeCallbackNameID != rhs.computeCallbackNameID;
 }
 
-std::string const & ComputeCallbackName::String() const
+std::string const & ComputeCallbackName::ToString() const
 {
   COMPUTE_CALLBACK_NAME::StringMap::const_iterator iter
       = COMPUTE_CALLBACK_NAME::computeCallbackNameToString.find(*this);

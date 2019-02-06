@@ -21,7 +21,7 @@
 /*                                                                            */
 
 /*                                                                            */
-/* Copyright (c) 2017--2018, Regents of the University of Minnesota.          */
+/* Copyright (c) 2017--2019, Regents of the University of Minnesota.          */
 /* All rights reserved.                                                       */
 /*                                                                            */
 /* Contributors:                                                              */
@@ -31,7 +31,7 @@
 /*                                                                            */
 
 /*                                                                            */
-/* Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.         */
+/* Release: This file is part of the kim-api-v2-2.0.0 package.                */
 /*                                                                            */
 
 /**
@@ -40,24 +40,36 @@
 Previous Section: \ref theory.
 
 In code, a model (or model driver) consists of up to eight routines which
-perform specific tasks.  The first is the *ModelCreate* (or \em
-ModelDriverCreate ) routine (required), which performs initialization tasks for
-the model object.  The second is the *ModelComputeArgumentsCreate* routine
-(required), which performs initialization tasks for a compute-arguments object.
-The third is the \em ModelCompute routine (required), which uses the
-configuration information stored in a compute-arguments object to perform the
-model's core computational tasks.  The fourth is the *ModelExtension* routine
-(optional) which provides a mechanism for creating and using non-standard
-extensions to the %KIM API.  The fifth is the *ModelRefresh* routine (required
-if parameter pointers are set, otherwise should not be provided), which
-performs updates after a simulator makes changes to the model's parameters (if
-this is supported).  The sixth is the *ModelWriteParameterizedModel* (optional)
-routine which can be used to wirte the parameter files and CMake file necessary
-to create a new parameterized model from the current set of in-memory
-parameters.  The seventh is the \em ModelComputeArgumentsDestroy routine
-(required), which performs finalization tasks for a compute-arguments object.
-The eigth is the *ModelDestroy* routine (required), which performs finalization
-tasks for the model object.  These are summarized in the following table.
+perform specific tasks:
+
+-# The <em>ModelCreate</em> (or \em ModelDriverCreate ) routine (required),
+   which performs initialization tasks for the model object.
+
+-# The <em>ModelComputeArgumentsCreate</em> routine (required), which performs
+   initialization tasks for a compute-arguments object.
+
+-# The \em ModelCompute routine (required), which uses the configuration
+   information stored in a compute-arguments object to perform the
+   model's core computational tasks.
+
+-# The <em>ModelExtension</em> routine (optional), which provides a mechanism
+   for creating and using non-standard extensions to the %KIM API.
+
+-# The <em>ModelRefresh</em> routine (required if parameter pointers are set,
+   otherwise should not be provided), which performs updates after a simulator
+   makes changes to the model's parameters (if this is supported).
+
+-# The <em>ModelWriteParameterizedModel</em> (optional) routine, which can be
+   used to write the parameter files and CMake file necessary to create a new
+   parameterized model from the current set of in-memory parameters.
+
+-# The \em ModelComputeArgumentsDestroy routine (required), which performs
+   finalization tasks for a compute-arguments object.
+
+-# The <em>ModelDestroy</em> routine (required), which performs finalization
+   tasks for the model object.
+
+These are summarized in the following table.
 
 | Model Routine                                    | Required / Optional |
 | ------------------------------------------------ | ------------------- |
@@ -70,50 +82,102 @@ tasks for the model object.  These are summarized in the following table.
 | KIM::MODEL_ROUTINE_NAME::ComputeArgumentsDestroy | required            |
 | KIM::MODEL_ROUTINE_NAME::Destroy                 | required            |
 
-The above table indicates which routines must be provided by a Model.  For
-optional routines, each Model must indicate that the routine is required or
-optional for use by the Simulator, as described below.
+The above table indicates which routines must be provided by a model.  For
+optional routines, each model must indicate that the routine is required or
+optional for use by the simulator, as described below.
 
-To interact with a model, a simulator creates a model object (which, in part,
-includes execution of the model's *ModelCreate* routine).  Once a model object
-is obtained, the Simulator should use KIM::Model::IsRoutinePresent() to
-determine which routines the model has provided and if they are required or
-optional.  From this infromation the simulator should determine if it can
-proceed to work with the model, or if the model requires the use of routines
-that are not supported by the simulator it should exit.  Next, the simulator
-creates a compute-arguments object (which, in part, includes execution of the
-model's *ModelComputeArgumentsCreate* routine).  Then, the simulator provides a
-compute-arguments object to the model's *ModelCompute* function.  There are
-input compute-arguments that include the various components that make up a
-configuration (number of particles, particle position vectors, etc.).  And,
-there are output compute-arguments that include the quantities (like partial
-energy and partial forces), defined in Section \ref theory, associated with the
-configuration.  There are also compute-callback functions (such as a function
-to get a particle's neighbor list) that the simulator provides for use by the
-model.
+The interaction between the simulator and a model involves the following
+steps:
+
+- A simulator creates a <em>model object</em>, by calling KIM::Model::Create,
+  that will be used to exchange pointers to data and functions related to the
+  model between the simulator and model.  Creating this object includes the
+  specification of how the simulator will number particles (zero-based or
+  one-based), determination of the physical base units that the model will use,
+  and execution of the model's <em>ModelCreate</em> routine.
+
+  When calling KIM::Model::Create to create a <em>model object</em>, the
+  simulator provides a set of "requested" base units that it would prefer to
+  use.  <em>The %KIM API gives the model final authority to decide on the base
+  units it will use.</em> Best practice for models is to respect the request of
+  the simulator and to use the requested base units by converting its
+  parameters appropriately.  The \c requestedUnitsAccepted output argument of
+  the KIM::Model::Create routine is a convenience that allows the simulator a
+  short-cut to determine if its request for base units was accepted.  (The
+  alternative is for the simulator to call to KIM::Model::GetUnits and compare
+  the results to the requested units.)
+
+  If a base unit is not relevant to the simulator (e.g., a unit of time is not
+  necessary for static equilibrium computations), then the simulator should
+  specify that the corresponding requested base unit(s) is/are "unused".
+  Similarly, if a base unit is irrelevant to the model (e.g., many models only
+  require units of length and energy; Thus, units of charge, temperature, and
+  time are irrelevant), then the model should specify that the corresponding
+  base unit(s) is/are "unused" (regardless of the simulator's requested values)
+  when calling KIM::ModelCreate::SetUnits within its <em>ModelCreate</em>
+  routine.  Additionally, the model should select its preferred (non-"unused")
+  base unit value when the simulator provides a request of "unused" for a
+  relevant base unit.
+
+- Once a model object is obtained, the simulator should use
+  KIM::Model::IsRoutinePresent to determine which routines the model has
+  provided and if they are required or optional.  From this information the
+  simulator should determine if it can proceed to work with the model, or if
+  the model requires the use of routines that are not supported by the
+  simulator it should exit.
+
+- Next, the simulator creates a <em>compute-arguments object</em>, by calling
+  KIM::Model::ComputeArgumentsCreate, that will be used to exchange pointers to
+  data and functions related to the atomic configuration and values being
+  computed for it.  Creating this object includes execution of the model's
+  <em>ModelComputeArgumentsCreate</em> routine.
+
+- Then, to perform a computation, the simulator provides a compute-arguments
+  object to the KIM::Model::Compute routine (which, in part, executes the
+  model's <em>ModelCompute</em> function).
+
+  - There are input compute-arguments that include the various components that
+    make up a configuration (number of particles, particle position vectors,
+    etc.).
+
+  - There are output compute-arguments that include the quantities (like partial
+    energy and partial forces), defined in Section \ref theory, associated with
+    the configuration.
+
+  - There are also compute-callback functions (such as a function to get a
+    particle's neighbor list) that the simulator provides for use by the
+    model.
+
+- When a simulator is finished working with a model, it needs to clean up by
+  calling KIM::Model::ComputeArgumentsDestroy (which, in part, executes the
+  model's <em>ModelComputeArgumentsDestroy</em> routine) to delete each of the
+  compute-arguments objects that were created, and finally calling
+  KIM::Model::Destroy (which, in part, executes the model's
+  <em>ModelDestroy</em> routine) to delete the model object.
 
 The %KIM API provides a list of all compute-arguments and compute-callbacks
-defined as part of the official API.  Each such argument and callback has a
-"Support Status" which can be one of four values: *requiredByAPI*, \em
-notSupported, *required*, or *optional*.  A model specifies a support status
-value, as part of its *ModelComputeArgumentsCreate* routine, for every
-compute-argument and compute-callback defined by the %KIM API.  It is the
-responsibility of the simulator to use the compute-arguments object interface
-to determine the support status of each compute-argument and compute-callback
-and to use this information to determine if the model is capable of performing
-the desired computation.
+defined as part of the official API.  Each argument and callback has a "Support
+Status" that can be one of four values: <em>requiredByAPI</em>,
+<em>notSupported</em>, <em>required</em>, or <em>optional</em>.  A model
+specifies a support status value, as part of its
+<em>ModelComputeArgumentsCreate</em> routine, for every compute-argument and
+compute-callback defined by the %KIM API.  It is the responsibility of the
+simulator to use the compute-arguments object interface to determine the
+support status of each compute-argument and compute-callback and to use this
+information to determine if the model is capable of performing the desired
+computation.
 
-Next, lists of each input compute-argument, output compute-argument, and
-compute-callback are provided.  To be explicit, below zero-based particle
+Below, lists of each input compute-argument, output compute-argument, and
+compute-callback are provided.  To be explicit, zero-based particle
 numbering is used where necessary.
 
 Input compute-argument table:
 | Compute Argument Name | Unit   | Data Type | Extent                | Memory Layout                                                      | Valid Support Statuses (bold -- default) |
 | --------------------- | ------ | --------- | --------------------- | ------------------------------------------------------------------ | ---------------------------------------- |
-| numberOfParticles     | N/A    | integer   | 1                     |                                                                    | **requiredByAPI**                        |
-| particleSpeciesCodes  | N/A    | integer   | numberOfParticles     | \f$sc^{(0)}, sc^{(1)}, \dots\f$                                    | **requiredByAPI**                        |
-| particleContributing  | N/A    | integer   | numberOfParticles     | \f$c^{(0)}, c^{(1)}, \dots\f$                                      | **requiredByAPI**                        |
-| coordinates           | length | double    | numberOfParticles * 3 | \f$r^{(0)}_1, r^{(0)}_2, r^{(0)}_3, r^{(1)}_1, r^{(1)}_2, \dots\f$ | **requiredByAPI**                        |
+| numberOfParticles     | N/A    | integer   | 1                     |                                                                    | <b>requiredByAPI</b>                     |
+| particleSpeciesCodes  | N/A    | integer   | numberOfParticles     | \f$sc^{(0)}, sc^{(1)}, \dots\f$                                    | <b>requiredByAPI</b>                     |
+| particleContributing  | N/A    | integer   | numberOfParticles     | \f$c^{(0)}, c^{(1)}, \dots\f$                                      | <b>requiredByAPI</b>                     |
+| coordinates           | length | double    | numberOfParticles * 3 | \f$r^{(0)}_1, r^{(0)}_2, r^{(0)}_3, r^{(1)}_1, r^{(1)}_2, \dots\f$ | <b>requiredByAPI</b>                     |
 
 - numberOfParticles is the number of particles (contributing and
 non-contributing) in the configuration.
@@ -123,7 +187,7 @@ specifying the species of each particle.  For example, if the model defines the
 mapping Cu \f$\leftrightarrow 1\f$, Al \f$\leftrightarrow 2\f$, and Ni
 \f$\leftrightarrow 3\f$, then \f$sc^{(0)} = 3, sc^{(1)} = 1, sc^{(2)} = 2, \dots\f$
 means that particle 0 is a nickel atom, particle 1 is a copper atom, particle 2
-is an aluminum atom, etc.
+is an aluminum atom.
 
 - particleContributing contains the contributing/non-contributing status
 of each particle.  Particle \f$i\f$ is contributing if \f$c^{(i)} = 1\f$ and
@@ -136,11 +200,11 @@ non-contributing if \f$c^{(i)} = 0\f$.
 Output compute-argument table:
 | Compute Argument Name                                | Unit                       | Data Type | Extent                | Memory Layout                                                           | Valid Support Statuses (bold -- default) |
 | ---------------------------------------------------- | -------------------------- | --------- | --------------------- | ----------------------------------------------------------------------- | ---------------------------------------- |
-| \ref partial_energy "partialEnergy"                  | energy                     | double    | 1                     |                                                                         | required, optional, **notSupported**     |
-| \ref partial_forces "partialForces"                  | force                      | double    | numberOfParticles * 3 | \f$f^{\mathcal{C}(0)}_1, f^{\mathcal{C}(0)}_2, f^{\mathcal{C}(0)}_3, f^{\mathcal{C}(1)}_1, f^{\mathcal{C}(1)}_2\dots\f$ | required, optional, **notSupported**     |
-| \ref partial_particle_energy "partialParticleEnergy" | energy                     | double    | numberOfParticles     | \f$E^{\mathcal{C}(0)}, E^{\mathcal{C}(1)}, E^{\mathcal{C}(2)}, \dots\f$ | required, optional, **notSupported**     |
-| \ref partial_virial "partialVirial"                  | energy                     | double    | 6                     | \f$V^{\mathcal{C}}_{11}, V^{\mathcal{C}}_{22}, V^{\mathcal{C}}_{33}, V^{\mathcal{C}}_{23}, V^{\mathcal{C}}_{32}, V^{\mathcal{C}}_{13}\f$ | required, optional, **notSupported**     |
-| \ref partial_particle_virial "partialParticleVirial" | energy                     | double    | numberOfParticles * 6 | \f$\mathbf{V}^{\mathcal{C}(0)}, \mathbf{V}^{\mathcal{C}(1)}, \mathbf{V}^{\mathcal{C}(2)}, \dots\f$ | required, optional, **notSupported**     |
+| \ref partial_energy "partialEnergy"                  | energy                     | double    | 1                     |                                                                         | required, optional, <b>notSupported</b>  |
+| \ref partial_forces "partialForces"                  | force                      | double    | numberOfParticles * 3 | \f$f^{\mathcal{C}(0)}_1, f^{\mathcal{C}(0)}_2, f^{\mathcal{C}(0)}_3, f^{\mathcal{C}(1)}_1, f^{\mathcal{C}(1)}_2\dots\f$ | required, optional, <b>notSupported</b>     |
+| \ref partial_particle_energy "partialParticleEnergy" | energy                     | double    | numberOfParticles     | \f$E^{\mathcal{C}}_0, E^{\mathcal{C}}_1, E^{\mathcal{C}}_2, \dots\f$ | required, optional, <b>notSupported</b>     |
+| \ref partial_virial "partialVirial"                  | energy                     | double    | 6                     | \f$V^{\mathcal{C}}_{11}, V^{\mathcal{C}}_{22}, V^{\mathcal{C}}_{33}, V^{\mathcal{C}}_{23}, V^{\mathcal{C}}_{31}, V^{\mathcal{C}}_{12}\f$ | required, optional, <b>notSupported</b>     |
+| \ref partial_particle_virial "partialParticleVirial" | energy                     | double    | numberOfParticles * 6 | \f$\mathbf{V}^{\mathcal{C}(0)}, \mathbf{V}^{\mathcal{C}(1)}, \mathbf{V}^{\mathcal{C}(2)}, \dots\f$ | required, optional, <b>notSupported</b>     |
 
 - partialEnergy is the configuration's partial energy \f$E^{\mathcal{C}}\f$.
 
@@ -149,7 +213,7 @@ Output compute-argument table:
   f^{\mathcal{C}(i)}_2 \mathbf{e}_2 + f^{\mathcal{C}(i)}_3 \mathbf{e}_3\f$.
 
 - partialParticleEnergy contains the partial particle energy for each particle,
-  \f$E^{\mathcal{C}(i)}\f$.
+  \f$E^{\mathcal{C}}_i\f$.
 
 - partialVirial is the configuration's partial virial tensor,
   \f$\mathbf{V}^{\mathcal{C}}\f$.
@@ -162,9 +226,9 @@ Output compute-argument table:
 Compute-callback table:
 | Compute Callback Name | Valid Support Statuses (bold -- default) |
 | --------------------- | ---------------------------------------- |
-| GetNeighborList       | **requiredByAPI**                        |
-| ProcessDEDrTerm       | required, optional, **notSupported**     |
-| ProcessD2EDr2Term     | required, optional, **notSupported**     |
+| GetNeighborList       | <b>requiredByAPI</b>                     |
+| ProcessDEDrTerm       | required, optional, <b>notSupported</b>  |
+| ProcessD2EDr2Term     | required, optional, <b>notSupported</b>  |
 
 - GetNeighborList is a callback function that allows a model to obtain the list
   of neighbors of a particle.  The model may request any number (\f$\ge1\f$) of
@@ -172,36 +236,36 @@ Compute-callback table:
   GetNeighborList callback function must support the return of the appropriate
   list of neighbors.  The returned list of neighbors consists of a
   contiguous-in-memory list of integers corresponding to an unordered full list
-  of a particle's neighbors.  Each such neighbor list must contain at least all
-  particles within the corresponding cutoff distance of the specified particle.
-  (However, the returned list may contain particles beyond the cutoff
-  distance.)  Neighbor lists provided by the simulator must be consistent with
-  the configuration coordinates and the model's cutoff values.  In particular,
-  the model must, in principle, be able to independently construct its own
-  equivalent neighbor list using just the particle coordinates.  Further, the
-  GetNeighborList callback routine must check to ensure that the neighbor list
-  data (provided, via the Simulator, by the compute-arguments object) is
-  consistent with the model's cutoff values.
+  of a particle's neighbors (not including itself).  Each such neighbor list
+  must contain at least all particles within the corresponding cutoff distance
+  of the specified particle.  (However, the returned list may contain particles
+  beyond the cutoff distance.)  Neighbor lists provided by the simulator must
+  be consistent with the configuration coordinates and the model's cutoff
+  values.  In particular, the model must, in principle, be able to
+  independently construct its own equivalent neighbor list using just the
+  particle coordinates.  Further, the GetNeighborList callback routine must
+  check to ensure that the neighbor list data (provided, via the simulator, by
+  the compute-arguments object) is consistent with the model's cutoff values.
 
   <b>CAUTION - SIMULATOR DEVELOPERS:</b> In general, it is important that
   neighbor lists provided by a simulator are "efficient" in the sense that the
   list contains only a small number of particles that are located outside the
   cutoff distance.  If the lists are not efficient, then the model
-  computational time may be *severely* impacted.  This is especially true for
+  computational time may be <em>severely</em> impacted.  This is especially true for
   models that request multiple neighbor lists with a wide range of cutoff
   distances.
 
-  \anchor neighbor_list_hint <b>Neighbor List Hint</b> The above describes the
-  default behavior and all models must work correctly when provided with
-  neighbor lists of this type.  However, based on the neighbor list hint
+  <b>Neighbor List Hint \anchor neighbor_list_hint :</b> The above describes
+  the default behavior and all models must work correctly when provided with
+  neighbor lists of this type.  However, based on the <em>neighbor list hint</em>
   provided by the model a simulator may provide the model with a modified
   neighbor list that is more efficient.  If the model sets its
   "modelWillNotRequestNeighborsOfNoncontributingParticles" value to 1 (true),
   it is guaranteeing that it will not request the neighbors of non-contributing
-  particles.  So, the simulator does not need to generate a neighbor list for
-  such particles.  The model has no way of knowing if the simulator is taking
-  advantage of its hint, so it must work correctly for all types of neighbor
-  lists consistent with its provided hint.
+  particles.  In this case, the simulator does not need to generate a neighbor
+  list for such particles.  The model has no way of knowing if the simulator is
+  taking advantage of its hint, so it must work correctly for all types of
+  neighbor lists consistent with its provided hint.
 
 - ProcessDEDrTerm is a callback function that allows for access to the
   derivatives of the configuration's partial energy, \f$E^{\mathcal{C}}\f$,
@@ -244,5 +308,6 @@ LocalWords:  particleContributing leftrightarrow partialEnergy partialForces
 LocalWords:  mathcal partialParticleEnergy partialVirial partialParticleVirial
 LocalWords:  virial GetNeighborList ProcessDEDrTerm ProcessD ac infl otimes em
 LocalWords:  ModelComputeArgumentsCreate ModelComputeArgumentsDestroy ge cdot
-LocalWords:  Modelcompureargumentsdestroy
+LocalWords:  Modelcompureargumentsdestroy ModelExtension CMake
 LocalWords:  modelWillNotRequestNeighborsOfNoncontributingParticles
+LocalWords:  ModelWriteParameterizedModel requestedUnitsAccepted

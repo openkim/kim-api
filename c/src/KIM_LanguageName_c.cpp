@@ -21,7 +21,7 @@
 //
 
 //
-// Copyright (c) 2016--2018, Regents of the University of Minnesota.
+// Copyright (c) 2016--2019, Regents of the University of Minnesota.
 // All rights reserved.
 //
 // Contributors:
@@ -29,7 +29,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
+// Release: This file is part of the kim-api-v2-2.0.0 package.
 //
 
 #ifndef KIM_LANGUAGE_NAME_HPP_
@@ -65,6 +65,11 @@ KIM_LanguageName KIM_LanguageName_FromString(char const * const str)
   return makeLanguageNameC(KIM::LanguageName(std::string(str)));
 }
 
+int KIM_LanguageName_Known(KIM_LanguageName const languageName)
+{
+  return makeLanguageNameCpp(languageName).Known();
+}
+
 int KIM_LanguageName_Equal(KIM_LanguageName const lhs,
                            KIM_LanguageName const rhs)
 {
@@ -79,7 +84,7 @@ int KIM_LanguageName_NotEqual(KIM_LanguageName const lhs,
 
 char const * KIM_LanguageName_ToString(KIM_LanguageName languageName)
 {
-  return makeLanguageNameCpp(languageName).String().c_str();
+  return makeLanguageNameCpp(languageName).ToString().c_str();
 }
 
 // Order doesn't matter as long as all values are unique

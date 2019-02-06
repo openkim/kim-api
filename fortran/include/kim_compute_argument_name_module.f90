@@ -19,7 +19,7 @@
 !
 
 !
-! Copyright (c) 2016--2018, Regents of the University of Minnesota.
+! Copyright (c) 2016--2019, Regents of the University of Minnesota.
 ! All rights reserved.
 !
 ! Contributors:
@@ -27,10 +27,15 @@
 !
 
 !
-! Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
+! Release: This file is part of the kim-api-v2-2.0.0 package.
 !
 
 
+!> \brief \copybrief KIM::ComputeArgumentName
+!!
+!! \sa KIM::ComputeArgumentName, KIM_ComputeArgumentName
+!!
+!! \since 2.0
 module kim_compute_argument_name_module
   use, intrinsic :: iso_c_binding
   implicit none
@@ -52,6 +57,7 @@ module kim_compute_argument_name_module
     KIM_COMPUTE_ARGUMENT_NAME_PARTIAL_PARTICLE_VIRIAL, &
 
     ! Routines
+    kim_known, &
     operator (.eq.), &
     operator (.ne.), &
     kim_from_string, &
@@ -61,56 +67,189 @@ module kim_compute_argument_name_module
     kim_get_compute_argument_data_type
 
 
+  !> \brief \copybrief KIM::ComputeArgumentName
+  !!
+  !! \sa KIM::ComputeArgumentName, KIM_ComputeArgumentName
+  !!
+  !! \since 2.0
   type, bind(c) :: kim_compute_argument_name_type
+     !> \brief \copybrief KIM::ComputeArgumentName::computeArgumentNameID
+     !!
+     !! \sa KIM::ComputeArgumentName::computeArgumentNameID,
+     !! KIM_ComputeArgumentName::computeArgumentNameID
+     !!
+     !! \since 2.0
     integer(c_int) compute_argument_name_id
   end type kim_compute_argument_name_type
 
-  type(kim_compute_argument_name_type), protected, &
+  !> \brief \copybrief KIM::COMPUTE_ARGUMENT_NAME::numberOfParticles
+  !!
+  !! \sa KIM::COMPUTE_ARGUMENT_NAME::numberOfParticles,
+  !! KIM_COMPUTE_ARGUMENT_NAME_numberOfParticles
+  !!
+  !! \since 2.0
+  type(kim_compute_argument_name_type), protected, save, &
     bind(c, name="KIM_COMPUTE_ARGUMENT_NAME_numberOfParticles") &
     :: KIM_COMPUTE_ARGUMENT_NAME_NUMBER_OF_PARTICLES
-  type(kim_compute_argument_name_type), protected, &
+
+  !> \brief \copybrief KIM::COMPUTE_ARGUMENT_NAME::particleSpeciesCodes
+  !!
+  !! \sa KIM::COMPUTE_ARGUMENT_NAME::particleSpeciesCodes,
+  !! KIM_COMPUTE_ARGUMENT_NAME_particleSpeciesCodes
+  !!
+  !! \since 2.0
+  type(kim_compute_argument_name_type), protected, save, &
     bind(c, name="KIM_COMPUTE_ARGUMENT_NAME_particleSpeciesCodes") &
     :: KIM_COMPUTE_ARGUMENT_NAME_PARTICLE_SPECIES_CODES
-  type(kim_compute_argument_name_type), protected, &
+
+  !> \brief \copybrief KIM::COMPUTE_ARGUMENT_NAME::particleContributing
+  !!
+  !! \sa KIM::COMPUTE_ARGUMENT_NAME::particleContributing,
+  !! KIM_COMPUTE_ARGUMENT_NAME_particleContributing
+  !!
+  !! \since 2.0
+  type(kim_compute_argument_name_type), protected, save, &
     bind(c, name="KIM_COMPUTE_ARGUMENT_NAME_particleContributing") &
     :: KIM_COMPUTE_ARGUMENT_NAME_PARTICLE_CONTRIBUTING
-  type(kim_compute_argument_name_type), protected, &
+
+  !> \brief \copybrief KIM::COMPUTE_ARGUMENT_NAME::coordinates
+  !!
+  !! \sa KIM::COMPUTE_ARGUMENT_NAME::coordinates,
+  !! KIM_COMPUTE_ARGUMENT_NAME_coordinates
+  !!
+  !! \since 2.0
+  type(kim_compute_argument_name_type), protected, save, &
     bind(c, name="KIM_COMPUTE_ARGUMENT_NAME_coordinates") &
     :: KIM_COMPUTE_ARGUMENT_NAME_COORDINATES
-  type(kim_compute_argument_name_type), protected, &
+
+  !> \brief \copybrief KIM::COMPUTE_ARGUMENT_NAME::partialEnergy
+  !!
+  !! \sa KIM::COMPUTE_ARGUMENT_NAME::partialEnergy,
+  !! KIM_COMPUTE_ARGUMENT_NAME_partialEnergy
+  !!
+  !! \since 2.0
+  type(kim_compute_argument_name_type), protected, save, &
     bind(c, name="KIM_COMPUTE_ARGUMENT_NAME_partialEnergy") &
     :: KIM_COMPUTE_ARGUMENT_NAME_PARTIAL_ENERGY
-  type(kim_compute_argument_name_type), protected, &
+
+  !> \brief \copybrief KIM::COMPUTE_ARGUMENT_NAME::partialForces
+  !!
+  !! \sa KIM::COMPUTE_ARGUMENT_NAME::partialForces,
+  !! KIM_COMPUTE_ARGUMENT_NAME_partialForces
+  !!
+  !! \since 2.0
+  type(kim_compute_argument_name_type), protected, save, &
     bind(c, name="KIM_COMPUTE_ARGUMENT_NAME_partialForces") &
     :: KIM_COMPUTE_ARGUMENT_NAME_PARTIAL_FORCES
-  type(kim_compute_argument_name_type), protected, &
+
+  !> \brief \copybrief KIM::COMPUTE_ARGUMENT_NAME::partialParticleEnergy
+  !!
+  !! \sa KIM::COMPUTE_ARGUMENT_NAME::partialParticleEnergy,
+  !! KIM_COMPUTE_ARGUMENT_NAME_partialParticleEnergy
+  !!
+  !! \since 2.0
+  type(kim_compute_argument_name_type), protected, save, &
     bind(c, name="KIM_COMPUTE_ARGUMENT_NAME_partialParticleEnergy") &
     :: KIM_COMPUTE_ARGUMENT_NAME_PARTIAL_PARTICLE_ENERGY
-  type(kim_compute_argument_name_type), protected, &
+
+  !> \brief \copybrief KIM::COMPUTE_ARGUMENT_NAME::partialVirial
+  !!
+  !! \sa KIM::COMPUTE_ARGUMENT_NAME::partialVirial,
+  !! KIM_COMPUTE_ARGUMENT_NAME_partialVirial
+  !!
+  !! \since 2.0
+  type(kim_compute_argument_name_type), protected, save, &
     bind(c, name="KIM_COMPUTE_ARGUMENT_NAME_partialVirial") &
     :: KIM_COMPUTE_ARGUMENT_NAME_PARTIAL_VIRIAL
-  type(kim_compute_argument_name_type), protected, &
+
+  !> \brief \copybrief KIM::COMPUTE_ARGUMENT_NAME::partialParticleVirial
+  !!
+  !! \sa KIM::COMPUTE_ARGUMENT_NAME::partialParticleVirial,
+  !! KIM_COMPUTE_ARGUMENT_NAME_partialParticleVirial
+  !!
+  !! \since 2.0
+  type(kim_compute_argument_name_type), protected, save, &
     bind(c, name="KIM_COMPUTE_ARGUMENT_NAME_partialParticleVirial") &
     :: KIM_COMPUTE_ARGUMENT_NAME_PARTIAL_PARTICLE_VIRIAL
 
+  !> \brief \copybrief KIM::ComputeArgumentName::Known
+  !!
+  !! \sa KIM::ComputeArgumentName::Known, KIM_ComputeArgumentName_Known
+  !!
+  !! \since 2.0
+  interface kim_known
+    module procedure kim_compute_argument_name_known
+  end interface kim_known
+
+  !> \brief \copybrief KIM::ComputeArgumentName::operator==()
+  !!
+  !! \sa KIM::ComputeArgumentName::operator==(), KIM_ComputeArgumentName_Equal
+  !!
+  !! \since 2.0
   interface operator (.eq.)
     module procedure kim_compute_argument_name_equal
   end interface operator (.eq.)
 
+  !> \brief \copybrief KIM::ComputeArgumentName::operator!=()
+  !!
+  !! \sa KIM::ComputeArgumentName::operator!=(),
+  !! KIM_ComputeArgumentName_NotEqual
+  !!
+  !! \since 2.0
   interface operator (.ne.)
     module procedure kim_compute_argument_name_not_equal
   end interface operator (.ne.)
 
+  !> \brief \copybrief KIM::ComputeArgumentName::<!--
+  !! -->ComputeArgumentName(std::string const &)
+  !!
+  !! \sa KIM::ComputeArgumentName::ComputeArgumentName(std::string const &),
+  !! KIM_ComputeArgumentName_FromString
+  !!
+  !! \since 2.0
   interface kim_from_string
     module procedure kim_compute_argument_name_from_string
   end interface kim_from_string
 
+  !> \brief \copybrief KIM::ComputeArgumentName::ToString
+  !!
+  !! \sa KIM::ComputeArgumentName::ToString, KIM_ComputeArgumentName_ToString
+  !!
+  !! \since 2.0
   interface kim_to_string
     module procedure kim_compute_argument_name_to_string
   end interface kim_to_string
 
 contains
-  logical function kim_compute_argument_name_equal(lhs, rhs)
+  !> \brief \copybrief KIM::ComputeArgumentName::Known
+  !!
+  !! \sa KIM::ComputeArgumentName::Known, KIM_ComputeArgumentName_Known
+  !!
+  !! \since 2.0
+  logical recursive function kim_compute_argument_name_known( &
+    compute_argument_name)
+    implicit none
+    interface
+      integer(c_int) recursive function known(compute_argument_name) &
+        bind(c, name="KIM_ComputeArgumentName_Known")
+        use, intrinsic :: iso_c_binding
+        import kim_compute_argument_name_type
+        implicit none
+        type(kim_compute_argument_name_type), intent(in), value :: &
+          compute_argument_name
+      end function known
+    end interface
+    type(kim_compute_argument_name_type), intent(in) :: compute_argument_name
+
+    kim_compute_argument_name_known = (known(compute_argument_name) /= 0)
+  end function kim_compute_argument_name_known
+
+  !> \brief \copybrief KIM::ComputeArgumentName::operator==()
+  !!
+  !! \sa KIM::ComputeArgumentName::operator==(), KIM_ComputeArgumentName_Equal
+  !!
+  !! \since 2.0
+  logical recursive function kim_compute_argument_name_equal(lhs, rhs)
     implicit none
     type(kim_compute_argument_name_type), intent(in) :: lhs
     type(kim_compute_argument_name_type), intent(in) :: rhs
@@ -119,7 +258,13 @@ contains
       = (lhs%compute_argument_name_id .eq. rhs%compute_argument_name_id)
   end function kim_compute_argument_name_equal
 
-  logical function kim_compute_argument_name_not_equal(lhs, rhs)
+  !> \brief \copybrief KIM::ComputeArgumentName::operator!=()
+  !!
+  !! \sa KIM::ComputeArgumentName::operator!=(),
+  !! KIM_ComputeArgumentName_NotEqual
+  !!
+  !! \since 2.0
+  logical recursive function kim_compute_argument_name_not_equal(lhs, rhs)
     implicit none
     type(kim_compute_argument_name_type), intent(in) :: lhs
     type(kim_compute_argument_name_type), intent(in) :: rhs
@@ -127,12 +272,19 @@ contains
     kim_compute_argument_name_not_equal = .not. (lhs .eq. rhs)
   end function kim_compute_argument_name_not_equal
 
-  subroutine kim_compute_argument_name_from_string(string, &
+  !> \brief \copybrief KIM::ComputeArgumentName::<!--
+  !! -->ComputeArgumentName(std::string const &)
+  !!
+  !! \sa KIM::ComputeArgumentName::ComputeArgumentName(std::string const &),
+  !! KIM_ComputeArgumentName_FromString
+  !!
+  !! \since 2.0
+  recursive subroutine kim_compute_argument_name_from_string(string, &
     compute_argument_name)
     implicit none
     interface
-      type(kim_compute_argument_name_type) function from_string(string) &
-        bind(c, name="KIM_ComputeArgumentName_FromString")
+      type(kim_compute_argument_name_type) recursive function from_string( &
+        string) bind(c, name="KIM_ComputeArgumentName_FromString")
         use, intrinsic :: iso_c_binding
         import kim_compute_argument_name_type
         implicit none
@@ -145,11 +297,17 @@ contains
     compute_argument_name = from_string(trim(string)//c_null_char)
   end subroutine kim_compute_argument_name_from_string
 
-  subroutine kim_compute_argument_name_to_string(compute_argument_name, string)
+  !> \brief \copybrief KIM::ComputeArgumentName::ToString
+  !!
+  !! \sa KIM::ComputeArgumentName::ToString, KIM_ComputeArgumentName_ToString
+  !!
+  !! \since 2.0
+  recursive subroutine kim_compute_argument_name_to_string( &
+    compute_argument_name, string)
     use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
     implicit none
     interface
-      type(c_ptr) function get_string(compute_argument_name) &
+      type(c_ptr) recursive function get_string(compute_argument_name) &
         bind(c, name="KIM_ComputeArgumentName_ToString")
         use, intrinsic :: iso_c_binding
         import kim_compute_argument_name_type
@@ -168,11 +326,18 @@ contains
     call kim_convert_c_char_ptr_to_string(p, string)
   end subroutine kim_compute_argument_name_to_string
 
-  subroutine kim_get_number_of_compute_argument_names( &
+  !> \brief \copybrief KIM::COMPUTE_ARGUMENT_NAME::<!--
+  !! -->GetNumberOfComputeArgumentNames
+  !!
+  !! \sa KIM::COMPUTE_ARGUMENT_NAME::GetNumberOfComputeArgumentNames,
+  !! KIM_COMPUTE_ARGUMENT_NAME_GetNumberOfComputeArgumentNames
+  !!
+  !! \since 2.0
+  recursive subroutine kim_get_number_of_compute_argument_names( &
     number_of_compute_argument_names)
     implicit none
     interface
-      subroutine get_number_of_compute_argument_names( &
+      recursive subroutine get_number_of_compute_argument_names( &
         number_of_compute_argument_names) &
         bind(c, &
         name="KIM_COMPUTE_ARGUMENT_NAME_GetNumberOfComputeArgumentNames")
@@ -185,11 +350,19 @@ contains
     call get_number_of_compute_argument_names(number_of_compute_argument_names)
   end subroutine kim_get_number_of_compute_argument_names
 
-  subroutine kim_get_compute_argument_name(index, &
+
+  !> \brief \copybrief KIM::COMPUTE_ARGUMENT_NAME::<!--
+  !! -->GetComputeArgumentName
+  !!
+  !! \sa KIM::COMPUTE_ARGUMENT_NAME::GetComputeArgumentName,
+  !! KIM_COMPUTE_ARGUMENT_NAME_GetComputeArgumentName
+  !!
+  !! \since 2.0
+  recursive subroutine kim_get_compute_argument_name(index, &
     compute_argument_name, ierr)
     implicit none
     interface
-      integer(c_int) function get_compute_argument_name(index, &
+      integer(c_int) recursive function get_compute_argument_name(index, &
         compute_argument_name) &
         bind(c, name="KIM_COMPUTE_ARGUMENT_NAME_GetComputeArgumentName")
         use, intrinsic :: iso_c_binding
@@ -207,13 +380,20 @@ contains
     ierr = get_compute_argument_name(index-1, compute_argument_name)
   end subroutine kim_get_compute_argument_name
 
-  subroutine kim_get_compute_argument_data_type( &
+  !> \brief \copybrief KIM::COMPUTE_ARGUMENT_NAME::<!--
+  !! -->GetComputeArgumentDataType
+  !!
+  !! \sa KIM::COMPUTE_ARGUMENT_NAME::GetComputeArgumentDataType,
+  !! KIM_COMPUTE_ARGUMENT_NAME_GetComputeArgumentDataType
+  !!
+  !! \since 2.0
+  recursive subroutine kim_get_compute_argument_data_type( &
     compute_argument_name, &
     data_type, ierr)
     use kim_data_type_module, only : kim_data_type_type
     implicit none
     interface
-      integer(c_int) function get_compute_argument_data_type( &
+      integer(c_int) recursive function get_compute_argument_data_type( &
         compute_argument_name, data_type) &
         bind(c, name="KIM_COMPUTE_ARGUMENT_NAME_GetComputeArgumentDataType")
         use, intrinsic :: iso_c_binding

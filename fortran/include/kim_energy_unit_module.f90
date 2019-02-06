@@ -19,7 +19,7 @@
 !
 
 !
-! Copyright (c) 2016--2018, Regents of the University of Minnesota.
+! Copyright (c) 2016--2019, Regents of the University of Minnesota.
 ! All rights reserved.
 !
 ! Contributors:
@@ -27,10 +27,15 @@
 !
 
 !
-! Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
+! Release: This file is part of the kim-api-v2-2.0.0 package.
 !
 
 
+!> \brief \copybrief KIM::EnergyUnit
+!!
+!! \sa KIM::EnergyUnit, KIM_EnergyUnit
+!!
+!! \since 2.0
 module kim_energy_unit_module
   use, intrinsic :: iso_c_binding
   implicit none
@@ -50,6 +55,7 @@ module kim_energy_unit_module
     KIM_ENERGY_UNIT_KCAL_MOL, &
 
     ! Routines
+    kim_known, &
     operator (.eq.), &
     operator (.ne.), &
     kim_from_string, &
@@ -58,50 +64,157 @@ module kim_energy_unit_module
     kim_get_energy_unit
 
 
+  !> \brief \copybrief KIM::EnergyUnit
+  !!
+  !! \sa KIM::EnergyUnit, KIM_EnergyUnit
+  !!
+  !! \since 2.0
   type, bind(c) :: kim_energy_unit_type
+     !> \brief \copybrief KIM::EnergyUnit::energyUnitID
+     !!
+     !! \sa KIM::EnergyUnit::energyUnitID, KIM_EnergyUnit::energyUnitID
+     !!
+     !! \since 2.0
     integer(c_int) energy_unit_id
   end type kim_energy_unit_type
 
-  type(kim_energy_unit_type), protected, &
+  !> \brief \copybrief KIM::ENERGY_UNIT::unused
+  !!
+  !! \sa KIM::ENERGY_UNIT::unused, KIM_ENERGY_UNIT_unused
+  !!
+  !! \since 2.0
+  type(kim_energy_unit_type), protected, save, &
     bind(c, name="KIM_ENERGY_UNIT_unused") &
     :: KIM_ENERGY_UNIT_UNUSED
-  type(kim_energy_unit_type), protected, &
+
+  !> \brief \copybrief KIM::ENERGY_UNIT::amu_A2_per_ps2
+  !!
+  !! \sa KIM::ENERGY_UNIT::amu_A2_per_ps2, KIM_ENERGY_UNIT_amu_A2_per_ps2
+  !!
+  !! \since 2.0
+  type(kim_energy_unit_type), protected, save, &
     bind(c, name="KIM_ENERGY_UNIT_amu_A2_per_ps2") &
     :: KIM_ENERGY_UNIT_AMU_A2_PER_PS2
-  type(kim_energy_unit_type), protected, &
+
+  !> \brief \copybrief KIM::ENERGY_UNIT::erg
+  !!
+  !! \sa KIM::ENERGY_UNIT::erg, KIM_ENERGY_UNIT_erg
+  !!
+  !! \since 2.0
+  type(kim_energy_unit_type), protected, save, &
     bind(c, name="KIM_ENERGY_UNIT_erg") &
     :: KIM_ENERGY_UNIT_ERG
-  type(kim_energy_unit_type), protected, &
+
+  !> \brief \copybrief KIM::ENERGY_UNIT::eV
+  !!
+  !! \sa KIM::ENERGY_UNIT::eV, KIM_ENERGY_UNIT_eV
+  !!
+  !! \since 2.0
+  type(kim_energy_unit_type), protected, save, &
     bind(c, name="KIM_ENERGY_UNIT_eV") &
     :: KIM_ENERGY_UNIT_EV
-  type(kim_energy_unit_type), protected, &
+
+  !> \brief \copybrief KIM::ENERGY_UNIT::Hartree
+  !!
+  !! \sa KIM::ENERGY_UNIT::Hartree, KIM_ENERGY_UNIT_Hartree
+  !!
+  !! \since 2.0
+  type(kim_energy_unit_type), protected, save, &
     bind(c, name="KIM_ENERGY_UNIT_Hartree") &
     :: KIM_ENERGY_UNIT_HARTREE
-  type(kim_energy_unit_type), protected, &
+
+  !> \brief \copybrief KIM::ENERGY_UNIT::J
+  !!
+  !! \sa KIM::ENERGY_UNIT::J, KIM_ENERGY_UNIT_J
+  !!
+  !! \since 2.0
+  type(kim_energy_unit_type), protected, save, &
     bind(c, name="KIM_ENERGY_UNIT_J") &
     :: KIM_ENERGY_UNIT_J
-  type(kim_energy_unit_type), protected, &
+
+  !> \brief \copybrief KIM::ENERGY_UNIT::kcal_mol
+  !!
+  !! \sa KIM::ENERGY_UNIT::kcal_mol, KIM_ENERGY_UNIT_kcal_mol
+  !!
+  !! \since 2.0
+  type(kim_energy_unit_type), protected, save, &
     bind(c, name="KIM_ENERGY_UNIT_kcal_mol") &
     :: KIM_ENERGY_UNIT_KCAL_MOL
 
+  !> \brief \copybrief KIM::EnergyUnit::Known
+  !!
+  !! \sa KIM::EnergyUnit::Known, KIM_EnergyUnit_Known
+  !!
+  !! \since 2.0
+  interface kim_known
+    module procedure kim_energy_unit_known
+  end interface kim_known
+
+  !> \brief \copybrief KIM::EnergyUnit::operator==()
+  !!
+  !! \sa KIM::EnergyUnit::operator==(), KIM_EnergyUnit_Equal
+  !!
+  !! \since 2.0
   interface operator (.eq.)
     module procedure kim_energy_unit_equal
   end interface operator (.eq.)
 
+  !> \brief \copybrief KIM::EnergyUnit::operator!=()
+  !!
+  !! \sa KIM::EnergyUnit::operator!=(), KIM_EnergyUnit_NotEqual
+  !!
+  !! \since 2.0
   interface operator (.ne.)
     module procedure kim_energy_unit_not_equal
   end interface operator (.ne.)
 
+  !> \brief \copybrief KIM::EnergyUnit::EnergyUnit(std::string const &)
+  !!
+  !! \sa KIM::EnergyUnit::EnergyUnit(std::string const &),
+  !! KIM_EnergyUnit_FromString
+  !!
+  !! \since 2.0
   interface kim_from_string
     module procedure kim_energy_unit_from_string
   end interface kim_from_string
 
+  !> \brief \copybrief KIM::EnergyUnit::ToString
+  !!
+  !! \sa KIM::EnergyUnit::ToString, KIM_EnergyUnit_ToString
+  !!
+  !! \since 2.0
   interface kim_to_string
     module procedure kim_energy_unit_to_string
   end interface kim_to_string
 
 contains
-  logical function kim_energy_unit_equal(lhs, rhs)
+  !> \brief \copybrief KIM::EnergyUnit::Known
+  !!
+  !! \sa KIM::EnergyUnit::Known, KIM_EnergyUnit_Known
+  !!
+  !! \since 2.0
+  logical recursive function kim_energy_unit_known(energy_unit)
+    implicit none
+    interface
+      integer(c_int) recursive function known(energy_unit) &
+        bind(c, name="KIM_EnergyUnit_Known")
+        use, intrinsic :: iso_c_binding
+        import kim_energy_unit_type
+        implicit none
+        type(kim_energy_unit_type), intent(in), value :: energy_unit
+      end function known
+    end interface
+    type(kim_energy_unit_type), intent(in) :: energy_unit
+
+    kim_energy_unit_known = (known(energy_unit) /= 0)
+  end function kim_energy_unit_known
+
+  !> \brief \copybrief KIM::EnergyUnit::operator==()
+  !!
+  !! \sa KIM::EnergyUnit::operator==(), KIM_EnergyUnit_Equal
+  !!
+  !! \since 2.0
+  logical recursive function kim_energy_unit_equal(lhs, rhs)
     implicit none
     type(kim_energy_unit_type), intent(in) :: lhs
     type(kim_energy_unit_type), intent(in) :: rhs
@@ -110,7 +223,12 @@ contains
       = (lhs%energy_unit_id .eq. rhs%energy_unit_id)
   end function kim_energy_unit_equal
 
-  logical function kim_energy_unit_not_equal(lhs, rhs)
+  !> \brief \copybrief KIM::EnergyUnit::operator!=()
+  !!
+  !! \sa KIM::EnergyUnit::operator!=(), KIM_EnergyUnit_NotEqual
+  !!
+  !! \since 2.0
+  logical recursive function kim_energy_unit_not_equal(lhs, rhs)
     implicit none
     type(kim_energy_unit_type), intent(in) :: lhs
     type(kim_energy_unit_type), intent(in) :: rhs
@@ -118,10 +236,16 @@ contains
     kim_energy_unit_not_equal = .not. (lhs .eq. rhs)
   end function kim_energy_unit_not_equal
 
-  subroutine kim_energy_unit_from_string(string, energy_unit)
+  !> \brief \copybrief KIM::EnergyUnit::EnergyUnit(std::string const &)
+  !!
+  !! \sa KIM::EnergyUnit::EnergyUnit(std::string const &),
+  !! KIM_EnergyUnit_FromString
+  !!
+  !! \since 2.0
+  recursive subroutine kim_energy_unit_from_string(string, energy_unit)
     implicit none
     interface
-      type(kim_energy_unit_type) function from_string(string) &
+      type(kim_energy_unit_type) recursive function from_string(string) &
         bind(c, name="KIM_EnergyUnit_FromString")
         use, intrinsic :: iso_c_binding
         import kim_energy_unit_type
@@ -135,11 +259,16 @@ contains
     energy_unit = from_string(trim(string)//c_null_char)
   end subroutine kim_energy_unit_from_string
 
-  subroutine kim_energy_unit_to_string(energy_unit, string)
+  !> \brief \copybrief KIM::EnergyUnit::ToString
+  !!
+  !! \sa KIM::EnergyUnit::ToString, KIM_EnergyUnit_ToString
+  !!
+  !! \since 2.0
+  recursive subroutine kim_energy_unit_to_string(energy_unit, string)
     use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
     implicit none
     interface
-      type(c_ptr) function get_string(energy_unit) &
+      type(c_ptr) recursive function get_string(energy_unit) &
         bind(c, name="KIM_EnergyUnit_ToString")
         use, intrinsic :: iso_c_binding
         import kim_energy_unit_type
@@ -156,10 +285,16 @@ contains
     call kim_convert_c_char_ptr_to_string(p, string)
   end subroutine kim_energy_unit_to_string
 
-  subroutine kim_get_number_of_energy_units(number_of_energy_units)
+  !> \brief \copybrief KIM::ENERGY_UNIT::GetNumberOfEnergyUnits
+  !!
+  !! \sa KIM::ENERGY_UNIT::GetNumberOfEnergyUnits,
+  !! KIM_ENERGY_UNIT_GetNumberOfEnergyUnits
+  !!
+  !! \since 2.0
+  recursive subroutine kim_get_number_of_energy_units(number_of_energy_units)
     implicit none
     interface
-      subroutine get_number_of_energy_units(number_of_energy_units) &
+      recursive subroutine get_number_of_energy_units(number_of_energy_units) &
         bind(c, name="KIM_ENERGY_UNIT_GetNumberOfEnergyUnits")
         use, intrinsic :: iso_c_binding
         integer(c_int), intent(out) :: number_of_energy_units
@@ -170,10 +305,15 @@ contains
     call get_number_of_energy_units(number_of_energy_units)
   end subroutine kim_get_number_of_energy_units
 
-  subroutine kim_get_energy_unit(index, energy_unit, ierr)
+  !> \brief \copybrief KIM::ENERGY_UNIT::GetEnergyUnit
+  !!
+  !! \sa KIM::ENERGY_UNIT::GetEnergyUnit, KIM_ENERGY_UNIT_GetEnergyUnit
+  !!
+  !! \since 2.0
+  recursive subroutine kim_get_energy_unit(index, energy_unit, ierr)
     implicit none
     interface
-      integer(c_int) function get_energy_unit(index, energy_unit) &
+      integer(c_int) recursive function get_energy_unit(index, energy_unit) &
         bind(c, name="KIM_ENERGY_UNIT_GetEnergyUnit")
         use, intrinsic :: iso_c_binding
         import kim_energy_unit_type

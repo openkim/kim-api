@@ -19,7 +19,7 @@
 //
 
 //
-// Copyright (c) 2016--2018, Regents of the University of Minnesota.
+// Copyright (c) 2016--2019, Regents of the University of Minnesota.
 // All rights reserved.
 //
 // Contributors:
@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
+// Release: This file is part of the kim-api-v2-2.0.0 package.
 //
 
 #include <map>
@@ -84,9 +84,9 @@ int GetLanguageName(int const index, LanguageName * const languageName)
 }  // namespace LANGUAGE_NAME
 
 // implementation of LanguageName
-LanguageName::LanguageName() : languageNameID(0) {}
+LanguageName::LanguageName() {}
 LanguageName::LanguageName(int const id) : languageNameID(id) {}
-LanguageName::LanguageName(std::string const str)
+LanguageName::LanguageName(std::string const & str)
 {
   languageNameID = -1;
   for (LANGUAGE_NAME::StringMap::const_iterator iter
@@ -102,6 +102,22 @@ LanguageName::LanguageName(std::string const str)
   }
 }
 
+bool LanguageName::Known() const
+{
+  int numberOfLanguageNames;
+  LANGUAGE_NAME::GetNumberOfLanguageNames(&numberOfLanguageNames);
+
+  for (int i = 0; i < numberOfLanguageNames; ++i)
+  {
+    LanguageName langName;
+    LANGUAGE_NAME::GetLanguageName(i, &langName);
+
+    if (*this == langName) { return true; }
+  }
+
+  return false;
+}
+
 bool LanguageName::operator==(LanguageName const & rhs) const
 {
   return languageNameID == rhs.languageNameID;
@@ -111,7 +127,7 @@ bool LanguageName::operator!=(LanguageName const & rhs) const
   return languageNameID != rhs.languageNameID;
 }
 
-std::string const & LanguageName::String() const
+std::string const & LanguageName::ToString() const
 {
   LANGUAGE_NAME::StringMap::const_iterator iter
       = LANGUAGE_NAME::languageNameToString.find(*this);

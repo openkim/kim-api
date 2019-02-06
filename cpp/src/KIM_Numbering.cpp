@@ -19,7 +19,7 @@
 //
 
 //
-// Copyright (c) 2016--2018, Regents of the University of Minnesota.
+// Copyright (c) 2016--2019, Regents of the University of Minnesota.
 // All rights reserved.
 //
 // Contributors:
@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
+// Release: This file is part of the kim-api-v2-2.0.0 package.
 //
 
 #include <map>
@@ -81,7 +81,7 @@ int GetNumbering(int const index, Numbering * const numbering)
 }  // namespace NUMBERING
 
 // implementation of Numbering
-Numbering::Numbering() : numberingID(0) {}
+Numbering::Numbering() {}
 Numbering::Numbering(int const id) : numberingID(id) {}
 Numbering::Numbering(std::string const & str)
 {
@@ -99,6 +99,22 @@ Numbering::Numbering(std::string const & str)
   }
 }
 
+bool Numbering::Known() const
+{
+  int numberOfNumberings;
+  NUMBERING::GetNumberOfNumberings(&numberOfNumberings);
+
+  for (int i = 0; i < numberOfNumberings; ++i)
+  {
+    Numbering num;
+    NUMBERING::GetNumbering(i, &num);
+
+    if (*this == num) { return true; }
+  }
+
+  return false;
+}
+
 bool Numbering::operator==(Numbering const & rhs) const
 {
   return numberingID == rhs.numberingID;
@@ -108,7 +124,7 @@ bool Numbering::operator!=(Numbering const & rhs) const
   return numberingID != rhs.numberingID;
 }
 
-std::string const & Numbering::String() const
+std::string const & Numbering::ToString() const
 {
   NUMBERING::StringMap::const_iterator iter
       = NUMBERING::numberingToString.find(*this);

@@ -19,7 +19,7 @@
 //
 
 //
-// Copyright (c) 2016--2018, Regents of the University of Minnesota.
+// Copyright (c) 2016--2019, Regents of the University of Minnesota.
 // All rights reserved.
 //
 // Contributors:
@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
+// Release: This file is part of the kim-api-v2-2.0.0 package.
 //
 
 #include <map>
@@ -166,7 +166,7 @@ int GetComputeArgumentDataType(ComputeArgumentName const computeArgumentName,
 
 
 // implementation of ComputeArgumentName
-ComputeArgumentName::ComputeArgumentName() : computeArgumentNameID(0) {}
+ComputeArgumentName::ComputeArgumentName() {}
 ComputeArgumentName::ComputeArgumentName(int const id) :
     computeArgumentNameID(id)
 {
@@ -188,6 +188,23 @@ ComputeArgumentName::ComputeArgumentName(std::string const & str)
   }
 }
 
+bool ComputeArgumentName::Known() const
+{
+  int numberOfComputeArgumentNames;
+  COMPUTE_ARGUMENT_NAME::GetNumberOfComputeArgumentNames(
+      &numberOfComputeArgumentNames);
+
+  for (int i = 0; i < numberOfComputeArgumentNames; ++i)
+  {
+    ComputeArgumentName cam;
+    COMPUTE_ARGUMENT_NAME::GetComputeArgumentName(i, &cam);
+
+    if (*this == cam) { return true; }
+  }
+
+  return false;
+}
+
 bool ComputeArgumentName::operator==(ComputeArgumentName const & rhs) const
 {
   return computeArgumentNameID == rhs.computeArgumentNameID;
@@ -197,7 +214,7 @@ bool ComputeArgumentName::operator!=(ComputeArgumentName const & rhs) const
   return computeArgumentNameID != rhs.computeArgumentNameID;
 }
 
-std::string const & ComputeArgumentName::String() const
+std::string const & ComputeArgumentName::ToString() const
 {
   COMPUTE_ARGUMENT_NAME::StringMap::const_iterator iter
       = COMPUTE_ARGUMENT_NAME::computeArgumentNameToString.find(*this);

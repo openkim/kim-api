@@ -19,7 +19,7 @@
 //
 
 //
-// Copyright (c) 2016--2018, Regents of the University of Minnesota.
+// Copyright (c) 2016--2019, Regents of the University of Minnesota.
 // All rights reserved.
 //
 // Contributors:
@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
+// Release: This file is part of the kim-api-v2-2.0.0 package.
 //
 
 #include <algorithm>
@@ -268,12 +268,13 @@ int ModelImplementation::Create(
   pModelImplementation = new ModelImplementation(new SharedLibrary(pLog), pLog);
 #if DEBUG_VERBOSITY
   std::string const callString
-      = "Create(" + numbering.String() + ", " + requestedLengthUnit.String()
-        + ", " + requestedEnergyUnit.String() + ", "
-        + requestedChargeUnit.String() + ", "
-        + requestedTemperatureUnit.String() + ", " + requestedTimeUnit.String()
-        + ", '" + modelName + "', " + SPTR(requestedUnitsAccepted) + ", "
-        + SPTR(modelImplementation) + ").";
+      = "Create(" + numbering.ToString() + ", " + requestedLengthUnit.ToString()
+        + ", " + requestedEnergyUnit.ToString() + ", "
+        + requestedChargeUnit.ToString() + ", "
+        + requestedTemperatureUnit.ToString() + ", "
+        + requestedTimeUnit.ToString() + ", '" + modelName + "', "
+        + SPTR(requestedUnitsAccepted) + ", " + SPTR(modelImplementation)
+        + ").";
   pModelImplementation->LogEntry(
       LOG_VERBOSITY::debug,
       "Created Log and ModelImplementation objects after enter " + callString,
@@ -374,14 +375,14 @@ int ModelImplementation::IsRoutinePresent(
     int * const required) const
 {
 #if DEBUG_VERBOSITY
-  std::string const callString = "IsRoutinePresent(" + modelRoutineName.String()
-                                 + ", " + SNUM(present) + ", " + SNUM(required)
-                                 + ").";
+  std::string const callString = "IsRoutinePresent("
+                                 + modelRoutineName.ToString() + ", "
+                                 + SNUM(present) + ", " + SNUM(required) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
 #if ERROR_VERBOSITY
-  int error = Validate(modelRoutineName);
+  int error = !modelRoutineName.Known();
   if (error)
   {
     LOG_ERROR("Invalid arguments.");
@@ -590,14 +591,15 @@ int ModelImplementation::SetRoutinePointer(
     Function * const fptr)
 {
 #if DEBUG_VERBOSITY
-  std::string const callString = "SetRoutinePointer(" + languageName.String()
-                                 + ", " + SNUM(required) + ", " + SFUNC(fptr)
-                                 + ").";
+  std::string const callString = "SetRoutinePointer("
+                                 + modelRoutineName.ToString() + ", "
+                                 + languageName.ToString() + ", "
+                                 + SNUM(required) + ", " + SFUNC(fptr) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
 #if ERROR_VERBOSITY
-  int error = Validate(modelRoutineName) || Validate(languageName);
+  int error = (!modelRoutineName.Known()) || (!languageName.Known());
   if (error)
   {
     LOG_ERROR("Invalid arguments.");
@@ -612,7 +614,7 @@ int ModelImplementation::SetRoutinePointer(
     {
       if (requiredByAPI_ModelRoutines.at(i) == modelRoutineName)
       {
-        LOG_ERROR(modelRoutineName.String() + " routine must be required.");
+        LOG_ERROR(modelRoutineName.ToString() + " routine must be required.");
         LOG_DEBUG("Exit 1=" + callString);
         return true;
       }
@@ -633,12 +635,12 @@ int ModelImplementation::SetSpeciesCode(SpeciesName const speciesName,
 {
 #if DEBUG_VERBOSITY
   std::string const callString
-      = "SetSpeciesCode(" + speciesName.String() + ", " + SNUM(code) + ").";
+      = "SetSpeciesCode(" + speciesName.ToString() + ", " + SNUM(code) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
 #if ERROR_VERBOSITY
-  int error = Validate(speciesName);
+  int error = !speciesName.Known();
   if (error)
   {
     LOG_ERROR("Invalid arguments.");
@@ -660,13 +662,13 @@ int ModelImplementation::GetSpeciesSupportAndCode(
 {
 #if DEBUG_VERBOSITY
   std::string const callString
-      = "GetSpeciesSupportAndCode(" + speciesName.String() + ", "
+      = "GetSpeciesSupportAndCode(" + speciesName.ToString() + ", "
         + SPTR(speciesIsSupported) + ", " + SPTR(code) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
 #if ERROR_VERBOSITY
-  int error = Validate(speciesName);
+  int error = !speciesName.Known();
   if (error)
   {
     LOG_ERROR("Invalid arguments.");
@@ -698,12 +700,12 @@ int ModelImplementation::SetModelNumbering(Numbering const numbering)
 {
 #if DEBUG_VERBOSITY
   std::string const callString
-      = "SetModelNumbering(" + numbering.String() + ").";
+      = "SetModelNumbering(" + numbering.ToString() + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
 #if ERROR_VERBOSITY
-  int error = Validate(numbering);
+  int error = !numbering.Known();
   if (error)
   {
     LOG_ERROR("Invalid arguments.");
@@ -723,12 +725,12 @@ int ModelImplementation::SetSimulatorNumbering(Numbering const numbering)
 {
 #if DEBUG_VERBOSITY
   std::string const callString
-      = "SetSimulatorNumbering(" + numbering.String() + ").";
+      = "SetSimulatorNumbering(" + numbering.ToString() + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
 #if ERROR_VERBOSITY
-  int error = Validate(numbering);
+  int error = !numbering.Known();
   if (error)
   {
     LOG_ERROR("Invalid arguments.");
@@ -751,16 +753,16 @@ int ModelImplementation::SetUnits(LengthUnit const lengthUnit,
 {
 #if DEBUG_VERBOSITY
   std::string const callString
-      = "SetUnits(" + lengthUnit.String() + ", " + energyUnit.String() + ", "
-        + chargeUnit.String() + ", " + temperatureUnit.String() + ", "
-        + timeUnit.String() + ").";
+      = "SetUnits(" + lengthUnit.ToString() + ", " + energyUnit.ToString()
+        + ", " + chargeUnit.ToString() + ", " + temperatureUnit.ToString()
+        + ", " + timeUnit.ToString() + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
 #if ERROR_VERBOSITY
-  int error = Validate(lengthUnit) || Validate(energyUnit)
-              || Validate(chargeUnit) || Validate(temperatureUnit)
-              || Validate(timeUnit);
+  int error = (!lengthUnit.Known()) || (!energyUnit.Known())
+              || (!chargeUnit.Known()) || (!temperatureUnit.Known())
+              || (!timeUnit.Known());
   if (error)
   {
     LOG_ERROR("Invalid arguments.");
@@ -1269,6 +1271,17 @@ int ModelImplementation::Extension(std::string const & extensionID,
 #endif
   LOG_DEBUG("Enter  " + callString);
 
+#if ERROR_VERBOSITY
+  int present = false;
+  IsRoutinePresent(KIM::MODEL_ROUTINE_NAME::Extension, &present, NULL);
+  if (!present)
+  {
+    LOG_ERROR("The Model does not provide the Extension routine.");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
+#endif
+
   extensionID_ = extensionID;
   int error = ModelExtension(extensionStructure);
   extensionID_ = "";
@@ -1295,7 +1308,7 @@ int ModelImplementation::ClearThenRefresh()
   if (parameterPointer_.size() == 0)
   {
     LOG_ERROR("ClearThenRefresh() called but no parameter pointers have been "
-              "set.");
+              "set (and no Refresh routine has been provided).");
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
@@ -1391,6 +1404,17 @@ int ModelImplementation::WriteParameterizedModel(
     return true;
   }
 
+  int present = false;
+  IsRoutinePresent(
+      KIM::MODEL_ROUTINE_NAME::WriteParameterizedModel, &present, NULL);
+  if (!present)
+  {
+    LOG_ERROR(
+        "The Model does not provide the WriteParameterizedModel routine.");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
+
   if (!IsCIdentifier(modelName))
   {
     LOG_ERROR("modelName '" + modelName + "' is not a valid C identifier.");
@@ -1429,6 +1453,14 @@ int ModelImplementation::WriteParameterizedModel(
   writeModelName_ = modelName;
   int error = ModelWriteParameterizedModel();
 
+  if (error)
+  {
+    LOG_ERROR(
+        "Model supplied WriteParameterizedModel() routine returned error.");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
+
   cmakelists_ << "  )\n";
   std::ofstream cmakeFile((path + "/CMakeLists.txt").c_str(),
                           std::ios::out | std::ios::trunc);
@@ -1441,18 +1473,11 @@ int ModelImplementation::WriteParameterizedModel(
   {
     LOG_ERROR("Unable to open CMakeLists.txt file for write.");
     LOG_DEBUG("Exit 1=" + callString);
-  }
-
-  if (error)
-  {
-    LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
-  else
-  {
-    LOG_DEBUG("Exit 0=" + callString);
-    return false;
-  }
+
+  LOG_DEBUG("Exit 0=" + callString);
+  return false;
 }
 
 void ModelImplementation::SetModelBufferPointer(void * const ptr)
@@ -1590,16 +1615,16 @@ int ModelImplementation::ConvertUnit(LengthUnit const fromLengthUnit,
   //
   // #if DEBUG_VERBOSITY
   //   std::string const callString = "ConvertUnit("
-  //       + fromLengthUnit.String() + ", "
-  //       + fromEnergyUnit.String() + ", "
-  //       + fromChargeUnit.String() + ", "
-  //       + fromTemperatureUnit.String() + ", "
-  //       + fromTimeUnit.String() + ", "
-  //       + toLengthUnit.String() + ", "
-  //       + toEnergyUnit.String() + ", "
-  //       + toChargeUnit.String() + ", "
-  //       + toTemperatureUnit.String() + ", "
-  //       + toTimeUnit.String() + ", "
+  //       + fromLengthUnit.ToString() + ", "
+  //       + fromEnergyUnit.ToString() + ", "
+  //       + fromChargeUnit.ToString() + ", "
+  //       + fromTemperatureUnit.ToString() + ", "
+  //       + fromTimeUnit.ToString() + ", "
+  //       + toLengthUnit.ToString() + ", "
+  //       + toEnergyUnit.ToString() + ", "
+  //       + toChargeUnit.ToString() + ", "
+  //       + toTemperatureUnit.ToString() + ", "
+  //       + toTimeUnit.ToString() + ", "
   //       + SNUM(lengthExponent) + ", "
   //       + SNUM(energyExponent) + ", "
   //       + SNUM(chargeExponent) + ", "
@@ -1616,11 +1641,11 @@ int ModelImplementation::ConvertUnit(LengthUnit const fromLengthUnit,
   static TimeMap const timeConvertToSI = GetTimeMap();
 
 #if ERROR_VERBOSITY
-  int error = Validate(fromLengthUnit) || Validate(fromEnergyUnit)
-              || Validate(fromChargeUnit) || Validate(fromTemperatureUnit)
-              || Validate(fromTimeUnit) || Validate(toLengthUnit)
-              || Validate(toEnergyUnit) || Validate(toChargeUnit)
-              || Validate(toTemperatureUnit) || Validate(toTimeUnit);
+  int error = (!fromLengthUnit.Known()) || (!fromEnergyUnit.Known())
+              || (!fromChargeUnit.Known()) || (!fromTemperatureUnit.Known())
+              || (!fromTimeUnit.Known()) || (!toLengthUnit.Known())
+              || (!toEnergyUnit.Known()) || (!toChargeUnit.Known())
+              || (!toTemperatureUnit.Known()) || (!toTimeUnit.Known());
   if (error)
   {
     // LOG_ERROR("Invalid arguments.");
@@ -1722,7 +1747,7 @@ void ModelImplementation::PushLogVerbosity(LogVerbosity const logVerbosity)
 {
 #if DEBUG_VERBOSITY
   std::string const callString
-      = "PushLogVerbosity(" + logVerbosity.String() + ").";
+      = "PushLogVerbosity(" + logVerbosity.ToString() + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -1761,10 +1786,10 @@ void ModelImplementation::LogEntry(LogVerbosity const logVerbosity,
   log_->LogEntry(logVerbosity, message, lineNumber, fileName);
 }
 
-std::string const & ModelImplementation::String() const
+std::string const & ModelImplementation::ToString() const
 {
 #if DEBUG_VERBOSITY
-  std::string const callString = "String().";
+  std::string const callString = "ToString().";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -1809,29 +1834,30 @@ std::string const & ModelImplementation::String() const
              MODEL_ROUTINE_NAME::Comparator>::const_iterator fptrResult
         = routineFunction_.find(modelRoutineName);
 
-    ss << "\t" << std::setw(25) << modelRoutineName.String() << std::setw(10)
-       << langResult->second.String() << std::setw(10) << requiredResult->second
-       << std::setw(25) << SFUNC(fptrResult->second) << "\n";
+    ss << "\t" << std::setw(25) << modelRoutineName.ToString() << std::setw(10)
+       << langResult->second.ToString() << std::setw(10)
+       << requiredResult->second << std::setw(25) << SFUNC(fptrResult->second)
+       << "\n";
   }
   ss << "\n";
 
-  ss << "Numbering : " << modelNumbering_.String() << "\n\n";
+  ss << "Numbering : " << modelNumbering_.ToString() << "\n\n";
 
   ss << "Units : \n"
         "\tLength Unit      : "
-     << lengthUnit_.String()
+     << lengthUnit_.ToString()
      << "\n"
         "\tEnergy Unit      : "
-     << energyUnit_.String()
+     << energyUnit_.ToString()
      << "\n"
         "\tCharge Unit      : "
-     << chargeUnit_.String()
+     << chargeUnit_.ToString()
      << "\n"
         "\tTemperature Unit : "
-     << temperatureUnit_.String()
+     << temperatureUnit_.ToString()
      << "\n"
         "\tTime Unit        : "
-     << timeUnit_.String() << "\n\n";
+     << timeUnit_.ToString() << "\n\n";
 
   if (influenceDistance_ == NULL)
     ss << "Influence Distance : "
@@ -1874,7 +1900,7 @@ std::string const & ModelImplementation::String() const
        spec != supportedSpecies_.end();
        ++spec)
   {
-    ss << "\t" << std::setw(specWidth) << (spec->first).String()
+    ss << "\t" << std::setw(specWidth) << (spec->first).ToString()
        << std::setw(specWidth) << spec->second << "\n";
   }
   ss << "\n";
@@ -1893,9 +1919,9 @@ std::string const & ModelImplementation::String() const
   for (int i = 0; i < numberOfParameters; ++i)
   {
     ss << "\t" << std::setw(8) << i << std::setw(10)
-       << parameterDataType_[i].String() << std::setw(10) << parameterExtent_[i]
-       << std::setw(15) << SPTR(parameterPointer_[i]) << parameterName_[i]
-       << "\n";
+       << parameterDataType_[i].ToString() << std::setw(10)
+       << parameterExtent_[i] << std::setw(15) << SPTR(parameterPointer_[i])
+       << parameterName_[i] << "\n";
   }
   ss << "\n";
 
@@ -1992,19 +2018,19 @@ int ModelImplementation::ModelCreate(
 {
 #if DEBUG_VERBOSITY
   std::string const callString
-      = "ModelCreate(" + numbering.String() + ", "
-        + requestedLengthUnit.String() + ", " + requestedEnergyUnit.String()
-        + ", " + requestedChargeUnit.String() + ", "
-        + requestedTemperatureUnit.String() + ", " + requestedTimeUnit.String()
-        + ", '" + modelName + "').";
+      = "ModelCreate(" + numbering.ToString() + ", "
+        + requestedLengthUnit.ToString() + ", " + requestedEnergyUnit.ToString()
+        + ", " + requestedChargeUnit.ToString() + ", "
+        + requestedTemperatureUnit.ToString() + ", "
+        + requestedTimeUnit.ToString() + ", '" + modelName + "').";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
 #if ERROR_VERBOSITY
-  int error = Validate(numbering) || Validate(requestedLengthUnit)
-              || Validate(requestedEnergyUnit) || Validate(requestedChargeUnit)
-              || Validate(requestedTemperatureUnit)
-              || Validate(requestedTimeUnit);
+  int error
+      = (!numbering.Known()) || (!requestedLengthUnit.Known())
+        || (!requestedEnergyUnit.Known()) || (!requestedChargeUnit.Known())
+        || (!requestedTemperatureUnit.Known()) || (!requestedTimeUnit.Known());
   if (error)
   {
     LOG_ERROR("Invalid arguments.");
@@ -2163,7 +2189,7 @@ int ModelImplementation::ModelCreate(
       if (funcResult->second == NULL)
       {
         LOG_ERROR("Model supplied Create() routine did not set pointer for "
-                  + modelRoutineName.String() + ".");
+                  + modelRoutineName.ToString() + ".");
         LOG_DEBUG("Exit 1=" + callString);
         return true;
       }
@@ -2175,7 +2201,7 @@ int ModelImplementation::ModelCreate(
     if (routineFunction_[MODEL_ROUTINE_NAME::Refresh] == NULL)
     {  // Must be provided if parameter pointers set
       LOG_ERROR("Model supplied Create() routine did not set pointer for "
-                + MODEL_ROUTINE_NAME::Refresh.String() + ".");
+                + MODEL_ROUTINE_NAME::Refresh.ToString() + ".");
       LOG_DEBUG("Exit 1=" + callString);
       return true;
     }
@@ -2185,7 +2211,7 @@ int ModelImplementation::ModelCreate(
     if (routineFunction_[MODEL_ROUTINE_NAME::Refresh] != NULL)
     {  // Must not be provided if no parameters set
       LOG_ERROR("Model supplied Create() routine set pointer for "
-                + MODEL_ROUTINE_NAME::Refresh.String()
+                + MODEL_ROUTINE_NAME::Refresh.ToString()
                 + " but did not "
                   "set parameter pointer(s).");
       LOG_DEBUG("Exit 1=" + callString);
@@ -2194,7 +2220,7 @@ int ModelImplementation::ModelCreate(
     if (routineFunction_[MODEL_ROUTINE_NAME::WriteParameterizedModel] != NULL)
     {  // Must not be provided if no parameters set
       LOG_ERROR("Model supplied Create() routine set pointer for "
-                + MODEL_ROUTINE_NAME::WriteParameterizedModel.String()
+                + MODEL_ROUTINE_NAME::WriteParameterizedModel.ToString()
                 + " but did not "
                   "set parameter pointer(s).");
       LOG_DEBUG("Exit 1=" + callString);
@@ -2764,18 +2790,18 @@ int ModelImplementation::InitializeStandAloneModel(
 {
 #if DEBUG_VERBOSITY
   std::string const callString
-      = "InitializeStandAloneModel(" + requestedLengthUnit.String() + ", "
-        + requestedEnergyUnit.String() + ", " + requestedChargeUnit.String()
-        + ", " + requestedTemperatureUnit.String() + ", "
-        + requestedTimeUnit.String() + ").";
+      = "InitializeStandAloneModel(" + requestedLengthUnit.ToString() + ", "
+        + requestedEnergyUnit.ToString() + ", " + requestedChargeUnit.ToString()
+        + ", " + requestedTemperatureUnit.ToString() + ", "
+        + requestedTimeUnit.ToString() + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
 #if ERROR_VERBOSITY
-  int error = Validate(requestedLengthUnit) || Validate(requestedEnergyUnit)
-              || Validate(requestedChargeUnit)
-              || Validate(requestedTemperatureUnit)
-              || Validate(requestedTimeUnit);
+  int error = (!requestedLengthUnit.Known()) || (!requestedEnergyUnit.Known())
+              || (!requestedChargeUnit.Known())
+              || (!requestedTemperatureUnit.Known())
+              || (!requestedTimeUnit.Known());
   if (error)
   {
     LOG_ERROR("Invalid arguments.");
@@ -2886,18 +2912,18 @@ int ModelImplementation::InitializeParameterizedModel(
 {
 #if DEBUG_VERBOSITY
   std::string const callString
-      = "InitializeParameterizedModel(" + requestedLengthUnit.String() + ", "
-        + requestedEnergyUnit.String() + ", " + requestedChargeUnit.String()
-        + ", " + requestedTemperatureUnit.String() + ", "
-        + requestedTimeUnit.String() + ").";
+      = "InitializeParameterizedModel(" + requestedLengthUnit.ToString() + ", "
+        + requestedEnergyUnit.ToString() + ", " + requestedChargeUnit.ToString()
+        + ", " + requestedTemperatureUnit.ToString() + ", "
+        + requestedTimeUnit.ToString() + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
 #if ERROR_VERBOSITY
-  int error = Validate(requestedLengthUnit) || Validate(requestedEnergyUnit)
-              || Validate(requestedChargeUnit)
-              || Validate(requestedTemperatureUnit)
-              || Validate(requestedTimeUnit);
+  int error = (!requestedLengthUnit.Known()) || (!requestedEnergyUnit.Known())
+              || (!requestedChargeUnit.Known())
+              || (!requestedTemperatureUnit.Known())
+              || (!requestedTimeUnit.Known());
   if (error)
   {
     LOG_ERROR("Invalid arguments.");
@@ -3115,335 +3141,6 @@ int ModelImplementation::WriteParameterFiles()
 
   LOG_DEBUG("Exit 0=" + callString);
   return false;
-}
-
-int ModelImplementation::Validate(ChargeUnit const chargeUnit)
-{
-  // No logging for Validate: no log object available
-  //
-  // #if DEBUG_VERBOSITY
-  //   std::string const callString = "Validate(" + chargeUnit.String()
-  //       + ").";
-  // #endif
-  //   LOG_DEBUG("Enter  " + callString);
-
-  int numberOfChargeUnits;
-  CHARGE_UNIT::GetNumberOfChargeUnits(&numberOfChargeUnits);
-
-  for (int i = 0; i < numberOfChargeUnits; ++i)
-  {
-    ChargeUnit cgUnit;
-    CHARGE_UNIT::GetChargeUnit(i, &cgUnit);
-
-    if (chargeUnit == cgUnit)
-    {
-      // LOG_DEBUG("Exit 0=" + callString);
-      return false;
-    }
-  }
-
-  // LOG_ERROR("Invalid ChargeUnit encountered.");
-  // LOG_DEBUG("Exit 1=" + callString);
-  return true;
-}
-
-int ModelImplementation::Validate(DataType const dataType)
-{
-  // No logging for Validate: no log object available
-  //
-  // #if DEBUG_VERBOSITY
-  //   std::string const callString = "Validate(" + dataType.String()
-  //       + ").";
-  // #endif
-  //   LOG_DEBUG("Enter  " + callString);
-
-  int numberOfDataTypes;
-  DATA_TYPE::GetNumberOfDataTypes(&numberOfDataTypes);
-
-  for (int i = 0; i < numberOfDataTypes; ++i)
-  {
-    DataType dType;
-    DATA_TYPE::GetDataType(i, &dType);
-
-    if (dataType == dType)
-    {
-      // LOG_DEBUG("Exit 0=" + callString);
-      return false;
-    }
-  }
-
-  // LOG_ERROR("Invalid DataType encountered.");
-  // LOG_DEBUG("Exit 1=" + callString);
-  return true;
-}
-
-int ModelImplementation::Validate(EnergyUnit const energyUnit)
-{
-  // No logging for Validate: no log object available
-  //
-  // #if DEBUG_VERBOSITY
-  //   std::string const callString = "Validate(" + energyUnit.String() + ").";
-  // #endif
-  //   LOG_DEBUG("Enter  " + callString);
-
-  int numberOfEnergyUnits;
-  ENERGY_UNIT::GetNumberOfEnergyUnits(&numberOfEnergyUnits);
-
-  for (int i = 0; i < numberOfEnergyUnits; ++i)
-  {
-    EnergyUnit eUnit;
-    ENERGY_UNIT::GetEnergyUnit(i, &eUnit);
-
-    if (energyUnit == eUnit)
-    {
-      // LOG_DEBUG("Exit 0=" + callString);
-      return false;
-    }
-  }
-
-  // LOG_ERROR("Invalid EnergyUnit encountered.");
-  // LOG_DEBUG("Exit 1=" + callString);
-  return true;
-}
-
-int ModelImplementation::Validate(LanguageName const languageName)
-{
-  // No logging for Validate: no log object available
-  //
-  // #if DEBUG_VERBOSITY
-  //   std::string const callString = "Validate(" + languageName.String()
-  //       + ").";
-  // #endif
-  //   LOG_DEBUG("Enter  " + callString);
-
-  int numberOfLanguageNames;
-  LANGUAGE_NAME::GetNumberOfLanguageNames(&numberOfLanguageNames);
-
-  for (int i = 0; i < numberOfLanguageNames; ++i)
-  {
-    LanguageName langName;
-    LANGUAGE_NAME::GetLanguageName(i, &langName);
-
-    if (languageName == langName)
-    {
-      // LOG_DEBUG("Exit 0=" + callString);
-      return false;
-    }
-  }
-
-  // LOG_ERROR("Invalid LanguageName encountered.");
-  // LOG_DEBUG("Exit 1=" + callString);
-  return true;
-}
-
-int ModelImplementation::Validate(LengthUnit const lengthUnit)
-{
-  // No logging for Validate: no log object available
-  //
-  // #if DEBUG_VERBOSITY
-  //   std::string const callString = "Validate(" + lengthUnit.String()
-  //       + ").";
-  // #endif
-  //   LOG_DEBUG("Enter  " + callString);
-
-  int numberOfLengthUnits;
-  LENGTH_UNIT::GetNumberOfLengthUnits(&numberOfLengthUnits);
-
-  for (int i = 0; i < numberOfLengthUnits; ++i)
-  {
-    LengthUnit lenUnit;
-    LENGTH_UNIT::GetLengthUnit(i, &lenUnit);
-
-    if (lengthUnit == lenUnit)
-    {
-      // LOG_DEBUG("Exit 0=" + callString);
-      return false;
-    }
-  }
-
-  // LOG_ERROR("Invalid LengthUnit encountered.");
-  // LOG_DEBUG("Exit 1=" + callString);
-  return true;
-}
-
-int ModelImplementation::Validate(Numbering const numbering)
-{
-  // No logging for Validate: no log object available
-  //
-  // #if DEBUG_VERBOSITY
-  //   std::string const callString = "Validate(" + numbering.String()
-  //       + ").";
-  // #endif
-  //   LOG_DEBUG("Enter  " + callString);
-
-  int numberOfNumberings;
-  NUMBERING::GetNumberOfNumberings(&numberOfNumberings);
-
-  for (int i = 0; i < numberOfNumberings; ++i)
-  {
-    Numbering num;
-    NUMBERING::GetNumbering(i, &num);
-
-    if (numbering == num)
-    {
-      // LOG_DEBUG("Exit 0=" + callString);
-      return false;
-    }
-  }
-
-  // LOG_ERROR("Invalid Numbering encountered.");
-  // LOG_DEBUG("Exit 1=" + callString);
-  return true;
-}
-
-int ModelImplementation::Validate(ModelRoutineName const modelRoutineName)
-{
-  // No logging for Validate: no log object available
-  //
-  // #if DEBUG_VERBOSITY
-  //   std::string const callString = "Validate(" + modelRoutineName.String()
-  //       + ").";
-  // #endif
-  //   LOG_DEBUG("Enter  " + callString);
-
-  int numberOfModelRoutineNames;
-  MODEL_ROUTINE_NAME::GetNumberOfModelRoutineNames(&numberOfModelRoutineNames);
-
-  for (int i = 0; i < numberOfModelRoutineNames; ++i)
-  {
-    ModelRoutineName routine;
-    MODEL_ROUTINE_NAME::GetModelRoutineName(i, &routine);
-
-    if (modelRoutineName == routine)
-    {
-      // LOG_DEBUG("Exit 0=" + callString);
-      return false;
-    }
-  }
-
-  // LOG_ERROR("Invalid ModelRoutineName encountered.");
-  // LOG_DEBUG("Exit 1=" + callString);
-  return true;
-}
-
-int ModelImplementation::Validate(SpeciesName const speciesName)
-{
-  // No logging for Validate: no log function available
-  //
-  // #if DEBUG_VERBOSITY
-  //   std::string const callString = "Validate(" + speciesName.String()
-  //       + ").";
-  // #endif
-  //   LOG_DEBUG("Enter  " + callString);
-
-  int numberOfSpeciesNames;
-  SPECIES_NAME::GetNumberOfSpeciesNames(&numberOfSpeciesNames);
-
-  for (int i = 0; i < numberOfSpeciesNames; ++i)
-  {
-    SpeciesName specName;
-    SPECIES_NAME::GetSpeciesName(i, &specName);
-
-    if (speciesName == specName)
-    {
-      // LOG_DEBUG("Exit 0=" + callString);
-      return false;
-    }
-  }
-
-  // LOG_ERROR("Invalid SpeciesName encountered.");
-  // LOG_DEBUG("Exit 1=" + callString);
-  return true;
-}
-
-int ModelImplementation::Validate(SupportStatus const supportStatus)
-{
-  // No logging for Validate: no log object available
-  //
-  // #if DEBUG_VERBOSITY
-  //   std::string const callString = "Validate(" + supportStatus.String()
-  //       + ").";
-  // #endif
-  //   LOG_DEBUG("Enter  " + callString);
-
-  int numberOfSupportStatuses;
-  SUPPORT_STATUS::GetNumberOfSupportStatuses(&numberOfSupportStatuses);
-
-  for (int i = 0; i < numberOfSupportStatuses; ++i)
-  {
-    SupportStatus supStatus;
-    SUPPORT_STATUS::GetSupportStatus(i, &supStatus);
-
-    if (supportStatus == supStatus)
-    {
-      // LOG_DEBUG("Exit 0=" + callString);
-      return false;
-    }
-  }
-
-  // LOG_ERROR("Invalid SupportStatus encountered.");
-  // LOG_DEBUG("Exit 1=" + callString);
-  return true;
-}
-
-int ModelImplementation::Validate(TemperatureUnit const temperatureUnit)
-{
-  // No logging for Validate: no log object available
-  //
-  // #if DEBUG_VERBOSITY
-  //   std::string const callString = "Validate(" + temperatureUnit.String()
-  //       + ").";
-  // #endif
-  //   LOG_DEBUG("Enter  " + callString);
-
-  int numberOfTemperatureUnits;
-  TEMPERATURE_UNIT::GetNumberOfTemperatureUnits(&numberOfTemperatureUnits);
-
-  for (int i = 0; i < numberOfTemperatureUnits; ++i)
-  {
-    TemperatureUnit tempUnit;
-    TEMPERATURE_UNIT::GetTemperatureUnit(i, &tempUnit);
-
-    if (temperatureUnit == tempUnit)
-    {
-      // LOG_DEBUG("Exit 0=" + callString);
-      return false;
-    }
-  }
-
-  // LOG_ERROR("Invalid TemperatureUnit encountered.");
-  // LOG_DEBUG("Exit 1=" + callString);
-  return true;
-}
-
-int ModelImplementation::Validate(TimeUnit const timeUnit)
-{
-  // No logging for Validate: no log object available
-  //
-  // #if DEBUG_VERBOSITY
-  //   std::string const callString = "Validate(" + timeUnit.String()
-  //       + ").";
-  // #endif
-  //   LOG_DEBUG("Enter  " + callString);
-
-  int numberOfTimeUnits;
-  TIME_UNIT::GetNumberOfTimeUnits(&numberOfTimeUnits);
-
-  for (int i = 0; i < numberOfTimeUnits; ++i)
-  {
-    TimeUnit tmUnit;
-    TIME_UNIT::GetTimeUnit(i, &tmUnit);
-
-    if (timeUnit == tmUnit)
-    {
-      // LOG_DEBUG("Exit 0=" + callString);
-      return false;
-    }
-  }
-
-  // LOG_ERROR("Invalid TimeUnit encountered.");
-  // LOG_DEBUG("Exit 1=" + callString);
-  return true;
 }
 
 int ModelImplementation::IsCIdentifier(std::string const & id) const

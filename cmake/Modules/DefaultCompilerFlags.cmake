@@ -19,7 +19,7 @@
 #
 
 #
-# Copyright (c) 2013--2018, Regents of the University of Minnesota.
+# Copyright (c) 2013--2019, Regents of the University of Minnesota.
 # All rights reserved.
 #
 # Contributors:
@@ -29,7 +29,7 @@
 #
 
 #
-# Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
+# Release: This file is part of the kim-api-v2-2.0.0 package.
 #
 
 
@@ -44,7 +44,11 @@ endif()
 if(KIM_API_ENABLE_COVERAGE)
   set(KIM_API_EXE_LINKER_FLAGS "${KIM_API_EXE_LINKER_FLAGS} -fprofile-arcs -ftest-coverage")
 endif()
-set(KIM_API_EXE_LINKER_FLAGS "${KIM_API_EXE_LINKER_FLAGS} -pie" CACHE STRING "KIM API linker flags")
+if(NOT CMAKE_C_COMPILER_ID STREQUAL Intel
+    AND
+    NOT CMAKE_C_COMPILER_ID STREQUAL AppleClang)
+  set(KIM_API_EXE_LINKER_FLAGS "${KIM_API_EXE_LINKER_FLAGS} -pie" CACHE STRING "KIM API linker flags")
+endif()
 #
 #
 set(CMAKE_EXE_LINKER_FLAGS "${KIM_API_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS}")
@@ -81,11 +85,19 @@ endif()
 set(KIM_API_C_FLAGS "${KIM_API_C_FLAGS}" CACHE STRING "KIM API C compiler flags")
 #
 include(EnableFortranCompilerFlagIfSupported)
-enable_fortran_compiler_flag_if_supported("-std=f2003")
-enable_fortran_compiler_flag_if_supported("-Wall")
-enable_fortran_compiler_flag_if_supported("-Wextra")
-enable_fortran_compiler_flag_if_supported("-Wimplicit-interface")
-enable_fortran_compiler_flag_if_supported("-pedantic")
+if(NOT CMAKE_Fortran_COMPILER_ID STREQUAL Intel)
+  enable_fortran_compiler_flag_if_supported("-std=f2003")
+  enable_fortran_compiler_flag_if_supported("-Wall")
+  enable_fortran_compiler_flag_if_supported("-Wextra")
+  enable_fortran_compiler_flag_if_supported("-Wimplicit-interface")
+  enable_fortran_compiler_flag_if_supported("-pedantic")
+else()
+  enable_fortran_compiler_flag_if_supported("-stand f03")
+  enable_fortran_compiler_flag_if_supported("-warn all")
+  enable_fortran_compiler_flag_if_supported("-e03")
+  enable_fortran_compiler_flag_if_supported("-warn interfaces")
+  enable_fortran_compiler_flag_if_supported("-diag-disable 5462")  # disable "Global name too long" warning
+endif()
 if(KIM_API_ENABLE_COVERAGE)
   enable_fortran_compiler_flag_if_supported("-fprofile-arcs")
   enable_fortran_compiler_flag_if_supported("-ftest-coverage")

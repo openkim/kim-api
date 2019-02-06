@@ -21,7 +21,7 @@
 //
 
 //
-// Copyright (c) 2016--2018, Regents of the University of Minnesota.
+// Copyright (c) 2016--2019, Regents of the University of Minnesota.
 // All rights reserved.
 //
 // Contributors:
@@ -29,7 +29,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
+// Release: This file is part of the kim-api-v2-2.0.0 package.
 //
 
 #ifndef KIM_LOG_VERBOSITY_HPP_
@@ -63,6 +63,11 @@ extern "C" {
 KIM_LogVerbosity KIM_LogVerbosity_FromString(char const * const str)
 {
   return makeLogVerbosityC(KIM::LogVerbosity(std::string(str)));
+}
+
+int KIM_LogVerbosity_Known(KIM_LogVerbosity const logVerbosity)
+{
+  return makeLogVerbosityCpp(logVerbosity).Known();
 }
 
 int KIM_LogVerbosity_LessThan(KIM_LogVerbosity const lhs,
@@ -101,7 +106,7 @@ int KIM_LogVerbosity_NotEqual(KIM_LogVerbosity const lhs,
 
 char const * KIM_LogVerbosity_ToString(KIM_LogVerbosity const logVerbosity)
 {
-  return makeLogVerbosityCpp(logVerbosity).String().c_str();
+  return makeLogVerbosityCpp(logVerbosity).ToString().c_str();
 }
 
 KIM_LogVerbosity const KIM_LOG_VERBOSITY_silent

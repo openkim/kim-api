@@ -19,7 +19,7 @@
 //
 
 //
-// Copyright (c) 2016--2018, Regents of the University of Minnesota.
+// Copyright (c) 2016--2019, Regents of the University of Minnesota.
 // All rights reserved.
 //
 // Contributors:
@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
+// Release: This file is part of the kim-api-v2-2.0.0 package.
 //
 
 
@@ -238,7 +238,7 @@ class ModelImplementation
                 std::stringstream const & message,
                 int const lineNumber,
                 std::string const & fileName) const;
-  std::string const & String() const;
+  std::string const & ToString() const;
 
  private:
   // do not allow copy constructor or operator=
@@ -267,18 +267,6 @@ class ModelImplementation
   int ModelRefresh();
   int ModelWriteParameterizedModel() const;
 
-
-  static int Validate(ChargeUnit const chargeUnit);
-  static int Validate(DataType const dataType);
-  static int Validate(EnergyUnit const energyUnit);
-  static int Validate(LanguageName const languageName);
-  static int Validate(LengthUnit const lengthUnit);
-  static int Validate(Numbering const numbering);
-  static int Validate(ModelRoutineName const modelRoutineName);
-  static int Validate(SpeciesName const speciesName);
-  static int Validate(SupportStatus const supportStatus);
-  static int Validate(TemperatureUnit const temperatureUnit);
-  static int Validate(TimeUnit const timeUnit);
 
   int IsCIdentifier(std::string const & id) const;
 

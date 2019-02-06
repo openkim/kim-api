@@ -21,7 +21,7 @@
 //
 
 //
-// Copyright (c) 2016--2018, Regents of the University of Minnesota.
+// Copyright (c) 2016--2019, Regents of the University of Minnesota.
 // All rights reserved.
 //
 // Contributors:
@@ -29,7 +29,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
+// Release: This file is part of the kim-api-v2-2.0.0 package.
 //
 
 #ifndef KIM_DATA_TYPE_HPP_
@@ -85,6 +85,12 @@ KIM_ComputeArgumentName_FromString(char const * const str)
   return makeComputeArgumentNameC(KIM::ComputeArgumentName(std::string(str)));
 }
 
+int KIM_ComputeArgumentName_Known(
+    KIM_ComputeArgumentName const computeArgumentName)
+{
+  return makeComputeArgumentNameCpp(computeArgumentName).Known();
+}
+
 int KIM_ComputeArgumentName_Equal(KIM_ComputeArgumentName const lhs,
                                   KIM_ComputeArgumentName const rhs)
 {
@@ -100,7 +106,7 @@ int KIM_ComputeArgumentName_NotEqual(KIM_ComputeArgumentName const lhs,
 char const *
 KIM_ComputeArgumentName_ToString(KIM_ComputeArgumentName computeArgumentName)
 {
-  return makeComputeArgumentNameCpp(computeArgumentName).String().c_str();
+  return makeComputeArgumentNameCpp(computeArgumentName).ToString().c_str();
 }
 
 // Order doesn't matter as long as all values are unique

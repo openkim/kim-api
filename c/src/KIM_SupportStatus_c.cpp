@@ -21,7 +21,7 @@
 //
 
 //
-// Copyright (c) 2016--2018, Regents of the University of Minnesota.
+// Copyright (c) 2016--2019, Regents of the University of Minnesota.
 // All rights reserved.
 //
 // Contributors:
@@ -29,7 +29,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
+// Release: This file is part of the kim-api-v2-2.0.0 package.
 //
 
 #ifndef KIM_SUPPORT_STATUS_HPP_
@@ -64,6 +64,11 @@ KIM_SupportStatus KIM_SupportStatus_FromString(char const * const str)
   return makeSupportStatusC(KIM::SupportStatus(std::string(str)));
 }
 
+int KIM_SupportStatus_Known(KIM_SupportStatus const supportStatus)
+{
+  return makeSupportStatusCpp(supportStatus).Known();
+}
+
 int KIM_SupportStatus_Equal(KIM_SupportStatus const lhs,
                             KIM_SupportStatus const rhs)
 {
@@ -78,7 +83,7 @@ int KIM_SupportStatus_NotEqual(KIM_SupportStatus const lhs,
 
 char const * KIM_SupportStatus_ToString(KIM_SupportStatus const supportStatus)
 {
-  return makeSupportStatusCpp(supportStatus).String().c_str();
+  return makeSupportStatusCpp(supportStatus).ToString().c_str();
 }
 
 #include "KIM_SupportStatus.inc"

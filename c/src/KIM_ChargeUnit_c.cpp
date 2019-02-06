@@ -21,7 +21,7 @@
 //
 
 //
-// Copyright (c) 2016--2018, Regents of the University of Minnesota.
+// Copyright (c) 2016--2019, Regents of the University of Minnesota.
 // All rights reserved.
 //
 // Contributors:
@@ -29,7 +29,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
+// Release: This file is part of the kim-api-v2-2.0.0 package.
 //
 
 #ifndef KIM_CHARGE_UNIT_HPP_
@@ -65,6 +65,11 @@ KIM_ChargeUnit KIM_ChargeUnit_FromString(char const * const str)
   return makeChargeUnitC(KIM::ChargeUnit(std::string(str)));
 }
 
+int KIM_ChargeUnit_Known(KIM_ChargeUnit const chargeUnit)
+{
+  return makeChargeUnitCpp(chargeUnit).Known();
+}
+
 int KIM_ChargeUnit_Equal(KIM_ChargeUnit const lhs, KIM_ChargeUnit const rhs)
 {
   return (lhs.chargeUnitID == rhs.chargeUnitID);
@@ -77,7 +82,7 @@ int KIM_ChargeUnit_NotEqual(KIM_ChargeUnit const lhs, KIM_ChargeUnit const rhs)
 
 char const * KIM_ChargeUnit_ToString(KIM_ChargeUnit const chargeUnit)
 {
-  return makeChargeUnitCpp(chargeUnit).String().c_str();
+  return makeChargeUnitCpp(chargeUnit).ToString().c_str();
 }
 
 #include "KIM_ChargeUnit.inc"

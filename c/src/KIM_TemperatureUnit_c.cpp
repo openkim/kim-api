@@ -21,7 +21,7 @@
 //
 
 //
-// Copyright (c) 2016--2018, Regents of the University of Minnesota.
+// Copyright (c) 2016--2019, Regents of the University of Minnesota.
 // All rights reserved.
 //
 // Contributors:
@@ -29,7 +29,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
+// Release: This file is part of the kim-api-v2-2.0.0 package.
 //
 
 #ifndef KIM_TEMPERATURE_UNIT_HPP_
@@ -67,6 +67,11 @@ KIM_TemperatureUnit KIM_TemperatureUnit_FromString(char const * const str)
   return makeTemperatureUnitC(KIM::TemperatureUnit(std::string(str)));
 }
 
+int KIM_TemperatureUnit_Known(KIM_TemperatureUnit const temperatureUnit)
+{
+  return makeTemperatureUnitCpp(temperatureUnit).Known();
+}
+
 int KIM_TemperatureUnit_Equal(KIM_TemperatureUnit const lhs,
                               KIM_TemperatureUnit const rhs)
 {
@@ -82,7 +87,7 @@ int KIM_TemperatureUnit_NotEqual(KIM_TemperatureUnit const lhs,
 char const *
 KIM_TemperatureUnit_ToString(KIM_TemperatureUnit const temperatureUnit)
 {
-  return makeTemperatureUnitCpp(temperatureUnit).String().c_str();
+  return makeTemperatureUnitCpp(temperatureUnit).ToString().c_str();
 }
 
 #include "KIM_TemperatureUnit.inc"

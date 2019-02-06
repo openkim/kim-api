@@ -19,7 +19,7 @@
 #
 
 #
-# Copyright (c) 2018, Regents of the University of Minnesota.
+# Copyright (c) 2018--2019, Regents of the University of Minnesota.
 # All rights reserved.
 #
 # Contributors:
@@ -27,13 +27,13 @@
 #
 
 #
-# Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
+# Release: This file is part of the kim-api-v2-2.0.0 package.
 #
 
 _@KIM_API_C_ID_PROJECT_NAME@_collections_management()
 {
   local collections_info
-  collections_info=@CMAKE_INSTALL_LIBEXECDIR@/@PROJECT_NAME@-collections-info
+  collections_info=@CMAKE_INSTALL_FULL_LIBEXECDIR@/@PROJECT_NAME@/@PROJECT_NAME@-collections-info
 
   local cur subcommands opts
   subcommands="list set-user-models-dir set-user-drivers-dir install reinstall"
@@ -114,11 +114,11 @@ _@KIM_API_C_ID_PROJECT_NAME@_collections_management()
       reinstall|remove)
         opts=""
         if test ${COMP_CWORD} -eq 2; then
-          opts="--interactive --sudo"
+          opts="--force --interactive --sudo"
         elif test ${COMP_CWORD} -eq 3 -a x"--interactive" = x"${COMP_WORDS[2]}"; then
           opts="--sudo"
-        elif test ${COMP_CWORD} -eq 3 -a x"--sudo" = x"${COMP_WORDS[2]}"; then
-          opts="--interactive"
+        elif test ${COMP_CWORD} -eq 3 -a x"--force" = x"${COMP_WORDS[2]}"; then
+          opts="--sudo"
         fi
         local models drivers
         models=`${collections_info} models | sed -e 's|[^[:space:]]* \([^[:space:]]*\) .*|\1|'`
@@ -136,11 +136,11 @@ _@KIM_API_C_ID_PROJECT_NAME@_collections_management()
       remove-all)
         opts=""
         if test ${COMP_CWORD} -eq 2; then
-          opts="--interactive --sudo"
+          opts="--force --interactive --sudo"
         elif test ${COMP_CWORD} -eq 3 -a x"--interactive" = x"${COMP_WORDS[2]}"; then
           opts="--sudo"
-        elif test ${COMP_CWORD} -eq 3 -a x"--sudo" = x"${COMP_WORDS[2]}"; then
-          opts="--interactive"
+        elif test ${COMP_CWORD} -eq 3 -a x"--force" = x"${COMP_WORDS[2]}"; then
+          opts="--sudo"
         fi
         COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
         return 0

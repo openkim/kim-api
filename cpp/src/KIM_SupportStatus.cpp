@@ -19,7 +19,7 @@
 //
 
 //
-// Copyright (c) 2016--2018, Regents of the University of Minnesota.
+// Copyright (c) 2016--2019, Regents of the University of Minnesota.
 // All rights reserved.
 //
 // Contributors:
@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-v2-2.0.0-beta.3 package.
+// Release: This file is part of the kim-api-v2-2.0.0 package.
 //
 
 #include <map>
@@ -86,7 +86,7 @@ int GetSupportStatus(int const index, SupportStatus * const supportStatus)
 }  // namespace SUPPORT_STATUS
 
 // implementation of SupportStatus
-SupportStatus::SupportStatus() : supportStatusID(0) {}
+SupportStatus::SupportStatus() {}
 SupportStatus::SupportStatus(int const id) : supportStatusID(id) {}
 SupportStatus::SupportStatus(std::string const & str)
 {
@@ -104,6 +104,22 @@ SupportStatus::SupportStatus(std::string const & str)
   }
 }
 
+bool SupportStatus::Known() const
+{
+  int numberOfSupportStatuses;
+  SUPPORT_STATUS::GetNumberOfSupportStatuses(&numberOfSupportStatuses);
+
+  for (int i = 0; i < numberOfSupportStatuses; ++i)
+  {
+    SupportStatus supStatus;
+    SUPPORT_STATUS::GetSupportStatus(i, &supStatus);
+
+    if (*this == supStatus) { return true; }
+  }
+
+  return false;
+}
+
 bool SupportStatus::operator==(SupportStatus const & rhs) const
 {
   return supportStatusID == rhs.supportStatusID;
@@ -113,7 +129,7 @@ bool SupportStatus::operator!=(SupportStatus const & rhs) const
   return supportStatusID != rhs.supportStatusID;
 }
 
-std::string const & SupportStatus::String() const
+std::string const & SupportStatus::ToString() const
 {
   SUPPORT_STATUS::StringMap::const_iterator iter
       = SUPPORT_STATUS::supportStatusToString.find(*this);
