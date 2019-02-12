@@ -62,8 +62,6 @@ mark_as_advanced(KIM_API_ENABLE_SANITIZE)
 option(KIM_API_ENABLE_COVERAGE "Enable code coverage" OFF)
 mark_as_advanced(KIM_API_ENABLE_COVERAGE)
 #
-# option(KIM_API_DOWNLOAD_OPENKIM "TODO Download all models, model drivers and simulators" OFF)
-#
 # Additional options (that depend on call to project()) defined below
 
 
@@ -134,27 +132,6 @@ if(KIM_API_BUILD_EXAMPLES)
   add_subdirectory(examples/models)
   add_subdirectory(examples/simulators)
 endif()
-
-
-# # Add downloads, if appropriate
-# #
-# if(KIM_API_DOWNLOAD_OPENKIM)
-#     # TODO insert full model/model_driver/simulator git repo or tarball here
-#     set(GIT_REPOSITORY "https://github.com/openkim/kim-api.git")
-#     set(GIT_BRANCH "cmake")
-#
-#     # TODO don't hardcode the directory "download"
-#     if(EXISTS ${CMAKE_BINARY_DIR}/download)
-#         execute_process(COMMAND git pull  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/download)
-#     else()
-#         execute_process(COMMAND git clone -b ${GIT_BRANCH} ${GIT_REPOSITORY} download WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
-#     endif()
-#
-#     # TODO don't hardcode these directories
-#     add_subdirectory(${CMAKE_BINARY_DIR}/download/examples/models)
-#     add_subdirectory(${CMAKE_BINARY_DIR}/download/examples/model-drivers)
-#     add_subdirectory(${CMAKE_BINARY_DIR}/download/examples/simulators)
-# endif()
 
 
 # Add install rules for kim-api
