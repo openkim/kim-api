@@ -349,8 +349,8 @@ $ source ${HOME}/local/bin/kim-api-vX-activate
 
 D.2.4 KIM API SPECIFIC BUILD OPTIONS
 
-The KIM API defines two additional regular build options and four advanced
-options.
+The KIM API defines two additional regular build options and additional
+advanced options.
 
 * KIM_API_LOG_MAXIMUM_LEVEL (="DEBUG" if CMAKE_BUILD_TYPE is "Debug", otherwise
   ="INFORMATION") This option takes one of the following six values "SILENT",
@@ -362,7 +362,7 @@ options.
   simulators.  NOTE: this option may be removed/changed in future releases when
   the examples are incorporated into the documentation.
 
-Additionally, the KIM API defines the following four advanced options.
+Additionally, the KIM API defines the following advanced options.
 
 * KIM_API_ENABLE_SANITIZE (=OFF) When ON this enables the AddressSanitizer
   library for detecting memory corruption bugs.
@@ -378,6 +378,18 @@ Additionally, the KIM API defines the following four advanced options.
   the package build.  Generally this should not be changed.  It can be used to
   build and install, on the same machine, two different copies of the same
   major version of the package.  This could be desirable for debugging.
+
+* KIM_API_CMAKE_C_COMPILER (="${CMAKE_C_COMPILER}") This value is recorded and
+  used after installation for compilation of items (models, model drivers,
+  etc.) to ensure binary compatibility with the installed KIM API.
+
+* KIM_API_CMAKE_CXX_COMPILER (="${CMAKE_CXX_COMPILER}") This value is recorded
+  and used after installation for compilation of items (models, model drivers,
+  etc.) to ensure binary compatibility with the installed KIM API.
+
+* KIM_API_CMAKE_Fortran_COMPILER (="${CMAKE_Fortran_COMPILER}") This value is
+  recorded and used after installation for compilation of items (models, model
+  drivers, etc.) to ensure binary compatibility with the installed KIM API.
 
 D.3 Uninstall the KIM API
 

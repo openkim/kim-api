@@ -78,6 +78,13 @@ include(DefineVersionVariables)
 
 # Define options dependent on PROJECT_NAME
 #
+set(KIM_API_CMAKE_C_COMPILER "${CMAKE_C_COMPILER}" CACHE FILEPATH "C compiler filepath to be used after installation for item compilation.")
+mark_as_advanced(KIM_API_CMAKE_C_COMPILER)
+set(KIM_API_CMAKE_CXX_COMPILER "${CMAKE_CXX_COMPILER}" CACHE FILEPATH "C++ compiler filepath to be used after installation for item compilation.")
+mark_as_advanced(KIM_API_CMAKE_CXX_COMPILER)
+set(KIM_API_CMAKE_Fortran_COMPILER "${CMAKE_Fortran_COMPILER}" CACHE FILEPATH "Fortran compiler filepath to be used after installation for item compilation.")
+mark_as_advanced(KIM_API_CMAKE_Fortran_COMPILER)
+#
 set(KIM_API_USER_CONFIGURATION_FILE ".${PROJECT_NAME}/config" CACHE STRING "Default configuration file name.  If not absolute, then relative to user home directory")
 mark_as_advanced(KIM_API_USER_CONFIGURATION_FILE)
 
