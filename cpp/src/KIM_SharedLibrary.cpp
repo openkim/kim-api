@@ -70,6 +70,7 @@ namespace KIM
 #define KIM_LOGGER_OBJECT_NAME this
 SharedLibrary::SharedLibrary(Log * const log) :
     sharedLibraryHandle_(NULL),
+    sharedLibrarySchemaVersion_(NULL),
     sharedLibrarySchema_(NULL),
     log_(log)
 {

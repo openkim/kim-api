@@ -319,7 +319,7 @@ int LennardJones612Implementation::OpenParameterFiles(
               i);
       ier = true;
       LOG_ERROR(message);
-      for (int j = i - 1; j <= 0; --j) { fclose(parameterFilePointers[j]); }
+      for (int j = i - 1; j >= 0; --j) { fclose(parameterFilePointers[j]); }
       return ier;
     }
   }
