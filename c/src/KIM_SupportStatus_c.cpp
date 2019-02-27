@@ -29,7 +29,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-v2-2.0.0 package.
+// Release: This file is part of the kim-api-v2-2.0.1 package.
 //
 
 #ifndef KIM_SUPPORT_STATUS_HPP_

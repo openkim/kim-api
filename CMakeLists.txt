@@ -29,7 +29,7 @@
 #
 
 #
-# Release: This file is part of the kim-api-v2-2.0.0 package.
+# Release: This file is part of the kim-api-v2-2.0.1 package.
 #
 
 
@@ -62,15 +62,13 @@ mark_as_advanced(KIM_API_ENABLE_SANITIZE)
 option(KIM_API_ENABLE_COVERAGE "Enable code coverage" OFF)
 mark_as_advanced(KIM_API_ENABLE_COVERAGE)
 #
-# option(KIM_API_DOWNLOAD_OPENKIM "TODO Download all models, model drivers and simulators" OFF)
-#
 # Additional options (that depend on call to project()) defined below
 
 
 #
 # Define main project
 #
-project(${PROJECT_PREFIX}-v2 VERSION 2.0.0 LANGUAGES CXX C Fortran)  # must remain a single line for create-pacakge script
+project(${PROJECT_PREFIX}-v2 VERSION 2.0.1 LANGUAGES CXX C Fortran)  # must remain a single line for create-pacakge script
 set(PROJECT_DESCRIPTION "An Application Programming Interface (API) for the Knowledgebase of Interatomic Models (KIM).")
 include(GNUInstallDirs)  # needs to come after call to project()
 include(Bash-CompletionConfig)  # set install dirs for bash completions
@@ -79,6 +77,13 @@ include(DefineVersionVariables)
 
 
 # Define options dependent on PROJECT_NAME
+#
+set(KIM_API_CMAKE_C_COMPILER "${CMAKE_C_COMPILER}" CACHE FILEPATH "C compiler filepath to be used after installation for item compilation.")
+mark_as_advanced(KIM_API_CMAKE_C_COMPILER)
+set(KIM_API_CMAKE_CXX_COMPILER "${CMAKE_CXX_COMPILER}" CACHE FILEPATH "C++ compiler filepath to be used after installation for item compilation.")
+mark_as_advanced(KIM_API_CMAKE_CXX_COMPILER)
+set(KIM_API_CMAKE_Fortran_COMPILER "${CMAKE_Fortran_COMPILER}" CACHE FILEPATH "Fortran compiler filepath to be used after installation for item compilation.")
+mark_as_advanced(KIM_API_CMAKE_Fortran_COMPILER)
 #
 set(KIM_API_USER_CONFIGURATION_FILE ".${PROJECT_NAME}/config" CACHE STRING "Default configuration file name.  If not absolute, then relative to user home directory")
 mark_as_advanced(KIM_API_USER_CONFIGURATION_FILE)
@@ -134,27 +139,6 @@ if(KIM_API_BUILD_EXAMPLES)
   add_subdirectory(examples/models)
   add_subdirectory(examples/simulators)
 endif()
-
-
-# # Add downloads, if appropriate
-# #
-# if(KIM_API_DOWNLOAD_OPENKIM)
-#     # TODO insert full model/model_driver/simulator git repo or tarball here
-#     set(GIT_REPOSITORY "https://github.com/openkim/kim-api.git")
-#     set(GIT_BRANCH "cmake")
-#
-#     # TODO don't hardcode the directory "download"
-#     if(EXISTS ${CMAKE_BINARY_DIR}/download)
-#         execute_process(COMMAND git pull  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/download)
-#     else()
-#         execute_process(COMMAND git clone -b ${GIT_BRANCH} ${GIT_REPOSITORY} download WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
-#     endif()
-#
-#     # TODO don't hardcode these directories
-#     add_subdirectory(${CMAKE_BINARY_DIR}/download/examples/models)
-#     add_subdirectory(${CMAKE_BINARY_DIR}/download/examples/model-drivers)
-#     add_subdirectory(${CMAKE_BINARY_DIR}/download/examples/simulators)
-# endif()
 
 
 # Add install rules for kim-api

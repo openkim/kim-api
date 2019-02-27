@@ -31,7 +31,7 @@
 #
 
 #
-# Release: This file is part of the kim-api-v2-2.0.0 package.
+# Release: This file is part of the kim-api-v2-2.0.1 package.
 #
 
 collections_info=@CMAKE_INSTALL_FULL_LIBEXECDIR@/@PROJECT_NAME@/@PROJECT_NAME@-collections-info

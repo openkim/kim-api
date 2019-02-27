@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-v2-2.0.0 package.
+// Release: This file is part of the kim-api-v2-2.0.1 package.
 //
 
 
@@ -374,7 +374,7 @@ int ParseSemVer(std::string const & version,
     return true;  // Has leading zeros
   }
   char * end;
-  int verNumber = strtol(majorStr.c_str(), &end, 10);
+  int majorVerNumber = strtol(majorStr.c_str(), &end, 10);
   if ('\0' != *end)
   {
     return true;  // Not a valid integer
@@ -385,7 +385,7 @@ int ParseSemVer(std::string const & version,
   {
     return true;  // Has leading zeros
   }
-  verNumber = strtol(minorStr.c_str(), &end, 10);
+  int minorVerNumber = strtol(minorStr.c_str(), &end, 10);
   if ('\0' != *end)
   {
     return true;  // Not a valid integer
@@ -396,7 +396,7 @@ int ParseSemVer(std::string const & version,
   {
     return true;  // Has leading zeros
   }
-  verNumber = strtol(patchStr.c_str(), &end, 10);
+  int patchVerNumber = strtol(patchStr.c_str(), &end, 10);
   if ('\0' != *end)
   {
     return true;  // Not a valid integer
@@ -420,9 +420,9 @@ int ParseSemVer(std::string const & version,
     }
   }
 
-  if (major != NULL) { *major = verNumber; }
-  if (minor != NULL) { *minor = verNumber; }
-  if (patch != NULL) { *patch = verNumber; }
+  if (major != NULL) { *major = majorVerNumber; }
+  if (minor != NULL) { *minor = minorVerNumber; }
+  if (patch != NULL) { *patch = patchVerNumber; }
   if (prerelease != NULL) { *prerelease = prereleaseStr; }
   if (buildMetadata != NULL) { *buildMetadata = buildMetadataStr; }
 

@@ -319,7 +319,7 @@ int LennardJones612Implementation::OpenParameterFiles(
               i);
       ier = true;
       LOG_ERROR(message);
-      for (int j = i - 1; i <= 0; --i) { fclose(parameterFilePointers[j]); }
+      for (int j = i - 1; j >= 0; --j) { fclose(parameterFilePointers[j]); }
       return ier;
     }
   }
@@ -456,19 +456,20 @@ int LennardJones612Implementation::ProcessParameterFiles(
   }
 
   // check that we got all like - like pairs
-  sprintf(nextLine, "There are not values for like-like pairs of:");
+  std::stringstream ss;
+  ss << "There are not values for like-like pairs of:";
   for (int i = 0; i < N; i++)
   {
     if (cutoffs_[(i * N + i - (i * i + i) / 2)] == -1)
     {
-      strcat(nextLine, "  ");
-      strcat(nextLine, (speciesNameVector[i].ToString()).c_str());
+      ss << "  ";
+      ss << (speciesNameVector[i].ToString()).c_str();
       ier = -1;
     }
   }
   if (ier == -1)
   {
-    LOG_ERROR(nextLine);
+    LOG_ERROR(ss);
     return true;
   }
 

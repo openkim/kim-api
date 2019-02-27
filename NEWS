@@ -28,8 +28,23 @@
 #
 
 #
-# Release: This file is part of the kim-api-v2-2.0.0 package.
+# Release: This file is part of the kim-api-v2-2.0.1 package.
 #
+
+
+=== kim-api-v2-2.0.1 ============ 22Feb2019 ====================================
+
+* Fix bug in KIM::SemVer::ParseSemVer()
+
+* Various minor fixes to address issues identified by Coverity Scan
+
+* Fix version string in libkim-api-v2.pc to conform to RPM schema
+
+* Added advanced CMake options for compilers used to build items after install
+
+* Added item install prefix CMake variables to cache; helps with packaging
+
+* Remove dead code in top level CMakeLists.txt
 
 
 === kim-api-v2-2.0.0 ============ 06Feb2019 ====================================
