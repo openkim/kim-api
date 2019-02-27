@@ -32,7 +32,7 @@
 
 #include <dlfcn.h>
 #include <iostream>
-//#include <string>
+#include <string>
 
 void usage(std::string name)
 {
@@ -45,6 +45,13 @@ void usage(std::string name)
   // note: this interface is likely to change in future kim-api releases
 }
 
+int IsFilePath(std::string const & filePath)
+{
+  // not very comperhensive but can be improved as needed
+  if (filePath.length() == 0) return false;
+  return true;
+}
+
 int main(int argc, char * argv[])
 {
   if (argc != 2)
@@ -54,11 +61,18 @@ int main(int argc, char * argv[])
   }
   else
   {
-    void * sharedLibraryHandle = dlopen(argv[1], RTLD_NOW);
+    std::string libFilePath(argv[1]);
+    if (!IsFilePath(libFilePath))  // validate lib path
+    {
+      std::cout << "Invalid <shared-library-name>.\n" << std::endl;
+      return 2;
+    }
+
+    void * sharedLibraryHandle = dlopen(libFilePath.c_str(), RTLD_NOW);
     if (sharedLibraryHandle == NULL)
     {
       std::cout << "Unable to open shared library.\n" << dlerror() << std::endl;
-      return 2;
+      return 3;
     }
     else
     {

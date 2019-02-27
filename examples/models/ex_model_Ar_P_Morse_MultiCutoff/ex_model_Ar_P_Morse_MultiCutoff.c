@@ -367,6 +367,12 @@ int loops(KIM_ModelCompute const * const modelCompute,
             {
               ier = KIM_ModelComputeArguments_ProcessDEDrTerm(
                   modelComputeArguments, dEidr, R, pRij, i, j);
+              if (ier)
+              {
+                LOG_ERROR("ProcessDEDrTerm callback error");
+                ier = TRUE;
+                return ier;
+              }
             }
 
             /* contribution to process_d2Edr2 */
@@ -386,6 +392,12 @@ int loops(KIM_ModelCompute const * const modelCompute,
                   pRij_pairs,
                   pi_pairs,
                   pj_pairs);
+              if (ier)
+              {
+                LOG_ERROR("ProcessD2EDr2Term callback error");
+                ier = TRUE;
+                return ier;
+              }
             }
 
             /* contribution to forces */

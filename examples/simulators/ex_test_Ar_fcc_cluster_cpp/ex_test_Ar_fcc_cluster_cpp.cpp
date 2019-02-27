@@ -389,6 +389,8 @@ int main()
   if (NULL == nl_cluster_model.neighborList) MY_ERROR("new unsuccessful");
 
   /* ready to compute */
+  std::ios oldState(NULL);
+  oldState.copyfmt(std::cout);
   std::cout << std::setiosflags(std::ios::scientific) << std::setprecision(10);
   std::cout << "This is Test : ex_test_Ar_fcc_cluster_cpp\n";
   std::cout << "---------------------------------------------------------------"
@@ -475,6 +477,7 @@ int main()
   delete[] nl_cluster_model.neighborList;
 
   /* everything is great */
+  std::cout.copyfmt(oldState);
   return 0;
 }
 
