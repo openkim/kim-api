@@ -29,7 +29,7 @@ matrix:
           make -j2 &&
           ccache -s &&
           make test &&
-          if test x"${COVERAGE}" != x""; then bash <(curl -s https://codecov.io/bash) -x gcov-6; fi &&
+          if test x"${COVERAGE}" != x""; then bash <(curl -s https://codecov.io/bash | sed -e's/execdir/exec/g') -x gcov-6; fi &&
           mkdir ./destdir &&
           make install DESTDIR=${PWD}/destdir &&
           rm -rf ./destdir/usr/local/{bin,etc,include,lib,libexec,share} &&
