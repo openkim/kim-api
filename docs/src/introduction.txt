@@ -78,6 +78,8 @@ Table of Contents:
 
 -# \ref version2_differences
 
+-# \ref The [NEWS](_n_e_w_s_source.html) file.
+
 In addition, all public header files and included example codes are available
 for [browsing](files.html).
 

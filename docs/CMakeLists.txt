@@ -80,6 +80,7 @@ set(SOURCES
   "../cpp/include/"
   "../c/include/"
   "../fortran/include/"
+  "../NEWS"
   "../examples/model-drivers/"
   "../examples/models/"
   "../examples/simulators/"
