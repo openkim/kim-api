@@ -108,6 +108,7 @@ w
 EOF
 
 
+# Change kim-api.git to release version string
 # replace c /* */ comments
 orig_string="kim-api.git repository"
 new_string="${fullpackagename} package"
@@ -131,6 +132,13 @@ q
 EOF
   fi
 done
+
+# Change branch id in README.md badge links
+ed "README.md" > /dev/null 2>&1 <<EOF
+g/^\[!/s/devel/master/g
+w
+q
+EOF
 
 printf "\n"
 git add -u
