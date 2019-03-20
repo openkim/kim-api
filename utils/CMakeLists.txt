@@ -53,6 +53,7 @@ target_link_libraries(collections-info kim-loader)
 set_target_properties(collections-info PROPERTIES OUTPUT_NAME ${COLLECTIONS_INFO})
 
 add_executable(shared-library-test shared-library-test.cpp)
+target_include_directories(shared-library-test PRIVATE ${CMAKE_BINARY_DIR})
 target_link_libraries(shared-library-test ${CMAKE_DL_LIBS})
 set_target_properties(shared-library-test PROPERTIES OUTPUT_NAME ${SHARED_LIBRARY_TEST})
 

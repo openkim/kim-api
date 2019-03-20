@@ -30,6 +30,7 @@
 // Release: This file is part of the kim-api.git repository.
 //
 
+#include "KIM_Version.hpp"
 #include <dlfcn.h>
 #include <iostream>
 #include <string>
@@ -41,7 +42,8 @@ void usage(std::string name)
 
   // Follows docopt.org format
   std::cerr << "Usage:\n"
-            << "  " << name << " <shared-library-name>" << std::endl;
+            << "  " << name << " <shared-library-name>\n"
+            << "  " << name << " --version" << std::endl;
   // note: this interface is likely to change in future kim-api releases
 }
 
@@ -58,6 +60,11 @@ int main(int argc, char * argv[])
   {
     usage(argv[0]);
     return 1;
+  }
+  else if (std::string(argv[1]) == "--version")
+  {
+    std::cout << KIM_VERSION_STRING << std::endl;
+    return 0;
   }
   else
   {

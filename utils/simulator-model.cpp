@@ -32,6 +32,7 @@
 
 #include "KIM_Configuration.hpp"
 #include "KIM_SharedLibrary.hpp"
+#include "KIM_Version.hpp"
 #include "old_KIM_API_DIRS.h"
 #include <cstdio>
 #include <cstdlib>
@@ -57,7 +58,9 @@ void usage(std::string name)
             << "  " << name << " "
             << "<simulator-model-name> "
             << "(metadata-file | <one-based-parameter-file-index>) "
-            << "(data | name)\n";
+            << "(data | name)\n"
+            << "  " << name << " "
+            << "--version\n";
   // note: this interface is likely to change in future kim-api releases
 }
 
@@ -68,6 +71,12 @@ int main(int argc, char * argv[])
   {
     usage(argv[0]);
     return -1;
+  }
+
+  if ((argc == 2) && (std::string(argv[1]) == "--version"))
+  {
+    std::cout << KIM_VERSION_STRING << std::endl;
+    return 0;
   }
 
   char const * modelname = argv[1];

@@ -32,6 +32,7 @@
 
 #include "KIM_Log.hpp"
 #include "KIM_LogVerbosity.hpp"
+#include "KIM_Version.hpp"
 #include "old_KIM_API_DIRS.h"
 #include <cstring>
 #include <iostream>
@@ -54,7 +55,8 @@ void usage(std::string name)
             << " config_file (env | name | models | model_drivers)\n"
             << "  " << name << " system (library | models | model_drivers)\n"
             << "  " << name << " models [--log] [find <model-name>]\n"
-            << "  " << name << " model_drivers [--log] [find <driver-name>]\n";
+            << "  " << name << " model_drivers [--log] [find <driver-name>]\n"
+            << "  " << name << " --version\n";
   // note: this interface is likely to change in future kim-api releases
 }
 
@@ -211,6 +213,11 @@ int main(int argc, char * argv[])
              || (0 == strcmp("model_drivers", argv[1])))
     {
       returnVal = processItems(argc, argv);
+    }
+    else if (0 == strcmp("--version", argv[1]))
+    {
+      std::cout << KIM_VERSION_STRING << std::endl;
+      returnVal = 0;
     }
     else
     {

@@ -36,6 +36,7 @@
 
 collections_info=@CMAKE_INSTALL_FULL_LIBEXECDIR@/@PROJECT_NAME@/@PROJECT_NAME@-collections-info
 major_version=@PROJECT_VERSION_MAJOR@
+kim_version_string="@PROJECT_VERSION_STRING@"
 
 make_command="make"
 cmake_command="cmake"
@@ -58,6 +59,7 @@ usage () {
   printf "          (<openkim-item-id> | <local-item-path>)...\n"
   printf "  ${command} remove [--force|--interactive] [--sudo] <item-id>...\n"
   printf "  ${command} remove-all [--force|--interactive] [--sudo]\n"
+  printf "  ${command} --version\n"
   printf "\n\n"
 
   printf "list:\n"
@@ -750,7 +752,7 @@ if test $# -lt 1; then
 else
   command=$1
   case $command in
-    list|set-user-drivers-dir|set-user-models-dir|install|reinstall|remove|remove-all)
+    list|set-user-drivers-dir|set-user-models-dir|install|reinstall|remove|remove-all|--version)
     ;;
     *)
       printf "unknown command: %s\n\n" $command
@@ -1075,6 +1077,14 @@ case $command in
     else
       printf "\nAborting!\n"
       exit 1
+    fi
+    ;;
+  --version)
+    if test $# -ne 1; then
+      usage
+      exit 1
+    else
+      printf "%s\n" "${kim_version_string}"
     fi
     ;;
 esac
