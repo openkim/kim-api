@@ -616,10 +616,10 @@ print_list_of_drivers_and_models () {
   printf -- "\t%s\n" "${config_env}"
   printf "\n"
   printf -- "%s:\n" "${drivers_env_name}"
-  printf -- "\t%s\n" "${drivers_env}"
+  printf -- "\t%s\n" ${drivers_env}  # unquoted ${drivers_env} to have multiple separate arguments
   printf "\n"
   printf -- "%s:\n" "${models_env_name}"
-  printf -- "\t%s\n" "${models_env}"
+  printf -- "\t%s\n" ${models_env}  # unquoted ${models_env} to have multiple separate arguments
   printf "\n"
   print_separator_line "="
 
@@ -632,7 +632,7 @@ print_list_of_drivers_and_models () {
   printf "\n\n\n"
   printf "Current Working Directory Collection\n"
   print_separator_line "-"
-  printf "Drivers: %s\n" "${PWD}"
+  printf "Drivers: '%s'\n" "${PWD}"
   if test $number_drivers_cwd -gt 0; then
     printf "${drivers_cwd_collection}"
   else
@@ -640,7 +640,7 @@ print_list_of_drivers_and_models () {
   fi
   printf "\n"
 
-  printf "Models: %s\n" "${PWD}"
+  printf "Models: '%s'\n" "${PWD}"
   if test $number_models_cwd -gt 0; then
     printf -- "${models_cwd_collection}"  # expected to have control characters
   else
@@ -683,14 +683,14 @@ print_list_of_drivers_and_models () {
   if test x"" = x"${models_usr}"; then models_usr="--empty--"; fi
   printf "User Collection\n"
   print_separator_line "-"
-  printf "Drivers: %s\n" "${drivers_usr}"
+  printf "Drivers: '%s'\n" "${drivers_usr}"
   if test $number_drivers_usr -gt 0; then
     printf -- "${drivers_usr_collection}"  # expected to have control characters
   else
     printf "\t--empty--\n"
   fi
   printf "\n"
-  printf "Models: %s\n" "${models_usr}"
+  printf "Models: '%s'\n" "${models_usr}"
   if test $number_models_usr -gt 0; then
     printf -- "${models_usr_collection}"  # expected to have control characters
   else
@@ -700,14 +700,14 @@ print_list_of_drivers_and_models () {
 
   printf "System Collection\n"
   print_separator_line "-"
-  printf "Drivers: %s\n" "`${collections_info} system model_drivers`"
+  printf "Drivers: '%s'\n" "`${collections_info} system model_drivers`"
   if test $number_drivers_sys -gt 0; then
     printf -- "${drivers_sys_collection}"  # expected to have control characters
   else
     printf "\t--empty--\n"
   fi
   printf "\n\n"
-  printf "Models: %s\n" "`${collections_info} system models`"
+  printf "Models: '%s'\n" "`${collections_info} system models`"
   if test $number_models_sys -gt 0; then
     printf -- "${models_sys_collection}"  # expected to have control characters
   else
