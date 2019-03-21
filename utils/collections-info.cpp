@@ -89,14 +89,15 @@ void collectionsInfo::env(ENV_OPTIONS const opt)
   {
     case E_ENV:
     {
-      std::string models_env = pushEnvDirs(KIM_MODELS_DIR, &lst);
-      std::string drivers_env = pushEnvDirs(KIM_MODEL_DRIVERS_DIR, &lst);
+      std::map<OLD_KIM::CollectionItemType const, std::string> envVarNames;
+      getEnvironmentVariableNames(&envVarNames);
 
-      std::cout << models_env << " " << drivers_env << std::endl;
+      std::cout << envVarNames[KIM_MODELS] << " "
+                << envVarNames[KIM_MODEL_DRIVERS] << std::endl;
       break;
     }
     case E_MODELS:
-      pushEnvDirs(KIM_MODELS_DIR, &lst);
+      pushDirs(KIM_ENVIRONMENT, KIM_MODELS, &lst, NULL);
 
       for (std::list<std::pair<std::string, std::string> >::const_iterator itr
            = lst.begin();
@@ -105,7 +106,7 @@ void collectionsInfo::env(ENV_OPTIONS const opt)
       { std::cout << itr->second << std::endl; }
       break;
     case E_MODEL_DRIVERS:
-      pushEnvDirs(KIM_MODEL_DRIVERS_DIR, &lst);
+      pushDirs(KIM_ENVIRONMENT, KIM_MODEL_DRIVERS, &lst, NULL);
       for (std::list<std::pair<std::string, std::string> >::const_iterator itr
            = lst.begin();
            itr != lst.end();
@@ -117,7 +118,6 @@ void collectionsInfo::env(ENV_OPTIONS const opt)
 
 void collectionsInfo::configFile(CONFIG_FILE_OPTIONS const opt)
 {
-  std::vector<std::string> userDirs = getUserDirs(NULL);
   switch (opt)
   {
     case CF_ENV:
@@ -133,12 +133,26 @@ void collectionsInfo::configFile(CONFIG_FILE_OPTIONS const opt)
     }
     case CF_MODELS:
     {
-      std::cout << userDirs[1] << std::endl;
+      std::list<std::pair<std::string, std::string> > lst;
+      pushDirs(KIM_USER, KIM_MODELS, &lst, NULL);
+
+      for (std::list<std::pair<std::string, std::string> >::const_iterator itr
+           = lst.begin();
+           itr != lst.end();
+           ++itr)
+      { std::cout << itr->second << std::endl; }
       break;
     }
     case CF_MODEL_DRIVERS:
     {
-      std::cout << userDirs[0] << std::endl;
+      std::list<std::pair<std::string, std::string> > lst;
+      pushDirs(KIM_USER, KIM_MODEL_DRIVERS, &lst, NULL);
+
+      for (std::list<std::pair<std::string, std::string> >::const_iterator itr
+           = lst.begin();
+           itr != lst.end();
+           ++itr)
+      { std::cout << itr->second << std::endl; }
       break;
     }
   }
@@ -149,7 +163,7 @@ void collectionsInfo::models(bool const list_all,
                              KIM::Log * log)
 {
   std::list<std::vector<std::string> > items;
-  getAvailableItems(KIM_MODELS_DIR, items, log);
+  getAvailableItems(KIM_MODELS, items, log);
   listItems(items, list_all, name);
 }
 
@@ -158,7 +172,7 @@ void collectionsInfo::drivers(bool list_all,
                               KIM::Log * log)
 {
   std::list<std::vector<std::string> > items;
-  getAvailableItems(KIM_MODEL_DRIVERS_DIR, items, log);
+  getAvailableItems(KIM_MODEL_DRIVERS, items, log);
   listItems(items, list_all, name);
 }
 
@@ -302,17 +316,29 @@ int processSystem(int argc, char * argv[])
   if (argc != 3) { returnVal = 1; }
   else
   {
-    std::vector<std::string> systemDirs = getSystemDirs();
-
     if (0 == strcmp("library", argv[2]))
     { std::cout << getSystemLibraryFileName() << std::endl; }
     else if (0 == strcmp("models", argv[2]))
     {
-      std::cout << systemDirs[1] << std::endl;
+      std::list<std::pair<std::string, std::string> > lst;
+      pushDirs(KIM_SYSTEM, KIM_MODELS, &lst, NULL);
+
+      for (std::list<std::pair<std::string, std::string> >::const_iterator itr
+           = lst.begin();
+           itr != lst.end();
+           ++itr)
+      { std::cout << itr->second << std::endl; }
     }
     else if (0 == strcmp("model_drivers", argv[2]))
     {
-      std::cout << systemDirs[0] << std::endl;
+      std::list<std::pair<std::string, std::string> > lst;
+      pushDirs(KIM_SYSTEM, KIM_MODEL_DRIVERS, &lst, NULL);
+
+      for (std::list<std::pair<std::string, std::string> >::const_iterator itr
+           = lst.begin();
+           itr != lst.end();
+           ++itr)
+      { std::cout << itr->second << std::endl; }
     }
     else
     {

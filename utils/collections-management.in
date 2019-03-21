@@ -76,8 +76,8 @@ usage () {
   printf "\n"
   printf "install:\n"
   printf "  Install model and/or model driver from openkim.org or from a local path\n"
-  printf "    * Installing to the environment collection places items in the first\n"
-  printf "      directory of the list.)\n"
+  printf "    * Installing to a collection places items in the first directory\n"
+  printf "      of the corresponding list.)\n"
   printf "    * 'install --force' is essentially equivalent to 'reinstall', but works\n"
   printf "      even when the item is not currently installed.\n"
   printf "    * 'OpenKIM' installs all 'current' items found at openkim.org,\n"
@@ -581,6 +581,26 @@ print_separator_line () {
   printf "%79s\n" " " | sed -e "s/ /$1/g"
 }
 
+print_collection_item_list () {
+  local item_label=$1
+  local dir_list="$2"
+  local number_of_items_in_list=$3
+  local item_list="$4"
+
+  printf -- "${item_label}: "
+  if test x"--empty--" = x"${dir_list}"; then
+    printf "%s" "${dir_list}"
+  else
+    printf "'%s' " ${dir_list}
+  fi
+  printf "\n"
+  if test ${number_of_items_in_list} -gt 0; then
+    printf -- "${item_list}"  # expected to have control characters
+  else
+    printf "\t--empty--\n"
+  fi
+}
+
 print_list_of_drivers_and_models () {
   local with_version=$1
   local with_log
@@ -632,49 +652,16 @@ print_list_of_drivers_and_models () {
   printf "\n\n\n"
   printf "Current Working Directory Collection\n"
   print_separator_line "-"
-  printf "Drivers: '%s'\n" "${PWD}"
-  if test $number_drivers_cwd -gt 0; then
-    printf "${drivers_cwd_collection}"
-  else
-    printf "\t--empty--\n"
-  fi
+  print_collection_item_list "Drivers" "${PWD}" $number_drivers_cwd "${drivers_cwd_collection}"
   printf "\n"
-
-  printf "Models: '%s'\n" "${PWD}"
-  if test $number_models_cwd -gt 0; then
-    printf -- "${models_cwd_collection}"  # expected to have control characters
-  else
-    printf "\t--empty--\n"
-  fi
+  print_collection_item_list "Models" "${PWD}" $number_models_cwd "${models_cwd_collection}"
   printf "\n\n"
 
   printf "Environment Variable Collection\n"
   print_separator_line "-"
-  printf "Drivers: "
-  if test x"--empty--" = x"${drivers_env}"; then
-    printf "%s" ${drivers_env}
-  else
-    printf "'%s' " ${drivers_env}
-  fi
+  print_collection_item_list "Drivers" "${drivers_env}" $number_drivers_env "${drivers_env_collection}"
   printf "\n"
-  if test $number_drivers_env -gt 0; then
-    printf -- "${drivers_env_collection}"  # expected to have control characters
-  else
-    printf "\t--empty--\n"
-  fi
-  printf "\n"
-  printf "Models: "
-  if test x"--empty--" = x"${models_env}"; then
-    printf "%s" ${models_env}
-  else
-    printf "'%s' " ${models_env}
-  fi
-  printf "\n"
-  if test $number_models_env -gt 0; then
-    printf -- "${models_env_collection}"  # expected to have control characters
-  else
-    printf "\t--empty--\n"
-  fi
+  print_collection_item_list "Models" "${models_env}" $number_models_env "${models_env_collection}"
   printf "\n\n"
 
   drivers_usr="`${collections_info} config_file model_drivers`"; if test $? -ne 0; then return 1; fi
@@ -683,36 +670,20 @@ print_list_of_drivers_and_models () {
   if test x"" = x"${models_usr}"; then models_usr="--empty--"; fi
   printf "User Collection\n"
   print_separator_line "-"
-  printf "Drivers: '%s'\n" "${drivers_usr}"
-  if test $number_drivers_usr -gt 0; then
-    printf -- "${drivers_usr_collection}"  # expected to have control characters
-  else
-    printf "\t--empty--\n"
-  fi
+  print_collection_item_list "Drivers" "${drivers_usr}" $number_drivers_usr "${drivers_usr_collection}"
   printf "\n"
-  printf "Models: '%s'\n" "${models_usr}"
-  if test $number_models_usr -gt 0; then
-    printf -- "${models_usr_collection}"  # expected to have control characters
-  else
-    printf "\t--empty--\n"
-  fi
+  print_collection_item_list "Models" "${models_usr}" $number_models_usr "${models_usr_collection}"
   printf "\n\n"
 
+  drivers_sys="`${collections_info} system model_drivers`"; if test $? -ne 0; then return 1; fi
+  if test x"" = x"${drivers_sys}"; then drivers_sys="--empty--"; fi
+  models_sys="`${collections_info} system models`"; if test $? -ne 0; then return 1; fi
+  if test x"" = x"${models_sys}"; then models_sys="--empty--"; fi
   printf "System Collection\n"
   print_separator_line "-"
-  printf "Drivers: '%s'\n" "`${collections_info} system model_drivers`"
-  if test $number_drivers_sys -gt 0; then
-    printf -- "${drivers_sys_collection}"  # expected to have control characters
-  else
-    printf "\t--empty--\n"
-  fi
-  printf "\n\n"
-  printf "Models: '%s'\n" "`${collections_info} system models`"
-  if test $number_models_sys -gt 0; then
-    printf -- "${models_sys_collection}"  # expected to have control characters
-  else
-    printf "\t--empty--\n"
-  fi
+  print_collection_item_list "Drivers" "${drivers_sys}" $number_drivers_sys "${drivers_sys_collection}"
+  printf "\n"
+  print_collection_item_list "Models" "${models_sys}" $number_models_sys "${models_sys_collection}"
   printf "\n"
 }
 

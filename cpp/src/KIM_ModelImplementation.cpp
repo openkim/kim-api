@@ -2050,7 +2050,7 @@ int ModelImplementation::ModelCreate(
   }
 
   std::vector<std::string> sharedLibraryList;
-  if (!findItem(OLD_KIM::KIM_MODELS_DIR, modelName, &sharedLibraryList, NULL))
+  if (!findItem(OLD_KIM::KIM_MODELS, modelName, &sharedLibraryList, NULL))
   {
     LOG_ERROR("Could not find model shared library.");
     LOG_DEBUG("Exit 1=" + callString);
@@ -2960,7 +2960,7 @@ int ModelImplementation::InitializeParameterizedModel(
   }
 
   std::vector<std::string> sharedLibraryList;
-  if (!findItem(OLD_KIM::KIM_MODEL_DRIVERS_DIR,
+  if (!findItem(OLD_KIM::KIM_MODEL_DRIVERS,
                 modelDriverName_,
                 &sharedLibraryList,
                 NULL))

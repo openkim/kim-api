@@ -115,13 +115,13 @@ std::string getSystemLibraryFileName()
                      + SNUM(KIM_VERSION_MAJOR) + KIM_SHARED_LIBRARY_SUFFIX);
 }
 
-std::vector<std::string> getSystemDirs()
+std::map<CollectionItemType const, std::string> getSystemDirs()
 {
-  std::vector<std::string> systemDirs(2);
-  systemDirs[0] = std::string(
+  std::map<CollectionItemType const, std::string> systemDirs;
+  systemDirs[KIM_MODEL_DRIVERS] = std::string(
       KIM_LIBDIR "/" KIM_PROJECT_NAME "/" KIM_MODEL_DRIVER_PLURAL_IDENTIFIER);
-  systemDirs[1] = std::string(KIM_LIBDIR "/" KIM_PROJECT_NAME
-                                         "/" KIM_MODEL_PLURAL_IDENTIFIER);
+  systemDirs[KIM_MODELS] = std::string(
+      KIM_LIBDIR "/" KIM_PROJECT_NAME "/" KIM_MODEL_PLURAL_IDENTIFIER);
 
   return systemDirs;
 }
@@ -146,12 +146,36 @@ std::string ProcessConfigFileDirectoryString(std::string const & dir)
     // nothing to do
   }
 
+  std::size_t pos = 0;
+  std::size_t colonLoc = 0;
+  while ((colonLoc = returnString.find(":", pos)) != std::string::npos)
+  {
+    pos = colonLoc + 1;
+    // must be absolute "/...." or home "~/..."
+    std::size_t found_home = returnString.find("~/", pos);
+    std::size_t found_root = returnString.find("/", pos);
+    if (found_home == pos)
+    {
+      // probably need a better way to get HOME
+      returnString.replace(pos, 1, getenv("HOME"));
+    }
+    else if (found_root != pos)  // error
+    {
+      returnString = "";
+    }
+    else
+    {
+      // nothing to do
+    }
+  }
+
   return returnString;  // "" indicated an error
 }
 
-std::vector<std::string> getUserDirs(KIM::Log * const log)
+std::map<CollectionItemType const, std::string>
+getUserDirs(KIM::Log * const log)
 {
-  std::vector<std::string> userDirs(2);
+  std::map<CollectionItemType const, std::string> userDirs;
   std::vector<std::string> configFile(getConfigFileName());
   std::ifstream cfl;
   cfl.open(configFile[0].c_str(), std::ifstream::in);
@@ -164,12 +188,12 @@ std::vector<std::string> getUserDirs(KIM::Log * const log)
     std::ofstream fl;
 
     if (makeDirWrapper(path.c_str(), 0755)) exit(1);
-    userDirs[0] = ProcessConfigFileDirectoryString(
+    userDirs[KIM_MODEL_DRIVERS] = ProcessConfigFileDirectoryString(
         KIM_USER_MODEL_DRIVER_PLURAL_DIR_DEFAULT);
-    if (makeDirWrapper(userDirs[0].c_str(), 0755)) exit(1);
-    userDirs[1]
+    if (makeDirWrapper(userDirs[KIM_MODEL_DRIVERS].c_str(), 0755)) exit(1);
+    userDirs[KIM_MODELS]
         = ProcessConfigFileDirectoryString(KIM_USER_MODEL_PLURAL_DIR_DEFAULT);
-    if (makeDirWrapper(userDirs[1].c_str(), 0755)) exit(1);
+    if (makeDirWrapper(userDirs[KIM_MODELS].c_str(), 0755)) exit(1);
 
     fl.open(configFile[0].c_str(), std::ofstream::out);
     fl << KIM_MODEL_DRIVER_PLURAL_DIR_IDENTIFIER
@@ -196,12 +220,12 @@ std::vector<std::string> getUserDirs(KIM::Log * const log)
              << std::endl;
           log->LogEntry(KIM::LOG_VERBOSITY::error, ss, __LINE__, __FILE__);
         }
-        userDirs[0] = "";
+        userDirs[KIM_MODEL_DRIVERS] = "";
         goto cleanUp;
       }
       word = strtok(NULL, sep);
-      userDirs[0] = ProcessConfigFileDirectoryString(word);
-      if (userDirs[0] == "")  // error
+      userDirs[KIM_MODEL_DRIVERS] = ProcessConfigFileDirectoryString(word);
+      if (userDirs[KIM_MODEL_DRIVERS] == "")  // error
       {
         if (log)
         {
@@ -229,12 +253,12 @@ std::vector<std::string> getUserDirs(KIM::Log * const log)
              << std::endl;
           log->LogEntry(KIM::LOG_VERBOSITY::error, ss, __LINE__, __FILE__);
         }
-        userDirs[1] = "";
+        userDirs[KIM_MODELS] = "";
         goto cleanUp;
       }
       word = strtok(NULL, sep);
-      userDirs[1] = ProcessConfigFileDirectoryString(word);
-      if (userDirs[1] == "")  // error
+      userDirs[KIM_MODELS] = ProcessConfigFileDirectoryString(word);
+      if (userDirs[KIM_MODELS] == "")  // error
       {
         if (log)
         {
@@ -254,57 +278,85 @@ std::vector<std::string> getUserDirs(KIM::Log * const log)
   return userDirs;
 }
 
-std::string
-pushEnvDirs(DirectoryPathType type,
-            std::list<std::pair<std::string, std::string> > * const lst)
+int getEnvironmentVariableNames(
+    std::map<CollectionItemType const, std::string> * const map)
 {
-  std::string varName;
-  switch (type)
-  {
-    case KIM_MODEL_DRIVERS_DIR:
-      varName = KIM_ENVIRONMENT_MODEL_DRIVER_PLURAL_DIR;
-      break;
-    case KIM_MODELS_DIR: varName = KIM_ENVIRONMENT_MODEL_PLURAL_DIR; break;
-    default: break;
-  }
-  char const * const varVal = getenv(varName.c_str());
-  if (NULL != varVal)
-  {
-    std::string varValString(varVal);
-    std::istringstream iss(varValString);
-    std::string token;
-    while (std::getline(iss, token, ':'))
-    { lst->push_back(std::make_pair(std::string("environment"), token)); }
-  }
-
-  return varName;
+  (*map)[KIM_MODEL_DRIVERS] = KIM_ENVIRONMENT_MODEL_DRIVER_PLURAL_DIR;
+  (*map)[KIM_MODELS] = KIM_ENVIRONMENT_MODEL_PLURAL_DIR;
+  return 0;
 }
 
-void searchPaths(DirectoryPathType type,
+int getDirList(CollectionType collectionType,
+               CollectionItemType itemType,
+               std::string * const dirList,
+               KIM::Log * const log)
+{
+  switch (collectionType)
+  {
+    case KIM_CWD: *dirList = "."; break;
+    case KIM_ENVIRONMENT:
+    {
+      std::map<CollectionItemType const, std::string> envVarNames;
+      if (getEnvironmentVariableNames(&envVarNames)) return true;
+      char const * const varVal = getenv(envVarNames[itemType].c_str());
+      if (varVal == NULL) { *dirList = ""; }
+      else
+      {
+        *dirList = varVal;
+      }
+      break;
+    }
+    case KIM_USER:
+    {
+      std::map<CollectionItemType const, std::string> userDirs
+          = getUserDirs(log);
+      *dirList = userDirs[itemType];
+      break;
+    }
+    case KIM_SYSTEM:
+    {
+      std::map<CollectionItemType const, std::string> systemDirs
+          = getSystemDirs();
+      *dirList = systemDirs[itemType];
+      break;
+    }
+  }
+  return false;
+}
+
+int pushDirs(CollectionType collectionType,
+             CollectionItemType itemType,
+             std::list<std::pair<std::string, std::string> > * const lst,
+             KIM::Log * const log)
+{
+  std::map<CollectionType, std::string> collectionStrings;
+  collectionStrings[KIM_CWD] = "CWD";
+  collectionStrings[KIM_ENVIRONMENT] = "environment";
+  collectionStrings[KIM_USER] = "user";
+  collectionStrings[KIM_SYSTEM] = "system";
+
+  std::string dirList;
+  if (getDirList(collectionType, itemType, &dirList, log)) return true;
+
+  std::istringstream iss(dirList);
+  std::string token;
+  while (std::getline(iss, token, ':'))
+  {
+    lst->push_back(std::make_pair(collectionStrings[collectionType], token));
+  }
+
+  return false;
+}
+
+void searchPaths(CollectionItemType type,
                  std::list<std::pair<std::string, std::string> > * const lst,
                  KIM::Log * const log)
 {
-  std::vector<std::string> userDirs = getUserDirs(log);
-  std::vector<std::string> systemDirs = getSystemDirs();
+  pushDirs(KIM_CWD, type, lst, log);
+  pushDirs(KIM_ENVIRONMENT, type, lst, log);
+  pushDirs(KIM_USER, type, lst, log);
+  pushDirs(KIM_SYSTEM, type, lst, log);
 
-  switch (type)
-  {
-    case KIM_MODEL_DRIVERS_DIR:
-      lst->push_back(std::make_pair(std::string("CWD"), std::string(".")));
-      pushEnvDirs(type, lst);
-      if (0 != userDirs[0].compare(""))
-      { lst->push_back(std::make_pair(std::string("user"), userDirs[0])); }
-      lst->push_back(std::make_pair(std::string("system"), systemDirs[0]));
-      break;
-    case KIM_MODELS_DIR:
-      lst->push_back(std::make_pair(std::string("CWD"), std::string(".")));
-      pushEnvDirs(type, lst);
-      if (0 != userDirs[1].compare(""))
-      { lst->push_back(std::make_pair(std::string("user"), userDirs[1])); }
-      lst->push_back(std::make_pair(std::string("system"), systemDirs[1]));
-      break;
-    default: break;
-  }
   return;
 }
 
@@ -340,7 +392,7 @@ bool lessThan(std::vector<std::string> lhs, std::vector<std::string> rhs)
   return lhs[IE_NAME] < rhs[IE_NAME];
 }
 
-void getAvailableItems(DirectoryPathType type,
+void getAvailableItems(CollectionItemType type,
                        std::list<std::vector<std::string> > & list,
                        KIM::Log * const log)
 {
@@ -367,10 +419,8 @@ void getAvailableItems(DirectoryPathType type,
                         + "/" KIM_SHARED_MODULE_PREFIX + KIM_PROJECT_NAME "-";
       switch (type)
       {
-        case KIM_MODELS_DIR: lib.append(KIM_MODEL_IDENTIFIER); break;
-        case KIM_MODEL_DRIVERS_DIR:
-          lib.append(KIM_MODEL_DRIVER_IDENTIFIER);
-          break;
+        case KIM_MODELS: lib.append(KIM_MODEL_IDENTIFIER); break;
+        case KIM_MODEL_DRIVERS: lib.append(KIM_MODEL_DRIVER_IDENTIFIER); break;
         default: break;
       }
       lib.append(KIM_SHARED_MODULE_SUFFIX);
@@ -399,7 +449,7 @@ void getAvailableItems(DirectoryPathType type,
   list.sort(lessThan);
 }
 
-bool findItem(DirectoryPathType type,
+bool findItem(CollectionItemType type,
               std::string const & name,
               std::vector<std::string> * const Item,
               KIM::Log * const log)

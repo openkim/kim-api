@@ -171,7 +171,9 @@ API library.  (See item D below for build-time settings controlling this
 default file name.)  If this file does not exist, the KIM API library will
 create it with a default configuration specifying that the user-collection
 files are stored in "${HOME}/.kim-api-vX/model-drivers/" and
-"${HOME}/.kim-api-vX/models/".  If the "KIM_API_VX_CONFIGURATION_FILE"
+"${HOME}/.kim-api-vX/models/".  More generally, the values in the configuration
+file may contain colon ':' separated lists of directory names (starting,
+strictly, with '/' or '~/').  If the "KIM_API_VX_CONFIGURATION_FILE"
 environment variable is set, its value (interpreted as an absolute file name)
 will supersede the default location and name of the configuration file.
 

@@ -86,7 +86,7 @@ int main(int argc, char * argv[])
 
   // get item shared library file name
   std::vector<std::string> item;
-  bool accessible = findItem(KIM_MODELS_DIR, modelname, &item, NULL);
+  bool accessible = findItem(KIM_MODELS, modelname, &item, NULL);
   if (accessible)
   {
     error = sharedLib.Open(item[OLD_KIM::IE_FULLPATH]);
