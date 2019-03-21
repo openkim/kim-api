@@ -41,7 +41,7 @@
 #include <vector>
 using namespace OLD_KIM;
 
-// TODO add KIM_API_V2_CMAKE_PREFIX_DIR environment var.
+// TODO add KIM_API_CMAKE_PREFIX_DIR environment var.
 
 void usage(std::string name)
 {

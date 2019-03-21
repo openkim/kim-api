@@ -33,7 +33,10 @@
 #
 
 
+set(FIND_FILE_IN FindKIM-API.cmake.in)  # should _not_ use PROJECT_NAME here
+set(FIND_FILE FindKIM-API.cmake)  # should _not_ use PROJECT_NAME here
+configure_file("${FIND_FILE_IN}" "${CMAKE_CURRENT_BINARY_DIR}/${FIND_FILE}" @ONLY)
 install(
-  FILES FindKIM-API-V2.cmake
+  FILES "${CMAKE_CURRENT_BINARY_DIR}/${FIND_FILE}"
   DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME}/${KIM_API_CMAKE_DIR_IDENTIFIER}/Modules
   )

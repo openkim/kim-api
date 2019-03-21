@@ -59,7 +59,8 @@ D. KIM API Installation
        D.2.2 CMAKE_BUILD_TYPE
        D.2.3 Installation prefix
        D.2.4 KIM API specific build options
-   D.3 Uninstall the KIM API
+   D.3 Installing multiple versions
+   D.4 Uninstall the KIM API
 
 E. Adding Models and/or Model Drivers to the collections
    E.1 Adding Models and/or Model Drivers to the system-collection
@@ -87,7 +88,7 @@ To install and run the KIM API package you need the following:
 
 4. The 'xxd' utility (distributed as part of the vim package).
 
-5. wget and tar (used by the kim-api-vX-collections-management utility).
+5. wget and tar (used by the kim-api-collections-management utility).
 
 6. Doxygen and Graphviz (for generating the documentation).
 
@@ -165,30 +166,30 @@ KIM API library.  This collection is located in subdirectories that are
 specified by a configuration file.  The user-collection may be populated with
 Models and Model Drivers after the KIM API has been built and installed.
 
-The configuration file is named "${HOME}/.kim-api-vX/config" by default.  Here
-"${HOME}" is the user's home directory and "X" is the major version of the KIM
-API library.  (See item D below for build-time settings controlling this
-default file name.)  If this file does not exist, the KIM API library will
-create it with a default configuration specifying that the user-collection
-files are stored in "${HOME}/.kim-api-vX/model-drivers/" and
-"${HOME}/.kim-api-vX/models/".  More generally, the values in the configuration
+The configuration file is named "${HOME}/.kim-api/config" by default.  Here
+"${HOME}" is the user's home directory.  (See item D below for build-time
+settings controlling this default file name.)  If the
+"KIM_API_CONFIGURATION_FILE" environment variable is set, its value
+(interpreted as an absolute file name) will supersede the default location and
+name of the configuration file.  If this file does not exist, the KIM API
+library will create it with a default configuration specifying that the
+user-collection files are stored in "${HOME}/.kim-api/model-drivers/" and
+"${HOME}/.kim-api/models/".  More generally, the values in the configuration
 file may contain colon ':' separated lists of directory names (starting,
-strictly, with '/' or '~/').  If the "KIM_API_VX_CONFIGURATION_FILE"
-environment variable is set, its value (interpreted as an absolute file name)
-will supersede the default location and name of the configuration file.
+strictly, with '/' or '~/').
 
 C.2.3 THE ENVIRONMENT-VARIABLE-COLLECTION
 
 The environment-variable-collection is a collection of Models and Model Drivers
 that are specified by the run-time environment of the process for the Simulator
 that uses the KIM API library.  The locations of this collection are specified
-by the environment variables "KIM_API_VX_MODELS_DIR" and
-"KIM_API_VX_MODEL_DRIVERS_DIR".  These variables should contain colon ':'
+by the environment variables "KIM_API_MODELS_DIR" and
+"KIM_API_MODEL_DRIVERS_DIR".  These variables should contain colon ':'
 separated lists of absolute directory names where the collection Models and
 Model Drivers, respectively, are located.  (For example, in bash you could
 execute the command
 
-$ export KIM_API_VX_MODELS_DIR=/my-kim-stuff/models-i-am-developing:/my-kim-stuff/misc-models
+$ export KIM_API_MODELS_DIR=/my-kim-stuff/models-i-am-developing:/my-kim-stuff/misc-models
 
 to have the KIM API look for Models in /my-kim-stuff/models-i-am-developing
 first and then look in /my-kim-stuff/misc-models.  (Similarly for Model
@@ -207,19 +208,19 @@ C.3 HELPER UTILITIES
 
 The KIM API package also includes a utility for managing the models and drivers
 contained in the various collections and for managing the configuration file.
-This utility is called "kim-api-vX-collections-management".  The KIM API
-package installs bash completion scripts that are designed to work with the
+This utility is called "kim-api-collections-management".  The KIM API package
+installs bash completion scripts that are designed to work with the
 "bash-completion" package (https://github.com/scop/bash-completion).  When
 "bash-completion" is installed and activated on the system, tab-completions for
 the collections management utility should be automatically loaded and available
 for use.
 
 In addition, when the KIM API package is installed to a "Local (non-global)"
-(see D below) directory, the package also installs the "kim-api-vX-activate"
-and "kim-api-vX-deactivate" scripts.  The activate script adds the utilities to
-the executable PATH, adds the KIM API library to the PKG_CONFIG_PATH so that
-the pkg-config utility can find it, and loads bash tab-completion support for
-the collections management utility.  The deactivate script removes what the
+(see D below) directory, the package also installs the "kim-api-activate" and
+"kim-api-deactivate" scripts.  The activate script adds the utilities to the
+executable PATH, adds the KIM API library to the PKG_CONFIG_PATH so that the
+pkg-config utility can find it, and loads bash tab-completion support for the
+collections management utility.  The deactivate script removes what the
 activate script added.
 
 
@@ -245,9 +246,9 @@ Here we assume that "/usr/local/bin" is included as part of the system's
 standard PATH setting.
 
 $ cd "${HOME}"
-$ wget https://s3.openkim.org/kim-api/kim-api-vX-X.Y.Z.txz  # replace X. Y, and Z with the current version numbers
-$ tar Jxvf kim-api-vX-X.Y.Z.txz
-$ cd kim-api-vX-X.Y.Z
+$ wget https://s3.openkim.org/kim-api/kim-api-X.Y.Z.txz  # replace X, Y, and Z with the current version numbers
+$ tar Jxvf kim-api-X.Y.Z.txz
+$ cd kim-api-X.Y.Z
 $ mkdir build
 $ cd build
 $ cmake .. -DCMAKE_BUILD_TYPE=Release
@@ -270,9 +271,9 @@ $ cd "${HOME}"
 
 If you want, you can now delete the source and build tree.  However, you may
 also want to preserve the "install_manifest.txt" file which would be needed for
-uninstalling the KIM API package (see D.3 below).
+uninstalling the KIM API package (see D.4 below).
 
-$ rm -r kim-api-vX-X.Y.Z kim-api-vX-X.Y.Z.txz # replace X, Y, and Z with the current version numbers
+$ rm -r kim-api-X.Y.Z kim-api-X.Y.Z.txz # replace X, Y, and Z with the current version numbers
 
 Now, we can build the simulator using the KIM API library that we have just
 installed.
@@ -287,12 +288,12 @@ Try it with one of the example models:
 $ printf "ex_model_Ar_P_LJ" | ./utility_forces_numer_deriv
 
 Next, we can try it with a model installed from https://openkim.org:
-$ kim-api-vX-collections-management install system --sudo EDIP_JustoBazantKaxiras_1998_Si__MO_958932894036_002
+$ kim-api-collections-management install system --sudo EDIP_JustoBazantKaxiras_1998_Si__MO_958932894036_002
 $ printf "EDIP_JustoBazantKaxiras_1998_Si__MO_958932894036_002" | ./utility_forces_numer_deriv
 
 Congratulations, you have now successfully installed the KIM API.  If you would
 like to learn more about the KIM API, read the documentation in the docs
-directory (/usr/local/share/doc/kim-api-vX).
+directory (/usr/local/share/doc/kim-api).
 
 D.2 CMAKE BUILD OPTIONS
 
@@ -344,10 +345,10 @@ $ cmake .. -DCMAKE_INSTALL_PREFIX="/install/prefix/path" -DCMAKE_BUILD_TYPE=Rele
 where "/install/prefix/path" should be replaced with your desired prefix.  For
 example, to install the KIM API in the "local" subdirectory of your home
 directory, use "${HOME}/local".  When installed in such a directory, the user
-may employ the "kim-api-vX-activate" utility to setup the PATH and bash
+may employ the "kim-api-activate" utility to setup the PATH and bash
 completions.  For example:
 
-$ source ${HOME}/local/bin/kim-api-vX-activate
+$ source ${HOME}/local/bin/kim-api-activate
 
 D.2.4 KIM API SPECIFIC BUILD OPTIONS
 
@@ -371,15 +372,15 @@ Additionally, the KIM API defines the following advanced options.
 
 * KIM_API_ENABLE_COVERAGE (=OFF) When ON this enables gcov code coverage.
 
-* KIM_API_USER_CONFIGURATION_FILE (=".kim-api-vX/config") This determines the
+* KIM_API_USER_CONFIGURATION_FILE (=".kim-api/config") This determines the
   default name of the KIM API user configuration file.  If the value
   corresponds to a relative path (does not start with "/"), then it is
   interpreted as relative to the user's home directory "${HOME}".
 
-* PROJECT_PREFIX (="kim-api") This value controls the naming of many aspects of
-  the package build.  Generally this should not be changed.  It can be used to
-  build and install, on the same machine, two different copies of the same
-  major version of the package.  This could be desirable for debugging.
+* KIM_API_PROJECT_NAME (="kim-api") This value controls the naming of many
+  aspects of the package build.  Generally this should not be changed.  It can
+  be used to build and install, on the same machine, two different copies
+  (typically different versions) of the package.
 
 * KIM_API_CMAKE_C_COMPILER (="${CMAKE_C_COMPILER}") This value is recorded and
   used after installation for compilation of items (models, model drivers,
@@ -393,11 +394,39 @@ Additionally, the KIM API defines the following advanced options.
   recorded and used after installation for compilation of items (models, model
   drivers, etc.) to ensure binary compatibility with the installed KIM API.
 
-D.3 Uninstall the KIM API
+D.3 Installing multiple versions
+
+On linux and macOS systems if you intend to install multiple versions of the
+KIM API using the same installation prefix
+("-DCMAKE_INSTALL_PREFIX=/install/prefix/path" argument to cmake) you must take
+care that the installations do not overwrite each other.  If you intend to
+install multiple versions using the same prefix you must use the
+"-DKIM_API_PROJECT_NAME=project-name" argument (See D.2.4 above) to cmake and
+use a unique value (any string without whitespace or control characters is
+valid) for each installation.
+
+Full support for the "-DKIM_API_PROJECT_NAME" argument, as described here, was
+first available in v2.0.2.  For example, suppose the current version of the KIM
+API were v3.2.1, and you want to also install KIM API v3.0.0, and v2.1.1.
+Then, you would configure each version as follows:
+
+ * v3.2.1
+
+   $ cmake .. [additional args]  # use default ("kim-api") for current version.
+
+ * v3.0.0
+
+   $ cmake .. -DKIM_API_PROJECT_NAME=kim-api3.0 [additional args]
+
+ * v2.1.1
+
+   $ cmake .. -DKIM_API_PROJECT_NAME=kim-api2.1 [additional args]
+
+D.4 Uninstall the KIM API
 
 When the KIM API package is installed, CMake creates a file in the build tree
 named "install_manifest.txt".  For the above commands this file would be
-located at "${HOME}/kim-api-vX-X.Y.Z/build/install_manifest.txt".  The manifest
+located at "${HOME}/kim-api-X.Y.Z/build/install_manifest.txt".  The manifest
 file contains the absolute file name of every file installed as part of the KIM
 API package.  The contents of the install_manifest.txt file can be used to
 remove these files and, thus, uninstall the KIM API package.  Thus, the
@@ -416,7 +445,7 @@ left behind by this process.
 It may also be desirable to remove the user configuration file and user
 collection directories.
 
-$ rm -rf "${HOME}/.kim-api-vX"
+$ rm -rf "${HOME}/.kim-api"
 
 
 -------------------------------------------------------------------------------
@@ -435,13 +464,13 @@ Model Drivers to the system-collection.
 
 $ cd "${HOME}
 
-$ kim-api-vX-collections-management install system --sudo Morse_Shifted_Jelinek_1972_Ar__MO_831902330215_002
+$ kim-api-collections-management install system --sudo Morse_Shifted_Jelinek_1972_Ar__MO_831902330215_002
 
-The kim-api-vX-collections-management utility automatically installs the
-necessary Model Driver.  You can see the items in the various collections by
-executing the following command.
+The kim-api-collections-management utility automatically installs the necessary
+Model Driver.  You can see the items in the various collections by executing
+the following command.
 
-$ kim-api-vX-collections-management list
+$ kim-api-collections-management list
 
 Now we can test the newly installed Model.
 
@@ -454,8 +483,8 @@ Adding Models and/or Model Drivers to the user-collection is similar.
 
 $ cd "${HOME}"
 
-$ kim-api-vX-collections-management install user LJ_Shifted_Bernardes_1958HighCutoff_Ar__MO_242741380554_003
-$ kim-api-vX-collections-management list
+$ kim-api-collections-management install user LJ_Shifted_Bernardes_1958HighCutoff_Ar__MO_242741380554_003
+$ kim-api-collections-management list
 $ cd "${HOME}/utility_forces_numer_deriv/build"  # we'll assume this is already built
 $ printf "LJ_Shifted_Bernardes_1958HighCutoff_Ar__MO_242741380554_003" | ./utility_forces_numer_deriv
 
@@ -467,11 +496,11 @@ similar.
 $ cd "${HOME}"
 
 $ mkdir -p "${HOME}/my-env-collection/model-drivers"
-$ export KIM_API_VX_MODEL_DRIVERS_DIR="${HOME}/my-env-collection/model-drivers"
+$ export KIM_API_MODEL_DRIVERS_DIR="${HOME}/my-env-collection/model-drivers"
 $ mkdir -p "${HOME}/my-env-collection/models"
-$ export KIM_API_VX_MODELS_DIR="${HOME}/my-env-collection/models"
-$ kim-api-vX-collections-management install environment Morse_Shifted_GirifalcoWeizer_1959HighCutoff_Cu__MO_151002396060_002
-$ kim-api-vX-collections-management list
+$ export KIM_API_MODELS_DIR="${HOME}/my-env-collection/models"
+$ kim-api-collections-management install environment Morse_Shifted_GirifalcoWeizer_1959HighCutoff_Cu__MO_151002396060_002
+$ kim-api-collections-management list
 $ cd "${HOME}/utility_forces_numer_deriv/build"  # we'll assume this is already built
 $ printf "Morse_Shifted_GirifalcoWeizer_1959HighCutoff_Cu__MO_151002396060_002" | ./utility_forces_numer_deriv
 
@@ -481,8 +510,8 @@ Adding Models and/or Model Drivers to the CWD-collection is, again, similar.
 
 $ cd "${HOME}"
 
-$ kim-api-vX-collections-management install CWD Exp6_KongChakrabarty_1973_ArNe__MO_946046425752_002
-$ kim-api-vX-collections-management list
+$ kim-api-collections-management install CWD Exp6_KongChakrabarty_1973_ArNe__MO_946046425752_002
+$ kim-api-collections-management list
 $ cd "${HOME}/utility_forces_numer_deriv/build"  # we'll assume this is already built
 $ printf "Exp6_KongChakrabarty_1973_ArNe__MO_946046425752_002" | ./utility_forces_numer_deriv
 

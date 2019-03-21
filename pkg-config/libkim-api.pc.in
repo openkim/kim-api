@@ -33,9 +33,9 @@
 #
 
 
-# pkg-config file for kim-api-v2
+# pkg-config file for @PROJECT_NAME@
 # https://people.freedesktop.org/~dbn/pkg-config-guide.html
-# Usage: cc `pkg-config --cflags --libs libkim-api-v2` -o myapp myapp.c
+# Usage: cc `pkg-config --cflags --libs lib@PROJECT_NAME@` -o myapp myapp.c
 # after you added @CMAKE_INSTALL_FULL_LIBDIR@/pkgconfig to PKG_CONFIG_PATH,
 # e.g. export PKG_CONFIG_PATH=@CMAKE_INSTALL_FULL_LIBDIR@/pkgconfig
 
@@ -54,7 +54,7 @@ moddir=@CMAKE_INSTALL_FULL_LIBDIR@/@PROJECT_NAME@/@KIM_API_Fortran_MODULE_DIR_ID
 docdir=@CMAKE_INSTALL_FULL_DOCDIR@
 
 Name: @CMAKE_SHARED_LIBRARY_PREFIX@@PROJECT_NAME@
-Description: The KIM API package is a system-level library that aims to give computer programmers the ability to write atomistic or molecular simulation programs that can seamlessly interface with implementations of interatomic models, regardless of the programming language (C, C++, Fortran, Python, etc.) in which the codes are written.
+Description: The @PROJECT_NAME@ package is a system-level library that aims to give computer programmers the ability to write atomistic or molecular simulation programs that can seamlessly interface with implementations of interatomic models, regardless of the programming language (C, C++, Fortran, Python, etc.) in which the codes are written.
 URL: https://openkim.org/kim-api
 Version: @PROJECT_VERSION_STRING_WITHOUT_BUILD_METADATA@
 Requires:

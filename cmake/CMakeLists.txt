@@ -34,9 +34,9 @@
 
 
 set(CONFIG_FILE_IN config.cmake.in)
-set(CONFIG_FILE ${PROJECT_NAME}-config.cmake)
+set(CONFIG_FILE kim-api-config.cmake)  # should _not_ use PROJECT_NAME here
 set(CONFIG_VERSION_FILE_IN config-version.cmake.in)
-set(CONFIG_VERSION_FILE ${PROJECT_NAME}-config-version.cmake)
+set(CONFIG_VERSION_FILE kim-api-config-version.cmake)  # should _not_ use PROJECT_NAME here
 
 configure_file("${CONFIG_FILE_IN}" "${CMAKE_CURRENT_BINARY_DIR}/${CONFIG_FILE}" @ONLY)
 configure_file("${CONFIG_VERSION_FILE_IN}"

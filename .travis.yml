@@ -44,10 +44,10 @@ matrix:
           cmake -DCMAKE_INSTALL_PREFIX=${PWD}/test-install -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DKIM_API_BUILD_EXAMPLES=OFF ${SANITIZE:+-DKIM_API_ENABLE_SANITIZE=ON} ${COVERAGE:+-DKIM_API_ENABLE_COVERAGE=ON} .. &&
           make -j2 install &&
           ccache -s &&
-          source ./test-install/bin/kim-api-v2-activate &&
-          kim-api-v2-collections-management install system `find ../examples/model-drivers -type d -mindepth 1 -maxdepth 1` &&
-          kim-api-v2-collections-management install system `find ../examples/models -type d -mindepth 1 -maxdepth 1` &&
-          kim-api-v2-collections-management list
+          source ./test-install/bin/kim-api-activate &&
+          kim-api-collections-management install system `find ../examples/model-drivers -type d -mindepth 1 -maxdepth 1` &&
+          kim-api-collections-management install system `find ../examples/models -type d -mindepth 1 -maxdepth 1` &&
+          kim-api-collections-management list
     - name: "linux fedora, Debug, Sanitize, Dockehub"
       if: branch != coverity_scan
       os: linux
@@ -84,7 +84,7 @@ matrix:
           CON=$(docker run -d ${TRAVIS_REPO_SLUG}:${DISTRO} /bin/bash) &&
           docker cp ${CON}:/home/kim/.ccache ${HOME}/
       after_success:
-        - if [[ ${DOCKERHUB} && ${DOCKER_USERNAME} && ${DOCKER_PASSWORD} && ${TRAVIS_BRANCH} == master-v2 && ${TRAVIS_PULL_REQUEST} == false ]]; then
+        - if [[ ${DOCKERHUB} && ${DOCKER_USERNAME} && ${DOCKER_PASSWORD} && ${TRAVIS_BRANCH} == master && ${TRAVIS_PULL_REQUEST} == false ]]; then
             docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
             docker push "${TRAVIS_REPO_SLUG}:${DISTRO}";
           fi

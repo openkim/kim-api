@@ -33,7 +33,7 @@
 #
 
 
-# - KIM-API-V2 configuration
+# - KIM-API configuration
 #
 #  add_kim_api_imported_library()      - add kim-api library target
 #  add_kim_api_model_library()         - set up kim-api model target
@@ -45,7 +45,7 @@
 include(FindPackageHandleStandardArgs)
 
 if(TARGET kim-api)
-  set(KIM_API_PROJECT_NAME @PROJECT_NAME@ CACHE STRING "KIM API project name")
+  set(KIM_API_PROJECT_NAME @KIM_API_PROJECT_NAME@ CACHE STRING "KIM API project name string")
   set(KIM_API_VERSION @PROJECT_VERSION@ CACHE STRING "KIM API version")
   set(KIM_API_VERSION_STRING @PROJECT_VERSION_STRING@ CACHE STRING "KIM API version string")
   set(KIM_API_CMAKE_DIR ${CMAKE_SOURCE_DIR}/${KIM_API_CMAKE_DIR_IDENTIFIER} CACHE PATH "KIM API CMake dir")
@@ -56,9 +56,9 @@ if(TARGET kim-api)
   set(KIM_API_MODEL_INSTALL_PREFIX ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME}/${KIM_API_MODEL_PLURAL_IDENTIFIER} CACHE PATH "KIM API Model Driver install prefix")
   set(KIM_API_MODEL_DRIVER_INSTALL_PREFIX ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME}/${KIM_API_MODEL_DRIVER_PLURAL_IDENTIFIER} CACHE PATH "KIM API Model install prefix")
 
-  # handle the QUIETLY and REQUIRED arguments and set KIM-API-V2_FOUND to TRUE
+  # handle the QUIETLY and REQUIRED arguments and set KIM-API_FOUND to TRUE
   # if all listed variables are TRUE
-  find_package_handle_standard_args(KIM-API-V2
+  find_package_handle_standard_args(KIM-API
     REQUIRED_VARS
       KIM_API_PROJECT_NAME
       KIM_API_VERSION
@@ -120,7 +120,7 @@ else()
   set(KIM_API_EXE_LINKER_FLAGS "@KIM_API_EXE_LINKER_FLAGS@" CACHE STRING "KIM API linker flags")
 
 
-  set(KIM_API_PROJECT_NAME @PROJECT_NAME@ CACHE STRING "KIM API project name")
+  set(KIM_API_PROJECT_NAME @KIM_API_PROJECT_NAME@ CACHE STRING "KIM API project name string")
   set(KIM_API_VERSION @PROJECT_VERSION@ CACHE STRING "KIM API version")
   set(KIM_API_VERSION_STRING @PROJECT_VERSION_STRING@ CACHE STRING "KIM API version string")
 
@@ -166,9 +166,9 @@ else()
   set(KIM_API_MODEL_INSTALL_PREFIX "${MODEL_INSTALL_PREFIX}" CACHE PATH "KIM API Model install prefix")
 
 
-  # handle the QUIETLY and REQUIRED arguments and set KIM-API-V2_FOUND to TRUE
+  # handle the QUIETLY and REQUIRED arguments and set KIM-API_FOUND to TRUE
   # if all listed variables are TRUE
-  find_package_handle_standard_args(KIM-API-V2
+  find_package_handle_standard_args(KIM-API
     REQUIRED_VARS
       KIM_API_PROJECT_NAME
       KIM_API_VERSION
