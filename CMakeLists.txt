@@ -89,6 +89,17 @@ set(KIM_API_USER_CONFIGURATION_FILE ".${PROJECT_NAME}/config" CACHE STRING "Defa
 mark_as_advanced(KIM_API_USER_CONFIGURATION_FILE)
 
 include(DefineInternalVariables)
+#
+# Define options dependent on internal variables
+#
+if((NOT KIM_API_SYSTEM_MODEL_DRIVERS_DIR) OR (KIM_API_SYSTEM_MODEL_DRIVERS_DIR MATCHES "^:"))
+  set(KIM_API_SYSTEM_MODEL_DRIVERS_DIR "${CMAKE_INSTALL_FULL_LIBDIR}/${PROJECT_NAME}/${KIM_API_MODEL_DRIVER_PLURAL_IDENTIFIER}${KIM_API_SYSTEM_MODEL_DRIVERS_DIR}" CACHE STRING "System collection (colon-separated) model drivers directory list" FORCE)
+endif()
+mark_as_advanced(KIM_API_SYSTEM_MODEL_DRIVERS_DIR)
+if((NOT KIM_API_SYSTEM_MODELS_DIR) OR (KIM_API_SYSTEM_MODELS_DIR MATCHES "^:"))
+  set(KIM_API_SYSTEM_MODELS_DIR "${CMAKE_INSTALL_FULL_LIBDIR}/${PROJECT_NAME}/${KIM_API_MODEL_PLURAL_IDENTIFIER}${KIM_API_SYSTEM_MODELS_DIR}" CACHE STRING "System collection (colon-separated) models directory list" FORCE)
+endif()
+mark_as_advanced(KIM_API_SYSTEM_MODELS_DIR)
 
 include(DefaultCompilerFlags)
 

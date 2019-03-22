@@ -118,11 +118,8 @@ std::string getSystemLibraryFileName()
 std::map<CollectionItemType const, std::string> getSystemDirs()
 {
   std::map<CollectionItemType const, std::string> systemDirs;
-  systemDirs[KIM_MODEL_DRIVERS] = std::string(
-      KIM_LIBDIR "/" KIM_PROJECT_NAME "/" KIM_MODEL_DRIVER_PLURAL_IDENTIFIER);
-  systemDirs[KIM_MODELS] = std::string(
-      KIM_LIBDIR "/" KIM_PROJECT_NAME "/" KIM_MODEL_PLURAL_IDENTIFIER);
-
+  systemDirs[KIM_MODEL_DRIVERS] = KIM_SYSTEM_MODEL_DRIVERS_DIR;
+  systemDirs[KIM_MODELS] = KIM_SYSTEM_MODELS_DIR;
   return systemDirs;
 }
 

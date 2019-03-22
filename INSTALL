@@ -152,8 +152,9 @@ collections.  The search for each is a separate and independent procedure.
 C.2.1 THE SYSTEM-COLLECTION
 
 The system-collection is a collection of Models and Model Drivers that are
-available to all Simulators that use the KIM API library.  This collection is
-located in the same subdirectory as the KIM API library.
+available to all Simulators that use the KIM API library.  By default, this
+collection is located in the same subdirectory as the KIM API library.  (See
+also the "KIM_API_SYSTEM_*_DIR" build options in section D.2.4, below.)
 
 Models and Model Drivers may be built and installed to the system-collection at
 anytime after the KIM API has been built and installed.
@@ -365,22 +366,34 @@ advanced options.
   simulators.  NOTE: this option may be removed/changed in future releases when
   the examples are incorporated into the documentation.
 
-Additionally, the KIM API defines the following advanced options.
+Additionally, the KIM API defines the following advanced build options.
 
 * KIM_API_ENABLE_SANITIZE (=OFF) When ON this enables the AddressSanitizer
   library for detecting memory corruption bugs.
 
 * KIM_API_ENABLE_COVERAGE (=OFF) When ON this enables gcov code coverage.
 
-* KIM_API_USER_CONFIGURATION_FILE (=".kim-api/config") This determines the
-  default name of the KIM API user configuration file.  If the value
-  corresponds to a relative path (does not start with "/"), then it is
-  interpreted as relative to the user's home directory "${HOME}".
-
 * KIM_API_PROJECT_NAME (="kim-api") This value controls the naming of many
   aspects of the package build.  Generally this should not be changed.  It can
   be used to build and install, on the same machine, two different copies
   (typically different versions) of the package.
+
+* KIM_API_USER_CONFIGURATION_FILE (=".${PROJECT_NAME}/config") This value
+  determines the default name of the KIM API user configuration file.  If the
+  value corresponds to a relative path (does not start with "/"), then it is
+  interpreted as relative to the user's home directory "${HOME}".
+
+* KIM_API_SYSTEM_MODEL_DRIVERS_DIR
+  (="${CMAKE_INSTALL_FULL_LIBDIR}/${PROJECT_NAME}/model-drivers") This value
+  specifies a colon ':' separated list of the model drivers directory locations
+  in the system collection.  If the value starts with a colon, cmake will
+  update it by prepending the default value.
+
+* KIM_API_SYSTEM_MODELS_DIR
+  (="${CMAKE_INSTALL_FULL_LIBDIR}/${PROJECT_NAME}/models") This value specifies
+  a colon ':' separated list of the models directory locations in the system
+  collection.  If the value starts with a colon, cmake will update it by
+  prepending the default value.
 
 * KIM_API_CMAKE_C_COMPILER (="${CMAKE_C_COMPILER}") This value is recorded and
   used after installation for compilation of items (models, model drivers,
