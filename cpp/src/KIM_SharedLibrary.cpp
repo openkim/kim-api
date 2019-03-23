@@ -33,8 +33,6 @@
 #include <dlfcn.h>
 #include <sstream>
 
-#include "old_KIM_API_DIRS.h"
-
 #ifndef KIM_SHARED_LIBRARY_HPP_
 #include "KIM_SharedLibrary.hpp"
 #endif
