@@ -594,6 +594,9 @@ print_list_of_items () {
     with_log=""
   fi
 
+  cmake_env_name="@KIM_API_ENVIRONMENT_CMAKE_PREFIX_DIR@"
+  cmake_env="${@KIM_API_ENVIRONMENT_CMAKE_PREFIX_DIR@}"
+  if test x"" = x"${cmake_env}"; then cmake_env="--empty--"; fi
   config_env_name="`${collections_info} config_file env | sed -e 's/ .*//'`"; if test $? -ne 0; then return 1; fi
   config_env="`${collections_info} config_file env | sed -e 's/^[^ ]* //'`"; if test $? -ne 0; then return 1; fi
   if test x"" = x"${config_env}"; then config_env="--empty--"; fi
@@ -619,6 +622,9 @@ print_list_of_items () {
   printf "\n\n"
   printf "Environment Variables:\n"
   print_separator_line "-"
+  printf -- "%s:\n" "${cmake_env_name}"
+  printf -- "\t%s\n" "${cmake_env}"
+  printf "\n"
   printf -- "%s:\n" "${config_env_name}"
   printf -- "\t%s\n" "${config_env}"
   printf "\n"

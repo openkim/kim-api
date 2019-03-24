@@ -41,8 +41,6 @@
 #include <vector>
 using namespace OLD_KIM;
 
-// @@@ TODO add KIM_API_CMAKE_PREFIX_DIR environment var.
-
 void usage(std::string name)
 {
   size_t beg = name.find_last_of("/");
