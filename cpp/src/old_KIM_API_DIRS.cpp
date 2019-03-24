@@ -61,7 +61,7 @@ int makeDirWrapper(const char * const path, mode_t mode)
       return false;
     else
     {
-      std::cerr << "Unable to make directory '" << path << "', exiting.\n";
+      std::cerr << "Unable to make directory '" << path << ".\n";
       return true;
     }
   }
@@ -207,10 +207,11 @@ int ProcessConfigFileLine(char * line,
   return false;
 }
 
-std::map<CollectionItemType const, std::string>
-getUserDirs(KIM::Log * const log)
+
+int getUserDirs(
+    std::map<CollectionItemType const, std::string> * const userDirs,
+    KIM::Log * const log)
 {
-  std::map<CollectionItemType const, std::string> userDirs;
   std::vector<std::string> configFile(getConfigFileName());
   std::ifstream cfl;
   cfl.open(configFile[0].c_str(), std::ifstream::in);
@@ -222,16 +223,18 @@ getUserDirs(KIM::Log * const log)
     // std::string const name = configFile[0].substr(pos+1);  // NOT USED
     std::ofstream fl;
 
-    if (makeDirWrapper(path.c_str(), 0755)) exit(1);
-    userDirs[KIM_MODEL_DRIVERS] = ProcessConfigFileDirectoryString(
+    if (makeDirWrapper(path.c_str(), 0755)) return true;
+    (*userDirs)[KIM_MODEL_DRIVERS] = ProcessConfigFileDirectoryString(
         KIM_USER_MODEL_DRIVER_PLURAL_DIR_DEFAULT);
-    if (makeDirWrapper(userDirs[KIM_MODEL_DRIVERS].c_str(), 0755)) exit(1);
-    userDirs[KIM_MODELS]
+    (*userDirs)[KIM_MODELS]
         = ProcessConfigFileDirectoryString(KIM_USER_MODEL_PLURAL_DIR_DEFAULT);
-    if (makeDirWrapper(userDirs[KIM_MODELS].c_str(), 0755)) exit(1);
-    userDirs[KIM_SIMULATOR_MODELS] = ProcessConfigFileDirectoryString(
+    (*userDirs)[KIM_SIMULATOR_MODELS] = ProcessConfigFileDirectoryString(
         KIM_USER_SIMULATOR_MODEL_PLURAL_DIR_DEFAULT);
-    if (makeDirWrapper(userDirs[KIM_SIMULATOR_MODELS].c_str(), 0755)) exit(1);
+    if (makeDirWrapper((*userDirs)[KIM_MODEL_DRIVERS].c_str(), 0755))
+      return true;
+    if (makeDirWrapper((*userDirs)[KIM_MODELS].c_str(), 0755)) return true;
+    if (makeDirWrapper((*userDirs)[KIM_SIMULATOR_MODELS].c_str(), 0755))
+      return true;
 
     fl.open(configFile[0].c_str(), std::ofstream::out);
     fl << KIM_MODEL_DRIVER_PLURAL_DIR_IDENTIFIER
@@ -249,7 +252,7 @@ getUserDirs(KIM::Log * const log)
         || (ProcessConfigFileLine(line,
                                   configFile[0],
                                   KIM_MODEL_DRIVER_PLURAL_DIR_IDENTIFIER,
-                                  userDirs[KIM_MODEL_DRIVERS],
+                                  (*userDirs)[KIM_MODEL_DRIVERS],
                                   log)))
       goto cleanUp;
 
@@ -257,7 +260,7 @@ getUserDirs(KIM::Log * const log)
         || (ProcessConfigFileLine(line,
                                   configFile[0],
                                   KIM_MODEL_PLURAL_DIR_IDENTIFIER,
-                                  userDirs[KIM_MODELS],
+                                  (*userDirs)[KIM_MODELS],
                                   log)))
       goto cleanUp;
 
@@ -265,7 +268,7 @@ getUserDirs(KIM::Log * const log)
         || (ProcessConfigFileLine(line,
                                   configFile[0],
                                   KIM_SIMULATOR_MODEL_PLURAL_DIR_IDENTIFIER,
-                                  userDirs[KIM_SIMULATOR_MODELS],
+                                  (*userDirs)[KIM_SIMULATOR_MODELS],
                                   log)))
       goto cleanUp;
 
@@ -273,7 +276,7 @@ getUserDirs(KIM::Log * const log)
     cfl.close();
   }
 
-  return userDirs;
+  return false;
 }
 
 int getEnvironmentVariableNames(
@@ -307,8 +310,8 @@ int getDirList(CollectionType collectionType,
     }
     case KIM_USER:
     {
-      std::map<CollectionItemType const, std::string> userDirs
-          = getUserDirs(log);
+      std::map<CollectionItemType const, std::string> userDirs;
+      if (getUserDirs(&userDirs, log)) return true;
       *dirList = userDirs[itemType];
       break;
     }
