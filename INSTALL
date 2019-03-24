@@ -45,7 +45,7 @@ B. Quick start
 
 C. Package concepts and operation overview
    C.1 KIM API library
-   C.2 Model and Model Driver collections
+   C.2 Model Drivers (MDs), Models (MOs), and Simulator Models (SMs) collections
        C.2.1 The system-collection
        C.2.2 The user-collection
        C.2.3 The environment-variable-collection
@@ -62,12 +62,12 @@ D. KIM API Installation
    D.3 Installing multiple versions
    D.4 Uninstall the KIM API
 
-E. Adding Models and/or Model Drivers to the collections
-   E.1 Adding Models and/or Model Drivers to the system-collection
-   E.2 Adding Models and/or Model Drivers to the user-collection
-   E.3 Adding Models and/or Model Drivers to the environment-variable-collection
-   E.4 Adding Models and/or Model Drivers to the CWD-collection
-   E.5 Manually adding Models and/or Model Drivers
+E. Adding MDs, MOs, and SMs to the collections
+   E.1 Adding MDs, MOs, and SMs to the system-collection
+   E.2 Adding MDs, MOs, and SMs to the user-collection
+   E.3 Adding MDs, MOs, and SMs to the environment-variable-collection
+   E.4 Adding MDs, MOs, and SMs to the CWD-collection
+   E.5 Manually adding MDs, MOs, and SMs
 
 
 -------------------------------------------------------------------------------
@@ -124,25 +124,27 @@ potential (Models), regardless of the programming language in which the codes
 are written.  Models can be "stand-alone", corresponding to code and parameters
 all in one.  Or, Models can be "parameterized", corresponding to just a set of
 parameters that must be connected to a Model Driver which contains the code
-that can be used with any set of parameters.  In addition to the main KIM API
-library, a small number of associated helper utilities are provided.
+that can be used with any set of parameters.  There are also Simulator Models
+that are similar to parameterized models, but must be used with a specific
+simulator.  In addition to the main KIM API library, a small number of
+associated helper utilities are provided.
 
 C.1. KIM API Library
 
 The KIM API library provides the necessary routines for a Model and a Simulator
-to interact.  Models are built and linked against the KIM API library, then
-installed in one of the model collections (see below) so that they are
-available for use with a Simulator.  Simulators are built and linked against
-the KIM API library so that they can access and use any of the available Models
-in the various collections.
+to interact.  Models and Simulator Models are built and linked against the KIM
+API library, then installed in one of the model collections (see below) so that
+they are available for use with a Simulator.  Simulators are built and linked
+against the KIM API library so that they can access and use any of the
+available Models or Simulator Models in the various collections.
 
-C.2 MODEL AND MODEL DRIVER COLLECTIONS
+C.2 MODEL DRIVERS (MDs), MODELS (MOs), AND SIMULATOR MODELS (SMs) COLLECTIONS
 
-The KIM API supports four "collections" of Models and Model Drivers.  These are
-the "system-collection", the "user-collection", the
+The KIM API supports four "collections" of Model Drivers, Models, and Simulator
+Models.  These are the "system-collection", the "user-collection", the
 "environment-variable-collection", and the "CWD-collection" as described below.
 
-When the KIM API needs to use a particular Model or Model Driver, it looks for
+When the KIM API needs to use a particular Model Driver or Model, it looks for
 the item by name, first in the CWD-collection, then in the
 environment-variable-collection, then in the user-collection, and finally in
 the system-collection.  It uses the first match that it finds.  Note, it is
@@ -151,70 +153,73 @@ collections.  The search for each is a separate and independent procedure.
 
 C.2.1 THE SYSTEM-COLLECTION
 
-The system-collection is a collection of Models and Model Drivers that are
-available to all Simulators that use the KIM API library.  By default, this
-collection is located in the same subdirectory as the KIM API library.  (See
-also the "KIM_API_SYSTEM_*_DIR" build options in section D.2.4, below.)
+The system-collection is a collection of Model Drivers, Models, and Simulator
+Models that are available to all Simulators that use the KIM API library.  By
+default, this collection is located in the same subdirectory as the KIM API
+library.  (See also the "KIM_API_SYSTEM_*_DIR" build options in section D.2.4,
+below.)
 
-Models and Model Drivers may be built and installed to the system-collection at
-anytime after the KIM API has been built and installed.
+Model Drivers, Models, and Simulator Models may be built and installed to the
+system-collection at anytime after the KIM API has been built and installed.
 
 C.2.2 THE USER-COLLECTION
 
-The user-collection is a collection of Models and Model Drivers that are
-available only to the user who owns the process for the Simulator that uses the
-KIM API library.  This collection is located in subdirectories that are
-specified by a configuration file.  The user-collection may be populated with
-Models and Model Drivers after the KIM API has been built and installed.
+The user-collection is a collection of Model Drivers, Models, and Simulator
+Models that are available only to the user who owns the process for the
+Simulator that uses the KIM API library.  This collection is located in
+subdirectories that are specified by a configuration file.  The user-collection
+may be populated with Model Drivers, Models, and Simulator Models after the KIM
+API has been built and installed.
 
 The configuration file is named "${HOME}/.kim-api/config" by default.  Here
-"${HOME}" is the user's home directory.  (See item D below for build-time
-settings controlling this default file name.)  If the
-"KIM_API_CONFIGURATION_FILE" environment variable is set, its value
-(interpreted as an absolute file name) will supersede the default location and
-name of the configuration file.  If this file does not exist, the KIM API
-library will create it with a default configuration specifying that the
-user-collection files are stored in "${HOME}/.kim-api/model-drivers/" and
-"${HOME}/.kim-api/models/".  More generally, the values in the configuration
-file may contain colon ':' separated lists of directory names (starting,
-strictly, with '/' or '~/').
+"${HOME}" is the user's home directory.  (See item D below for build options
+controlling this default file name.)  If the "KIM_API_CONFIGURATION_FILE"
+environment variable is set, its value (interpreted as an absolute file name)
+will supersede the default location and name of the configuration file.  If
+this file does not exist, the KIM API library will create it with a default
+configuration specifying that the user-collection files are stored in
+"${HOME}/.kim-api/model-drivers/" and "${HOME}/.kim-api/models/".  More
+generally, the values in the configuration file may contain colon ':' separated
+lists of directory names (starting, strictly, with '/' or '~/').
 
 C.2.3 THE ENVIRONMENT-VARIABLE-COLLECTION
 
-The environment-variable-collection is a collection of Models and Model Drivers
-that are specified by the run-time environment of the process for the Simulator
-that uses the KIM API library.  The locations of this collection are specified
-by the environment variables "KIM_API_MODELS_DIR" and
-"KIM_API_MODEL_DRIVERS_DIR".  These variables should contain colon ':'
-separated lists of absolute directory names where the collection Models and
-Model Drivers, respectively, are located.  (For example, in bash you could
-execute the command
+The environment-variable-collection is a collection of Model Drivers, Models,
+and Simulator Models that are specified by the run-time environment of the
+process for the Simulator that uses the KIM API library.  The locations of this
+collection are specified by the environment variables
+"KIM_API_MODEL_DRIVERS_DIR", "KIM_API_MODELS_DIR", and
+"KIM_API_SIMULATOR_MODELS_DIR".  These variables should contain colon ':'
+separated lists of absolute directory names where the collection Model Drivers,
+Models, and Simulator Models, respectively, are located.  (For example, in bash
+you could execute the command
 
 $ export KIM_API_MODELS_DIR=/my-kim-stuff/models-i-am-developing:/my-kim-stuff/misc-models
 
 to have the KIM API look for Models in /my-kim-stuff/models-i-am-developing
-first and then look in /my-kim-stuff/misc-models.  (Similarly for Model
-Drivers.)  The environment-variable-collection may be populated with Models and
-Model Drivers after the KIM API has been built and installed.
+first and then look in /my-kim-stuff/misc-models.  (Similarly for Model Drivers
+and Simulator Models.)  The environment-variable-collection may be populated
+with Model Drivers, Models, and Simulator Models after the KIM API has been
+built and installed.
 
 C.2.4 THE CWD-COLLECTION
 
-The CWD-collection is a collection of Models and Model Drivers that are
-available to a Simulator at run-time.  The collection is located in the
-Simulator process's current working directory (CWD).  The CWD-collection may be
-populated with Models and Model Drivers after the KIM API has been built and
-installed.
+The CWD-collection is a collection of Model Drivers, Models, Simulator Models
+that are available to a Simulator at run-time.  The collection is located in
+the Simulator process's current working directory (CWD).  The CWD-collection
+may be populated with Model Drivers, Models, and Simulator Models after the KIM
+API has been built and installed.
 
 C.3 HELPER UTILITIES
 
-The KIM API package also includes a utility for managing the models and drivers
-contained in the various collections and for managing the configuration file.
-This utility is called "kim-api-collections-management".  The KIM API package
-installs bash completion scripts that are designed to work with the
-"bash-completion" package (https://github.com/scop/bash-completion).  When
-"bash-completion" is installed and activated on the system, tab-completions for
-the collections management utility should be automatically loaded and available
-for use.
+The KIM API package also includes a utility for managing the model drivers,
+models, and simulator models contained in the various collections and for
+managing the configuration file.  This utility is called
+"kim-api-collections-management".  The KIM API package installs bash completion
+scripts that are designed to work with the "bash-completion" package
+(https://github.com/scop/bash-completion).  When "bash-completion" is installed
+and activated on the system, tab-completions for the collections management
+utility should be automatically loaded and available for use.
 
 In addition, when the KIM API package is installed to a "Local (non-global)"
 (see D below) directory, the package also installs the "kim-api-activate" and
@@ -232,13 +237,13 @@ D. KIM API INSTALLATION
 D.1 Typical Build Scenario
 
 Here, the typical KIM API build and install process is detailed and the
-system-collection is populated with the example models and drivers as well as a
-single Model and its associated Model Driver, both from openkim.org.
-Additionally, one of the example Simulators is copied to the user's home
-directory and used to test the KIM API.  The KIM API package uses the CMake
-build system.  See the CMake documentation (https://cmake.org/cmake/help/v3.4/)
-for help with CMake settings.  For some common CMake settings and KIM API
-specific settings, see D.2 below.
+system-collection is populated with the example model drivers, models, and
+simulator models, as well as a single Model and its associated Model Driver,
+both from openkim.org.  Additionally, one of the example Simulators is copied
+to the user's home directory and used to test the KIM API.  The KIM API package
+uses the CMake build system.  See the CMake documentation
+(https://cmake.org/cmake/help/v3.4/) for help with CMake settings.  For some
+common CMake settings and KIM API specific settings, see D.2 below.
 
 The commands given below are for the bash shell.
 
@@ -395,6 +400,12 @@ Additionally, the KIM API defines the following advanced build options.
   collection.  If the value starts with a colon, cmake will update it by
   prepending the default value.
 
+* KIM_API_SYSTEM_SIMULATOR_MODELS_DIR
+  (="${CMAKE_INSTALL_FULL_LIBDIR}/${PROJECT_NAME}/simulator-models") This value
+  specifies a colon ':' separated list of the simulator models directory
+  locations in the system collection.  If the value starts with a colon, cmake
+  will update it by prepending the default value.
+
 * KIM_API_CMAKE_C_COMPILER (="${CMAKE_C_COMPILER}") This value is recorded and
   used after installation for compilation of items (models, model drivers,
   etc.) to ensure binary compatibility with the installed KIM API.
@@ -463,14 +474,14 @@ $ rm -rf "${HOME}/.kim-api"
 
 -------------------------------------------------------------------------------
 
-E. ADDING MODELS AND/OR MODEL DRIVERS TO THE COLLECTIONS
+E. ADDING MDs, MOs, and SMs TO THE COLLECTIONS
 
 
 Here we describe how to add Models and/or Model Drivers to the
 system-collection, user-collection, environment-variable-collection, and the
 CWD-collection.
 
-E.1 ADDING MODELS AND/OR MODEL DRIVERS TO THE SYSTEM-COLLECTION
+E.1 ADDING MDs, MOs, and SMs TO THE SYSTEM-COLLECTION
 
 Once you have the KIM API installed, it is easy to add additional Models and/or
 Model Drivers to the system-collection.
@@ -490,9 +501,9 @@ Now we can test the newly installed Model.
 $ cd "${HOME}/utility_forces_numer_deriv/build"  # we'll assume this is already built
 $ printf "Morse_Shifted_Jelinek_1972_Ar__MO_831902330215_002" | ./utility_forces_numer_deriv
 
-E.2 ADDING MODELS AND/OR MODEL DRIVERS TO THE USER-COLLECTION
+E.2 ADDING MDs, MOs, and SMs TO THE USER-COLLECTION
 
-Adding Models and/or Model Drivers to the user-collection is similar.
+Adding MDs, MOs, and SMs to the user-collection is similar.
 
 $ cd "${HOME}"
 
@@ -501,10 +512,9 @@ $ kim-api-collections-management list
 $ cd "${HOME}/utility_forces_numer_deriv/build"  # we'll assume this is already built
 $ printf "LJ_Shifted_Bernardes_1958HighCutoff_Ar__MO_242741380554_003" | ./utility_forces_numer_deriv
 
-E.3 ADDING MODELS AND/OR MODEL DRIVERS TO THE ENVIRONMENT-VARIABLE-COLLECTION
+E.3 ADDING MDs, MOs, and SMs TO THE ENVIRONMENT-VARIABLE-COLLECTION
 
-Adding Models and/or Model Drivers to the environment-variable-collection is
-similar.
+Adding MDs, MOs, and SMs to the environment-variable-collection is similar.
 
 $ cd "${HOME}"
 
@@ -517,9 +527,9 @@ $ kim-api-collections-management list
 $ cd "${HOME}/utility_forces_numer_deriv/build"  # we'll assume this is already built
 $ printf "Morse_Shifted_GirifalcoWeizer_1959HighCutoff_Cu__MO_151002396060_002" | ./utility_forces_numer_deriv
 
-E.4 ADDING MODELS AND/OR MODEL DRIVERS TO THE CWD-COLLECTION
+E.4 ADDING MDs, MOs, and SMs TO THE CWD-COLLECTION
 
-Adding Models and/or Model Drivers to the CWD-collection is, again, similar.
+Adding MDs, MOs, and SMs to the CWD-collection is, again, similar.
 
 $ cd "${HOME}"
 
@@ -528,10 +538,10 @@ $ kim-api-collections-management list
 $ cd "${HOME}/utility_forces_numer_deriv/build"  # we'll assume this is already built
 $ printf "Exp6_KongChakrabarty_1973_ArNe__MO_946046425752_002" | ./utility_forces_numer_deriv
 
-E.5 Manually adding Models and/or Model Drivers
+E.5 Manually adding MDs, MOs, and SMs
 
-If necessary a model and/or model driver may be manually built and installed.
-We'll assume the item's source code is in the current directory
+If necessary a model driver, model, or simulator model may be manually built
+and installed.  We'll assume the item's source code is in the current directory
 
 $ mkdir build
 $ cd build

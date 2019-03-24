@@ -42,7 +42,7 @@
 
 namespace OLD_KIM
 {
-enum CollectionItemType { KIM_MODEL_DRIVERS, KIM_MODELS };
+enum CollectionItemType { KIM_MODEL_DRIVERS, KIM_MODELS, KIM_SIMULATOR_MODELS };
 enum CollectionType { KIM_CWD, KIM_ENVIRONMENT, KIM_USER, KIM_SYSTEM };
 
 bool findItem(CollectionItemType type,

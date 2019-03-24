@@ -120,6 +120,7 @@ std::map<CollectionItemType const, std::string> getSystemDirs()
   std::map<CollectionItemType const, std::string> systemDirs;
   systemDirs[KIM_MODEL_DRIVERS] = KIM_SYSTEM_MODEL_DRIVERS_DIR;
   systemDirs[KIM_MODELS] = KIM_SYSTEM_MODELS_DIR;
+  systemDirs[KIM_SIMULATOR_MODELS] = KIM_SYSTEM_SIMULATOR_MODELS_DIR;
   return systemDirs;
 }
 
@@ -169,6 +170,43 @@ std::string ProcessConfigFileDirectoryString(std::string const & dir)
   return returnString;  // "" indicated an error
 }
 
+int ProcessConfigFileLine(char * line,
+                          std::string const & configFile,
+                          char const * const identifier,
+                          std::string & userDir,
+                          KIM::Log * const log)
+{
+  char * word;
+  char const * const sep = " \t=";
+
+  word = strtok(line, sep);
+  if (strcmp(identifier, word))
+  {
+    if (log)
+    {
+      std::stringstream ss;
+      ss << "Unknown line in " << configFile << " file: " << word << std::endl;
+      log->LogEntry(KIM::LOG_VERBOSITY::error, ss, __LINE__, __FILE__);
+    }
+    userDir = "";
+    return true;
+  }
+  word = strtok(NULL, sep);
+  userDir = ProcessConfigFileDirectoryString(word);
+  if (userDir == "")  // error
+  {
+    if (log)
+    {
+      std::stringstream ss;
+      ss << "Invalid value in " << configFile << " file: " << word << std::endl;
+      log->LogEntry(KIM::LOG_VERBOSITY::error, ss, __LINE__, __FILE__);
+    }
+    return true;
+  }
+
+  return false;
+}
+
 std::map<CollectionItemType const, std::string>
 getUserDirs(KIM::Log * const log)
 {
@@ -191,82 +229,45 @@ getUserDirs(KIM::Log * const log)
     userDirs[KIM_MODELS]
         = ProcessConfigFileDirectoryString(KIM_USER_MODEL_PLURAL_DIR_DEFAULT);
     if (makeDirWrapper(userDirs[KIM_MODELS].c_str(), 0755)) exit(1);
+    userDirs[KIM_SIMULATOR_MODELS] = ProcessConfigFileDirectoryString(
+        KIM_USER_SIMULATOR_MODEL_PLURAL_DIR_DEFAULT);
+    if (makeDirWrapper(userDirs[KIM_SIMULATOR_MODELS].c_str(), 0755)) exit(1);
 
     fl.open(configFile[0].c_str(), std::ofstream::out);
     fl << KIM_MODEL_DRIVER_PLURAL_DIR_IDENTIFIER
         " = " KIM_USER_MODEL_DRIVER_PLURAL_DIR_DEFAULT "\n";
     fl << KIM_MODEL_PLURAL_DIR_IDENTIFIER
         " = " KIM_USER_MODEL_PLURAL_DIR_DEFAULT "\n";
+    fl << KIM_SIMULATOR_MODEL_PLURAL_DIR_IDENTIFIER
+        " = " KIM_USER_SIMULATOR_MODEL_PLURAL_DIR_DEFAULT "\n";
     fl.close();
   }
   else
   {
     char line[LINELEN];
-    if (cfl.getline(line, LINELEN))
-    {
-      char * word;
-      char const * const sep = " \t=";
+    if ((!cfl.getline(line, LINELEN))
+        || (ProcessConfigFileLine(line,
+                                  configFile[0],
+                                  KIM_MODEL_DRIVER_PLURAL_DIR_IDENTIFIER,
+                                  userDirs[KIM_MODEL_DRIVERS],
+                                  log)))
+      goto cleanUp;
 
-      word = strtok(line, sep);
-      if (strcmp(KIM_MODEL_DRIVER_PLURAL_DIR_IDENTIFIER, word))
-      {
-        if (log)
-        {
-          std::stringstream ss;
-          ss << "Unknown line in " << configFile[0] << " file: " << word
-             << std::endl;
-          log->LogEntry(KIM::LOG_VERBOSITY::error, ss, __LINE__, __FILE__);
-        }
-        userDirs[KIM_MODEL_DRIVERS] = "";
-        goto cleanUp;
-      }
-      word = strtok(NULL, sep);
-      userDirs[KIM_MODEL_DRIVERS] = ProcessConfigFileDirectoryString(word);
-      if (userDirs[KIM_MODEL_DRIVERS] == "")  // error
-      {
-        if (log)
-        {
-          std::stringstream ss;
-          ss << "Invalid value in " << configFile[0] << " file: " << word
-             << std::endl;
-          log->LogEntry(KIM::LOG_VERBOSITY::error, ss, __LINE__, __FILE__);
-        }
-        goto cleanUp;
-      }
-    }
+    if ((!cfl.getline(line, LINELEN))
+        || (ProcessConfigFileLine(line,
+                                  configFile[0],
+                                  KIM_MODEL_PLURAL_DIR_IDENTIFIER,
+                                  userDirs[KIM_MODELS],
+                                  log)))
+      goto cleanUp;
 
-    if (cfl.getline(line, LINELEN))
-    {
-      char * word;
-      char const * const sep = " \t=";
-
-      word = strtok(line, sep);
-      if (strcmp(KIM_MODEL_PLURAL_DIR_IDENTIFIER, word))
-      {
-        if (log)
-        {
-          std::stringstream ss;
-          ss << "Unknown line in " << configFile[0] << " file: " << word
-             << std::endl;
-          log->LogEntry(KIM::LOG_VERBOSITY::error, ss, __LINE__, __FILE__);
-        }
-        userDirs[KIM_MODELS] = "";
-        goto cleanUp;
-      }
-      word = strtok(NULL, sep);
-      userDirs[KIM_MODELS] = ProcessConfigFileDirectoryString(word);
-      if (userDirs[KIM_MODELS] == "")  // error
-      {
-        if (log)
-        {
-          std::stringstream ss;
-          ss << "Invalid value in " << configFile[0] << " file: " << word
-             << std::endl;
-          log->LogEntry(KIM::LOG_VERBOSITY::error, ss, __LINE__, __FILE__);
-        }
-        goto cleanUp;
-      }
-    }
+    if ((!cfl.getline(line, LINELEN))
+        || (ProcessConfigFileLine(line,
+                                  configFile[0],
+                                  KIM_SIMULATOR_MODEL_PLURAL_DIR_IDENTIFIER,
+                                  userDirs[KIM_SIMULATOR_MODELS],
+                                  log)))
+      goto cleanUp;
 
   cleanUp:
     cfl.close();
@@ -280,6 +281,7 @@ int getEnvironmentVariableNames(
 {
   (*map)[KIM_MODEL_DRIVERS] = KIM_ENVIRONMENT_MODEL_DRIVER_PLURAL_DIR;
   (*map)[KIM_MODELS] = KIM_ENVIRONMENT_MODEL_PLURAL_DIR;
+  (*map)[KIM_SIMULATOR_MODELS] = KIM_ENVIRONMENT_SIMULATOR_MODEL_PLURAL_DIR;
   return 0;
 }
 
@@ -416,9 +418,11 @@ void getAvailableItems(CollectionItemType type,
                         + "/" KIM_SHARED_MODULE_PREFIX + KIM_PROJECT_NAME "-";
       switch (type)
       {
-        case KIM_MODELS: lib.append(KIM_MODEL_IDENTIFIER); break;
         case KIM_MODEL_DRIVERS: lib.append(KIM_MODEL_DRIVER_IDENTIFIER); break;
-        default: break;
+        case KIM_MODELS: lib.append(KIM_MODEL_IDENTIFIER); break;
+        case KIM_SIMULATOR_MODELS:
+          lib.append(KIM_SIMULATOR_MODEL_IDENTIFIER);
+          break;
       }
       lib.append(KIM_SHARED_MODULE_SUFFIX);
       entry[IE_FULLPATH] = lib;

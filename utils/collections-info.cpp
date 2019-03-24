@@ -41,7 +41,7 @@
 #include <vector>
 using namespace OLD_KIM;
 
-// TODO add KIM_API_CMAKE_PREFIX_DIR environment var.
+// @@@ TODO add KIM_API_CMAKE_PREFIX_DIR environment var.
 
 void usage(std::string name)
 {
@@ -50,41 +50,39 @@ void usage(std::string name)
 
   // Follows docopt.org format
   std::cerr << "Usage:\n"
-            << "  " << name << " env (env | models | model_drivers)\n"
             << "  " << name
-            << " config_file (env | name | models | model_drivers)\n"
-            << "  " << name << " system (library | models | model_drivers)\n"
+            << " env (env | model_drivers | models | simulator_models)\n"
+            << "  " << name
+            << " config_file (env | name | model_drivers | models | "
+               "simulator_models)\n"
+            << "  " << name
+            << " system (library | model_drivers | models | simulator_models)\n"
+            << "  " << name
+            << " model_drivers [--log] [find <model-driver-name>]\n"
             << "  " << name << " models [--log] [find <model-name>]\n"
-            << "  " << name << " model_drivers [--log] [find <driver-name>]\n"
+            << "  " << name
+            << " simulator_models [--log] [find <simulator-model-name>]\n"
             << "  " << name << " --version\n";
   // note: this interface is likely to change in future kim-api releases
 }
 
-class collectionsInfo
+namespace CI
 {
- public:
-  collectionsInfo() {};
-  ~collectionsInfo() {};
-
-  enum ENV_OPTIONS { E_ENV, E_MODELS, E_MODEL_DRIVERS };
-  void env(ENV_OPTIONS const opt);
-
-  enum CONFIG_FILE_OPTIONS { CF_ENV, CF_NAME, CF_MODELS, CF_MODEL_DRIVERS };
-  void configFile(CONFIG_FILE_OPTIONS const opt);
-
-  void models(bool const list_all, std::string const & name, KIM::Log * log);
-
-  void drivers(bool const list_all, std::string const & name, KIM::Log * log);
-
- private:
-  void listItems(std::list<std::vector<std::string> > const & items,
-                 bool const list_all,
-                 std::string const & names);
-};
-
-void collectionsInfo::env(ENV_OPTIONS const opt)
+void listDirs(OLD_KIM::CollectionType const collection,
+              OLD_KIM::CollectionItemType const type)
 {
   std::list<std::pair<std::string, std::string> > lst;
+  pushDirs(collection, type, &lst, NULL);
+  for (std::list<std::pair<std::string, std::string> >::const_iterator itr
+       = lst.begin();
+       itr != lst.end();
+       ++itr)
+  { std::cout << itr->second << std::endl; }
+}
+
+enum ENV_OPTIONS { E_ENV, E_MODEL_DRIVERS, E_MODELS, E_SIMULATOR_MODELS };
+void env(ENV_OPTIONS const opt)
+{
   switch (opt)
   {
     case E_ENV:
@@ -92,31 +90,27 @@ void collectionsInfo::env(ENV_OPTIONS const opt)
       std::map<OLD_KIM::CollectionItemType const, std::string> envVarNames;
       getEnvironmentVariableNames(&envVarNames);
 
-      std::cout << envVarNames[KIM_MODELS] << " "
-                << envVarNames[KIM_MODEL_DRIVERS] << std::endl;
+      std::cout << envVarNames[KIM_MODEL_DRIVERS] << " "
+                << envVarNames[KIM_MODELS] << " "
+                << envVarNames[KIM_SIMULATOR_MODELS] << std::endl;
       break;
     }
-    case E_MODELS:
-      pushDirs(KIM_ENVIRONMENT, KIM_MODELS, &lst, NULL);
-
-      for (std::list<std::pair<std::string, std::string> >::const_iterator itr
-           = lst.begin();
-           itr != lst.end();
-           ++itr)
-      { std::cout << itr->second << std::endl; }
-      break;
-    case E_MODEL_DRIVERS:
-      pushDirs(KIM_ENVIRONMENT, KIM_MODEL_DRIVERS, &lst, NULL);
-      for (std::list<std::pair<std::string, std::string> >::const_iterator itr
-           = lst.begin();
-           itr != lst.end();
-           ++itr)
-      { std::cout << itr->second << std::endl; }
+    case E_MODEL_DRIVERS: listDirs(KIM_ENVIRONMENT, KIM_MODEL_DRIVERS); break;
+    case E_MODELS: listDirs(KIM_ENVIRONMENT, KIM_MODELS); break;
+    case E_SIMULATOR_MODELS:
+      listDirs(KIM_ENVIRONMENT, KIM_SIMULATOR_MODELS);
       break;
   }
 }
 
-void collectionsInfo::configFile(CONFIG_FILE_OPTIONS const opt)
+enum CONFIG_FILE_OPTIONS {
+  CF_ENV,
+  CF_NAME,
+  CF_MODEL_DRIVERS,
+  CF_MODELS,
+  CF_SIMULATOR_MODELS
+};
+void configFile(CONFIG_FILE_OPTIONS const opt)
 {
   switch (opt)
   {
@@ -126,61 +120,32 @@ void collectionsInfo::configFile(CONFIG_FILE_OPTIONS const opt)
       std::cout << configFileName[1] << " " << configFileName[2] << std::endl;
       break;
     }
-    case CF_NAME:
-    {
-      std::cout << getConfigFileName()[0] << std::endl;
-      break;
-    }
-    case CF_MODELS:
-    {
-      std::list<std::pair<std::string, std::string> > lst;
-      pushDirs(KIM_USER, KIM_MODELS, &lst, NULL);
-
-      for (std::list<std::pair<std::string, std::string> >::const_iterator itr
-           = lst.begin();
-           itr != lst.end();
-           ++itr)
-      { std::cout << itr->second << std::endl; }
-      break;
-    }
-    case CF_MODEL_DRIVERS:
-    {
-      std::list<std::pair<std::string, std::string> > lst;
-      pushDirs(KIM_USER, KIM_MODEL_DRIVERS, &lst, NULL);
-
-      for (std::list<std::pair<std::string, std::string> >::const_iterator itr
-           = lst.begin();
-           itr != lst.end();
-           ++itr)
-      { std::cout << itr->second << std::endl; }
-      break;
-    }
+    case CF_NAME: std::cout << getConfigFileName()[0] << std::endl; break;
+    case CF_MODEL_DRIVERS: listDirs(KIM_USER, KIM_MODEL_DRIVERS); break;
+    case CF_MODELS: listDirs(KIM_USER, KIM_MODELS); break;
+    case CF_SIMULATOR_MODELS: listDirs(KIM_USER, KIM_SIMULATOR_MODELS); break;
   }
 }
 
-void collectionsInfo::models(bool const list_all,
-                             std::string const & name,
-                             KIM::Log * log)
+enum SYS_OPTIONS { S_MODEL_DRIVERS, S_MODELS, S_SIMULATOR_MODELS };
+void sys(SYS_OPTIONS const opt)
 {
-  std::list<std::vector<std::string> > items;
-  getAvailableItems(KIM_MODELS, items, log);
-  listItems(items, list_all, name);
+  switch (opt)
+  {
+    case S_MODEL_DRIVERS: listDirs(KIM_SYSTEM, KIM_MODEL_DRIVERS); break;
+    case S_MODELS: listDirs(KIM_SYSTEM, KIM_MODELS); break;
+    case S_SIMULATOR_MODELS: listDirs(KIM_SYSTEM, KIM_SIMULATOR_MODELS); break;
+  }
 }
 
-void collectionsInfo::drivers(bool list_all,
-                              std::string const & name,
-                              KIM::Log * log)
+void listItems(OLD_KIM::CollectionItemType const type,
+               bool const list_all,
+               std::string const & name,
+               KIM::Log * const log)
 {
   std::list<std::vector<std::string> > items;
-  getAvailableItems(KIM_MODEL_DRIVERS, items, log);
-  listItems(items, list_all, name);
-}
+  getAvailableItems(type, items, log);
 
-void collectionsInfo::listItems(
-    std::list<std::vector<std::string> > const & items,
-    bool const list_all,
-    std::string const & name)
-{
   std::list<std::vector<std::string> >::const_iterator itr;
   for (itr = items.begin(); itr != items.end(); ++itr)
   {
@@ -200,6 +165,7 @@ void collectionsInfo::listItems(
     }
   }
 }
+}  // namespace CI
 
 
 int processEnv(int argc, char * argv[]);
@@ -223,8 +189,9 @@ int main(int argc, char * argv[])
     {
       returnVal = processSystem(argc, argv);
     }
-    else if ((0 == strcmp("models", argv[1]))
-             || (0 == strcmp("model_drivers", argv[1])))
+    else if ((0 == strcmp("model_drivers", argv[1]))
+             || (0 == strcmp("models", argv[1]))
+             || (0 == strcmp("simulator_models", argv[1])))
     {
       returnVal = processItems(argc, argv);
     }
@@ -247,18 +214,22 @@ int main(int argc, char * argv[])
 int processEnv(int argc, char * argv[])
 {
   int returnVal = 0;
-  collectionsInfo::ENV_OPTIONS opt;
+  CI::ENV_OPTIONS opt;
   if (argc != 3) { returnVal = 1; }
   else
   {
-    if (0 == strcmp("env", argv[2])) { opt = collectionsInfo::E_ENV; }
-    else if (0 == strcmp("models", argv[2]))
-    {
-      opt = collectionsInfo::E_MODELS;
-    }
+    if (0 == strcmp("env", argv[2])) { opt = CI::E_ENV; }
     else if (0 == strcmp("model_drivers", argv[2]))
     {
-      opt = collectionsInfo::E_MODEL_DRIVERS;
+      opt = CI::E_MODEL_DRIVERS;
+    }
+    else if (0 == strcmp("models", argv[2]))
+    {
+      opt = CI::E_MODELS;
+    }
+    else if (0 == strcmp("simulator_models", argv[2]))
+    {
+      opt = CI::E_SIMULATOR_MODELS;
     }
     else
     {
@@ -266,11 +237,7 @@ int processEnv(int argc, char * argv[])
     }
   }
 
-  if (0 == returnVal)
-  {
-    collectionsInfo col;
-    col.env(opt);
-  }
+  if (0 == returnVal) { CI::env(opt); }
 
   return returnVal;
 }
@@ -278,22 +245,26 @@ int processEnv(int argc, char * argv[])
 int processConfigFile(int argc, char * argv[])
 {
   int returnVal = 0;
-  collectionsInfo::CONFIG_FILE_OPTIONS opt;
+  CI::CONFIG_FILE_OPTIONS opt;
   if (argc != 3) { returnVal = 1; }
   else
   {
-    if (0 == strcmp("env", argv[2])) { opt = collectionsInfo::CF_ENV; }
+    if (0 == strcmp("env", argv[2])) { opt = CI::CF_ENV; }
     else if (0 == strcmp("name", argv[2]))
     {
-      opt = collectionsInfo::CF_NAME;
-    }
-    else if (0 == strcmp("models", argv[2]))
-    {
-      opt = collectionsInfo::CF_MODELS;
+      opt = CI::CF_NAME;
     }
     else if (0 == strcmp("model_drivers", argv[2]))
     {
-      opt = collectionsInfo::CF_MODEL_DRIVERS;
+      opt = CI::CF_MODEL_DRIVERS;
+    }
+    else if (0 == strcmp("models", argv[2]))
+    {
+      opt = CI::CF_MODELS;
+    }
+    else if (0 == strcmp("simulator_models", argv[2]))
+    {
+      opt = CI::CF_SIMULATOR_MODELS;
     }
     else
     {
@@ -301,11 +272,7 @@ int processConfigFile(int argc, char * argv[])
     }
   }
 
-  if (0 == returnVal)
-  {
-    collectionsInfo col;
-    col.configFile(opt);
-  }
+  if (0 == returnVal) { CI::configFile(opt); }
 
   return returnVal;
 }
@@ -318,27 +285,17 @@ int processSystem(int argc, char * argv[])
   {
     if (0 == strcmp("library", argv[2]))
     { std::cout << getSystemLibraryFileName() << std::endl; }
-    else if (0 == strcmp("models", argv[2]))
-    {
-      std::list<std::pair<std::string, std::string> > lst;
-      pushDirs(KIM_SYSTEM, KIM_MODELS, &lst, NULL);
-
-      for (std::list<std::pair<std::string, std::string> >::const_iterator itr
-           = lst.begin();
-           itr != lst.end();
-           ++itr)
-      { std::cout << itr->second << std::endl; }
-    }
     else if (0 == strcmp("model_drivers", argv[2]))
     {
-      std::list<std::pair<std::string, std::string> > lst;
-      pushDirs(KIM_SYSTEM, KIM_MODEL_DRIVERS, &lst, NULL);
-
-      for (std::list<std::pair<std::string, std::string> >::const_iterator itr
-           = lst.begin();
-           itr != lst.end();
-           ++itr)
-      { std::cout << itr->second << std::endl; }
+      CI::listDirs(KIM_SYSTEM, KIM_MODEL_DRIVERS);
+    }
+    else if (0 == strcmp("models", argv[2]))
+    {
+      CI::listDirs(KIM_SYSTEM, KIM_MODELS);
+    }
+    else if (0 == strcmp("simulator_models", argv[2]))
+    {
+      CI::listDirs(KIM_SYSTEM, KIM_SIMULATOR_MODELS);
     }
     else
     {
@@ -386,14 +343,27 @@ int processItems(int argc, char * argv[])
 
   if (0 == returnVal)
   {
-    collectionsInfo col;
-    if (0 == strcmp("models", argv[1])) { col.models(list_all, name, log); }
+    if (0 == strcmp("model_drivers", argv[1]))
+    { CI::listItems(KIM_MODEL_DRIVERS, list_all, name, log); }
+    else if (0 == strcmp("models", argv[1]))
+    {
+      CI::listItems(KIM_MODELS, list_all, name, log);
+    }
+    else if (0 == strcmp("simulator_models", argv[1]))
+    {
+      CI::listItems(KIM_SIMULATOR_MODELS, list_all, name, log);
+    }
     else
     {
-      col.drivers(list_all, name, log);
+      returnVal = 1;  // unknown argument
     }
   }
 
-  if (log) KIM::Log::Destroy(&log);
+  if (log)
+  {
+    KIM::Log::Destroy(&log);
+    log = NULL;
+  }
+
   return returnVal;
 }
