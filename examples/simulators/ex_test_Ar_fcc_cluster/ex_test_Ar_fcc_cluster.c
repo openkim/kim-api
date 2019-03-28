@@ -39,6 +39,7 @@
 #define FALSE 0
 
 #define NAMESTRLEN 128
+#define NAMESTRFMT "%127s"
 
 #define FCCSPACING 5.260
 #define DIM 3
@@ -132,7 +133,7 @@ int main()
 
   /* Get KIM Model names */
   printf("Please enter valid KIM Model name: \n");
-  error = scanf("%s", modelname);
+  error = scanf(NAMESTRFMT, modelname);
   if (1 != error) { MY_ERROR("Unable to read model name"); }
 
   /* initialize the model */
