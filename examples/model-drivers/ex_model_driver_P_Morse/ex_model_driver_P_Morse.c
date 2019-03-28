@@ -56,6 +56,7 @@
 #define DIM 3 /* dimensionality of space */
 #define SPECCODE 1 /* internal species code */
 #define SPEC_NAME_LEN 64 /* max length of species name string */
+#define SPEC_NAME_FMT "%63s"
 
 
 /* Define prototype for Model Driver init */
@@ -512,7 +513,7 @@ int model_driver_create(KIM_ModelDriverCreate * const modelDriverCreate,
   }
 
   ier = fscanf(fid,
-               "%s \n%lf \n%lf \n%lf \n%lf",
+               SPEC_NAME_FMT " \n%lf \n%lf \n%lf \n%lf",
                speciesNameString, /* element symbol */
                &cutoff, /* cutoff distance in angstroms */
                &epsilon, /* Morse epsilon in eV */
