@@ -30,7 +30,7 @@
 /*                                                                            */
 
 /*                                                                            */
-/* Release: This file is part of the kim-api-v2-2.0.1 package.                */
+/* Release: This file is part of the kim-api-2.0.2 package.                   */
 /*                                                                            */
 
 /**
@@ -77,6 +77,8 @@ Table of Contents:
    ex_model_Ar_P_Morse.params, LennardJones612_UniversalShifted.params)
 
 -# \ref version2_differences
+
+-# The [NEWS](_n_e_w_s_source.html) file.
 
 In addition, all public header files and included example codes are available
 for [browsing](files.html).

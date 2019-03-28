@@ -29,7 +29,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-v2-2.0.1 package.
+// Release: This file is part of the kim-api-2.0.2 package.
 //
 
 #ifndef KIM_COMPUTE_CALLBACK_NAME_HPP_

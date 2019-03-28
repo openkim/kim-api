@@ -27,14 +27,11 @@
 //
 
 //
-// Release: This file is part of the kim-api-v2-2.0.1 package.
+// Release: This file is part of the kim-api-2.0.2 package.
 //
 
 #include <dlfcn.h>
 #include <sstream>
-
-#include "KIM_Configuration.hpp"
-#include "old_KIM_API_DIRS.h"
 
 #ifndef KIM_SHARED_LIBRARY_HPP_
 #include "KIM_SharedLibrary.hpp"

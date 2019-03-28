@@ -27,7 +27,7 @@
 #
 
 #
-# Release: This file is part of the kim-api-v2-2.0.1 package.
+# Release: This file is part of the kim-api-2.0.2 package.
 #
 
 
@@ -50,3 +50,27 @@ Two other scripts are provided:
   utility.  clang-format is assumed to be installed on the system and in the
   path.  The ./git-hooks/pre-commit hook also depends on the availability of
   clang-format.
+
+
+Branches:
+
+* There are two official branches (see below), all other branches are transient
+  and may be rewritten at any time.
+
+  - "master" This branch always points to the most recent official release.
+
+  - "devel" This branch points to the latest development commits.  It is not
+    guaranteed to be buildable.  Pull requests should be based off this branch.
+
+
+Tags:
+
+* There are two tag name conventions in use.
+
+  - "vX.Y.Z" These tags point to the final release commit version of the
+    release.  These tags show up in the history (git log) of the "master"
+    branch, but not of the "devel" branch.
+
+  - "vX.Y.Z-git" These tags point to the final commit version of the release,
+    before the create-package script is executed to generate the release
+    commit.  These tags show up in the history (git log) of the "devel" branch.

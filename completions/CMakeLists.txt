@@ -30,15 +30,15 @@
 #
 
 #
-# Release: This file is part of the kim-api-v2-2.0.1 package.
+# Release: This file is part of the kim-api-2.0.2 package.
 #
 
 
-set(BASH_COMPLETIONS ${PROJECT_NAME}-completion.bash)
+set(BASH_COMPLETIONS ${PROJECT_NAME}-collections-management.bash)
 
 string(MAKE_C_IDENTIFIER "${PROJECT_NAME}" KIM_API_C_ID_PROJECT_NAME)
 
-configure_file(completion.bash.in ${BASH_COMPLETIONS} @ONLY)
+configure_file(collections-management.bash.in ${BASH_COMPLETIONS} @ONLY)
 
 install(
   FILES ${CMAKE_CURRENT_BINARY_DIR}/${BASH_COMPLETIONS}

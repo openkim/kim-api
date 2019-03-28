@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-v2-2.0.1 package.
+// Release: This file is part of the kim-api-2.0.2 package.
 //
 
 #include <algorithm>
@@ -1431,8 +1431,8 @@ int ModelImplementation::WriteParameterizedModel(
          "# Required preamble\n"
          "\n"
          "cmake_minimum_required(VERSION 3.4)\n"
-         "list(APPEND CMAKE_PREFIX_PATH $ENV{KIM_API_V2_CMAKE_PREFIX_DIR})\n"
-         "find_package(KIM-API-V2 2.0 REQUIRED CONFIG)\n"
+         "list(APPEND CMAKE_PREFIX_PATH $ENV{KIM_API_CMAKE_PREFIX_DIR})\n"
+         "find_package(KIM-API 2.0 REQUIRED CONFIG)\n"
          "if(NOT TARGET kim-api)\n"
          "  enable_testing()\n"
          "  project(\"${KIM_API_PROJECT_NAME}\" VERSION "
@@ -2050,7 +2050,7 @@ int ModelImplementation::ModelCreate(
   }
 
   std::vector<std::string> sharedLibraryList;
-  if (!findItem(OLD_KIM::KIM_MODELS_DIR, modelName, &sharedLibraryList, NULL))
+  if (!findItem(OLD_KIM::KIM_MODELS, modelName, &sharedLibraryList, NULL))
   {
     LOG_ERROR("Could not find model shared library.");
     LOG_DEBUG("Exit 1=" + callString);
@@ -2960,7 +2960,7 @@ int ModelImplementation::InitializeParameterizedModel(
   }
 
   std::vector<std::string> sharedLibraryList;
-  if (!findItem(OLD_KIM::KIM_MODEL_DRIVERS_DIR,
+  if (!findItem(OLD_KIM::KIM_MODEL_DRIVERS,
                 modelDriverName_,
                 &sharedLibraryList,
                 NULL))

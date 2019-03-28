@@ -34,8 +34,8 @@ information about the examples.
 Items in these directories may be built as part of the main KIM API build.  Or,
 they may be build separately, after the KIM API has been built and installed.
 In the latter case, for Models and Model Drivers, use the
-kim-api-vX-collections-management utility to build and install the items.  For
-the simulators, the following example sequence of commands is typical.
+kim-api-collections-management utility to build and install the items.  For the
+simulators, the following example sequence of commands is typical.
 
 $ cd simulators/ex_test_Ar_fcc_cluster
 $ mkdir build

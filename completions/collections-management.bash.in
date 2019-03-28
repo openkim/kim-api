@@ -27,7 +27,7 @@
 #
 
 #
-# Release: This file is part of the kim-api-v2-2.0.1 package.
+# Release: This file is part of the kim-api-2.0.2 package.
 #
 
 _@KIM_API_C_ID_PROJECT_NAME@_collections_management()
@@ -36,7 +36,8 @@ _@KIM_API_C_ID_PROJECT_NAME@_collections_management()
   collections_info=@CMAKE_INSTALL_FULL_LIBEXECDIR@/@PROJECT_NAME@/@PROJECT_NAME@-collections-info
 
   local cur subcommands opts
-  subcommands="list set-user-models-dir set-user-drivers-dir install reinstall"
+  subcommands="list set-user-model-drivers-dir set-user-models-dir "
+  subcommands="${subcommands} set-user-simulator-models-dir install reinstall"
   subcommands="${subcommands} remove remove-all"
 
   COMPREPLY=()
@@ -96,7 +97,7 @@ _@KIM_API_C_ID_PROJECT_NAME@_collections_management()
           opts="OpenKIM OpenKIM_with_history"
         fi
 
-        local query='query={"type":"mo","kim-api-version":{"$regex":"^@PROJECT_VERSION_MAJOR@\\."}}'
+        local query='query={"type":{"$regex":"md|mo|sm"},"kim-api-version":{"$regex":"^@PROJECT_VERSION_MAJOR@\\."}}'
         query="${query}"'&fields={"kimcode":1}'
         query="${query}"'&database=obj&history=on'
         local list=`wget -q -O - --post-data="${query}" \
@@ -120,10 +121,11 @@ _@KIM_API_C_ID_PROJECT_NAME@_collections_management()
         elif test ${COMP_CWORD} -eq 3 -a x"--force" = x"${COMP_WORDS[2]}"; then
           opts="--sudo"
         fi
-        local models drivers
-        models=`${collections_info} models | sed -e 's|[^[:space:]]* \([^[:space:]]*\) .*|\1|'`
+        local models drivers simulator_models
         drivers=`${collections_info} model_drivers | sed -e 's|[^[:space:]]* \([^[:space:]]*\) .*|\1|'`
-        opts="${opts} ${models} ${drivers}"
+        models=`${collections_info} models | sed -e 's|[^[:space:]]* \([^[:space:]]*\) .*|\1|'`
+        drivers=`${collections_info} simulator_models | sed -e 's|[^[:space:]]* \([^[:space:]]*\) .*|\1|'`
+        opts="${opts} ${drivers} ${models} ${simulator_models}"
 
         if test x"reinstall" = x"${COMP_WORDS[1]}"; then
           if test x"function" = x"`type -t _cd`"; then  # check if bash_completion has been loaded & _cd defined

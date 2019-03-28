@@ -29,7 +29,7 @@
 #
 
 #
-# Release: This file is part of the kim-api-v2-2.0.1 package.
+# Release: This file is part of the kim-api-2.0.2 package.
 #
 
 cmake_minimum_required(VERSION 3.9)
@@ -42,6 +42,7 @@ find_package(Doxygen)
 set(DOXYGEN_PROJECT_NAME         "${PROJECT_NAME}")
 set(DOXYGEN_PROJECT_NUMBER       "${PROJECT_VERSION_STRING}")
 set(DOXYGEN_STRIP_FROM_PATH      "../../")
+set(DOXYGEN_CASE_SENSE_NAMES     NO)
 set(DOXYGEN_TAB_SIZE             2)
 set(DOXYGEN_EXCLUDE_SYMBOLS      "*_DEFINED_" "*_HPP_" "*_H_")
 set(DOXYGEN_ENABLE_PREPROCESSING YES)
@@ -80,6 +81,7 @@ set(SOURCES
   "../cpp/include/"
   "../c/include/"
   "../fortran/include/"
+  "../NEWS"
   "../examples/model-drivers/"
   "../examples/models/"
   "../examples/simulators/"

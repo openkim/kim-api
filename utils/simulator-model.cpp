@@ -27,11 +27,12 @@
 //
 
 //
-// Release: This file is part of the kim-api-v2-2.0.1 package.
+// Release: This file is part of the kim-api-2.0.2 package.
 //
 
 #include "KIM_Configuration.hpp"
 #include "KIM_SharedLibrary.hpp"
+#include "KIM_Version.hpp"
 #include "old_KIM_API_DIRS.h"
 #include <cstdio>
 #include <cstdlib>
@@ -57,7 +58,9 @@ void usage(std::string name)
             << "  " << name << " "
             << "<simulator-model-name> "
             << "(metadata-file | <one-based-parameter-file-index>) "
-            << "(data | name)\n";
+            << "(data | name)\n"
+            << "  " << name << " "
+            << "--version\n";
   // note: this interface is likely to change in future kim-api releases
 }
 
@@ -70,6 +73,12 @@ int main(int argc, char * argv[])
     return -1;
   }
 
+  if ((argc == 2) && (std::string(argv[1]) == "--version"))
+  {
+    std::cout << KIM_VERSION_STRING << std::endl;
+    return 0;
+  }
+
   char const * modelname = argv[1];
 
   int error;
@@ -77,63 +86,41 @@ int main(int argc, char * argv[])
 
   // get item shared library file name
   std::vector<std::string> item;
-  bool accessible = findItem(KIM_MODELS_DIR, modelname, &item, NULL);
+  bool accessible = findItem(KIM_SIMULATOR_MODELS, modelname, &item, NULL);
   if (accessible)
   {
     error = sharedLib.Open(item[OLD_KIM::IE_FULLPATH]);
     if (error)
     {
-      std::cout << "* Error: A problem occurred with the Model shared library "
-                   "file for Model name: '"
+      std::cout << "* Error: A problem occurred with the Simulator Model "
+                   "shared library file for name: '"
                 << modelname << "'" << std::endl;
       return 1;
+    }
+
+    if (argc == 2)
+    {
+      std::cout << "SIMULATOR_MODEL";
+      return 0;
     }
   }
   else
   {
-    std::cout << "* Error: The Model shared library file is not readable for "
-                 "Model name: '"
-              << modelname << "'" << std::endl;
-    return 2;
-  }
-
-  if (2 == argc)  // Is item a simulator model
-  {
-    KIM::SharedLibrary::ITEM_TYPE itemType;
-    error = sharedLib.GetType(&itemType);
-    if (error)
+    if (argc == 2)
     {
-      std::cout << "* Error getting itemType" << std::endl;
-      sharedLib.Close();
-      return 3;
+      std::cout << "NOT_A_SIMULATOR_MODEL";
+      return 4;
     }
-
-    std::cout << "Item is a ";
-    switch (itemType)
-    {
-      case KIM::SharedLibrary::STAND_ALONE_MODEL:
-        std::cout << "STAND_ALONE_MODEL";
-        break;
-      case KIM::SharedLibrary::PARAMETERIZED_MODEL:
-        std::cout << "PARAMETERIZED_MODEL";
-        break;
-      case KIM::SharedLibrary::SIMULATOR_MODEL:
-        std::cout << "SIMULATOR_MODEL";
-        break;
-      case KIM::SharedLibrary::MODEL_DRIVER: std::cout << "MODEL_DRIVER"; break;
-    };
-    std::cout << std::endl;
-
-    int returnCode;
-    if (itemType != KIM::SharedLibrary::SIMULATOR_MODEL)
-      returnCode = 4;
     else
-      returnCode = 0;
-
-    sharedLib.Close();
-    return returnCode;
+    {
+      std::cout << "* Error: The Simulator Model shared library file is not "
+                   "readable for name: '"
+                << modelname << "'" << std::endl;
+      return 2;
+    }
   }
-  else if (std::string(argv[2]) == "number-of-parameter-files")
+
+  if (std::string(argv[2]) == "number-of-parameter-files")
   {
     int number;
     error = sharedLib.GetNumberOfParameterFiles(&number);

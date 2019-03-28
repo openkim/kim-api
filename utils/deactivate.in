@@ -30,7 +30,7 @@
 #
 
 #
-# Release: This file is part of the kim-api-v2-2.0.1 package.
+# Release: This file is part of the kim-api-2.0.2 package.
 #
 
 
@@ -57,7 +57,7 @@ if test x"" = x"${PKG_CONFIG_PATH}"; then unset PKG_CONFIG_PATH; fi
 unset @KIM_API_ENVIRONMENT_CMAKE_PREFIX_DIR@
 
 for _func in `grep "_@KIM_API_C_ID_PROJECT_NAME@_.*[[:space:]]*()" \
-  "@BASH_COMPLETION_COMPLETIONSDIR@/@PROJECT_NAME@-completion.bash"`; do
+  "@BASH_COMPLETION_COMPLETIONSDIR@/@PROJECT_NAME@-collections-management.bash"`; do
   _func=`printf "${_func}" | sed -e 's|[[:space:]]*().*||'`
   unset -f "${_func}"
 done

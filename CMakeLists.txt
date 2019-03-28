@@ -29,7 +29,7 @@
 #
 
 #
-# Release: This file is part of the kim-api-v2-2.0.1 package.
+# Release: This file is part of the kim-api-2.0.2 package.
 #
 
 
@@ -43,8 +43,8 @@ include(DefaultCompilerStandards)
 
 # Define options
 #
-set(PROJECT_PREFIX "kim-api" CACHE STRING "Project prefix string")
-mark_as_advanced(KIM_API_PROJECT_PREFIX)
+set(KIM_API_PROJECT_NAME "kim-api" CACHE STRING "KIM API project name string")
+mark_as_advanced(KIM_API_PROJECT_NAME)
 #
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   set(LOG_MAX "DEBUG")
@@ -54,7 +54,7 @@ endif()
 set(KIM_API_LOG_MAXIMUM_LEVEL "${LOG_MAX}" CACHE STRING "Maximum log verbosity")
 set_property(CACHE KIM_API_LOG_MAXIMUM_LEVEL PROPERTY STRINGS SILENT FATAL ERROR WARNING INFORMATION DEBUG)
 #
-option(KIM_API_BUILD_EXAMPLES "Build example Models, Drivers, and Simulators" ON)
+option(KIM_API_BUILD_EXAMPLES "Build example Drivers, Models, Simulator Models, and Simulators" ON)
 #
 option(KIM_API_ENABLE_SANITIZE "Enable AddressSanitizer" OFF)
 mark_as_advanced(KIM_API_ENABLE_SANITIZE)
@@ -68,7 +68,7 @@ mark_as_advanced(KIM_API_ENABLE_COVERAGE)
 #
 # Define main project
 #
-project(${PROJECT_PREFIX}-v2 VERSION 2.0.1 LANGUAGES CXX C Fortran)  # must remain a single line for create-pacakge script
+project(${KIM_API_PROJECT_NAME} VERSION 2.0.2 LANGUAGES CXX C Fortran)  # must remain a single line for create-pacakge script
 set(PROJECT_DESCRIPTION "An Application Programming Interface (API) for the Knowledgebase of Interatomic Models (KIM).")
 include(GNUInstallDirs)  # needs to come after call to project()
 include(Bash-CompletionConfig)  # set install dirs for bash completions
@@ -89,6 +89,21 @@ set(KIM_API_USER_CONFIGURATION_FILE ".${PROJECT_NAME}/config" CACHE STRING "Defa
 mark_as_advanced(KIM_API_USER_CONFIGURATION_FILE)
 
 include(DefineInternalVariables)
+#
+# Define options dependent on internal variables
+#
+if((NOT KIM_API_SYSTEM_MODEL_DRIVERS_DIR) OR (KIM_API_SYSTEM_MODEL_DRIVERS_DIR MATCHES "^:"))
+  set(KIM_API_SYSTEM_MODEL_DRIVERS_DIR "${CMAKE_INSTALL_FULL_LIBDIR}/${PROJECT_NAME}/${KIM_API_MODEL_DRIVER_PLURAL_IDENTIFIER}${KIM_API_SYSTEM_MODEL_DRIVERS_DIR}" CACHE STRING "System collection (colon-separated) model drivers directory list" FORCE)
+endif()
+mark_as_advanced(KIM_API_SYSTEM_MODEL_DRIVERS_DIR)
+if((NOT KIM_API_SYSTEM_MODELS_DIR) OR (KIM_API_SYSTEM_MODELS_DIR MATCHES "^:"))
+  set(KIM_API_SYSTEM_MODELS_DIR "${CMAKE_INSTALL_FULL_LIBDIR}/${PROJECT_NAME}/${KIM_API_MODEL_PLURAL_IDENTIFIER}${KIM_API_SYSTEM_MODELS_DIR}" CACHE STRING "System collection (colon-separated) models directory list" FORCE)
+endif()
+mark_as_advanced(KIM_API_SYSTEM_MODELS_DIR)
+if((NOT KIM_API_SYSTEM_SIMULATOR_MODELS_DIR) OR (KIM_API_SYSTEM_SIMULATOR_MODELS_DIR MATCHES "^:"))
+  set(KIM_API_SYSTEM_SIMULATOR_MODELS_DIR "${CMAKE_INSTALL_FULL_LIBDIR}/${PROJECT_NAME}/${KIM_API_SIMULATOR_MODEL_PLURAL_IDENTIFIER}${KIM_API_SYSTEM_SIMULATOR_MODELS_DIR}" CACHE STRING "System collection (colon-separated) simulator models directory list" FORCE)
+endif()
+mark_as_advanced(KIM_API_SYSTEM_SIMULATOR_MODELS_DIR)
 
 include(DefaultCompilerFlags)
 
@@ -137,6 +152,7 @@ if(KIM_API_BUILD_EXAMPLES)
   list(APPEND CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR}/cmake/Modules)
   add_subdirectory(examples/model-drivers)
   add_subdirectory(examples/models)
+  add_subdirectory(examples/simulator-models)
   add_subdirectory(examples/simulators)
 endif()
 

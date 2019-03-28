@@ -29,7 +29,7 @@
 #
 
 #
-# Release: This file is part of the kim-api-v2-2.0.1 package.
+# Release: This file is part of the kim-api-2.0.2 package.
 #
 
 
@@ -41,24 +41,20 @@ if((${GIT_FOUND}) AND (EXISTS "${CMAKE_SOURCE_DIR}/.git"))
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR} TIMEOUT 5 OUTPUT_QUIET
     ERROR_VARIABLE EXEC_ERR OUTPUT_STRIP_TRAILING_WHITESPACE
     )
-  execute_process(COMMAND ${GIT_EXECUTABLE} rev-parse --short HEAD
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-    OUTPUT_VARIABLE KIM_API_GIT_COMMIT_ID OUTPUT_STRIP_TRAILING_WHITESPACE
-    )
-  execute_process(COMMAND ${GIT_EXECUTABLE} diff-index --name-only HEAD
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-    OUTPUT_VARIABLE _HAS_CHANGES OUTPUT_STRIP_TRAILING_WHITESPACE ERROR_QUIET
-    )
-  string(REPLACE "docs/readthedocs/conf.py" "" _HAS_CHANGES_FILTERED "${_HAS_CHANGES}")
-  string(STRIP "${_HAS_CHANGES_FILTERED}" _HAS_CHANGES_FILTERED)
-  if(NOT "${_HAS_CHANGES_FILTERED}" STREQUAL "")
-    set(KIM_API_GIT_COMMIT_ID "${KIM_API_GIT_COMMIT_ID}.dirty")
+  if(READTHEDOCS)
+    set(_DIRTY "")
+  else()
+    set(_DIRTY ".dirty")
   endif()
-  set(KIM_API_BUILD_METADATA "${KIM_API_GIT_COMMIT_ID}")
+  execute_process(COMMAND ${GIT_EXECUTABLE} describe --dirty=${_DIRTY} --broken=.broken --always
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    OUTPUT_VARIABLE KIM_API_GIT_DESCRIBE OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+  set(KIM_API_BUILD_METADATA "${KIM_API_GIT_DESCRIBE}")
 
   set(RECONFIGURE_FILE "${CMAKE_BINARY_DIR}/reconfigure")
   execute_process(COMMAND ${CMAKE_COMMAND} -E touch "${RECONFIGURE_FILE}")
-  add_custom_target(git-commit-id ALL
+  add_custom_target(git-commit-describe ALL
     COMMAND ${CMAKE_COMMAND} -E touch "${RECONFIGURE_FILE}"
     )
   include("${RECONFIGURE_FILE}")
