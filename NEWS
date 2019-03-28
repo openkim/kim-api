@@ -32,6 +32,45 @@
 #
 
 
+=== kim-api-2.0.2 =============== 28Mar2019 ====================================
+
+* Transition from 'kim-api-v2' naming to 'kim-api' for better alignment with
+  open source conventions
+
+* Added a simulator model example
+
+* Refactored support for simulator models: separated from models in collections.
+  Updated collections-management utility appropriately
+
+* Updated calls to scanf() for better security
+
+* Refactored old_KIM_API_DIRS.cpp to remove calls to 'exit()'
+
+* Added build options to set system collection directories
+
+* Added support for colon-separated list of directories for user and system
+  collections
+
+* Added '--version' flag to utilities
+
+* Update bash completion to work with old and new bash
+
+* Improve robustness of creat-package script
+
+* Updated badges to point to 'devel' branch & create-package to change to
+  'master' branch for release commit
+
+* Added coverity & codecov badges to README.md
+
+* Added vX.Y.Z-git tags to git repo and updated create-package script
+
+* Added NEWS file to Doxygen documentation & updated doxygen settings
+
+* Improved version build metadata string using "git describe"
+
+* Updated link flags for codecov
+
+
 === kim-api-v2-2.0.1 ============ 27Feb2019 ====================================
 
 * Fix bug in KIM::SemVer::ParseSemVer()
