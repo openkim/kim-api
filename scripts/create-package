@@ -110,13 +110,19 @@ EOF
 
 # Change kim-api.git to release version string
 # replace c /* */ comments
-orig_string="kim-api.git repository"
-new_string="${fullpackagename} package"
+orig_string="kim-api.git repository. "  # include trailing space to keep this from catching non /* */ comments
+new_string="${fullpackagename} package."
 num_spaces=`expr ${#new_string} - ${#orig_string}`
-for fl in `grep -l -r -e "kim-api\.git repository. \{${num_spaces}\}" *`; do
+if test ${num_spaces} -le 0; then
+  new_string="`printf -- '%-'${#orig_string}'s' \"${new_string}\"`"
+else
+  orig_string="`printf -- '%-'${#new_string}'s' \"${orig_string}\"`"
+fi
+orig_string="`printf -- "${orig_string}" | sed -e 's/[]\/$*.^[]/\\\\&/g'`"  # escape orig_string appropriately
+for fl in `grep -l -r "${orig_string}" *`; do
   if test x"${fl}" != x"scripts/create-package"; then  # can't ed current script
     ed "${fl}" > /dev/null 2>&1 <<EOF
-,s/kim-api\.git repository. \{${num_spaces}\}/$fullpackagename package./g
+,s/${orig_string}/${new_string}/g
 w
 q
 EOF
