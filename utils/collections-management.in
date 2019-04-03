@@ -340,7 +340,6 @@ get_build_install_item () {
         query="${query}"'&history=on'
       fi
       local list
-      printf "@@@@ ${query} @@@@@\n"
       list="`wget -q -O - --post-data="${query}" https://query.openkim.org/api`"
       if test $? -ne 0; then  # wget failed
         printf "*** ERROR *** Unable to successfully contact openkim.org to download models.\n"
