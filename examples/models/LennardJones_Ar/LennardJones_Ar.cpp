@@ -253,7 +253,7 @@ class LennardJones_Ar
 
   //****************************************************************************
   static int ComputeArgumentsCreate(
-      KIM::ModelCompute const * const modelCompute,
+      KIM::ModelCompute const * const /* modelCompute */,
       KIM::ModelComputeArgumentsCreate * const modelComputeArgumentsCreate)
   {
     // register arguments
@@ -264,8 +264,6 @@ class LennardJones_Ar
                     KIM::COMPUTE_ARGUMENT_NAME::partialForces,
                     KIM::SUPPORT_STATUS::required);
 
-    (void) modelCompute;  // avoid unused parameter warning
-
     // register callbacks
     //
     // none
@@ -274,13 +272,11 @@ class LennardJones_Ar
   }
 
   //****************************************************************************
-  static int ComputeArgumentsDestroy(
-      KIM::ModelCompute const * const modelCompute,
-      KIM::ModelComputeArgumentsDestroy * const modelComputeArgumentsDestroy)
+  static int
+  ComputeArgumentsDestroy(KIM::ModelCompute const * const /* modelCompute */,
+                          KIM::ModelComputeArgumentsDestroy * const
+                          /* modelComputeArgumentsDestroy */)
   {
-    (void) modelCompute;  // avoid unused parameter warning
-    (void) modelComputeArgumentsDestroy;  // avoid unused parameter warning
-
     // nothing further to do
 
     return false;
