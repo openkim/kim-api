@@ -361,8 +361,8 @@ class Model
   /// \brief Get the Model's support and code for the requested SpeciesName.
   ///
   /// \param[in]  speciesName The SpeciesName of interest.
-  /// \param[out] speciesIsSupported \c true the Model supports the species of
-  ///             interest, \c false otherwise.
+  /// \param[out] speciesIsSupported \c true if the Model supports the species
+  ///             of interest, \c false otherwise.
   /// \param[out] code Value used by the Model to refer to the species of
   ///             interest.
   ///
