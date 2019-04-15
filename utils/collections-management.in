@@ -566,7 +566,7 @@ print_separator_line () {
 }
 
 print_collection_item_list () {
-  local item_label=$1
+  local item_label="$1"
   local dir_list="$2"
   local number_of_items_in_list=$3
   local item_list="$4"
