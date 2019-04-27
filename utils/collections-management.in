@@ -903,7 +903,7 @@ case $command in
         shift
       done
     fi
-    if x"force-no" = x"${use_force}"; then
+    if test x"force-no" = x"${use_force}"; then
       printf "This will remove and reinstall all files associated with these items.\n"
       printf "  Use the '--interactive' option to request confirmation\n"
       printf "  before attempting to remove each item.\n"
