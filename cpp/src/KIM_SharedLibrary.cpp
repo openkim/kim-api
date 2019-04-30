@@ -52,15 +52,17 @@
 namespace KIM
 {
 // log helpers
-#define SNUM(x) \
-  static_cast<std::ostringstream &>(std::ostringstream() << std::dec << x).str()
-#define SPTR(x)                                                      \
-  static_cast<std::ostringstream &>(std::ostringstream()             \
-                                    << static_cast<void const *>(x)) \
+#define SNUM(x)                                                \
+  static_cast<std::ostringstream const &>(std::ostringstream() \
+                                          << std::dec << x)    \
       .str()
-#define SFUNCP(x)                                                   \
-  static_cast<std::ostringstream &>(std::ostringstream()            \
-                                    << static_cast<Function **>(x)) \
+#define SPTR(x)                                                            \
+  static_cast<std::ostringstream const &>(std::ostringstream()             \
+                                          << static_cast<void const *>(x)) \
+      .str()
+#define SFUNCP(x)                                                         \
+  static_cast<std::ostringstream const &>(std::ostringstream()            \
+                                          << static_cast<Function **>(x)) \
       .str()
 
 #include "KIM_LogMacros.hpp"

@@ -670,8 +670,10 @@ int LennardJones612Implementation::RegisterKIMComputeArgumentsSettings(
 
 //******************************************************************************
 // helper macro
-#define SNUM(x) \
-  static_cast<std::ostringstream &>(std::ostringstream() << std::dec << x).str()
+#define SNUM(x)                                                \
+  static_cast<std::ostringstream const &>(std::ostringstream() \
+                                          << std::dec << x)    \
+      .str()
 //******************************************************************************
 #undef KIM_LOGGER_OBJECT_NAME
 #define KIM_LOGGER_OBJECT_NAME modelDriverCreate

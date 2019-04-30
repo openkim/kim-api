@@ -63,15 +63,17 @@ extern std::vector<ComputeCallbackName> const requiredByAPI_ComputeCallbacks;
 
 
 // log helpers
-#define SNUM(x) \
-  static_cast<std::ostringstream &>(std::ostringstream() << std::dec << x).str()
-#define SPTR(x)                                                      \
-  static_cast<std::ostringstream &>(std::ostringstream()             \
-                                    << static_cast<void const *>(x)) \
+#define SNUM(x)                                                \
+  static_cast<std::ostringstream const &>(std::ostringstream() \
+                                          << std::dec << x)    \
       .str()
-#define SFUNC(x)                                                   \
-  static_cast<std::ostringstream &>(std::ostringstream()           \
-                                    << static_cast<Function *>(x)) \
+#define SPTR(x)                                                            \
+  static_cast<std::ostringstream const &>(std::ostringstream()             \
+                                          << static_cast<void const *>(x)) \
+      .str()
+#define SFUNC(x)                                                         \
+  static_cast<std::ostringstream const &>(std::ostringstream()           \
+                                          << static_cast<Function *>(x)) \
       .str()
 
 
