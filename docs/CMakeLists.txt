@@ -84,6 +84,7 @@ set(SOURCES
   "../NEWS"
   "../examples/model-drivers/"
   "../examples/models/"
+  "../examples/simulator-models/"
   "../examples/simulators/"
   )
 
