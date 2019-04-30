@@ -3118,7 +3118,9 @@ int ModelImplementation::WriteParameterFiles()
   for (int i = 0; i < numberOfParameterFiles_; ++i)
   {
     std::stringstream templateString;
-    templateString << P_tmpdir << "/" << fileNameString;
+    templateString << P_tmpdir
+                   << ((std::string(P_tmpdir).back() == '/') ? "" : "/")
+                   << fileNameString;
     char * cstr = strdup(templateString.str().c_str());
     int fileid = mkstemp(cstr);
     if (fileid == -1)
