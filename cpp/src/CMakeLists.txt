@@ -64,6 +64,8 @@ set(CPP_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_SemVer.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_SpeciesName.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_SupportStatus.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/KIM_SimulatorModel.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/KIM_SimulatorModelImplementation.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_TemperatureUnit.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_TimeUnit.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ComputeArgumentsImplementation.cpp
@@ -82,6 +84,9 @@ add_library(kim-loader STATIC
   KIM_LogImplementation.cpp
   KIM_SharedLibrary.cpp
   old_KIM_API_DIRS.cpp
+  KIM_SimulatorModel.cpp
+  KIM_SimulatorModelImplementation.cpp
+  KIM_SpeciesName.cpp
   )
 target_include_directories(kim-loader PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}
@@ -90,3 +95,11 @@ target_include_directories(kim-loader PUBLIC
   ${CMAKE_BINARY_DIR}
   )
 target_link_libraries(kim-loader ${CMAKE_DL_LIBS})
+
+
+# temp
+#
+set_source_files_properties("${CMAKE_CURRENT_SOURCE_DIR}/KIM_SimulatorModelImplementation.cpp"
+  PROPERTIES COMPILE_FLAGS "-std=c++11")
+target_link_libraries(kim-loader jsoncpp)
+add_dependencies(kim-loader jsoncpp_project)

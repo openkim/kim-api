@@ -68,6 +68,7 @@ set(CPP_HEADERS
   KIM_Numbering.hpp
   KIM_SemVer.hpp
   KIM_SimulatorHeaders.hpp
+  KIM_SimulatorModel.hpp
   KIM_SpeciesName.hpp
   KIM_SupportedExtensions.hpp
   KIM_SupportStatus.hpp
