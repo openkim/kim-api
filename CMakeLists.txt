@@ -121,23 +121,6 @@ target_include_directories(kim-api PUBLIC $<TARGET_PROPERTY:kim-api,Fortran_MODU
 target_include_directories(kim-api PUBLIC ${CMAKE_BINARY_DIR})
 target_link_libraries(kim-api ${CMAKE_DL_LIBS})
 
-# BEGIN Temporary for simulator model development
-#
-include(ExternalProject)
-ExternalProject_Add(jsoncpp_project
-  PREFIX jsoncpp
-  GIT_REPOSITORY https://github.com/open-source-parsers/jsoncpp.git
-  CMAKE_ARGS -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER} -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/jsoncpp-install
-  INSTALL_COMMAND make DESTDIR= install
-  )
-include_directories("${CMAKE_BINARY_DIR}/jsoncpp-install/include")
-add_library(jsoncpp STATIC IMPORTED)
-set_target_properties(jsoncpp PROPERTIES IMPORTED_LOCATION "${CMAKE_BINARY_DIR}/jsoncpp-install/lib/libjsoncpp.a")
-
-target_link_libraries(kim-api jsoncpp)
-add_dependencies(kim-api jsoncpp_project)
-
-# END Temporary for simulator model development
 
 # Add include subdirectories
 #
@@ -178,11 +161,3 @@ endif()
 # Add install rules for kim-api
 #
 install(TARGETS kim-api DESTINATION ${CMAKE_INSTALL_LIBDIR})
-
-
-# BEGIN Temporary for simulator model development
-#
-set_source_files_properties("${CMAKE_SOURCE_DIR}/cpp/src/KIM_SimulatorModelImplementation.cpp"
-  PROPERTIES COMPILE_FLAGS "-std=c++11")
-
-# END Temporary for simulator model development

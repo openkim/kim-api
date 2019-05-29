@@ -30,6 +30,8 @@
 // Release: This file is part of the kim-api.git repository.
 //
 
+#include <cstdlib>
+#include <cstring>
 #include <fstream>
 #include <iomanip>
 #include <sstream>
@@ -46,8 +48,9 @@
 #include "KIM_SimulatorModelImplementation.hpp"
 #endif
 
-#include "json/json.h"
-#include <iostream>
+extern "C" {
+#include "pdjson.h"
+}
 
 // log helpers
 #define SNUM(x)                                                \
@@ -739,51 +742,13 @@ int SimulatorModelImplementation::Initialize(
     return true;
   }
 
-  std::ifstream ifs;
-  ifs.open(metadataFileName_, std::ifstream::in);
-  Json::Reader reader;
-  Json::Value val;
-  reader.parse(ifs, val);
-  ifs.close();
-
-  for (Json::Value::const_iterator itr = val.begin(); itr != val.end(); ++itr)
+  if (ReadJson())
   {
-    if (itr.key() == "simulator-version")
-    { simulatorVersion_ = (*itr).asString(); }
-    else if (itr.key() == "simulator-name")
-    {
-      simulatorName_ = (*itr).asString();
-    }
-    else if (itr.key() == "supported-species")
-    {
-      std::stringstream ss((*itr).asString());
-      while (ss)
-      {
-        std::string species;
-        ss >> species;
-        if (species != "") simulatorSupportedSpecies_.push_back(species);
-      }
-    }
-    else if (itr.key() == "extended-id")
-    {
-      // no-op
-    }
-    else
-    {
-      simulatorFieldNames_.push_back(itr.key().asString());
-      std::vector<std::string> lines;
-      if (simulatorFieldNames_.back() == "units")
-      { lines.push_back(itr->asString()); }
-      else
-      {
-        for (Json::Value::const_iterator field = itr->begin();
-             field != itr->end();
-             ++field)
-        { lines.push_back(field->asString()); }
-      }
-      originalSimulatorFields_.push_back(lines);
-    }
+    // ReadJson() logs error
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
   }
+
   // check for all required data
   if (simulatorName_ == "")
   {
@@ -815,6 +780,181 @@ int SimulatorModelImplementation::Initialize(
 
   ClearTemplateMap();
 
+  LOG_DEBUG("Exit 0=" + callString);
+  return false;
+}
+
+namespace
+{
+int json_get(void * arg) { return (static_cast<std::ifstream *>(arg))->get(); }
+const std::string json_types[] = {"",
+                                  "JSON_ERROR",
+                                  "JSON_DONE",
+                                  "JSON_OBJECT",
+                                  "JSON_OBJECT_END",
+                                  "JSON_ARRAY",
+                                  "JSON_ARRAY_END",
+                                  "JSON_STRING",
+                                  "JSON_NUMBER",
+                                  "JSON_TRUE",
+                                  "JSON_FALSE",
+                                  "JSON_NULL"};
+}  // namespace
+
+int SimulatorModelImplementation::ReadJson()
+{
+#if DEBUG_VERBOSITY
+  std::string const callString = "ReadJson().";
+#endif
+  LOG_DEBUG("Enter  " + callString);
+
+  std::ifstream ifs;
+  ifs.open(metadataFileName_.c_str(), std::ifstream::in);
+
+  struct json_stream json;
+  enum json_type type;
+
+  json_open(&json, json_get, static_cast<void *>(&ifs), 0);
+
+  type = json_next(&json);
+  LOG_DEBUG("Read " + json_types[type] + ".");
+  while ((type != JSON_DONE) && (type != JSON_ERROR))
+  {
+    // find key
+    if (type == JSON_STRING)
+    {
+      std::string key(json_get_string(&json, NULL));
+      LOG_DEBUG("Read " + json_types[type] + " value '" + key + "'.");
+
+      if (key == "simulator-version")
+      {
+        // get value
+        type = json_next(&json);
+        LOG_DEBUG("Read " + json_types[type] + ".");
+        if (type != JSON_STRING)
+        {
+          LOG_ERROR("Expeting JSON_STRING.");
+          LOG_DEBUG("Exit 1=" + callString);
+          return true;
+        }
+        else
+        {
+          simulatorVersion_ = json_get_string(&json, NULL);
+          LOG_DEBUG("Read " + json_types[type] + " value '" + simulatorVersion_
+                    + "'.");
+        }
+      }
+      else if (key == "simulator-name")
+      {
+        // get value
+        type = json_next(&json);
+        LOG_DEBUG("Read " + json_types[type] + ".");
+        if (type != JSON_STRING)
+        {
+          LOG_ERROR("Expeting JSON_STRING.");
+          LOG_DEBUG("Exit 1=" + callString);
+          return true;
+        }
+        else
+        {
+          simulatorName_ = json_get_string(&json, NULL);
+          LOG_DEBUG("Read " + json_types[type] + " value '" + simulatorName_
+                    + "'.");
+        }
+      }
+      else if (key == "supported-species")
+      {
+        // get value
+        type = json_next(&json);
+        LOG_DEBUG("Read " + json_types[type] + ".");
+        if (type != JSON_STRING)
+        {
+          LOG_ERROR("Expeting JSON_STRING.");
+          LOG_DEBUG("Exit 1=" + callString);
+          return true;
+        }
+        else
+        {
+          std::stringstream ss(json_get_string(&json, NULL));
+          LOG_DEBUG("Read " + json_types[type] + " value '" + ss.str() + "'.");
+          while (ss)
+          {
+            std::string species;
+            ss >> species;
+            if (species != "") simulatorSupportedSpecies_.push_back(species);
+          }
+        }
+      }
+      else if (key == "extended-id")
+      {
+        // get value
+        type = json_next(&json);
+        LOG_DEBUG("Read " + json_types[type] + ".");
+        if (type != JSON_STRING)
+        {
+          LOG_ERROR("Expeting JSON_STRING.");
+          LOG_DEBUG("Exit 1=" + callString);
+          return true;
+        }
+        else
+        {
+          LOG_DEBUG("Read " + json_types[type] + " value '"
+                    + json_get_string(&json, NULL) + "'.");
+          // no-op
+        }
+      }
+      else  // simulator field
+      {
+        simulatorFieldNames_.push_back(key);
+        std::vector<std::string> lines;
+        // get value
+        type = json_next(&json);
+        LOG_DEBUG("Read " + json_types[type] + ".");
+        if (type == JSON_ARRAY)
+        {
+          type = json_next(&json);
+          LOG_DEBUG("Read " + json_types[type] + ".");
+          while (type != JSON_ARRAY_END)
+          {
+            if (type == JSON_STRING)
+            {
+              lines.push_back(json_get_string(&json, NULL));
+              LOG_DEBUG("Read " + json_types[type] + " value '" + lines.back()
+                        + "'.");
+            }
+            else
+            {
+              LOG_ERROR("Expeting JSON_STRING.");
+              LOG_DEBUG("Exit 1=" + callString);
+              return true;
+            }
+
+            type = json_next(&json);
+            LOG_DEBUG("Read " + json_types[type] + ".");
+          }
+        }
+        else if (type == JSON_STRING)
+        {
+          lines.push_back(json_get_string(&json, NULL));
+          LOG_DEBUG("Read " + json_types[type] + " value '" + lines.back()
+                    + "'.");
+        }
+        else  // error
+        {
+          LOG_ERROR("Expeting JSON_ARRAY or JSON_STRING.");
+          LOG_DEBUG("Exit 1=" + callString);
+          return true;
+        }
+
+        originalSimulatorFields_.push_back(lines);
+      }
+    }
+    type = json_next(&json);
+    LOG_DEBUG("Read " + json_types[type] + ".");
+  }
+
+  json_close(&json);
+  ifs.close();
   LOG_DEBUG("Exit 0=" + callString);
   return false;
 }

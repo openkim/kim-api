@@ -129,6 +129,7 @@ class SimulatorModelImplementation
 
   Log * log_;
 
+  int ReadJson();
   int Initialize(std::string const & simulatorModelName);
   int WriteMetadataAndParameterFiles();
   void RemoveMetadataAndParameterFiles();
