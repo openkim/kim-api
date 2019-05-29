@@ -42,6 +42,7 @@
 # filter file list
 filter_file_list () {
   local file_list="$1"
+  local ignore_file="`git rev-parse --show-toplevel`/.clang-format-hook-ignore"
   files_to_check_format=""
 
   for file in ${file_list}; do
@@ -55,6 +56,14 @@ filter_file_list () {
                                      -e 's/^.*\.h\.in$//'   \
                                      -e 's/^.*\.c$//'       \
                                      -e 's/^.*\.c\.in$//'`
+    if test -f "${ignore_file}"; then
+      if test `grep -c "^${file}$" "${ignore_file}"` -gt 0; then
+        # ignore
+        printf "In ignore\n"
+        keep=no
+      fi
+    fi
+
     if test x"${keep}" = x""; then
       files_to_check_format="${files_to_check_format} ${file}"
     fi
