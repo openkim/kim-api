@@ -39,6 +39,8 @@ configure_file(KIM_Configuration.hpp.in ${CMAKE_BINARY_DIR}/KIM_Configuration.hp
 
 set(CPP_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ChargeUnit.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/KIM_Collection.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/KIM_CollectionItemType.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ComputeArgumentName.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ComputeArguments.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ComputeCallbackName.cpp
@@ -77,6 +79,8 @@ target_sources(kim-api PRIVATE ${CPP_SOURCES})
 
 
 add_library(kim-loader STATIC
+  KIM_Collection.cpp
+  KIM_CollectionItemType.cpp
   KIM_LogVerbosity.cpp
   KIM_Log.cpp
   KIM_LogImplementation.cpp
