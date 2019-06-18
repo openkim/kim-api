@@ -30,13 +30,17 @@
 // Release: This file is part of the kim-api.git repository.
 //
 
+
+#include "edn-cpp/edn.hpp"
 #include <cstdlib>
 #include <cstring>
 #include <dirent.h>
 #include <fstream>
 #include <iomanip>
 #include <sstream>
+#include <streambuf>
 #include <unistd.h>
+
 
 #ifndef KIM_LOG_HPP_
 #include "KIM_Log.hpp"
@@ -50,9 +54,6 @@
 #include "KIM_SimulatorModelImplementation.hpp"
 #endif
 
-extern "C" {
-#include "pdjson.h"
-}
 
 // log helpers
 #define SNUM(x)                                                \
@@ -753,9 +754,9 @@ int SimulatorModelImplementation::Initialize(
     return true;
   }
 
-  if (ReadJson())
+  if (ReadEdn())
   {
-    // ReadJson() logs error
+    // ReadEdn() logs error
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
@@ -795,27 +796,11 @@ int SimulatorModelImplementation::Initialize(
   return false;
 }
 
-namespace
-{
-int json_get(void * arg) { return (static_cast<std::ifstream *>(arg))->get(); }
-const std::string json_types[] = {"",
-                                  "JSON_ERROR",
-                                  "JSON_DONE",
-                                  "JSON_OBJECT",
-                                  "JSON_OBJECT_END",
-                                  "JSON_ARRAY",
-                                  "JSON_ARRAY_END",
-                                  "JSON_STRING",
-                                  "JSON_NUMBER",
-                                  "JSON_TRUE",
-                                  "JSON_FALSE",
-                                  "JSON_NULL"};
-}  // namespace
 
-int SimulatorModelImplementation::ReadJson()
+int SimulatorModelImplementation::ReadEdn()
 {
 #if DEBUG_VERBOSITY
-  std::string const callString = "ReadJson().";
+  std::string const callString = "ReadEdn().";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -826,153 +811,138 @@ int SimulatorModelImplementation::ReadJson()
   if (!ifs.is_open())
   {
     LOG_ERROR("Unable to open simulator model metatdata file.");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
+  std::string ednString((std::istreambuf_iterator<char>(ifs)),
+                        std::istreambuf_iterator<char>());
+  ifs.close();
+
+  edn::EdnNode node;
+  try
+  {
+    node = edn::read(ednString);
+  }
+  catch (char const * e)
+  {
+    LOG_ERROR("Unable to parse EDN file: " + std::string(e) + ".");
+    LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
 
-  struct json_stream json;
-  enum json_type type;
-
-  json_open(&json, json_get, static_cast<void *>(&ifs), 0);
-
-  type = json_next(&json);
-  LOG_DEBUG("Read " + json_types[type] + ".");
-  while ((type != JSON_DONE) && (type != JSON_ERROR))
+  LOG_DEBUG("Read " + edn::typeToString(node.type) + ": " + node.value + ".");
+  if (node.type == edn::EdnMap)
   {
-    // find key
-    if (type == JSON_STRING)
+    std::list<edn::EdnNode>::const_iterator itr;
+    for (itr = node.values.begin(); itr != node.values.end(); ++itr)
     {
-      std::string key(json_get_string(&json, NULL));
-      LOG_DEBUG("Read " + json_types[type] + " value '" + key + "'.");
+      // find key
+      if (itr->type == edn::EdnString)
+      {
+        std::string key(itr->value);
+        LOG_DEBUG("Read " + edn::typeToString(itr->type) + ": " + itr->value
+                  + ".");
 
-      if (key == "simulator-version")
-      {
         // get value
-        type = json_next(&json);
-        LOG_DEBUG("Read " + json_types[type] + ".");
-        if (type != JSON_STRING)
+        ++itr;
+        LOG_DEBUG("Read " + edn::typeToString(itr->type) + ": " + itr->value
+                  + ".");
+        if (key == "simulator-version")
         {
-          LOG_ERROR("Expeting JSON_STRING.");
-          LOG_DEBUG("Exit 1=" + callString);
-          return true;
-        }
-        else
-        {
-          simulatorVersion_ = json_get_string(&json, NULL);
-          LOG_DEBUG("Read " + json_types[type] + " value '" + simulatorVersion_
-                    + "'.");
-        }
-      }
-      else if (key == "simulator-name")
-      {
-        // get value
-        type = json_next(&json);
-        LOG_DEBUG("Read " + json_types[type] + ".");
-        if (type != JSON_STRING)
-        {
-          LOG_ERROR("Expeting JSON_STRING.");
-          LOG_DEBUG("Exit 1=" + callString);
-          return true;
-        }
-        else
-        {
-          simulatorName_ = json_get_string(&json, NULL);
-          LOG_DEBUG("Read " + json_types[type] + " value '" + simulatorName_
-                    + "'.");
-        }
-      }
-      else if (key == "supported-species")
-      {
-        // get value
-        type = json_next(&json);
-        LOG_DEBUG("Read " + json_types[type] + ".");
-        if (type != JSON_STRING)
-        {
-          LOG_ERROR("Expeting JSON_STRING.");
-          LOG_DEBUG("Exit 1=" + callString);
-          return true;
-        }
-        else
-        {
-          std::stringstream ss(json_get_string(&json, NULL));
-          LOG_DEBUG("Read " + json_types[type] + " value '" + ss.str() + "'.");
-          while (ss)
+          if (itr->type == edn::EdnString) { simulatorVersion_ = itr->value; }
+          else
           {
-            std::string species;
-            ss >> species;
-            if (species != "") simulatorSupportedSpecies_.push_back(species);
+            LOG_ERROR("Expecting 'EdnString'.");
+            LOG_DEBUG("Exit 1=" + callString);
+            return true;
           }
         }
-      }
-      else if (key == "extended-id")
-      {
-        // get value
-        type = json_next(&json);
-        LOG_DEBUG("Read " + json_types[type] + ".");
-        if (type != JSON_STRING)
+        else if (key == "simulator-name")
         {
-          LOG_ERROR("Expeting JSON_STRING.");
-          LOG_DEBUG("Exit 1=" + callString);
-          return true;
-        }
-        else
-        {
-          LOG_DEBUG("Read " + json_types[type] + " value '"
-                    + json_get_string(&json, NULL) + "'.");
-          // no-op
-        }
-      }
-      else  // simulator field
-      {
-        simulatorFieldNames_.push_back(key);
-        std::vector<std::string> lines;
-        // get value
-        type = json_next(&json);
-        LOG_DEBUG("Read " + json_types[type] + ".");
-        if (type == JSON_ARRAY)
-        {
-          type = json_next(&json);
-          LOG_DEBUG("Read " + json_types[type] + ".");
-          while (type != JSON_ARRAY_END)
+          if (itr->type == edn::EdnString) { simulatorName_ = itr->value; }
+          else
           {
-            if (type == JSON_STRING)
-            {
-              lines.push_back(json_get_string(&json, NULL));
-              LOG_DEBUG("Read " + json_types[type] + " value '" + lines.back()
-                        + "'.");
-            }
-            else
-            {
-              LOG_ERROR("Expeting JSON_STRING.");
-              LOG_DEBUG("Exit 1=" + callString);
-              return true;
-            }
-
-            type = json_next(&json);
-            LOG_DEBUG("Read " + json_types[type] + ".");
+            LOG_ERROR("Expecting 'EdnString'.");
+            LOG_DEBUG("Exit 1=" + callString);
+            return true;
           }
         }
-        else if (type == JSON_STRING)
+        else if (key == "supported-species")
         {
-          lines.push_back(json_get_string(&json, NULL));
-          LOG_DEBUG("Read " + json_types[type] + " value '" + lines.back()
-                    + "'.");
+          if (itr->type == edn::EdnString)
+          {
+            std::stringstream ss(itr->value);
+            while (ss)
+            {
+              std::string species;
+              ss >> species;
+              if (species != "") simulatorSupportedSpecies_.push_back(species);
+            }
+          }
+          else
+          {
+            LOG_ERROR("Expecting 'EdnString'.");
+            LOG_DEBUG("Exit 1=" + callString);
+            return true;
+          }
         }
-        else  // error
+        else if (key == "extended-id")
         {
-          LOG_ERROR("Expeting JSON_ARRAY or JSON_STRING.");
-          LOG_DEBUG("Exit 1=" + callString);
-          return true;
+          if (itr->type == edn::EdnString)
+          {
+            // no-op
+          }
+          else
+          {
+            LOG_ERROR("Expecting 'EdnString'.");
+            LOG_DEBUG("Exit 1=" + callString);
+            return true;
+          }
         }
+        else  // simulator field
+        {
+          simulatorFieldNames_.push_back(key);
+          std::vector<std::string> lines;
 
-        originalSimulatorFields_.push_back(lines);
+          if (itr->type == edn::EdnVector)
+          {
+            std::list<edn::EdnNode>::const_iterator vec;
+            for (vec = itr->values.begin(); vec != itr->values.end(); ++vec)
+            {
+              LOG_DEBUG("Read " + edn::typeToString(vec->type) + ": "
+                        + vec->value + ".");
+              if (vec->type == edn::EdnString) { lines.push_back(vec->value); }
+              else
+              {
+                LOG_ERROR("Expecting 'EdnString'.");
+                LOG_DEBUG("Exit 1=" + callString);
+                return true;
+              }
+            }
+          }
+          else if (itr->type == edn::EdnString)
+          {
+            lines.push_back(itr->value);
+          }
+          else
+          {
+            LOG_ERROR("Expecting 'EdnVector' or 'EdnString'.");
+            LOG_DEBUG("Exit 1=" + callString);
+            return true;
+          }
+
+          originalSimulatorFields_.push_back(lines);
+        }
       }
     }
-    type = json_next(&json);
-    LOG_DEBUG("Read " + json_types[type] + ".");
+  }
+  else
+  {
+    LOG_ERROR("Expecting 'EdnMap'.");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
   }
 
-  json_close(&json);
-  ifs.close();
   LOG_DEBUG("Exit 0=" + callString);
   return false;
 }

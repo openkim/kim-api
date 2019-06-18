@@ -130,7 +130,7 @@ class SimulatorModelImplementation
 
   Log * log_;
 
-  int ReadJson();
+  int ReadEdn();
   int Initialize(std::string const & simulatorModelName);
   int WriteParameterFileDirectory();
   void RemoveParameterFileDirectory();

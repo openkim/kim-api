@@ -1,9 +1,0 @@
-{
-  "simulator-version" : "12-Dec-2018",
-  "simulator-name" : "LAMMPS",
-  "extended-id" : "ex_sim_model_Si_mod_tersoff",
-  "model-init" : [ "" ],
-  "model-defn" : [ "pair_style tersoff/mod", "pair_coeff * * @<parameter-file-1>@ @<atom-type-sym-list>@" ],
-  "supported-species" : "Si",
-  "units" : "metal"
-}

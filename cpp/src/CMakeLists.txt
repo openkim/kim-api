@@ -73,14 +73,9 @@ set(CPP_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ModelImplementation.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_SharedLibrary.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/old_KIM_API_DIRS.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/pdjson/pdjson.c
   )
 
 target_sources(kim-api PRIVATE ${CPP_SOURCES})
-target_include_directories(kim-api PRIVATE
-  ${CMAKE_CURRENT_SOURCE_DIR}/pdjson
-  )
-
 
 add_library(kim-loader STATIC
   KIM_LogVerbosity.cpp
@@ -90,11 +85,9 @@ add_library(kim-loader STATIC
   old_KIM_API_DIRS.cpp
   KIM_SimulatorModel.cpp
   KIM_SimulatorModelImplementation.cpp
-  pdjson/pdjson.c
   )
 target_include_directories(kim-loader PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_CURRENT_SOURCE_DIR}/pdjson
   ../include
   ../../cmake
   ${CMAKE_BINARY_DIR}

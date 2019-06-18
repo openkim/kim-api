@@ -1,8 +1,6 @@
 # Must match line exactly
 #
 
-cpp/src/pdjson/pdjson.c
-cpp/src/pdjson/pdjson.h
-cpp/src/pdjson/tests/pretty.c
-cpp/src/pdjson/tests/stream.c
-cpp/src/pdjson/tests/tests.c
+cpp/src/edn-cpp/edn.hpp
+cpp/src/edn-cpp/example.cpp
+cpp/src/edn-cpp/repl.cpp

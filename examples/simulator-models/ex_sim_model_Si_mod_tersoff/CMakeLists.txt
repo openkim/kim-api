@@ -17,6 +17,6 @@ endif()
 
 add_kim_api_model_library(
   NAME            "ex_sim_model_Si_mod_tersoff"
-  METADATA_FILE   "kim-simulator-model.json"
+  METADATA_FILE   "kim-simulator-model.edn"
   PARAMETER_FILES "Si.tersoff.mod"
   )

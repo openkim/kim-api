@@ -83,8 +83,6 @@ int main(int argc, char * argv[])
     return 1;
   }
 
-  std::cout << simulatorModel->ToString() << std::endl;
-
   int returnValue = 0;
 
   if (argc == 2)
