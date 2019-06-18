@@ -140,11 +140,22 @@ class SimulatorModel
                             int const lineIndex,
                             std::string const ** const lineValue) const;
 
-  /// \brief Get metadata file name.
+  /// \brief Get name of the temporary directory where parameter files provided
+  /// by the simulator model are written.
   ///
-  /// \param[out] originalMetadataFileName The original name of the metadata
-  ///             file.
-  /// \param[out] metadataFileName The name of the on-disk metadata file.
+  /// \param[out] directoryName The temporary directory name
+  ///
+  /// \sa KIM_SimulatorModel_GetParameterFileDirectoryName,
+  /// kim_simulator_model_module::kim_get_parameter_file_directory_name
+  ///
+  /// \since 2.1
+  void
+  GetParameterFileDirectoryName(std::string const ** const directoryName) const;
+
+  /// \brief Get metadata file name.  The file is located in the simulator
+  /// model's parameter file directory.
+  ///
+  /// \param[out] metadataFileName The name of the metadata file.
   ///
   /// \todo should this routine name be improved?
   ///
@@ -152,8 +163,7 @@ class SimulatorModel
   /// kim_simulator_model_module::kim_get_metadata_file_name
   ///
   /// \since 2.1
-  void GetMetadataFileName(std::string const ** const originalMetadataFileName,
-                           std::string const ** const metadataFileName) const;
+  void GetMetadataFileName(std::string const ** const metadataFileName) const;
 
   /// \brief Get the number of parameter files provided by the simulator model.
   ///
@@ -165,12 +175,11 @@ class SimulatorModel
   /// \since 2.1
   void GetNumberOfParameterFiles(int * const numberOfParameterFiles) const;
 
-  /// \brief Get name of a particular parameter file.
+  /// \brief Get name of a particular parameter file.  The file is located in
+  /// the simulator model's parameter file directory.
   ///
   /// \param[in] index Zero-based index for the parameter file of interest.
-  /// \param[out] originalParameterFileName The original file name of the
-  ///             parameter file.
-  /// \param[out] parameterFileName The on-disk file name of the parameter file.
+  /// \param[out] parameterFileName Name of the parameter file.
   ///
   /// \return \c true if \c index is invalid.
   /// \return \c false otherwise.
@@ -180,7 +189,6 @@ class SimulatorModel
   ///
   /// \since 2.1
   int GetParameterFileName(int const index,
-                           std::string const ** const originalParameterFileName,
                            std::string const ** const parameterFileName) const;
 
   /// \brief Set the \ref cache_buffer_pointers "Simulator's buffer pointer"

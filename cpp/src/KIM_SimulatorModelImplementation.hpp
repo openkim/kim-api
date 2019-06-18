@@ -83,13 +83,14 @@ class SimulatorModelImplementation
                             int const lineIndex,
                             std::string const ** const lineValue) const;
 
-  void GetMetadataFileName(std::string const ** const originalMetadataFileName,
-                           std::string const ** const metadataFileName) const;
+  void
+  GetParameterFileDirectoryName(std::string const ** const directoryName) const;
+
+  void GetMetadataFileName(std::string const ** const metadataFileName) const;
 
   void GetNumberOfParameterFiles(int * const numberOfParameterFiles) const;
 
   int GetParameterFileName(int const index,
-                           std::string const ** const originalParameterFileName,
                            std::string const ** const parameterFileName) const;
 
   void SetSimulatorBufferPointer(void * const ptr);
@@ -131,10 +132,10 @@ class SimulatorModelImplementation
 
   int ReadJson();
   int Initialize(std::string const & simulatorModelName);
-  int WriteMetadataAndParameterFiles();
-  void RemoveMetadataAndParameterFiles();
+  int WriteParameterFileDirectory();
+  void RemoveParameterFileDirectory();
 
-  std::string originalMetadataFileName_;
+  std::string parameterFileDirectoryName_;
   std::string metadataFileName_;
 
   std::string simulatorName_;
@@ -146,7 +147,6 @@ class SimulatorModelImplementation
   std::vector<std::vector<std::string> > simulatorFields_;
 
   int numberOfParameterFiles_;
-  std::vector<std::string> originalParameterFileNames_;
   std::vector<std::string> parameterFileNames_;
 
   bool templateMapOpen_;

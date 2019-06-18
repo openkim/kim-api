@@ -83,6 +83,8 @@ int main(int argc, char * argv[])
     return 1;
   }
 
+  std::cout << simulatorModel->ToString() << std::endl;
+
   int returnValue = 0;
 
   if (argc == 2)
@@ -108,12 +110,14 @@ int main(int argc, char * argv[])
   }
   else
   {
+    std::string const * dirName;
+    simulatorModel->GetParameterFileDirectoryName(&dirName);
     std::string const * name;
-    std::string const * originalName;
     if (std::string(argv[2]) == "metadata-file")
     {
-      simulatorModel->GetMetadataFileName(&originalName, &name);
-      FILE * file = fopen(name->c_str(), "r");
+      simulatorModel->GetMetadataFileName(&name);
+      std::string const filePath = *dirName + "/" + *name;
+      FILE * file = fopen(filePath.c_str(), "r");
       if (file == NULL)
       {
         std::cout << "* Error: unable to open metadata file." << std::endl;
@@ -123,13 +127,12 @@ int main(int argc, char * argv[])
       fseek(file, 0, SEEK_END);
       long int size = ftell(file);
       fclose(file);
-      file = fopen(name->c_str(), "r");
+      file = fopen(filePath.c_str(), "r");
       unsigned char * fileData = new unsigned char[size];
       fread(fileData, sizeof(unsigned char), size, file);
       fclose(file);
 
-      if (std::string(argv[3]) == "name")
-      { std::cout << *originalName << std::endl; }
+      if (std::string(argv[3]) == "name") { std::cout << *name << std::endl; }
       else if (std::string(argv[3]) == "data")
       {
         fwrite(fileData, sizeof(unsigned char), size, stdout);
@@ -149,11 +152,12 @@ int main(int argc, char * argv[])
       }
       else
       {
+        std::string const * dirName;
+        simulatorModel->GetParameterFileDirectoryName(&dirName);
         // The command line interface uses a one-based index for compatibility
         // with external scripts.  The SharedLibrary API uses a zero-based
         // index consistent with standard C++ convention.
-        error = simulatorModel->GetParameterFileName(
-            index - 1, &originalName, &name);
+        error = simulatorModel->GetParameterFileName(index - 1, &name);
         if (error)
         {
           std::cout << "* Error: unable to get parameter file name."
@@ -161,7 +165,8 @@ int main(int argc, char * argv[])
           returnValue = 8;
           goto cleanup;
         }
-        FILE * file = fopen(name->c_str(), "r");
+        std::string const filePath = *dirName + "/" + *name;
+        FILE * file = fopen(filePath.c_str(), "r");
         if (file == NULL)
         {
           std::cout << "* Error: unable to open parameter file." << std::endl;
@@ -171,13 +176,12 @@ int main(int argc, char * argv[])
         fseek(file, 0, SEEK_END);
         long int size = ftell(file);
         fclose(file);
-        file = fopen(name->c_str(), "r");
+        file = fopen(filePath.c_str(), "r");
         unsigned char * fileData = new unsigned char[size];
         fread(fileData, sizeof(unsigned char), size, file);
         fclose(file);
 
-        if (std::string(argv[3]) == "name")
-        { std::cout << *originalName << std::endl; }
+        if (std::string(argv[3]) == "name") { std::cout << *name << std::endl; }
         else if (std::string(argv[3]) == "data")
         {
           fwrite(fileData, sizeof(unsigned char), size, stdout);

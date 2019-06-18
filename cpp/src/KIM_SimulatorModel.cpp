@@ -123,11 +123,16 @@ int SimulatorModel::GetSimulatorFieldLine(
   return pimpl->GetSimulatorFieldLine(fieldIndex, lineIndex, lineValue);
 }
 
+void SimulatorModel::GetParameterFileDirectoryName(
+    std::string const ** const directoryName) const
+{
+  pimpl->GetParameterFileDirectoryName(directoryName);
+}
+
 void SimulatorModel::GetMetadataFileName(
-    std::string const ** const originalMetadataFileName,
     std::string const ** const metadataFileName) const
 {
-  pimpl->GetMetadataFileName(originalMetadataFileName, metadataFileName);
+  pimpl->GetMetadataFileName(metadataFileName);
 }
 
 void SimulatorModel::GetNumberOfParameterFiles(
@@ -137,12 +142,9 @@ void SimulatorModel::GetNumberOfParameterFiles(
 }
 
 int SimulatorModel::GetParameterFileName(
-    int const index,
-    std::string const ** const originalParameterFileName,
-    std::string const ** const parameterFileName) const
+    int const index, std::string const ** const parameterFileName) const
 {
-  return pimpl->GetParameterFileName(
-      index, originalParameterFileName, parameterFileName);
+  return pimpl->GetParameterFileName(index, parameterFileName);
 }
 
 void SimulatorModel::SetSimulatorBufferPointer(void * const ptr)

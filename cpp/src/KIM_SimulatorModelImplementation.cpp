@@ -32,9 +32,11 @@
 
 #include <cstdlib>
 #include <cstring>
+#include <dirent.h>
 #include <fstream>
 #include <iomanip>
 #include <sstream>
+#include <unistd.h>
 
 #ifndef KIM_LOG_HPP_
 #include "KIM_Log.hpp"
@@ -269,10 +271,16 @@ void SimulatorModelImplementation::AddStandardTemplatesToMap()
 #endif
   LOG_DEBUG("Enter  " + callString);
 
+  templateMap_["parameter-file-dir"] = parameterFileDirectoryName_;
+
   for (size_t i = 0; i < parameterFileNames_.size(); ++i)
   {
-    std::string key = "parameter-file-" + SNUM(i + 1);
+    std::string key = "parameter-file-basename-" + SNUM(i + 1);
     templateMap_[key] = parameterFileNames_[i];
+
+    key = "parameter-file-" + SNUM(i + 1);
+    templateMap_[key]
+        = parameterFileDirectoryName_ + "/" + parameterFileNames_[i];
   }
 
   LOG_DEBUG("Exit 0=" + callString);
@@ -399,19 +407,29 @@ int SimulatorModelImplementation::GetSimulatorFieldLine(
   return false;
 }
 
-void SimulatorModelImplementation::GetMetadataFileName(
-    std::string const ** const originalMetadataFileName,
-    std::string const ** const metadataFileName) const
+void SimulatorModelImplementation::GetParameterFileDirectoryName(
+    std::string const ** const directoryName) const
 {
 #if DEBUG_VERBOSITY
-  std::string const callString = "GetMetadataFileName("
-                                 + SPTR(originalMetadataFileName) + ", "
-                                 + SPTR(metadataFileName) + ").";
+  std::string const callString
+      = "GetParameterFileDirectoryName(" + SPTR(directoryName) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
-  if (originalMetadataFileName)
-  { *originalMetadataFileName = &originalMetadataFileName_; }
+  if (directoryName) { *directoryName = &parameterFileDirectoryName_; }
+
+  LOG_DEBUG("Exit 0=" + callString);
+}
+
+void SimulatorModelImplementation::GetMetadataFileName(
+    std::string const ** const metadataFileName) const
+{
+#if DEBUG_VERBOSITY
+  std::string const callString
+      = "GetMetadataFileName(" + SPTR(metadataFileName) + ").";
+#endif
+  LOG_DEBUG("Enter  " + callString);
+
   if (metadataFileName) { *metadataFileName = &metadataFileName_; }
 
   LOG_DEBUG("Exit 0=" + callString);
@@ -432,13 +450,10 @@ void SimulatorModelImplementation::GetNumberOfParameterFiles(
 }
 
 int SimulatorModelImplementation::GetParameterFileName(
-    int const index,
-    std::string const ** const originalParameterFileName,
-    std::string const ** const parameterFileName) const
+    int const index, std::string const ** const parameterFileName) const
 {
 #if DEBUG_VERBOSITY
   std::string const callString = "GetParameterFileName(" + SNUM(index) + ", "
-                                 + SPTR(originalParameterFileName) + ", "
                                  + SPTR(parameterFileName) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
@@ -452,8 +467,6 @@ int SimulatorModelImplementation::GetParameterFileName(
   }
 #endif
 
-  if (originalParameterFileName)
-  { *originalParameterFileName = &originalParameterFileNames_[index]; }
   if (parameterFileName) { *parameterFileName = &parameterFileNames_[index]; }
 
   LOG_DEBUG("Exit 0=" + callString);
@@ -561,9 +574,9 @@ std::string const & SimulatorModelImplementation::ToString() const
   ss << "Log ID : " << log_->GetID() << "\n";
   ss << "\n";
 
-  ss << "Metadata file\n"
-     << "\tOriginal Name : " << originalMetadataFileName_ << "\n"
-     << "\tOn-disk Name  : " << metadataFileName_ << "\n\n";
+  ss << "Parameter file directory : " << parameterFileDirectoryName_ << "\n";
+
+  ss << "Metadata file name : " << metadataFileName_ << "\n\n";
 
   ss << "Simulator Name    : " << simulatorName_ << "\n"
      << "Simulator Version : " << simulatorVersion_ << "\n"
@@ -580,11 +593,9 @@ std::string const & SimulatorModelImplementation::ToString() const
   for (int i = 0; i < numberOfParameterFiles_; ++i)
   {
     ss << "\t"
-       << "index  : " << i << "\n"
+       << "index : " << i << "\n"
        << "\t  "
-       << "Original Name : " << originalParameterFileNames_[i] << "\n"
-       << "\t  "
-       << "On-disk Name  : " << parameterFileNames_[i] << "\n\n";
+       << "name : " << parameterFileNames_[i] << "\n\n";
   }
 
   ss << "Original simulator fields :\n";
@@ -635,7 +646,7 @@ SimulatorModelImplementation::SimulatorModelImplementation(
     simulatorModelName_(""),
     sharedLibrary_(sharedLibrary),
     log_(log),
-    originalMetadataFileName_(""),
+    parameterFileDirectoryName_(""),
     metadataFileName_(""),
     simulatorName_(""),
     simulatorVersion_(""),
@@ -661,7 +672,7 @@ SimulatorModelImplementation::~SimulatorModelImplementation()
 #endif
   LOG_DEBUG("Enter  " + callString);
 
-  RemoveMetadataAndParameterFiles();
+  RemoveParameterFileDirectory();
 
   delete sharedLibrary_;
 
@@ -734,10 +745,10 @@ int SimulatorModelImplementation::Initialize(
       break;
   }
 
-  error = WriteMetadataAndParameterFiles();
+  error = WriteParameterFileDirectory();
   if (error)
   {
-    LOG_ERROR("Could not write parameter files to scratch space.");
+    LOG_ERROR("Could not write parameter file directory to scratch space.");
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
@@ -808,8 +819,15 @@ int SimulatorModelImplementation::ReadJson()
 #endif
   LOG_DEBUG("Enter  " + callString);
 
+  std::string const filePath
+      = parameterFileDirectoryName_ + "/" + metadataFileName_;
   std::ifstream ifs;
-  ifs.open(metadataFileName_.c_str(), std::ifstream::in);
+  ifs.open(filePath.c_str(), std::ifstream::in);
+  if (!ifs.is_open())
+  {
+    LOG_ERROR("Unable to open simulator model metatdata file.");
+    return true;
+  }
 
   struct json_stream json;
   enum json_type type;
@@ -959,48 +977,59 @@ int SimulatorModelImplementation::ReadJson()
   return false;
 }
 
-int SimulatorModelImplementation::WriteMetadataAndParameterFiles()
+int SimulatorModelImplementation::WriteParameterFileDirectory()
 {
 #if DEBUG_VERBOSITY
-  std::string const callString = "WriteParameterFiles().";
+  std::string const callString = "WriteParameterFileDirectory().";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
   int error;
 
-  unsigned int len;
-  unsigned char const * metadataData;
-  error = sharedLibrary_->GetMetadataFile(
-      &originalMetadataFileName_, &len, &metadataData);
-  if (error)
-  {
-    LOG_ERROR("Unable to get metadata file.");
-    LOG_DEBUG("Exit 1=" + callString);
-    return true;
-  }
-
-  static char const metadataFileNameString[]
-      = "kim-simulator-model-metadata-file-XXXXXXXXXXXX";
+  static char const parameterFileDirectoryNameString[]
+      = "kim-simulator-model-parameter-file-directory-XXXXXXXXXXXX";
   std::stringstream templateString;
   templateString << P_tmpdir
                  << ((*(--(std::string(P_tmpdir).end())) == '/') ? "" : "/")
-                 << metadataFileNameString;
+                 << parameterFileDirectoryNameString;
   char * cstr = strdup(templateString.str().c_str());
-  int fileid = mkstemp(cstr);
-  if (fileid == -1)
+  char * tmpdir = mkdtemp(cstr);
+  if (NULL == tmpdir)
   {
     free(cstr);
-    LOG_ERROR("Could not create a secure temporary file.");
+    LOG_ERROR("Could not create a secure temporary directory.");
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
-  metadataFileName_ = cstr;
+  parameterFileDirectoryName_ = tmpdir;
   free(cstr);
-  FILE * fl = fdopen(fileid, "w");
-  fwrite(metadataData, sizeof(unsigned char), len, fl);
-  fclose(fl);  // also closed the fileid
-  fl = NULL;
 
+  {
+    unsigned int len;
+    unsigned char const * metadataData;
+    error = sharedLibrary_->GetMetadataFile(
+        &metadataFileName_, &len, &metadataData);
+    if (error)
+    {
+      LOG_ERROR("Unable to get metadata file.");
+      RemoveParameterFileDirectory();
+      LOG_DEBUG("Exit 1=" + callString);
+      return true;
+    }
+    std::string const metadataFilePathName
+        = parameterFileDirectoryName_ + "/" + metadataFileName_;
+    FILE * fl = fopen(metadataFilePathName.c_str(), "w");
+    if (NULL == fl)
+    {
+      LOG_ERROR("Unable to get write parameter file.");
+      RemoveParameterFileDirectory();
+      LOG_DEBUG("Exit 1=" + callString);
+      return true;
+    }
+    fwrite(metadataData, sizeof(unsigned char), len, fl);
+    fclose(fl);
+    fl = NULL;
+  }
 
   sharedLibrary_->GetNumberOfParameterFiles(&numberOfParameterFiles_);
   std::vector<unsigned char const *> parameterFileStrings;
@@ -1018,56 +1047,61 @@ int SimulatorModelImplementation::WriteMetadataAndParameterFiles()
       LOG_DEBUG("Exit 1=" + callString);
       return true;
     }
-    originalParameterFileNames_.push_back(parameterFileName);
-    parameterFileStrings.push_back(strPtr);
-    parameterFileStringLengths.push_back(length);
-  }
+    parameterFileNames_.push_back(parameterFileName);
 
-  static char const fileNameString[]
-      = "kim-simulator-model-parameter-file-XXXXXXXXXXXX";
-  for (int i = 0; i < numberOfParameterFiles_; ++i)
-  {
-    templateString.str("");
-    templateString << P_tmpdir
-                   << ((*(--(std::string(P_tmpdir).end())) == '/') ? "" : "/")
-                   << fileNameString;
-    cstr = strdup(templateString.str().c_str());
-    fileid = mkstemp(cstr);
-    if (fileid == -1)
+    std::string const parameterFilePathName
+        = parameterFileDirectoryName_ + "/" + parameterFileName;
+    FILE * fl = fopen(parameterFilePathName.c_str(), "w");
+    if (NULL == fl)
     {
-      free(cstr);
-      LOG_ERROR("Could not create a secure temporary file.");
+      LOG_ERROR("Unable to get write parameter file.");
+      RemoveParameterFileDirectory();
       LOG_DEBUG("Exit 1=" + callString);
       return true;
     }
-    parameterFileNames_.push_back(cstr);
-    free(cstr);
-
-    fl = fdopen(fileid, "w");
-    fwrite(parameterFileStrings[i],
-           sizeof(unsigned char),
-           parameterFileStringLengths[i],
-           fl);
-    fclose(fl);  // also closed the fileid
+    fwrite(strPtr, sizeof(unsigned char), length, fl);
+    fclose(fl);
+    fl = NULL;
   }
 
   LOG_DEBUG("Exit 0=" + callString);
   return false;
 }
 
-void SimulatorModelImplementation::RemoveMetadataAndParameterFiles()
+void SimulatorModelImplementation::RemoveParameterFileDirectory()
 {
-  // remove metadata file
-  if (metadataFileName_ != "") remove(metadataFileName_.c_str());
-  metadataFileName_.clear();
-
-  // remove parameter files
-  for (size_t i = 0; i < parameterFileNames_.size(); ++i)
+  if (parameterFileDirectoryName_ != "")
   {
-    if (parameterFileNames_[i] != "") remove(parameterFileNames_[i].c_str());
+    int error;
+    struct dirent * dp = NULL;
+    DIR * dir = NULL;
+    dir = opendir(parameterFileDirectoryName_.c_str());
+    while ((dp = readdir(dir)))
+    {
+      // assuming no subdirectories, just files
+      if ((0 != strcmp(dp->d_name, ".")) && (0 != strcmp(dp->d_name, "..")))
+      {
+        std::string filePath = parameterFileDirectoryName_ + "/" + dp->d_name;
+        error = remove(filePath.c_str());
+        if (error)
+        {
+          LOG_ERROR("Unable to remove simulator model file '" + filePath
+                    + "'.");
+        }
+      }
+    }
+    error = remove(parameterFileDirectoryName_.c_str());
+    if (error)
+    {
+      LOG_ERROR("Unable to remove simulator model parameter file directory '"
+                + parameterFileDirectoryName_ + "'.");
+    }
+
+    // clear out directory and file stuff
+    parameterFileDirectoryName_ = "";
+    metadataFileName_ = "";
+    numberOfParameterFiles_ = -1;
+    parameterFileNames_.clear();
   }
-  // clear out parameter file stuff
-  numberOfParameterFiles_ = -1;
-  parameterFileNames_.clear();
 }
 }  // namespace KIM
