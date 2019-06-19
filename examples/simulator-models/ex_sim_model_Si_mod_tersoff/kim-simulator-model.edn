@@ -1,4 +1,5 @@
 {
+  "kim-api-sm-schema-version" 1
   "simulator-version" "12-Dec-2018"
   "simulator-name" "LAMMPS"
   "extended-id" "ex_sim_model_Si_mod_tersoff"

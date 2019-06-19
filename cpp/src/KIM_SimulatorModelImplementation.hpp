@@ -47,6 +47,12 @@
 #endif
 
 
+namespace edn
+{
+// Forward declarations
+struct EdnNode;
+}  // namespace edn
+
 namespace KIM
 {
 // Forward declarations
@@ -130,13 +136,17 @@ class SimulatorModelImplementation
 
   Log * log_;
 
-  int ReadEdn();
+  int ParseEdn(edn::EdnNode & node) const;
+  int GetSchemaVersion();
+  int ReadEdnSchemaV1();
   int Initialize(std::string const & simulatorModelName);
   int WriteParameterFileDirectory();
   void RemoveParameterFileDirectory();
 
   std::string parameterFileDirectoryName_;
   std::string metadataFileName_;
+  int schemaVersion_;
+  std::string extendedID_;
 
   std::string simulatorName_;
   std::string simulatorVersion_;

@@ -649,6 +649,8 @@ SimulatorModelImplementation::SimulatorModelImplementation(
     log_(log),
     parameterFileDirectoryName_(""),
     metadataFileName_(""),
+    schemaVersion_(0),
+    extendedID_(""),
     simulatorName_(""),
     simulatorVersion_(""),
     numberOfParameterFiles_(0),
@@ -754,14 +756,42 @@ int SimulatorModelImplementation::Initialize(
     return true;
   }
 
-  if (ReadEdn())
+  if (GetSchemaVersion())
   {
-    // ReadEdn() logs error
+    // GetSchemaVersion() logs error
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
+  if (schemaVersion_ == 1)
+  {
+    if (ReadEdnSchemaV1())
+    {
+      // ReadEdn() logs error
+      LOG_DEBUG("Exit 1=" + callString);
+      return true;
+    }
+  }
+  else
+  {
+    LOG_ERROR("Shouldn't ever get here.");
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
 
   // check for all required data
+  if (extendedID_ == "")
+  {
+    LOG_ERROR("Required metadata field 'extended-id' not found.");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
+  else if (extendedID_ != simulatorModelName_)
+  {
+    LOG_ERROR(
+        "Metadata field 'extended-id' not equal to simulator model name.");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
   if (simulatorName_ == "")
   {
     LOG_ERROR("Required metadata field 'simulator-name' not found.");
@@ -796,11 +826,10 @@ int SimulatorModelImplementation::Initialize(
   return false;
 }
 
-
-int SimulatorModelImplementation::ReadEdn()
+int SimulatorModelImplementation::ParseEdn(edn::EdnNode & node) const
 {
 #if DEBUG_VERBOSITY
-  std::string const callString = "ReadEdn().";
+  std::string const callString = "ParseEdn().";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -818,7 +847,6 @@ int SimulatorModelImplementation::ReadEdn()
                         std::istreambuf_iterator<char>());
   ifs.close();
 
-  edn::EdnNode node;
   try
   {
     node = edn::read(ednString);
@@ -826,6 +854,25 @@ int SimulatorModelImplementation::ReadEdn()
   catch (char const * e)
   {
     LOG_ERROR("Unable to parse EDN file: " + std::string(e) + ".");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
+
+  LOG_DEBUG("Exit 0=" + callString);
+  return false;
+}
+
+int SimulatorModelImplementation::GetSchemaVersion()
+{
+#if DEBUG_VERBOSITY
+  std::string const callString = "GetSchemaVersion().";
+#endif
+  LOG_DEBUG("Enter  " + callString);
+
+  edn::EdnNode node;
+  if (ParseEdn(node))
+  {
+    // ParseEdn() logs error
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
@@ -847,7 +894,82 @@ int SimulatorModelImplementation::ReadEdn()
         ++itr;
         LOG_DEBUG("Read " + edn::typeToString(itr->type) + ": " + itr->value
                   + ".");
-        if (key == "simulator-version")
+        if (key == "kim-api-sm-schema-version")
+        {
+          if (itr->type == edn::EdnInt)
+          { std::istringstream(itr->value) >> schemaVersion_; }
+          else
+          {
+            LOG_ERROR("Expecting 'EdnInt'.");
+            LOG_DEBUG("Exit 1=" + callString);
+            return true;
+          }
+        }
+      }
+    }
+  }
+  else
+  {
+    LOG_ERROR("Expecting 'EdnMap'.");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
+
+  if (schemaVersion_ != 1)
+  {
+    LOG_ERROR("Unsupported schema version found.");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
+
+  LOG_DEBUG("Exit 0=" + callString);
+  return false;
+}
+
+int SimulatorModelImplementation::ReadEdnSchemaV1()
+{
+#if DEBUG_VERBOSITY
+  std::string const callString = "ReadEdnSchemaV1().";
+#endif
+  LOG_DEBUG("Enter  " + callString);
+
+  edn::EdnNode node;
+  if (ParseEdn(node))
+  {
+    // ParseEdn() logs error
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
+
+  LOG_DEBUG("Read " + edn::typeToString(node.type) + ": " + node.value + ".");
+  if (node.type == edn::EdnMap)
+  {
+    std::list<edn::EdnNode>::const_iterator itr;
+    for (itr = node.values.begin(); itr != node.values.end(); ++itr)
+    {
+      // find key
+      if (itr->type == edn::EdnString)
+      {
+        std::string key(itr->value);
+        LOG_DEBUG("Read " + edn::typeToString(itr->type) + ": " + itr->value
+                  + ".");
+
+        // get value
+        ++itr;
+        LOG_DEBUG("Read " + edn::typeToString(itr->type) + ": " + itr->value
+                  + ".");
+        if (key == "kim-api-sm-schema-version")
+        {
+          if (itr->type == edn::EdnInt)
+          { std::istringstream(itr->value) >> schemaVersion_; }
+          else
+          {
+            LOG_ERROR("Expecting 'EdnInt'.");
+            LOG_DEBUG("Exit 1=" + callString);
+            return true;
+          }
+        }
+        else if (key == "simulator-version")
         {
           if (itr->type == edn::EdnString) { simulatorVersion_ = itr->value; }
           else
@@ -888,10 +1010,7 @@ int SimulatorModelImplementation::ReadEdn()
         }
         else if (key == "extended-id")
         {
-          if (itr->type == edn::EdnString)
-          {
-            // no-op
-          }
+          if (itr->type == edn::EdnString) { extendedID_ = itr->value; }
           else
           {
             LOG_ERROR("Expecting 'EdnString'.");
