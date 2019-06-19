@@ -45,6 +45,73 @@ class SimulatorModelImplementation;
 /// \brief Provides the primary interface to a %KIM API SimulatorModel object
 /// and is meant to be used by simulators.
 ///
+/// %KIM API SimulatorModel objects are implemented by a metadata file, written
+/// in EDN format (See https://openkim.org/about-edn/), and a set of one or
+/// more parameter files.  The metadata file contains the information necessary
+/// to setup the model within the simulator.  The %KIM API SimulatorModel model
+/// object provides a generic interface to access the parameter files and the
+/// contents of the metadata file.  Each simulator may define its own set of
+/// "simulator fields" that contain simulator-specific content for the model's
+/// setup.  A simulator field consistes of zero or more "lines".  Each line is
+/// a string containing inforamtion that is meaningful to the simulator.  To
+/// allow the simulator to specialize the field lines based on user input, the
+/// SimulatorModel interface provides a template substitution mechanism.  Each
+/// simulator field line may contaion template tags of the form "@<key>@" and
+/// will be replaced by an appropriate value provided by the SimulatorModel
+/// object or the simulator.
+///
+/// To facilitate backward-compatibility, the schema of the metadata file is
+/// explicitly versioned.  Each version of the schema is documented here.
+///
+/// \note \parblock
+/// <h3>`kim-api-sm-schema-version = 1` (Since 2.1):</h3>
+///
+/// The metadata file consists of a single EDN Map.  Each key-value pair in the
+/// map has a key element-type of string.  The following list gives the
+/// *required* key values and the element-type of their corresponding value:
+///
+/// * "kim-api-sm-schema-version", integer
+/// * "extended-id", string
+/// * "simulator-name", string
+/// * "simulator-version", string
+/// * "supported-species", string
+///
+/// The "extended-id" string value must be identical to the SimulatorModel's
+/// name.  The "supported-species" string value is a space separated list of
+/// labels that identify the species supported by the model.  The %KIM API does
+/// not impose any additional constraints on these species labels.
+///
+/// All other key-value pairs in the EDN map are "simulator fields" which mush
+/// have a value with element-type string or vector.  If a vector of length
+/// zero or greater is provided, each element of the vector must have
+/// element-type string.
+///
+/// **Example**
+/// \code{.edn}
+/// {
+///   "kim-api-sm-schema-version" 1
+///   "extended-id" "Sim_LAMMPS_LJcut_AkersonElliott_Alchemy_PbAu"
+///   "simulator-name" "LAMMPS"
+///   "simulator-version" "12 Dec 2018"
+///   "supported-species" "Pb Au"
+///   "units" "metal"
+///   "model-defn" [ "pair_style lj/cut 10.4057000"
+///                  "variable alchemy_mapping index @<atom-type-sym-list>@"
+///                  "variable alchemy_curr_type loop 10000"
+///                  "include @<parameter-file-1>@"
+///                  "pair_modify mix arithmetic"
+///                ]
+/// }
+/// \endcode
+///
+/// In this example the "units" and "model-defn" key-value pairs are "simulator
+/// fields" whose format is defined by the LAMMPS kim_style command.  There
+/// are also two examples of template tags: "@<atom-type-sym-list>@", which is
+/// defined by the LAMMPS simulator, and "@<parameter-file-1>@", which is
+/// defined by the SimulatorModel object.
+///
+/// \endparblock
+///
 /// \sa KIM_SimulatorModel,
 /// kim_simulator_model_module::kim_simulator_model_handle_type
 ///
@@ -61,11 +128,17 @@ class SimulatorModel
   /// \param[out] simulatorModel Pointer to the newly created SimulatorModel
   ///             object.
   ///
-  /// \todo Verify this documentaion
+  /// \note The value of `simulatorModelName` is required to be a valid
+  /// C-identifier.
   ///
   /// \return \c true if the %KIM API is unable to allocate a new log object.
   /// \return \c true if the requested simulator model's library cannot be
   ///         found, opened, is of the wrong type, or has some other problem.
+  /// \return \c true if the simulator model's parameter files cannot be
+  ///         written to scratch space.
+  /// \return \c true if the simulator model's metadata file is invalid EDN, is
+  ///         written in an unsupported schema version, or does not provide all
+  ///         required data.
   /// \return \c false otherwise.
   ///
   /// \post `simulatorModel == NULL` if an error occurs.
@@ -95,47 +168,150 @@ class SimulatorModel
   static void Destroy(SimulatorModel ** const simulatorModel);
 
 
-  /// @@@ add docs
-  void GetSimulatorName(std::string const ** const simulatorName) const;
+  /// \brief Get the SimulatorModel's simulator name and version.
+  ///
+  /// \param[out] simulatorName Simulator name.
+  /// \param[out] simulatorVersion Simulator version.
+  ///
+  /// \pre \c simulatorName and \c simulatorVersion may be \c NULL if the
+  ///      cooresponding value is not needed.
+  ///
+  /// \sa KIM_SimulatorModel_GetSimulatorNameAndVersion,
+  /// kim_simulator_model_module::kim_get_simulator_name_and_version
+  ///
+  /// \since 2.1
+  void
+  GetSimulatorNameAndVersion(std::string const ** const simulatorName,
+                             std::string const ** const simulatorVersion) const;
 
-  /// @@@ add docs
-  void GetSimulatorVersion(std::string const ** const simulatorVersion) const;
-
-  /// @@@ add docs
+  /// \brief Get the number of species supported by the SimulatorModel.
+  ///
+  /// \param[out] numberOfSupportedSpecies The number of species supported by
+  ///             the Simulator Model.
+  ///
+  /// \sa KIM_SimulatorModel_GetNumberOfSupportedSpecies,
+  /// kim_simulator_model_module::kim_get_number_of_supported_species
+  ///
+  /// \since 2.1
   void GetNumberOfSupportedSpecies(int * const numberOfSupportedSpecies) const;
 
-  /// @@@ add docs
+  /// \brief Get a species name supported by the SimulatorModel.
+  ///
+  /// \param[in]  index Zero-based index for the species name.
+  /// \param[out] speciesName The value of the species name of interest.
+  ///
+  /// \return \c true if \c index is invalid.
+  /// \return \c false otherwise.
+  ///
+  /// \sa KIM_SimulatorModel_GetSupportedSpecies,
+  /// kim_simulator_model_module::kim_get_supported_species
+  ///
+  /// \since 2.1
   int GetSupportedSpecies(int const index,
                           std::string const ** const speciesName) const;
 
-  /// \brief Set template map.
+  /// \brief Restart the template map for simulator field line substitutions.
   ///
-  /// Provide the simulator specific key-value pairs for the field
-  /// translations.  These will be added to the standard translations defined
-  /// by the KIM API.
+  /// This routine clears the template map of all existing entries, adds the
+  /// %KIM API defined entries (\c parameter-file-dir, \c
+  /// parameter-file-basename-#, and \c parameter-file-#, where # ranges from 1
+  /// to the SimulatorModel's number of parameter files), and opens the
+  /// template map for addition of new entries.
   ///
-  /// \param[in] templateMap The std::map with key-value pairs to be used for
-  ///            translation of simulator fields.
-  ///
-  /// \sa KIM_SimulatorModel_SetTemplateMap,
-  /// kim_simulator_model_module::kim_set_template_map
+  /// \sa KIM_SimulatorModel_RestartTemplateMap,
+  /// kim_simulator_model_module::kim_restart_template_map
   ///
   /// \since 2.1
+  void RestartTemplateMap();
 
-  /// @@@ fixup docs
-  void ClearTemplateMap();
+  /// \brief Add a new key-value entry to the template map.
+  ///
+  /// In all simulator field lines, when \c key, surrounded by the template
+  /// tags "@<" and ">@", is found it will be replaced by \c value.  For
+  /// example, if \c key is \c my-key, and \c value is \c the-result, then
+  /// wherever the string `@<my-key>@` is found within a simulator field line
+  /// it will be replaced by the string `the-result`.
+  //
+  /// \param[in] key The \c key value.  Must consist only of digits (0-9),
+  ///            upper or lower case letters (a-zA-Z) or dash (-).
+  /// \param[in] value The \c value value.
+  ///
+  /// \return \c true if the template map has been closed by a call to
+  ///         FinishTempateMap.
+  /// \return \c true if \c key contains invalid characters.
+  ///
+  /// \sa KIM_SimulatorModel_AddTemplateMap,
+  /// kim_simulator_model_module::kim_add_template_map
+  ///
+  /// \since 2.1
   int AddTemplateMap(std::string const & key, std::string const & value);
-  void CloseTemplateMap();
 
-  //@@ add docs
+  /// \brief Finish (close) the template map and perform template substitutions.
+  ///
+  /// Close the template map and use the map entries to perform
+  /// search-and-replace substitutions on all simulator field lines.  The
+  /// template map must be closed to access the simulator field lines via
+  /// GetSimulatorFieldLine().
+  ///
+  /// \sa KIM_SimulatorModel_FinishTemplateMap,
+  /// kim_simulator_model_module::kim_finish_template_map
+  ///
+  /// \since 2.1
+  void FinishTemplateMap();
+
+  /// \brief Get the number of simulator fields provided by the SimulatorModel.
+  ///
+  ///
+  /// \param[out] numberOfSimulatorFields The number of simulator fields
+  ///             provided by the SimulatorModel.
+  ///
+  /// \sa KIM_SimulatorModel_GetNumberOfSimulatorFields,
+  /// kim_simulator_model_module::kim_get_number_of_simulator_fields
+  ///
+  /// \since 2.1
   void GetNumberOfSimulatorFields(int * const numberOfSimulatorFields) const;
 
-  //@@ add docs
+  /// \brief Get the metadata for the simulator field of interest.
+  ///
+  /// \param[in]  fieldIndex Zero-based index of the simulator field of
+  ///             interest.
+  /// \param[out] extent Number of lines in the simulator field of interest.
+  /// \param[out] fieldName Name of the simulator field.
+  ///
+  /// \pre \c extent and \c fieldName may be \c NULL if the corresponding value
+  ///      is not needed.
+  ///
+  /// \post \c extent and \c fieldName are unchanged if an error occurs.
+  ///
+  /// \return \c true if \c fieldIndex is invalid.
+  /// \return \c false otherwise.
+  ///
+  /// \sa KIM_SimulatorModel_GetSimulatorFieldMetadata,
+  /// kim_simulator_model_module::kim_get_simulator_field_metadata
+  ///
+  /// \since 2.1
   int GetSimulatorFieldMetadata(int const fieldIndex,
                                 int * const extent,
                                 std::string const ** const fieldName) const;
 
-  //@@ add docs
+
+  /// \brief Get a line for the simulator field of interest.
+  ///
+  /// \param[in]  fieldIndex Zero-based index of the simulator field of
+  ///             interest.
+  /// \param[in]  lineIndex Zero-based index of the line of interest.
+  /// \param[out] lineValue The value of the simulator field line.
+  ///
+  /// \post \c lineValue is unchanged if an error occurs.
+  ///
+  /// \return \c true if \c fieldIndex is invalid.
+  /// \return \c true if \c lineIndex is invalid.
+  /// \return \c false otherwise.
+  ///
+  /// \sa KIM_SimulatorModel_GetSimulatorFieldLine,
+  /// kim_simulator_model_module::kim_get_simulator_field_line
+  ///
+  /// \since 2.1
   int GetSimulatorFieldLine(int const fieldIndex,
                             int const lineIndex,
                             std::string const ** const lineValue) const;
@@ -143,7 +319,7 @@ class SimulatorModel
   /// \brief Get name of the temporary directory where parameter files provided
   /// by the simulator model are written.
   ///
-  /// \param[out] directoryName The temporary directory name
+  /// \param[out] directoryName The temporary directory name.
   ///
   /// \sa KIM_SimulatorModel_GetParameterFileDirectoryName,
   /// kim_simulator_model_module::kim_get_parameter_file_directory_name
@@ -152,12 +328,10 @@ class SimulatorModel
   void
   GetParameterFileDirectoryName(std::string const ** const directoryName) const;
 
-  /// \brief Get metadata file name.  The file is located in the simulator
-  /// model's parameter file directory.
+  /// \brief Get the SimulatorModel's metadata file basename.  The file is
+  /// located in the SimulatorModel's parameter file directory.
   ///
-  /// \param[out] metadataFileName The name of the metadata file.
-  ///
-  /// \todo should this routine name be improved?
+  /// \param[out] metadataFileName The basename of the metadata file.
   ///
   /// \sa KIM_SimulatorModel_GetMetadataFileName,
   /// kim_simulator_model_module::kim_get_metadata_file_name
@@ -165,7 +339,7 @@ class SimulatorModel
   /// \since 2.1
   void GetMetadataFileName(std::string const ** const metadataFileName) const;
 
-  /// \brief Get the number of parameter files provided by the simulator model.
+  /// \brief Get the number of parameter files provided by the SimulatorModel.
   ///
   /// \param[out] numberOfParameterFiles The number of parameter files.
   ///
@@ -175,11 +349,13 @@ class SimulatorModel
   /// \since 2.1
   void GetNumberOfParameterFiles(int * const numberOfParameterFiles) const;
 
-  /// \brief Get name of a particular parameter file.  The file is located in
-  /// the simulator model's parameter file directory.
+  /// \brief Get the basename of a particular parameter file.  The file is
+  /// located in the SimulatorModel's parameter file directory.
   ///
-  /// \param[in] index Zero-based index for the parameter file of interest.
-  /// \param[out] parameterFileName Name of the parameter file.
+  /// \param[in]  index Zero-based index for the parameter file of interest.
+  /// \param[out] parameterFileName Basename of the parameter file.
+  ///
+  /// \post \c parameterFileName is unchanged if an error occurs.
   ///
   /// \return \c true if \c index is invalid.
   /// \return \c false otherwise.

@@ -67,16 +67,11 @@ void SimulatorModel::Destroy(SimulatorModel ** const simulatorModel)
   *simulatorModel = NULL;
 }
 
-void SimulatorModel::GetSimulatorName(
-    std::string const ** const simulatorName) const
-{
-  pimpl->GetSimulatorName(simulatorName);
-}
-
-void SimulatorModel::GetSimulatorVersion(
+void SimulatorModel::GetSimulatorNameAndVersion(
+    std::string const ** const simulatorName,
     std::string const ** const simulatorVersion) const
 {
-  pimpl->GetSimulatorVersion(simulatorVersion);
+  pimpl->GetSimulatorNameAndVersion(simulatorName, simulatorVersion);
 }
 
 void SimulatorModel::GetNumberOfSupportedSpecies(
@@ -91,7 +86,7 @@ int SimulatorModel::GetSupportedSpecies(
   return pimpl->GetSupportedSpecies(index, speciesName);
 }
 
-void SimulatorModel::ClearTemplateMap() { pimpl->ClearTemplateMap(); }
+void SimulatorModel::RestartTemplateMap() { pimpl->RestartTemplateMap(); }
 
 int SimulatorModel::AddTemplateMap(std::string const & key,
                                    std::string const & value)
@@ -99,7 +94,7 @@ int SimulatorModel::AddTemplateMap(std::string const & key,
   return pimpl->AddTemplateMap(key, value);
 }
 
-void SimulatorModel::CloseTemplateMap() { pimpl->CloseTemplateMap(); }
+void SimulatorModel::FinishTemplateMap() { pimpl->FinishTemplateMap(); }
 
 void SimulatorModel::GetNumberOfSimulatorFields(
     int * const numberOfSimulatorFields) const

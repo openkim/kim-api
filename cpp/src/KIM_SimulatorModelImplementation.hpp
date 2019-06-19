@@ -68,16 +68,17 @@ class SimulatorModelImplementation
   static void
   Destroy(SimulatorModelImplementation ** const simulatorModelImplementation);
 
-  void GetSimulatorName(std::string const ** const simulatorString) const;
-  void GetSimulatorVersion(std::string const ** const simulatorVersions) const;
+  void
+  GetSimulatorNameAndVersion(std::string const ** const simulatorString,
+                             std::string const ** const simulatorVersion) const;
 
   void GetNumberOfSupportedSpecies(int * const numberOfSupportedSpecies) const;
   int GetSupportedSpecies(int const index,
                           std::string const ** const speciesName) const;
 
-  void ClearTemplateMap();
+  void RestartTemplateMap();
   int AddTemplateMap(std::string const & key, std::string const & value);
-  void CloseTemplateMap();
+  void FinishTemplateMap();
 
   void GetNumberOfSimulatorFields(int * const numberOfSimulatorFields) const;
 

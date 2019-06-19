@@ -145,30 +145,19 @@ void SimulatorModelImplementation::Destroy(
   *simulatorModelImplementation = NULL;
 }
 
-void SimulatorModelImplementation::GetSimulatorName(
-    std::string const ** const simulatorName) const
-{
-#if DEBUG_VERBOSITY
-  std::string const callString
-      = "GetSimulatorName(" + SPTR(simulatorName) + ").";
-#endif
-  LOG_DEBUG("Enter  " + callString);
-
-  *simulatorName = &simulatorName_;
-
-  LOG_DEBUG("Exit 0=" + callString);
-}
-
-void SimulatorModelImplementation::GetSimulatorVersion(
+void SimulatorModelImplementation::GetSimulatorNameAndVersion(
+    std::string const ** const simulatorName,
     std::string const ** const simulatorVersion) const
 {
 #if DEBUG_VERBOSITY
-  std::string const callString
-      = "GetSimulatorVersion(" + SPTR(simulatorVersion) + ").";
+  std::string const callString = "GetSimulatorNameAndVersion("
+                                 + SPTR(simulatorName) + ", "
+                                 + SPTR(simulatorVersion) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
-  *simulatorVersion = &simulatorVersion_;
+  if (simulatorName) *simulatorName = &simulatorName_;
+  if (simulatorVersion) *simulatorVersion = &simulatorVersion_;
 
   LOG_DEBUG("Exit 0=" + callString);
 }
@@ -201,13 +190,13 @@ int SimulatorModelImplementation::GetSupportedSpecies(
   *speciesName = &(simulatorSupportedSpecies_[index]);
 
   LOG_DEBUG("Exit 0=" + callString);
-  return true;
+  return false;
 }
 
-void SimulatorModelImplementation::ClearTemplateMap()
+void SimulatorModelImplementation::RestartTemplateMap()
 {
 #if DEBUG_VERBOSITY
-  std::string const callString = "ClearTemplateMap().";
+  std::string const callString = "RestartTemplateMap().";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -252,10 +241,10 @@ int SimulatorModelImplementation::AddTemplateMap(std::string const & key,
   return false;
 }
 
-void SimulatorModelImplementation::CloseTemplateMap()
+void SimulatorModelImplementation::FinishTemplateMap()
 {
 #if DEBUG_VERBOSITY
-  std::string const callString = "CloseTemplateMap().";
+  std::string const callString = "FinishTemplateMap().";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -417,7 +406,7 @@ void SimulatorModelImplementation::GetParameterFileDirectoryName(
 #endif
   LOG_DEBUG("Enter  " + callString);
 
-  if (directoryName) { *directoryName = &parameterFileDirectoryName_; }
+  *directoryName = &parameterFileDirectoryName_;
 
   LOG_DEBUG("Exit 0=" + callString);
 }
@@ -431,7 +420,7 @@ void SimulatorModelImplementation::GetMetadataFileName(
 #endif
   LOG_DEBUG("Enter  " + callString);
 
-  if (metadataFileName) { *metadataFileName = &metadataFileName_; }
+  *metadataFileName = &metadataFileName_;
 
   LOG_DEBUG("Exit 0=" + callString);
 }
@@ -468,7 +457,7 @@ int SimulatorModelImplementation::GetParameterFileName(
   }
 #endif
 
-  if (parameterFileName) { *parameterFileName = &parameterFileNames_[index]; }
+  *parameterFileName = &parameterFileNames_[index];
 
   LOG_DEBUG("Exit 0=" + callString);
   return false;
@@ -766,7 +755,7 @@ int SimulatorModelImplementation::Initialize(
   {
     if (ReadEdnSchemaV1())
     {
-      // ReadEdn() logs error
+      // ReadEdnSchemaV1() logs error
       LOG_DEBUG("Exit 1=" + callString);
       return true;
     }
@@ -820,7 +809,7 @@ int SimulatorModelImplementation::Initialize(
     return true;
   }
 
-  ClearTemplateMap();
+  RestartTemplateMap();
 
   LOG_DEBUG("Exit 0=" + callString);
   return false;

@@ -1,0 +1,14 @@
+{
+  "kim-api-sm-schema-version" 1
+  "extended-id" "Sim_LAMMPS_LJcut_AkersonElliott_Alchemy_PbAu"
+  "simulator-name" "LAMMPS"
+  "simulator-version" "12 Dec 2018"
+  "supported-species" "Pb Au"
+  "units" "metal"
+  "model-defn" [ "pair_style lj/cut 10.4057000"
+                 "variable alchemy_mapping index @<atom-type-sym-list>@"
+                 "variable alchemy_curr_type loop 10000"
+                 "include @<parameter-file-1>@"
+                 "pair_modify mix arithmetic"
+               ]
+}
