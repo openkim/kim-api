@@ -85,6 +85,8 @@ class Model
   ///             requested by the Simulator.
   /// \param[out] model Pointer to the newly created Model object.
   ///
+  /// \note The value of `modelName` is required to be a valid C-identifier.
+  ///
   /// \note A requested unit of \c unused indicates that the Simulator will not
   /// employ any derived units connected to the associated base unit.  This
   /// avoids the need for the Simulator to make an arbitrary choice that could
@@ -387,7 +389,8 @@ class Model
   /// \param[out] numberOfParameters The number of parameter arrays provided
   ///             by the Model.
   ///
-  /// \sa KIM_Model_GetNumberOfParameters
+  /// \sa KIM_Model_GetNumberOfParameters,
+  /// kim_model_module::kim_get_number_of_parameters
   ///
   /// \since 2.0
   void GetNumberOfParameters(int * const numberOfParameters) const;
