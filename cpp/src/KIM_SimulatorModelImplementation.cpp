@@ -193,10 +193,10 @@ int SimulatorModelImplementation::GetSupportedSpecies(
   return false;
 }
 
-void SimulatorModelImplementation::RestartTemplateMap()
+void SimulatorModelImplementation::OpenAndInitializeTemplateMap()
 {
 #if DEBUG_VERBOSITY
-  std::string const callString = "RestartTemplateMap().";
+  std::string const callString = "OpenAndInitializeTemplateMap().";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -227,7 +227,8 @@ int SimulatorModelImplementation::AddTemplateMap(std::string const & key,
                                                  std::string const & value)
 {
 #if DEBUG_VERBOSITY
-  std::string const callString = "AddTemplateMap().";
+  std::string const callString
+      = "AddTemplateMap('" + key + "', '" + value + "').";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -253,10 +254,10 @@ int SimulatorModelImplementation::AddTemplateMap(std::string const & key,
   return false;
 }
 
-void SimulatorModelImplementation::FinishTemplateMap()
+void SimulatorModelImplementation::CloseTemplateMap()
 {
 #if DEBUG_VERBOSITY
-  std::string const callString = "FinishTemplateMap().";
+  std::string const callString = "CloseTemplateMap().";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -273,16 +274,15 @@ void SimulatorModelImplementation::AddStandardTemplatesToMap()
 #endif
   LOG_DEBUG("Enter  " + callString);
 
-  templateMap_["parameter-file-dir"] = parameterFileDirectoryName_;
+  AddTemplateMap("parameter-file-dir", parameterFileDirectoryName_);
 
   for (size_t i = 0; i < parameterFileNames_.size(); ++i)
   {
-    std::string key = "parameter-file-basename-" + SNUM(i + 1);
-    templateMap_[key] = parameterFileNames_[i];
+    AddTemplateMap("parameter-file-basename-" + SNUM(i + 1),
+                   parameterFileNames_[i]);
 
-    key = "parameter-file-" + SNUM(i + 1);
-    templateMap_[key]
-        = parameterFileDirectoryName_ + "/" + parameterFileNames_[i];
+    AddTemplateMap("parameter-file-" + SNUM(i + 1),
+                   parameterFileDirectoryName_ + "/" + parameterFileNames_[i]);
   }
 
   LOG_DEBUG("Exit 0=" + callString);
@@ -302,6 +302,7 @@ int SimulatorModelImplementation::ProcessSimulatorFields()
     return true;
   }
 
+  simulatorFields_.clear();
   for (size_t i = 0; i < originalSimulatorFields_.size(); ++i)
   {
     std::vector<std::string> lines;
@@ -828,7 +829,7 @@ int SimulatorModelImplementation::Initialize(
     return true;
   }
 
-  RestartTemplateMap();
+  OpenAndInitializeTemplateMap();
 
   LOG_DEBUG("Exit 0=" + callString);
   return false;

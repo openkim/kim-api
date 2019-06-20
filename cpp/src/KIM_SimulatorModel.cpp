@@ -86,7 +86,10 @@ int SimulatorModel::GetSupportedSpecies(
   return pimpl->GetSupportedSpecies(index, speciesName);
 }
 
-void SimulatorModel::RestartTemplateMap() { pimpl->RestartTemplateMap(); }
+void SimulatorModel::OpenAndInitializeTemplateMap()
+{
+  pimpl->OpenAndInitializeTemplateMap();
+}
 
 int SimulatorModel::TemplateMapIsOpen() const
 {
@@ -99,7 +102,7 @@ int SimulatorModel::AddTemplateMap(std::string const & key,
   return pimpl->AddTemplateMap(key, value);
 }
 
-void SimulatorModel::FinishTemplateMap() { pimpl->FinishTemplateMap(); }
+void SimulatorModel::CloseTemplateMap() { pimpl->CloseTemplateMap(); }
 
 void SimulatorModel::GetNumberOfSimulatorFields(
     int * const numberOfSimulatorFields) const

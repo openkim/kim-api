@@ -76,10 +76,10 @@ class SimulatorModelImplementation
   int GetSupportedSpecies(int const index,
                           std::string const ** const speciesName) const;
 
-  void RestartTemplateMap();
+  void OpenAndInitializeTemplateMap();
   int TemplateMapIsOpen() const;
   int AddTemplateMap(std::string const & key, std::string const & value);
-  void FinishTemplateMap();
+  void CloseTemplateMap();
 
   void GetNumberOfSimulatorFields(int * const numberOfSimulatorFields) const;
 

@@ -76,13 +76,14 @@ class SimulatorModelImplementation;
 ///   ordering is defined by the order files are listed in the SMs
 ///   CMakeLists.txt file.)
 /// * \c parameter-file-# (# ranges from 1 to the SimulatorModel's number of
-///   parameter files), with a value equal to the basename (file name without
-///   path) of the corresponding parameter file.
+///   parameter files), with a value equal to the full absolute file name (path
+///   and base name) of the corresponding parameter file.
 ///
 /// To facilitate backward-compatibility, the schema of the metadata file is
 /// explicitly versioned.  Each version of the schema is documented here.
 ///
-/// \note \parblock
+/// ------
+///
 /// <h3>`kim-api-sm-schema-version = 1` (Since 2.1):</h3>
 ///
 /// The metadata file consists of a single EDN Map.  Each key-value pair in the
@@ -105,7 +106,7 @@ class SimulatorModelImplementation;
 /// zero or greater is provided, each element of the vector must have
 /// element-type string.
 ///
-/// **Example**
+/// **Example of `kim-api-sm-schema-version = 1` file format**
 /// \code{.edn}
 /// {
 ///   "kim-api-sm-schema-version" 1
@@ -129,7 +130,7 @@ class SimulatorModelImplementation;
 /// defined by the LAMMPS simulator, and "@<parameter-file-1>@", which is
 /// defined by the SimulatorModel object.
 ///
-/// \endparblock
+/// ------
 ///
 /// \sa KIM_SimulatorModel,
 /// kim_simulator_model_module::kim_simulator_model_handle_type
@@ -229,7 +230,8 @@ class SimulatorModel
   int GetSupportedSpecies(int const index,
                           std::string const ** const speciesName) const;
 
-  /// \brief Restart the template map for simulator field line substitutions.
+  /// \brief Open and initialize the template map for simulator field line
+  /// substitutions.
   ///
   /// This routine clears the template map of all existing entries, adds the
   /// %KIM API \ref standard_template_entries "standard template entries", and
@@ -237,15 +239,15 @@ class SimulatorModel
   /// simulator significant flexibilty. For instance, when only a partial set
   /// of the simulator's template map key-value entries are known (such as when
   /// the simulator's input file has been only partially processed).  In this
-  /// case, the simulator can finalize the template map to obtain certain field
-  /// lines that it knows to be complete.  Then it can restart the template map
-  /// and continue processing its input.
+  /// case, the simulator can close the template map to obtain certain field
+  /// lines that it knows to be complete.  Then it can open and initialize the
+  /// template map and continue processing its input.
   ///
-  /// \sa KIM_SimulatorModel_RestartTemplateMap,
-  /// kim_simulator_model_module::kim_restart_template_map
+  /// \sa KIM_SimulatorModel_OpenAndInitializeTemplateMap,
+  /// kim_simulator_model_module::kim_open_and_initialize_template_map
   ///
   /// \since 2.1
-  void RestartTemplateMap();
+  void OpenAndInitializeTemplateMap();
 
   /// \brief Determine if the template map is open.
   ///
@@ -260,25 +262,25 @@ class SimulatorModel
 
   /// \brief Add a new key-value entry to the template map.
   ///
-  /// When a SimulatorModel object is Create'd, its template map is opened and
-  /// initialized by executing a call to RestartTemplateMap().  This routine
-  /// allows adds new key-value entries to the open template map.
+  /// As part of the SimulatorModel::Create'ion of a SimulatorModel object its
+  /// template map is opened and initialized by (internally) executing a call
+  /// to OpenAndInitializeTemplateMap().  The AddTemplateMap() routine allows
+  /// new key-value entries to be added to the open template map.
   ///
-  /// Once the template map is closed by a call to FinalizeTemplateMap(), the
-  /// map entries are used to perform semplate substitution on the simulator
-  /// field line strings.  In each simulator field line and for each map
-  /// key-value entry, when \c key, surrounded by the template tags "@<" and
-  /// ">@", is found it will be replaced by \c value.  For example, if \c key
-  /// is \c my-key, and \c value is \c the-result, then wherever the string
-  /// `@<my-key>@` is found within a simulator field line it will be replaced
-  /// by the string `the-result`.
+  /// Once the CloseTemplateMap() routine is executed, the map entries are used
+  /// to perform template substitution on the simulator field line strings.  In
+  /// each simulator field line and for each map key-value entry, when \c key,
+  /// surrounded by the template tags "@<" and ">@", is found it will be
+  /// replaced by \c value.  For example, if \c key is \c my-key, and \c value
+  /// is \c the-result, then wherever the string `@<my-key>@` is found within a
+  /// simulator field line it will be replaced by the string `the-result`.
   //
   /// \param[in] key The \c key value.  Must consist only of digits (0-9),
-  ///            lower case letters (a-z) or dash (-).
+  ///            lower case letters (a-z), and dashes (-).
   /// \param[in] value The \c value value.  All valid strings are allowed.
   ///
   /// \return \c true if the template map has been closed by a call to
-  ///         FinishTempateMap.
+  ///         CloseTempateMap().
   /// \return \c true if \c key contains invalid characters.
   /// \return \c false otherwise.
   ///
@@ -288,18 +290,18 @@ class SimulatorModel
   /// \since 2.1
   int AddTemplateMap(std::string const & key, std::string const & value);
 
-  /// \brief Finish (close) the template map and perform template substitutions.
+  /// \brief Close the template map and perform template substitutions.
   ///
   /// Close the template map and use the map entries to perform
   /// search-and-replace substitutions on all simulator field lines.  The
   /// template map must be closed to access the simulator field lines via
   /// GetSimulatorFieldLine().
   ///
-  /// \sa KIM_SimulatorModel_FinishTemplateMap,
-  /// kim_simulator_model_module::kim_finish_template_map
+  /// \sa KIM_SimulatorModel_CloseTemplateMap,
+  /// kim_simulator_model_module::kim_close_template_map
   ///
   /// \since 2.1
-  void FinishTemplateMap();
+  void CloseTemplateMap();
 
   /// \brief Get the number of simulator fields provided by the SimulatorModel.
   ///
