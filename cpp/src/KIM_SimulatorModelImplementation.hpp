@@ -77,6 +77,7 @@ class SimulatorModelImplementation
                           std::string const ** const speciesName) const;
 
   void RestartTemplateMap();
+  int TemplateMapIsOpen() const;
   int AddTemplateMap(std::string const & key, std::string const & value);
   void FinishTemplateMap();
 

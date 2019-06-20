@@ -45,10 +45,13 @@ class SimulatorModelImplementation;
 /// \brief Provides the primary interface to a %KIM API SimulatorModel object
 /// and is meant to be used by simulators.
 ///
-/// %KIM API SimulatorModel objects are implemented by a metadata file, written
-/// in EDN format (See https://openkim.org/about-edn/), and a set of one or
-/// more parameter files.  The metadata file contains the information necessary
-/// to setup the model within the simulator.  The %KIM API SimulatorModel model
+/// Simulator Models (SMs) are a mechanism by which the %KIM API provides
+/// support for models that are implemented natively in simulation codes
+/// ("Simulators").  An SM consists of all the information and data required to
+/// use the model from within its simulator.  This includes a metadata file in
+/// EDN format (see https://openkim.org/about-edn/) containing instructions and
+/// settings that must be specified for the simulator to define and use the
+/// model, and one or more parameter files.  The %KIM API SimulatorModel model
 /// object provides a generic interface to access the parameter files and the
 /// contents of the metadata file.  Each simulator may define its own set of
 /// "simulator fields" that contain simulator-specific content for the model's
@@ -59,6 +62,22 @@ class SimulatorModelImplementation;
 /// simulator field line may contaion template tags of the form "@<key>@" and
 /// will be replaced by an appropriate value provided by the SimulatorModel
 /// object or the simulator.
+///
+/// The %KIM API defines the following set of standard template key-value
+/// entries \anchor standard_template_entries:
+///
+/// * \c parameter-file-dir, with a value equal to the absolute path name of
+///   the SimulatorModel's temporary parameter file directory.  This directory
+///   is created when the SimulatorModel object is SimulatorModel::Create'd and
+///   is removed when the object is SimulatorModel::Destroy'd.
+/// * \c parameter-file-basename-# (# ranges from 1 to the SimulatorModel's
+///   number of parameter files), with a value equal to the basename (file name
+///   without path) of the corresponding parameter file. (Parameter file
+///   ordering is defined by the order files are listed in the SMs
+///   CMakeLists.txt file.)
+/// * \c parameter-file-# (# ranges from 1 to the SimulatorModel's number of
+///   parameter files), with a value equal to the basename (file name without
+///   path) of the corresponding parameter file.
 ///
 /// To facilitate backward-compatibility, the schema of the metadata file is
 /// explicitly versioned.  Each version of the schema is documented here.
@@ -81,7 +100,7 @@ class SimulatorModelImplementation;
 /// labels that identify the species supported by the model.  The %KIM API does
 /// not impose any additional constraints on these species labels.
 ///
-/// All other key-value pairs in the EDN map are "simulator fields" which mush
+/// All other key-value pairs in the EDN map are "simulator fields" which must
 /// have a value with element-type string or vector.  If a vector of length
 /// zero or greater is provided, each element of the vector must have
 /// element-type string.
@@ -213,10 +232,14 @@ class SimulatorModel
   /// \brief Restart the template map for simulator field line substitutions.
   ///
   /// This routine clears the template map of all existing entries, adds the
-  /// %KIM API defined entries (\c parameter-file-dir, \c
-  /// parameter-file-basename-#, and \c parameter-file-#, where # ranges from 1
-  /// to the SimulatorModel's number of parameter files), and opens the
-  /// template map for addition of new entries.
+  /// %KIM API \ref standard_template_entries "standard template entries", and
+  /// opens the template map for addition of new entries.  This allows the
+  /// simulator significant flexibilty. For instance, when only a partial set
+  /// of the simulator's template map key-value entries are known (such as when
+  /// the simulator's input file has been only partially processed).  In this
+  /// case, the simulator can finalize the template map to obtain certain field
+  /// lines that it knows to be complete.  Then it can restart the template map
+  /// and continue processing its input.
   ///
   /// \sa KIM_SimulatorModel_RestartTemplateMap,
   /// kim_simulator_model_module::kim_restart_template_map
@@ -224,21 +247,40 @@ class SimulatorModel
   /// \since 2.1
   void RestartTemplateMap();
 
+  /// \brief Determine if the template map is open.
+  ///
+  /// \return \c true if the template map is open.
+  /// \return \c false if the template map is closed.
+  ///
+  /// \sa KIM_SimulatorModel_TemplateMapIsOpen,
+  /// kim_simulator_model_module::kim_template_map_is_open
+  ///
+  /// \since 2.1
+  int TemplateMapIsOpen() const;
+
   /// \brief Add a new key-value entry to the template map.
   ///
-  /// In all simulator field lines, when \c key, surrounded by the template
-  /// tags "@<" and ">@", is found it will be replaced by \c value.  For
-  /// example, if \c key is \c my-key, and \c value is \c the-result, then
-  /// wherever the string `@<my-key>@` is found within a simulator field line
-  /// it will be replaced by the string `the-result`.
+  /// When a SimulatorModel object is Create'd, its template map is opened and
+  /// initialized by executing a call to RestartTemplateMap().  This routine
+  /// allows adds new key-value entries to the open template map.
+  ///
+  /// Once the template map is closed by a call to FinalizeTemplateMap(), the
+  /// map entries are used to perform semplate substitution on the simulator
+  /// field line strings.  In each simulator field line and for each map
+  /// key-value entry, when \c key, surrounded by the template tags "@<" and
+  /// ">@", is found it will be replaced by \c value.  For example, if \c key
+  /// is \c my-key, and \c value is \c the-result, then wherever the string
+  /// `@<my-key>@` is found within a simulator field line it will be replaced
+  /// by the string `the-result`.
   //
   /// \param[in] key The \c key value.  Must consist only of digits (0-9),
-  ///            upper or lower case letters (a-zA-Z) or dash (-).
-  /// \param[in] value The \c value value.
+  ///            lower case letters (a-z) or dash (-).
+  /// \param[in] value The \c value value.  All valid strings are allowed.
   ///
   /// \return \c true if the template map has been closed by a call to
   ///         FinishTempateMap.
   /// \return \c true if \c key contains invalid characters.
+  /// \return \c false otherwise.
   ///
   /// \sa KIM_SimulatorModel_AddTemplateMap,
   /// kim_simulator_model_module::kim_add_template_map
@@ -295,7 +337,8 @@ class SimulatorModel
                                 std::string const ** const fieldName) const;
 
 
-  /// \brief Get a line for the simulator field of interest.
+  /// \brief Get a line for the simulator field of interest with all template
+  /// substitutions performed (Requires the template map is closed).
   ///
   /// \param[in]  fieldIndex Zero-based index of the simulator field of
   ///             interest.
@@ -304,6 +347,7 @@ class SimulatorModel
   ///
   /// \post \c lineValue is unchanged if an error occurs.
   ///
+  /// \return \c true if the template map is open.
   /// \return \c true if \c fieldIndex is invalid.
   /// \return \c true if \c lineIndex is invalid.
   /// \return \c false otherwise.
@@ -316,10 +360,11 @@ class SimulatorModel
                             int const lineIndex,
                             std::string const ** const lineValue) const;
 
-  /// \brief Get name of the temporary directory where parameter files provided
-  /// by the simulator model are written.
+  /// \brief Get absolute path name of the temporary directory where parameter
+  /// files provided by the simulator model are written.
   ///
-  /// \param[out] directoryName The temporary directory name.
+  /// \param[out] directoryName The absolute path name of the SimulatorModel's
+  ///             temporary parameter file directory.
   ///
   /// \sa KIM_SimulatorModel_GetParameterFileDirectoryName,
   /// kim_simulator_model_module::kim_get_parameter_file_directory_name
@@ -328,10 +373,12 @@ class SimulatorModel
   void
   GetParameterFileDirectoryName(std::string const ** const directoryName) const;
 
-  /// \brief Get the SimulatorModel's metadata file basename.  The file is
-  /// located in the SimulatorModel's parameter file directory.
+  /// \brief Get the SimulatorModel's metadata file basename (file name without
+  /// path).  The file is located in the SimulatorModel's parameter file
+  /// directory.
   ///
-  /// \param[out] metadataFileName The basename of the metadata file.
+  /// \param[out] metadataFileName The basename (file name without path) of the
+  ///             metadata file.
   ///
   /// \sa KIM_SimulatorModel_GetMetadataFileName,
   /// kim_simulator_model_module::kim_get_metadata_file_name
@@ -349,11 +396,13 @@ class SimulatorModel
   /// \since 2.1
   void GetNumberOfParameterFiles(int * const numberOfParameterFiles) const;
 
-  /// \brief Get the basename of a particular parameter file.  The file is
-  /// located in the SimulatorModel's parameter file directory.
+  /// \brief Get the basename (file name without path) of a particular
+  /// parameter file.  The file is located in the SimulatorModel's parameter
+  /// file directory.
   ///
   /// \param[in]  index Zero-based index for the parameter file of interest.
-  /// \param[out] parameterFileName Basename of the parameter file.
+  /// \param[out] parameterFileName Basename (file name without path) of the
+  ///             parameter file.
   ///
   /// \post \c parameterFileName is unchanged if an error occurs.
   ///

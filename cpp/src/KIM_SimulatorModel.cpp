@@ -88,6 +88,11 @@ int SimulatorModel::GetSupportedSpecies(
 
 void SimulatorModel::RestartTemplateMap() { pimpl->RestartTemplateMap(); }
 
+int SimulatorModel::TemplateMapIsOpen() const
+{
+  return pimpl->TemplateMapIsOpen();
+}
+
 int SimulatorModel::AddTemplateMap(std::string const & key,
                                    std::string const & value)
 {

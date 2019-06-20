@@ -210,6 +210,19 @@ void SimulatorModelImplementation::RestartTemplateMap()
   LOG_DEBUG("Exit 0=" + callString);
 }
 
+int SimulatorModelImplementation::TemplateMapIsOpen() const
+{
+#if DEBUG_VERBOSITY
+  std::string const callString = "TemplateMapIsOpen().";
+#endif
+  LOG_DEBUG("Enter  " + callString);
+
+  int result = templateMapOpen_;
+
+  LOG_DEBUG("Exit " + SNUM(result) + "=" + callString);
+  return result;
+}
+
 int SimulatorModelImplementation::AddTemplateMap(std::string const & key,
                                                  std::string const & value)
 {
@@ -226,7 +239,6 @@ int SimulatorModelImplementation::AddTemplateMap(std::string const & key,
   }
 
   char allowedCharacters[] = "abcdefghijklmnopqrstuvwxyz"
-                             "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
                              "-0123456789";
   if (key.find_first_not_of(allowedCharacters) == std::string::npos)
   { templateMap_[key] = value; }
@@ -327,7 +339,7 @@ void SimulatorModelImplementation::GetNumberOfSimulatorFields(
 #endif
   LOG_DEBUG("Enter  " + callString);
 
-  *numberOfSimulatorFields = simulatorFields_.size();
+  *numberOfSimulatorFields = originalSimulatorFields_.size();
 
   LOG_DEBUG("Exit 0=" + callString);
 }
@@ -346,7 +358,7 @@ int SimulatorModelImplementation::GetSimulatorFieldMetadata(
 
 #if ERROR_VERBOSITY
   if ((fieldIndex < 0)
-      || (static_cast<size_t>(fieldIndex) >= simulatorFields_.size()))
+      || (static_cast<size_t>(fieldIndex) >= originalSimulatorFields_.size()))
   {
     LOG_ERROR("Invalid simulator field index, " + SNUM(fieldIndex) + ".");
     LOG_DEBUG("Exit 1=" + callString);
@@ -374,6 +386,13 @@ int SimulatorModelImplementation::GetSimulatorFieldLine(
   LOG_DEBUG("Enter  " + callString);
 
 #if ERROR_VERBOSITY
+  if (templateMapOpen_)
+  {
+    LOG_ERROR("Simulator field lines are not available while the template map "
+              "is open.");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
   if ((fieldIndex < 0)
       || (static_cast<size_t>(fieldIndex) >= simulatorFields_.size()))
   {
