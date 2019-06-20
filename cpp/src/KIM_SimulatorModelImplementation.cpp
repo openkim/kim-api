@@ -367,7 +367,7 @@ int SimulatorModelImplementation::GetSimulatorFieldMetadata(
   }
 #endif
 
-  if (extent) *extent = simulatorFields_[fieldIndex].size();
+  if (extent) *extent = originalSimulatorFields_[fieldIndex].size();
   if (fieldName) *fieldName = &simulatorFieldNames_[fieldIndex];
 
   LOG_DEBUG("Exit 0=" + callString);
