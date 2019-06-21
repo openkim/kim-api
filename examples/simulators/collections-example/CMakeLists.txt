@@ -33,22 +33,26 @@
 #
 
 
+#
+# Required preamble
+#
+
 cmake_minimum_required(VERSION 3.4)
 
-set(TEST_MODELS
-  LennardJones612_UniversalShifted__MO_959249795837_003
-  LennardJones_Ar
-  ex_model_Ar_P_LJ
-  ex_model_Ar_P_MLJ_Fortran
-  ex_model_Ar_P_Morse
-  ex_model_Ar_P_Morse_07C
-  ex_model_Ar_P_Morse_07C_w_Extensions
-  ex_model_Ar_P_Morse_MultiCutoff
-  ex_model_Ar_SLJ_MultiCutoff
-  )
+list(APPEND CMAKE_PREFIX_PATH $ENV{KIM_API_CMAKE_PREFIX_DIR})
+find_package(KIM-API 2.0 REQUIRED CONFIG)
+if(NOT TARGET kim-api)
+  enable_testing()
+  project("${KIM_API_PROJECT_NAME}" VERSION "${KIM_API_VERSION}"
+    LANGUAGES CXX C Fortran)
+  add_kim_api_imported_library()
+  add_kim_api_compiler_flags()
+endif()
 
-add_subdirectory(collections-example)
-add_subdirectory(ex_test_Ar_fcc_cluster)
-add_subdirectory(ex_test_Ar_fcc_cluster_cpp)
-add_subdirectory(ex_test_Ar_fcc_cluster_fortran)
-add_subdirectory(utility_forces_numer_deriv)
+# End preamble
+
+
+set(TEST_NAME "collections-example")
+
+add_executable(${TEST_NAME} ${TEST_NAME}.cpp)
+target_link_libraries(${TEST_NAME} kim-api)
