@@ -43,8 +43,12 @@
 #include "KIM_Log.hpp"
 #endif
 
-#ifndef KIMHDR_OLD_KIM_API_DIRS_H
-#include "old_KIM_API_DIRS.h"
+#ifndef KIM_COLLECTION_ITEM_TYPE_HPP_
+#include "KIM_CollectionItemType.hpp"
+#endif
+
+#ifndef KIM_COLLECTIONS_HPP_
+#include "KIM_Collections.hpp"
 #endif
 
 #ifndef KIM_MODEL_IMPLEMENTATION_HPP_
@@ -284,6 +288,25 @@ int ModelImplementation::Create(
       __FILE__);
 #endif
 
+  Collections * col;
+  error = Collections::Create(&col);
+  if (error)
+  {
+#if DEBUG_VERBOSITY
+    pModelImplementation->LogEntry(
+        LOG_VERBOSITY::debug,
+        "Destroying ModelImplementation object and exit " + callString,
+        __LINE__,
+        __FILE__);
+#endif
+    delete pModelImplementation;  // also deletes pLog
+
+    return true;
+  }
+  col->SetLogID(pLog->GetID() + "_Collections");
+
+  pModelImplementation->collections_ = col;
+
   error = pModelImplementation->ModelCreate(numbering,
                                             requestedLengthUnit,
                                             requestedEnergyUnit,
@@ -367,7 +390,7 @@ void ModelImplementation::Destroy(
                  __LINE__,
                  __FILE__);
 #endif
-  delete *modelImplementation;  // also deletes Log object
+  delete *modelImplementation;  // also deletes Log & collections objects
   *modelImplementation = NULL;
 }
 
@@ -1949,6 +1972,7 @@ std::string const & ModelImplementation::ToString() const
 
 ModelImplementation::ModelImplementation(SharedLibrary * const sharedLibrary,
                                          Log * const log) :
+    collections_(NULL),
     itemType_(SharedLibrary::STAND_ALONE_MODEL),
     modelName_(""),
     modelDriverName_(""),
@@ -2005,6 +2029,8 @@ ModelImplementation::~ModelImplementation()
 
   delete sharedLibrary_;
 
+  if (collections_) Collections::Destroy(&collections_);
+
   LOG_DEBUG("Destroying Log object and exit " + callString);
   Log::Destroy(&log_);
 }
@@ -2051,15 +2077,17 @@ int ModelImplementation::ModelCreate(
     return true;
   }
 
-  std::vector<std::string> sharedLibraryList;
-  if (!findItem(OLD_KIM::KIM_MODELS, modelName, &sharedLibraryList, NULL))
+  std::string const * itemFilePath;
+  error = collections_->GetItem(
+      COLLECTION_ITEM_TYPE::model, modelName, &itemFilePath, NULL, NULL);
+  if (error)
   {
     LOG_ERROR("Could not find model shared library.");
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
 
-  error = sharedLibrary_->Open(sharedLibraryList[OLD_KIM::IE_FULLPATH]);
+  error = sharedLibrary_->Open(*itemFilePath);
   if (error)
   {
     LOG_ERROR("Could not open model shared library.");
@@ -2961,18 +2989,20 @@ int ModelImplementation::InitializeParameterizedModel(
     return true;
   }
 
-  std::vector<std::string> sharedLibraryList;
-  if (!findItem(OLD_KIM::KIM_MODEL_DRIVERS,
-                modelDriverName_,
-                &sharedLibraryList,
-                NULL))
+  std::string const * itemFilePath;
+  error = collections_->GetItem(COLLECTION_ITEM_TYPE::modelDriver,
+                                modelDriverName_,
+                                &itemFilePath,
+                                NULL,
+                                NULL);
+  if (error)
   {
     LOG_ERROR("Could not find model driver shared library.");
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
 
-  error = sharedLibrary_->Open(sharedLibraryList[OLD_KIM::IE_FULLPATH]);
+  error = sharedLibrary_->Open(*itemFilePath);
   if (error)
   {
     LOG_ERROR("Could not open model driver shared library.");

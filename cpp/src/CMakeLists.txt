@@ -74,7 +74,6 @@ set(CPP_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_LogImplementation.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ModelImplementation.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_SharedLibrary.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/old_KIM_API_DIRS.cpp
   )
 
 target_sources(kim-api PRIVATE ${CPP_SOURCES})

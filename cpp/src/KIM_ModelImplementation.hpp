@@ -88,6 +88,7 @@ namespace KIM
 {
 // Forward declaration
 class Log;
+class Collections;
 
 class ModelImplementation
 {
@@ -270,6 +271,7 @@ class ModelImplementation
 
   int IsCIdentifier(std::string const & id) const;
 
+  Collections * collections_;
   SharedLibrary::ITEM_TYPE itemType_;
   std::string modelName_;
   std::string modelDriverName_;
