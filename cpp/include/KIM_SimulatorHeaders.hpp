@@ -34,6 +34,18 @@
 #ifndef KIM_SIMULATOR_HEADERS_HPP_
 #define KIM_SIMULATOR_HEADERS_HPP_
 
+#ifndef KIM_COLLECTIONS_HPP_
+#include "KIM_Collections.hpp"
+#endif
+
+#ifndef KIM_COLLECTION_HPP_
+#include "KIM_Collection.hpp"
+#endif
+
+#ifndef KIM_COLLECTION_ITEM_TYPE__
+#include "KIM_CollectionItemType.hpp"
+#endif
+
 #ifndef KIM_MODEL_HPP_
 #include "KIM_Model.hpp"
 #endif
