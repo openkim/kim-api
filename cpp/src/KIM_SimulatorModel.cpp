@@ -132,10 +132,10 @@ void SimulatorModel::GetParameterFileDirectoryName(
   pimpl->GetParameterFileDirectoryName(directoryName);
 }
 
-void SimulatorModel::GetMetadataFileName(
-    std::string const ** const metadataFileName) const
+void SimulatorModel::GetSpecificationFileName(
+    std::string const ** const specificationFileName) const
 {
-  pimpl->GetMetadataFileName(metadataFileName);
+  pimpl->GetSpecificationFileName(specificationFileName);
 }
 
 void SimulatorModel::GetNumberOfParameterFiles(

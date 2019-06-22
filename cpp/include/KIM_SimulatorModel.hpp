@@ -48,20 +48,21 @@ class SimulatorModelImplementation;
 /// Simulator Models (SMs) are a mechanism by which the %KIM API provides
 /// support for models that are implemented natively in simulation codes
 /// ("Simulators").  An SM consists of all the information and data required to
-/// use the model from within its simulator.  This includes a metadata file in
-/// EDN format (see https://openkim.org/about-edn/) containing instructions and
-/// settings that must be specified for the simulator to define and use the
-/// model, and one or more parameter files.  The %KIM API SimulatorModel model
-/// object provides a generic interface to access the parameter files and the
-/// contents of the metadata file.  Each simulator may define its own set of
-/// "simulator fields" that contain simulator-specific content for the model's
-/// setup.  A simulator field consistes of zero or more "lines".  Each line is
-/// a string containing inforamtion that is meaningful to the simulator.  To
-/// allow the simulator to specialize the field lines based on user input, the
-/// SimulatorModel interface provides a template substitution mechanism.  Each
-/// simulator field line may contaion template tags of the form "@<key>@" and
-/// will be replaced by an appropriate value provided by the SimulatorModel
-/// object or the simulator.
+/// use the model from within its simulator.  This includes a specification
+/// file in EDN format (see https://openkim.org/about-edn/) containing
+/// instructions and settings that must be specified for the simulator to
+/// define and use the model, and one or more parameter files.  The %KIM API
+/// SimulatorModel model object provides a generic interface to access the
+/// parameter files and the contents of the specification file.  Each simulator
+/// may define its own set of "simulator fields" that contain
+/// simulator-specific content for the model's setup.  A simulator field
+/// consistes of zero or more "lines".  Each line is a string containing
+/// inforamtion that is meaningful to the simulator.  To allow the simulator to
+/// specialize the field lines based on user input, the SimulatorModel
+/// interface provides a template substitution mechanism.  Each simulator field
+/// line may contaion template tags of the form "@<key>@" and will be replaced
+/// by an appropriate value provided by the SimulatorModel object or the
+/// simulator.
 ///
 /// The %KIM API defines the following set of standard template key-value
 /// entries \anchor standard_template_entries:
@@ -79,24 +80,24 @@ class SimulatorModelImplementation;
 ///   parameter files), with a value equal to the full absolute file name (path
 ///   and base name) of the corresponding parameter file.
 ///
-/// To facilitate backward-compatibility, the schema of the metadata file is
-/// explicitly versioned.  Each version of the schema is documented here.
+/// To facilitate backward-compatibility, the schema of the specification file
+/// is explicitly versioned.  Each version of the schema is documented here.
 ///
 /// ------
 ///
 /// <h3>`kim-api-sm-schema-version = 1` (Since 2.1):</h3>
 ///
-/// The metadata file consists of a single EDN Map.  Each key-value pair in the
-/// map has a key element-type of string.  The following list gives the
+/// The specification file consists of a single EDN Map.  Each key-value pair
+/// in the map has a key element-type of string.  The following list gives the
 /// *required* key values and the element-type of their corresponding value:
 ///
 /// * "kim-api-sm-schema-version", integer
-/// * "extended-id", string
+/// * "model-name", string
 /// * "simulator-name", string
 /// * "simulator-version", string
 /// * "supported-species", string
 ///
-/// The "extended-id" string value must be identical to the SimulatorModel's
+/// The "model-name" string value must be identical to the SimulatorModel's
 /// name.  The "supported-species" string value is a space separated list of
 /// labels that identify the species supported by the model.  The %KIM API does
 /// not impose any additional constraints on these species labels.
@@ -110,7 +111,7 @@ class SimulatorModelImplementation;
 /// \code{.edn}
 /// {
 ///   "kim-api-sm-schema-version" 1
-///   "extended-id" "Sim_LAMMPS_LJcut_AkersonElliott_Alchemy_PbAu"
+///   "model-name" "Sim_LAMMPS_LJcut_AkersonElliott_Alchemy_PbAu"
 ///   "simulator-name" "LAMMPS"
 ///   "simulator-version" "12 Dec 2018"
 ///   "supported-species" "Pb Au"
@@ -156,9 +157,9 @@ class SimulatorModel
   ///         found, opened, is of the wrong type, or has some other problem.
   /// \return \c true if the simulator model's parameter files cannot be
   ///         written to scratch space.
-  /// \return \c true if the simulator model's metadata file is invalid EDN, is
-  ///         written in an unsupported schema version, or does not provide all
-  ///         required data.
+  /// \return \c true if the simulator model's specification file is invalid
+  ///         EDN, is written in an unsupported schema version, or does not
+  ///         provide all required data.
   /// \return \c false otherwise.
   ///
   /// \post `simulatorModel == NULL` if an error occurs.
@@ -375,18 +376,19 @@ class SimulatorModel
   void
   GetParameterFileDirectoryName(std::string const ** const directoryName) const;
 
-  /// \brief Get the SimulatorModel's metadata file basename (file name without
-  /// path).  The file is located in the SimulatorModel's parameter file
-  /// directory.
+  /// \brief Get the SimulatorModel's specification file basename (file name
+  /// without path).  The file is located in the SimulatorModel's parameter
+  /// file directory.
   ///
-  /// \param[out] metadataFileName The basename (file name without path) of the
-  ///             metadata file.
+  /// \param[out] specificationFileName The basename (file name without path)
+  ///             of the specification file.
   ///
-  /// \sa KIM_SimulatorModel_GetMetadataFileName,
-  /// kim_simulator_model_module::kim_get_metadata_file_name
+  /// \sa KIM_SimulatorModel_GetSpecificationFileName,
+  /// kim_simulator_model_module::kim_get_specification_file_name
   ///
   /// \since 2.1
-  void GetMetadataFileName(std::string const ** const metadataFileName) const;
+  void GetSpecificationFileName(
+      std::string const ** const specificationFileName) const;
 
   /// \brief Get the number of parameter files provided by the SimulatorModel.
   ///

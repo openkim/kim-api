@@ -113,7 +113,7 @@ int main(int argc, char * argv[])
     std::string const * name;
     if (std::string(argv[2]) == "metadata-file")
     {
-      simulatorModel->GetMetadataFileName(&name);
+      simulatorModel->GetSpecificationFileName(&name);
       std::string const filePath = *dirName + "/" + *name;
       FILE * file = fopen(filePath.c_str(), "r");
       if (file == NULL)

@@ -94,7 +94,8 @@ class SimulatorModelImplementation
   void
   GetParameterFileDirectoryName(std::string const ** const directoryName) const;
 
-  void GetMetadataFileName(std::string const ** const metadataFileName) const;
+  void GetSpecificationFileName(
+      std::string const ** const specificationFileName) const;
 
   void GetNumberOfParameterFiles(int * const numberOfParameterFiles) const;
 
@@ -146,9 +147,9 @@ class SimulatorModelImplementation
   void RemoveParameterFileDirectory();
 
   std::string parameterFileDirectoryName_;
-  std::string metadataFileName_;
+  std::string specificationFileName_;
   int schemaVersion_;
-  std::string extendedID_;
+  std::string modelName_;
 
   std::string simulatorName_;
   std::string simulatorVersion_;

@@ -1,6 +1,6 @@
 {
   "kim-api-sm-schema-version" 1
-  "extended-id" "Sim_LAMMPS_LJcut_AkersonElliott_Alchemy_PbAu"
+  "model-name" "Sim_LAMMPS_LJcut_AkersonElliott_Alchemy_PbAu"
   "simulator-name" "LAMMPS"
   "simulator-version" "12 Dec 2018"
   "supported-species" "Pb Au"

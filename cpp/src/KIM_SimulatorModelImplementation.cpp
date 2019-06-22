@@ -431,16 +431,16 @@ void SimulatorModelImplementation::GetParameterFileDirectoryName(
   LOG_DEBUG("Exit 0=" + callString);
 }
 
-void SimulatorModelImplementation::GetMetadataFileName(
-    std::string const ** const metadataFileName) const
+void SimulatorModelImplementation::GetSpecificationFileName(
+    std::string const ** const specificationFileName) const
 {
 #if DEBUG_VERBOSITY
   std::string const callString
-      = "GetMetadataFileName(" + SPTR(metadataFileName) + ").";
+      = "GetSpecificationFileName(" + SPTR(specificationFileName) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
-  *metadataFileName = &metadataFileName_;
+  *specificationFileName = &specificationFileName_;
 
   LOG_DEBUG("Exit 0=" + callString);
 }
@@ -586,7 +586,7 @@ std::string const & SimulatorModelImplementation::ToString() const
 
   ss << "Parameter file directory : " << parameterFileDirectoryName_ << "\n";
 
-  ss << "Metadata file name : " << metadataFileName_ << "\n\n";
+  ss << "Specification file name : " << specificationFileName_ << "\n\n";
 
   ss << "Simulator Name    : " << simulatorName_ << "\n"
      << "Simulator Version : " << simulatorVersion_ << "\n"
@@ -657,9 +657,9 @@ SimulatorModelImplementation::SimulatorModelImplementation(
     sharedLibrary_(sharedLibrary),
     log_(log),
     parameterFileDirectoryName_(""),
-    metadataFileName_(""),
+    specificationFileName_(""),
     schemaVersion_(0),
-    extendedID_(""),
+    modelName_(""),
     simulatorName_(""),
     simulatorVersion_(""),
     numberOfParameterFiles_(0),
@@ -788,34 +788,34 @@ int SimulatorModelImplementation::Initialize(
   }
 
   // check for all required data
-  if (extendedID_ == "")
+  if (modelName_ == "")
   {
-    LOG_ERROR("Required metadata field 'extended-id' not found.");
+    LOG_ERROR("Required specification field 'model-name' not found.");
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
-  else if (extendedID_ != simulatorModelName_)
+  else if (modelName_ != simulatorModelName_)
   {
     LOG_ERROR(
-        "Metadata field 'extended-id' not equal to simulator model name.");
+        "Specificaiton field 'model-name' not equal to simulator model name.");
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
   if (simulatorName_ == "")
   {
-    LOG_ERROR("Required metadata field 'simulator-name' not found.");
+    LOG_ERROR("Required specification field 'simulator-name' not found.");
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
   if (simulatorVersion_ == "")
   {
-    LOG_ERROR("Required metadata field 'simulator-version' not found.");
+    LOG_ERROR("Required specification field 'simulator-version' not found.");
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
   if (simulatorSupportedSpecies_.size() == 0)
   {
-    LOG_ERROR("Required metadata field 'supported-species' not found.");
+    LOG_ERROR("Required specification field 'supported-species' not found.");
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
@@ -843,7 +843,7 @@ int SimulatorModelImplementation::ParseEdn(edn::EdnNode & node) const
   LOG_DEBUG("Enter  " + callString);
 
   std::string const filePath
-      = parameterFileDirectoryName_ + "/" + metadataFileName_;
+      = parameterFileDirectoryName_ + "/" + specificationFileName_;
   std::ifstream ifs;
   ifs.open(filePath.c_str(), std::ifstream::in);
   if (!ifs.is_open())
@@ -1017,9 +1017,9 @@ int SimulatorModelImplementation::ReadEdnSchemaV1()
             return true;
           }
         }
-        else if (key == "extended-id")
+        else if (key == "model-name")
         {
-          if (itr->type == edn::EdnString) { extendedID_ = itr->value; }
+          if (itr->type == edn::EdnString) { modelName_ = itr->value; }
           else
           {
             LOG_ERROR("Expecting 'EdnString'.");
@@ -1104,19 +1104,19 @@ int SimulatorModelImplementation::WriteParameterFileDirectory()
 
   {
     unsigned int len;
-    unsigned char const * metadataData;
+    unsigned char const * specificationData;
     error = sharedLibrary_->GetMetadataFile(
-        &metadataFileName_, &len, &metadataData);
+        &specificationFileName_, &len, &specificationData);
     if (error)
     {
-      LOG_ERROR("Unable to get metadata file.");
+      LOG_ERROR("Unable to get specification file.");
       RemoveParameterFileDirectory();
       LOG_DEBUG("Exit 1=" + callString);
       return true;
     }
-    std::string const metadataFilePathName
-        = parameterFileDirectoryName_ + "/" + metadataFileName_;
-    FILE * fl = fopen(metadataFilePathName.c_str(), "w");
+    std::string const specificationFilePathName
+        = parameterFileDirectoryName_ + "/" + specificationFileName_;
+    FILE * fl = fopen(specificationFilePathName.c_str(), "w");
     if (NULL == fl)
     {
       LOG_ERROR("Unable to get write parameter file.");
@@ -1124,7 +1124,7 @@ int SimulatorModelImplementation::WriteParameterFileDirectory()
       LOG_DEBUG("Exit 1=" + callString);
       return true;
     }
-    fwrite(metadataData, sizeof(unsigned char), len, fl);
+    fwrite(specificationData, sizeof(unsigned char), len, fl);
     fclose(fl);
     fl = NULL;
   }
@@ -1197,7 +1197,7 @@ void SimulatorModelImplementation::RemoveParameterFileDirectory()
 
     // clear out directory and file stuff
     parameterFileDirectoryName_ = "";
-    metadataFileName_ = "";
+    specificationFileName_ = "";
     numberOfParameterFiles_ = -1;
     parameterFileNames_.clear();
   }
