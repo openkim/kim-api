@@ -384,13 +384,10 @@ namespace edn {
     after.reserve(before.length() + 4); 
     
     for (string::size_type i = 0; i < before.length(); ++i) { 
-      switch (before[i]) { 
-        case '"':
-        case '\\':
+      if (before[i] == '"' || before[i] == '\\') {
           after += '\\';
-        default:
-          after += before[i];
       }
+      after += before[i];
     }
     return after;
   }
