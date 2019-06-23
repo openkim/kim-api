@@ -33,6 +33,8 @@
 
 #include "KIM_Configuration.hpp"
 #include "KIM_Version.hpp"
+#include <cstdlib>
+#include <cstring>
 #include <dirent.h>
 #include <fstream>
 #include <iostream>
