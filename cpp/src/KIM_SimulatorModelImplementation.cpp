@@ -1194,6 +1194,7 @@ void SimulatorModelImplementation::RemoveParameterFileDirectory()
       LOG_ERROR("Unable to remove simulator model parameter file directory '"
                 + parameterFileDirectoryName_ + "'.");
     }
+    closedir(dir);
 
     // clear out directory and file stuff
     parameterFileDirectoryName_ = "";
