@@ -490,7 +490,7 @@ split_items_list_into_collections () {
       "")
       # empty do nothing
       ;;
-      CWD)
+      currentWorkingDirectory)
         number_cwd="`expr $number_cwd \+ 1`"
         cwd_collection="${cwd_collection}\t${name}"
         if test x"${with_version}" = x"yes"; then
@@ -498,7 +498,7 @@ split_items_list_into_collections () {
         fi
         cwd_collection="${cwd_collection}\n"
         ;;
-      environment)
+      environmentVariable)
         number_env="`expr $number_env \+ 1`"
         env_collection="${env_collection}\t${name}"
         if test x"${with_version}" = x"yes"; then
@@ -615,7 +615,7 @@ print_list_of_items () {
   printf -- "  ---  Model Collections Listing\n"
   print_separator_line "="
   printf "\n"
-  printf "kim-api library: \n\t%s\n" "`${collections_info} system library`"
+  printf "kim-api : \n\t%s\n" "`${collections_info} system project`"
   printf "\n"
   printf "kim-api configuration file:\n\t%s\n" \
          "`${collections_info} config_file name`"

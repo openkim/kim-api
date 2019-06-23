@@ -30,16 +30,18 @@
 // Release: This file is part of the kim-api.git repository.
 //
 
+#include "KIM_Collection.hpp"
+#include "KIM_CollectionItemType.hpp"
+#include "KIM_Collections.hpp"
 #include "KIM_Log.hpp"
 #include "KIM_LogVerbosity.hpp"
 #include "KIM_Version.hpp"
-#include "old_KIM_API_DIRS.h"
 #include <cstring>
 #include <iostream>
 #include <list>
+#include <sstream>
 #include <string>
 #include <vector>
-using namespace OLD_KIM;
 
 void usage(std::string name)
 {
@@ -54,7 +56,7 @@ void usage(std::string name)
             << " config_file (env | name | model_drivers | models | "
                "simulator_models)\n"
             << "  " << name
-            << " system (library | model_drivers | models | simulator_models)\n"
+            << " system (project | model_drivers | models | simulator_models)\n"
             << "  " << name
             << " model_drivers [--log] [find <model-driver-name>]\n"
             << "  " << name << " models [--log] [find <model-name>]\n"
@@ -66,39 +68,69 @@ void usage(std::string name)
 
 namespace CI
 {
-void listDirs(OLD_KIM::CollectionType const collection,
-              OLD_KIM::CollectionItemType const type)
+void printColonSeparatedList(std::string const & lst)
 {
-  std::list<std::pair<std::string, std::string> > lst;
-  pushDirs(collection, type, &lst, NULL);
-  for (std::list<std::pair<std::string, std::string> >::const_iterator itr
-       = lst.begin();
-       itr != lst.end();
-       ++itr)
-  { std::cout << itr->second << std::endl; }
+  std::istringstream iss(lst);
+  std::string token;
+  while (std::getline(iss, token, ':')) { std::cout << token << std::endl; }
 }
 
 enum ENV_OPTIONS { E_ENV, E_MODEL_DRIVERS, E_MODELS, E_SIMULATOR_MODELS };
 void env(ENV_OPTIONS const opt)
 {
+  KIM::Log::PushDefaultVerbosity(KIM::LOG_VERBOSITY::silent);
+  KIM::Collections * col;
+  KIM::Collections::Create(&col);
+
   switch (opt)
   {
     case E_ENV:
     {
-      std::map<OLD_KIM::CollectionItemType const, std::string> envVarNames;
-      getEnvironmentVariableNames(&envVarNames);
+      using namespace KIM::COLLECTION_ITEM_TYPE;
+      std::string const * envName;
+      col->GetEnvironmentVariableName(modelDriver, &envName);
+      std::cout << *envName << " ";
 
-      std::cout << envVarNames[KIM_MODEL_DRIVERS] << " "
-                << envVarNames[KIM_MODELS] << " "
-                << envVarNames[KIM_SIMULATOR_MODELS] << std::endl;
+      col->GetEnvironmentVariableName(model, &envName);
+      std::cout << *envName << " ";
+
+      col->GetEnvironmentVariableName(simulatorModel, &envName);
+      std::cout << *envName;
+
+      std::cout << std::endl;
       break;
     }
-    case E_MODEL_DRIVERS: listDirs(KIM_ENVIRONMENT, KIM_MODEL_DRIVERS); break;
-    case E_MODELS: listDirs(KIM_ENVIRONMENT, KIM_MODELS); break;
-    case E_SIMULATOR_MODELS:
-      listDirs(KIM_ENVIRONMENT, KIM_SIMULATOR_MODELS);
+    case E_MODEL_DRIVERS:
+    {
+      std::string const * dirs;
+      col->GetDirectories(KIM::COLLECTION::environmentVariable,
+                          KIM::COLLECTION_ITEM_TYPE::modelDriver,
+                          &dirs);
+      printColonSeparatedList(*dirs);
       break;
+    }
+    case E_MODELS:
+    {
+      std::string const * dirs;
+      col->GetDirectories(KIM::COLLECTION::environmentVariable,
+                          KIM::COLLECTION_ITEM_TYPE::model,
+                          &dirs);
+      printColonSeparatedList(*dirs);
+      break;
+    }
+    case E_SIMULATOR_MODELS:
+    {
+      std::string const * dirs;
+      col->GetDirectories(KIM::COLLECTION::environmentVariable,
+                          KIM::COLLECTION_ITEM_TYPE::simulatorModel,
+                          &dirs);
+      printColonSeparatedList(*dirs);
+      break;
+    }
   }
+
+  KIM::Collections::Destroy(&col);
+  KIM::Log::PopDefaultVerbosity();
 }
 
 enum CONFIG_FILE_OPTIONS {
@@ -110,58 +142,174 @@ enum CONFIG_FILE_OPTIONS {
 };
 void configFile(CONFIG_FILE_OPTIONS const opt)
 {
+  KIM::Log::PushDefaultVerbosity(KIM::LOG_VERBOSITY::silent);
+  KIM::Collections * col;
+  KIM::Collections::Create(&col);
+
   switch (opt)
   {
     case CF_ENV:
     {
-      std::vector<std::string> configFileName = getConfigFileName();
-      std::cout << configFileName[1] << " " << configFileName[2] << std::endl;
+      std::string const * fl;
+      std::string const * val;
+      col->GetConfigurationFileEnvironmentVariable(&fl, &val);
+      std::cout << *fl << " " << *val << std::endl;
       break;
     }
-    case CF_NAME: std::cout << getConfigFileName()[0] << std::endl; break;
-    case CF_MODEL_DRIVERS: listDirs(KIM_USER, KIM_MODEL_DRIVERS); break;
-    case CF_MODELS: listDirs(KIM_USER, KIM_MODELS); break;
-    case CF_SIMULATOR_MODELS: listDirs(KIM_USER, KIM_SIMULATOR_MODELS); break;
+    case CF_NAME:
+    {
+      std::string const * dir;
+      col->GetConfigurationFilePath(&dir);
+      std::cout << *dir << std::endl;
+      break;
+    }
+    case CF_MODEL_DRIVERS:
+    {
+      std::string const * dirs;
+      col->GetDirectories(
+          KIM::COLLECTION::user, KIM::COLLECTION_ITEM_TYPE::modelDriver, &dirs);
+      printColonSeparatedList(*dirs);
+      break;
+    }
+    case CF_MODELS:
+    {
+      std::string const * dirs;
+      col->GetDirectories(
+          KIM::COLLECTION::user, KIM::COLLECTION_ITEM_TYPE::model, &dirs);
+      printColonSeparatedList(*dirs);
+      break;
+    }
+    case CF_SIMULATOR_MODELS:
+    {
+      std::string const * dirs;
+      col->GetDirectories(KIM::COLLECTION::user,
+                          KIM::COLLECTION_ITEM_TYPE::simulatorModel,
+                          &dirs);
+      printColonSeparatedList(*dirs);
+      break;
+    }
   }
+
+  KIM::Collections::Destroy(&col);
+  KIM::Log::PopDefaultVerbosity();
+}
+
+void project()
+{
+  KIM::Log::PushDefaultVerbosity(KIM::LOG_VERBOSITY::silent);
+  KIM::Collections * col;
+  KIM::Collections::Create(&col);
+
+  std::string const * project;
+  std::string const * version;
+  col->GetProjectNameAndSemVer(&project, &version);
+
+  std::cout << *project << " " << *version << std::endl;
+
+  KIM::Collections::Destroy(&col);
+  KIM::Log::PopDefaultVerbosity();
 }
 
 enum SYS_OPTIONS { S_MODEL_DRIVERS, S_MODELS, S_SIMULATOR_MODELS };
 void sys(SYS_OPTIONS const opt)
 {
+  KIM::Log::PushDefaultVerbosity(KIM::LOG_VERBOSITY::silent);
+  KIM::Collections * col;
+  KIM::Collections::Create(&col);
+
   switch (opt)
   {
-    case S_MODEL_DRIVERS: listDirs(KIM_SYSTEM, KIM_MODEL_DRIVERS); break;
-    case S_MODELS: listDirs(KIM_SYSTEM, KIM_MODELS); break;
-    case S_SIMULATOR_MODELS: listDirs(KIM_SYSTEM, KIM_SIMULATOR_MODELS); break;
+    case S_MODEL_DRIVERS:
+    {
+      std::string const * dirs;
+      col->GetDirectories(KIM::COLLECTION::system,
+                          KIM::COLLECTION_ITEM_TYPE::modelDriver,
+                          &dirs);
+      printColonSeparatedList(*dirs);
+      break;
+    }
+    case S_MODELS:
+    {
+      std::string const * dirs;
+      col->GetDirectories(
+          KIM::COLLECTION::system, KIM::COLLECTION_ITEM_TYPE::model, &dirs);
+      printColonSeparatedList(*dirs);
+      break;
+    }
+    case S_SIMULATOR_MODELS:
+    {
+      std::string const * dirs;
+      col->GetDirectories(KIM::COLLECTION::system,
+                          KIM::COLLECTION_ITEM_TYPE::simulatorModel,
+                          &dirs);
+      printColonSeparatedList(*dirs);
+      break;
+    }
   }
+
+  KIM::Collections::Destroy(&col);
+  KIM::Log::PopDefaultVerbosity();
 }
 
-void listItems(OLD_KIM::CollectionItemType const type,
+void listItems(KIM::CollectionItemType const type,
                bool const list_all,
                std::string const & name,
-               KIM::Log * const log)
+               bool const log)
 {
-  std::list<std::vector<std::string> > items;
-  getAvailableItems(type, items, log);
+  if (log)
+    KIM::Log::PushDefaultVerbosity(KIM::LOG_VERBOSITY::debug);
+  else
+    KIM::Log::PushDefaultVerbosity(KIM::LOG_VERBOSITY::silent);
+  KIM::Collections * col;
+  KIM::Collections::Create(&col);
 
-  std::list<std::vector<std::string> >::const_iterator itr;
-  for (itr = items.begin(); itr != items.end(); ++itr)
+  if (list_all)
   {
-    if (list_all)
+    std::vector<KIM::Collection> colList;
+    colList.push_back(KIM::COLLECTION::currentWorkingDirectory);
+    colList.push_back(KIM::COLLECTION::environmentVariable);
+    colList.push_back(KIM::COLLECTION::user);
+    colList.push_back(KIM::COLLECTION::system);
+
+    for (std::vector<KIM::Collection>::size_type i = 0; i < colList.size(); ++i)
     {
-      std::cout << (*itr)[IE_COLLECTION] << " " << (*itr)[IE_NAME] << " "
-                << (*itr)[IE_DIR] << " " << (*itr)[IE_VER] << std::endl;
-    }
-    else
-    {
-      if (name == (*itr)[1])
+      std::string const * itemNames;
+      int error
+          = col->GetItemNamesByCollectionAndType(colList[i], type, &itemNames);
+      if (error) return;
+
+      std::istringstream iss(*itemNames);
+      std::string token;
+      while (std::getline(iss, token, ':'))
       {
-        std::cout << (*itr)[IE_COLLECTION] << " " << (*itr)[IE_NAME] << " "
-                  << (*itr)[IE_DIR] << " " << (*itr)[IE_VER] << std::endl;
-        break;
+        std::string const * itemFilePath;
+        int metadataExtent;
+        col->GetItemByCollectionAndType(
+            colList[i], type, token, &itemFilePath, &metadataExtent);
+
+        std::cout << colList[i].ToString() << " " << token << " "
+                  << *itemFilePath << " "
+                  << "VERSION-NOT-CURRENTLY-AVAILABLE" << std::endl;
       }
     }
   }
+  else
+  {
+    std::string const * itemFilePath;
+    int metadataExtent;
+    KIM::Collection collection;
+    int error
+        = col->GetItem(type, name, &itemFilePath, &metadataExtent, &collection);
+
+    if (error) return;
+
+    std::cout << collection.ToString() << " " << name << " " << *itemFilePath
+              << " "
+              << "VERSION-NOT-CURRENTLY-AVAILABLE" << std::endl;
+  }
+
+  KIM::Collections::Destroy(&col);
+  KIM::Log::PopDefaultVerbosity();
 }
 }  // namespace CI
 
@@ -281,19 +429,18 @@ int processSystem(int argc, char * argv[])
   if (argc != 3) { returnVal = 1; }
   else
   {
-    if (0 == strcmp("library", argv[2]))
-    { std::cout << getSystemLibraryFileName() << std::endl; }
+    if (0 == strcmp("project", argv[2])) { CI::project(); }
     else if (0 == strcmp("model_drivers", argv[2]))
     {
-      CI::listDirs(KIM_SYSTEM, KIM_MODEL_DRIVERS);
+      CI::sys(CI::S_MODEL_DRIVERS);
     }
     else if (0 == strcmp("models", argv[2]))
     {
-      CI::listDirs(KIM_SYSTEM, KIM_MODELS);
+      CI::sys(CI::S_MODELS);
     }
     else if (0 == strcmp("simulator_models", argv[2]))
     {
-      CI::listDirs(KIM_SYSTEM, KIM_SIMULATOR_MODELS);
+      CI::sys(CI::S_SIMULATOR_MODELS);
     }
     else
     {
@@ -310,15 +457,14 @@ int processItems(int argc, char * argv[])
   bool list_all = true;
   std::string name;
 
-  KIM::Log * log = NULL;
+  bool log = false;
   if (argc >= 3)
   {
     if (0 == strcmp("--log", argv[2]))
     {
       for (int i = 3; i < argc; ++i) argv[i - 1] = argv[i];
       argc--;
-      KIM::Log::Create(&log);
-      log->PushVerbosity(KIM::LOG_VERBOSITY::debug);
+      log = true;
     }
   }
 
@@ -341,26 +487,22 @@ int processItems(int argc, char * argv[])
 
   if (0 == returnVal)
   {
+    using namespace KIM::COLLECTION_ITEM_TYPE;
+
     if (0 == strcmp("model_drivers", argv[1]))
-    { CI::listItems(KIM_MODEL_DRIVERS, list_all, name, log); }
+    { CI::listItems(modelDriver, list_all, name, log); }
     else if (0 == strcmp("models", argv[1]))
     {
-      CI::listItems(KIM_MODELS, list_all, name, log);
+      CI::listItems(model, list_all, name, log);
     }
     else if (0 == strcmp("simulator_models", argv[1]))
     {
-      CI::listItems(KIM_SIMULATOR_MODELS, list_all, name, log);
+      CI::listItems(simulatorModel, list_all, name, log);
     }
     else
     {
       returnVal = 1;  // unknown argument
     }
-  }
-
-  if (log)
-  {
-    KIM::Log::Destroy(&log);
-    log = NULL;
   }
 
   return returnVal;
