@@ -181,7 +181,7 @@ get_local_build_item_name () {
 
     local item_type="`grep -- "item-type:" item-info.txt | sed -e 's/^item-type://'`"
     case "${item_type}" in
-      MODEL_DRIVER|STAND_ALONE_MODEL|PARAMETERIZED_MODEL|SIMULATOR_MODEL)
+      modelDriver|model|simulatorModel)
         printf -- "%s" "`grep -- "item-name:" item-info.txt | sed -e 's/^item-name:"\(.*\)"/\1/'`" \
                > "${build_dir}/item_name"
         ;;
@@ -377,8 +377,9 @@ get_build_install_item () {
         return 1
       fi
       item_type="`grep "item-type:" item-info.txt | sed -e 's/item-type://'`"
-      if test x"PARAMETERIZED_MODEL" = x"${item_type}"; then
-        dvr="`grep "item-driver-name:" item-info.txt | sed -e 's/item-driver-name:"\(.*\)"/\1/'`"
+      item_driver_name="`grep "item-driver-name:" item-info.txt | sed -e 's/item-driver-name:"\(.*\)"/\1/'`"
+      if test x"model" = x"${item_type}" -a x"" != x"${item_driver_name}"; then
+        dvr="${item_driver_name}"
         if test x"" != x"`${collections_info} model_drivers find "${dvr}"`"; then
           printf "Found#installed#driver...#%s\n" "${dvr}" | sed -e 's/ /./g' -e 's/#/ /g' || return 1
         else

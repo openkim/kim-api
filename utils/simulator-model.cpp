@@ -150,7 +150,7 @@ int main(int argc, char * argv[])
     unsigned char const * data;
     if (std::string(argv[2]) == "metadata-file")
     {
-      error = sharedLib.GetMetadataFile(&name, &len, &data);
+      error = sharedLib.GetSimulatorModelSpecificationFile(&name, &len, &data);
       if (error)
       {
         std::cout << "* Error: unable to get metadata file." << std::endl;

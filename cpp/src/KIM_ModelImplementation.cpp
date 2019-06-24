@@ -855,7 +855,7 @@ int ModelImplementation::GetNumberOfParameterFiles(
   LOG_DEBUG("Enter  " + callString);
 
 #if ERROR_VERBOSITY
-  if (itemType_ != SharedLibrary::PARAMETERIZED_MODEL)
+  if (modelDriverName_ == "")
   {
     LOG_ERROR("Only parameterized models have parameter files.");
     LOG_DEBUG("Exit 1=" + callString);
@@ -879,7 +879,7 @@ int ModelImplementation::GetParameterFileName(
   LOG_DEBUG("Enter  " + callString);
 
 #if ERROR_VERBOSITY
-  if (itemType_ != SharedLibrary::PARAMETERIZED_MODEL)
+  if (modelDriverName_ == "")
   {
     LOG_ERROR("Only parameterized models have parameter files.");
     LOG_DEBUG("Exit 1=" + callString);
@@ -1421,7 +1421,7 @@ int ModelImplementation::WriteParameterizedModel(
   LOG_DEBUG("Enter  " + callString);
 
 #if ERROR_VERBOSITY
-  if (itemType_ != SharedLibrary::PARAMETERIZED_MODEL)
+  if (modelDriverName_ == "")
   {
     LOG_ERROR("Only parameterized models can implement the "
               "WritePrameterizedModel() routine.");
@@ -1826,7 +1826,7 @@ std::string const & ModelImplementation::ToString() const
   ss << "Model object\n"
      << "------------\n\n";
   ss << "Model Name : " << modelName_ << "\n";
-  if (itemType_ == SharedLibrary::PARAMETERIZED_MODEL)
+  if (modelDriverName_ != "")
   { ss << "Model Driver Name : " << modelDriverName_ << "\n"; }
   ss << "Log ID : " << log_->GetID() << "\n";
   ss << "\n";
@@ -1973,7 +1973,6 @@ std::string const & ModelImplementation::ToString() const
 ModelImplementation::ModelImplementation(SharedLibrary * const sharedLibrary,
                                          Log * const log) :
     collections_(NULL),
-    itemType_(SharedLibrary::STAND_ALONE_MODEL),
     modelName_(""),
     modelDriverName_(""),
     sharedLibrary_(sharedLibrary),
@@ -2095,10 +2094,21 @@ int ModelImplementation::ModelCreate(
     return true;
   }
 
-  error = sharedLibrary_->GetType(&itemType_);
-  switch (itemType_)
+  // get driver name
+  error = sharedLibrary_->GetDriverName(&modelDriverName_);
+  if (error)
   {
-    case SharedLibrary::STAND_ALONE_MODEL:
+    LOG_ERROR("Could not get Model Driver name.");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
+
+  error = sharedLibrary_->GetType(&itemType_);
+  {
+    using namespace COLLECTION_ITEM_TYPE;
+
+    if ((itemType_ == model) && (modelDriverName_ == ""))
+    {
       LOG_DEBUG("Initializing a stand alone model.");
       error = InitializeStandAloneModel(requestedLengthUnit,
                                         requestedEnergyUnit,
@@ -2111,8 +2121,9 @@ int ModelImplementation::ModelCreate(
         LOG_DEBUG("Exit 1=" + callString);
         return true;
       }
-      break;
-    case SharedLibrary::PARAMETERIZED_MODEL:
+    }
+    else if (itemType_ == model)
+    {
       LOG_DEBUG("Initializing a parameterized model.");
       error = InitializeParameterizedModel(requestedLengthUnit,
                                            requestedEnergyUnit,
@@ -2125,22 +2136,25 @@ int ModelImplementation::ModelCreate(
         LOG_DEBUG("Exit 1=" + callString);
         return true;
       }
-      break;
-    case SharedLibrary::MODEL_DRIVER:
+    }
+    else if (itemType_ == modelDriver)
+    {
       LOG_ERROR("Creation of a model driver is not allowed.");
       LOG_DEBUG("Exit 1=" + callString);
       return true;
-      break;
-    case SharedLibrary::SIMULATOR_MODEL:
+    }
+    else if (itemType_ == simulatorModel)
+    {
       LOG_ERROR("Creation of a simulator model is not allowed.");
       LOG_DEBUG("Exit 1=" + callString);
       return true;
-      break;
-    default:
+    }
+    else
+    {
       LOG_ERROR("Creation of an unknown model type is not allowed.");
       LOG_DEBUG("Exit 1=" + callString);
       return true;
-      break;
+    }
   }
 
 #if ERROR_VERBOSITY
@@ -2962,15 +2976,6 @@ int ModelImplementation::InitializeParameterizedModel(
   }
 #endif
 
-  // get driver name
-  error = sharedLibrary_->GetDriverName(&modelDriverName_);
-  if (error)
-  {
-    LOG_ERROR("Could not get Model Driver name.");
-    LOG_DEBUG("Exit 1=" + callString);
-    return true;
-  }
-
   // write parameter files to scratch space
   error = WriteParameterFiles();
   if (error)
@@ -3011,9 +3016,9 @@ int ModelImplementation::InitializeParameterizedModel(
   }
 
   // check that it is a driver
-  SharedLibrary::ITEM_TYPE itemType;
+  CollectionItemType itemType;
   error = sharedLibrary_->GetType(&itemType);
-  if ((error) || (itemType != SharedLibrary::MODEL_DRIVER))
+  if ((error) || (itemType != COLLECTION_ITEM_TYPE::modelDriver))
   {
     LOG_ERROR("Invalid model driver shared library.");
     LOG_DEBUG("Exit 1=" + callString);

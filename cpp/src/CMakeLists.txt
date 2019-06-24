@@ -84,6 +84,7 @@ add_library(kim-loader STATIC
   KIM_CollectionItemType.cpp
   KIM_Collections.cpp
   KIM_CollectionsImplementation.cpp
+  KIM_LanguageName.cpp
   KIM_LogVerbosity.cpp
   KIM_Log.cpp
   KIM_LogImplementation.cpp

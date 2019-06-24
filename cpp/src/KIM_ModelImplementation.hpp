@@ -272,7 +272,7 @@ class ModelImplementation
   int IsCIdentifier(std::string const & id) const;
 
   Collections * collections_;
-  SharedLibrary::ITEM_TYPE itemType_;
+  CollectionItemType itemType_;
   std::string modelName_;
   std::string modelDriverName_;
 

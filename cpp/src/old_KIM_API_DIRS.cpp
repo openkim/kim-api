@@ -439,7 +439,8 @@ void getAvailableItems(CollectionItemType type,
       if (!error)
       {
         std::string versionString;
-        error = sharedLibrary.GetCompiledWithVersion(&versionString);
+        // error = sharedLibrary.GetCompiledWithVersion(&versionString);
+        error = true;
         if (error) { entry[IE_VER] = "unknown"; }
         else
         {
