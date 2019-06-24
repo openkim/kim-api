@@ -182,10 +182,10 @@ int SharedLibrary::Open(std::string const & sharedLibraryName)
     }
 
     if (schemaV1->itemType == SharedLibrarySchemaV1::STAND_ALONE_MODEL)
-    { itemType_ = COLLECTION_ITEM_TYPE::model; }
+    { itemType_ = COLLECTION_ITEM_TYPE::portableModel; }
     else if (schemaV1->itemType == SharedLibrarySchemaV1::PARAMETERIZED_MODEL)
     {
-      itemType_ = COLLECTION_ITEM_TYPE::model;
+      itemType_ = COLLECTION_ITEM_TYPE::portableModel;
       // differentiated from above by driverName_
     }
     else if (schemaV1->itemType == SharedLibrarySchemaV1::SIMULATOR_MODEL)
@@ -377,7 +377,8 @@ int SharedLibrary::GetParameterFile(
     return true;  // not open
   }
 
-  if (((itemType_ == COLLECTION_ITEM_TYPE::model) && (driverName_ == ""))
+  if (((itemType_ == COLLECTION_ITEM_TYPE::portableModel)
+       && (driverName_ == ""))
       || (itemType_ == COLLECTION_ITEM_TYPE::modelDriver))
   {
     LOG_ERROR("This item type does not have parameter files.");
@@ -511,7 +512,7 @@ int SharedLibrary::GetDriverName(std::string * const driverName) const
     return true;  // not open
   }
 
-  if ((itemType_ != COLLECTION_ITEM_TYPE::model) && (driverName_ != ""))
+  if ((itemType_ != COLLECTION_ITEM_TYPE::portableModel) && (driverName_ != ""))
   {
     LOG_ERROR("This item type does not have an associated  model driver.");
     LOG_DEBUG("Exit 1=" + callString);

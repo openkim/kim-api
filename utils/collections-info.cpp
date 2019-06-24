@@ -49,20 +49,22 @@ void usage(std::string name)
   if (beg != std::string::npos) name = name.substr(beg + 1, std::string::npos);
 
   // Follows docopt.org format
-  std::cerr << "Usage:\n"
-            << "  " << name
-            << " env (env | model_drivers | models | simulator_models)\n"
-            << "  " << name
-            << " config_file (env | name | model_drivers | models | "
-               "simulator_models)\n"
-            << "  " << name
-            << " system (project | model_drivers | models | simulator_models)\n"
-            << "  " << name
-            << " model_drivers [--log] [find <model-driver-name>]\n"
-            << "  " << name << " models [--log] [find <model-name>]\n"
-            << "  " << name
-            << " simulator_models [--log] [find <simulator-model-name>]\n"
-            << "  " << name << " --version\n";
+  std::cerr
+      << "Usage:\n"
+      << "  " << name
+      << " env (env | model_drivers | portable_models | simulator_models)\n"
+      << "  " << name
+      << " config_file (env | name | model_drivers | portable_models | "
+         "simulator_models)\n"
+      << "  " << name
+      << " system (project | model_drivers | portable_models | "
+         "simulator_models)\n"
+      << "  " << name << " model_drivers [--log] [find <model-driver-name>]\n"
+      << "  " << name
+      << " portable_models [--log] [find <portable-model-name>]\n"
+      << "  " << name
+      << " simulator_models [--log] [find <simulator-model-name>]\n"
+      << "  " << name << " --version\n";
   // note: this interface is likely to change in future kim-api releases
 }
 
@@ -75,7 +77,12 @@ void printColonSeparatedList(std::string const & lst)
   while (std::getline(iss, token, ':')) { std::cout << token << std::endl; }
 }
 
-enum ENV_OPTIONS { E_ENV, E_MODEL_DRIVERS, E_MODELS, E_SIMULATOR_MODELS };
+enum ENV_OPTIONS {
+  E_ENV,
+  E_MODEL_DRIVERS,
+  E_PORTABLE_MODELS,
+  E_SIMULATOR_MODELS
+};
 void env(ENV_OPTIONS const opt)
 {
   KIM::Log::PushDefaultVerbosity(KIM::LOG_VERBOSITY::silent);
@@ -91,7 +98,7 @@ void env(ENV_OPTIONS const opt)
       col->GetEnvironmentVariableName(modelDriver, &envName);
       std::cout << *envName << " ";
 
-      col->GetEnvironmentVariableName(model, &envName);
+      col->GetEnvironmentVariableName(portableModel, &envName);
       std::cout << *envName << " ";
 
       col->GetEnvironmentVariableName(simulatorModel, &envName);
@@ -109,11 +116,11 @@ void env(ENV_OPTIONS const opt)
       printColonSeparatedList(*dirs);
       break;
     }
-    case E_MODELS:
+    case E_PORTABLE_MODELS:
     {
       std::string const * dirs;
       col->GetDirectories(KIM::COLLECTION::environmentVariable,
-                          KIM::COLLECTION_ITEM_TYPE::model,
+                          KIM::COLLECTION_ITEM_TYPE::portableModel,
                           &dirs);
       printColonSeparatedList(*dirs);
       break;
@@ -137,7 +144,7 @@ enum CONFIG_FILE_OPTIONS {
   CF_ENV,
   CF_NAME,
   CF_MODEL_DRIVERS,
-  CF_MODELS,
+  CF_PORTABLE_MODELS,
   CF_SIMULATOR_MODELS
 };
 void configFile(CONFIG_FILE_OPTIONS const opt)
@@ -171,11 +178,12 @@ void configFile(CONFIG_FILE_OPTIONS const opt)
       printColonSeparatedList(*dirs);
       break;
     }
-    case CF_MODELS:
+    case CF_PORTABLE_MODELS:
     {
       std::string const * dirs;
-      col->GetDirectories(
-          KIM::COLLECTION::user, KIM::COLLECTION_ITEM_TYPE::model, &dirs);
+      col->GetDirectories(KIM::COLLECTION::user,
+                          KIM::COLLECTION_ITEM_TYPE::portableModel,
+                          &dirs);
       printColonSeparatedList(*dirs);
       break;
     }
@@ -210,7 +218,7 @@ void project()
   KIM::Log::PopDefaultVerbosity();
 }
 
-enum SYS_OPTIONS { S_MODEL_DRIVERS, S_MODELS, S_SIMULATOR_MODELS };
+enum SYS_OPTIONS { S_MODEL_DRIVERS, S_PORTABLE_MODELS, S_SIMULATOR_MODELS };
 void sys(SYS_OPTIONS const opt)
 {
   KIM::Log::PushDefaultVerbosity(KIM::LOG_VERBOSITY::silent);
@@ -228,11 +236,12 @@ void sys(SYS_OPTIONS const opt)
       printColonSeparatedList(*dirs);
       break;
     }
-    case S_MODELS:
+    case S_PORTABLE_MODELS:
     {
       std::string const * dirs;
-      col->GetDirectories(
-          KIM::COLLECTION::system, KIM::COLLECTION_ITEM_TYPE::model, &dirs);
+      col->GetDirectories(KIM::COLLECTION::system,
+                          KIM::COLLECTION_ITEM_TYPE::portableModel,
+                          &dirs);
       printColonSeparatedList(*dirs);
       break;
     }
@@ -336,7 +345,7 @@ int main(int argc, char * argv[])
       returnVal = processSystem(argc, argv);
     }
     else if ((0 == strcmp("model_drivers", argv[1]))
-             || (0 == strcmp("models", argv[1]))
+             || (0 == strcmp("portable_models", argv[1]))
              || (0 == strcmp("simulator_models", argv[1])))
     {
       returnVal = processItems(argc, argv);
@@ -369,9 +378,9 @@ int processEnv(int argc, char * argv[])
     {
       opt = CI::E_MODEL_DRIVERS;
     }
-    else if (0 == strcmp("models", argv[2]))
+    else if (0 == strcmp("portable_models", argv[2]))
     {
-      opt = CI::E_MODELS;
+      opt = CI::E_PORTABLE_MODELS;
     }
     else if (0 == strcmp("simulator_models", argv[2]))
     {
@@ -404,9 +413,9 @@ int processConfigFile(int argc, char * argv[])
     {
       opt = CI::CF_MODEL_DRIVERS;
     }
-    else if (0 == strcmp("models", argv[2]))
+    else if (0 == strcmp("portable_models", argv[2]))
     {
-      opt = CI::CF_MODELS;
+      opt = CI::CF_PORTABLE_MODELS;
     }
     else if (0 == strcmp("simulator_models", argv[2]))
     {
@@ -434,9 +443,9 @@ int processSystem(int argc, char * argv[])
     {
       CI::sys(CI::S_MODEL_DRIVERS);
     }
-    else if (0 == strcmp("models", argv[2]))
+    else if (0 == strcmp("portable_models", argv[2]))
     {
-      CI::sys(CI::S_MODELS);
+      CI::sys(CI::S_PORTABLE_MODELS);
     }
     else if (0 == strcmp("simulator_models", argv[2]))
     {
@@ -491,9 +500,9 @@ int processItems(int argc, char * argv[])
 
     if (0 == strcmp("model_drivers", argv[1]))
     { CI::listItems(modelDriver, list_all, name, log); }
-    else if (0 == strcmp("models", argv[1]))
+    else if (0 == strcmp("portable_models", argv[1]))
     {
-      CI::listItems(model, list_all, name, log);
+      CI::listItems(portableModel, list_all, name, log);
     }
     else if (0 == strcmp("simulator_models", argv[1]))
     {

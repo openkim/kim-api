@@ -85,9 +85,9 @@ std::string LibraryName(KIM::CollectionItemType const itemType,
   {
     using namespace KIM::COLLECTION_ITEM_TYPE;
     if (itemType == modelDriver) { libName += KIM_MODEL_DRIVER_IDENTIFIER; }
-    else if (itemType == model)
+    else if (itemType == portableModel)
     {
-      libName += KIM_MODEL_IDENTIFIER;
+      libName += KIM_PORTABLE_MODEL_IDENTIFIER;
     }
     else if (itemType == simulatorModel)
     {
@@ -297,9 +297,9 @@ void PrivateGetEnvironmentVariableName(KIM::CollectionItemType const itemType,
 
   if (itemType == modelDriver)
   { name = KIM_ENVIRONMENT_MODEL_DRIVER_PLURAL_DIR; }
-  else if (itemType == model)
+  else if (itemType == portableModel)
   {
-    name = KIM_ENVIRONMENT_MODEL_PLURAL_DIR;
+    name = KIM_ENVIRONMENT_PORTABLE_MODEL_PLURAL_DIR;
   }
   else if (itemType == simulatorModel)
   {
@@ -319,7 +319,7 @@ void PrivateGetCWDDirs(ItemTypeToStringMap & dirsMap)
   using namespace KIM::COLLECTION_ITEM_TYPE;
 
   dirsMap[modelDriver] = ".";
-  dirsMap[model] = ".";
+  dirsMap[portableModel] = ".";
   dirsMap[simulatorModel] = ".";
 }
 
@@ -336,11 +336,12 @@ void PrivateGetEnvironmentDirs(ItemTypeToStringMap & dirsMap)
   }
 
   {
-    char const * const varVal = getenv(KIM_ENVIRONMENT_MODEL_PLURAL_DIR);
-    if (varVal == NULL) { dirsMap[model] = ""; }
+    char const * const varVal
+        = getenv(KIM_ENVIRONMENT_PORTABLE_MODEL_PLURAL_DIR);
+    if (varVal == NULL) { dirsMap[portableModel] = ""; }
     else
     {
-      dirsMap[model] = varVal;
+      dirsMap[portableModel] = varVal;
     }
   }
 
@@ -375,19 +376,19 @@ int PrivateGetUserDirs(KIM::Log * log, ItemTypeToStringMap & dirsMap)
     if (MakeDirWrapper(path.c_str(), 0755)) return true;
     dirsMap[modelDriver] = ProcessConfigFileDirectoryString(
         KIM_USER_MODEL_DRIVER_PLURAL_DIR_DEFAULT);
-    dirsMap[model]
-        = ProcessConfigFileDirectoryString(KIM_USER_MODEL_PLURAL_DIR_DEFAULT);
+    dirsMap[portableModel] = ProcessConfigFileDirectoryString(
+        KIM_USER_PORTABLE_MODEL_PLURAL_DIR_DEFAULT);
     dirsMap[simulatorModel] = ProcessConfigFileDirectoryString(
         KIM_USER_SIMULATOR_MODEL_PLURAL_DIR_DEFAULT);
     if (MakeDirWrapper(dirsMap[modelDriver].c_str(), 0755)) return true;
-    if (MakeDirWrapper(dirsMap[model].c_str(), 0755)) return true;
+    if (MakeDirWrapper(dirsMap[portableModel].c_str(), 0755)) return true;
     if (MakeDirWrapper(dirsMap[simulatorModel].c_str(), 0755)) return true;
 
     fl.open(configFile.c_str(), std::ofstream::out);
     fl << KIM_MODEL_DRIVER_PLURAL_DIR_IDENTIFIER
         " = " KIM_USER_MODEL_DRIVER_PLURAL_DIR_DEFAULT "\n";
-    fl << KIM_MODEL_PLURAL_DIR_IDENTIFIER
-        " = " KIM_USER_MODEL_PLURAL_DIR_DEFAULT "\n";
+    fl << KIM_PORTABLE_MODEL_PLURAL_DIR_IDENTIFIER
+        " = " KIM_USER_PORTABLE_MODEL_PLURAL_DIR_DEFAULT "\n";
     fl << KIM_SIMULATOR_MODEL_PLURAL_DIR_IDENTIFIER
         " = " KIM_USER_SIMULATOR_MODEL_PLURAL_DIR_DEFAULT "\n";
     fl.close();
@@ -406,10 +407,13 @@ int PrivateGetUserDirs(KIM::Log * log, ItemTypeToStringMap & dirsMap)
     dirsMap[modelDriver] = val;
 
     if ((!cfl.getline(line, LINELEN))
-        || (ProcessConfigFileLine(
-            line, configFile, KIM_MODEL_PLURAL_DIR_IDENTIFIER, log, val)))
+        || (ProcessConfigFileLine(line,
+                                  configFile,
+                                  KIM_PORTABLE_MODEL_PLURAL_DIR_IDENTIFIER,
+                                  log,
+                                  val)))
       goto cleanUp;
-    dirsMap[model] = val;
+    dirsMap[portableModel] = val;
 
     if ((!cfl.getline(line, LINELEN))
         || (ProcessConfigFileLine(line,
@@ -432,7 +436,7 @@ void PrivateGetSystemDirs(ItemTypeToStringMap & dirsMap)
   using namespace KIM::COLLECTION_ITEM_TYPE;
 
   dirsMap[modelDriver] = KIM_SYSTEM_MODEL_DRIVERS_DIR;
-  dirsMap[model] = KIM_SYSTEM_MODELS_DIR;
+  dirsMap[portableModel] = KIM_SYSTEM_PORTABLE_MODELS_DIR;
   dirsMap[simulatorModel] = KIM_SYSTEM_SIMULATOR_MODELS_DIR;
 }
 
@@ -570,8 +574,8 @@ int PrivateGetTypeOfItem(std::string const & itemName,
   using namespace KIM::COLLECTION_ITEM_TYPE;
 
   KIM::CollectionItemType itemType;
-  if (!PrivateGetItem(model, itemName, log, NULL, NULL, NULL))
-  { itemType = model; }
+  if (!PrivateGetItem(portableModel, itemName, log, NULL, NULL, NULL))
+  { itemType = portableModel; }
   else if (!PrivateGetItem(simulatorModel, itemName, log, NULL, NULL, NULL))
   {
     itemType = simulatorModel;

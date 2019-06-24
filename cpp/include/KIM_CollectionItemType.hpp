@@ -143,15 +143,15 @@ namespace COLLECTION_ITEM_TYPE
 /// \since 2.1
 extern CollectionItemType const modelDriver;
 
-/// \brief The standard \c model CollectionItemType.
+/// \brief The standard \c portableModel CollectionItemType.
 ///
-/// The item is a model.
+/// The item is a portable model.
 ///
-/// \sa KIM_COLLECTION_ITEM_TPYE_model,
-/// kim_collection_item_type_module::kim_collection_item_type_model
+/// \sa KIM_COLLECTION_ITEM_TPYE_portableModel,
+/// kim_collection_item_type_module::kim_collection_item_type_portable_model
 ///
 /// \since 2.1
-extern CollectionItemType const model;
+extern CollectionItemType const portableModel;
 
 /// \brief The standard \c simulatorModel CollectionItemType.
 ///

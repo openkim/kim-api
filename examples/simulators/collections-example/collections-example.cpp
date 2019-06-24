@@ -48,9 +48,9 @@ void dirsForCollection(KIM::Collection const collection, KIM::Collections & col)
     std::cout << collection.ToString() << ":" << modelDriver.ToString() << " : "
               << *dirs << std::endl;
 
-    col.GetDirectories(collection, model, &dirs);
-    std::cout << collection.ToString() << ":" << model.ToString() << " : "
-              << *dirs << std::endl;
+    col.GetDirectories(collection, portableModel, &dirs);
+    std::cout << collection.ToString() << ":" << portableModel.ToString()
+              << " : " << *dirs << std::endl;
 
     col.GetDirectories(collection, simulatorModel, &dirs);
     std::cout << collection.ToString() << ":" << simulatorModel.ToString()
@@ -91,8 +91,9 @@ int main()
   }
   {
     std::string const * name;
-    col->GetEnvironmentVariableName(KIM::COLLECTION_ITEM_TYPE::model, &name);
-    std::cout << KIM::COLLECTION_ITEM_TYPE::model.ToString()
+    col->GetEnvironmentVariableName(KIM::COLLECTION_ITEM_TYPE::portableModel,
+                                    &name);
+    std::cout << KIM::COLLECTION_ITEM_TYPE::portableModel.ToString()
               << " env name : " << *name << std::endl;
     std::cout << std::endl;
   }
@@ -141,9 +142,9 @@ int main()
     col->GetItemNamesByCollectionAndType(KC::system, modelDriver, &names);
     std::cout << KC::system.ToString() << ":" << modelDriver.ToString() << " : "
               << *names << std::endl;
-    col->GetItemNamesByCollectionAndType(KC::system, model, &names);
-    std::cout << KC::system.ToString() << ":" << model.ToString() << " : "
-              << *names << std::endl;
+    col->GetItemNamesByCollectionAndType(KC::system, portableModel, &names);
+    std::cout << KC::system.ToString() << ":" << portableModel.ToString()
+              << " : " << *names << std::endl;
     col->GetItemNamesByCollectionAndType(KC::system, simulatorModel, &names);
     std::cout << KC::system.ToString() << ":" << simulatorModel.ToString()
               << " : " << *names << std::endl;
@@ -157,9 +158,9 @@ int main()
     col->GetItemNamesByCollectionAndType(user, modelDriver, &names);
     std::cout << user.ToString() << ":" << modelDriver.ToString() << " : "
               << *names << std::endl;
-    col->GetItemNamesByCollectionAndType(user, model, &names);
-    std::cout << user.ToString() << ":" << model.ToString() << " : " << *names
-              << std::endl;
+    col->GetItemNamesByCollectionAndType(user, portableModel, &names);
+    std::cout << user.ToString() << ":" << portableModel.ToString() << " : "
+              << *names << std::endl;
     col->GetItemNamesByCollectionAndType(user, simulatorModel, &names);
     std::cout << user.ToString() << ":" << simulatorModel.ToString() << " : "
               << *names << std::endl;
@@ -174,9 +175,10 @@ int main()
         environmentVariable, modelDriver, &names);
     std::cout << environmentVariable.ToString() << ":" << modelDriver.ToString()
               << " : " << *names << std::endl;
-    col->GetItemNamesByCollectionAndType(environmentVariable, model, &names);
-    std::cout << environmentVariable.ToString() << ":" << model.ToString()
-              << " : " << *names << std::endl;
+    col->GetItemNamesByCollectionAndType(
+        environmentVariable, portableModel, &names);
+    std::cout << environmentVariable.ToString() << ":"
+              << portableModel.ToString() << " : " << *names << std::endl;
     col->GetItemNamesByCollectionAndType(
         environmentVariable, simulatorModel, &names);
     std::cout << environmentVariable.ToString() << ":"
@@ -193,9 +195,9 @@ int main()
     std::cout << currentWorkingDirectory.ToString() << ":"
               << modelDriver.ToString() << " : " << *names << std::endl;
     col->GetItemNamesByCollectionAndType(
-        currentWorkingDirectory, model, &names);
-    std::cout << currentWorkingDirectory.ToString() << ":" << model.ToString()
-              << " : " << *names << std::endl;
+        currentWorkingDirectory, portableModel, &names);
+    std::cout << currentWorkingDirectory.ToString() << ":"
+              << portableModel.ToString() << " : " << *names << std::endl;
     col->GetItemNamesByCollectionAndType(
         currentWorkingDirectory, simulatorModel, &names);
     std::cout << currentWorkingDirectory.ToString() << ":"
@@ -208,8 +210,8 @@ int main()
     std::string const * names;
     col->GetItemNamesByType(modelDriver, &names);
     std::cout << modelDriver.ToString() << " : " << *names << std::endl;
-    col->GetItemNamesByType(model, &names);
-    std::cout << model.ToString() << " : " << *names << std::endl;
+    col->GetItemNamesByType(portableModel, &names);
+    std::cout << portableModel.ToString() << " : " << *names << std::endl;
     col->GetItemNamesByType(simulatorModel, &names);
     std::cout << simulatorModel.ToString() << " : " << *names << std::endl;
     std::cout << std::endl;

@@ -37,7 +37,7 @@
 #define KIM_COLLECTION_ITEM_TYPE_INC_
 
 #define ID_modelDriver 0
-#define ID_model 1
+#define ID_portableModel 1
 #define ID_simulatorModel 2
 
 #endif /* KIM_COLLECTION_ITEM_TYPE_INC_ */

@@ -2077,8 +2077,11 @@ int ModelImplementation::ModelCreate(
   }
 
   std::string const * itemFilePath;
-  error = collections_->GetItem(
-      COLLECTION_ITEM_TYPE::model, modelName, &itemFilePath, NULL, NULL);
+  error = collections_->GetItem(COLLECTION_ITEM_TYPE::portableModel,
+                                modelName,
+                                &itemFilePath,
+                                NULL,
+                                NULL);
   if (error)
   {
     LOG_ERROR("Could not find model shared library.");
@@ -2107,7 +2110,7 @@ int ModelImplementation::ModelCreate(
   {
     using namespace COLLECTION_ITEM_TYPE;
 
-    if ((itemType_ == model) && (modelDriverName_ == ""))
+    if ((itemType_ == portableModel) && (modelDriverName_ == ""))
     {
       LOG_DEBUG("Initializing a stand alone model.");
       error = InitializeStandAloneModel(requestedLengthUnit,
@@ -2122,7 +2125,7 @@ int ModelImplementation::ModelCreate(
         return true;
       }
     }
-    else if (itemType_ == model)
+    else if (itemType_ == portableModel)
     {
       LOG_DEBUG("Initializing a parameterized model.");
       error = InitializeParameterizedModel(requestedLengthUnit,

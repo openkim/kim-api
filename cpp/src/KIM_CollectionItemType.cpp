@@ -43,7 +43,7 @@ namespace COLLECTION_ITEM_TYPE
 {
 #include "KIM_CollectionItemType.inc"
 CollectionItemType const modelDriver(ID_modelDriver);
-CollectionItemType const model(ID_model);
+CollectionItemType const portableModel(ID_portableModel);
 CollectionItemType const simulatorModel(ID_simulatorModel);
 
 namespace
@@ -56,7 +56,7 @@ StringMap const GetStringMap()
 {
   StringMap m;
   m[modelDriver] = "modelDriver";
-  m[model] = "model";
+  m[portableModel] = "portableModel";
   m[simulatorModel] = "simulatorModel";
   return m;
 }

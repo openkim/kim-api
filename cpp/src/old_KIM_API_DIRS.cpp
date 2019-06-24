@@ -121,7 +121,7 @@ std::map<CollectionItemType const, std::string> getSystemDirs()
 {
   std::map<CollectionItemType const, std::string> systemDirs;
   systemDirs[KIM_MODEL_DRIVERS] = KIM_SYSTEM_MODEL_DRIVERS_DIR;
-  systemDirs[KIM_MODELS] = KIM_SYSTEM_MODELS_DIR;
+  systemDirs[KIM_PORTABLE_MODELS] = KIM_SYSTEM_PORTABLE_MODELS_DIR;
   systemDirs[KIM_SIMULATOR_MODELS] = KIM_SYSTEM_SIMULATOR_MODELS_DIR;
   return systemDirs;
 }
@@ -228,21 +228,22 @@ int getUserDirs(
     if (makeDirWrapper(path.c_str(), 0755)) return true;
     (*userDirs)[KIM_MODEL_DRIVERS] = ProcessConfigFileDirectoryString(
         KIM_USER_MODEL_DRIVER_PLURAL_DIR_DEFAULT);
-    (*userDirs)[KIM_MODELS]
-        = ProcessConfigFileDirectoryString(KIM_USER_MODEL_PLURAL_DIR_DEFAULT);
+    (*userDirs)[KIM_PORTABLE_MODELS] = ProcessConfigFileDirectoryString(
+        KIM_USER_PORTABLE_MODEL_PLURAL_DIR_DEFAULT);
     (*userDirs)[KIM_SIMULATOR_MODELS] = ProcessConfigFileDirectoryString(
         KIM_USER_SIMULATOR_MODEL_PLURAL_DIR_DEFAULT);
     if (makeDirWrapper((*userDirs)[KIM_MODEL_DRIVERS].c_str(), 0755))
       return true;
-    if (makeDirWrapper((*userDirs)[KIM_MODELS].c_str(), 0755)) return true;
+    if (makeDirWrapper((*userDirs)[KIM_PORTABLE_MODELS].c_str(), 0755))
+      return true;
     if (makeDirWrapper((*userDirs)[KIM_SIMULATOR_MODELS].c_str(), 0755))
       return true;
 
     fl.open(configFile[0].c_str(), std::ofstream::out);
     fl << KIM_MODEL_DRIVER_PLURAL_DIR_IDENTIFIER
         " = " KIM_USER_MODEL_DRIVER_PLURAL_DIR_DEFAULT "\n";
-    fl << KIM_MODEL_PLURAL_DIR_IDENTIFIER
-        " = " KIM_USER_MODEL_PLURAL_DIR_DEFAULT "\n";
+    fl << KIM_PORTABLE_MODEL_PLURAL_DIR_IDENTIFIER
+        " = " KIM_USER_PORTABLE_MODEL_PLURAL_DIR_DEFAULT "\n";
     fl << KIM_SIMULATOR_MODEL_PLURAL_DIR_IDENTIFIER
         " = " KIM_USER_SIMULATOR_MODEL_PLURAL_DIR_DEFAULT "\n";
     fl.close();
@@ -261,8 +262,8 @@ int getUserDirs(
     if ((!cfl.getline(line, LINELEN))
         || (ProcessConfigFileLine(line,
                                   configFile[0],
-                                  KIM_MODEL_PLURAL_DIR_IDENTIFIER,
-                                  (*userDirs)[KIM_MODELS],
+                                  KIM_PORTABLE_MODEL_PLURAL_DIR_IDENTIFIER,
+                                  (*userDirs)[KIM_PORTABLE_MODELS],
                                   log)))
       goto cleanUp;
 
@@ -285,7 +286,7 @@ int getEnvironmentVariableNames(
     std::map<CollectionItemType const, std::string> * const map)
 {
   (*map)[KIM_MODEL_DRIVERS] = KIM_ENVIRONMENT_MODEL_DRIVER_PLURAL_DIR;
-  (*map)[KIM_MODELS] = KIM_ENVIRONMENT_MODEL_PLURAL_DIR;
+  (*map)[KIM_PORTABLE_MODELS] = KIM_ENVIRONMENT_PORTABLE_MODEL_PLURAL_DIR;
   (*map)[KIM_SIMULATOR_MODELS] = KIM_ENVIRONMENT_SIMULATOR_MODEL_PLURAL_DIR;
   return 0;
 }
@@ -424,7 +425,9 @@ void getAvailableItems(CollectionItemType type,
       switch (type)
       {
         case KIM_MODEL_DRIVERS: lib.append(KIM_MODEL_DRIVER_IDENTIFIER); break;
-        case KIM_MODELS: lib.append(KIM_MODEL_IDENTIFIER); break;
+        case KIM_PORTABLE_MODELS:
+          lib.append(KIM_PORTABLE_MODEL_IDENTIFIER);
+          break;
         case KIM_SIMULATOR_MODELS:
           lib.append(KIM_SIMULATOR_MODEL_IDENTIFIER);
           break;
