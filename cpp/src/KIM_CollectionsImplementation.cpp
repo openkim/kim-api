@@ -753,6 +753,15 @@ int CollectionsImplementation::GetItem(CollectionItemType const itemType,
 #endif
   LOG_DEBUG("Enter  " + callString);
 
+#if ERROR_VERBOSITY
+  if (!itemType.Known())
+  {
+    LOG_ERROR("Invalid arguments.");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
+#endif
+
   int extent;
   Collection col;
   if (PrivateGetItem(itemType, itemName, log_, &getItemPath_, &extent, &col))
@@ -788,6 +797,15 @@ int CollectionsImplementation::GetItemMetadata(
         + SPTR(metadataString) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
+
+#if ERROR_VERBOSITY
+  if (!itemType.Known())
+  {
+    LOG_ERROR("Invalid arguments.");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
+#endif
 
   unsigned int length;
   int asString;
@@ -828,6 +846,15 @@ int CollectionsImplementation::GetItemNamesByType(
                                  + ", " + SPTR(itemNames) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
+
+#if ERROR_VERBOSITY
+  if (!itemType.Known())
+  {
+    LOG_ERROR("Invalid arguments.");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
+#endif
 
   std::list<std::string> listOfNames;
   std::list<std::string> colListOfNames;
@@ -870,6 +897,15 @@ int CollectionsImplementation::GetItemNamesByCollectionAndType(
 #endif
   LOG_DEBUG("Enter  " + callString);
 
+#if ERROR_VERBOSITY
+  if ((!collection.Known()) || (!itemType.Known()))
+  {
+    LOG_ERROR("Invalid arguments.");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
+#endif
+
   std::list<std::string> listOfNames;
   PrivateGetListOfItemNamesByCollectionAndType(
       collection, itemType, log_, listOfNames);
@@ -897,12 +933,14 @@ int CollectionsImplementation::GetItemByCollectionAndType(
 #endif
   LOG_DEBUG("Enter  " + callString);
 
+#if ERROR_VERBOSITY
   if ((!collection.Known()) || (!itemType.Known()))
   {
     LOG_ERROR("Invalid arguments.");
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
+#endif
 
   int extent;
   int error
@@ -946,6 +984,15 @@ int CollectionsImplementation::GetItemMetadataByCollectionAndType(
         + SPTR(metadataString) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
+
+#if ERROR_VERBOSITY
+  if ((!collection.Known()) || (!itemType.Known()))
+  {
+    LOG_ERROR("Invalid arguments.");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
+#endif
 
   unsigned int length;
   int asString;
@@ -1072,17 +1119,17 @@ int CollectionsImplementation::GetDirectories(
 #endif
   LOG_DEBUG("Enter  " + callString);
 
-  ItemTypeToStringMap dirsMap;
-  if (!collection.Known())
+#if ERROR_VERBOSITY
+  if ((!collection.Known()) || (!itemType.Known()))
   {
     LOG_ERROR("Invalid arguments.");
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
-  else if (collection == COLLECTION::system)
-  {
-    PrivateGetSystemDirs(dirsMap);
-  }
+#endif
+
+  ItemTypeToStringMap dirsMap;
+  if (collection == COLLECTION::system) { PrivateGetSystemDirs(dirsMap); }
   else if (collection == COLLECTION::user)
   {
     if (PrivateGetUserDirs(log_, dirsMap))
@@ -1101,17 +1148,7 @@ int CollectionsImplementation::GetDirectories(
     PrivateGetCWDDirs(dirsMap);
   }
 
-  if (!itemType.Known())
-  {
-    LOG_ERROR("Invalid arguments.");
-    LOG_DEBUG("Exit 1=" + callString);
-    return true;
-  }
-  else
-  {
-    getDirectories_ = dirsMap[itemType];
-  }
-
+  getDirectories_ = dirsMap[itemType];
   *directories = &getDirectories_;
 
   LOG_DEBUG("Exit 0=" + callString);
