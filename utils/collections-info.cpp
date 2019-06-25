@@ -56,6 +56,8 @@ void usage(std::string name)
       << "  " << name
       << " config_file (env | name | model_drivers | portable_models | "
          "simulator_models)\n"
+      << "  " << name << " type <item-name>\n"
+      << "  " << name << " metadata <item-name>\n"
       << "  " << name
       << " system (project | model_drivers | portable_models | "
          "simulator_models)\n"
@@ -322,8 +324,10 @@ void listItems(KIM::CollectionItemType const type,
             }
           }
 
+          std::string s(*itemCompVer);
+          s.erase(s.find_last_not_of(" \n\r\t") + 1);  // rtrim
           std::cout << colList[i].ToString() << " " << token << " "
-                    << *itemFilePath << " " << *itemCompVer << std::endl;
+                    << *itemFilePath << " " << s << std::endl;
         }
       }
     }
@@ -353,8 +357,10 @@ void listItems(KIM::CollectionItemType const type,
         break;
       }
     }
+    std::string s(*itemCompVer);
+    s.erase(s.find_last_not_of(" \n\r\t") + 1);  // rtrim
     std::cout << collection.ToString() << " " << name << " " << *itemFilePath
-              << " " << *itemCompVer << std::endl;
+              << " " << s << std::endl;
   }
 
   KIM::Collections::Destroy(&col);
@@ -365,6 +371,8 @@ void listItems(KIM::CollectionItemType const type,
 
 int processEnv(int argc, char * argv[]);
 int processConfigFile(int argc, char * argv[]);
+int getItemType(int argc, char * argv[]);
+int getItemMetadata(int argc, char * argv[]);
 int processSystem(int argc, char * argv[]);
 int processItems(int argc, char * argv[]);
 
@@ -379,6 +387,14 @@ int main(int argc, char * argv[])
     else if (0 == strcmp("config_file", argv[1]))
     {
       returnVal = processConfigFile(argc, argv);
+    }
+    else if (0 == strcmp("type", argv[1]))
+    {
+      returnVal = getItemType(argc, argv);
+    }
+    else if (0 == strcmp("metadata", argv[1]))
+    {
+      returnVal = getItemMetadata(argc, argv);
     }
     else if (0 == strcmp("system", argv[1]))
     {
@@ -468,6 +484,94 @@ int processConfigFile(int argc, char * argv[])
   }
 
   if (0 == returnVal) { CI::configFile(opt); }
+
+  return returnVal;
+}
+
+int getItemType(int argc, char * argv[])
+{
+  int returnVal = 0;
+  if (argc != 3) { returnVal = 1; }
+  else
+  {
+    KIM::Log::PushDefaultVerbosity(KIM::LOG_VERBOSITY::silent);
+    KIM::Collections * col;
+    int error = KIM::Collections::Create(&col);
+    if (error) return 1;
+
+    KIM::CollectionItemType itemType;
+    error = col->GetTypeOfItem(argv[2], &itemType);
+    if (error)
+      returnVal = 1;
+    else
+    {
+      std::cout << itemType.ToString() << std::endl;
+    }
+
+    KIM::Collections::Destroy(&col);
+    KIM::Log::PopDefaultVerbosity();
+  }
+
+  return returnVal;
+}
+
+int getItemMetadata(int argc, char * argv[])
+{
+  int returnVal = 0;
+  if (argc != 3) { returnVal = 1; }
+  else
+  {
+    KIM::Log::PushDefaultVerbosity(KIM::LOG_VERBOSITY::silent);
+    KIM::Collections * col;
+    int error = KIM::Collections::Create(&col);
+    if (error) return 1;
+
+    KIM::CollectionItemType itemType;
+    error = col->GetTypeOfItem(argv[2], &itemType);
+    if (error)
+      returnVal = 1;
+    else
+    {
+      int extent;
+      error = col->GetItem(itemType, argv[2], NULL, &extent, NULL);
+      if (error)
+        returnVal = 1;
+      else
+      {
+        for (int i = 0; i < extent; ++i)
+        {
+          std::string const * id;
+          std::string const * data;
+          int asString;
+          error = col->GetItemMetadata(
+              itemType, argv[2], i, &id, NULL, NULL, &asString, &data);
+          if ((error) || (!asString))
+          {
+            std::cout << "=== MD " << i << " === "
+                      << "not available" << std::endl;
+            std::cout << "======="
+                      << "="
+                      << "====="
+                      << "=============" << std::endl;
+          }
+          else
+          {
+            std::string s(*data);
+            s.erase(s.find_last_not_of(" \n\r\t") + 1);  // rtrim
+            std::cout << "=== MD " << i << " === " << *id << std::endl;
+            std::cout << s << std::endl;
+            std::cout << "======="
+                      << "="
+                      << "====="
+                      << "=============" << std::endl;
+          }
+        }
+      }
+    }
+
+    KIM::Collections::Destroy(&col);
+    KIM::Log::PopDefaultVerbosity();
+  }
 
   return returnVal;
 }

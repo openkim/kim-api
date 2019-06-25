@@ -361,6 +361,15 @@ function(add_kim_api_model_library)
   # process metadata files
   list(APPEND METADATA_LOCAL_FILES "item-compiled-with-version.txt")
   list(INSERT MODEL_METADATA_FILES 0 "${METADATA_LOCAL_FILES}")
+  #
+  file(GLOB KIM_STANDARD_METADATA_FILES
+    LIST_DIRECTORIES false
+    RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}"
+    "kimspec.edn" "kimprovenance.edn" "kimcite-*.bib")
+  if(KIM_STANDARD_METADATA_FILES)
+    list(APPEND MODEL_METADATA_FILES "${KIM_STANDARD_METADATA_FILES}")
+  endif()
+  #
   set(METADATA_FILE_DECLARATIONS "")
   set(EMBEDDED_METADATA_FILES "")
   set(EMBEDDED_METADATA_FILES_IDENTIFIER "NULL")
@@ -469,6 +478,15 @@ function(add_kim_api_model_driver_library)
   # process metadata files
   list(APPEND METADATA_LOCAL_FILES "item-compiled-with-version.txt")
   list(INSERT MODEL_DRIVER_METADATA_FILES 0 "${METADATA_LOCAL_FILES}")
+  #
+  file(GLOB KIM_STANDARD_METADATA_FILES
+    LIST_DIRECTORIES false
+    RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}"
+    "kimspec.edn" "kimprovenance.edn" "kimcite-*.bib")
+  if(KIM_STANDARD_METADATA_FILES)
+    list(APPEND MODEL_DRIVER_METADATA_FILES "${KIM_STANDARD_METADATA_FILES}")
+  endif()
+  #
   set(METADATA_FILE_DECLARATIONS "")
   set(EMBEDDED_METADATA_FILES "")
   set(EMBEDDED_METADATA_FILES_IDENTIFIER "NULL")
