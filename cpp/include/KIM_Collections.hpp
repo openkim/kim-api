@@ -102,7 +102,7 @@ class Collections
                       std::string const & itemName,
                       int const index,
                       std::string const ** const metadataID,
-                      int * const metadataLength,
+                      unsigned int * const metadataLength,
                       unsigned char const ** const metadataRawData,
                       int * const availableAsString,
                       std::string const ** const metadataString) const;
@@ -144,7 +144,7 @@ class Collections
       std::string const & itemName,
       int const index,
       std::string const ** const metadataID,
-      int * const metadataLength,
+      unsigned int * const metadataLength,
       unsigned char const ** const metadataRawData,
       int * const availableAsString,
       std::string const ** const metadataString) const;

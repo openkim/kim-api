@@ -293,12 +293,38 @@ void listItems(KIM::CollectionItemType const type,
       {
         std::string const * itemFilePath;
         int metadataExtent;
-        col->GetItemByCollectionAndType(
+        error = col->GetItemByCollectionAndType(
             colList[i], type, token, &itemFilePath, &metadataExtent);
 
-        std::cout << colList[i].ToString() << " " << token << " "
-                  << *itemFilePath << " "
-                  << "VERSION-NOT-CURRENTLY-AVAILABLE" << std::endl;
+        if (!error)
+        {
+          std::string const notAvailable("VERSION-NOT-AVAILABLE");
+          std::string const * itemCompVer = &notAvailable;
+          for (int j = 0; j < metadataExtent; ++j)
+          {
+            std::string const * mdID;
+            std::string const * mdStr;
+            int asString;
+            error = col->GetItemMetadataByCollectionAndType(colList[i],
+                                                            type,
+                                                            token,
+                                                            j,
+                                                            &mdID,
+                                                            NULL,
+                                                            NULL,
+                                                            &asString,
+                                                            &mdStr);
+            if ((!error) && (*mdID == "item-compiled-with-version.txt")
+                && (asString))
+            {
+              itemCompVer = mdStr;
+              break;
+            }
+          }
+
+          std::cout << colList[i].ToString() << " " << token << " "
+                    << *itemFilePath << " " << *itemCompVer << std::endl;
+        }
       }
     }
   }
@@ -312,9 +338,23 @@ void listItems(KIM::CollectionItemType const type,
 
     if (error) return;
 
+    std::string const notAvailable("VERSION-NOT-AVAILABLE");
+    std::string const * itemCompVer = &notAvailable;
+    for (int j = 0; j < metadataExtent; ++j)
+    {
+      std::string const * mdID;
+      std::string const * mdStr;
+      int asString;
+      error = col->GetItemMetadataByCollectionAndType(
+          collection, type, name, j, &mdID, NULL, NULL, &asString, &mdStr);
+      if ((!error) && (*mdID == "item-compiled-with-version.txt") && (asString))
+      {
+        itemCompVer = mdStr;
+        break;
+      }
+    }
     std::cout << collection.ToString() << " " << name << " " << *itemFilePath
-              << " "
-              << "VERSION-NOT-CURRENTLY-AVAILABLE" << std::endl;
+              << " " << *itemCompVer << std::endl;
   }
 
   KIM::Collections::Destroy(&col);

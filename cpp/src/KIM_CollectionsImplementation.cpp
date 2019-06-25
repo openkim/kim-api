@@ -509,10 +509,48 @@ int PrivateGetItemByCollectionAndType(KIM::Collection const collection,
   }
 
   if (libPath == "") { return true; }
+  int mdExtent;
+  int error = lib.GetNumberOfMetadataFiles(&mdExtent);
+  if (error) { return true; }
 
   if (path) *path = libPath;
-  // currently libraries do not have any metadata files.
-  if (metadataExtent) *metadataExtent = 0;
+  if (metadataExtent) *metadataExtent = mdExtent;
+
+  return false;
+}
+
+int PrivateGetItemMetadataByCollectionAndType(
+    KIM::Collection const collection,
+    KIM::CollectionItemType const itemType,
+    std::string const & itemName,
+    int const index,
+    KIM::Log * const log,
+    std::string * const metadataID,
+    unsigned int * const metadataLength,
+    std::string * const metadataString,
+    int * const availableAsString)
+{
+  std::string path;
+  int mdExtent;
+  int error = PrivateGetItemByCollectionAndType(
+      collection, itemType, itemName, log, &path, &mdExtent);
+
+  if ((index < 0) || (index >= mdExtent)) { return true; }
+
+  KIM::SharedLibrary lib(log);
+  error = lib.Open(path);
+  if (error) { return true; }
+
+  unsigned char const * mdFileData;
+  error = lib.GetMetadataFile(index, metadataID, metadataLength, &mdFileData);
+  if (error) { return true; }
+
+  metadataString->assign(reinterpret_cast<char const *>(mdFileData),
+                         *metadataLength);
+  if (strlen(metadataString->c_str()) == *metadataLength)
+    *availableAsString = true;
+  else
+    *availableAsString = false;
 
   return false;
 }
@@ -566,6 +604,31 @@ int PrivateGetItem(KIM::CollectionItemType const itemType,
 
   return false;
 }  // namespace
+
+int PrivateGetItemMetadata(KIM::CollectionItemType const itemType,
+                           std::string const & itemName,
+                           int const index,
+                           KIM::Log * const log,
+                           std::string * const metadataID,
+                           unsigned int * const metadataLength,
+                           std::string * const metadataString,
+                           int * const availableAsString)
+{
+  KIM::Collection collection;
+  int error = PrivateGetItem(itemType, itemName, log, NULL, NULL, &collection);
+
+  if (error) { return true; }
+
+  return PrivateGetItemMetadataByCollectionAndType(collection,
+                                                   itemType,
+                                                   itemName,
+                                                   index,
+                                                   log,
+                                                   metadataID,
+                                                   metadataLength,
+                                                   metadataString,
+                                                   availableAsString);
+}
 
 int PrivateGetTypeOfItem(std::string const & itemName,
                          KIM::Log * const log,
@@ -712,7 +775,7 @@ int CollectionsImplementation::GetItemMetadata(
     std::string const & itemName,
     int const index,
     std::string const ** const metadataID,
-    int * const metadataLength,
+    unsigned int * const metadataLength,
     unsigned char const ** const metadataRawData,
     int * const availableAsString,
     std::string const ** const metadataString) const
@@ -726,7 +789,31 @@ int CollectionsImplementation::GetItemMetadata(
 #endif
   LOG_DEBUG("Enter  " + callString);
 
-  //@ @ @;
+  unsigned int length;
+  int asString;
+  int error = PrivateGetItemMetadata(itemType,
+                                     itemName,
+                                     index,
+                                     log_,
+                                     &getItemMetadataID_,
+                                     &length,
+                                     &getItemMetadataString_,
+                                     &asString);
+
+  if (error)
+  {
+    LOG_ERROR("Unable to get metadata for item.");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
+
+  if (metadataID) *metadataID = &getItemMetadataID_;
+  if (metadataLength) *metadataLength = length;
+  if (metadataRawData)
+    *metadataRawData = reinterpret_cast<unsigned char const *>(
+        getItemMetadataString_.c_str());
+  if (availableAsString) *availableAsString = asString;
+  if ((asString) && (metadataString)) *metadataString = &getItemMetadataString_;
 
   LOG_DEBUG("Exit 0=" + callString);
   return false;
@@ -845,7 +932,7 @@ int CollectionsImplementation::GetItemMetadataByCollectionAndType(
     std::string const & itemName,
     int const index,
     std::string const ** const metadataID,
-    int * const metadataLength,
+    unsigned int * const metadataLength,
     unsigned char const ** const metadataRawData,
     int * const availableAsString,
     std::string const ** const metadataString) const
@@ -860,7 +947,35 @@ int CollectionsImplementation::GetItemMetadataByCollectionAndType(
 #endif
   LOG_DEBUG("Enter  " + callString);
 
-  // @ @ @;
+  unsigned int length;
+  int asString;
+  int error = PrivateGetItemMetadataByCollectionAndType(
+      collection,
+      itemType,
+      itemName,
+      index,
+      log_,
+      &getItemMetadataByCollectionAndTypeID_,
+      &length,
+      &getItemMetadataByCollectionAndTypeString_,
+      &asString);
+
+  if (error)
+  {
+    LOG_ERROR("Unable to get metadata for item.");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
+
+
+  if (metadataID) *metadataID = &getItemMetadataByCollectionAndTypeID_;
+  if (metadataLength) *metadataLength = length;
+  if (metadataRawData)
+    *metadataRawData = reinterpret_cast<unsigned char const *>(
+        getItemMetadataByCollectionAndTypeString_.c_str());
+  if (availableAsString) *availableAsString = asString;
+  if ((asString) && (metadataString))
+    *metadataString = &getItemMetadataByCollectionAndTypeString_;
 
   LOG_DEBUG("Exit 0=" + callString);
   return false;

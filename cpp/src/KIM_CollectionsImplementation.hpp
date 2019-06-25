@@ -79,7 +79,7 @@ class CollectionsImplementation
                       std::string const & itemName,
                       int const index,
                       std::string const ** const metadataID,
-                      int * const metadataLength,
+                      unsigned int * const metadataLength,
                       unsigned char const ** const metadataRawData,
                       int * const availableAsString,
                       std::string const ** const metadataString) const;
@@ -101,7 +101,7 @@ class CollectionsImplementation
       std::string const & itemName,
       int const index,
       std::string const ** const metadataID,
-      int * const metadataLength,
+      unsigned int * const metadataLength,
       unsigned char const ** const metadataRawData,
       int * const availableAsString,
       std::string const ** const metadataString) const;
@@ -146,8 +146,6 @@ class CollectionsImplementation
   mutable std::string getItemPath_;
 
   mutable std::string getItemMetadataID_;
-  mutable int getItemMetadataLength_;
-  mutable std::vector<unsigned char> getItemMetadataRawData_;
   mutable std::string getItemMetadataString_;
 
   mutable std::string getItemNamesByType_;
@@ -157,8 +155,6 @@ class CollectionsImplementation
   mutable std::string getItemByCollectionAndTypePath_;
 
   mutable std::string getItemMetadataByCollectionAndTypeID_;
-  mutable int getItemMetadataByCollectionAndTypeLength_;
-  mutable std::vector<unsigned char> getItemMetadataByCollectionAndTypeRawData_;
   mutable std::string getItemMetadataByCollectionAndTypeString_;
 
   mutable std::string getProjectNameAndSemVerProjectName_;
