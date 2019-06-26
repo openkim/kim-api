@@ -82,72 +82,75 @@ class Collections
   /// @@@ add docs
   ///
   /// \since 2.1
-  int GetTypeOfItem(std::string const & itemName,
-                    CollectionItemType * const typeOfItem) const;
+  int GetItemType(std::string const & itemName,
+                  CollectionItemType * const itemType) const;
 
   /// @@@ add docs
   ///
   /// \since 2.1
-  int GetItem(CollectionItemType const itemType,
-              std::string const & itemName,
-              std::string const ** const path,
-              int * const metadataExtent,
-              Collection * const collection) const;
+  int GetItemLibraryFileNameAndCollection(CollectionItemType const itemType,
+                                          std::string const & itemName,
+                                          std::string const ** const fileName,
+                                          Collection * const collection) const;
 
   /// @@@ add docs
   ///
-  /// pointers are valid until next call of GetItemMetadata
+  /// pointers are valid until next call
+  ///
   /// \since 2.1
-  int GetItemMetadata(CollectionItemType const itemType,
-                      std::string const & itemName,
-                      int const index,
-                      std::string const ** const metadataID,
-                      unsigned int * const metadataLength,
-                      unsigned char const ** const metadataRawData,
-                      int * const availableAsString,
-                      std::string const ** const metadataString) const;
+  int CacheListOfItemMetadataFiles(CollectionItemType const itemType,
+                                   std::string const & itemName,
+                                   int * const extent);
+  int GetItemMetadataFile(int const index,
+                          std::string const ** const fileName,
+                          unsigned int * const fileLength,
+                          unsigned char const ** const fileRawData,
+                          int * const availableAsString,
+                          std::string const ** const fileString) const;
 
   /// @@@ add docs
-  ///
-  /// @@@ return a colon separated list of names
   ///
   /// \since 4.1
-  int GetItemNamesByType(CollectionItemType const itemType,
-                         std::string const ** const itemNames) const;
-
-  /// @@@ add docs
-  ///
-  /// @@@ return a colon separated list of names
-  ///
-  /// \since 2.1
-  int GetItemNamesByCollectionAndType(
-      Collection const collection,
-      CollectionItemType const itemType,
-      std::string const ** const itemNames) const;
+  int CacheListOfItemNamesByType(CollectionItemType const itemType,
+                                 int * const extent);
+  int GetItemNameByType(int const index,
+                        std::string const ** const itemName) const;
 
   /// @@@ add docs
   ///
   /// \since 2.1
-  int GetItemByCollectionAndType(Collection const collection,
-                                 CollectionItemType const itemType,
-                                 std::string const & itemName,
-                                 std::string const ** const path,
-                                 int * const metadataExtent) const;
+  int CacheListOfItemNamesByCollectionAndType(Collection const collection,
+                                              CollectionItemType const itemType,
+                                              int * const extent);
+  int GetItemNameByCollectionAndType(int const index,
+                                     std::string const ** const itemName) const;
 
   /// @@@ add docs
   ///
-  /// pointers are valid until next call of GetItemMetadata
   /// \since 2.1
-  int GetItemMetadataByCollectionAndType(
+  int GetItemLibraryFileNameByCollectionAndType(
       Collection const collection,
       CollectionItemType const itemType,
       std::string const & itemName,
+      std::string const ** const fileName) const;
+
+  /// @@@ add docs
+  ///
+  /// pointers are valid until next call
+  ///
+  /// \since 2.1
+  int CacheListOfItemMetadataFilesByCollectionAndType(
+      Collection const collection,
+      CollectionItemType const itemType,
+      std::string const & itemName,
+      int * const extent);
+  int GetItemMetadataFileByCollectionAndType(
       int const index,
-      std::string const ** const metadataID,
-      unsigned int * const metadataLength,
-      unsigned char const ** const metadataRawData,
+      std::string const ** const fileName,
+      unsigned int * const fileLength,
+      unsigned char const ** const fileRawData,
       int * const availableAsString,
-      std::string const ** const metadataString) const;
+      std::string const ** const fileString) const;
 
 
   /// @@@ add docs
@@ -171,19 +174,19 @@ class Collections
   /// @@@ add docs
   ///
   /// \since 2.1
-  void GetConfigurationFilePath(std::string const ** const filePath) const;
+  void GetConfigurationFileName(std::string const ** const fileName) const;
 
   /// @@@ add docs
   ///
-  /// @@@ return colon separated list of paths
-  ///
   /// \since 2.1
-  int GetDirectories(Collection const collection,
-                     CollectionItemType const itemType,
-                     std::string const ** const directories) const;
+  int CacheListOfDirectoryNames(Collection const collection,
+                                CollectionItemType const itemType,
+                                int * const extent);
+  int GetDirectoryName(int const index,
+                       std::string const ** const directoryName) const;
 
-  /// \brief Set the identity of the Log object associated with the Collections
-  /// object.
+  /// \brief Set the identity of the Log object
+  /// associated with the Collections object.
   ///
   /// \param[in] logID String identifying the Collections object's Log object.
   ///

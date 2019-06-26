@@ -112,21 +112,6 @@ void ParseColonSeparatedList(std::string const & listString,
   while (std::getline(iss, token, ':')) { lst.push_back(token); }
 }
 
-std::string CreateColonSeparatedStringFromList(std::list<std::string> const lst)
-{
-  std::string finalList;
-
-  std::string separator("");
-  std::list<std::string>::const_iterator itr;
-  for (itr = lst.begin(); itr != lst.end(); ++itr)
-  {
-    finalList += separator + *itr;
-    separator = ":";
-  }
-
-  return finalList;
-}
-
 void GetSubDirectories(std::string const & dir, std::list<std::string> & list)
 {
   list.clear();
@@ -262,14 +247,14 @@ void PrivateGetConfigurationFileEnvironmentVariable(std::string & name,
   if (NULL != varVal) value = varVal;
 }
 
-void PrivateGetConfigurationFilePath(std::string & filePath)
+void PrivateGetConfigurationFileName(std::string & fileName)
 {
-  filePath = KIM_USER_CONFIGURATION_FILE;
+  fileName = KIM_USER_CONFIGURATION_FILE;
 
-  if (filePath[0] != '/')
+  if (fileName[0] != '/')
   {
     // probably need a better way to get HOME
-    filePath = std::string(getenv("HOME")).append("/").append(filePath);
+    fileName = std::string(getenv("HOME")).append("/").append(fileName);
   }
 
   std::string varName;
@@ -281,11 +266,11 @@ void PrivateGetConfigurationFilePath(std::string & filePath)
     if (varVal[0] != '/')
     {
       // probably need a better way to get PWD
-      filePath = std::string(getenv("PWD")).append("/").append(varVal);
+      fileName = std::string(getenv("PWD")).append("/").append(varVal);
     }
     else
     {
-      filePath = varVal;
+      fileName = varVal;
     }
   }
 }
@@ -361,7 +346,7 @@ int PrivateGetUserDirs(KIM::Log * log, ItemTypeToStringMap & dirsMap)
   using namespace KIM::COLLECTION_ITEM_TYPE;
 
   std::string configFile;
-  PrivateGetConfigurationFilePath(configFile);
+  PrivateGetConfigurationFileName(configFile);
 
   std::ifstream cfl;
   cfl.open(configFile.c_str(), std::ifstream::in);
@@ -477,12 +462,12 @@ void PrivateGetListOfItemNamesByCollectionAndType(
   }
 }
 
-int PrivateGetItemByCollectionAndType(KIM::Collection const collection,
-                                      KIM::CollectionItemType const itemType,
-                                      std::string const & itemName,
-                                      KIM::Log * log,
-                                      std::string * path,
-                                      int * metadataExtent)
+int PrivateGetItemLibraryFileNameByCollectionAndType(
+    KIM::Collection const collection,
+    KIM::CollectionItemType const itemType,
+    std::string const & itemName,
+    KIM::Log * log,
+    std::string * fileName)
 {
   namespace KC = KIM::COLLECTION;
 
@@ -509,87 +494,82 @@ int PrivateGetItemByCollectionAndType(KIM::Collection const collection,
   }
 
   if (libPath == "") { return true; }
-  int mdExtent;
-  int error = lib.GetNumberOfMetadataFiles(&mdExtent);
-  if (error) { return true; }
 
-  if (path) *path = libPath;
-  if (metadataExtent) *metadataExtent = mdExtent;
+  if (fileName) *fileName = libPath;
 
   return false;
 }
 
-int PrivateGetItemMetadataByCollectionAndType(
+int PrivateGetListOfItemMetadataFilesByCollectionAndType(
     KIM::Collection const collection,
     KIM::CollectionItemType const itemType,
     std::string const & itemName,
-    int const index,
     KIM::Log * const log,
-    std::string * const metadataID,
-    unsigned int * const metadataLength,
-    std::string * const metadataString,
-    int * const availableAsString)
+    std::vector<std::string> & fileNames,
+    std::vector<int> & availableAsStrings,
+    std::vector<std::string> & fileStrings)
 {
   std::string path;
-  int mdExtent;
-  int error = PrivateGetItemByCollectionAndType(
-      collection, itemType, itemName, log, &path, &mdExtent);
+  int error = PrivateGetItemLibraryFileNameByCollectionAndType(
+      collection, itemType, itemName, log, &path);
 
-  if ((index < 0) || (index >= mdExtent)) { return true; }
+  if (error) { return true; }
+
+  fileNames.clear();
+  availableAsStrings.clear();
+  fileStrings.clear();
 
   KIM::SharedLibrary lib(log);
   error = lib.Open(path);
   if (error) { return true; }
-
-  unsigned char const * mdFileData;
-  error = lib.GetMetadataFile(index, metadataID, metadataLength, &mdFileData);
+  int extent;
+  error = lib.GetNumberOfMetadataFiles(&extent);
   if (error) { return true; }
 
-  metadataString->assign(reinterpret_cast<char const *>(mdFileData),
-                         *metadataLength);
-  if (strlen(metadataString->c_str()) == *metadataLength)
-    *availableAsString = true;
-  else
-    *availableAsString = false;
+  for (int i = 0; i < extent; ++i)
+  {
+    std::string flnm;
+    unsigned int length;
+    unsigned char const * data;
+    error = lib.GetMetadataFile(i, &flnm, &length, &data);
+    if (error) { return true; }
+
+    fileNames.push_back(flnm);
+    fileStrings.push_back("");
+    fileStrings.rbegin()->assign(reinterpret_cast<char const *>(data), length);
+    availableAsStrings.push_back(
+        (strlen(fileStrings.rbegin()->c_str()) == length) ? true : false);
+  }
 
   return false;
 }
 
-int PrivateGetItem(KIM::CollectionItemType const itemType,
-                   std::string const & itemName,
-                   KIM::Log * const log,
-                   std::string * const path,
-                   int * const metadataExtent,
-                   KIM::Collection * const collection)
+int PrivateGetItemLibraryFileNameAndCollection(
+    KIM::CollectionItemType const itemType,
+    std::string const & itemName,
+    KIM::Log * const log,
+    std::string * const fileName,
+    KIM::Collection * const collection)
 {
   namespace KC = KIM::COLLECTION;
 
   std::string itemPath;
-  int extent;
   KIM::Collection col;
-  if (!PrivateGetItemByCollectionAndType(KC::currentWorkingDirectory,
-                                         itemType,
-                                         itemName,
-                                         log,
-                                         &itemPath,
-                                         &extent))
+  if (!PrivateGetItemLibraryFileNameByCollectionAndType(
+          KC::currentWorkingDirectory, itemType, itemName, log, &itemPath))
   { col = KC::currentWorkingDirectory; }
-  else if (!PrivateGetItemByCollectionAndType(KC::environmentVariable,
-                                              itemType,
-                                              itemName,
-                                              log,
-                                              &itemPath,
-                                              &extent))
+  else if (!PrivateGetItemLibraryFileNameByCollectionAndType(
+               KC::environmentVariable, itemType, itemName, log, &itemPath))
   {
     col = KC::environmentVariable;
   }
-  else if (!PrivateGetItemByCollectionAndType(
-               KC::user, itemType, itemName, log, &itemPath, &extent))
+  else if (!PrivateGetItemLibraryFileNameByCollectionAndType(
+               KC::user, itemType, itemName, log, &itemPath))
   {
     col = KC::user;
   }
-  else if (!PrivateGetItemByCollectionAndType(
-               KC::system, itemType, itemName, log, &itemPath, &extent))
+  else if (!PrivateGetItemLibraryFileNameByCollectionAndType(
+               KC::system, itemType, itemName, log, &itemPath))
   {
     col = KC::system;
   }
@@ -598,61 +578,61 @@ int PrivateGetItem(KIM::CollectionItemType const itemType,
     return true;
   }
 
-  if (path) *path = itemPath;
-  if (metadataExtent) *metadataExtent = extent;
+  if (fileName) *fileName = itemPath;
   if (collection) *collection = col;
 
   return false;
 }  // namespace
 
-int PrivateGetItemMetadata(KIM::CollectionItemType const itemType,
-                           std::string const & itemName,
-                           int const index,
-                           KIM::Log * const log,
-                           std::string * const metadataID,
-                           unsigned int * const metadataLength,
-                           std::string * const metadataString,
-                           int * const availableAsString)
+int PrivateGetListOfItemMetadataFiles(KIM::CollectionItemType const itemType,
+                                      std::string const & itemName,
+                                      KIM::Log * const log,
+                                      std::vector<std::string> & fileNames,
+                                      std::vector<int> & availableAsStrings,
+                                      std::vector<std::string> & fileStrings)
 {
   KIM::Collection collection;
-  int error = PrivateGetItem(itemType, itemName, log, NULL, NULL, &collection);
+  int error = PrivateGetItemLibraryFileNameAndCollection(
+      itemType, itemName, log, NULL, &collection);
 
   if (error) { return true; }
 
-  return PrivateGetItemMetadataByCollectionAndType(collection,
-                                                   itemType,
-                                                   itemName,
-                                                   index,
-                                                   log,
-                                                   metadataID,
-                                                   metadataLength,
-                                                   metadataString,
-                                                   availableAsString);
+  return PrivateGetListOfItemMetadataFilesByCollectionAndType(
+      collection,
+      itemType,
+      itemName,
+      log,
+      fileNames,
+      availableAsStrings,
+      fileStrings);
 }
 
-int PrivateGetTypeOfItem(std::string const & itemName,
-                         KIM::Log * const log,
-                         KIM::CollectionItemType * const typeOfItem)
+int PrivateGetItemType(std::string const & itemName,
+                       KIM::Log * const log,
+                       KIM::CollectionItemType * const itemType)
 {
   using namespace KIM::COLLECTION_ITEM_TYPE;
 
-  KIM::CollectionItemType itemType;
-  if (!PrivateGetItem(portableModel, itemName, log, NULL, NULL, NULL))
-  { itemType = portableModel; }
-  else if (!PrivateGetItem(simulatorModel, itemName, log, NULL, NULL, NULL))
+  KIM::CollectionItemType it;
+  if (!PrivateGetItemLibraryFileNameAndCollection(
+          portableModel, itemName, log, NULL, NULL))
+  { it = portableModel; }
+  else if (!PrivateGetItemLibraryFileNameAndCollection(
+               simulatorModel, itemName, log, NULL, NULL))
   {
-    itemType = simulatorModel;
+    it = simulatorModel;
   }
-  else if (!PrivateGetItem(modelDriver, itemName, log, NULL, NULL, NULL))
+  else if (!PrivateGetItemLibraryFileNameAndCollection(
+               modelDriver, itemName, log, NULL, NULL))
   {
-    itemType = modelDriver;
+    it = modelDriver;
   }
   else
   {
     return true;
   }
 
-  *typeOfItem = itemType;
+  *itemType = it;
 
   return false;
 }
@@ -716,40 +696,39 @@ void CollectionsImplementation::Destroy(
   *collectionsImplementation = NULL;
 }
 
-int CollectionsImplementation::GetTypeOfItem(
-    std::string const & itemName, CollectionItemType * const typeOfItem) const
+int CollectionsImplementation::GetItemType(
+    std::string const & itemName, CollectionItemType * const itemType) const
 {
 #if DEBUG_VERBOSITY
   std::string const callString
-      = "GetTypeOfItem(\"" + itemName + "\", " + SPTR(typeOfItem) + ").";
+      = "GetItemType(\"" + itemName + "\", " + SPTR(itemType) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
-  CollectionItemType itemType;
-  if (PrivateGetTypeOfItem(itemName, log_, &itemType))
+  CollectionItemType it;
+  if (PrivateGetItemType(itemName, log_, &it))
   {
     LOG_ERROR("Unable to find item.");
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
 
-  *typeOfItem = itemType;
+  *itemType = it;
 
   LOG_DEBUG("Exit 0=" + callString);
   return false;
 }
 
-int CollectionsImplementation::GetItem(CollectionItemType const itemType,
-                                       std::string const & itemName,
-                                       std::string const ** const path,
-                                       int * const metadataExtent,
-                                       Collection * const collection) const
+int CollectionsImplementation::GetItemLibraryFileNameAndCollection(
+    CollectionItemType const itemType,
+    std::string const & itemName,
+    std::string const ** const fileName,
+    Collection * const collection) const
 {
 #if DEBUG_VERBOSITY
-  std::string const callString = "GetItem(" + itemType.ToString() + ", \""
-                                 + itemName + "\", " + SPTR(path) + ", "
-                                 + SPTR(metadataExtent) + ", "
-                                 + SPTR(collection) + ").";
+  std::string const callString
+      = "GetItemLibraryFileNameAndCollection(" + itemType.ToString() + ", \""
+        + itemName + "\", " + SPTR(fileName) + ", " + SPTR(collection) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -762,39 +741,35 @@ int CollectionsImplementation::GetItem(CollectionItemType const itemType,
   }
 #endif
 
-  int extent;
   Collection col;
-  if (PrivateGetItem(itemType, itemName, log_, &getItemPath_, &extent, &col))
+  if (PrivateGetItemLibraryFileNameAndCollection(
+          itemType,
+          itemName,
+          log_,
+          &getItemLibraryFileNameAndCollection_FileName_,
+          &col))
   {
     LOG_ERROR("Unable to find item.");
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
 
-  if (path) *path = &getItemPath_;
-  if (metadataExtent) *metadataExtent = extent;
+  if (fileName) *fileName = &getItemLibraryFileNameAndCollection_FileName_;
   if (collection) *collection = col;
 
   LOG_DEBUG("Exit 0=" + callString);
   return false;
 }
 
-int CollectionsImplementation::GetItemMetadata(
+int CollectionsImplementation::CacheListOfItemMetadataFiles(
     CollectionItemType const itemType,
     std::string const & itemName,
-    int const index,
-    std::string const ** const metadataID,
-    unsigned int * const metadataLength,
-    unsigned char const ** const metadataRawData,
-    int * const availableAsString,
-    std::string const ** const metadataString) const
+    int * const extent)
 {
 #if DEBUG_VERBOSITY
-  std::string const callString
-      = "GetItemMetadata(" + itemType.ToString() + ", \"" + itemName + "\", "
-        + SNUM(index) + ", " + SPTR(metadataID) + ", " + SPTR(metadataLength)
-        + ", " + SPTR(metadataRawData) + ", " + SPTR(availableAsString) + ", "
-        + SPTR(metadataString) + ").";
+  std::string const callString = "CacheListOfItemMetadataFiles("
+                                 + itemType.ToString() + ", \"" + itemName
+                                 + "\", " + SPTR(extent) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -807,43 +782,73 @@ int CollectionsImplementation::GetItemMetadata(
   }
 #endif
 
-  unsigned int length;
-  int asString;
-  int error = PrivateGetItemMetadata(itemType,
-                                     itemName,
-                                     index,
-                                     log_,
-                                     &getItemMetadataID_,
-                                     &length,
-                                     &getItemMetadataString_,
-                                     &asString);
+  int error = PrivateGetListOfItemMetadataFiles(
+      itemType,
+      itemName,
+      log_,
+      cacheListOfItemMetadataFiles_Names_,
+      cacheListOfItemMetadataFiles_availableAsString_,
+      cacheListOfItemMetadataFiles_RawData_);
 
   if (error)
   {
-    LOG_ERROR("Unable to get metadata for item.");
+    LOG_ERROR("Unable to cache item metadata files.");
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
 
-  if (metadataID) *metadataID = &getItemMetadataID_;
-  if (metadataLength) *metadataLength = length;
-  if (metadataRawData)
-    *metadataRawData = reinterpret_cast<unsigned char const *>(
-        getItemMetadataString_.c_str());
-  if (availableAsString) *availableAsString = asString;
-  if ((asString) && (metadataString)) *metadataString = &getItemMetadataString_;
+  *extent = cacheListOfItemMetadataFiles_Names_.size();
 
   LOG_DEBUG("Exit 0=" + callString);
   return false;
 }
 
-int CollectionsImplementation::GetItemNamesByType(
-    CollectionItemType const itemType,
-    std::string const ** const itemNames) const
+int CollectionsImplementation::GetItemMetadataFile(
+    int const index,
+    std::string const ** const fileName,
+    unsigned int * const fileLength,
+    unsigned char const ** const fileRawData,
+    int * const availableAsString,
+    std::string const ** const fileString) const
 {
 #if DEBUG_VERBOSITY
-  std::string const callString = "GetItemNamesByType(" + itemType.ToString()
-                                 + ", " + SPTR(itemNames) + ").";
+  std::string const callString
+      = "GetItemMetadataFile(" + SNUM(index) + ", " + SPTR(fileName) + ", "
+        + SPTR(fileLength) + ", " + SPTR(fileRawData) + ", "
+        + SPTR(availableAsString) + ", " + SPTR(fileString) + ").";
+#endif
+  LOG_DEBUG("Enter  " + callString);
+
+  if ((index < 0)
+      || (size_t(index) > cacheListOfItemMetadataFiles_Names_.size()))
+  {
+    LOG_ERROR("Invalid metadata file index, " + SNUM(index) + ".");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
+
+  if (fileName) *fileName = &(cacheListOfItemMetadataFiles_Names_[index]);
+  if (fileLength)
+    *fileLength = (cacheListOfItemMetadataFiles_RawData_[index].length() - 1);
+  if (fileRawData)
+    *fileRawData = reinterpret_cast<unsigned char const *>(
+        cacheListOfItemMetadataFiles_RawData_[index].c_str());
+  if (availableAsString)
+    *availableAsString = cacheListOfItemMetadataFiles_availableAsString_[index];
+  if ((*availableAsString) && (fileString))
+    *fileString = &(cacheListOfItemMetadataFiles_RawData_[index]);
+
+  LOG_DEBUG("Exit 0=" + callString);
+  return false;
+}
+
+int CollectionsImplementation::CacheListOfItemNamesByType(
+    CollectionItemType const itemType, int * const extent)
+{
+#if DEBUG_VERBOSITY
+  std::string const callString = "CacheListOfItemNamesByType("
+                                 + itemType.ToString() + ", " + SPTR(extent)
+                                 + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -877,23 +882,45 @@ int CollectionsImplementation::GetItemNamesByType(
     listOfNames.merge(colListOfNames);
   }
   listOfNames.unique();
+  cacheListOfItemNamesByType_.assign(listOfNames.begin(), listOfNames.end());
 
-  getItemNamesByType_ = CreateColonSeparatedStringFromList(listOfNames);
-  *itemNames = &getItemNamesByType_;
+  *extent = cacheListOfItemNamesByType_.size();
 
   LOG_DEBUG("Exit 0=" + callString);
   return false;
 }
 
-int CollectionsImplementation::GetItemNamesByCollectionAndType(
-    Collection const collection,
-    CollectionItemType const itemType,
-    std::string const ** const itemNames) const
+int CollectionsImplementation::GetItemNameByType(
+    int const index, std::string const ** const itemName) const
 {
 #if DEBUG_VERBOSITY
   std::string const callString
-      = "GetItemNamesByCollectionAndType(" + collection.ToString() + ", "
-        + itemType.ToString() + ", " + SPTR(itemNames) + ").";
+      = "GetItemNameByType(" + SNUM(index) + ", " + SPTR(itemName) + ").";
+#endif
+  LOG_DEBUG("Enter  " + callString);
+
+  if ((index < 0) || (size_t(index) > cacheListOfItemNamesByType_.size()))
+  {
+    LOG_ERROR("Invalid item name index, " + SNUM(index) + ".");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
+
+  *itemName = &(cacheListOfItemNamesByType_[index]);
+
+  LOG_DEBUG("Exit 0=" + callString);
+  return false;
+}
+
+int CollectionsImplementation::CacheListOfItemNamesByCollectionAndType(
+    Collection const collection,
+    CollectionItemType const itemType,
+    int * const extent)
+{
+#if DEBUG_VERBOSITY
+  std::string const callString
+      = "CacheListOfItemNamesByCollectionAndType(" + collection.ToString()
+        + ", " + itemType.ToString() + ", " + SPTR(extent) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -906,30 +933,50 @@ int CollectionsImplementation::GetItemNamesByCollectionAndType(
   }
 #endif
 
-  std::list<std::string> listOfNames;
-  PrivateGetListOfItemNamesByCollectionAndType(
-      collection, itemType, log_, listOfNames);
+  std::list<std::string> lst;
+  PrivateGetListOfItemNamesByCollectionAndType(collection, itemType, log_, lst);
+  cacheListOfItemNamesByCollectionAndType_.assign(lst.begin(), lst.end());
 
-  getItemNamesByCollectionAndType_
-      = CreateColonSeparatedStringFromList(listOfNames);
-  *itemNames = &getItemNamesByCollectionAndType_;
+  *extent = cacheListOfItemNamesByCollectionAndType_.size();
 
   LOG_DEBUG("Exit 0=" + callString);
   return false;
 }
 
-int CollectionsImplementation::GetItemByCollectionAndType(
+int CollectionsImplementation::GetItemNameByCollectionAndType(
+    int const index, std::string const ** const itemName) const
+{
+#if DEBUG_VERBOSITY
+  std::string const callString = "GetItemNameByCollectionAndType(" + SNUM(index)
+                                 + ", " + SPTR(itemName) + ").";
+#endif
+  LOG_DEBUG("Enter  " + callString);
+
+  if ((index < 0)
+      || (size_t(index) > cacheListOfItemNamesByCollectionAndType_.size()))
+  {
+    LOG_ERROR("Invalid item name index, " + SNUM(index) + ".");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
+
+  *itemName = &(cacheListOfItemNamesByCollectionAndType_[index]);
+
+  LOG_DEBUG("Exit 0=" + callString);
+  return false;
+}
+
+int CollectionsImplementation::GetItemLibraryFileNameByCollectionAndType(
     Collection const collection,
     CollectionItemType const itemType,
     std::string const & itemName,
-    std::string const ** const path,
-    int * const metadataExtent) const
+    std::string const ** const fileName) const
 {
 #if DEBUG_VERBOSITY
-  std::string const callString
-      = "GetItemByCollectionAndType(" + collection.ToString() + ", "
-        + itemType.ToString() + ", \"" + itemName + "\", " + SPTR(path) + ", "
-        + SPTR(metadataExtent) + ").";
+  std::string const callString = "GetItemLibraryFileNameByCollectionAndType("
+                                 + collection.ToString() + ", "
+                                 + itemType.ToString() + ", \"" + itemName
+                                 + "\", " + SPTR(fileName) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -942,14 +989,12 @@ int CollectionsImplementation::GetItemByCollectionAndType(
   }
 #endif
 
-  int extent;
-  int error
-      = PrivateGetItemByCollectionAndType(collection,
-                                          itemType,
-                                          itemName,
-                                          log_,
-                                          &getItemByCollectionAndTypePath_,
-                                          &extent);
+  int error = PrivateGetItemLibraryFileNameByCollectionAndType(
+      collection,
+      itemType,
+      itemName,
+      log_,
+      &getItemLibraryFileNameByCollectionAndType_);
   if (error)
   {
     LOG_ERROR("Unable to find item.");
@@ -957,31 +1002,23 @@ int CollectionsImplementation::GetItemByCollectionAndType(
     return true;
   }
 
-  if (path) *path = &getItemByCollectionAndTypePath_;
-  if (metadataExtent) *metadataExtent = extent;
+  *fileName = &getItemLibraryFileNameByCollectionAndType_;
 
   LOG_DEBUG("Exit 0=" + callString);
   return false;
 }
 
-int CollectionsImplementation::GetItemMetadataByCollectionAndType(
+int CollectionsImplementation::CacheListOfItemMetadataFilesByCollectionAndType(
     Collection const collection,
     CollectionItemType const itemType,
     std::string const & itemName,
-    int const index,
-    std::string const ** const metadataID,
-    unsigned int * const metadataLength,
-    unsigned char const ** const metadataRawData,
-    int * const availableAsString,
-    std::string const ** const metadataString) const
+    int * const extent)
 {
 #if DEBUG_VERBOSITY
   std::string const callString
-      = "GetItemMetadataByCollectionAndType(" + collection.ToString() + ", "
-        + itemType.ToString() + ", \"" + itemName + "\", " + SNUM(index) + ", "
-        + SPTR(metadataID) + ", " + SPTR(metadataLength) + ", "
-        + SPTR(metadataRawData) + ", " + SPTR(availableAsString) + ", "
-        + SPTR(metadataString) + ").";
+      = "CacheListOfItemMetadataFilesByCollectionAndType("
+        + collection.ToString() + ", " + itemType.ToString() + ", \"" + itemName
+        + "\", " + SPTR(extent) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -994,35 +1031,72 @@ int CollectionsImplementation::GetItemMetadataByCollectionAndType(
   }
 #endif
 
-  unsigned int length;
-  int asString;
-  int error = PrivateGetItemMetadataByCollectionAndType(
+  int error = PrivateGetListOfItemMetadataFilesByCollectionAndType(
       collection,
       itemType,
       itemName,
-      index,
       log_,
-      &getItemMetadataByCollectionAndTypeID_,
-      &length,
-      &getItemMetadataByCollectionAndTypeString_,
-      &asString);
+      cacheListOfItemMetadataFilesByCollectionAndType_FileNames_,
+      cacheListOfItemMetadataFilesByCollectionAndType_AvailableAsString_,
+      cacheListOfItemMetadataFilesByCollectionAndType_FileRawData_);
 
   if (error)
   {
-    LOG_ERROR("Unable to get metadata for item.");
+    LOG_ERROR("Unable to cache item metadata files.");
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
 
+  *extent = cacheListOfItemMetadataFilesByCollectionAndType_FileNames_.size();
 
-  if (metadataID) *metadataID = &getItemMetadataByCollectionAndTypeID_;
-  if (metadataLength) *metadataLength = length;
-  if (metadataRawData)
-    *metadataRawData = reinterpret_cast<unsigned char const *>(
-        getItemMetadataByCollectionAndTypeString_.c_str());
-  if (availableAsString) *availableAsString = asString;
-  if ((asString) && (metadataString))
-    *metadataString = &getItemMetadataByCollectionAndTypeString_;
+  LOG_DEBUG("Exit 0=" + callString);
+  return false;
+}
+
+int CollectionsImplementation::GetItemMetadataFileByCollectionAndType(
+    int const index,
+    std::string const ** const fileName,
+    unsigned int * const fileLength,
+    unsigned char const ** const fileRawData,
+    int * const availableAsString,
+    std::string const ** const fileString) const
+{
+#if DEBUG_VERBOSITY
+  std::string const callString
+      = "GetItemMetadataFileByCollectionAndType(" + SNUM(index) + ", "
+        + SPTR(fileName) + ", " + SPTR(fileLength) + ", " + SPTR(fileRawData)
+        + ", " + SPTR(availableAsString) + ", " + SPTR(fileString) + ").";
+#endif
+  LOG_DEBUG("Enter  " + callString);
+
+  if ((index < 0)
+      || (size_t(index)
+          > cacheListOfItemMetadataFilesByCollectionAndType_FileNames_.size()))
+  {
+    LOG_ERROR("Invalid metadata file index, " + SNUM(index) + ".");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
+
+  if (fileName)
+    *fileName
+        = &(cacheListOfItemMetadataFilesByCollectionAndType_FileNames_[index]);
+  if (fileLength)
+    *fileLength
+        = (cacheListOfItemMetadataFilesByCollectionAndType_FileRawData_[index]
+               .length()
+           - 1);
+  if (fileRawData)
+    *fileRawData = reinterpret_cast<unsigned char const *>(
+        cacheListOfItemMetadataFilesByCollectionAndType_FileRawData_[index]
+            .c_str());
+  if (availableAsString)
+    *availableAsString
+        = cacheListOfItemMetadataFilesByCollectionAndType_AvailableAsString_
+            [index];
+  if ((*availableAsString) && (fileString))
+    *fileString = &(
+        cacheListOfItemMetadataFilesByCollectionAndType_FileRawData_[index]);
 
   LOG_DEBUG("Exit 0=" + callString);
   return false;
@@ -1038,11 +1112,11 @@ void CollectionsImplementation::GetProjectNameAndSemVer(
 #endif
   LOG_DEBUG("Enter  " + callString);
 
-  PrivateGetProjectNameAndSemVer(getProjectNameAndSemVerProjectName_,
-                                 getProjectNameAndSemVerSemVer_);
+  PrivateGetProjectNameAndSemVer(getProjectNameAndSemVer_ProjectName_,
+                                 getProjectNameAndSemVer_SemVer_);
 
-  if (projectName) *projectName = &getProjectNameAndSemVerProjectName_;
-  if (semVer) *semVer = &getProjectNameAndSemVerSemVer_;
+  if (projectName) *projectName = &getProjectNameAndSemVer_ProjectName_;
+  if (semVer) *semVer = &getProjectNameAndSemVer_SemVer_;
 
   LOG_DEBUG("Exit   " + callString);
 }
@@ -1082,40 +1156,40 @@ void CollectionsImplementation::GetConfigurationFileEnvironmentVariable(
   LOG_DEBUG("Enter  " + callString);
 
   PrivateGetConfigurationFileEnvironmentVariable(
-      getConfigurationFileEnvironmentVariableName_,
-      getConfigurationFileEnvironmentVariableValue_);
+      getConfigurationFileEnvironmentVariable_Name_,
+      getConfigurationFileEnvironmentVariable_Value_);
 
-  if (name) *name = &getConfigurationFileEnvironmentVariableName_;
-  if (value) *value = &getConfigurationFileEnvironmentVariableValue_;
+  if (name) *name = &getConfigurationFileEnvironmentVariable_Name_;
+  if (value) *value = &getConfigurationFileEnvironmentVariable_Value_;
 
   LOG_DEBUG("Exit   " + callString);
 }
 
-void CollectionsImplementation::GetConfigurationFilePath(
-    std::string const ** const filePath) const
+void CollectionsImplementation::GetConfigurationFileName(
+    std::string const ** const fileName) const
 {
 #if DEBUG_VERBOSITY
   std::string const callString
-      = "GetConfigurationFilePath(" + SPTR(filePath) + ").";
+      = "GetConfigurationFileName(" + SPTR(fileName) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
-  PrivateGetConfigurationFilePath(getConfigurationFilePath_);
+  PrivateGetConfigurationFileName(getConfigurationFileName_);
 
-  *filePath = &getConfigurationFilePath_;
+  *fileName = &getConfigurationFileName_;
 
   LOG_DEBUG("Exit   " + callString);
 }
 
-int CollectionsImplementation::GetDirectories(
+int CollectionsImplementation::CacheListOfDirectoryNames(
     Collection const collection,
     CollectionItemType const itemType,
-    std::string const ** const directories) const
+    int * const extent)
 {
 #if DEBUG_VERBOSITY
-  std::string const callString = "GetDirectories(" + collection.ToString()
-                                 + ", " + itemType.ToString() + ", "
-                                 + SPTR(directories) + ").";
+  std::string const callString
+      = "CacheListOfDirectoryNames(" + collection.ToString() + ", "
+        + itemType.ToString() + ", " + SPTR(extent) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -1148,8 +1222,33 @@ int CollectionsImplementation::GetDirectories(
     PrivateGetCWDDirs(dirsMap);
   }
 
-  getDirectories_ = dirsMap[itemType];
-  *directories = &getDirectories_;
+  std::list<std::string> lst;
+  ParseColonSeparatedList(dirsMap[itemType], lst);
+  cacheListOfDirectoryNames_.assign(lst.begin(), lst.end());
+
+  *extent = cacheListOfDirectoryNames_.size();
+
+  LOG_DEBUG("Exit 0=" + callString);
+  return false;
+}
+
+int CollectionsImplementation::GetDirectoryName(
+    int const index, std::string const ** const directoryName) const
+{
+#if DEBUG_VERBOSITY
+  std::string const callString
+      = "GetDirectoryName(" + SNUM(index) + ", " + SPTR(directoryName) + ").";
+#endif
+  LOG_DEBUG("Enter  " + callString);
+
+  if ((index < 0) || (size_t(index) > cacheListOfDirectoryNames_.size()))
+  {
+    LOG_ERROR("Invalid directory index, " + SNUM(index) + ".");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
+
+  *directoryName = &(cacheListOfDirectoryNames_[index]);
 
   LOG_DEBUG("Exit 0=" + callString);
   return false;

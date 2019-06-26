@@ -67,44 +67,51 @@ class CollectionsImplementation
   static void
   Destroy(CollectionsImplementation ** const collectionsImplementation);
 
-  int GetTypeOfItem(std::string const & itemName,
-                    CollectionItemType * const typeOfItem) const;
+  int GetItemType(std::string const & itemName,
+                  CollectionItemType * const itemType) const;
 
-  int GetItem(CollectionItemType const itemType,
-              std::string const & itemName,
-              std::string const ** const path,
-              int * const metadataExtent,
-              Collection * const collection) const;
-  int GetItemMetadata(CollectionItemType const itemType,
-                      std::string const & itemName,
-                      int const index,
-                      std::string const ** const metadataID,
-                      unsigned int * const metadataLength,
-                      unsigned char const ** const metadataRawData,
-                      int * const availableAsString,
-                      std::string const ** const metadataString) const;
-  int GetItemNamesByType(CollectionItemType const itemType,
-                         std::string const ** const itemNames) const;
+  int GetItemLibraryFileNameAndCollection(CollectionItemType const itemType,
+                                          std::string const & itemName,
+                                          std::string const ** const fileName,
+                                          Collection * const collection) const;
+  int CacheListOfItemMetadataFiles(CollectionItemType const itemType,
+                                   std::string const & itemName,
+                                   int * const extent);
+  int GetItemMetadataFile(int const index,
+                          std::string const ** const fileName,
+                          unsigned int * const fileLength,
+                          unsigned char const ** const fileRawData,
+                          int * const availableAsString,
+                          std::string const ** const fileString) const;
+  int CacheListOfItemNamesByType(CollectionItemType const itemType,
+                                 int * const extent);
+  int GetItemNameByType(int const index,
+                        std::string const ** const itemName) const;
 
-  int GetItemNamesByCollectionAndType(
-      Collection const collection,
-      CollectionItemType const itemType,
-      std::string const ** const itemNames) const;
-  int GetItemByCollectionAndType(Collection const collection,
-                                 CollectionItemType const itemType,
-                                 std::string const & itemName,
-                                 std::string const ** const path,
-                                 int * const metadataExtent) const;
-  int GetItemMetadataByCollectionAndType(
+  int CacheListOfItemNamesByCollectionAndType(Collection const collection,
+                                              CollectionItemType const itemType,
+                                              int * const extent);
+  int GetItemNameByCollectionAndType(int const index,
+                                     std::string const ** const itemName) const;
+
+  int GetItemLibraryFileNameByCollectionAndType(
       Collection const collection,
       CollectionItemType const itemType,
       std::string const & itemName,
+      std::string const ** const fileName) const;
+
+  int CacheListOfItemMetadataFilesByCollectionAndType(
+      Collection const collection,
+      CollectionItemType const itemType,
+      std::string const & itemName,
+      int * const extent);
+  int GetItemMetadataFileByCollectionAndType(
       int const index,
-      std::string const ** const metadataID,
-      unsigned int * const metadataLength,
-      unsigned char const ** const metadataRawData,
+      std::string const ** const fileName,
+      unsigned int * const fileLength,
+      unsigned char const ** const fileRawData,
       int * const availableAsString,
-      std::string const ** const metadataString) const;
+      std::string const ** const fileString) const;
 
   void GetProjectNameAndSemVer(std::string const ** const projectName,
                                std::string const ** const semVer) const;
@@ -115,11 +122,13 @@ class CollectionsImplementation
   void GetConfigurationFileEnvironmentVariable(
       std::string const ** const name, std::string const ** const value) const;
 
-  void GetConfigurationFilePath(std::string const ** const filePath) const;
+  void GetConfigurationFileName(std::string const ** const fileName) const;
 
-  int GetDirectories(Collection const collection,
-                     CollectionItemType const itemType,
-                     std::string const ** const directories) const;
+  int CacheListOfDirectoryNames(Collection const collection,
+                                CollectionItemType const itemType,
+                                int * const extent);
+  int GetDirectoryName(int const index,
+                       std::string const ** const directoryName) const;
 
   void SetLogID(std::string const & logID);
   void PushLogVerbosity(LogVerbosity const logVerbosity);
@@ -143,31 +152,36 @@ class CollectionsImplementation
 
   Log * log_;
 
-  mutable std::string getItemPath_;
+  mutable std::string getItemLibraryFileNameAndCollection_FileName_;
 
-  mutable std::string getItemMetadataID_;
-  mutable std::string getItemMetadataString_;
+  std::vector<std::string> cacheListOfItemMetadataFiles_Names_;
+  std::vector<int> cacheListOfItemMetadataFiles_availableAsString_;
+  std::vector<std::string> cacheListOfItemMetadataFiles_RawData_;
 
-  mutable std::string getItemNamesByType_;
+  std::vector<std::string> cacheListOfItemNamesByType_;
 
-  mutable std::string getItemNamesByCollectionAndType_;
+  std::vector<std::string> cacheListOfItemNamesByCollectionAndType_;
 
-  mutable std::string getItemByCollectionAndTypePath_;
+  mutable std::string getItemLibraryFileNameByCollectionAndType_;
 
-  mutable std::string getItemMetadataByCollectionAndTypeID_;
-  mutable std::string getItemMetadataByCollectionAndTypeString_;
+  std::vector<std::string>
+      cacheListOfItemMetadataFilesByCollectionAndType_FileNames_;
+  std::vector<int>
+      cacheListOfItemMetadataFilesByCollectionAndType_AvailableAsString_;
+  std::vector<std::string>
+      cacheListOfItemMetadataFilesByCollectionAndType_FileRawData_;
 
-  mutable std::string getProjectNameAndSemVerProjectName_;
-  mutable std::string getProjectNameAndSemVerSemVer_;
+  mutable std::string getProjectNameAndSemVer_ProjectName_;
+  mutable std::string getProjectNameAndSemVer_SemVer_;
 
   mutable std::string getEnvironmentVariableName_;
 
-  mutable std::string getConfigurationFileEnvironmentVariableName_;
-  mutable std::string getConfigurationFileEnvironmentVariableValue_;
+  mutable std::string getConfigurationFileEnvironmentVariable_Name_;
+  mutable std::string getConfigurationFileEnvironmentVariable_Value_;
 
-  mutable std::string getConfigurationFilePath_;
+  mutable std::string getConfigurationFileName_;
 
-  mutable std::string getDirectories_;
+  std::vector<std::string> cacheListOfDirectoryNames_;
 };  // class CollectionsImplementation
 }  // namespace KIM
 #endif  // KIM_COLLECTIONS_IMPLEMENTATION_HPP_

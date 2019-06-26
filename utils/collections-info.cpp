@@ -72,11 +72,14 @@ void usage(std::string name)
 
 namespace CI
 {
-void printColonSeparatedList(std::string const & lst)
+void printDirs(int const extent, KIM::Collections const * const col)
 {
-  std::istringstream iss(lst);
-  std::string token;
-  while (std::getline(iss, token, ':')) { std::cout << token << std::endl; }
+  for (int i = 0; i < extent; ++i)
+  {
+    std::string const * dir;
+    col->GetDirectoryName(i, &dir);
+    std::cout << *dir << std::endl;
+  }
 }
 
 enum ENV_OPTIONS {
@@ -111,29 +114,29 @@ void env(ENV_OPTIONS const opt)
     }
     case E_MODEL_DRIVERS:
     {
-      std::string const * dirs;
-      col->GetDirectories(KIM::COLLECTION::environmentVariable,
-                          KIM::COLLECTION_ITEM_TYPE::modelDriver,
-                          &dirs);
-      printColonSeparatedList(*dirs);
+      int extent;
+      col->CacheListOfDirectoryNames(KIM::COLLECTION::environmentVariable,
+                                     KIM::COLLECTION_ITEM_TYPE::modelDriver,
+                                     &extent);
+      printDirs(extent, col);
       break;
     }
     case E_PORTABLE_MODELS:
     {
-      std::string const * dirs;
-      col->GetDirectories(KIM::COLLECTION::environmentVariable,
-                          KIM::COLLECTION_ITEM_TYPE::portableModel,
-                          &dirs);
-      printColonSeparatedList(*dirs);
+      int extent;
+      col->CacheListOfDirectoryNames(KIM::COLLECTION::environmentVariable,
+                                     KIM::COLLECTION_ITEM_TYPE::portableModel,
+                                     &extent);
+      printDirs(extent, col);
       break;
     }
     case E_SIMULATOR_MODELS:
     {
-      std::string const * dirs;
-      col->GetDirectories(KIM::COLLECTION::environmentVariable,
-                          KIM::COLLECTION_ITEM_TYPE::simulatorModel,
-                          &dirs);
-      printColonSeparatedList(*dirs);
+      int extent;
+      col->CacheListOfDirectoryNames(KIM::COLLECTION::environmentVariable,
+                                     KIM::COLLECTION_ITEM_TYPE::simulatorModel,
+                                     &extent);
+      printDirs(extent, col);
       break;
     }
   }
@@ -168,34 +171,35 @@ void configFile(CONFIG_FILE_OPTIONS const opt)
     case CF_NAME:
     {
       std::string const * dir;
-      col->GetConfigurationFilePath(&dir);
+      col->GetConfigurationFileName(&dir);
       std::cout << *dir << std::endl;
       break;
     }
     case CF_MODEL_DRIVERS:
     {
-      std::string const * dirs;
-      col->GetDirectories(
-          KIM::COLLECTION::user, KIM::COLLECTION_ITEM_TYPE::modelDriver, &dirs);
-      printColonSeparatedList(*dirs);
+      int extent;
+      col->CacheListOfDirectoryNames(KIM::COLLECTION::user,
+                                     KIM::COLLECTION_ITEM_TYPE::modelDriver,
+                                     &extent);
+      printDirs(extent, col);
       break;
     }
     case CF_PORTABLE_MODELS:
     {
-      std::string const * dirs;
-      col->GetDirectories(KIM::COLLECTION::user,
-                          KIM::COLLECTION_ITEM_TYPE::portableModel,
-                          &dirs);
-      printColonSeparatedList(*dirs);
+      int extent;
+      col->CacheListOfDirectoryNames(KIM::COLLECTION::user,
+                                     KIM::COLLECTION_ITEM_TYPE::portableModel,
+                                     &extent);
+      printDirs(extent, col);
       break;
     }
     case CF_SIMULATOR_MODELS:
     {
-      std::string const * dirs;
-      col->GetDirectories(KIM::COLLECTION::user,
-                          KIM::COLLECTION_ITEM_TYPE::simulatorModel,
-                          &dirs);
-      printColonSeparatedList(*dirs);
+      int extent;
+      col->CacheListOfDirectoryNames(KIM::COLLECTION::user,
+                                     KIM::COLLECTION_ITEM_TYPE::simulatorModel,
+                                     &extent);
+      printDirs(extent, col);
       break;
     }
   }
@@ -231,29 +235,29 @@ void sys(SYS_OPTIONS const opt)
   {
     case S_MODEL_DRIVERS:
     {
-      std::string const * dirs;
-      col->GetDirectories(KIM::COLLECTION::system,
-                          KIM::COLLECTION_ITEM_TYPE::modelDriver,
-                          &dirs);
-      printColonSeparatedList(*dirs);
+      int extent;
+      col->CacheListOfDirectoryNames(KIM::COLLECTION::system,
+                                     KIM::COLLECTION_ITEM_TYPE::modelDriver,
+                                     &extent);
+      printDirs(extent, col);
       break;
     }
     case S_PORTABLE_MODELS:
     {
-      std::string const * dirs;
-      col->GetDirectories(KIM::COLLECTION::system,
-                          KIM::COLLECTION_ITEM_TYPE::portableModel,
-                          &dirs);
-      printColonSeparatedList(*dirs);
+      int extent;
+      col->CacheListOfDirectoryNames(KIM::COLLECTION::system,
+                                     KIM::COLLECTION_ITEM_TYPE::portableModel,
+                                     &extent);
+      printDirs(extent, col);
       break;
     }
     case S_SIMULATOR_MODELS:
     {
-      std::string const * dirs;
-      col->GetDirectories(KIM::COLLECTION::system,
-                          KIM::COLLECTION_ITEM_TYPE::simulatorModel,
-                          &dirs);
-      printColonSeparatedList(*dirs);
+      int extent;
+      col->CacheListOfDirectoryNames(KIM::COLLECTION::system,
+                                     KIM::COLLECTION_ITEM_TYPE::simulatorModel,
+                                     &extent);
+      printDirs(extent, col);
       break;
     }
   }
@@ -284,39 +288,34 @@ void listItems(KIM::CollectionItemType const type,
 
     for (std::vector<KIM::Collection>::size_type i = 0; i < colList.size(); ++i)
     {
-      std::string const * itemNames;
-      int error
-          = col->GetItemNamesByCollectionAndType(colList[i], type, &itemNames);
+      int extent;
+      int error = col->CacheListOfItemNamesByCollectionAndType(
+          colList[i], type, &extent);
       if (error) return;
 
-      std::istringstream iss(*itemNames);
-      std::string token;
-      while (std::getline(iss, token, ':'))
+      for (int j = 0; j < extent; ++j)
       {
-        std::string const * itemFilePath;
-        int metadataExtent;
-        error = col->GetItemByCollectionAndType(
-            colList[i], type, token, &itemFilePath, &metadataExtent);
+        std::string const * itemName;
+        col->GetItemNameByCollectionAndType(j, &itemName);
+        std::string const * itemLibraryFileName;
+        error = col->GetItemLibraryFileNameByCollectionAndType(
+            colList[i], type, *itemName, &itemLibraryFileName);
 
         if (!error)
         {
           std::string const notAvailable("VERSION-NOT-AVAILABLE");
           std::string const * itemCompVer = &notAvailable;
-          for (int j = 0; j < metadataExtent; ++j)
+          int mdExtent;
+          col->CacheListOfItemMetadataFilesByCollectionAndType(
+              colList[i], type, *itemName, &mdExtent);
+          for (int k = 0; k < mdExtent; ++k)
           {
-            std::string const * mdID;
+            std::string const * mdFileName;
             std::string const * mdStr;
             int asString;
-            error = col->GetItemMetadataByCollectionAndType(colList[i],
-                                                            type,
-                                                            token,
-                                                            j,
-                                                            &mdID,
-                                                            NULL,
-                                                            NULL,
-                                                            &asString,
-                                                            &mdStr);
-            if ((!error) && (*mdID == "item-compiled-with-version.txt")
+            error = col->GetItemMetadataFileByCollectionAndType(
+                k, &mdFileName, NULL, NULL, &asString, &mdStr);
+            if ((!error) && (*mdFileName == "item-compiled-with-version.txt")
                 && (asString))
             {
               itemCompVer = mdStr;
@@ -326,32 +325,35 @@ void listItems(KIM::CollectionItemType const type,
 
           std::string s(*itemCompVer);
           s.erase(s.find_last_not_of(" \n\r\t") + 1);  // rtrim
-          std::cout << colList[i].ToString() << " " << token << " "
-                    << *itemFilePath << " " << s << std::endl;
+          std::cout << colList[i].ToString() << " " << *itemName << " "
+                    << *itemLibraryFileName << " " << s << std::endl;
         }
       }
     }
   }
   else
   {
-    std::string const * itemFilePath;
-    int metadataExtent;
+    std::string const * itemFileName;
     KIM::Collection collection;
-    int error
-        = col->GetItem(type, name, &itemFilePath, &metadataExtent, &collection);
+    int error = col->GetItemLibraryFileNameAndCollection(
+        type, name, &itemFileName, &collection);
 
     if (error) return;
 
     std::string const notAvailable("VERSION-NOT-AVAILABLE");
     std::string const * itemCompVer = &notAvailable;
-    for (int j = 0; j < metadataExtent; ++j)
+    int extent;
+    col->CacheListOfItemMetadataFilesByCollectionAndType(
+        collection, type, name, &extent);
+    for (int j = 0; j < extent; ++j)
     {
-      std::string const * mdID;
+      std::string const * mdFileName;
       std::string const * mdStr;
       int asString;
-      error = col->GetItemMetadataByCollectionAndType(
-          collection, type, name, j, &mdID, NULL, NULL, &asString, &mdStr);
-      if ((!error) && (*mdID == "item-compiled-with-version.txt") && (asString))
+      error = col->GetItemMetadataFileByCollectionAndType(
+          j, &mdFileName, NULL, NULL, &asString, &mdStr);
+      if ((!error) && (*mdFileName == "item-compiled-with-version.txt")
+          && (asString))
       {
         itemCompVer = mdStr;
         break;
@@ -359,7 +361,7 @@ void listItems(KIM::CollectionItemType const type,
     }
     std::string s(*itemCompVer);
     s.erase(s.find_last_not_of(" \n\r\t") + 1);  // rtrim
-    std::cout << collection.ToString() << " " << name << " " << *itemFilePath
+    std::cout << collection.ToString() << " " << name << " " << *itemFileName
               << " " << s << std::endl;
   }
 
@@ -500,7 +502,7 @@ int getItemType(int argc, char * argv[])
     if (error) return 1;
 
     KIM::CollectionItemType itemType;
-    error = col->GetTypeOfItem(argv[2], &itemType);
+    error = col->GetItemType(argv[2], &itemType);
     if (error)
       returnVal = 1;
     else
@@ -527,24 +529,26 @@ int getItemMetadata(int argc, char * argv[])
     if (error) return 1;
 
     KIM::CollectionItemType itemType;
-    error = col->GetTypeOfItem(argv[2], &itemType);
+    error = col->GetItemType(argv[2], &itemType);
     if (error)
       returnVal = 1;
     else
     {
-      int extent;
-      error = col->GetItem(itemType, argv[2], NULL, &extent, NULL);
+      error = col->GetItemLibraryFileNameAndCollection(
+          itemType, argv[2], NULL, NULL);
       if (error)
         returnVal = 1;
       else
       {
+        int extent;
+        col->CacheListOfItemMetadataFiles(itemType, argv[2], &extent);
         for (int i = 0; i < extent; ++i)
         {
-          std::string const * id;
+          std::string const * fileName;
           std::string const * data;
           int asString;
-          error = col->GetItemMetadata(
-              itemType, argv[2], i, &id, NULL, NULL, &asString, &data);
+          error = col->GetItemMetadataFile(
+              i, &fileName, NULL, NULL, &asString, &data);
           if ((error) || (!asString))
           {
             std::cout << "=== MD " << i << " === "
@@ -558,7 +562,7 @@ int getItemMetadata(int argc, char * argv[])
           {
             std::string s(*data);
             s.erase(s.find_last_not_of(" \n\r\t") + 1);  // rtrim
-            std::cout << "=== MD " << i << " === " << *id << std::endl;
+            std::cout << "=== MD " << i << " === " << *fileName << std::endl;
             std::cout << s << std::endl;
             std::cout << "======="
                       << "="

@@ -40,21 +40,39 @@
 
 void dirsForCollection(KIM::Collection const collection, KIM::Collections & col)
 {
-  std::string const * dirs;
+  int extent;
 
   {
     using namespace KIM::COLLECTION_ITEM_TYPE;
-    col.GetDirectories(collection, modelDriver, &dirs);
-    std::cout << collection.ToString() << ":" << modelDriver.ToString() << " : "
-              << *dirs << std::endl;
+    col.CacheListOfDirectoryNames(collection, modelDriver, &extent);
+    std::cout << collection.ToString() << ":" << modelDriver.ToString()
+              << " :\n";
+    for (int i = 0; i < extent; ++i)
+    {
+      std::string const * dir;
+      col.GetDirectoryName(i, &dir);
+      std::cout << "\t" << *dir << std::endl;
+    }
 
-    col.GetDirectories(collection, portableModel, &dirs);
+    col.CacheListOfDirectoryNames(collection, portableModel, &extent);
     std::cout << collection.ToString() << ":" << portableModel.ToString()
-              << " : " << *dirs << std::endl;
+              << " :\n";
+    for (int i = 0; i < extent; ++i)
+    {
+      std::string const * dir;
+      col.GetDirectoryName(i, &dir);
+      std::cout << "\t" << *dir << std::endl;
+    }
 
-    col.GetDirectories(collection, simulatorModel, &dirs);
+    col.CacheListOfDirectoryNames(collection, simulatorModel, &extent);
     std::cout << collection.ToString() << ":" << simulatorModel.ToString()
-              << " : " << *dirs << std::endl;
+              << " :\n";
+    for (int i = 0; i < extent; ++i)
+    {
+      std::string const * dir;
+      col.GetDirectoryName(i, &dir);
+      std::cout << "\t" << *dir << std::endl;
+    }
   }
 }
 
@@ -118,9 +136,9 @@ int main()
 
 
   {
-    std::string const * filePath;
-    col->GetConfigurationFilePath(&filePath);
-    std::cout << "config filepath : " << *filePath << std::endl;
+    std::string const * fileName;
+    col->GetConfigurationFileName(&fileName);
+    std::cout << "config file name : " << *fileName << std::endl;
     std::cout << std::endl;
   }
 
@@ -136,85 +154,152 @@ int main()
 
 
   {
-    namespace KC = KIM::COLLECTION;
+    KIM::Collection kc = KIM::COLLECTION::system;
     using namespace KIM::COLLECTION_ITEM_TYPE;
-    std::string const * names;
-    col->GetItemNamesByCollectionAndType(KC::system, modelDriver, &names);
-    std::cout << KC::system.ToString() << ":" << modelDriver.ToString() << " : "
-              << *names << std::endl;
-    col->GetItemNamesByCollectionAndType(KC::system, portableModel, &names);
-    std::cout << KC::system.ToString() << ":" << portableModel.ToString()
-              << " : " << *names << std::endl;
-    col->GetItemNamesByCollectionAndType(KC::system, simulatorModel, &names);
-    std::cout << KC::system.ToString() << ":" << simulatorModel.ToString()
-              << " : " << *names << std::endl;
-    std::cout << std::endl;
+    int extent;
+    col->CacheListOfItemNamesByCollectionAndType(kc, modelDriver, &extent);
+    std::cout << kc.ToString() << ":" << modelDriver.ToString() << " :\n";
+    for (int i = 0; i < extent; ++i)
+    {
+      std::string const * name;
+      col->GetItemNameByCollectionAndType(i, &name);
+      std::cout << "\t" << *name << std::endl;
+    }
+    col->CacheListOfItemNamesByCollectionAndType(kc, portableModel, &extent);
+    std::cout << kc.ToString() << ":" << portableModel.ToString() << " :\n";
+    for (int i = 0; i < extent; ++i)
+    {
+      std::string const * name;
+      col->GetItemNameByCollectionAndType(i, &name);
+      std::cout << "\t" << *name << std::endl;
+    }
+    col->CacheListOfItemNamesByCollectionAndType(kc, simulatorModel, &extent);
+    std::cout << kc.ToString() << ":" << simulatorModel.ToString() << " :\n";
+    for (int i = 0; i < extent; ++i)
+    {
+      std::string const * name;
+      col->GetItemNameByCollectionAndType(i, &name);
+      std::cout << "\t" << *name << std::endl;
+    }
   }
 
   {
-    using namespace KIM::COLLECTION;
+    KIM::Collection kc = KIM::COLLECTION::user;
     using namespace KIM::COLLECTION_ITEM_TYPE;
-    std::string const * names;
-    col->GetItemNamesByCollectionAndType(user, modelDriver, &names);
-    std::cout << user.ToString() << ":" << modelDriver.ToString() << " : "
-              << *names << std::endl;
-    col->GetItemNamesByCollectionAndType(user, portableModel, &names);
-    std::cout << user.ToString() << ":" << portableModel.ToString() << " : "
-              << *names << std::endl;
-    col->GetItemNamesByCollectionAndType(user, simulatorModel, &names);
-    std::cout << user.ToString() << ":" << simulatorModel.ToString() << " : "
-              << *names << std::endl;
-    std::cout << std::endl;
+    int extent;
+    col->CacheListOfItemNamesByCollectionAndType(kc, modelDriver, &extent);
+    std::cout << kc.ToString() << ":" << modelDriver.ToString() << " :\n";
+    for (int i = 0; i < extent; ++i)
+    {
+      std::string const * name;
+      col->GetItemNameByCollectionAndType(i, &name);
+      std::cout << "\t" << *name << std::endl;
+    }
+    col->CacheListOfItemNamesByCollectionAndType(kc, portableModel, &extent);
+    std::cout << kc.ToString() << ":" << portableModel.ToString() << " :\n";
+    for (int i = 0; i < extent; ++i)
+    {
+      std::string const * name;
+      col->GetItemNameByCollectionAndType(i, &name);
+      std::cout << "\t" << *name << std::endl;
+    }
+    col->CacheListOfItemNamesByCollectionAndType(kc, simulatorModel, &extent);
+    std::cout << kc.ToString() << ":" << simulatorModel.ToString() << " :\n";
+    for (int i = 0; i < extent; ++i)
+    {
+      std::string const * name;
+      col->GetItemNameByCollectionAndType(i, &name);
+      std::cout << "\t" << *name << std::endl;
+    }
   }
 
   {
-    using namespace KIM::COLLECTION;
+    KIM::Collection kc = KIM::COLLECTION::environmentVariable;
     using namespace KIM::COLLECTION_ITEM_TYPE;
-    std::string const * names;
-    col->GetItemNamesByCollectionAndType(
-        environmentVariable, modelDriver, &names);
-    std::cout << environmentVariable.ToString() << ":" << modelDriver.ToString()
-              << " : " << *names << std::endl;
-    col->GetItemNamesByCollectionAndType(
-        environmentVariable, portableModel, &names);
-    std::cout << environmentVariable.ToString() << ":"
-              << portableModel.ToString() << " : " << *names << std::endl;
-    col->GetItemNamesByCollectionAndType(
-        environmentVariable, simulatorModel, &names);
-    std::cout << environmentVariable.ToString() << ":"
-              << simulatorModel.ToString() << " : " << *names << std::endl;
-    std::cout << std::endl;
+    int extent;
+    col->CacheListOfItemNamesByCollectionAndType(kc, modelDriver, &extent);
+    std::cout << kc.ToString() << ":" << modelDriver.ToString() << " :\n";
+    for (int i = 0; i < extent; ++i)
+    {
+      std::string const * name;
+      col->GetItemNameByCollectionAndType(i, &name);
+      std::cout << "\t" << *name << std::endl;
+    }
+    col->CacheListOfItemNamesByCollectionAndType(kc, portableModel, &extent);
+    std::cout << kc.ToString() << ":" << portableModel.ToString() << " :\n";
+    for (int i = 0; i < extent; ++i)
+    {
+      std::string const * name;
+      col->GetItemNameByCollectionAndType(i, &name);
+      std::cout << "\t" << *name << std::endl;
+    }
+    col->CacheListOfItemNamesByCollectionAndType(kc, simulatorModel, &extent);
+    std::cout << kc.ToString() << ":" << simulatorModel.ToString() << " :\n";
+    for (int i = 0; i < extent; ++i)
+    {
+      std::string const * name;
+      col->GetItemNameByCollectionAndType(i, &name);
+      std::cout << "\t" << *name << std::endl;
+    }
   }
 
   {
-    using namespace KIM::COLLECTION;
+    KIM::Collection kc = KIM::COLLECTION::currentWorkingDirectory;
     using namespace KIM::COLLECTION_ITEM_TYPE;
-    std::string const * names;
-    col->GetItemNamesByCollectionAndType(
-        currentWorkingDirectory, modelDriver, &names);
-    std::cout << currentWorkingDirectory.ToString() << ":"
-              << modelDriver.ToString() << " : " << *names << std::endl;
-    col->GetItemNamesByCollectionAndType(
-        currentWorkingDirectory, portableModel, &names);
-    std::cout << currentWorkingDirectory.ToString() << ":"
-              << portableModel.ToString() << " : " << *names << std::endl;
-    col->GetItemNamesByCollectionAndType(
-        currentWorkingDirectory, simulatorModel, &names);
-    std::cout << currentWorkingDirectory.ToString() << ":"
-              << simulatorModel.ToString() << " : " << *names << std::endl;
-    std::cout << std::endl;
+    int extent;
+    col->CacheListOfItemNamesByCollectionAndType(kc, modelDriver, &extent);
+    std::cout << kc.ToString() << ":" << modelDriver.ToString() << " :\n";
+    for (int i = 0; i < extent; ++i)
+    {
+      std::string const * name;
+      col->GetItemNameByCollectionAndType(i, &name);
+      std::cout << "\t" << *name << std::endl;
+    }
+    col->CacheListOfItemNamesByCollectionAndType(kc, portableModel, &extent);
+    std::cout << kc.ToString() << ":" << portableModel.ToString() << " :\n";
+    for (int i = 0; i < extent; ++i)
+    {
+      std::string const * name;
+      col->GetItemNameByCollectionAndType(i, &name);
+      std::cout << "\t" << *name << std::endl;
+    }
+    col->CacheListOfItemNamesByCollectionAndType(kc, simulatorModel, &extent);
+    std::cout << kc.ToString() << ":" << simulatorModel.ToString() << " :\n";
+    for (int i = 0; i < extent; ++i)
+    {
+      std::string const * name;
+      col->GetItemNameByCollectionAndType(i, &name);
+      std::cout << "\t" << *name << std::endl;
+    }
   }
 
   {
     using namespace KIM::COLLECTION_ITEM_TYPE;
-    std::string const * names;
-    col->GetItemNamesByType(modelDriver, &names);
-    std::cout << modelDriver.ToString() << " : " << *names << std::endl;
-    col->GetItemNamesByType(portableModel, &names);
-    std::cout << portableModel.ToString() << " : " << *names << std::endl;
-    col->GetItemNamesByType(simulatorModel, &names);
-    std::cout << simulatorModel.ToString() << " : " << *names << std::endl;
-    std::cout << std::endl;
+    int extent;
+    col->CacheListOfItemNamesByType(modelDriver, &extent);
+    std::cout << modelDriver.ToString() << " :\n";
+    for (int i = 0; i < extent; ++i)
+    {
+      std::string const * name;
+      col->GetItemNameByType(i, &name);
+      std::cout << "\t" << *name << std::endl;
+    }
+    col->CacheListOfItemNamesByType(portableModel, &extent);
+    std::cout << portableModel.ToString() << " :\n";
+    for (int i = 0; i < extent; ++i)
+    {
+      std::string const * name;
+      col->GetItemNameByType(i, &name);
+      std::cout << "\t" << *name << std::endl;
+    }
+    col->CacheListOfItemNamesByType(simulatorModel, &extent);
+    std::cout << simulatorModel.ToString() << " :\n";
+    for (int i = 0; i < extent; ++i)
+    {
+      std::string const * name;
+      col->GetItemNameByType(i, &name);
+      std::cout << "\t" << *name << std::endl;
+    }
   }
 
 

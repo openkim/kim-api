@@ -2077,11 +2077,8 @@ int ModelImplementation::ModelCreate(
   }
 
   std::string const * itemFilePath;
-  error = collections_->GetItem(COLLECTION_ITEM_TYPE::portableModel,
-                                modelName,
-                                &itemFilePath,
-                                NULL,
-                                NULL);
+  error = collections_->GetItemLibraryFileNameAndCollection(
+      COLLECTION_ITEM_TYPE::portableModel, modelName, &itemFilePath, NULL);
   if (error)
   {
     LOG_ERROR("Could not find model shared library.");
@@ -2998,11 +2995,8 @@ int ModelImplementation::InitializeParameterizedModel(
   }
 
   std::string const * itemFilePath;
-  error = collections_->GetItem(COLLECTION_ITEM_TYPE::modelDriver,
-                                modelDriverName_,
-                                &itemFilePath,
-                                NULL,
-                                NULL);
+  error = collections_->GetItemLibraryFileNameAndCollection(
+      COLLECTION_ITEM_TYPE::modelDriver, modelDriverName_, &itemFilePath, NULL);
   if (error)
   {
     LOG_ERROR("Could not find model driver shared library.");

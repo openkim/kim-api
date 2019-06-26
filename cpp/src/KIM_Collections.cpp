@@ -65,86 +65,98 @@ void Collections::Destroy(Collections ** const collections)
   *collections = NULL;
 }
 
-int Collections::GetTypeOfItem(std::string const & itemName,
-                               CollectionItemType * const typeOfItem) const
+int Collections::GetItemType(std::string const & itemName,
+                             CollectionItemType * const itemType) const
 {
-  return pimpl->GetTypeOfItem(itemName, typeOfItem);
+  return pimpl->GetItemType(itemName, itemType);
 }
 
-int Collections::GetItem(CollectionItemType const itemType,
-                         std::string const & itemName,
-                         std::string const ** const path,
-                         int * const metadataExtent,
-                         Collection * const collection) const
-{
-  return pimpl->GetItem(itemType, itemName, path, metadataExtent, collection);
-}
-
-int Collections::GetItemMetadata(
+int Collections::GetItemLibraryFileNameAndCollection(
     CollectionItemType const itemType,
     std::string const & itemName,
+    std::string const ** const fileName,
+    Collection * const collection) const
+{
+  return pimpl->GetItemLibraryFileNameAndCollection(
+      itemType, itemName, fileName, collection);
+}
+
+int Collections::CacheListOfItemMetadataFiles(CollectionItemType const itemType,
+                                              std::string const & itemName,
+                                              int * const extent)
+{
+  return pimpl->CacheListOfItemMetadataFiles(itemType, itemName, extent);
+}
+
+int Collections::GetItemMetadataFile(
     int const index,
-    std::string const ** const metadataID,
-    unsigned int * const metadataLength,
-    unsigned char const ** const metadataRawData,
+    std::string const ** const fileName,
+    unsigned int * const fileLength,
+    unsigned char const ** const fileRawData,
     int * const availableAsString,
-    std::string const ** const metadataString) const
+    std::string const ** const fileString) const
 {
-  return pimpl->GetItemMetadata(itemType,
-                                itemName,
-                                index,
-                                metadataID,
-                                metadataLength,
-                                metadataRawData,
-                                availableAsString,
-                                metadataString);
+  return pimpl->GetItemMetadataFile(
+      index, fileName, fileLength, fileRawData, availableAsString, fileString);
 }
 
-int Collections::GetItemNamesByType(CollectionItemType const itemType,
-                                    std::string const ** const itemNames) const
+int Collections::CacheListOfItemNamesByType(CollectionItemType const itemType,
+                                            int * const extent)
 {
-  return pimpl->GetItemNamesByType(itemType, itemNames);
+  return pimpl->CacheListOfItemNamesByType(itemType, extent);
 }
 
-int Collections::GetItemNamesByCollectionAndType(
+int Collections::GetItemNameByType(int const index,
+                                   std::string const ** const itemName) const
+{
+  return pimpl->GetItemNameByType(index, itemName);
+}
+
+int Collections::CacheListOfItemNamesByCollectionAndType(
     Collection const collection,
     CollectionItemType const itemType,
-    std::string const ** const itemNames) const
+    int * const extent)
 {
-  return pimpl->GetItemNamesByCollectionAndType(
-      collection, itemType, itemNames);
+  return pimpl->CacheListOfItemNamesByCollectionAndType(
+      collection, itemType, extent);
 }
 
-int Collections::GetItemByCollectionAndType(Collection const collection,
-                                            CollectionItemType const itemType,
-                                            std::string const & itemName,
-                                            std::string const ** const path,
-                                            int * const metadataExtent) const
+int Collections::GetItemNameByCollectionAndType(
+    int const index, std::string const ** const itemNames) const
 {
-  return pimpl->GetItemByCollectionAndType(
-      collection, itemType, itemName, path, metadataExtent);
+  return pimpl->GetItemNameByCollectionAndType(index, itemNames);
 }
 
-int Collections::GetItemMetadataByCollectionAndType(
+int Collections::GetItemLibraryFileNameByCollectionAndType(
     Collection const collection,
     CollectionItemType const itemType,
     std::string const & itemName,
-    int const index,
-    std::string const ** const metadataID,
-    unsigned int * const metadataLength,
-    unsigned char const ** const metadataRawData,
-    int * const availableAsString,
-    std::string const ** const metadataString) const
+    std::string const ** const fileName) const
 {
-  return pimpl->GetItemMetadataByCollectionAndType(collection,
-                                                   itemType,
-                                                   itemName,
-                                                   index,
-                                                   metadataID,
-                                                   metadataLength,
-                                                   metadataRawData,
-                                                   availableAsString,
-                                                   metadataString);
+  return pimpl->GetItemLibraryFileNameByCollectionAndType(
+      collection, itemType, itemName, fileName);
+}
+
+int Collections::CacheListOfItemMetadataFilesByCollectionAndType(
+    Collection const collection,
+    CollectionItemType const itemType,
+    std::string const & itemName,
+    int * const extent)
+{
+  return pimpl->CacheListOfItemMetadataFilesByCollectionAndType(
+      collection, itemType, itemName, extent);
+}
+
+int Collections::GetItemMetadataFileByCollectionAndType(
+    int const index,
+    std::string const ** const fileName,
+    unsigned int * const fileLength,
+    unsigned char const ** const fileRawData,
+    int * const availableAsString,
+    std::string const ** const fileString) const
+{
+  return pimpl->GetItemMetadataFileByCollectionAndType(
+      index, fileName, fileLength, fileRawData, availableAsString, fileString);
 }
 
 void Collections::GetProjectNameAndSemVer(
@@ -166,17 +178,23 @@ void Collections::GetConfigurationFileEnvironmentVariable(
   pimpl->GetConfigurationFileEnvironmentVariable(name, value);
 }
 
-void Collections::GetConfigurationFilePath(
-    std::string const ** const filePath) const
+void Collections::GetConfigurationFileName(
+    std::string const ** const fileName) const
 {
-  pimpl->GetConfigurationFilePath(filePath);
+  pimpl->GetConfigurationFileName(fileName);
 }
 
-int Collections::GetDirectories(Collection const collection,
-                                CollectionItemType const itemType,
-                                std::string const ** const directories) const
+int Collections::CacheListOfDirectoryNames(Collection const collection,
+                                           CollectionItemType const itemType,
+                                           int * const extent)
 {
-  return pimpl->GetDirectories(collection, itemType, directories);
+  return pimpl->CacheListOfDirectoryNames(collection, itemType, extent);
+}
+
+int Collections::GetDirectoryName(
+    int const index, std::string const ** const directoryName) const
+{
+  return pimpl->GetDirectoryName(index, directoryName);
 }
 
 void Collections::SetLogID(std::string const & logID)
