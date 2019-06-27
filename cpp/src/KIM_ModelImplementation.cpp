@@ -1141,6 +1141,13 @@ int ModelImplementation::SetParameter(int const parameterIndex,
     return true;
   }
 
+  if (parameterDataType_[parameterIndex] != DATA_TYPE::Integer)
+  {
+    LOG_ERROR("Data type of parameter is not Integer.");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
+
   if ((arrayIndex < 0) || (arrayIndex >= parameterExtent_[parameterIndex]))
   {
     LOG_ERROR("Invalid parameter arrayIndex, " + SNUM(arrayIndex) + ".");
@@ -1173,6 +1180,13 @@ int ModelImplementation::SetParameter(int const parameterIndex,
           >= parameterPointer_.size()))
   {
     LOG_ERROR("Invalid parameter index, " + SNUM(parameterIndex) + ".");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
+
+  if (parameterDataType_[parameterIndex] != DATA_TYPE::Double)
+  {
+    LOG_ERROR("Data type of parameter is not Double.");
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
