@@ -40,7 +40,7 @@
 
 void dirsForCollection(KIM::Collection const collection, KIM::Collections & col)
 {
-  int extent;
+  int extent = 0;
 
   {
     using namespace KIM::COLLECTION_ITEM_TYPE;
@@ -54,6 +54,7 @@ void dirsForCollection(KIM::Collection const collection, KIM::Collections & col)
       std::cout << "\t" << *dir << std::endl;
     }
 
+    extent = 0;
     col.CacheListOfDirectoryNames(collection, portableModel, &extent);
     std::cout << collection.ToString() << ":" << portableModel.ToString()
               << " :\n";
@@ -64,6 +65,7 @@ void dirsForCollection(KIM::Collection const collection, KIM::Collections & col)
       std::cout << "\t" << *dir << std::endl;
     }
 
+    extent = 0;
     col.CacheListOfDirectoryNames(collection, simulatorModel, &extent);
     std::cout << collection.ToString() << ":" << simulatorModel.ToString()
               << " :\n";

@@ -200,16 +200,19 @@ std::string ProcessConfigFileDirectoryString(std::string const & dir)
   return returnString;  // "" indicated an error
 }
 
-int ProcessConfigFileLine(char * line,
+int ProcessConfigFileLine(char const * const line,
                           std::string const & configFile,
                           char const * const identifier,
                           KIM::Log * const log,
                           std::string & userDir)
 {
+  char linecpy[LINELEN];
   char * word;
   char const * const sep = " \t=";
 
-  word = strtok(line, sep);
+  strncpy(linecpy, line, LINELEN);
+
+  word = strtok(linecpy, sep);
   if (strcmp(identifier, word))
   {
     if (log)
@@ -382,34 +385,63 @@ int PrivateGetUserDirs(KIM::Log * log, ItemTypeToStringMap & dirsMap)
   {
     std::string val;
     char line[LINELEN];
-    if ((!cfl.getline(line, LINELEN))
+    cfl.getline(line, LINELEN);
+    if ((cfl.fail())
         || (ProcessConfigFileLine(line,
                                   configFile,
                                   KIM_MODEL_DRIVER_PLURAL_DIR_IDENTIFIER,
                                   log,
                                   val)))
-      goto cleanUp;
-    dirsMap[modelDriver] = val;
+    {
+      cfl.close();
+      return true;
+    }
+    else
+      dirsMap[modelDriver] = val;
 
-    if ((!cfl.getline(line, LINELEN))
-        || (ProcessConfigFileLine(line,
-                                  configFile,
-                                  KIM_PORTABLE_MODEL_PLURAL_DIR_IDENTIFIER,
-                                  log,
-                                  val)))
-      goto cleanUp;
+    cfl.getline(line, LINELEN);
+    if (!cfl.fail())
+    {
+      if (ProcessConfigFileLine(line,
+                                configFile,
+                                KIM_PORTABLE_MODEL_PLURAL_DIR_IDENTIFIER,
+                                log,
+                                val))
+      {
+        if (ProcessConfigFileLine(
+                line,
+                configFile,
+                "models-dir",  // Accept old format for this line
+                log,
+                val))
+        {
+          cfl.close();
+          return true;
+        }
+      }
+    }
+    else
+    {
+      cfl.close();
+      return true;
+    }
+
     dirsMap[portableModel] = val;
 
-    if ((!cfl.getline(line, LINELEN))
+    cfl.getline(line, LINELEN);
+    if ((cfl.fail())
         || (ProcessConfigFileLine(line,
                                   configFile,
                                   KIM_SIMULATOR_MODEL_PLURAL_DIR_IDENTIFIER,
                                   log,
                                   val)))
-      goto cleanUp;
-    dirsMap[simulatorModel] = val;
+    {
+      cfl.close();
+      return true;
+    }
+    else
+      dirsMap[simulatorModel] = val;
 
-  cleanUp:
     cfl.close();
   }
 
@@ -431,6 +463,8 @@ void PrivateGetListOfItemNamesByCollectionAndType(
     KIM::Log * log,
     std::list<std::string> & names)
 {
+  names.clear();
+
   ItemTypeToStringMap dirsMap;
   if (collection == KIM::COLLECTION::system)
     PrivateGetSystemDirs(dirsMap);
@@ -509,6 +543,10 @@ int PrivateGetListOfItemMetadataFilesByCollectionAndType(
     std::vector<int> & availableAsStrings,
     std::vector<std::string> & fileStrings)
 {
+  fileNames.clear();
+  availableAsStrings.clear();
+  fileStrings.clear();
+
   std::string path;
   int error = PrivateGetItemLibraryFileNameByCollectionAndType(
       collection, itemType, itemName, log, &path);
@@ -591,6 +629,10 @@ int PrivateGetListOfItemMetadataFiles(KIM::CollectionItemType const itemType,
                                       std::vector<int> & availableAsStrings,
                                       std::vector<std::string> & fileStrings)
 {
+  fileNames.clear();
+  availableAsStrings.clear();
+  fileStrings.clear();
+
   KIM::Collection collection;
   int error = PrivateGetItemLibraryFileNameAndCollection(
       itemType, itemName, log, NULL, &collection);
