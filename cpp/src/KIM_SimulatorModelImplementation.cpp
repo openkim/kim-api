@@ -46,8 +46,12 @@
 #include "KIM_Log.hpp"
 #endif
 
-#ifndef KIMHDR_OLD_KIM_API_DIRS_H
-#include "old_KIM_API_DIRS.h"
+#ifndef KIM_COLLECTION_ITEM_TYPE_HPP_
+#include "KIM_CollectionItemType.hpp"
+#endif
+
+#ifndef KIM_COLLECTIONS_HPP_
+#include "KIM_Collections.hpp"
 #endif
 
 #ifndef KIM_SIMULATOR_MODEL_IMPLEMENTATION_HPP_
@@ -98,7 +102,8 @@ int SimulatorModelImplementation::Create(
       __FILE__);
 #endif
 
-  error = pSimulatorModelImplementation->Initialize(simulatorModelName);
+  Collections * col;
+  error = Collections::Create(&col);
   if (error)
   {
 #if DEBUG_VERBOSITY
@@ -109,6 +114,25 @@ int SimulatorModelImplementation::Create(
         __FILE__);
 #endif
     delete pSimulatorModelImplementation;  // also deletes pLog
+
+    return true;
+  }
+  col->SetLogID(pLog->GetID() + "_Collections");
+
+  pSimulatorModelImplementation->collections_ = col;
+
+  error = pSimulatorModelImplementation->Initialize(simulatorModelName);
+  if (error)
+  {
+#if DEBUG_VERBOSITY
+    pSimulatorModelImplementation->LogEntry(
+        LOG_VERBOSITY::debug,
+        "Destroying SimulatorModelImplementation object and exit " + callString,
+        __LINE__,
+        __FILE__);
+#endif
+    delete pSimulatorModelImplementation;  // also deletes Log object and
+                                           // collections object
 
     return true;
   }
@@ -141,7 +165,8 @@ void SimulatorModelImplementation::Destroy(
                  __LINE__,
                  __FILE__);
 #endif
-  delete *simulatorModelImplementation;  // also deletes Log object
+  delete *simulatorModelImplementation;  // also deletes Log object and
+                                         // collections object
   *simulatorModelImplementation = NULL;
 }
 
@@ -653,6 +678,7 @@ std::string const & SimulatorModelImplementation::ToString() const
 
 SimulatorModelImplementation::SimulatorModelImplementation(
     SharedLibrary * const sharedLibrary, Log * const log) :
+    collections_(NULL),
     simulatorModelName_(""),
     sharedLibrary_(sharedLibrary),
     log_(log),
@@ -688,6 +714,8 @@ SimulatorModelImplementation::~SimulatorModelImplementation()
 
   delete sharedLibrary_;
 
+  if (collections_) Collections::Destroy(&collections_);
+
   LOG_DEBUG("Destroying Log object and exit " + callString);
   Log::Destroy(&log_);
 }
@@ -702,18 +730,20 @@ int SimulatorModelImplementation::Initialize(
 
   simulatorModelName_ = simulatorModelName;
 
-  std::vector<std::string> sharedLibraryList;
-  if (!findItem(OLD_KIM::KIM_SIMULATOR_MODELS,
-                simulatorModelName,
-                &sharedLibraryList,
-                NULL))
+  std::string const * itemFilePath;
+  int error = collections_->GetItemLibraryFileNameAndCollection(
+      COLLECTION_ITEM_TYPE::simulatorModel,
+      simulatorModelName,
+      &itemFilePath,
+      NULL);
+  if (error)
   {
     LOG_ERROR("Could not find simulator model shared library.");
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
 
-  int error = sharedLibrary_->Open(sharedLibraryList[OLD_KIM::IE_FULLPATH]);
+  error = sharedLibrary_->Open(*itemFilePath);
   if (error)
   {
     LOG_ERROR("Could not open simulator model shared library.");
@@ -721,7 +751,7 @@ int SimulatorModelImplementation::Initialize(
     return true;
   }
 
-  SharedLibrary::ITEM_TYPE itemType;
+  CollectionItemType itemType;
   error = sharedLibrary_->GetType(&itemType);
   if (error)
   {
@@ -729,32 +759,30 @@ int SimulatorModelImplementation::Initialize(
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
-  switch (itemType)
+
   {
-    case SharedLibrary::SIMULATOR_MODEL:
-      LOG_DEBUG("Initializing a simulator model.");
-      // fall through to continue
-      break;
-    case SharedLibrary::STAND_ALONE_MODEL:
-      LOG_ERROR("Creation of a stand alone model is not allowed.");
+    using namespace COLLECTION_ITEM_TYPE;
+
+    if (itemType == simulatorModel)
+    { LOG_DEBUG("Initializing a simulator model."); }
+    else if (itemType == portableModel)
+    {
+      LOG_ERROR("Creation of a portable model is not allowed.");
       LOG_DEBUG("Exit 1=" + callString);
       return true;
-      break;
-    case SharedLibrary::PARAMETERIZED_MODEL:
-      LOG_ERROR("Creation of a parameterized model is not allowed.");
-      LOG_DEBUG("Exit 1=" + callString);
-      return true;
-      break;
-    case SharedLibrary::MODEL_DRIVER:
+    }
+    else if (itemType == modelDriver)
+    {
       LOG_ERROR("Creation of a model driver is not allowed.");
       LOG_DEBUG("Exit 1=" + callString);
       return true;
-      break;
-    default:
-      LOG_ERROR("Creation of an unknown model type is not allowed.");
+    }
+    else
+    {
+      LOG_ERROR("Creation of an unknown item type is not allowed.");
       LOG_DEBUG("Exit 1=" + callString);
       return true;
-      break;
+    }
   }
 
   error = WriteParameterFileDirectory();
@@ -1105,7 +1133,7 @@ int SimulatorModelImplementation::WriteParameterFileDirectory()
   {
     unsigned int len;
     unsigned char const * specificationData;
-    error = sharedLibrary_->GetMetadataFile(
+    error = sharedLibrary_->GetSimulatorModelSpecificationFile(
         &specificationFileName_, &len, &specificationData);
     if (error)
     {

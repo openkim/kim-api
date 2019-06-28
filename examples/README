@@ -28,8 +28,8 @@
 
 
 This directory (examples) contains directories with example Model Drivers,
-Models, and Simulators.  Please see the README files within each directory for
-information about the examples.
+Portable Models, Simulator Models, and Simulators.  Please see the README files
+within each directory for information about the examples.
 
 Items in these directories may be built as part of the main KIM API build.  Or,
 they may be build separately, after the KIM API has been built and installed.

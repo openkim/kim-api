@@ -17,6 +17,6 @@ endif()
 
 add_kim_api_model_library(
   NAME            "Sim_LAMMPS_LJcut_AkersonElliott_Alchemy_PbAu"
-  METADATA_FILE   "smspec.edn"
+  SM_SPEC_FILE    "smspec.edn"
   PARAMETER_FILES "Alchemy_PbAu.in"
   )

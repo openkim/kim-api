@@ -30,6 +30,7 @@
 // Release: This file is part of the kim-api.git repository.
 //
 
+#include <cstring>
 #include <dlfcn.h>
 #include <sstream>
 
@@ -70,7 +71,10 @@ namespace KIM
 SharedLibrary::SharedLibrary(Log * const log) :
     sharedLibraryHandle_(NULL),
     sharedLibrarySchemaVersion_(NULL),
-    sharedLibrarySchema_(NULL),
+    itemName_(""),
+    createRoutine_(NULL),
+    numberOfParameterFiles_(0),
+    numberOfMetadataFiles_(0),
     log_(log)
 {
 #if DEBUG_VERBOSITY
@@ -108,7 +112,6 @@ int SharedLibrary::Open(std::string const & sharedLibraryName)
   }
 
   sharedLibraryName_ = sharedLibraryName;
-
   sharedLibraryHandle_ = dlopen(sharedLibraryName_.c_str(), RTLD_NOW);
   if (sharedLibraryHandle_ == NULL)
   {
@@ -117,8 +120,6 @@ int SharedLibrary::Open(std::string const & sharedLibraryName)
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
-
-
   sharedLibrarySchemaVersion_ = reinterpret_cast<int const *>(
       dlsym(sharedLibraryHandle_, "kim_shared_library_schema_version"));
   if (sharedLibrarySchemaVersion_ == NULL)
@@ -128,17 +129,100 @@ int SharedLibrary::Open(std::string const & sharedLibraryName)
     return true;
   }
 
-  if (*sharedLibrarySchemaVersion_ == 1)
+
+  if (*sharedLibrarySchemaVersion_ == 2)
   {
-    sharedLibrarySchema_ = reinterpret_cast<
-        SHARED_LIBRARY_SCHEMA::SharedLibrarySchemaV1 const *>(
-        dlsym(sharedLibraryHandle_, "kim_shared_library_schema"));
-    if (sharedLibrarySchema_ == NULL)
+    using namespace SHARED_LIBRARY_SCHEMA;
+    SharedLibrarySchemaV2 const * const schemaV2
+        = reinterpret_cast<SharedLibrarySchemaV2 const *>(
+            dlsym(sharedLibraryHandle_, "kim_shared_library_schema"));
+    if (schemaV2 == NULL)
     {
       LOG_ERROR(dlerror());
       LOG_DEBUG("Exit 1=" + callString);
       return true;
     }
+
+    itemType_ = schemaV2->itemType;
+    createLanguageName_ = schemaV2->createLanguageName;
+    createRoutine_ = schemaV2->createRoutine;
+    driverName_ = ((schemaV2->driverName) ? schemaV2->driverName : "");
+    numberOfParameterFiles_ = schemaV2->numberOfParameterFiles;
+    for (int i = 0; i < numberOfParameterFiles_; ++i)
+    {
+      EmbeddedFile fl;
+      fl.fileName = schemaV2->parameterFiles[i].fileName;
+      fl.fileLength = schemaV2->parameterFiles[i].fileLength;
+      fl.filePointer = schemaV2->parameterFiles[i].filePointer;
+
+      parameterFiles_.push_back(fl);
+    }
+    numberOfMetadataFiles_ = schemaV2->numberOfMetadataFiles;
+    for (int i = 0; i < numberOfMetadataFiles_; ++i)
+    {
+      EmbeddedFile fl;
+      fl.fileName = schemaV2->metadataFiles[i].fileName;
+      fl.fileLength = schemaV2->metadataFiles[i].fileLength;
+      fl.filePointer = schemaV2->metadataFiles[i].filePointer;
+
+      metadataFiles_.push_back(fl);
+    }
+  }
+  else if (*sharedLibrarySchemaVersion_ == 1)
+  {
+    using namespace SHARED_LIBRARY_SCHEMA;
+    SharedLibrarySchemaV1 const * const schemaV1
+        = reinterpret_cast<SharedLibrarySchemaV1 const *>(
+            dlsym(sharedLibraryHandle_, "kim_shared_library_schema"));
+    if (schemaV1 == NULL)
+    {
+      LOG_ERROR(dlerror());
+      LOG_DEBUG("Exit 1=" + callString);
+      return true;
+    }
+
+    if (schemaV1->itemType == SharedLibrarySchemaV1::STAND_ALONE_MODEL)
+    { itemType_ = COLLECTION_ITEM_TYPE::portableModel; }
+    else if (schemaV1->itemType == SharedLibrarySchemaV1::PARAMETERIZED_MODEL)
+    {
+      itemType_ = COLLECTION_ITEM_TYPE::portableModel;
+      // differentiated from above by driverName_
+    }
+    else if (schemaV1->itemType == SharedLibrarySchemaV1::SIMULATOR_MODEL)
+    {
+      itemType_ = COLLECTION_ITEM_TYPE::simulatorModel;
+    }
+    else if (schemaV1->itemType == SharedLibrarySchemaV1::MODEL_DRIVER)
+    {
+      itemType_ = COLLECTION_ITEM_TYPE::modelDriver;
+    }
+    else
+    {
+      LOG_ERROR("SHOULD NEVER GET HERE.");
+      LOG_DEBUG("Exit 1=" + callString);
+      return true;
+    }
+
+    createLanguageName_ = schemaV1->createLanguageName;
+    createRoutine_ = schemaV1->createRoutine;
+    driverName_ = ((schemaV1->driverName) ? schemaV1->driverName : "");
+    numberOfParameterFiles_ = schemaV1->numberOfParameterFiles;
+    for (int i = 0; i < numberOfParameterFiles_; ++i)
+    {
+      EmbeddedFile fl;
+      fl.fileName = schemaV1->parameterFiles[i].fileName;
+      fl.fileLength = schemaV1->parameterFiles[i].fileLength;
+      fl.filePointer = schemaV1->parameterFiles[i].filePointer;
+
+      parameterFiles_.push_back(fl);
+    }
+    numberOfMetadataFiles_ = 1;
+    EmbeddedFile fl;
+    fl.fileName = "compiled-with-version.txt";
+    fl.fileLength = strlen(schemaV1->compiledWithVersion);
+    fl.filePointer = reinterpret_cast<unsigned char const *>(
+        schemaV1->compiledWithVersion);
+    metadataFiles_.push_back(fl);
   }
   else
   {
@@ -166,6 +250,17 @@ int SharedLibrary::Close()
   }
 
   sharedLibraryName_ = "";
+  sharedLibrarySchemaVersion_ = 0;
+  itemName_ = "";
+  createRoutine_ = NULL;
+  driverName_ = "";
+  simulatorModelSpecificationFile_.fileName = NULL;
+  simulatorModelSpecificationFile_.fileLength = 0;
+  simulatorModelSpecificationFile_.filePointer = NULL;
+  numberOfParameterFiles_ = 0;
+  parameterFiles_.clear();
+  numberOfMetadataFiles_ = 0;
+  metadataFiles_.clear();
   int error = dlclose(sharedLibraryHandle_);
   if (error)
   {
@@ -189,20 +284,19 @@ int SharedLibrary::GetName(std::string * const name) const
 #endif
   LOG_DEBUG("Enter  " + callString);
 
-  *name = sharedLibrarySchema_->itemName;
+  *name = itemName_;
 
   LOG_DEBUG("Exit 0=" + callString);
   return false;
 }
 
-int SharedLibrary::GetType(ITEM_TYPE * const type) const
+int SharedLibrary::GetType(CollectionItemType * const type) const
 {
 #if DEBUG_VERBOSITY
   std::string const callString = "GetType(" + SPTR(type) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
-  *type = SIMULATOR_MODEL;  // dummy value
   if (sharedLibraryHandle_ == NULL)
   {
     LOG_ERROR("Library not open.");
@@ -210,39 +304,7 @@ int SharedLibrary::GetType(ITEM_TYPE * const type) const
     return true;  // not open
   }
 
-  if (*sharedLibrarySchemaVersion_ == 1)
-  {
-    using namespace KIM::SHARED_LIBRARY_SCHEMA;
-    SharedLibrarySchemaV1::ITEM_TYPE const KIM_ItemType
-        = sharedLibrarySchema_->itemType;
-
-    if (KIM_ItemType == SharedLibrarySchemaV1::STAND_ALONE_MODEL)
-    { *type = STAND_ALONE_MODEL; }
-    else if (KIM_ItemType == SharedLibrarySchemaV1::PARAMETERIZED_MODEL)
-    {
-      *type = PARAMETERIZED_MODEL;
-    }
-    else if (KIM_ItemType == SharedLibrarySchemaV1::SIMULATOR_MODEL)
-    {
-      *type = SIMULATOR_MODEL;
-    }
-    else if (KIM_ItemType == SharedLibrarySchemaV1::MODEL_DRIVER)
-    {
-      *type = MODEL_DRIVER;
-    }
-    else
-    {
-      LOG_ERROR("SHOULD NEVER GET HERE.");
-      LOG_DEBUG("Exit 1=" + callString);
-      return true;
-    }
-  }
-  else
-  {
-    LOG_ERROR("Unknown KIM::SharedLibrarySchema version.");
-    LOG_DEBUG("Exit 1=" + callString);
-    return true;
-  }
+  *type = itemType_;
 
   LOG_DEBUG("Exit 0=" + callString);
   return false;
@@ -265,17 +327,8 @@ int SharedLibrary::GetCreateFunctionPointer(
     return true;  // not open
   }
 
-  if (*sharedLibrarySchemaVersion_ == 1)
-  {
-    *languageName = sharedLibrarySchema_->createLanguageName;
-    *functionPointer = sharedLibrarySchema_->createRoutine;
-  }
-  else
-  {
-    LOG_ERROR("Unknown KIM::SharedLibrarySchema version.");
-    LOG_DEBUG("Exit 1=" + callString);
-    return true;
-  }
+  if (languageName) *languageName = createLanguageName_;
+  if (functionPointer) *functionPointer = createRoutine_;
 
   LOG_DEBUG("Exit 0=" + callString);
   return false;
@@ -297,14 +350,7 @@ int SharedLibrary::GetNumberOfParameterFiles(
     return true;  // not open
   }
 
-  if (*sharedLibrarySchemaVersion_ == 1)
-  { *numberOfParameterFiles = sharedLibrarySchema_->numberOfParameterFiles; }
-  else
-  {
-    LOG_ERROR("Unknown KIM::SharedLibrarySchema version.");
-    LOG_DEBUG("Exit 1=" + callString);
-    return true;
-  }
+  *numberOfParameterFiles = numberOfParameterFiles_;
 
   LOG_DEBUG("Exit 0=" + callString);
   return false;
@@ -331,56 +377,38 @@ int SharedLibrary::GetParameterFile(
     return true;  // not open
   }
 
-  ITEM_TYPE itemType;
-  GetType(&itemType);
-  if ((itemType != PARAMETERIZED_MODEL) && (itemType != SIMULATOR_MODEL))
+  if (((itemType_ == COLLECTION_ITEM_TYPE::portableModel)
+       && (driverName_ == ""))
+      || (itemType_ == COLLECTION_ITEM_TYPE::modelDriver))
   {
     LOG_ERROR("This item type does not have parameter files.");
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
 
-  int numberOfParameterFiles;
-  GetNumberOfParameterFiles(&numberOfParameterFiles);
-  if ((index < 0) || index >= numberOfParameterFiles)
+  if ((index < 0) || index >= numberOfParameterFiles_)
   {
     LOG_ERROR("Invalid parameter file index.");
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
 
-  if (*sharedLibrarySchemaVersion_ == 1)
-  {
-    if (parameterFileName)
-      *parameterFileName
-          = (sharedLibrarySchema_->parameterFiles[index]).fileName;
-    if (parameterFileLength)
-      *parameterFileLength
-          = (sharedLibrarySchema_->parameterFiles[index]).fileLength;
-    if (parameterFileData)
-      *parameterFileData
-          = (sharedLibrarySchema_->parameterFiles[index]).filePointer;
-  }
-  else
-  {
-    LOG_ERROR("Unknown KIM::SharedLibrarySchema version.");
-    LOG_DEBUG("Exit 1=" + callString);
-    return true;
-  }
+  if (parameterFileName) *parameterFileName = (parameterFiles_[index]).fileName;
+  if (parameterFileLength)
+    *parameterFileLength = (parameterFiles_[index]).fileLength;
+  if (parameterFileData)
+    *parameterFileData = (parameterFiles_[index]).filePointer;
 
   LOG_DEBUG("Exit 0=" + callString);
   return false;
 }
 
-int SharedLibrary::GetMetadataFile(
-    std::string * const metadataFileName,
-    unsigned int * const metadataFileLength,
-    unsigned char const ** const metadataFileData) const
+int SharedLibrary::GetNumberOfMetadataFiles(
+    int * const numberOfMetadataFiles) const
 {
 #if DEBUG_VERBOSITY
-  std::string const callString = "GetMetadataFile(, " + SPTR(metadataFileName)
-                                 + ", " + SPTR(metadataFileLength) + ", "
-                                 + SPTR(metadataFileData) + ").";
+  std::string const callString
+      = "GetNumberOfMetadataFiles(" + SPTR(numberOfMetadataFiles) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -391,30 +419,80 @@ int SharedLibrary::GetMetadataFile(
     return true;  // not open
   }
 
-  ITEM_TYPE itemType;
-  GetType(&itemType);
-  if (itemType != SIMULATOR_MODEL)
+  *numberOfMetadataFiles = numberOfMetadataFiles_;
+
+  LOG_DEBUG("Exit 0=" + callString);
+  return false;
+}
+
+int SharedLibrary::GetMetadataFile(
+    int const index,
+    std::string * const metadataFileName,
+    unsigned int * const metadataFileLength,
+    unsigned char const ** const metadataFileData) const
+{
+#if DEBUG_VERBOSITY
+  std::string const callString
+      = "GetMetadataFile(" + SNUM(index) + ", " + SPTR(metadataFileName) + ", "
+        + SPTR(metadataFileLength) + ", " + SPTR(metadataFileData) + ").";
+#endif
+  LOG_DEBUG("Enter  " + callString);
+
+  if (sharedLibraryHandle_ == NULL)
   {
-    LOG_ERROR("This item type does not have a metadata file.");
+    LOG_ERROR("Library not open.");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;  // not open
+  }
+
+  if ((index < 0) || index >= numberOfMetadataFiles_)
+  {
+    LOG_ERROR("Invalid metadata file index.");
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
 
-  if (*sharedLibrarySchemaVersion_ == 1)
+  if (metadataFileName) *metadataFileName = (metadataFiles_[index]).fileName;
+  if (metadataFileLength)
+    *metadataFileLength = (metadataFiles_[index]).fileLength;
+  if (metadataFileData) *metadataFileData = (metadataFiles_[index]).filePointer;
+
+  LOG_DEBUG("Exit 0=" + callString);
+  return false;
+}
+
+int SharedLibrary::GetSimulatorModelSpecificationFile(
+    std::string * const specFileName,
+    unsigned int * const specFileLength,
+    unsigned char const ** const specFileData) const
+{
+#if DEBUG_VERBOSITY
+  std::string const callString
+      = "GetSimulatorModelSpecificationFile(, " + SPTR(specFileName) + ", "
+        + SPTR(specFileLength) + ", " + SPTR(specFileData) + ").";
+#endif
+  LOG_DEBUG("Enter  " + callString);
+
+  if (sharedLibraryHandle_ == NULL)
   {
-    if (metadataFileName)
-      *metadataFileName = (sharedLibrarySchema_->metadataFile)->fileName;
-    if (metadataFileLength)
-      *metadataFileLength = (sharedLibrarySchema_->metadataFile)->fileLength;
-    if (metadataFileData)
-      *metadataFileData = (sharedLibrarySchema_->metadataFile)->filePointer;
+    LOG_ERROR("Library not open.");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;  // not open
   }
-  else
+
+  if (itemType_ != COLLECTION_ITEM_TYPE::simulatorModel)
   {
-    LOG_ERROR("Unknown KIM::SharedLibrarySchema version.");
+    LOG_ERROR(
+        "This item type does not have a simulator model specification file.");
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
+
+  if (specFileName) *specFileName = (simulatorModelSpecificationFile_).fileName;
+  if (specFileLength)
+    *specFileLength = (simulatorModelSpecificationFile_).fileLength;
+  if (specFileData)
+    *specFileData = (simulatorModelSpecificationFile_).filePointer;
 
   LOG_DEBUG("Exit 0=" + callString);
   return false;
@@ -434,57 +512,18 @@ int SharedLibrary::GetDriverName(std::string * const driverName) const
     return true;  // not open
   }
 
-  if (*sharedLibrarySchemaVersion_ == 1)
+  if ((itemType_ != COLLECTION_ITEM_TYPE::portableModel) && (driverName_ != ""))
   {
-    ITEM_TYPE itemType;
-    GetType(&itemType);
-    if (itemType != PARAMETERIZED_MODEL)
-    {
-      LOG_DEBUG("Exit 1=" + callString);
-      return true;
-    }
-
-    *driverName = sharedLibrarySchema_->driverName;
-  }
-  else
-  {
-    LOG_ERROR("Unknown KIM::SharedLibrarySchema version.");
+    LOG_ERROR("This item type does not have an associated  model driver.");
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
+
+  *driverName = driverName_;
 
   LOG_DEBUG("Exit 0=" + callString);
   return false;
-}
-
-int SharedLibrary::GetCompiledWithVersion(
-    std::string * const versionString) const
-{
-#if DEBUG_VERBOSITY
-  std::string const callString
-      = "GetCompiledWithVersion(" + SPTR(versionString) + ").";
-#endif
-  LOG_DEBUG("Enter  " + callString);
-
-  if (sharedLibraryHandle_ == NULL)
-  {
-    LOG_ERROR("Library not open.");
-    LOG_DEBUG("Exit 1=" + callString);
-    return true;  // not open
-  }
-
-  if (*sharedLibrarySchemaVersion_ == 1)
-  { *versionString = sharedLibrarySchema_->compiledWithVersion; }
-  else
-  {
-    LOG_ERROR("Unknown KIM::SharedLibrarySchema version.");
-    LOG_DEBUG("Exit 1=" + callString);
-    return true;
-  }
-
-  LOG_DEBUG("Exit 1=" + callString);
-  return false;
-}
+}  // namespace KIM
 
 void SharedLibrary::LogEntry(LogVerbosity const logVerbosity,
                              std::string const & message,

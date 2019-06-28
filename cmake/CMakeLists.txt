@@ -56,6 +56,7 @@ set(ITEM_BUILD_SOURCES
   KIM_SharedLibrarySchema.hpp
   item-wrapper.cpp.in
   item-info.txt.in
+  item-compiled-with-version.txt.in
   )
 
 install(
