@@ -36,7 +36,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <dirent.h>
-#include <error.h>
+#include <errno.h>
 #include <fstream>
 #include <iostream>
 #include <map>
