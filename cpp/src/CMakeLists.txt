@@ -90,7 +90,6 @@ add_library(kim-loader STATIC
   KIM_Log.cpp
   KIM_LogImplementation.cpp
   KIM_SharedLibrary.cpp
-  old_KIM_API_DIRS.cpp
   KIM_SimulatorModel.cpp
   KIM_SimulatorModelImplementation.cpp
   )
