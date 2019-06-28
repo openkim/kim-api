@@ -815,6 +815,11 @@ int CollectionsImplementation::CacheListOfItemMetadataFiles(
 #endif
   LOG_DEBUG("Enter  " + callString);
 
+  *extent = 0;
+  cacheListOfItemMetadataFiles_Names_.clear();
+  cacheListOfItemMetadataFiles_availableAsString_.clear();
+  cacheListOfItemMetadataFiles_RawData_.clear();
+
 #if ERROR_VERBOSITY
   if (!itemType.Known())
   {
@@ -894,6 +899,9 @@ int CollectionsImplementation::CacheListOfItemNamesByType(
 #endif
   LOG_DEBUG("Enter  " + callString);
 
+  *extent = 0;
+  cacheListOfItemNamesByType_.clear();
+
 #if ERROR_VERBOSITY
   if (!itemType.Known())
   {
@@ -965,6 +973,9 @@ int CollectionsImplementation::CacheListOfItemNamesByCollectionAndType(
         + ", " + itemType.ToString() + ", " + SPTR(extent) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
+
+  *extent = 0;
+  cacheListOfItemNamesByCollectionAndType_.clear();
 
 #if ERROR_VERBOSITY
   if ((!collection.Known()) || (!itemType.Known()))
@@ -1063,6 +1074,11 @@ int CollectionsImplementation::CacheListOfItemMetadataFilesByCollectionAndType(
         + "\", " + SPTR(extent) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
+
+  *extent = 0;
+  cacheListOfItemMetadataFilesByCollectionAndType_FileNames_.clear();
+  cacheListOfItemMetadataFilesByCollectionAndType_AvailableAsString_.clear();
+  cacheListOfItemMetadataFilesByCollectionAndType_FileRawData_.clear();
 
 #if ERROR_VERBOSITY
   if ((!collection.Known()) || (!itemType.Known()))
@@ -1234,6 +1250,9 @@ int CollectionsImplementation::CacheListOfDirectoryNames(
         + itemType.ToString() + ", " + SPTR(extent) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
+
+  *extent = 0;
+  cacheListOfDirectoryNames_.clear();
 
 #if ERROR_VERBOSITY
   if ((!collection.Known()) || (!itemType.Known()))

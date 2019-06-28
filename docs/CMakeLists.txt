@@ -83,7 +83,7 @@ set(SOURCES
   "../fortran/include/"
   "../NEWS"
   "../examples/model-drivers/"
-  "../examples/models/"
+  "../examples/portable-models/"
   "../examples/simulator-models/"
   "../examples/simulators/"
   )
