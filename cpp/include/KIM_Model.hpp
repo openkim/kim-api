@@ -154,6 +154,9 @@ class Model
   /// \param[out] required \c true if the Model requires the use of the routine,
   ///             \c false otherwise.
   ///
+  /// \return \c true if \c modelRoutineName is unknown.
+  /// \return \c false otherwise.
+  ///
   /// \pre \c present or \c required may be \c NULL if the corresponding value
   ///      is not needed.
   ///
@@ -183,6 +186,10 @@ class Model
   ///
   /// Each neighbor list has a cutoff value and a flag indicating if the Model
   /// will request the neighbors of non-contributing particles.
+  ///
+  /// \note Output pointers obtained from this routine are valid until the next
+  /// call to Model::ClearThenRefresh of the KIM::Model object is
+  /// Model::Destroy'd.
   ///
   /// \param[out] numberOfNeighborLists The number of neighbor lists required
   ///             by the Model.
@@ -398,6 +405,9 @@ class Model
   /// \brief Get the metadata associated with one of the Model's parameter
   /// arrays.
   ///
+  /// \note String pointers obtained from this routine are valid until the
+  /// KIM::Model object is Model::Destroy'd.
+  ///
   /// \param[in]  parameterIndex Zero-based index for the parameter array.
   /// \param[out] dataType The DataType value for the parameter array.
   /// \param[out] extent The number of parameters in the array.
@@ -456,6 +466,8 @@ class Model
   /// \param[in] parameterValue The new value for the parameter of interest.
   ///
   /// \return \c true if \c parameterIndex is invalid.
+  /// \return \c true if the specified parameter and \c parameterValue are of
+  ///         different data types.
   /// \return \c true if \c arrayIndex is invalid.
   /// \return \c false otherwise.
   ///
