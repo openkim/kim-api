@@ -1,4 +1,0 @@
-*.o
-tests/pretty
-tests/stream
-tests/tests
