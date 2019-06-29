@@ -276,96 +276,102 @@ void listItems(KIM::CollectionItemType const type,
   else
     KIM::Log::PushDefaultVerbosity(KIM::LOG_VERBOSITY::silent);
   KIM::Collections * col;
-  KIM::Collections::Create(&col);
+  int error = KIM::Collections::Create(&col);
 
-  if (list_all)
+  if (!error)
   {
-    std::vector<KIM::Collection> colList;
-    colList.push_back(KIM::COLLECTION::currentWorkingDirectory);
-    colList.push_back(KIM::COLLECTION::environmentVariable);
-    colList.push_back(KIM::COLLECTION::user);
-    colList.push_back(KIM::COLLECTION::system);
-
-    for (std::vector<KIM::Collection>::size_type i = 0; i < colList.size(); ++i)
+    if (list_all)
     {
-      int extent;
-      int error = col->CacheListOfItemNamesByCollectionAndType(
-          colList[i], type, &extent);
-      if (error) return;
+      std::vector<KIM::Collection> colList;
+      colList.push_back(KIM::COLLECTION::currentWorkingDirectory);
+      colList.push_back(KIM::COLLECTION::environmentVariable);
+      colList.push_back(KIM::COLLECTION::user);
+      colList.push_back(KIM::COLLECTION::system);
 
-      for (int j = 0; j < extent; ++j)
+      for (std::vector<KIM::Collection>::size_type i = 0; i < colList.size();
+           ++i)
       {
-        std::string const * itemName;
-        col->GetItemNameByCollectionAndType(j, &itemName);
-        std::string const * itemLibraryFileName;
-        error = col->GetItemLibraryFileNameByCollectionAndType(
-            colList[i], type, *itemName, &itemLibraryFileName);
+        int extent;
+        error = col->CacheListOfItemNamesByCollectionAndType(
+            colList[i], type, &extent);
+        if (error) break;
 
-        if (!error)
+        for (int j = 0; j < extent; ++j)
         {
-          std::string const notAvailable("VERSION-NOT-AVAILABLE");
-          std::string const * itemCompVer = &notAvailable;
-          int mdExtent;
-          col->CacheListOfItemMetadataFilesByCollectionAndType(
-              colList[i], type, *itemName, &mdExtent);
-          for (int k = 0; k < mdExtent; ++k)
-          {
-            std::string const * mdFileName;
-            std::string const * mdStr;
-            int asString;
-            error = col->GetItemMetadataFileByCollectionAndType(
-                k, &mdFileName, NULL, NULL, &asString, &mdStr);
-            if ((!error) && (*mdFileName == "item-compiled-with-version.txt")
-                && (asString))
-            {
-              itemCompVer = mdStr;
-              break;
-            }
-          }
+          std::string const * itemName;
+          col->GetItemNameByCollectionAndType(j, &itemName);
+          std::string const * itemLibraryFileName;
+          error = col->GetItemLibraryFileNameByCollectionAndType(
+              colList[i], type, *itemName, &itemLibraryFileName);
 
-          std::string s(*itemCompVer);
-          s.erase(s.find_last_not_of(" \n\r\t") + 1);  // rtrim
-          std::cout << colList[i].ToString() << " " << *itemName << " "
-                    << *itemLibraryFileName << " " << s << std::endl;
+          if (!error)
+          {
+            std::string const notAvailable("VERSION-NOT-AVAILABLE");
+            std::string const * itemCompVer = &notAvailable;
+            int mdExtent;
+            col->CacheListOfItemMetadataFilesByCollectionAndType(
+                colList[i], type, *itemName, &mdExtent);
+            for (int k = 0; k < mdExtent; ++k)
+            {
+              std::string const * mdFileName;
+              std::string const * mdStr;
+              int asString;
+              error = col->GetItemMetadataFileByCollectionAndType(
+                  k, &mdFileName, NULL, NULL, &asString, &mdStr);
+              if ((!error) && (*mdFileName == "item-compiled-with-version.txt")
+                  && (asString))
+              {
+                itemCompVer = mdStr;
+                break;
+              }
+            }
+
+            std::string s(*itemCompVer);
+            s.erase(s.find_last_not_of(" \n\r\t") + 1);  // rtrim
+            std::cout << colList[i].ToString() << " " << *itemName << " "
+                      << *itemLibraryFileName << " " << s << std::endl;
+          }
         }
       }
     }
-  }
-  else
-  {
-    std::string const * itemFileName;
-    KIM::Collection collection;
-    int error = col->GetItemLibraryFileNameAndCollection(
-        type, name, &itemFileName, &collection);
-
-    if (error) return;
-
-    std::string const notAvailable("VERSION-NOT-AVAILABLE");
-    std::string const * itemCompVer = &notAvailable;
-    int extent;
-    col->CacheListOfItemMetadataFilesByCollectionAndType(
-        collection, type, name, &extent);
-    for (int j = 0; j < extent; ++j)
+    else
     {
-      std::string const * mdFileName;
-      std::string const * mdStr;
-      int asString;
-      error = col->GetItemMetadataFileByCollectionAndType(
-          j, &mdFileName, NULL, NULL, &asString, &mdStr);
-      if ((!error) && (*mdFileName == "item-compiled-with-version.txt")
-          && (asString))
+      std::string const * itemFileName;
+      KIM::Collection collection;
+      int error = col->GetItemLibraryFileNameAndCollection(
+          type, name, &itemFileName, &collection);
+
+      if (!error)
       {
-        itemCompVer = mdStr;
-        break;
+        std::string const notAvailable("VERSION-NOT-AVAILABLE");
+        std::string const * itemCompVer = &notAvailable;
+        int extent;
+        col->CacheListOfItemMetadataFilesByCollectionAndType(
+            collection, type, name, &extent);
+        for (int j = 0; j < extent; ++j)
+        {
+          std::string const * mdFileName;
+          std::string const * mdStr;
+          int asString;
+          error = col->GetItemMetadataFileByCollectionAndType(
+              j, &mdFileName, NULL, NULL, &asString, &mdStr);
+          if ((!error) && (*mdFileName == "item-compiled-with-version.txt")
+              && (asString))
+          {
+            itemCompVer = mdStr;
+            break;
+          }
+        }
+        std::string s(*itemCompVer);
+        s.erase(s.find_last_not_of(" \n\r\t") + 1);  // rtrim
+        std::cout << collection.ToString() << " " << name << " "
+                  << *itemFileName << " " << s << std::endl;
       }
     }
-    std::string s(*itemCompVer);
-    s.erase(s.find_last_not_of(" \n\r\t") + 1);  // rtrim
-    std::cout << collection.ToString() << " " << name << " " << *itemFileName
-              << " " << s << std::endl;
+
+    KIM::Collections::Destroy(&col);
   }
 
-  KIM::Collections::Destroy(&col);
   KIM::Log::PopDefaultVerbosity();
 }
 }  // namespace CI
@@ -499,18 +505,20 @@ int getItemType(int argc, char * argv[])
     KIM::Log::PushDefaultVerbosity(KIM::LOG_VERBOSITY::silent);
     KIM::Collections * col;
     int error = KIM::Collections::Create(&col);
-    if (error) return 1;
-
-    KIM::CollectionItemType itemType;
-    error = col->GetItemType(argv[2], &itemType);
-    if (error)
-      returnVal = 1;
-    else
+    if (!error)
     {
-      std::cout << itemType.ToString() << std::endl;
+      KIM::CollectionItemType itemType;
+      error = col->GetItemType(argv[2], &itemType);
+      if (error)
+        returnVal = 1;
+      else
+      {
+        std::cout << itemType.ToString() << std::endl;
+      }
+
+      KIM::Collections::Destroy(&col);
     }
 
-    KIM::Collections::Destroy(&col);
     KIM::Log::PopDefaultVerbosity();
   }
 
@@ -526,54 +534,57 @@ int getItemMetadata(int argc, char * argv[])
     KIM::Log::PushDefaultVerbosity(KIM::LOG_VERBOSITY::silent);
     KIM::Collections * col;
     int error = KIM::Collections::Create(&col);
-    if (error) return 1;
 
-    KIM::CollectionItemType itemType;
-    error = col->GetItemType(argv[2], &itemType);
-    if (error)
-      returnVal = 1;
-    else
+    if (!error)
     {
-      error = col->GetItemLibraryFileNameAndCollection(
-          itemType, argv[2], NULL, NULL);
+      KIM::CollectionItemType itemType;
+      error = col->GetItemType(argv[2], &itemType);
       if (error)
         returnVal = 1;
       else
       {
-        int extent;
-        col->CacheListOfItemMetadataFiles(itemType, argv[2], &extent);
-        for (int i = 0; i < extent; ++i)
+        error = col->GetItemLibraryFileNameAndCollection(
+            itemType, argv[2], NULL, NULL);
+        if (error)
+          returnVal = 1;
+        else
         {
-          std::string const * fileName;
-          std::string const * data;
-          int asString;
-          error = col->GetItemMetadataFile(
-              i, &fileName, NULL, NULL, &asString, &data);
-          if ((error) || (!asString))
+          int extent;
+          col->CacheListOfItemMetadataFiles(itemType, argv[2], &extent);
+          for (int i = 0; i < extent; ++i)
           {
-            std::cout << "=== MD " << i << " === "
-                      << "not available" << std::endl;
-            std::cout << "======="
-                      << "="
-                      << "====="
-                      << "=============" << std::endl;
-          }
-          else
-          {
-            std::string s(*data);
-            s.erase(s.find_last_not_of(" \n\r\t") + 1);  // rtrim
-            std::cout << "=== MD " << i << " === " << *fileName << std::endl;
-            std::cout << s << std::endl;
-            std::cout << "======="
-                      << "="
-                      << "====="
-                      << "=============" << std::endl;
+            std::string const * fileName;
+            std::string const * data;
+            int asString;
+            error = col->GetItemMetadataFile(
+                i, &fileName, NULL, NULL, &asString, &data);
+            if ((error) || (!asString))
+            {
+              std::cout << "=== MD " << i << " === "
+                        << "not available" << std::endl;
+              std::cout << "======="
+                        << "="
+                        << "====="
+                        << "=============" << std::endl;
+            }
+            else
+            {
+              std::string s(*data);
+              s.erase(s.find_last_not_of(" \n\r\t") + 1);  // rtrim
+              std::cout << "=== MD " << i << " === " << *fileName << std::endl;
+              std::cout << s << std::endl;
+              std::cout << "======="
+                        << "="
+                        << "====="
+                        << "=============" << std::endl;
+            }
           }
         }
       }
+
+      KIM::Collections::Destroy(&col);
     }
 
-    KIM::Collections::Destroy(&col);
     KIM::Log::PopDefaultVerbosity();
   }
 
