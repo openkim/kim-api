@@ -37,7 +37,7 @@
 #define KIM_MODEL_DRIVER_CREATE_H_
 
 #ifndef KIM_FUNCTION_TYPES_H_
-#include "KIM_FunctionTypes.h"
+#include "KIM_FunctionTypes.h" /* IWYU pragma: export */
 #endif
 
 /* Forward declarations */

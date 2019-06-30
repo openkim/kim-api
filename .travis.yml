@@ -49,7 +49,7 @@ matrix:
       env: CMAKE_BUILD_TYPE=Debug SANITIZE=true COVERAGE=true COVERITY=false
       before_script:
         - brew update &> /dev/null &&
-          brew install gcc@6 ccache&&
+          brew install gcc@6 ccache iwyu &&
           export PATH="/usr/local/opt/ccache/libexec:$PATH" &&
           export CC=gcc-6 &&
           export CXX=g++-6 &&
@@ -59,7 +59,7 @@ matrix:
         - mkdir build &&
           cd build &&
           ccache -z &&
-          cmake -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} ${SANITIZE:+-DKIM_API_ENABLE_SANITIZE=ON} ${COVERAGE:+-DKIM_API_ENABLE_COVERAGE=ON} .. &&
+          cmake -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} ${SANITIZE:+-DKIM_API_ENABLE_SANITIZE=ON} ${COVERAGE:+-DKIM_API_ENABLE_COVERAGE=ON} -DCMAKE_CXX_INCLUDE_WHAT_YOU_USE=include-what-you-use -DCMAKE_C_INCLUDE_WHAT_YOU_USE=include-what-you-use .. &&
           make -j2 &&
           ccache -s &&
           make test &&
@@ -75,7 +75,7 @@ matrix:
           mkdir build &&
           cd build &&
           ccache -z &&
-          cmake -DCMAKE_INSTALL_PREFIX=${PWD}/test-install -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DKIM_API_BUILD_EXAMPLES=OFF ${SANITIZE:+-DKIM_API_ENABLE_SANITIZE=ON} ${COVERAGE:+-DKIM_API_ENABLE_COVERAGE=ON} .. &&
+          cmake -DCMAKE_INSTALL_PREFIX=${PWD}/test-install -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DKIM_API_BUILD_EXAMPLES=OFF ${SANITIZE:+-DKIM_API_ENABLE_SANITIZE=ON} ${COVERAGE:+-DKIM_API_ENABLE_COVERAGE=ON} -DCMAKE_CXX_INCLUDE_WHAT_YOU_USE=include-what-you-use -DCMAKE_C_INCLUDE_WHAT_YOU_USE=include-what-you-use .. &&
           make -j2 install &&
           ccache -s &&
           source ./test-install/bin/kim-api-activate &&
