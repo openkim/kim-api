@@ -883,8 +883,13 @@ int CollectionsImplementation::GetItemMetadataFile(
         cacheListOfItemMetadataFiles_RawData_[index].c_str());
   if (availableAsString)
     *availableAsString = cacheListOfItemMetadataFiles_availableAsString_[index];
-  if ((*availableAsString) && (fileString))
-    *fileString = &(cacheListOfItemMetadataFiles_RawData_[index]);
+  if (fileString)
+  {
+    if (cacheListOfItemMetadataFiles_availableAsString_[index])
+      *fileString = &(cacheListOfItemMetadataFiles_RawData_[index]);
+    else
+      *fileString = NULL;
+  }
 
   LOG_DEBUG("Exit 0=" + callString);
   return false;
