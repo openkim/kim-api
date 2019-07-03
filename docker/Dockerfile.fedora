@@ -55,7 +55,7 @@ ARG TRAVIS_COMMIT
 ARG TRAVIS_OS_NAME
 
 RUN dnf -y install make cmake git gcc-c++ gcc-gfortran ccache wget vim-common \
-                   findutils ${SANITIZE:+libasan}
+                   findutils ${SANITIZE:+libasan} iwyu
 RUN wget -O /usr/bin/codecov https://codecov.io/bash
 RUN chmod +x /usr/bin/codecov
 
@@ -81,6 +81,8 @@ RUN cmake -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} \
           -DCMAKE_INSTALL_PREFIX=/usr \
           ${COVERAGE:+-DKIM_API_ENABLE_COVERAGE=ON} \
           ${SANITIZE:+-DKIM_API_ENABLE_SANITIZE=ON} \
+          -DCMAKE_CXX_INCLUDE_WHAT_YOU_USE=include-what-you-use \
+          -DCMAKE_C_INCLUDE_WHAT_YOU_USE=include-what-you-use \
   ..
 RUN make -j2
 RUN ccache -s
@@ -109,6 +111,8 @@ RUN cmake -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} \
           -DKIM_API_BUILD_EXAMPLES=OFF \
           ${COVERAGE:+-DKIM_API_ENABLE_COVERAGE=ON} \
           ${SANITIZE:+-DKIM_API_ENABLE_SANITIZE=ON} \
+          -DCMAKE_CXX_INCLUDE_WHAT_YOU_USE=include-what-you-use \
+          -DCMAKE_C_INCLUDE_WHAT_YOU_USE=include-what-you-use \
   ..
 RUN make -j2 install
 RUN ccache -s

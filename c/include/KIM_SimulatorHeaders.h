@@ -36,6 +36,7 @@
 #ifndef KIM_SIMULATOR_HEADERS_H_
 #define KIM_SIMULATOR_HEADERS_H_
 
+/* IWYU pragma: begin_exports */
 #ifndef KIM_COLLECTIONS_H_
 #include "KIM_Collections.h"
 #endif
@@ -99,5 +100,6 @@
 #ifndef KIM_SUPPORT_STATUS_H_
 #include "KIM_SupportStatus.h"
 #endif
+/* IWYU pragma: end_exports */
 
 #endif /* KIM_SIMULATOR_HEADERS_H_ */

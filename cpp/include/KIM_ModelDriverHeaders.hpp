@@ -34,6 +34,7 @@
 #ifndef KIM_MODEL_DRIVER_HEADERS_HPP_
 #define KIM_MODEL_DRIVER_HEADERS_HPP_
 
+// IWYU pragma: begin_export
 #ifndef KIM_MODEL_DRIVER_CREATE_HPP_
 #include "KIM_ModelDriverCreate.hpp"
 #endif
@@ -117,5 +118,6 @@
 #ifndef KIM_MODEL_DESTROY_HPP_
 #include "KIM_ModelDestroy.hpp"
 #endif
+// IWYU pragma: end_export
 
 #endif  // KIM_MODEL_DRIVER_HEADERS_HPP_
