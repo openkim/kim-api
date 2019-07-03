@@ -35,6 +35,9 @@
 
 set(C_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ChargeUnit_c.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/KIM_Collection_c.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/KIM_Collections_c.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/KIM_CollectionItemType_c.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ComputeArgumentName_c.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ComputeArguments_c.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ComputeCallbackName_c.cpp
@@ -58,6 +61,7 @@ set(C_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ModelWriteParameterizedModel_c.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_Numbering_c.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_SemVer_c.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/KIM_SimulatorModel_c.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_SpeciesName_c.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_SupportStatus_c.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_TemperatureUnit_c.cpp

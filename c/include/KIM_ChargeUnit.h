@@ -68,7 +68,7 @@ typedef struct KIM_ChargeUnit KIM_ChargeUnit;
 /**
  ** \brief \copybrief KIM::ChargeUnit::ChargeUnit(std::string const &)
  **
- ** \sa KIM::ChargeUnit::ChargeUnit(std::string const &), ,
+ ** \sa KIM::ChargeUnit::ChargeUnit(std::string const &),
  ** kim_charge_unit_module::kim_from_string
  **
  ** \since 2.0

@@ -137,7 +137,7 @@ namespace COLLECTION_ITEM_TYPE
 ///
 /// The item is a model driver.
 ///
-/// \sa KIM_COLLECTION_ITEM_TPYE_modelDriver,
+/// \sa KIM_COLLECTION_ITEM_TYPE_modelDriver,
 /// kim_collection_item_type_module::kim_collection_item_type_model_driver
 ///
 /// \since 2.1
@@ -147,7 +147,7 @@ extern CollectionItemType const modelDriver;
 ///
 /// The item is a portable model.
 ///
-/// \sa KIM_COLLECTION_ITEM_TPYE_portableModel,
+/// \sa KIM_COLLECTION_ITEM_TYPE_portableModel,
 /// kim_collection_item_type_module::kim_collection_item_type_portable_model
 ///
 /// \since 2.1
@@ -157,7 +157,7 @@ extern CollectionItemType const portableModel;
 ///
 /// The item is a simulator model.
 ///
-/// \sa KIM_COLLECTION_ITEM_TPYE_simulatorModel,
+/// \sa KIM_COLLECTION_ITEM_TYPE_simulatorModel,
 /// kim_collection_item_type_module::kim_collection_item_type_simulator_model
 ///
 /// \since 2.1

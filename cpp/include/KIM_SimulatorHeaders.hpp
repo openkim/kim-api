@@ -42,12 +42,16 @@
 #include "KIM_Collection.hpp"
 #endif
 
-#ifndef KIM_COLLECTION_ITEM_TYPE__
+#ifndef KIM_COLLECTION_ITEM_TYPE_HPP_
 #include "KIM_CollectionItemType.hpp"
 #endif
 
 #ifndef KIM_MODEL_HPP_
 #include "KIM_Model.hpp"
+#endif
+
+#ifndef KIM_SIMULATOR_MODEL_HPP_
+#include "KIM_SimulatorModel.hpp"
 #endif
 
 #ifndef KIM_LOG_VERBOSITY_HPP_

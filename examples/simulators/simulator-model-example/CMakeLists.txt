@@ -52,7 +52,7 @@ endif()
 # End preamble
 
 
-set(TEST_NAME "collections-example")
+set(TEST_NAME "simulator-model-example")
 
 add_executable(${TEST_NAME} ${TEST_NAME}.cpp)
 target_link_libraries(${TEST_NAME} kim-api)
