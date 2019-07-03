@@ -211,7 +211,8 @@ int ProcessConfigFileLine(char const * const line,
   char * word;
   char const * const sep = " \t=";
 
-  strncpy(linecpy, line, LINELEN);
+  strncpy(linecpy, line, LINELEN - 1);
+  linecpy[LINELEN - 1] = '\0';
 
   word = strtok(linecpy, sep);
   if (strcmp(identifier, word))
