@@ -148,12 +148,15 @@ int SharedLibrary::Open(std::string const & sharedLibraryName)
     createRoutine_ = schemaV2->createRoutine;
     driverName_ = ((schemaV2->driverName) ? schemaV2->driverName : "");
 
-    simulatorModelSpecificationFile_.fileName
-        = schemaV2->simulatorModelSpecificationFile->fileName;
-    simulatorModelSpecificationFile_.fileLength
-        = schemaV2->simulatorModelSpecificationFile->fileLength;
-    simulatorModelSpecificationFile_.filePointer
-        = schemaV2->simulatorModelSpecificationFile->filePointer;
+    if (schemaV2->simulatorModelSpecificationFile)
+    {
+      simulatorModelSpecificationFile_.fileName
+          = schemaV2->simulatorModelSpecificationFile->fileName;
+      simulatorModelSpecificationFile_.fileLength
+          = schemaV2->simulatorModelSpecificationFile->fileLength;
+      simulatorModelSpecificationFile_.filePointer
+          = schemaV2->simulatorModelSpecificationFile->filePointer;
+    }
 
     numberOfParameterFiles_ = schemaV2->numberOfParameterFiles;
     for (int i = 0; i < numberOfParameterFiles_; ++i)
@@ -215,12 +218,15 @@ int SharedLibrary::Open(std::string const & sharedLibraryName)
     createRoutine_ = schemaV1->createRoutine;
     driverName_ = ((schemaV1->driverName) ? schemaV1->driverName : "");
 
-    simulatorModelSpecificationFile_.fileName
-        = schemaV1->metadataFile->fileName;
-    simulatorModelSpecificationFile_.fileLength
-        = schemaV1->metadataFile->fileLength;
-    simulatorModelSpecificationFile_.filePointer
-        = schemaV1->metadataFile->filePointer;
+    if (schemaV1->metadataFile)
+    {
+      simulatorModelSpecificationFile_.fileName
+          = schemaV1->metadataFile->fileName;
+      simulatorModelSpecificationFile_.fileLength
+          = schemaV1->metadataFile->fileLength;
+      simulatorModelSpecificationFile_.filePointer
+          = schemaV1->metadataFile->filePointer;
+    }
 
     numberOfParameterFiles_ = schemaV1->numberOfParameterFiles;
     for (int i = 0; i < numberOfParameterFiles_; ++i)
