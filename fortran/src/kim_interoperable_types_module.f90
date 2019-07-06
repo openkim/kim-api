@@ -38,6 +38,7 @@ module kim_interoperable_types_module
 
   public &
     ! Derived types
+    kim_collections_type, &
     kim_compute_arguments_type, &
     kim_log_type, &
     kim_model_compute_arguments_create_type, &
@@ -50,8 +51,14 @@ module kim_interoperable_types_module
     kim_model_driver_create_type, &
     kim_model_type, &
     kim_model_refresh_type, &
-    kim_model_write_parameterized_model_type
+    kim_model_write_parameterized_model_type, &
+    kim_simulator_model_type
 
+
+  type, bind(c) :: kim_collections_type
+    private
+    type(c_ptr) :: p
+  end type kim_collections_type
 
   type, bind(c) :: kim_compute_arguments_type
     private
@@ -117,4 +124,9 @@ module kim_interoperable_types_module
     private
     type(c_ptr) :: p
   end type kim_model_write_parameterized_model_type
+
+  type, bind(c) :: kim_simulator_model_type
+    private
+    type(c_ptr) :: p
+  end type kim_simulator_model_type
 end module kim_interoperable_types_module

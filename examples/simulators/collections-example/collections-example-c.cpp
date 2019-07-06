@@ -250,6 +250,6 @@ int main()
     }
   }
 
-
+  KIM_Collections_Destroy(&col);
   return 0;
 }

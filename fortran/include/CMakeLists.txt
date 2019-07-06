@@ -38,6 +38,9 @@ target_include_directories(kim-api PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 set(F_MOD_DIR $<TARGET_PROPERTY:kim-api,Fortran_MODULE_DIRECTORY>)
 set(FORTRAN_MODULES
   ${F_MOD_DIR}/kim_charge_unit_module.mod
+  ${F_MOD_DIR}/kim_collection_item_type_module.mod
+  ${F_MOD_DIR}/kim_collection_module.mod
+  ${F_MOD_DIR}/kim_collections_module.mod
   ${F_MOD_DIR}/kim_compute_argument_name_module.mod
   ${F_MOD_DIR}/kim_compute_arguments_module.mod
   ${F_MOD_DIR}/kim_compute_callback_name_module.mod
@@ -64,6 +67,7 @@ set(FORTRAN_MODULES
   ${F_MOD_DIR}/kim_numbering_module.mod
   ${F_MOD_DIR}/kim_sem_ver_module.mod
   ${F_MOD_DIR}/kim_simulator_headers_module.mod
+  ${F_MOD_DIR}/kim_simulator_model_module.mod
   ${F_MOD_DIR}/kim_species_name_module.mod
   ${F_MOD_DIR}/kim_support_status_module.mod
   ${F_MOD_DIR}/kim_supported_extensions_module.mod
@@ -76,6 +80,9 @@ install(FILES ${FORTRAN_MODULES} DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PROJECT_N
 
 set(F_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/kim_charge_unit_module.f90
+  ${CMAKE_CURRENT_SOURCE_DIR}/kim_collection_item_type_module.f90
+  ${CMAKE_CURRENT_SOURCE_DIR}/kim_collection_module.f90
+  ${CMAKE_CURRENT_SOURCE_DIR}/kim_collections_module.f90
   ${CMAKE_CURRENT_SOURCE_DIR}/kim_compute_argument_name_module.f90
   ${CMAKE_CURRENT_SOURCE_DIR}/kim_compute_arguments_module.f90
   ${CMAKE_CURRENT_SOURCE_DIR}/kim_compute_callback_name_module.f90
@@ -102,6 +109,7 @@ set(F_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/kim_numbering_module.f90
   ${CMAKE_CURRENT_SOURCE_DIR}/kim_sem_ver_module.f90
   ${CMAKE_CURRENT_SOURCE_DIR}/kim_simulator_headers_module.f90
+  ${CMAKE_CURRENT_SOURCE_DIR}/kim_simulator_model_module.f90
   ${CMAKE_CURRENT_SOURCE_DIR}/kim_species_name_module.f90
   ${CMAKE_CURRENT_SOURCE_DIR}/kim_support_status_module.f90
   ${CMAKE_CURRENT_SOURCE_DIR}/kim_supported_extensions_module.f90

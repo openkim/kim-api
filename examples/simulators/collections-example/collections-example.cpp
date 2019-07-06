@@ -221,6 +221,6 @@ int main()
     }
   }
 
-
+  KIM::Collections::Destroy(&col);
   return 0;
 }

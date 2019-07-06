@@ -34,7 +34,11 @@
 module kim_simulator_headers_module
   use, intrinsic :: iso_c_binding
 
+  use kim_collections_module
+  use kim_collection_module
+  use kim_collection_item_type_module
   use kim_model_module
+  use kim_simulator_model_module
   use kim_log_verbosity_module
   use kim_data_type_module
   use kim_language_name_module

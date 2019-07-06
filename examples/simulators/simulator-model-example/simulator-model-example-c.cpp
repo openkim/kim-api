@@ -154,8 +154,8 @@ int main()
   }
 
   KIM_SimulatorModel_Destroy(&SM);
-  return false;
+  return 0;
 fail:
   KIM_SimulatorModel_Destroy(&SM);
-  return true;
+  return 1;
 }

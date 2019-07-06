@@ -59,3 +59,6 @@ target_link_libraries(${TEST_NAME} kim-api)
 
 add_executable(${TEST_NAME}-c ${TEST_NAME}-c.cpp)
 target_link_libraries(${TEST_NAME}-c kim-api)
+
+add_executable(${TEST_NAME}-fortran ${TEST_NAME}-fortran.f90)
+target_link_libraries(${TEST_NAME}-fortran kim-api)

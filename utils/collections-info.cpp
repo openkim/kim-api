@@ -555,9 +555,10 @@ int getItemMetadata(int argc, char * argv[])
           {
             std::string const * fileName;
             std::string const * data;
+            unsigned int fileLength;
             int asString;
             error = col->GetItemMetadataFile(
-                i, &fileName, NULL, NULL, &asString, &data);
+                i, &fileName, &fileLength, NULL, &asString, &data);
             if ((error) || (!asString))
             {
               std::cout << "=== MD " << i << " === "
@@ -571,7 +572,8 @@ int getItemMetadata(int argc, char * argv[])
             {
               std::string s(*data);
               s.erase(s.find_last_not_of(" \n\r\t") + 1);  // rtrim
-              std::cout << "=== MD " << i << " === " << *fileName << std::endl;
+              std::cout << "=== MD " << i << " === " << *fileName
+                        << " === " << fileLength << " ===" << std::endl;
               std::cout << s << std::endl;
               std::cout << "======="
                         << "="
