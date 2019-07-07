@@ -239,7 +239,8 @@ class Collections
   ///       \c fileString are unchanged if an error occurs.
   ///
   /// \sa KIM_Collections_GetItemMetadataFile,
-  /// kim_collections_module::kim_get_item_metadata_file
+  /// kim_collections_module::kim_get_item_metadata_file_length,
+  /// kim_collections_module::kim_get_item_metadata_file_values
   ///
   /// \since 2.1
   int GetItemMetadataFile(int const index,
@@ -424,7 +425,10 @@ class Collections
   ///       \c fileString are unchanged if an error occurs.
   ///
   /// \sa KIM_Collections_GetItemMetadataFileByCollectionAndType,
-  /// kim_collections_module::kim_get_item_metadata_file_by_collection_and_type
+  /// kim_collections_module::kim_get_item_metadata_file_length_<!--
+  /// -->by_collection_and_type,
+  /// kim_collections_module::kim_get_item_metadata_file_values_<!--
+  /// -->_by_collection_and_type
   ///
   /// \since 2.1
   int GetItemMetadataFileByCollectionAndType(

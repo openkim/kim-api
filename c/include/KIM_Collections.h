@@ -146,7 +146,8 @@ int KIM_Collections_CacheListOfItemMetadataFiles(
  ** \brief \copybrief KIM::Collections::GetItemMetadataFile
  **
  ** \sa KIM::Collections::GetItemMetadataFile,
- ** kim_collections_module::kim_get_item_metadata_file
+ ** kim_collections_module::kim_get_item_metadata_file_length,
+ ** kim_collections_module::kim_get_item_metadata_file_values
  **
  ** \since 2.1
  **/
@@ -216,8 +217,8 @@ int KIM_Collections_GetItemNameByCollectionAndType(
  ** -->KIM::Collections::GetItemLibraryFileNameByCollectionAndType
  **
  ** \sa KIM::Collections::GetItemLibraryFileNameByCollectionAndType,
- ** kim_collections_module::<!---
- ** ->kim_get_item_library_file_name_by_collection_and_type
+ ** kim_collections_module::<!--
+ ** -->kim_get_item_library_file_name_by_collection_and_type
  **
  ** \since 2.1
  **/
@@ -249,7 +250,10 @@ int KIM_Collections_CacheListOfItemMetadataFilesByCollectionAndType(
  ** \brief \copybrief KIM::Collections::GetItemMetadataFileByCollectionAndType
  **
  ** \sa KIM::Collections::GetItemMetadataFileByCollectionAndType,
- ** kim_collections_module::kim_get_item_metadata_file_by_collection_and_type
+ ** kim_collections_module::kim_get_item_metadata_file_length_<!--
+ ** -->by_collection_and_type,
+ ** kim_collections_module::kim_get_item_metadata_file_values_<!--
+ ** -->by_collection_and_type
  **
  ** \since 2.1
  **/

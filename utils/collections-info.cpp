@@ -326,10 +326,14 @@ void listItems(KIM::CollectionItemType const type,
               }
             }
 
+            std::size_t found = itemLibraryFileName->find_last_of("/");
+            std::string dir = itemLibraryFileName->substr(0, found);
+            found = dir.find_last_of("/");
+            dir = dir.substr(0, found);
             std::string s(*itemCompVer);
             s.erase(s.find_last_not_of(" \n\r\t") + 1);  // rtrim
-            std::cout << colList[i].ToString() << " " << *itemName << " "
-                      << *itemLibraryFileName << " " << s << std::endl;
+            std::cout << colList[i].ToString() << " " << *itemName << " " << dir
+                      << " " << s << std::endl;
           }
         }
       }
@@ -362,10 +366,14 @@ void listItems(KIM::CollectionItemType const type,
             break;
           }
         }
+        std::size_t found = itemFileName->find_last_of("/");
+        std::string dir = itemFileName->substr(0, found);
+        found = dir.find_last_of("/");
+        dir = dir.substr(0, found);
         std::string s(*itemCompVer);
         s.erase(s.find_last_not_of(" \n\r\t") + 1);  // rtrim
-        std::cout << collection.ToString() << " " << name << " "
-                  << *itemFileName << " " << s << std::endl;
+        std::cout << collection.ToString() << " " << name << " " << dir << " "
+                  << s << std::endl;
       }
     }
 
