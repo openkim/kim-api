@@ -1,0 +1,55 @@
+#!/bin/sh
+
+if test $# != 3; then
+  printf "usage: run-cmds-from-install (IN_WORKSPACE|GLOBAL) <WORKSPACE> <KIM_API_SOURCE>\n"
+  exit 1
+fi
+
+if test x"IN_WORKSPACE" = x"${1}"; then
+  EXTRA_CMDS=YES
+elif test x"GLOBAL" = x"${1}"; then
+  EXTRA_CMDS=NO
+else
+  printf "First argument is no one of: IN_WORKSPACE or GLOBAL\n"
+  exit 1
+fi
+
+if test ! -d "$2"; then
+  printf "WORKSPACE does not exist."
+  exit 2
+fi
+if test ! -d "$3"; then
+  printf "KIM_API_SOURCE does not exist."
+  exit 3
+fi
+
+WORKSPACE="$2"
+KIM_API_SOURCE="$3"
+
+CMDS=$(grep '^\$' "${KIM_API_SOURCE}/INSTALL" | \
+         sed -e 's|#.*$||g' \
+             -e 's|^\$ ||' \
+             -e 's|$| \&\&|' \
+    )
+
+if test x"YES" = x"${EXTRA_CMDS}"; then
+  CMDS=$(printf "${CMDS}" | \
+           sed -e 's|\(-DCMAKE_BUILD_TYPE=Release\)|\1 -DCMAKE_INSTALL_PREFIX=${WORKSPACE}/install-kim|' \
+               -e 's|\(make install\)|\1 \&\& source ${WORKSPACE}/install-kim/bin/kim-api-activate|' \
+               -e 's|--sudo *||g' \
+               -e 's|sudo *||g' \
+      )
+fi
+
+CMDS=`printf "set -x;\n%s\n%s &&\n%s &&\n%s;\nset +x;" "${CMDS}" \
+  "kim-api-collections-management remove --force LennardJones_Ar" \
+  "kim-api-collections-management remove-all --force" \
+  "kim-api-collections-management list"`
+
+printf "\n\n"
+printf "==============================================================================\n"
+printf "${CMDS}\n"
+printf "==============================================================================\n"
+printf "\n\n"
+
+eval "${CMDS}"
