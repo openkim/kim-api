@@ -41,7 +41,7 @@ if test x"YES" = x"${EXTRA_CMDS}"; then
       )
 fi
 
-CMDS=`printf "set -x;\n%s\n%s &&\n%s &&\n%s;\nset +x;" "${CMDS}" \
+CMDS=`printf "set -x &&\n%s\n%s &&\n%s &&\n%s &&\nset +x;" "${CMDS}" \
   "kim-api-collections-management remove --force LennardJones_Ar" \
   "kim-api-collections-management remove-all --force" \
   "kim-api-collections-management list"`
