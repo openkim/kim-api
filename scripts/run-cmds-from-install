@@ -36,6 +36,7 @@ if test x"YES" = x"${EXTRA_CMDS}"; then
   CMDS=$(printf "${CMDS}" | \
            sed -e 's|\(-DCMAKE_BUILD_TYPE=Release\)|\1 -DCMAKE_INSTALL_PREFIX=${WORKSPACE}/install-kim|' \
                -e 's|\(make install\)|\1 \&\& source ${WORKSPACE}/install-kim/bin/kim-api-activate|' \
+               -e '/ldconfig/d' \
                -e 's|--sudo *||g' \
                -e 's|sudo *||g' \
       )

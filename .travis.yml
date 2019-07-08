@@ -83,7 +83,9 @@ matrix:
           kim-api-collections-management install system `find ../examples/model-drivers -type d -mindepth 1 -maxdepth 1` &&
           kim-api-collections-management install system `find ../examples/portable-models -type d -mindepth 1 -maxdepth 1` &&
           kim-api-collections-management install system `find ../examples/simulator-models -type d -mindepth 1 -maxdepth 1` &&
-          kim-api-collections-management list
+          kim-api-collections-management list &&
+          mkdir "${PWD}/WORKSPACE" &&
+          ../scripts/run-cmds-from-install IN_WORKSPACE "${PWD}/WORKSPACE" "${PWD}/.."
     - name: "linux fedora, Debug, Sanitize, Dockehub"
       if: branch != coverity_scan
       os: linux

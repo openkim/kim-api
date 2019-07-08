@@ -55,7 +55,7 @@ ARG TRAVIS_REPO_SLUG
 ARG TRAVIS_COMMIT
 ARG TRAVIS_OS_NAME
 
-RUN dnf -y install make cmake git gcc-c++ gcc-gfortran ccache wget vim-common \
+RUN dnf -y install make cmake git gcc gcc-c++ gcc-gfortran ccache wget vim-common xz \
                    findutils ${SANITIZE:+libasan} iwyu
 RUN wget -O /usr/bin/codecov https://codecov.io/bash
 RUN chmod +x /usr/bin/codecov
@@ -122,3 +122,6 @@ RUN source ./test-install/bin/kim-api-activate && \
     kim-api-collections-management install system `find ../examples/portable-models -mindepth 1 -maxdepth 1 -type d` && \
     kim-api-collections-management install system `find ../examples/simulator-models -mindepth 1 -maxdepth 1 -type d` && \
     kim-api-collections-management list
+
+RUN mkdir "${PWD}/WORKSPACE"
+RUN ../scripts/run-cmds-from-install IN_WORKSPACE "${PWD}/WORKSPACE" "${PWD}/.."
