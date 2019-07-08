@@ -204,6 +204,20 @@ interaction between the simulator and a PM involves the following steps:
   base unit value when the simulator provides a request of "unused" for a
   relevant base unit.
 
+  The %KIM API/PMI supports "Toy Models", which are a deliberately simplistic
+  model with many details removed so that it can be used to explain a mechanism
+  concisely.  Toy models do not model a real material, but are rather
+  associated with a class of materials (e.g., glasses).  Toy models should use
+  the "user" species values (KIM::SPECIES_NAME::user01 through
+  KIM::SPECIES_NAME::user20).  Some toy models are formulated to be
+  nondimensional.  Rather than introducing a new type of nondimensional units
+  to the %KIM API/PMI with accompanying requirements for simulators to support
+  this, toy models are should define their length base unit as
+  KIM::LENGTH_UNIT::A and their energy base unit as KIM::ENERGY_UNIT::eV.  From
+  the perspective of the toy model these can be considered proxy units (similar
+  to Lennard-Jones units).  (See also [Toy Model support within
+  openkim.org](https://openkim.org/about-toy-models).)
+
 - Once a PM object is obtained, the simulator should use
   KIM::Model::IsRoutinePresent to determine which routines the model has
   provided and if they are required or optional.  From this information the
@@ -432,4 +446,4 @@ LocalWords:  ModelComputeArgumentsCreate ModelComputeArgumentsDestroy ge cdot
 LocalWords:  Modelcompureargumentsdestroy ModelExtension CMake PMI PMs MDs tr
 LocalWords:  modelWillNotRequestNeighborsOfNoncontributingParticles td br PM's
 LocalWords:  ModelWriteParameterizedModel requestedUnitsAccepted SMI SMs SM's
-LocalWords:  metadata programatic SM SMI's
+LocalWords:  metadata programatic SM SMI's nondimensional Lennard openkim org

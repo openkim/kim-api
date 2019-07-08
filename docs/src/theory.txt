@@ -139,7 +139,7 @@ E_i = \bar{E}_i(\mathbf{r}^{(j)} \;|\; j \in
 \bar{\mathcal{N}}^{(i)}_{r_{\text{infl}}}).
 \f]
 
-In fact, due to the principle of material frame indifference, this function can
+In fact, due to the principle of material frame indifference, this function must
 only be a function of the <em>distances</em> between these particles:
 
 \f[
@@ -147,6 +147,11 @@ E_i = \tilde{E}_i( r^{(j,k)} \;|\; j,k \in
 \bar{\mathcal{N}}^{(i)}_{r_{\text{infl}}})
 .
 \f]
+
+Further, it is required that the energy-per-particle function is independent of
+the particle numbering.  That is, the value of the energy function cannot
+depend on the order in which the particles are labeled with a unique
+identification number.
 
 It is usually most convenient to work with the function of position vectors,
 \f$\bar{E}_i(\mathbf{r}^{(j)})\f$.  However, in some cases it is advantageous
@@ -399,4 +404,4 @@ Next Section: \ref implementation.
 
 LocalWords:  CDDL yyyy Ellad Tadmor Karls kim api infl Ni Cu virial monte Li
 LocalWords:  carlo atomistic mathcal mathbf equiv ac cp ncp emptyset le otimes
-LocalWords:  unaccented html jpg pdf np ref em
+LocalWords:  unaccented html jpg pdf np ref em PMI PMs PM's
