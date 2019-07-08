@@ -36,6 +36,7 @@ FROM fedora:latest
 
 ARG COVERAGE
 ARG SANITIZE
+ARG IWYU
 ARG CC
 ARG CXX
 ARG CXXFLAGS
@@ -81,8 +82,8 @@ RUN cmake -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} \
           -DCMAKE_INSTALL_PREFIX=/usr \
           ${COVERAGE:+-DKIM_API_ENABLE_COVERAGE=ON} \
           ${SANITIZE:+-DKIM_API_ENABLE_SANITIZE=ON} \
-          -DCMAKE_CXX_INCLUDE_WHAT_YOU_USE=include-what-you-use \
-          -DCMAKE_C_INCLUDE_WHAT_YOU_USE=include-what-you-use \
+          ${IWYU:+-DCMAKE_CXX_INCLUDE_WHAT_YOU_USE=include-what-you-use} \
+          ${IWYU:+-DCMAKE_C_INCLUDE_WHAT_YOU_USE=include-what-you-use} \
   ..
 RUN make -j2
 RUN ccache -s
@@ -111,8 +112,8 @@ RUN cmake -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} \
           -DKIM_API_BUILD_EXAMPLES=OFF \
           ${COVERAGE:+-DKIM_API_ENABLE_COVERAGE=ON} \
           ${SANITIZE:+-DKIM_API_ENABLE_SANITIZE=ON} \
-          -DCMAKE_CXX_INCLUDE_WHAT_YOU_USE=include-what-you-use \
-          -DCMAKE_C_INCLUDE_WHAT_YOU_USE=include-what-you-use \
+          ${IWYU:+-DCMAKE_CXX_INCLUDE_WHAT_YOU_USE=include-what-you-use} \
+          ${IWYU:+-DCMAKE_C_INCLUDE_WHAT_YOU_USE=include-what-you-use} \
   ..
 RUN make -j2 install
 RUN ccache -s

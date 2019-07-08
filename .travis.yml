@@ -54,12 +54,13 @@ matrix:
           export CC=gcc-6 &&
           export CXX=g++-6 &&
           export FC=gfortran-6
+          export IWYU=YES
         - env
       script:
         - mkdir build &&
           cd build &&
           ccache -z &&
-          cmake -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} ${SANITIZE:+-DKIM_API_ENABLE_SANITIZE=ON} ${COVERAGE:+-DKIM_API_ENABLE_COVERAGE=ON} -DCMAKE_CXX_INCLUDE_WHAT_YOU_USE=include-what-you-use -DCMAKE_C_INCLUDE_WHAT_YOU_USE=include-what-you-use .. &&
+          cmake -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} ${SANITIZE:+-DKIM_API_ENABLE_SANITIZE=ON} ${COVERAGE:+-DKIM_API_ENABLE_COVERAGE=ON} ${IWYU:+-DCMAKE_CXX_INCLUDE_WHAT_YOU_USE=include-what-you-use} ${IWYU:+-DCMAKE_C_INCLUDE_WHAT_YOU_USE=include-what-you-use} .. &&
           make -j2 &&
           ccache -s &&
           make test &&
@@ -75,7 +76,7 @@ matrix:
           mkdir build &&
           cd build &&
           ccache -z &&
-          cmake -DCMAKE_INSTALL_PREFIX=${PWD}/test-install -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DKIM_API_BUILD_EXAMPLES=OFF ${SANITIZE:+-DKIM_API_ENABLE_SANITIZE=ON} ${COVERAGE:+-DKIM_API_ENABLE_COVERAGE=ON} -DCMAKE_CXX_INCLUDE_WHAT_YOU_USE=include-what-you-use -DCMAKE_C_INCLUDE_WHAT_YOU_USE=include-what-you-use .. &&
+          cmake -DCMAKE_INSTALL_PREFIX=${PWD}/test-install -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DKIM_API_BUILD_EXAMPLES=OFF ${SANITIZE:+-DKIM_API_ENABLE_SANITIZE=ON} ${COVERAGE:+-DKIM_API_ENABLE_COVERAGE=ON} ${IWYU:+-DCMAKE_CXX_INCLUDE_WHAT_YOU_USE=include-what-you-use} {$IWYU:+-DCMAKE_C_INCLUDE_WHAT_YOU_USE=include-what-you-use} .. &&
           make -j2 install &&
           ccache -s &&
           source ./test-install/bin/kim-api-activate &&
@@ -104,6 +105,7 @@ matrix:
                    --build-arg CMAKE_BUILD_TYPE="${CMAKE_BUILD_TYPE}"
                    --build-arg COVERAGE="${COVERAGE}"
                    --build-arg SANITIZE="${SANITIZE}"
+                   --build-arg IWYU=${LEAVE_EMPTY_WHILE_FEDORAS_IWYU_IS_SO_OLD:+}
                    --build-arg CI=${CI}
                    --build-arg TRAVIS=${TRAVIS}
                    --build-arg TRAVIS_OS_NAME=${DISTRO:-fedora}
