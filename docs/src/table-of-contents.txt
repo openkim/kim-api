@@ -37,20 +37,34 @@
 \mainpage Table of Contents
 
 The Knowledgebase of Interatomic Models (%KIM) Application Programming
-Interface (API) defines a standard for how molecular simulators interface with
-interatomic models (also called potentials or force-fields).  This allows a
-single computer implementation of a model to be used (without modification)
-within multiple simulator codes.  See [openkim.org](https://openkim.org) to
-find hundreds of model implementations,
+Interface (API) defines a standard (the Portable Model Interface (PMI)) for how
+molecular simulators interface with interatomic models (also called potentials
+or force-fields).  This allows a single computer implementation of a Portable
+Model (PM) to be used (without modification) within multiple simulator codes.
+A PM can include code and parameters all in one.  Or, a PM can include just
+parameters and use a separate Model Driver (MD) library containing the code.
+See [openkim.org](https://openkim.org) to find hundreds of portable model
+implementations,
 [openkim.org/projects-using-kim](https://openkim.org/projects-using-kim) to
-learn which simulators support the %KIM API, and
-[openkim.org/kim-api](https://openkim.org/kim-api) to learn how to use %KIM
-models with those simulators.
+learn which simulators support the %KIM API/PMI, and
+[openkim.org/kim-api](https://openkim.org/kim-api) to learn how to use %KIM PMs
+with those simulators.  The %KIM API also defines a standard (the Simulator
+Model Interface (SMI)) that allows for the creation and curation of Simulator
+Models (SMs), which are packages containing the metadata necessary for how to
+setup and run a model that is implemented as an integrated part of a simulation
+code (simulator).  A %KIM SM includes all of the necessary parameter files,
+simulator input commands, and metadata (supported species, units, etc.)  needed
+to run the model in its native simulator.  See
+[openkim.org](https://openkim.org) to find hundreds of SM packages,
+[openkim.org/projects-using-kim](https://openkim.org/projects-using-kim) to
+learn which simulators support the %KIM API/SMI, and
+[openkim.org/kim-api](https://openkim.org/kim-api) to learn how to use %KIM SMs
+with those simulators.
 
 This documentation describes the specifications and official implementation of
 the %KIM API as a system-level software library that gives computer programmers
-the ability to write models and/or simulators in supported programming language
-(C, C++, FORTRAN 77, Fortran 90/95/2003).
+the ability to write PM, SM, and/or Simulators in supported programming
+language (C, C++, FORTRAN 77, Fortran 90/95/2003).
 
 Table of Contents:
 
@@ -60,21 +74,33 @@ Table of Contents:
 
 -# \ref implementation
 
--# Example simulators written in C++ (\ref ex_test_Ar_fcc_cluster_cpp.cpp), C
-   (\ref ex_test_Ar_fcc_cluster.c), and Fortran
-   (\ref ex_test_Ar_fcc_cluster_fortran.f90).
-
--# Example stand-alone models written in C++ (\ref LennardJones_Ar.cpp), C
+-# Example Portable Models (PMs) written in C++ (\ref LennardJones_Ar.cpp), C
    (\ref ex_model_Ar_P_Morse_07C.c, ex_model_Ar_P_Morse_MultiCutoff.c,
    ex_model_Ar_P_Morse_07C_w_Extensions.c) and Fortran (\ref
    ex_model_Ar_P_MLJ_Fortran.f90, ex_model_Ar_SLJ_MultiCutoff.f90)
 
--# Example model drivers written in C++
-   (LennardJones612Implementation.hpp), C (ex_model_driver_P_Morse.c),
-   and Fortran (ex_model_driver_P_LJ.f90).
+-# Example Model Drivers (MDs) written in C++
+   (LennardJones612Implementation.hpp), C (ex_model_driver_P_Morse.c), and
+   Fortran (ex_model_driver_P_LJ.f90).
 
--# Example parameterized models (ex_model_Ar_P_LJ.params,
-   ex_model_Ar_P_Morse.params, LennardJones612_UniversalShifted.params)
+-# Example PMs using MDs (ex_model_Ar_P_LJ.params, ex_model_Ar_P_Morse.params,
+   LennardJones612_UniversalShifted.params)
+
+-# An Example SM (<em>Sim_LAMMPS_LJcut_AkersonElliott_Alchemy_PbAu</em>, with
+   specification file [smspec.edn](smspec_8edn_source.html) and parameter file
+   [Alchemy_PbAu.in](_alchemy___pb_au_8in_source.html)).
+
+-# Example Simulators written in C++ (ex_test_Ar_fcc_cluster_cpp.cpp,
+   collections-example.cpp, simulator-model-example.cpp), C
+   (ex_test_Ar_fcc_cluster.c, collections-example-c.cpp,
+   simulator-model-example-c.cpp), and Fortran (
+   ex_test_Ar_fcc_cluster_fortran.f90, collections-example-fortran.f90,
+   simulator-model-example-fortran.f90).
+
+-# A utility for checking the consistency between a PM's energy function and
+   its forces function (utility_forces_numer_deriv.f90).  This performs a
+   numerical differentiation of the PM's energy, using Ridder's method, and
+   compares the result with the PM's forces.
 
 -# \ref version2_differences
 
@@ -90,5 +116,6 @@ for [browsing](files.html).
 */
 
 LocalWords:  CDDL yyyy Ellad Tadmor kim api mainpage atomistic interatomic ref
-LocalWords:  Ar fcc cpp fortran MLJ LennardJones hpp LJ params html SLJ org
-LocalWords:  MultiCutoff UniversalShifted Knowledgebase openkim
+LocalWords:  Ar fcc cpp fortran MLJ LennardJones hpp LJ params html SLJ org SM
+LocalWords:  MultiCutoff UniversalShifted Knowledgebase openkim PMI PMs SMI
+LocalWords:  curation SMs metadata MDs

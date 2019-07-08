@@ -39,18 +39,20 @@
 
 Previous Section: \ref theory.
 
-In code, a model (or model driver) consists of up to eight routines which
-perform specific tasks:
+## The %KIM API Portable Model Interface (%KIM API/PMI)
+
+In code, Portable Models (PMs) and Model Drivers (MDs) consist of up to eight
+routines which perform specific tasks.
 
 -# The <em>ModelCreate</em> (or \em ModelDriverCreate ) routine (required),
-   which performs initialization tasks for the model object.
+   which performs initialization tasks for the KIM::Model object.
 
 -# The <em>ModelComputeArgumentsCreate</em> routine (required), which performs
-   initialization tasks for a compute-arguments object.
+   initialization tasks for a KIM::ComputeArguments object.
 
 -# The \em ModelCompute routine (required), which uses the configuration
-   information stored in a compute-arguments object to perform the
-   model's core computational tasks.
+   information stored in a KIM::ComputeArguments object to perform the model's
+   core computational tasks.
 
 -# The <em>ModelExtension</em> routine (optional), which provides a mechanism
    for creating and using non-standard extensions to the %KIM API.
@@ -64,45 +66,128 @@ perform specific tasks:
    parameterized model from the current set of in-memory parameters.
 
 -# The \em ModelComputeArgumentsDestroy routine (required), which performs
-   finalization tasks for a compute-arguments object.
+   finalization tasks for a KIM::ComputeArguments object.
 
 -# The <em>ModelDestroy</em> routine (required), which performs finalization
-   tasks for the model object.
+   tasks for the KIM::Model object.
 
-These are summarized in the following table.
+The %KIM API/PMI provides a separate interface to be used by the PM or MD for
+each of these routines.  The routines and their associated interfaces are
+summarized in the following table.
 
-| Model Routine                                    | Required / Optional |
-| ------------------------------------------------ | ------------------- |
-| KIM::MODEL_ROUTINE_NAME::Create                  | required            |
-| KIM::MODEL_ROUTINE_NAME::ComputeArgumentsCreate  | required            |
-| KIM::MODEL_ROUTINE_NAME::Compute                 | required            |
-| KIM::MODEL_ROUTINE_NAME::Extension               | optional            |
-| KIM::MODEL_ROUTINE_NAME::Refresh                 | required if one or more parameter pointers set, otherwise should not be provided |
-| KIM::MODEL_ROUTINE_NAME::WriteParameterizedModel | optional            |
-| KIM::MODEL_ROUTINE_NAME::ComputeArgumentsDestroy | required            |
-| KIM::MODEL_ROUTINE_NAME::Destroy                 | required            |
+<table><caption align=top></caption>
+<tr>
+  <th>
+    Model Routine Name
+  </th><th>
+    Required / Optional
+  </th><th>
+    %KIM API/PMI Interface
+  </th>
+</tr>
+<tr>
+  <td>
+    KIM::MODEL_ROUTINE_NAME::Create
+  </td><td>
+    required
+  </td><td>
+    KIM::ModelCreate or
+    <br>
+    KIM::ModelDriverCreate
+  </td>
+</tr>
+<tr>
+  <td>
+    KIM::MODEL_ROUTINE_NAME::ComputeArgumentsCreate
+  </td><td>
+    required
+  </td><td>
+    KIM::ModelComputeArgumentsCreate
+  </td>
+</tr>
+<tr>
+  <td>
+    KIM::MODEL_ROUTINE_NAME::Compute
+  </td><td>
+    required
+  </td><td>
+    KIM::ModelCompute and
+    <br>
+    KIM::ModelComputeArguments
+  </td>
+</tr>
+<tr>
+  <td>
+    KIM::MODEL_ROUTINE_NAME::Extension
+  </td><td>
+    optional
+  </td><td>
+    KIM::ModelExtension
+  </td>
+</tr>
+<tr>
+  <td>
+    KIM::MODEL_ROUTINE_NAME::Refresh
+  </td><td>
+    required if one or more parameter pointers set,
+    <br>
+    otherwise should not be provided
+  </td><td>
+    KIM::ModelRefresh
+  </td>
+</tr>
+<tr>
+  <td>
+    KIM::MODEL_ROUTINE_NAME::WriteParameterizedModel
+  </td><td>
+    optional
+  </td><td>
+    KIM::ModelWriteParameterizedModel
+  </td>
+</tr>
+<tr>
+  <td>
+    KIM::MODEL_ROUTINE_NAME::ComputeArgumentsDestroy
+  </td><td>
+    required
+  </td><td>
+    KIM::ModelComputeArgumentsDestroy
+  </td>
+</tr>
+<tr>
+  <td>
+    KIM::MODEL_ROUTINE_NAME::Destroy
+  </td><td>
+    required
+  </td><td>
+    KIM::ModelDestroy
+  </td>
+</tr>
+</table>
 
-The above table indicates which routines must be provided by a model.  For
+The above table also indicates which routines must be provided by a model.  For
 optional routines, each model must indicate that the routine is required or
 optional for use by the simulator, as described below.
 
-The interaction between the simulator and a model involves the following
-steps:
+The %KIM API/PMI provides two interfaces to be used by the Simulator,
+KIM::Model and KIM::ComputeArguments, for interacting with a PM.  The
+interaction between the simulator and a PM involves the following steps:
 
-- A simulator creates a <em>model object</em>, by calling KIM::Model::Create,
-  that will be used to exchange pointers to data and functions related to the
-  model between the simulator and model.  Creating this object includes the
-  specification of how the simulator will number particles (zero-based or
-  one-based), determination of the physical base units that the model will use,
-  and execution of the model's <em>ModelCreate</em> routine.
+- A simulator creates a <em>Portable Model object</em>, by calling
+  KIM::Model::Create, that will be used to exchange pointers to data and
+  functions related to the model between the simulator and PM.  Creating
+  this object includes the specification of how the simulator will number
+  particles (zero-based or one-based), determination of the physical base units
+  that the model will use, and execution of the model's <em>ModelCreate</em>
+  routine.
 
-  When calling KIM::Model::Create to create a <em>model object</em>, the
-  simulator provides a set of "requested" base units that it would prefer to
-  use.  <em>The %KIM API gives the model final authority to decide on the base
-  units it will use.</em> Best practice for models is to respect the request of
-  the simulator and to use the requested base units by converting its
-  parameters appropriately.  The \c requestedUnitsAccepted output argument of
-  the KIM::Model::Create routine is a convenience that allows the simulator a
+  When calling KIM::Model::Create to create a <em>PM object</em>, the simulator
+  provides a set of "requested" base units that it would prefer to use.
+  <em>The %KIM API/PMI gives the PM final authority to decide on the base units
+  it will use.</em> Best practice for models is to respect the request of the
+  simulator and to use the requested base units by converting its parameters
+  appropriately.  The \c requestedUnitsAccepted output argument of the
+  KIM::Model::Create routine is a convenience that allows the simulator a
   short-cut to determine if its request for base units was accepted.  (The
   alternative is for the simulator to call to KIM::Model::GetUnits and compare
   the results to the requested units.)
@@ -119,18 +204,18 @@ steps:
   base unit value when the simulator provides a request of "unused" for a
   relevant base unit.
 
-- Once a model object is obtained, the simulator should use
+- Once a PM object is obtained, the simulator should use
   KIM::Model::IsRoutinePresent to determine which routines the model has
   provided and if they are required or optional.  From this information the
   simulator should determine if it can proceed to work with the model, or if
   the model requires the use of routines that are not supported by the
   simulator it should exit.
 
-- Next, the simulator creates a <em>compute-arguments object</em>, by calling
-  KIM::Model::ComputeArgumentsCreate, that will be used to exchange pointers to
-  data and functions related to the atomic configuration and values being
-  computed for it.  Creating this object includes execution of the model's
-  <em>ModelComputeArgumentsCreate</em> routine.
+- Next, the simulator creates a <em>KIM::ComputeArguments object</em>, by
+  calling KIM::Model::ComputeArgumentsCreate, that will be used to exchange
+  pointers to data and functions related to the atomic configuration and values
+  being computed for it.  Creating this object includes execution of the
+  model's <em>ModelComputeArgumentsCreate</em> routine.
 
 - Then, to perform a computation, the simulator provides a compute-arguments
   object to the KIM::Model::Compute routine (which, in part, executes the
@@ -153,19 +238,18 @@ steps:
   model's <em>ModelComputeArgumentsDestroy</em> routine) to delete each of the
   compute-arguments objects that were created, and finally calling
   KIM::Model::Destroy (which, in part, executes the model's
-  <em>ModelDestroy</em> routine) to delete the model object.
+  <em>ModelDestroy</em> routine) to delete the KIM::Model object.
 
-The %KIM API provides a list of all compute-arguments and compute-callbacks
+The %KIM API/PMI provides a list of all compute-arguments and compute-callbacks
 defined as part of the official API.  Each argument and callback has a "Support
 Status" that can be one of four values: <em>requiredByAPI</em>,
-<em>notSupported</em>, <em>required</em>, or <em>optional</em>.  A model
-specifies a support status value, as part of its
-<em>ModelComputeArgumentsCreate</em> routine, for every compute-argument and
-compute-callback defined by the %KIM API.  It is the responsibility of the
-simulator to use the compute-arguments object interface to determine the
-support status of each compute-argument and compute-callback and to use this
-information to determine if the model is capable of performing the desired
-computation.
+<em>notSupported</em>, <em>required</em>, or <em>optional</em>.  A PM specifies
+a support status value, as part of its <em>ModelComputeArgumentsCreate</em>
+routine, for every compute-argument and compute-callback defined by the %KIM
+API/PMI.  It is the responsibility of the simulator to use the
+KIM::ComputeArguments object interface to determine the support status of each
+compute-argument and compute-callback and to use this information to determine
+if the PM is capable of performing the desired computation.
 
 Below, lists of each input compute-argument, output compute-argument, and
 compute-callback are provided.  To be explicit, zero-based particle
@@ -297,6 +381,43 @@ Compute-callback table:
   it allows the model to communicate the values of \f$\frac{\partial^2
   E^{\mathcal{C}}}{\partial r^{(i,j)} \partial r^{(m,n)}}\f$ to the simulator.
 
+See the documentation of the KIM::Model and KIM::ComputeArguments interfaces
+for more details of the %KIM API/PMI from the simulator's perspective.
+
+See the documentation of the KIM::ModelCompute, KIM::ModelComputeArguments,
+KIM::ModelComputeArgumentsCreate, KIM::ModelComputeArgumentsDestroy,
+KIM::ModelCreate, KIM::ModelDestroy, KIM::ModelDriverCreate,
+KIM::ModelExtension, KIM::ModelRefresh, and KIM::ModelWriteParameterizedModel
+interfaces for more details of the %KIM API/PMI from the PM's perspective.
+
+
+## The %KIM API Simulator Model Interface (%KIM API/SMI)
+
+In code, Simulator Models (SMs) are simply a set of <em>parameter files</em>
+and a <em>specification file</em> which contains simulator input commands and
+metadata (supported species, units, etc.) needed to run the model in its native
+simulator.
+
+The %KIM API/SMI consists of the KIM::SimulatorModel interface which provides
+programatic access to the SM's parameter files and the contents of its
+specification file.  Conceptually, an SM specification file contains a series
+of key-value pairs.  Some key-value pairs are defined and required by the %KIM
+API/SMI.  All other key-value pairs are called "Simulator Fields".  For
+flexibility and generality, the content and meaning of the simulator fields is
+not defined by the %KIM API/SMI.  Instead, each simulator is free to create and
+define its own set of specifications.  The value part of a simulator field
+key-value pair is one or more strings call "Simulator Field Lines".  These
+strings may contain template tags (of the form "@<template-tag-key>@") which
+the KIM::SimulatorModel object will replace by performing template substitution
+using the "Template Map".  The %KIM API/SMI defines a small set of template
+mappings which facilitate providing copies of the SM's parameter files to the
+simulator.  Additionally, simulators may define their own template mappings and
+add these to the %KIM API/SMI's set to be used for template substitution.
+
+See the documentation of the KIM::SimulatorModel interface for more details of
+the %KIM API/SMI.
+
+
 Next Section: \ref version2_differences.
 
 */
@@ -308,6 +429,7 @@ LocalWords:  particleContributing leftrightarrow partialEnergy partialForces
 LocalWords:  mathcal partialParticleEnergy partialVirial partialParticleVirial
 LocalWords:  virial GetNeighborList ProcessDEDrTerm ProcessD ac infl otimes em
 LocalWords:  ModelComputeArgumentsCreate ModelComputeArgumentsDestroy ge cdot
-LocalWords:  Modelcompureargumentsdestroy ModelExtension CMake
-LocalWords:  modelWillNotRequestNeighborsOfNoncontributingParticles
-LocalWords:  ModelWriteParameterizedModel requestedUnitsAccepted
+LocalWords:  Modelcompureargumentsdestroy ModelExtension CMake PMI PMs MDs tr
+LocalWords:  modelWillNotRequestNeighborsOfNoncontributingParticles td br PM's
+LocalWords:  ModelWriteParameterizedModel requestedUnitsAccepted SMI SMs SM's
+LocalWords:  metadata programatic SM SMI's

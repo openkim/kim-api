@@ -38,6 +38,9 @@
 
 Previous Section: \ref implementation.
 
+\note This section describes version 2.0 of the %KIM API.  Additions made in
+version 2.1 and above to the %KIM API package are not included.
+
 Experience with using and supporting the kim-api-v1 package has shown that the
 package's complexity (in terms of the number of different "modes of operation";
 e.g., neighbor lists: half, full, iterator, locator; Neighbor-list Boundary

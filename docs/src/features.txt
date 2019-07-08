@@ -65,69 +65,114 @@ The current version of the %KIM API package supports the following features:
   that it defines (KIM::ChargeUnit, KIM::ComputeArgumentName,
   KIM::ComputeCallbackName, KIM::DataType, KIM::EnergyUnit, KIM::LanguageName,
   KIM::LengthUnit, KIM::LogVerbosity, KIM::ModelRoutineName, KIM::Numbering,
-  KIM::SpeciesName, KIM::SupportStatus, KIM::TemperatureUnit, KIM::TimeUnit).
+  KIM::SpeciesName, KIM::SupportStatus, KIM::TemperatureUnit, KIM::TimeUnit,
+  KIM::Collection, KIM::CollectionItemType).
   This allows for backward-compatible additions to the enumerations in future
   versions of the %KIM API.  Further, the strong-typing greatly facilitates
   debugging.
 
-- **Numbering Origin Support**: Support for automatic translation between
-  zero-based numbering of particles (C-style numbering beginning with zero) and
-  one-based numbering (Fortran-style numbering beginning with one).
+- **Discoverable Collections Interface**: Support is provided (via a
+  KIM::Collections object) for programatic discovery of all
+  KIM::CollectionItemType%s (Model Drivers, Portable Models, and Simulator
+  Models) in each of the KIM::Collection%s which are configured and
+  installed on the computing system.
 
-- **Data Communication**: Communication of an arbitrary number of *arguments*
-  and *callback* routines between a *model* (interatomic potential) and
-  a *simulator* (simulation code that uses a model).
+- **Portable Model Interface (the %KIM API/PMI)**: Features for the PMI include
 
-- **Data types**: integer and double.
+  - **Numbering Origin Support**: Support for automatic translation between
+    zero-based numbering of particles (C-style numbering beginning with zero)
+    and one-based numbering (Fortran-style numbering beginning with one).
 
-  Each of the data types can be used to create multi-dimensional array
-  arguments that are exchanged between models and simulators.  The %KIM API
-  standard defines the dimension and extent of these arrays for each argument.
-  However, this information is not discoverable at run-time.  Thus, it is left
-  to the programmer to ensure that the correct values are used.
+  - **Data Communication**: Communication of an arbitrary number of *arguments*
+    and *callback* routines between a *model* (interatomic potential) and a
+    *simulator* (simulation code that uses a model).
 
-  Currently, the %KIM API does not define any (more complex) data structures.
-  However, in the future (as the need arises, and in consultation with the
-  atomistic and molecular simulation community) additional data types and data
-  structures may be introduced.
+  - **Data types**: integer and double.
 
-- **Physical Units**: The %KIM API standard defines the physical units for each
-  argument exchanged between a model and simulator.  A simulator provides a set
-  of *requested units* to define a unit system and a model either accepts this
-  unit system (and performs appropriate unit conversions for its parameters),
-  or it rejects the request and reports the unit system to be used.
+    Each of the data types can be used to create multi-dimensional array
+    arguments that are exchanged between models and simulators.  The %KIM API
+    standard defines the dimension and extent of these arrays for each
+    argument.  However, this information is not discoverable at run-time.
+    Thus, it is left to the programmer to ensure that the correct values are
+    used.
 
-- **Neighbor lists**: Neighbor list routines are expected to be provided by the
-  calling simulator.  All neighbor lists are full, unsorted lists that must
-  contain all particles within the specified cutoff distance (but may contain
-  additional particles).  A model must request one or more neighbor lists, each
-  with an associated cutoff distance.  (Cutoff distances are typically
-  distinct, but may repeat.  Repeated cutoff distances allow a model to
-  simultaneously access the neighbors of multiple particles without needing to
-  make copies of the neighbor list(s).)  A simulator must provide all such
-  requested lists and ensure that these lists contain only a small number of
-  particles that are located outside the cutoff distance.  Models must provide
-  "hints" about how they use neighbor lists.  These hints allow the simulator
-  to, optionally, optimize its neighbor list build algorithm.
+    Currently, the %KIM API does not define any (more complex) data structures.
+    However, in the future (as the need arises, and in consultation with the
+    atomistic and molecular simulation community) additional data types and
+    data structures may be introduced.
 
-- **Particle Species**: The %KIM API provides the ability to designate the
-  physical species of each particle in a simulation.  Currently, only one
-  identifier is provided for each element in the periodic table.  In the future
-  support for models that require multiple types of each element may be added.
+  - **Physical Units**: The %KIM API standard defines the physical units for
+    each argument exchanged between a model and simulator.  A simulator
+    provides a set of *requested units* to define a unit system and a model
+    either accepts this unit system (and performs appropriate unit conversions
+    for its parameters), or it rejects the request and reports the unit system
+    to be used.
 
-- **Model Parameters**: The %KIM philosophy views a *model* as a well-defined
-  computational code that includes specific values for all parameters needed to
-  perform an actual computation.  However, it is often useful to explore how a
-  model's predictions vary as the values of its parameters are varied.  For
-  this reason, the %KIM API allows a model to (optionally) "publish" its
-  parameters so that a simulator may modify them during the course of a
-  simulation.
+  - **Neighbor lists**: Neighbor list routines are expected to be provided by
+    the calling simulator.  All neighbor lists are full, unsorted lists that
+    must contain all particles within the specified cutoff distance (but may
+    contain additional particles).  A model must request one or more neighbor
+    lists, each with an associated cutoff distance.  (Cutoff distances are
+    typically distinct, but may repeat.  Repeated cutoff distances allow a
+    model to simultaneously access the neighbors of multiple particles without
+    needing to make copies of the neighbor list(s).)  A simulator must provide
+    all such requested lists and ensure that these lists contain only a small
+    number of particles that are located outside the cutoff distance.  Models
+    must provide "hints" about how they use neighbor lists.  These hints allow
+    the simulator to, optionally, optimize its neighbor list build algorithm.
 
-- **Model Drivers**: The %KIM API package provides the ability to create model
-  driver routines.  A model driver is an implementation of an interatomic
-  potential functional-form.  A model for a given material can be created which
-  uses an existing model driver by providing a file or files with the
-  appropriate parameter values for the material system of interest.
+  - **Particle Species**: The %KIM API provides the ability to designate the
+    physical species of each particle in a simulation.  Currently, only one
+    identifier is provided for each element in the periodic table.  In the
+    future support for models that require multiple types of each element may
+    be added.
+
+  - **Model Parameters**: The %KIM philosophy views a *portable model* as a
+    well-defined computational code that includes specific values for all
+    parameters needed to perform an actual computation.  However, it is often
+    useful to explore how a model's predictions vary as the values of its
+    parameters are varied.  For this reason, the %KIM API allows a portable
+    model to (optionally) "publish" its parameters so that a simulator may
+    modify them during the course of a simulation.
+
+  - **Model Drivers**: The %KIM API package provides the ability to create
+    model driver routines.  A model driver is an implementation of an
+    interatomic potential functional-form.  A portable model for a given
+    material can be created which uses an existing model driver by providing a
+    file or files with the appropriate parameter values for the material system
+    of interest.
+
+- **Simulator Model Interface (the %KIM API/SMI)**: Features of the SMI include
+
+  - **Simulator Model (SM) Specification File**: The SM specification file
+    records simulator input commands and other important metadata needed to run
+    the SM in its native simulator.
+
+  - **Simulator Name and Version Tracking**: The SM's associated simulator name
+    and version are recorded in the specification file to allow for explicitly
+    verifying compatibility of the SM package with the simulator's identity and
+    version.
+
+  - **Supported Species List**: The SM's supported species strings (arbitrary
+    strings identifying the atomic species the model simulates) are recorded in
+    the specification file and are made available to the simulator.
+
+  - **Parameter Files**: Any number of parameter files may be encapsulated
+    within the SM package and provided to the simulator in a simple and
+    unobtrusive manner.
+
+  - **Flexible Simulator Field/Line Framework**: Simulator input commands and
+    additional metadata necessary to run the SM are stored in the SM
+    specification file.  A flexible framework of "Simulator Fields" containing
+    one or more "Simulator Field Lines" give each simulator maximum flexibility
+    in defining its own specialized interface and satisfying its own needs.
+
+  - **Template Substitution**: Simulator Field Lines can contain template keys
+    that will be replaced by values stored in a "Template Map".  The template
+    map contains mappings defined by the %KIM API/SMI as well as custom
+    mappings defined by the simulator.  This mechanism provides flexibility and
+    dynamic behavior allowing the simulator's handling of the SM to be adjusted
+    at run time.
 
 - **Logging capabilities**: The %KIM API package provides a full-featured
   logging capability that facilitates the identification and debugging of
@@ -137,12 +182,13 @@ The current version of the %KIM API package supports the following features:
 
 - **Caching capabilities**: \anchor cache_buffer_pointers The %KIM API package
   provides a mechanism to store a pointer to a memory (cache) buffer in the
-  main API objects (KIM::Model and KIM::ComputeArguments).  In each case there
-  is a "ModelBufferPointer" which is for use by the model's routines and a
-  "SimulatorBufferPointer" which is for use by the simulator.  (These buffer
-  pointers are not to be used for communication between the simulator and
-  model, and therefore the ModelBufferPointer is not accessible to the
-  simulator and vise-versa.)
+  main API objects (KIM::Model, KIM::ComputeArguments, and
+  KIM::SimulatorModel).  In each object there is a "SimulatorBufferPointer"
+  which is for use by the simulator.  For the KIM::Model and
+  KIM::ComputeArguments objects there is also a "ModelBufferPointer" which is
+  for use by the portable model's routines.  (These buffer pointers are not to
+  be used for communication between the simulator and model, and therefore the
+  ModelBufferPointer is not accessible to the simulator and vise-versa.)
 
 - **Semantic Versioning**: The %KIM API package conforms to the [Semantic
   Versioning 2.0.0](https://semver.org) standard.  This standard is useful
@@ -159,5 +205,6 @@ Next Section: \ref theory.
 LocalWords:  CDDL yyyy Ellad Tadmor Karls kim api pimpl discoverable const ref
 LocalWords:  DataType LanguageName SpeciesName LengthUnit EnergyUnit TimeUnit
 LocalWords:  ChargeUnit TemperatureUnit ArgumentName CallbackName interatomic
-LocalWords:  SupportStatus atomistic Versioning ComputeArgumentName
+LocalWords:  SupportStatus atomistic Versioning ComputeArgumentName PMI SMI SM
 LocalWords:  ComputeCallbackName ModelBufferPointer SimulatorBufferPointer
+LocalWords:  programatic metadata SM's

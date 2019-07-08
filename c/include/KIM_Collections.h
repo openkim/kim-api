@@ -293,7 +293,7 @@ int KIM_Collections_GetEnvironmentVariableName(
     char const ** const name);
 
 /**
- ** \brief \copybrief KIM::Collections::GetConfigruationFileEnvironmentVariable
+ ** \brief \copybrief KIM::Collections::GetConfigurationFileEnvironmentVariable
  **
  ** \sa KIM::Collections::GetConfigurationFileEnvironmentVariable,
  ** kim_collections_module::kim_get_configuration_file_environment_variable

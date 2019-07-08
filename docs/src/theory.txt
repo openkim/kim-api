@@ -35,30 +35,30 @@
 /*                                                                            */
 
 /**
-\page theory Theory
+\page theory Theory for the Portable Model Interface
 
 Previous Section: \ref features.
 
-\anchor energy_per_particle The %KIM API is concerned with "simulators" and
-"models".  Conceptually, a %KIM Model is a subprogram that defines an
-energy-per-particle function, \f$E_i\f$, and an "influence distance",
-\f$r_{\text{infl}}\f$, that identifies the particle separation range over which
-\f$E_i\f$ depends on the position of its neighboring particles.  (Note, this is
-not necessarily equal to the neighbor list cutoff radius used by a model.)  A
-%KIM Model is defined for a specific material system (a specific set of
-particle species: e.g., Al, Ni, and Cu) and contains all parameter values
-necessary for evaluating \f$E_i\f$ for any configuration containing particles
-of the supported species.  A %KIM Model will, typically, also have the ability
-to compute other quantities related to the energy-per-particle, such as the
-force on a particle or the particle's virial.
+\anchor energy_per_particle The %KIM API Portable Model Interface (PMI) is
+concerned with "simulators" and "portable models" (PMs).  Conceptually, a %KIM
+PM is a subprogram that defines an energy-per-particle function, \f$E_i\f$, and
+an "influence distance", \f$r_{\text{infl}}\f$, that identifies the particle
+separation range over which \f$E_i\f$ depends on the position of its
+neighboring particles.  (Note, this is not necessarily equal to the neighbor
+list cutoff radius used by a model.)  A %KIM PM is defined for a specific
+material system (a specific set of particle species: e.g., Al, Ni, and Cu) and
+contains all parameter values necessary for evaluating \f$E_i\f$ for any
+configuration containing particles of the supported species.  A %KIM PM will,
+typically, also have the ability to compute other quantities related to the
+energy-per-particle, such as the force on a particle or the particle's virial.
 
-Conceptually, a KIM-compliant simulator is a computer program that is
-compatible with the %KIM API and performs a numerical simulation based on the
-energy, forces, etc. of a set of particles.  This could be a molecular dynamics
-simulation, a Monte Carlo simulation, or other similar simulation technique.
-Such a simulator treats a %KIM Model as a black box.  It constructs an
+Conceptually, a KIM-PMI-compliant simulator is a computer program that is
+compatible with the %KIM API/PMI and performs a numerical simulation based on
+the energy, forces, etc. of a set of particles.  This could be a molecular
+dynamics simulation, a Monte Carlo simulation, or other similar simulation
+technique.  Such a simulator treats a %KIM PM as a black box.  It constructs an
 atomistic "Configuration" of interest and passes this configuration to a %KIM
-Model along with a list of quantities (energy, force, virial, etc.) to be
+PM along with a list of quantities (energy, force, virial, etc.) to be
 computed.  The model then performs the requested computation and passes the
 results back to the simulator.  Once the simulator has received the model's
 results it may use these values to advance its simulation and update the
@@ -66,13 +66,13 @@ atomistic configuration.  Typically, this sequence of events is repeated in an
 iterative process until the simulator determines it has reached convergence or
 some other stopping condition is achieved.
 
-The purpose of the %KIM API is to coordinate the information exchange between
-KIM-compliant simulators and %KIM Models.  It does this through the definition
-of various concepts and quantities, and by providing a set of subroutines that
-facilitate the necessary communication between simulators and models.  A
-simulator supporting the %KIM API can work with all %KIM Models (as long as
-they can agree on units and the necessary species are supported by the model)
-and vice versa.
+The purpose of the %KIM API/PMI is to coordinate the information exchange
+between KIM-compliant simulators and %KIM PMs.  It does this through the
+definition of various concepts and quantities, and by providing a set of
+subroutines that facilitate the necessary communication between simulators and
+PMs.  A simulator supporting the %KIM API/PMI can work with all %KIM PMs (as
+long as they can agree on units and the necessary species are supported by the
+model) and vice versa.
 
 Of central importance to the information exchange process is the definition of
 an atomistic "Configuration", \f$\mathcal{C}\f$.  Abstractly, a configuration
@@ -94,9 +94,9 @@ particle \f$i \in C_p\f$, the following additional data must be defined.
      "padding" particles) can be thought of as providing the appropriate
      boundary conditions for the configuration.
 
-Before proceeding further, we introduce the notation \f$\mathbf{r}^{(i,j)} \equiv
-\mathbf{r}^{(j)} - \mathbf{r}^{(i)}\f$ for the relative position vector from
-particle \f$i\f$ to particle \f$j\f$, and the notation \f$r^{(i,j)}\f$ for
+Before proceeding further, we introduce the notation \f$\mathbf{r}^{(i,j)}
+\equiv \mathbf{r}^{(j)} - \mathbf{r}^{(i)}\f$ for the relative position vector
+from particle \f$i\f$ to particle \f$j\f$, and the notation \f$r^{(i,j)}\f$ for
 the magnitude of the vector \f$\mathbf{r}^{(i,j)}\f$.  Note that \f$r^{(j,i)} =
 r^{(i,j)}\f$ and these are simply two different notations for the same
 quantity.
@@ -132,8 +132,7 @@ Finally, define the closure of the particle's influence neighborhood,
 \f]
 
 With the above definitions, it is possible to more specifically identify the
-functional dependence for a %KIM Model's energy-per-particle function,
-\f$E_i\f$:
+functional dependence for a %KIM PM's energy-per-particle function, \f$E_i\f$:
 
 \f[
 E_i = \bar{E}_i(\mathbf{r}^{(j)} \;|\; j \in
@@ -319,10 +318,10 @@ particle energy \f$E^{\mathcal{C}}_i\f$ of particle \f$i\f$ is used.  Further,
 it is obvious by inspection that with these definitions the sum of partial
 particle virial tensors equals the partial virial tensor.
 
-Thus, the %KIM API does not impose a specific definition for a model's partial
-particle virial tensor.  It simply requires that the model's definition
-satisfies the summation formula \f$\mathbf{V}^{\mathcal{C}} = \sum_{i \in
-C_{p}} \mathbf{V}^{\mathcal{C}(i)}\f$.
+Thus, the %KIM API/PMI does not impose a specific definition for a PM's partial
+particle virial tensor.  It simply requires that the PM's definition satisfies
+the summation formula \f$\mathbf{V}^{\mathcal{C}} = \sum_{i \in C_{p}}
+\mathbf{V}^{\mathcal{C}(i)}\f$.
 
 ## Domain Decomposition
 
@@ -376,8 +375,8 @@ E &= E^\mathcal{C} + E^\mathcal{D},\\
 \mathbf{V}^{\mathcal{D}(i)}.
 \f}
 
-Here it becomes clear why the %KIM API prepends the term "Partial" to all of
-its standard quantity names.  In general, the quantities computed by a model
+Here it becomes clear why the %KIM API/PMI prepends the term "Partial" to all
+of its standard quantity names.  In general, the quantities computed by a PM
 are only one "partial" contribution to a total.  For example, here we can say
 that the force on particle \f$i\f$, \f$\mathbf{f}^{(i)}\f$, is the sum of
 \f$\mathcal{C}\f$'s partial force \f$\mathbf{f}^{\mathcal{C}(i)}\f$ and
