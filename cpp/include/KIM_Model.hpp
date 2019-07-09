@@ -441,6 +441,8 @@ class Model
   /// \param[out] parameterValue The value of the parameter of interest.
   ///
   /// \return \c true if \c parameterIndex is invalid.
+  /// \return \c true if the specified parameter and \c parameterValue are of
+  ///         different data types.
   /// \return \c true if \c arrayIndex is invalid.
   /// \return \c false otherwise.
   ///
