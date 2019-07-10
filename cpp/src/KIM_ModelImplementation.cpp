@@ -2907,7 +2907,7 @@ int ModelImplementation::InitializeStandAloneModel(
                             KIM_ChargeUnit const requestedChargeUnit,
                             KIM_TemperatureUnit const requestedTemperatureUnit,
                             KIM_TimeUnit const requestedTimeUnit,
-                            int * const);
+                            int * const ierr);
   ModelCreateF * FCreate = reinterpret_cast<ModelCreateF *>(functionPointer);
 
   struct Mdl

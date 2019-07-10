@@ -62,8 +62,7 @@ typedef void(Function)(void);  // Generic function pointer
 
 /// \brief Prototype for MODEL_ROUTINE_NAME::Create routine.
 ///
-/// \sa ModelDriverCreateFunction, KIM_ModelCreateFunction,
-/// KIM_ModelDriverCreateFunction
+/// \sa KIM_ModelCreateFunction, kim_model_module::kim_model_create
 ///
 /// \since 2.0
 typedef int ModelCreateFunction(ModelCreate * const modelCreate,
@@ -75,8 +74,7 @@ typedef int ModelCreateFunction(ModelCreate * const modelCreate,
 
 /// \brief Prototype for MODEL_ROUTINE_NAME::Create routine.
 ///
-/// \sa ModelCreateFunction, KIM_ModelDriverCreateFunction,
-/// KIM_ModelCreateFunction
+/// \sa KIM_ModelDriverCreateFunction, kim_model_module::kim_model_create
 ///
 /// \since 2.0
 typedef int
@@ -90,7 +88,8 @@ ModelDriverCreateFunction(ModelDriverCreate * const modelDriverCreate,
 /// \brief Prototype for MODEL_ROUTINE_NAME::ComputeArgumentsCreate
 /// routine.
 ///
-/// \sa KIM_ModelComputeArgumentsCreateFunction
+/// \sa KIM_ModelComputeArgumentsCreateFunction,
+/// kim_model_module::kim_model_compute_arguments_create
 ///
 /// \since 2.0
 typedef int ModelComputeArgumentsCreateFunction(
@@ -99,7 +98,7 @@ typedef int ModelComputeArgumentsCreateFunction(
 
 /// \brief Prototype for MODEL_ROUTINE_NAME::Compute routine.
 ///
-/// \sa KIM_ModelComputeFunction
+/// \sa KIM_ModelComputeFunction, kim_model_module::kim_model_compute
 ///
 /// \since 2.0
 typedef int ModelComputeFunction(
@@ -108,7 +107,8 @@ typedef int ModelComputeFunction(
 
 /// \brief Prototype for COMPUTE_CALLBACK_NAME::GetNeighborList routine.
 ///
-/// \sa KIM_GetNeighborListFunction
+/// \sa KIM_GetNeighborListFunction, kim_model_compute_arguments_module::<!--
+/// -->kim_model_compute_arguments_get_neighbor_list
 ///
 /// \since 2.0
 typedef int GetNeighborListFunction(void * const dataObject,
@@ -122,7 +122,8 @@ typedef int GetNeighborListFunction(void * const dataObject,
 /// \brief Prototype for COMPUTE_CALLBACK_NAME::ProcessDEDrTerm
 /// routine.
 ///
-/// \sa KIM_ProcessDEDrTermFunction
+/// \sa KIM_ProcessDEDrTermFunction, kim_model_compute_arguments_module::<!--
+/// -->kim_model_compute_arguments_process_dedr_term
 ///
 /// \since 2.0
 typedef int ProcessDEDrTermFunction(void * const dataObject,
@@ -135,7 +136,9 @@ typedef int ProcessDEDrTermFunction(void * const dataObject,
 /// \brief Prototype for COMPUTE_CALLBACK_NAME::ProcessD2EDr2Term
 /// routine.
 ///
-/// \sa KIM_ProcessD2EDr2TermFunction
+/// \sa KIM_ProcessD2EDr2TermFunction, kim_model_compute_arguments_module::<!--
+/// -->kim_model_compute_arguments_process_d2edr2_term
+///
 ///
 /// \since 2.0
 typedef int ProcessD2EDr2TermFunction(void * const dataObject,
@@ -147,7 +150,7 @@ typedef int ProcessD2EDr2TermFunction(void * const dataObject,
 
 /// \brief Prototype for MODEL_ROUTINE_NAME::Extension routine.
 ///
-/// \sa KIM_ModelExtensionFunction
+/// \sa KIM_ModelExtensionFunction, kim_model_module::kim_model_extension
 ///
 /// \since 2.0
 typedef int ModelExtensionFunction(ModelExtension * const modelExtension,
@@ -155,14 +158,16 @@ typedef int ModelExtensionFunction(ModelExtension * const modelExtension,
 
 /// \brief Prototype for MODEL_ROUTINE_NAME::Refresh routine.
 ///
-/// \sa KIM_ModelRefreshFunction
+/// \sa KIM_ModelRefreshFunction,
+/// kim_model_module::kim_model_clear_then_refresh
 ///
 /// \since 2.0
 typedef int ModelRefreshFunction(ModelRefresh * const modelRefresh);
 
 /// \brief Prototype for MODEL_ROUTINE_NAME::WriteParameterizedModel routine.
 ///
-/// \sa KIM_ModelWriteParameterizedModelFunction
+/// \sa KIM_ModelWriteParameterizedModelFunction,
+/// kim_model_module::kim_model_write_parameterized_model
 ///
 /// \since 2.0
 typedef int ModelWriteParameterizedModelFunction(
@@ -171,7 +176,8 @@ typedef int ModelWriteParameterizedModelFunction(
 /// \brief Prototype for MODEL_ROUTINE_NAME::ComputeArgumentsDestroy
 /// routine.
 ///
-/// \sa KIM_ModelComputeArgumentsDestroyFunction
+/// \sa KIM_ModelComputeArgumentsDestroyFunction,
+/// kim_model_module::kim_model_compute_arguments_destroy
 ///
 /// \since 2.0
 typedef int ModelComputeArgumentsDestroyFunction(
@@ -180,7 +186,7 @@ typedef int ModelComputeArgumentsDestroyFunction(
 
 /// \brief Prototype for MODEL_ROUTINE_NAME::Destroy routine.
 ///
-/// \sa KIM_ModelDestroyFunction
+/// \sa KIM_ModelDestroyFunction, kim_model_module::kim_model_destroy
 ///
 /// \since 2.0
 typedef int ModelDestroyFunction(ModelDestroy * const modelDestroy);
