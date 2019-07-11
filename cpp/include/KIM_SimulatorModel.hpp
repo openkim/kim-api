@@ -56,11 +56,11 @@ class SimulatorModelImplementation;
 /// parameter files and the contents of the specification file.  Each simulator
 /// may define its own set of "simulator fields" that contain
 /// simulator-specific content for the model's setup.  A simulator field
-/// consistes of zero or more "lines".  Each line is a string containing
-/// inforamtion that is meaningful to the simulator.  To allow the simulator to
+/// consists of zero or more "lines".  Each line is a string containing
+/// information that is meaningful to the simulator.  To allow the simulator to
 /// specialize the field lines based on user input, the SimulatorModel
 /// interface provides a template substitution mechanism.  Each simulator field
-/// line may contaion template tags of the form "@<key>@" and will be replaced
+/// line may contain template tags of the form "@<key>@" and will be replaced
 /// by an appropriate value provided by the SimulatorModel object or the
 /// simulator.
 ///

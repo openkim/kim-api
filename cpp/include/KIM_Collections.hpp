@@ -56,9 +56,9 @@ class CollectionsImplementation;
 /// interface.  Typically, the collections are associated with different levels
 /// of user permissions on the system.  The KIM::COLLECTION::system collection
 /// is available to all users on the system and is managed by the system
-/// administrator and cannot be changed by users without admininstrator
+/// administrator and cannot be changed by users without administrator
 /// privileges.  The KIM::COLLECTION::user collection is specific to each user
-/// and the use has full privileges to manange the collection.  The
+/// and the use has full privileges to manage the collection.  The
 /// KIM::COLLECTION::environmentVariable and the
 /// KIM::COLLECTION::currentWorkingDirectory collections allow users more
 /// dynamic flexibility to manage and store items for special purposes.
@@ -69,19 +69,20 @@ class CollectionsImplementation;
 /// that can be used with any simulator that supports the %KIM API/PMI;
 /// KIM::COLLECTION_ITEM_TYPE::simulatorModel represents the %KIM Simulator
 /// Models that can be used with a specific simulator that supports the %KIM
-/// API/SMI; and KIM::COLLECTION_ITEM_TYPE::modelDriver represents %KIM Model
+/// API/SMI; and KIM::COLLECTION_ITEM_TYPE::modelDriver represents %KIM %Model
 /// Drivers that are libraries of code that can be used by multiple Portable
 /// Models to help reduce code duplication.  The KIM::Collections interface
 /// provides programatic access to the contents and system settings for the
 /// %KIM API collections and items stored within them.  The contents and
-/// settings of the collections are can change during the lifetime of a
+/// settings of the collections can change during the lifetime of a
 /// KIM::Collections object (due to installation or removal of items by other
 /// processes on the machine and/or changes to environment variables or the
 /// configuration file.  Therefore, when lists of information about the
-/// collections are needed, the KIM::Collections interface creates a cache of
-/// the list then provides access to the cached list via a getter ("Get...()")
-/// routine.  The cached list is only updated when the simulator makes another
-/// request for the list (via a "CacheListOf...()" routine).
+/// collections are requested (via a "CacheListOf...()" routine), the
+/// KIM::Collections interface first creates a cache of the list and then
+/// provides access to the cached list via a getter ("Get...()") routine.  The
+/// cached list is only updated when the simulator makes another request for
+/// the list (via a "CacheListOf...()" routine).
 ///
 /// Items in the %KIM API collections are generally referred to by name.  An
 /// item name is required to be a valid C-identifier (no other restrictions are
@@ -93,18 +94,18 @@ class CollectionsImplementation;
 /// -->(\anchor collection_search_order first the
 /// KIM::COLLECTION::currentWorkingDirectory, then
 /// KIM::COLLECTION::environmentVariable, then KIM::COLLECTION::user, and
-/// finally KIM::COLLECTION::system) and return the first occurance of an item
+/// finally KIM::COLLECTION::system) and return the first occurrence of an item
 /// with the requested type and name that is found.  In some cases only the
 /// name of the desired item is known, and Collections::GetItemType must be
 /// used first to determine the item's type.  The Collections::GetItemType
-/// routine will search through each collection (in the order decribed just
+/// routine will search through each collection (in the order described just
 /// \ref collection_search_order "above") and through each item type within
 /// each collection in a specific order <!------------------------------------
 /// --> (\anchor collection_item_type_search_order first the
 /// KIM::COLLECTION_ITEM_TYPE::portableModel type, then the
 /// KIM::COLLECTION_ITEM_TYPE::simulatorModel type, and finally the
-/// KIM::COLLECTION_ITEM_TYPE::modelDriver type) and return the first occurance
-/// of an item with the requested name that is found.
+/// KIM::COLLECTION_ITEM_TYPE::modelDriver type) and return the first
+/// occurrence of an item with the requested name that is found.
 ///
 /// \sa KIM_Collections, kim_collections_module::kim_collections_handle_type
 ///
