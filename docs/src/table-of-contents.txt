@@ -43,19 +43,18 @@ or force-fields).  This allows a single computer implementation of a Portable
 Model (PM) to be used (without modification) within multiple simulator codes.
 A PM can include code and parameters all in one.  Or, a PM can include just
 parameters and use a separate Model Driver (MD) library containing the code.
-See [openkim.org](https://openkim.org) to find hundreds of portable model
-implementations,
+See [openkim.org](https://openkim.org) to find many PM implementations,
 [openkim.org/projects-using-kim](https://openkim.org/projects-using-kim) to
 learn which simulators support the %KIM API/PMI, and
 [openkim.org/kim-api](https://openkim.org/kim-api) to learn how to use %KIM PMs
 with those simulators.  The %KIM API also defines a standard (the Simulator
 Model Interface (SMI)) that allows for the creation and curation of Simulator
-Models (SMs), which are packages containing the metadata necessary for how to
-setup and run a model that is implemented as an integrated part of a simulation
-code (simulator).  A %KIM SM includes all of the necessary parameter files,
+Models (SMs), which are packages containing the metadata necessary to set up
+and run a model that is implemented as an integrated part of a simulation code
+(simulator).  A %KIM SM includes all of the necessary parameter files,
 simulator input commands, and metadata (supported species, units, etc.)  needed
 to run the model in its native simulator.  See
-[openkim.org](https://openkim.org) to find hundreds of SM packages,
+[openkim.org](https://openkim.org) to find many SM packages,
 [openkim.org/projects-using-kim](https://openkim.org/projects-using-kim) to
 learn which simulators support the %KIM API/SMI, and
 [openkim.org/kim-api](https://openkim.org/kim-api) to learn how to use %KIM SMs
@@ -64,7 +63,7 @@ with those simulators.
 This documentation describes the specifications and official implementation of
 the %KIM API as a system-level software library that gives computer programmers
 the ability to write PM, SM, and/or Simulators in supported programming
-language (C, C++, FORTRAN 77, Fortran 90/95/2003).
+language (C, C++, Fortran).
 
 Table of Contents:
 
@@ -117,5 +116,6 @@ for [browsing](files.html).
 
 LocalWords:  CDDL yyyy Ellad Tadmor kim api mainpage atomistic interatomic ref
 LocalWords:  Ar fcc cpp fortran MLJ LennardJones hpp LJ params html SLJ org SM
-LocalWords:  MultiCutoff UniversalShifted Knowledgebase openkim PMI PMs SMI
-LocalWords:  curation SMs metadata MDs
+LocalWords:  MultiCutoff UniversalShifted Knowledgebase openkim PMI PMs SMI em
+LocalWords:  curation SMs metadata MDs Sim LAMMPS LJcut AkersonElliott PbAu pb
+LocalWords:  smspec edn au PM's numer deriv Ridder's

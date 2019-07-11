@@ -44,18 +44,21 @@ class Collection;
 class CollectionItemType;
 class CollectionsImplementation;
 
-/// \brief Provides the interface to the %KIM API Collections and is meant to
+/// \brief Provides the interface to the %KIM API %Collections and is meant to
 /// be used by simulators.
 ///
 /// The %KIM API defines interfaces to various types of "items"
 /// (KIM::CollectionItemType) and these items are organized and stored in
-/// various "collections" (KIM::Collection) on the user's system.  Typically,
-/// the collections are associated with different levels of user permissions on
-/// the system.  The KIM::COLLECTION::system collection is available to all
-/// users on the system and is managed by the system administrator and cannot
-/// be changed by users without admininstrator privileges.  The
-/// KIM::COLLECTION::user collection is specific to each user and the use has
-/// full privileges to manange the collection.  The
+/// various "collections" (KIM::Collection) on the user's system.  Items are
+/// generally installed to or removed from the collections by using the \c
+/// kim-api-collections-management utility, and the %KIM API/PMI and %KIM
+/// API/SMI find items within the collections using the KIM::Collections
+/// interface.  Typically, the collections are associated with different levels
+/// of user permissions on the system.  The KIM::COLLECTION::system collection
+/// is available to all users on the system and is managed by the system
+/// administrator and cannot be changed by users without admininstrator
+/// privileges.  The KIM::COLLECTION::user collection is specific to each user
+/// and the use has full privileges to manange the collection.  The
 /// KIM::COLLECTION::environmentVariable and the
 /// KIM::COLLECTION::currentWorkingDirectory collections allow users more
 /// dynamic flexibility to manage and store items for special purposes.
@@ -67,12 +70,18 @@ class CollectionsImplementation;
 /// KIM::COLLECTION_ITEM_TYPE::simulatorModel represents the %KIM Simulator
 /// Models that can be used with a specific simulator that supports the %KIM
 /// API/SMI; and KIM::COLLECTION_ITEM_TYPE::modelDriver represents %KIM Model
-/// Drivers that are libraries of code that can be used by multiple portable
-/// models to help reduce code duplication.
-///
-/// The KIM::Collections interface provides programatic access to the contents
-/// and system settings for the %KIM API collections and items stored within
-/// them.
+/// Drivers that are libraries of code that can be used by multiple Portable
+/// Models to help reduce code duplication.  The KIM::Collections interface
+/// provides programatic access to the contents and system settings for the
+/// %KIM API collections and items stored within them.  The contents and
+/// settings of the collections are can change during the lifetime of a
+/// KIM::Collections object (due to installation or removal of items by other
+/// processes on the machine and/or changes to environment variables or the
+/// configuration file.  Therefore, when lists of information about the
+/// collections are needed, the KIM::Collections interface creates a cache of
+/// the list then provides access to the cached list via a getter ("Get...()")
+/// routine.  The cached list is only updated when the simulator makes another
+/// request for the list (via a "CacheListOf...()" routine).
 ///
 /// Items in the %KIM API collections are generally referred to by name.  An
 /// item name is required to be a valid C-identifier (no other restrictions are

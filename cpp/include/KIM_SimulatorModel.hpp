@@ -85,7 +85,8 @@ class SimulatorModelImplementation;
 ///
 /// ------
 ///
-/// <h3>`kim-api-sm-schema-version = 1` (Since 2.1):</h3>
+/// \anchor kim_api_sm_schema_version_1 <h3>`kim-api-sm-schema-version = 1`
+/// (Since 2.1):</h3>
 ///
 /// The specification file consists of a single EDN Map.  Each key-value pair
 /// in the map has a key element-type of string.  The following list gives the
@@ -126,8 +127,8 @@ class SimulatorModelImplementation;
 /// \endcode
 ///
 /// In this example the "units" and "model-defn" key-value pairs are "simulator
-/// fields" whose format is defined by the LAMMPS kim_style command.  There
-/// are also two examples of template tags: "@<atom-type-sym-list>@", which is
+/// fields" whose format is defined by the LAMMPS kim_init command.  There are
+/// also two examples of template tags: "@<atom-type-sym-list>@", which is
 /// defined by the LAMMPS simulator, and "@<parameter-file-1>@", which is
 /// defined by the SimulatorModel object.
 ///

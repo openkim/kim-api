@@ -39,7 +39,7 @@
 
 Previous Section: \ref theory.
 
-## The %KIM API Portable Model Interface (%KIM API/PMI)
+## \anchor kim_api_pmi The %KIM API Portable Model Interface (%KIM API/PMI)
 
 In code, Portable Models (PMs) and Model Drivers (MDs) consist of up to eight
 routines which perform specific tasks.
@@ -51,7 +51,7 @@ routines which perform specific tasks.
    initialization tasks for a KIM::ComputeArguments object.
 
 -# The \em ModelCompute routine (required), which uses the configuration
-   information stored in a KIM::ComputeArguments object to perform the model's
+   information stored in a KIM::ComputeArguments object to perform the PM's
    core computational tasks.
 
 -# The <em>ModelExtension</em> routine (optional), which provides a mechanism
@@ -59,11 +59,11 @@ routines which perform specific tasks.
 
 -# The <em>ModelRefresh</em> routine (required if parameter pointers are set,
    otherwise should not be provided), which performs updates after a simulator
-   makes changes to the model's parameters (if this is supported).
+   makes changes to the PM's parameters (if this is supported).
 
 -# The <em>ModelWriteParameterizedModel</em> (optional) routine, which can be
    used to write the parameter files and CMake file necessary to create a new
-   parameterized model from the current set of in-memory parameters.
+   parameterized PM from the current set of in-memory parameters.
 
 -# The \em ModelComputeArgumentsDestroy routine (required), which performs
    finalization tasks for a KIM::ComputeArguments object.
@@ -72,101 +72,157 @@ routines which perform specific tasks.
    tasks for the KIM::Model object.
 
 The %KIM API/PMI provides a separate interface to be used by the PM or MD for
-each of these routines.  The routines and their associated interfaces are
-summarized in the following table.
+each of these routines.  For each of these routines, the following table lists
+(i) the associated KIM::RoutineName extensible enumeration constant, (ii) links
+to the associated %KIM API/PMI interface(s) available within the routine, (iii)
+links to the routine's prototype (in C++, C, and Fortran), and (iv) if the %KIM
+API/MPI requires a PM or MD to provide the routine, or if it is optional.
 
 <table><caption align=top></caption>
 <tr>
   <th>
-    Model Routine Name
-  </th><th>
-    Required / Optional
+    Model Routine Name constant
   </th><th>
     %KIM API/PMI Interface
+  </th><th>
+    Routine prototype (C++; C; Fortran)
+  </th><th>
+    %KIM API/MPI Required / Optional
   </th>
 </tr>
 <tr>
   <td>
     KIM::MODEL_ROUTINE_NAME::Create
   </td><td>
-    required
-  </td><td>
     KIM::ModelCreate or
     <br>
     KIM::ModelDriverCreate
+  </td><td>
+    KIM::ModelCreateFunction,
+    <br>
+    KIM::ModelDriverCreateFunction;
+    <br>
+    \ref KIM_ModelCreateFunction,
+    <br>
+    \ref KIM_ModelDriverCreateFunction;
+    <br>
+    kim_model_module::kim_model_create
+  </td><td>
+    required
   </td>
 </tr>
 <tr>
   <td>
     KIM::MODEL_ROUTINE_NAME::ComputeArgumentsCreate
   </td><td>
-    required
-  </td><td>
     KIM::ModelComputeArgumentsCreate
+  </td><td>
+    KIM::ModelComputeArgumentsCreateFunction;
+    <br>
+    \ref KIM_ModelComputeArgumentsCreateFunction;
+    <br>
+    kim_model_module::kim_model_compute_arguments_create
+  </td><td>
+    required
   </td>
 </tr>
 <tr>
   <td>
     KIM::MODEL_ROUTINE_NAME::Compute
   </td><td>
-    required
-  </td><td>
     KIM::ModelCompute and
     <br>
     KIM::ModelComputeArguments
+  </td><td>
+    KIM::ModelComputeFunction;
+    <br>
+    \ref KIM_ModelComputeFunction;
+    <br>
+    kim_model_module::kim_model_compute
+  </td><td>
+    required
   </td>
 </tr>
 <tr>
   <td>
     KIM::MODEL_ROUTINE_NAME::Extension
   </td><td>
-    optional
-  </td><td>
     KIM::ModelExtension
+  </td><td>
+    KIM::ModelExtensionFunction;
+    <br>
+    \ref KIM_ModelExtensionFunction;
+    <br>
+    kim_model_module::kim_model_extension
+  </td><td>
+    optional
   </td>
 </tr>
 <tr>
   <td>
     KIM::MODEL_ROUTINE_NAME::Refresh
   </td><td>
-    required if one or more parameter pointers set,
-    <br>
-    otherwise should not be provided
-  </td><td>
     KIM::ModelRefresh
+  </td><td>
+    KIM::ModelRefreshFunction;
+    <br>
+    \ref KIM_ModelRefreshFunction;
+    <br>
+    kim_model_module::kim_model_clear_then_refresh
+  </td><td>
+    required if one or more parameter pointers set,
+    otherwise should not be provided
   </td>
 </tr>
 <tr>
   <td>
     KIM::MODEL_ROUTINE_NAME::WriteParameterizedModel
   </td><td>
-    optional
-  </td><td>
     KIM::ModelWriteParameterizedModel
+  </td><td>
+    KIM::ModelWriteParameterizedModelFunction;
+    <br>
+    \ref KIM_ModelWriteParameterizedModelFunction;
+    <br>
+    kim_model_module::kim_model_write_parameterized_model
+  </td><td>
+    optional
   </td>
 </tr>
 <tr>
   <td>
     KIM::MODEL_ROUTINE_NAME::ComputeArgumentsDestroy
   </td><td>
-    required
-  </td><td>
     KIM::ModelComputeArgumentsDestroy
+  </td><td>
+    KIM::ModelComputeArgumentsDestroyFunction;
+    <br>
+    \ref KIM_ModelComputeArgumentsDestroyFunction;
+    <br>
+    kim_model_module::kim_model_compute_arguments_destroy
+  </td><td>
+    required
   </td>
 </tr>
 <tr>
   <td>
     KIM::MODEL_ROUTINE_NAME::Destroy
   </td><td>
-    required
-  </td><td>
     KIM::ModelDestroy
+  </td><td>
+    KIM::ModelDestroyFunction;
+    <br>
+    \ref KIM_ModelDestroyFunction;
+    <br>
+    kim_model_module::kim_model_destroy
+  </td><td>
+    required
   </td>
 </tr>
 </table>
 
-The above table also indicates which routines must be provided by a model.  For
-optional routines, each model must indicate that the routine is required or
+The above table also indicates which routines must be provided by a PM.  For
+optional routines, each PM must indicate that the routine is required or
 optional for use by the simulator, as described below.
 
 The %KIM API/PMI provides two interfaces to be used by the Simulator,
@@ -175,16 +231,15 @@ interaction between the simulator and a PM involves the following steps:
 
 - A simulator creates a <em>Portable Model object</em>, by calling
   KIM::Model::Create, that will be used to exchange pointers to data and
-  functions related to the model between the simulator and PM.  Creating
-  this object includes the specification of how the simulator will number
-  particles (zero-based or one-based), determination of the physical base units
-  that the model will use, and execution of the model's <em>ModelCreate</em>
-  routine.
+  functions related to the PM between the simulator and PM.  Creating this
+  object includes the specification of how the simulator will number particles
+  (zero-based or one-based), determination of the physical base units that the
+  PM will use, and execution of the PM's <em>ModelCreate</em> routine.
 
   When calling KIM::Model::Create to create a <em>PM object</em>, the simulator
   provides a set of "requested" base units that it would prefer to use.
   <em>The %KIM API/PMI gives the PM final authority to decide on the base units
-  it will use.</em> Best practice for models is to respect the request of the
+  it will use.</em> Best practice for PMs is to respect the request of the
   simulator and to use the requested base units by converting its parameters
   appropriately.  The \c requestedUnitsAccepted output argument of the
   KIM::Model::Create routine is a convenience that allows the simulator a
@@ -195,45 +250,44 @@ interaction between the simulator and a PM involves the following steps:
   If a base unit is not relevant to the simulator (e.g., a unit of time is not
   necessary for static equilibrium computations), then the simulator should
   specify that the corresponding requested base unit(s) is/are "unused".
-  Similarly, if a base unit is irrelevant to the model (e.g., many models only
+  Similarly, if a base unit is irrelevant to the PM (e.g., many models only
   require units of length and energy; Thus, units of charge, temperature, and
-  time are irrelevant), then the model should specify that the corresponding
-  base unit(s) is/are "unused" (regardless of the simulator's requested values)
-  when calling KIM::ModelCreate::SetUnits within its <em>ModelCreate</em>
-  routine.  Additionally, the model should select its preferred (non-"unused")
-  base unit value when the simulator provides a request of "unused" for a
-  relevant base unit.
+  time are irrelevant), then the PM should specify that the corresponding base
+  unit(s) is/are "unused" (regardless of the simulator's requested values) when
+  calling KIM::ModelCreate::SetUnits within its <em>ModelCreate</em> routine.
+  Additionally, the PM should select its preferred (non-"unused") base unit
+  value when the simulator provides a request of "unused" for a relevant base
+  unit.
 
   The %KIM API/PMI supports "Toy Models", which are a deliberately simplistic
   model with many details removed so that it can be used to explain a mechanism
   concisely.  Toy models do not model a real material, but are rather
-  associated with a class of materials (e.g., glasses).  Toy models should use
-  the "user" species values (KIM::SPECIES_NAME::user01 through
+  associated with a class of materials (e.g., glasses).  Toy PMs should use the
+  "user" species values (KIM::SPECIES_NAME::user01 through
   KIM::SPECIES_NAME::user20).  Some toy models are formulated to be
   nondimensional.  Rather than introducing a new type of nondimensional units
   to the %KIM API/PMI with accompanying requirements for simulators to support
-  this, toy models are should define their length base unit as
-  KIM::LENGTH_UNIT::A and their energy base unit as KIM::ENERGY_UNIT::eV.  From
-  the perspective of the toy model these can be considered proxy units (similar
-  to Lennard-Jones units).  (See also [Toy Model support within
+  this, toy PMs should define their length base unit as KIM::LENGTH_UNIT::A and
+  their energy base unit as KIM::ENERGY_UNIT::eV.  From the perspective of the
+  toy PM these can be considered proxy units (similar to Lennard-Jones units).
+  (See also [Toy Model support within
   openkim.org](https://openkim.org/about-toy-models).)
 
 - Once a PM object is obtained, the simulator should use
-  KIM::Model::IsRoutinePresent to determine which routines the model has
-  provided and if they are required or optional.  From this information the
-  simulator should determine if it can proceed to work with the model, or if
-  the model requires the use of routines that are not supported by the
-  simulator it should exit.
+  KIM::Model::IsRoutinePresent to determine which routines the PM has provided
+  and if they are required or optional.  From this information the simulator
+  should determine if it can proceed to work with the PM, or if the PM requires
+  the use of routines that are not supported by the simulator it should exit.
 
 - Next, the simulator creates a <em>KIM::ComputeArguments object</em>, by
   calling KIM::Model::ComputeArgumentsCreate, that will be used to exchange
   pointers to data and functions related to the atomic configuration and values
-  being computed for it.  Creating this object includes execution of the
-  model's <em>ModelComputeArgumentsCreate</em> routine.
+  being computed for it.  Creating this object includes execution of the PM's
+  <em>ModelComputeArgumentsCreate</em> routine.
 
 - Then, to perform a computation, the simulator provides a compute-arguments
-  object to the KIM::Model::Compute routine (which, in part, executes the
-  model's <em>ModelCompute</em> function).
+  object to the KIM::Model::Compute routine (which, in part, executes the PM's
+  <em>ModelCompute</em> function).
 
   - There are input compute-arguments that include the various components that
     make up a configuration (number of particles, particle position vectors,
@@ -244,15 +298,14 @@ interaction between the simulator and a PM involves the following steps:
     the configuration.
 
   - There are also compute-callback functions (such as a function to get a
-    particle's neighbor list) that the simulator provides for use by the
-    model.
+    particle's neighbor list) that the simulator provides for use by the PM.
 
-- When a simulator is finished working with a model, it needs to clean up by
+- When a simulator is finished working with a PM, it needs to clean up by
   calling KIM::Model::ComputeArgumentsDestroy (which, in part, executes the
-  model's <em>ModelComputeArgumentsDestroy</em> routine) to delete each of the
+  PM's <em>ModelComputeArgumentsDestroy</em> routine) to delete each of the
   compute-arguments objects that were created, and finally calling
-  KIM::Model::Destroy (which, in part, executes the model's
-  <em>ModelDestroy</em> routine) to delete the KIM::Model object.
+  KIM::Model::Destroy (which, in part, executes the PM's <em>ModelDestroy</em>
+  routine) to delete the KIM::Model object.
 
 The %KIM API/PMI provides a list of all compute-arguments and compute-callbacks
 defined as part of the official API.  Each argument and callback has a "Support
@@ -260,7 +313,15 @@ Status" that can be one of four values: <em>requiredByAPI</em>,
 <em>notSupported</em>, <em>required</em>, or <em>optional</em>.  A PM specifies
 a support status value, as part of its <em>ModelComputeArgumentsCreate</em>
 routine, for every compute-argument and compute-callback defined by the %KIM
-API/PMI.  It is the responsibility of the simulator to use the
+API/PMI.  Some arguments and callbacks are required by the %KIM API and can
+only have a support status of <em>requiredByAPI</em>.  All other arguments and
+callbacks are not required by the %KIM API/MPI, and therefore the PM may set
+their support status to any one of the three remaining options:
+<em>required</em>, <em>optional</em>, or <em>notSupported</em>.  Just before
+the PM's <em>ModelComputeArgumentsCreate</em> routine is executed, the %KIM
+API/MPI initializes the support status of all arguments and callbacks to either
+<em>requiredByAPI</em> or <em>notSupported</em>, as indicated in the below
+tables.  It is the responsibility of the simulator to use the
 KIM::ComputeArguments object interface to determine the support status of each
 compute-argument and compute-callback and to use this information to determine
 if the PM is capable of performing the desired computation.
@@ -280,12 +341,12 @@ Input compute-argument table:
 - numberOfParticles is the number of particles (contributing and
 non-contributing) in the configuration.
 
-- particleSpeciesCodes contains integer codes (as defined by the model)
-specifying the species of each particle.  For example, if the model defines the
-mapping Cu \f$\leftrightarrow 1\f$, Al \f$\leftrightarrow 2\f$, and Ni
-\f$\leftrightarrow 3\f$, then \f$sc^{(0)} = 3, sc^{(1)} = 1, sc^{(2)} = 2, \dots\f$
-means that particle 0 is a nickel atom, particle 1 is a copper atom, particle 2
-is an aluminum atom.
+- particleSpeciesCodes contains integer codes (as defined by the PM) specifying
+the species of each particle.  For example, if the PM defines the mapping Cu
+\f$\leftrightarrow 1\f$, Al \f$\leftrightarrow 2\f$, and Ni \f$\leftrightarrow
+3\f$, then \f$sc^{(0)} = 3, sc^{(1)} = 1, sc^{(2)} = 2, \dots\f$ means that
+particle 0 is a nickel atom, particle 1 is a copper atom, particle 2 is an
+aluminum atom.
 
 - particleContributing contains the contributing/non-contributing status
 of each particle.  Particle \f$i\f$ is contributing if \f$c^{(i)} = 1\f$ and
@@ -328,8 +389,8 @@ Compute-callback table:
 | ProcessDEDrTerm       | required, optional, <b>notSupported</b>  |
 | ProcessD2EDr2Term     | required, optional, <b>notSupported</b>  |
 
-- GetNeighborList is a callback function that allows a model to obtain the list
-  of neighbors of a particle.  The model may request any number (\f$\ge1\f$) of
+- GetNeighborList is a callback function that allows a PM to obtain the list of
+  neighbors of a particle.  The PM may request any number (\f$\ge1\f$) of
   neighbor lists with different (or equal) cutoff distances.  The
   GetNeighborList callback function must support the return of the appropriate
   list of neighbors.  The returned list of neighbors consists of a
@@ -338,37 +399,36 @@ Compute-callback table:
   must contain at least all particles within the corresponding cutoff distance
   of the specified particle.  (However, the returned list may contain particles
   beyond the cutoff distance.)  Neighbor lists provided by the simulator must
-  be consistent with the configuration coordinates and the model's cutoff
-  values.  In particular, the model must, in principle, be able to
-  independently construct its own equivalent neighbor list using just the
-  particle coordinates.  Further, the GetNeighborList callback routine must
-  check to ensure that the neighbor list data (provided, via the simulator, by
-  the compute-arguments object) is consistent with the model's cutoff values.
+  be consistent with the configuration coordinates and the PM's cutoff values.
+  In particular, the PM must, in principle, be able to independently construct
+  its own equivalent neighbor list using just the particle coordinates.
+  Further, the GetNeighborList callback routine must check to ensure that the
+  neighbor list data (provided, via the simulator, by the compute-arguments
+  object) is consistent with the PM's cutoff values.
 
   <b>CAUTION - SIMULATOR DEVELOPERS:</b> In general, it is important that
   neighbor lists provided by a simulator are "efficient" in the sense that the
   list contains only a small number of particles that are located outside the
-  cutoff distance.  If the lists are not efficient, then the model
-  computational time may be <em>severely</em> impacted.  This is especially true for
-  models that request multiple neighbor lists with a wide range of cutoff
-  distances.
+  cutoff distance.  If the lists are not efficient, then the PM computational
+  time may be <em>severely</em> impacted.  This is especially true for PMs that
+  request multiple neighbor lists with a wide range of cutoff distances.
 
   <b>Neighbor List Hint \anchor neighbor_list_hint :</b> The above describes
-  the default behavior and all models must work correctly when provided with
-  neighbor lists of this type.  However, based on the <em>neighbor list hint</em>
-  provided by the model a simulator may provide the model with a modified
-  neighbor list that is more efficient.  If the model sets its
+  the default behavior and all PMs must work correctly when provided with
+  neighbor lists of this type.  However, based on the <em>neighbor list
+  hint</em> provided by the PM a simulator may provide the PM with a modified
+  neighbor list that is more efficient.  If the PM sets its
   "modelWillNotRequestNeighborsOfNoncontributingParticles" value to 1 (true),
   it is guaranteeing that it will not request the neighbors of non-contributing
   particles.  In this case, the simulator does not need to generate a neighbor
-  list for such particles.  The model has no way of knowing if the simulator is
+  list for such particles.  The PM has no way of knowing if the simulator is
   taking advantage of its hint, so it must work correctly for all types of
   neighbor lists consistent with its provided hint.
 
 - ProcessDEDrTerm is a callback function that allows for access to the
   derivatives of the configuration's partial energy, \f$E^{\mathcal{C}}\f$,
   with respect to all pair-distances, \f$r^{(i,j)}, i,j \in C_{p}\f$.  That is,
-  it allows the model to communicate the values of \f$\frac{\partial
+  it allows the PM to communicate the values of \f$\frac{\partial
   E^{\mathcal{C}}}{\partial r^{(i,j)}}\f$ to the simulator.  Recall that
   \f$r^{(i,j)}\f$ and \f$r^{(j,i)}\f$ are just two different notations for the
   same quantity.  Thus, there are only \f$\frac{\text{numberOfParticles} \cdot
@@ -392,7 +452,7 @@ Compute-callback table:
 - ProcessD2EDr2Term is a callback function that allows for access to the second
   derivatives of the configuration's partial energy, \f$E^{\mathcal{C}}\f$,
   with respect to all pair-distances, \f$r^{(i,j)}, i,j \in C_{p}\f$.  That is,
-  it allows the model to communicate the values of \f$\frac{\partial^2
+  it allows the PM to communicate the values of \f$\frac{\partial^2
   E^{\mathcal{C}}}{\partial r^{(i,j)} \partial r^{(m,n)}}\f$ to the simulator.
 
 See the documentation of the KIM::Model and KIM::ComputeArguments interfaces
@@ -405,7 +465,7 @@ KIM::ModelExtension, KIM::ModelRefresh, and KIM::ModelWriteParameterizedModel
 interfaces for more details of the %KIM API/PMI from the PM's perspective.
 
 
-## The %KIM API Simulator Model Interface (%KIM API/SMI)
+## \anchor kim_api_smi The %KIM API Simulator Model Interface (%KIM API/SMI)
 
 In code, Simulator Models (SMs) are simply a set of <em>parameter files</em>
 and a <em>specification file</em> which contains simulator input commands and
@@ -428,6 +488,115 @@ mappings which facilitate providing copies of the SM's parameter files to the
 simulator.  Additionally, simulators may define their own template mappings and
 add these to the %KIM API/SMI's set to be used for template substitution.
 
+Although the %KIM API/SMI is designed for maximum flexibility, an example of one
+way it can be used by a simulator to support SMs is helpful.  In particular,
+for the [LAMMPS](https://lammps.sandia.gov) simulator, performing a simulator
+with a specific model typically involves three separate parts: (1)
+specification of the physical units in which the model's parameters are given
+and therefore the units in which the simulation will be performed; (2)
+specifying other default properties needed by the model which must be set
+before the LAMMPS simulation box is defined, such as the LAMMPS
+atom style; and (3) specifying the pair_style or other style commands that
+define the model's interactions types and read in the model's parameters.  Here
+is an example LAMMPS input file for the ReaxFF potential, similar to the CHO
+example included in the LAMMPS distribution.
+
+\code{.unparsed}
+# REAX potential for CHO system
+
+units           real
+
+atom_style      charge
+neigh_modify    every 10 delay 0 check no
+
+neighbor        2 bin
+
+read_data       data.CHO
+
+pair_style      reax/c lmp_control
+pair_coeff      * * ffield.reax.cho H C O
+fix             reaxqeq all qeq/reax 1 0.0 10.0 1e-6 param.qeq
+
+fix             1 all nve
+fix             2 all temp/berendsen 500.0 500.0 100.0
+
+timestep        0.25
+
+run             100
+\endcode
+
+In this case, the `units` line corresponds to (1) above.  The `atom_style` and
+`neigh_modify` lines corresponds to (2) above.  And, the `pair_style`,
+`pair_coeff`, and `fix reaxqeq` lines correspond to (3) above.  The string
+"lmp_control", "ffield.reax.cho", and "param.qeq" are parameter file names
+(which are expected to be in the current working directory, since the names do
+not start with a '/').  Also of note, is the string of parameters "H C O" on
+the `pair_coeff` line, which specifies a mapping between the species names "H",
+"C", and "O" used by the ReaxFF model and the LAMMPS atom type numbers 1,2,3,
+respectively.  The number of atom types and their species mapping is part of
+the simulation, not part of the model, and in this case it is specified in the
+"data.CHO" input file listed on the `read_data` line.  This is information that
+can change from simulation to simulation and any LAMMPS %KIM SM implementation
+will need a way of specifying the atom type mapping on the `pair_coeff` line.
+
+The LAMMPS SM implementation accommodates all of these needs by defining three
+Simulator Fields, corresponding to the three parts of a LAMMPS model
+specification discussed above. (1) A "units" field, with a single line
+containing the LAMMPS unit system string required by the model.  (2) A
+"model-init" field, with zero or more lines containing, in this case, the
+`atom_style` and `neigh_modify` commands.  And (3) a "model-defn" field, with
+zero or more lines containing, in this case, the `pair_style`, `pair_coeff`,
+and `fix reaxqeq` commands.  In the latter field lines, the correct parameter
+file names are obtained through the %KIM API/SMI's template substitution
+mechanism, using the standard template keys for the SM's parameter files.  The
+correct atom type mapping is obtained through a special, LAMMPS defined,
+template map with key "atom-type-sym-list".  The result of all of these
+considerations and definitions is the following SM specification file (see the
+\ref kim_api_sm_schema_version_1 "KIM API/SMI Specification File Schema" for
+details of the file format) for the LAMMPS ReaxFF model.
+
+\code{.edn}
+{
+  "kim-api-sm-schema-version" 1
+  "model-name" "Sim_LAMMPS_ReaxFF_ChenowethVanDuinGoddard_2008_CHO__SM_584143153761_000"
+  "simulator-name" "LAMMPS"
+  "simulator-version" "28 Feb 2019"
+  "supported-species" "C H O"
+  "units" "real"
+  "model-init" [ "atom_style charge"
+                 "neigh_modify one 4000"
+               ]
+  "model-defn" [ "pair_style reax/c @<parameter-file-2>@ safezone 2.0 mincap 100"
+                 "pair_coeff * * @<parameter-file-1>@ @<atom-type-sym-list>@"
+                 "fix reaxqeq all qeq/reax 1 0.0 10.0 1.0e-6 @<parameter-file-3>@"
+               ]
+}
+\endcode
+
+The ordering of the SM's parameter files is specified in the SM's \c
+CMakeLists.txt configuration file.  With this SM defined and installed in one
+of the %KIM API collections, the following is equivalent to the above LAMMPS
+input script.
+
+\code{.unparsed}
+# REAX potential for CHO system
+
+kim_init          Sim_LAMMPS_ReaxFF_ChenowethVanDuinGoddard_2008_CHO__SM_584143153761_000 real
+
+neighbor          2 bin
+
+read_data         data.CHO
+
+kim_interactions  C H O
+
+fix               1 all nve
+fix               2 all temp/berendsen 500.0 500.0 100.0
+
+timestep          0.25
+
+run               100
+\endcode
+
 See the documentation of the KIM::SimulatorModel interface for more details of
 the %KIM API/SMI.
 
@@ -447,3 +616,10 @@ LocalWords:  Modelcompureargumentsdestroy ModelExtension CMake PMI PMs MDs tr
 LocalWords:  modelWillNotRequestNeighborsOfNoncontributingParticles td br PM's
 LocalWords:  ModelWriteParameterizedModel requestedUnitsAccepted SMI SMs SM's
 LocalWords:  metadata programatic SM SMI's nondimensional Lennard openkim org
+LocalWords:  pmi smi MPI ModelCreateFunction ModelDriverCreateFunction LAMMPS
+LocalWords:  ModelComputeArgumentsCreateFunction ModelComputeFunction ReaxFF
+LocalWords:  ModelExtensionFunction ModelRefreshFunction ModelDestroyFunction
+LocalWords:  ModelWriteParameterizedModelFunction CHO REAX reax lmp coeff qeq
+LocalWords:  ModelComputeArgumentsDestroyFunction reaxqeq param nve berendsen
+LocalWords:  timestep endcode init defn sym sm edn Sim ChenowethVanDuinGoddard
+LocalWords:  safezone mincap CMakeLists txt

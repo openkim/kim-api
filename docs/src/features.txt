@@ -77,15 +77,18 @@ The current version of the %KIM API package supports the following features:
   Models) in each of the KIM::Collection%s which are configured and
   installed on the computing system.
 
-- **Portable Model Interface (the %KIM API/PMI)**: Features for the PMI include
+- **Portable Model Interface (the %KIM API/PMI)**:
+
+  See \ref kim_api_pmi "The KIM API/PMI" for a description of the PMI. Features
+  for the PMI include
 
   - **Numbering Origin Support**: Support for automatic translation between
     zero-based numbering of particles (C-style numbering beginning with zero)
     and one-based numbering (Fortran-style numbering beginning with one).
 
   - **Data Communication**: Communication of an arbitrary number of *arguments*
-    and *callback* routines between a *model* (interatomic potential) and a
-    *simulator* (simulation code that uses a model).
+    and *callback* routines between a *portable model* (interatomic potential)
+    and a *simulator* (simulation code that uses a model).
 
   - **Data types**: integer and double.
 
@@ -116,14 +119,17 @@ The current version of the %KIM API package supports the following features:
     typically distinct, but may repeat.  Repeated cutoff distances allow a
     model to simultaneously access the neighbors of multiple particles without
     needing to make copies of the neighbor list(s).)  A simulator must provide
-    all such requested lists and ensure that these lists contain only a small
-    number of particles that are located outside the cutoff distance.  Models
-    must provide "hints" about how they use neighbor lists.  These hints allow
-    the simulator to, optionally, optimize its neighbor list build algorithm.
+    all such requested lists and should ensure that these lists contain only a
+    small number of particles that are located outside the cutoff distance.
+    Models must provide "hints" in a standard format (explained \ref
+    neighbor_list_hint "here") about how they use neighbor lists.  These hints
+    allow the simulator to, optionally, optimize its neighbor list build
+    algorithm.
 
   - **Particle Species**: The %KIM API provides the ability to designate the
     physical species of each particle in a simulation.  Currently, only one
-    identifier is provided for each element in the periodic table.  In the
+    identifier is provided for each element in the periodic table, along with
+    some user-defined species for development purposes and toy models.  In the
     future support for models that require multiple types of each element may
     be added.
 
@@ -133,7 +139,8 @@ The current version of the %KIM API package supports the following features:
     useful to explore how a model's predictions vary as the values of its
     parameters are varied.  For this reason, the %KIM API allows a portable
     model to (optionally) "publish" its parameters so that a simulator may
-    modify them during the course of a simulation.
+    modify them during the course of a simulation.  This feature is also useful
+    for codes designed to fit interatomic models.
 
   - **Model Drivers**: The %KIM API package provides the ability to create
     model driver routines.  A model driver is an implementation of an
@@ -142,7 +149,10 @@ The current version of the %KIM API package supports the following features:
     file or files with the appropriate parameter values for the material system
     of interest.
 
-- **Simulator Model Interface (the %KIM API/SMI)**: Features of the SMI include
+- **Simulator Model Interface (the %KIM API/SMI)**:
+
+  See \ref kim_api_smi "The KIM API/SMI" for a description of the SMI.
+  Features of the SMI include
 
   - **Simulator Model (SM) Specification File**: The SM specification file
     records simulator input commands and other important metadata needed to run
@@ -206,5 +216,5 @@ LocalWords:  CDDL yyyy Ellad Tadmor Karls kim api pimpl discoverable const ref
 LocalWords:  DataType LanguageName SpeciesName LengthUnit EnergyUnit TimeUnit
 LocalWords:  ChargeUnit TemperatureUnit ArgumentName CallbackName interatomic
 LocalWords:  SupportStatus atomistic Versioning ComputeArgumentName PMI SMI SM
-LocalWords:  ComputeCallbackName ModelBufferPointer SimulatorBufferPointer
-LocalWords:  programatic metadata SM's
+LocalWords:  ComputeCallbackName ModelBufferPointer SimulatorBufferPointer pmi
+LocalWords:  programatic metadata SM's smi
