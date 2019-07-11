@@ -37,7 +37,7 @@ once the repo has been cloned locally.  A script is provided to do just this:
 $ ./scripts/configure-git-repo-hooks-etc
 
 
-Two other scripts are provided:
+Three other scripts are provided:
 
 * create-package
 
@@ -50,6 +50,11 @@ Two other scripts are provided:
   utility.  clang-format is assumed to be installed on the system and in the
   path.  The ./git-hooks/pre-commit hook also depends on the availability of
   clang-format.
+
+* run-cmds-from-install
+
+  This script extracts commands from the INSTALL file and executes them.  The
+  script is used by CI and for testing.
 
 
 Branches:
