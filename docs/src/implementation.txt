@@ -488,18 +488,18 @@ mappings which facilitate providing copies of the SM's parameter files to the
 simulator.  Additionally, simulators may define their own template mappings and
 add these to the %KIM API/SMI's set to be used for template substitution.
 
-Although the %KIM API/SMI is designed for maximum flexibility, an example of one
-way it can be used by a simulator to support SMs is helpful.  In particular,
-for the [LAMMPS](https://lammps.sandia.gov) simulator, performing a simulator
-with a specific model typically involves three separate parts: (1)
-specification of the physical units in which the model's parameters are given
-and therefore the units in which the simulation will be performed; (2)
-specifying other default properties needed by the model which must be set
-before the LAMMPS simulation box is defined, such as the LAMMPS
-atom style; and (3) specifying the pair_style or other style commands that
-define the model's interactions types and read in the model's parameters.  Here
-is an example LAMMPS input file for the ReaxFF potential, similar to the CHO
-example included in the LAMMPS distribution.
+Although the %KIM API/SMI is designed for maximum flexibility, an example of
+one way it can be used by a simulator to support SMs is helpful.  In
+particular, for the [LAMMPS](https://lammps.sandia.gov) simulator, performing a
+simulator with a specific model typically involves three separate parts: (1)
+specifying the physical units in which the model's parameters are given and
+therefore the units in which the simulation will be performed; (2) specifying
+other default properties needed by the model which must be set before the
+LAMMPS simulation box is defined, such as the LAMMPS atom style; and (3)
+specifying the `pair_style` or other style commands that define the model's
+interactions and read in the model's parameter files.  Here is an example
+LAMMPS input file for the ReaxFF potential, similar to the CHO example included
+in the LAMMPS distribution.
 
 \code{.unparsed}
 # REAX potential for CHO system
@@ -526,18 +526,19 @@ run             100
 \endcode
 
 In this case, the `units` line corresponds to (1) above.  The `atom_style` and
-`neigh_modify` lines corresponds to (2) above.  And, the `pair_style`,
-`pair_coeff`, and `fix reaxqeq` lines correspond to (3) above.  The string
+`neigh_modify` lines correspond to (2) above.  And, the `pair_style`,
+`pair_coeff`, and `fix reaxqeq` lines correspond to (3) above.  The strings
 "lmp_control", "ffield.reax.cho", and "param.qeq" are parameter file names
 (which are expected to be in the current working directory, since the names do
-not start with a '/').  Also of note, is the string of parameters "H C O" on
-the `pair_coeff` line, which specifies a mapping between the species names "H",
-"C", and "O" used by the ReaxFF model and the LAMMPS atom type numbers 1,2,3,
-respectively.  The number of atom types and their species mapping is part of
-the simulation, not part of the model, and in this case it is specified in the
-"data.CHO" input file listed on the `read_data` line.  This is information that
-can change from simulation to simulation and any LAMMPS %KIM SM implementation
-will need a way of specifying the atom type mapping on the `pair_coeff` line.
+not start with a '/').  Also of note is the string of parameters "H C O" on the
+`pair_coeff` line, which specifies a mapping between the species names "H",
+"C", and "O" used by the ReaxFF model and the LAMMPS atom type numbers 1,2, and
+3, respectively.  The number of atom types and their species mapping are part
+of the simulation, not part of the model.  In this case these values are
+specified within the "data.CHO" input file listed on the `read_data` line.
+Since the number of atom types and the species map can change from simulation
+to simulation, any LAMMPS %KIM SM implementation will need a way of specifying
+the atom type mapping on the `pair_coeff` line.
 
 The LAMMPS SM implementation accommodates all of these needs by defining three
 Simulator Fields, corresponding to the three parts of a LAMMPS model
