@@ -77,7 +77,7 @@ class CollectionsImplementation;
 /// settings of the collections can change during the lifetime of a
 /// KIM::Collections object (due to installation or removal of items by other
 /// processes on the machine and/or changes to environment variables or the
-/// configuration file.  Therefore, when lists of information about the
+/// configuration file).  Therefore, when lists of information about the
 /// collections are requested (via a "CacheListOf...()" routine), the
 /// KIM::Collections interface first creates a cache of the list and then
 /// provides access to the cached list via a getter ("Get...()") routine.  The

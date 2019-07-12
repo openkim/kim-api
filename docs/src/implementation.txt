@@ -71,12 +71,12 @@ routines which perform specific tasks.
 -# The <em>ModelDestroy</em> routine (required), which performs finalization
    tasks for the KIM::Model object.
 
-The %KIM API/PMI provides a separate interface to be used by the PM or MD for
-each of these routines.  For each of these routines, the following table lists
-(i) the associated KIM::RoutineName extensible enumeration constant, (ii) links
-to the associated %KIM API/PMI interface(s) available within the routine, (iii)
-links to the routine's prototype (in C++, C, and Fortran), and (iv) if the %KIM
-API/MPI requires a PM or MD to provide the routine, or if it is optional.
+The %KIM API/PMI provides a separate interface to be used by the PM or MD.  For
+each of the routines itemized above, the following table lists (i) the
+associated KIM::ModelRoutineName extensible enumeration constant, (ii) links to
+the associated %KIM API/PMI interface(s) available within the routine, (iii)
+links to the routine's prototype (in C++, C, and Fortran), and (iv) whether the
+%KIM API/MPI requires a PM or MD to provide the routine, or if it is optional.
 
 <table><caption align=top></caption>
 <tr>
@@ -480,7 +480,7 @@ API/SMI.  All other key-value pairs are called "Simulator Fields".  For
 flexibility and generality, the content and meaning of the simulator fields is
 not defined by the %KIM API/SMI.  Instead, each simulator is free to create and
 define its own set of specifications.  The value part of a simulator field
-key-value pair is one or more strings call "Simulator Field Lines".  These
+key-value pair is one or more strings called "Simulator Field Lines".  These
 strings may contain template tags (of the form "@<template-tag-key>@") which
 the KIM::SimulatorModel object will replace by performing template substitution
 using the "Template Map".  The %KIM API/SMI defines a small set of template
@@ -491,7 +491,7 @@ add these to the %KIM API/SMI's set to be used for template substitution.
 Although the %KIM API/SMI is designed for maximum flexibility, an example of
 one way it can be used by a simulator to support SMs is helpful.  In
 particular, for the [LAMMPS](https://lammps.sandia.gov) simulator, performing a
-simulator with a specific model typically involves three separate parts: (1)
+simulation with a specific model typically involves three separate parts: (1)
 specifying the physical units in which the model's parameters are given and
 therefore the units in which the simulation will be performed; (2) specifying
 other default properties needed by the model which must be set before the
@@ -532,9 +532,9 @@ In this case, the `units` line corresponds to (1) above.  The `atom_style` and
 (which are expected to be in the current working directory, since the names do
 not start with a '/').  Also of note is the string of parameters "H C O" on the
 `pair_coeff` line, which specifies a mapping between the species names "H",
-"C", and "O" used by the ReaxFF model and the LAMMPS atom type numbers 1,2, and
-3, respectively.  The number of atom types and their species mapping are part
-of the simulation, not part of the model.  In this case these values are
+"C", and "O" used by the ReaxFF model and the LAMMPS atom type numbers 1, 2,
+and 3, respectively.  The number of atom types and their species mapping are
+part of the simulation, not part of the model.  In this case these values are
 specified within the "data.CHO" input file listed on the `read_data` line.
 Since the number of atom types and the species map can change from simulation
 to simulation, any LAMMPS %KIM SM implementation will need a way of specifying
