@@ -235,7 +235,7 @@ contains
   !!     implicit none
   !!     type(c_ptr), intent(in), value :: data_object
   !!     integer(c_int), intent(in), value :: number_of_neighbor_lists
-  !!     real(c_double), intent(in) :: cutoffs(number_of_neighbor_lists)
+  !!     real(c_double), intent(in) :: cutoffs(*)
   !!     integer(c_int), intent(in), value :: neighbor_list_index
   !!     integer(c_int), intent(in), value :: particle_number
   !!     integer(c_int), intent(out) :: number_of_neighbors
@@ -244,6 +244,10 @@ contains
   !!   end subroutine get_neighbor_ilst
   !! end interface
   !! \endcode
+  !!
+  !! \note The use of the "assumed size" type for `cutoffs` above is necessary
+  !! for strict conformance to the Fortran/C interoperability standard.  The
+  !! cutoffs array is expected to be of shape \c [number_of_neighbor_lists].
   !!
   !! \sa KIM::ModelComputeArguments::GetNeighborList,
   !! KIM_ModelComputeArguments_GetNeighborList

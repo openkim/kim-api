@@ -95,7 +95,7 @@ recursive subroutine get_neigh(data_object, number_of_neighbor_lists, cutoffs, &
   !-- Transferred variables
   type(c_ptr),    value, intent(in) :: data_object
   integer(c_int), value, intent(in) :: number_of_neighbor_lists
-  real(c_double),        intent(in) :: cutoffs(number_of_neighbor_lists)
+  real(c_double),        intent(in) :: cutoffs(*)
   integer(c_int), value, intent(in) :: neighbor_list_index
   integer(c_int), value, intent(in)  :: request
   integer(c_int),        intent(out) :: numnei
@@ -106,6 +106,12 @@ recursive subroutine get_neigh(data_object, number_of_neighbor_lists, cutoffs, &
   integer(c_int) numberOfParticles
   type(neighObject_type), pointer :: neighObject
   integer(c_int), pointer :: neighborList(:,:)
+
+  if (number_of_neighbor_lists > 1) then
+    call my_warning("Model requires too many neighbor lists")
+    ierr = 1
+    return
+  endif
 
   call c_f_pointer(data_object, neighObject)
   numberOfParticles = neighObject%number_of_particles

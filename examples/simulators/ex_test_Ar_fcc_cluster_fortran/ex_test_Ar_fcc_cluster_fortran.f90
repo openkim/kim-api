@@ -88,7 +88,7 @@ recursive subroutine get_neigh(data_object, number_of_neighbor_lists, cutoffs, &
   !-- Transferred variables
   type(c_ptr),    value, intent(in) :: data_object
   integer(c_int), value, intent(in) :: number_of_neighbor_lists
-  real(c_double),        intent(in) :: cutoffs(number_of_neighbor_lists)
+  real(c_double),        intent(in) :: cutoffs(*)
   integer(c_int), value, intent(in) :: neighbor_list_index
   integer(c_int), value, intent(in)  :: request
   integer(c_int),        intent(out) :: numnei

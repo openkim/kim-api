@@ -947,7 +947,7 @@ int ComputeArgumentsImplementation::ProcessDEDrTerm(double const de,
   typedef void ProcessDEDrTermF(void * const dataObject,
                                 double const de,
                                 double const r,
-                                double const * const dx,
+                                double const(*const dx)[3],
                                 int const i,
                                 int const j,
                                 int * const ierr);
@@ -975,7 +975,7 @@ int ComputeArgumentsImplementation::ProcessDEDrTerm(double const de,
     FProcess_dEdr(const_cast<void *>(dataObject),
                   de,
                   r,
-                  dx,
+                  reinterpret_cast<double const(*)[3]>(dx),
                   simulatorI,
                   simulatorJ,
                   &error);
@@ -1033,10 +1033,10 @@ int ComputeArgumentsImplementation::ProcessD2EDr2Term(double const de,
       = reinterpret_cast<KIM_ProcessD2EDr2TermFunction *>(functionPointer);
   typedef void ProcessD2EDr2TermF(void * const dataObject,
                                   double const de,
-                                  double const * const r,
-                                  double const * const dx,
-                                  int const * const i,
-                                  int const * const j,
+                                  double const(*const r)[2],
+                                  double const(*const dx)[2][3],
+                                  int const(*const i)[2],
+                                  int const(*const j)[2],
                                   int * const ierr);
   ProcessD2EDr2TermF * FProcess_d2Edr2
       = reinterpret_cast<ProcessD2EDr2TermF *>(functionPointer);
@@ -1066,10 +1066,10 @@ int ComputeArgumentsImplementation::ProcessD2EDr2Term(double const de,
   {
     FProcess_d2Edr2(const_cast<void *>(dataObject),
                     de,
-                    r,
-                    dx,
-                    simulatorI,
-                    simulatorJ,
+                    reinterpret_cast<double const(*)[2]>(r),
+                    reinterpret_cast<double const(*)[2][3]>(dx),
+                    &simulatorI,
+                    &simulatorJ,
                     &error);
   }
   else
