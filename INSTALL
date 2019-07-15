@@ -68,7 +68,8 @@ E. Adding MDs, PMs, and SMs to the collections
    E.2 Adding MDs, PMs, and SMs to the user-collection
    E.3 Adding MDs, PMs, and SMs to the environment-variable-collection
    E.4 Adding MDs, PMs, and SMs to the CWD-collection
-   E.5 Manually adding MDs, PMs, and SMs
+   E.5 Adding MDs, PMs, and SMs from a local source directory
+   E.6 Manually adding MDs, PMs, and SMs
 
 
 -------------------------------------------------------------------------------
@@ -510,7 +511,7 @@ SMs to the system-collection.
 $ cd "${WORKSPACE}"
 
 $ kim-api-collections-management install system --sudo Morse_Shifted_Jelinek_1972_Ar__MO_831902330215_003
- $ kim-api-collections-management install system --sudo Sim_LAMMPS_ADP_PunDarlingKecskes_2015_CuTa__SM_399364650444_000
+$ kim-api-collections-management install system --sudo Sim_LAMMPS_ADP_PunDarlingKecskes_2015_CuTa__SM_399364650444_000
 
 The kim-api-collections-management utility automatically installs the necessary
 MD too.  You can see the items in the various collections by executing the
@@ -521,7 +522,7 @@ $ kim-api-collections-management list
 Now we can test the newly installed PM.
 
 $ cd "${WORKSPACE}/utility_forces_numer_deriv/build"  # we'll assume this is already built
- $ printf "Morse_Shifted_Jelinek_1972_Ar__MO_831902330215_003" | ./utility_forces_numer_deriv
+$ printf "Morse_Shifted_Jelinek_1972_Ar__MO_831902330215_003" | ./utility_forces_numer_deriv
 
 E.2 ADDING MDs, PMs, and SMs TO THE USER-COLLECTION
 
@@ -530,7 +531,7 @@ Adding MDs, PSs, and SMs to the user-collection is similar.
 $ cd "${WORKSPACE}"
 
 $ kim-api-collections-management install user LJ_Shifted_Bernardes_1958HighCutoff_Ar__MO_242741380554_003
- $ kim-api-collections-management install user Sim_LAMMPS_AGNI_BotuBatraChapman_2017_Al__SM_666183636896_000
+$ kim-api-collections-management install user Sim_LAMMPS_AGNI_BotuBatraChapman_2017_Al__SM_666183636896_000
 $ kim-api-collections-management list
 $ cd "${WORKSPACE}/utility_forces_numer_deriv/build"  # we'll assume this is already built
 $ printf "LJ_Shifted_Bernardes_1958HighCutoff_Ar__MO_242741380554_003" | ./utility_forces_numer_deriv
@@ -548,7 +549,7 @@ $ export KIM_API_PORTABLE_MODELS_DIR="${WORKSPACE}/my-env-collection/portable-mo
 $ mkdir -p "${WORKSPACE}/my-env-collection/simulator-models"
 $ export KIM_API_SIMULATOR_MODELS_DIR="${WORKSPACE}/my-env-collection/simulator-models"
 $ kim-api-collections-management install environment Morse_Shifted_GirifalcoWeizer_1959HighCutoff_Cu__MO_151002396060_003
- $ kim-api-collections-management install environment Sim_LAMMPS_BOP_WardZhouWong_2012_CdZnTe__SM_409035133405_000
+$ kim-api-collections-management install environment Sim_LAMMPS_BOP_WardZhouWong_2012_CdZnTe__SM_409035133405_000
 $ kim-api-collections-management list
 $ cd "${WORKSPACE}/utility_forces_numer_deriv/build"  # we'll assume this is already built
 $ printf "Morse_Shifted_GirifalcoWeizer_1959HighCutoff_Cu__MO_151002396060_003" | ./utility_forces_numer_deriv
@@ -560,11 +561,23 @@ Adding MDs, PMs, and SMs to the CWD-collection is, again, similar.
 $ cd "${WORKSPACE}"
 
 $ kim-api-collections-management install CWD Exp6_KongChakrabarty_1973_ArNe__MO_946046425752_002
- $ kim-api-collections-management install CWD Sim_LAMMPS_MEAM_EtesamiAsadi_2018_Ni__SM_333792531460_000
+$ kim-api-collections-management install CWD Sim_LAMMPS_MEAM_EtesamiAsadi_2018_Ni__SM_333792531460_000
 $ kim-api-collections-management list
 $ printf "Exp6_KongChakrabarty_1973_ArNe__MO_946046425752_002" | "${WORKSPACE}/utility_forces_numer_deriv/build/utility_forces_numer_deriv"  # we'll assume this is already built
 
-E.5 Manually adding MDs, PMs, and SMs
+E.5 Adding MDs, PMs, and SMs from a local source directory
+
+The kim-api-collections-management utility allows for the installation of items
+from a directory on the local file system.  This is useful if you are
+developing an item or do not have network access to openkim.org, but already
+have the source code downloaded.  We'll assume that the item's source code
+(including the CMakeLists.txt file, parameter files, etc) you want to install
+are in directory "${WORKSPACE}/item-source".  Then you simply provide this
+directory name instead of the item name.
+
+   $ kim-api-collections-management install user "${WORKSPACE}/item-source"
+
+E.6 Manually adding MDs, PMs, and SMs
 
 If necessary a MD, PM, or SM may be manually built and installed.  We'll assume
 the item's source code is in the current directory
