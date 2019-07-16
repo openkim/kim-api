@@ -50,7 +50,7 @@ void usage(std::string name)
             << "number-of-parameter-files\n"
             << "  " << name << " "
             << "<simulator-model-name> "
-            << "(metadata-file | <one-based-parameter-file-index>) "
+            << "(smspec-file | <one-based-parameter-file-index>) "
             << "(data | name)\n"
             << "  " << name << " "
             << "--version\n";
@@ -111,14 +111,14 @@ int main(int argc, char * argv[])
     std::string const * dirName;
     simulatorModel->GetParameterFileDirectoryName(&dirName);
     std::string const * name;
-    if (std::string(argv[2]) == "metadata-file")
+    if (std::string(argv[2]) == "smspec-file")
     {
       simulatorModel->GetSpecificationFileName(&name);
       std::string const filePath = *dirName + "/" + *name;
       FILE * file = fopen(filePath.c_str(), "r");
       if (file == NULL)
       {
-        std::cout << "* Error: unable to open metadata file." << std::endl;
+        std::cout << "* Error: unable to open smspec file." << std::endl;
         returnValue = 8;
         goto cleanup;
       }
