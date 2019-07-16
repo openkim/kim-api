@@ -255,10 +255,6 @@ function(add_kim_api_model_library)
   endif()
 
   if(MODEL_SM_SPEC_FILE)
-    if("${MODEL_PARAMETER_FILES}" STREQUAL "")
-      message(FATAL_ERROR "No Simulator Model parameter file(s) provided")
-    endif()
-
     set(ITEM_NAME "\"${MODEL_NAME}\"")
     set(ITEM_DRIVER_NAME "NULL")
     set(ITEM_SM_SPEC_FILE "\"${MODEL_SM_SPEC_FILE}\"")
