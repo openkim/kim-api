@@ -29,7 +29,7 @@
 #
 
 #
-# Release: This file is part of the kim-api-2.0.2 package.
+# Release: This file is part of the kim-api-2.1.0 package.
 #
 
 
@@ -63,7 +63,7 @@ foreach(TEST_MODEL ${TEST_MODELS})
   FILE(MAKE_DIRECTORY ${TEST_DIR})
   add_test(NAME Run_${TEST_NAME}_${TEST_MODEL} COMMAND sh -c "echo ${TEST_MODEL} | ${CMAKE_CURRENT_BINARY_DIR}/${TEST_NAME} > stdout" WORKING_DIRECTORY ${TEST_DIR})
   # TODO : the environment variables can be abstracted for generality
-  set_tests_properties(Run_${TEST_NAME}_${TEST_MODEL} PROPERTIES ENVIRONMENT "KIM_API_MODELS_DIR=${CMAKE_BINARY_DIR};KIM_API_MODEL_DRIVERS_DIR=${CMAKE_BINARY_DIR}")
+  set_tests_properties(Run_${TEST_NAME}_${TEST_MODEL} PROPERTIES ENVIRONMENT "KIM_API_PORTABLE_MODELS_DIR=${CMAKE_BINARY_DIR};KIM_API_MODEL_DRIVERS_DIR=${CMAKE_BINARY_DIR}")
   if("${TEST_MODEL}" MATCHES "ex_model_Ar_.*_MultiCutoff")
     set_tests_properties(Run_${TEST_NAME}_${TEST_MODEL} PROPERTIES WILL_FAIL TRUE)
   endif()

@@ -29,7 +29,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-2.0.2 package.
+// Release: This file is part of the kim-api-2.1.0 package.
 //
 
 #ifndef KIM_LOG_VERBOSITY_HPP_

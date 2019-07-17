@@ -29,7 +29,7 @@
 #
 
 #
-# Release: This file is part of the kim-api.git repository.
+# Release: This file is part of the kim-api-2.1.0 package.
 #
 
 
@@ -110,7 +110,7 @@ EOF
 
 # Change kim-api.git to release version string
 # replace c /* */ comments
-orig_string="kim-api.git repository. "  # include trailing space to keep this from catching non /* */ comments
+orig_string="kim-api-2.1.0 package.  "  # include trailing space to keep this from catching non /* */ comments
 new_string="${fullpackagename} package."
 num_spaces=`expr ${#new_string} - ${#orig_string}`
 if test ${num_spaces} -le 0; then
@@ -119,7 +119,7 @@ else
   orig_string="`printf -- '%-'${#new_string}'s' \"${orig_string}\"`"
 fi
 orig_string="`printf -- "${orig_string}" | sed -e 's/[]\/$*.^[]/\\\\&/g'`"  # escape orig_string appropriately
-for fl in `grep -l -r "${orig_string}" *`; do
+for fl in `grep -l -r "${orig_string}" .`; do
   if test x"${fl}" != x"scripts/create-package"; then  # can't ed current script
     ed "${fl}" > /dev/null 2>&1 <<EOF
 ,s/${orig_string}/${new_string}/g
@@ -129,7 +129,7 @@ EOF
   fi
 done
 # replace the rest
-for fl in `grep -l -r "kim-api\.git repository" *`; do
+for fl in `grep -l -r "kim-api\.git repository" .`; do
   if test x"${fl}" != x"scripts/create-package"; then  # can't ed current script
     ed "${fl}" > /dev/null 2>&1 <<EOF
 ,s/kim-api\.git repository/$fullpackagename package/g

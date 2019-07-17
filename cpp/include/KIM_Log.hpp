@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-2.0.2 package.
+// Release: This file is part of the kim-api-2.1.0 package.
 //
 
 
@@ -64,7 +64,7 @@ class Log
 
   /// \brief Destroy a previously Log::Create'd object.
   ///
-  /// \param[inout] log Pointer to the Model object.
+  /// \param[inout] log Pointer to the Log object.
   ///
   /// \pre \c log points to a previously created %KIM API Log object.
   ///

@@ -27,7 +27,7 @@
 !
 
 !
-! Release: This file is part of the kim-api-2.0.2 package.
+! Release: This file is part of the kim-api-2.1.0 package.
 !
 
 
@@ -340,6 +340,56 @@ contains
 
   !> \brief \copybrief KIM::Model::Create
   !!
+  !! A Fortran PM must provide a KIM::MODEL_ROUTINE_NAME::Create routine.  The
+  !! interface for this is given here.
+  !!
+  !! A PM not employing a MD should use the following interface (see also
+  !! KIM::ModelCreateFunction, \ref KIM_ModelCreateFunction)
+  !!
+  !! \code{.f90}
+  !! interface
+  !!   recursive subroutine create(model_create_handle, requested_length_unit, &
+  !!     requested_energy_unit, requested_charge_unit, &
+  !!     requested_temperature_unit, requested_time_unit, ierr) bind(c)
+  !!     use, intrinsic :: iso_c_binding
+  !!     use kim_model_headers_module
+  !!     implicit none
+  !!     type(kim_model_create_handle_type), intent(in) :: model_create_handle
+  !!     type(kim_length_unit_type), intent(in), value :: requested_length_unit
+  !!     type(kim_energy_unit_type), intent(in), value :: requested_energy_unit
+  !!     type(kim_charge_unit_type), intent(in), value :: requested_charge_unit
+  !!     type(kim_temperature_unit_type), intent(in), value :: &
+  !!       requested_temperature_unit
+  !!     type(kim_time_unit_type), intent(in), value :: requested_time_unit
+  !!     integer(c_int), intent(out) :: ierr
+  !!   end subroutine create
+  !! end interface
+  !! \endcode
+  !!
+  !! A MD should use the following interface (see also
+  !! KIM::ModelDriverCreateFunction, \ref KIM_ModelDriverCreateFunction)
+  !!
+  !! \code{.f90}
+  !! interface
+  !!   recursive subroutine create(model_driver_create_handle, &
+  !!     requested_length_unit, requested_energy_unit, requested_charge_unit, &
+  !!     requested_temperature_unit, requested_time_unit, ierr) bind(c)
+  !!     use, intrinsic :: iso_c_binding
+  !!     use kim_model_driver_headers_module
+  !!     implicit none
+  !!     type(kim_model_driver_create_handle_type), intent(in) :: &
+  !!       model_create_handle
+  !!     type(kim_length_unit_type), intent(in), value :: requested_length_unit
+  !!     type(kim_energy_unit_type), intent(in), value :: requested_energy_unit
+  !!     type(kim_charge_unit_type), intent(in), value :: requested_charge_unit
+  !!     type(kim_temperature_unit_type), intent(in), value :: &
+  !!       requested_temperature_unit
+  !!     type(kim_time_unit_type), intent(in), value :: requested_time_unit
+  !!     integer(c_int), intent(out) :: ierr
+  !!   end subroutine create
+  !! end interface
+  !! \endcode
+  !!
   !! \sa KIM::Model::Create, KIM_Model_Create
   !!
   !! \since 2.0
@@ -396,6 +446,22 @@ contains
   end subroutine kim_model_create
 
   !> \brief \copybrief KIM::Model::Destroy
+  !!
+  !! A Fortran PM must provide a KIM::MODEL_ROUTINE_NAME::Destroy routine.  The
+  !! interface for this is given here (see also KIM::ModelDestroyFunction, \ref
+  !! KIM_ModelDestroyFunction).
+  !!
+  !! \code{.f90}
+  !! interface
+  !!   recursive subroutine destroy(model_destroy_handle, ierr) bind(c)
+  !!     use, intrinsic :: iso_c_binding
+  !!     use kim_model_headers_module
+  !!     implicit none
+  !!     type(kim_model_destroy_handle_type), intent(in) :: model_destroy_handle
+  !!     integer(c_int), intent(out) :: ierr
+  !!   end subroutine destroy
+  !! end interface
+  !! \endcode
   !!
   !! \sa KIM::Model::Destroy, KIM_Model_Destroy
   !!
@@ -637,6 +703,26 @@ contains
 
   !> \brief \copybrief KIM::Model::ComputeArgumentsCreate
   !!
+  !! A Fortran PM must provide a
+  !! KIM::MODEL_ROUTINE_NAME::ComputeArgumentsCreate routine.  The interface
+  !! for this is given here (see also KIM::ModelComputeArgumentsCreateFunction,
+  !! \ref KIM_ModelComputeArgumentsCreateFunction).
+  !!
+  !! \code{.f90}
+  !! interface
+  !!   recursive subroutine compute_arguments_create(model_compute_handle, &
+  !!     model_compute_arguments_create_handle, ierr) bind(c)
+  !!     use, intrinsic :: iso_c_binding
+  !!     use kim_model_headers_module
+  !!     implicit none
+  !!     type(kim_model_compute_handle_type), intent(in) :: model_compute_handle
+  !!     type(kim_model_compute_arguments_create_handle_type), intent(in) &
+  !!       :: model_compute_arguments_create_handle
+  !!     integer(c_int), intent(out) :: ierr
+  !!   end subroutine compute_arguments_create
+  !! end interface
+  !! \endcode
+  !!
   !! \sa KIM::Model::ComputeArgumentsCreate, KIM_Model_ComputeArgumentsCreate
   !!
   !! \since 2.0
@@ -672,6 +758,27 @@ contains
   end subroutine kim_model_compute_arguments_create
 
   !> \brief \copybrief KIM::Model::ComputeArgumentsDestroy
+  !!
+  !! A Fortran PM must provide a
+  !! KIM::MODEL_ROUTINE_NAME::ComputeArgumentsDestroy routine.  The interface
+  !! for this is given here (see also
+  !! KIM::ModelComputeArgumentsDestroyFunction, \ref
+  !! KIM_ModelComputeArgumentsDestroyFunction).
+  !!
+  !! \code{.f90}
+  !! interface
+  !!   recursive subroutine compute_arguments_destroy(model_compute_handle, &
+  !!     model_compute_arguments_destroy_handle, ierr) bind(c)
+  !!     use, intrinsic :: iso_c_binding
+  !!     use kim_model_headers_module
+  !!     implicit none
+  !!     type(kim_model_compute_handle_type), intent(in) :: model_compute_handle
+  !!     type(kim_model_compute_arguments_destroy_handle_type), intent(in) &
+  !!       :: model_compute_arguments_destroy_handle
+  !!     integer(c_int), intent(out) :: ierr
+  !!   end subroutine compute_arguments_destroy
+  !! end interface
+  !! \endcode
   !!
   !! \sa KIM::Model::ComputeArgumentsDestroy, KIM_Model_ComputeArgumentsDestroy
   !!
@@ -709,6 +816,25 @@ contains
 
   !> \brief \copybrief KIM::Model::Compute
   !!
+  !! A Fortran PM must provide a KIM::MODEL_ROUTINE_NAME::Compute routine.  The
+  !! interface for this is given here (see also KIM::ModelComputeFunction, \ref
+  !! KIM_ModelComputeFunction).
+  !!
+  !! \code{.f90}
+  !! interface
+  !!   recursive subroutine compute(model_compute_handle, &
+  !!     model_compute_arguments_handle, ierr) bind(c)
+  !!     use, intrinsic :: iso_c_binding
+  !!     use kim_model_headers_module
+  !!     implicit none
+  !!     type(kim_model_compute_handle_type), intent(in) :: model_compute_handle
+  !!     type(kim_model_compute_arguments_handle_type), intent(in) :: &
+  !!       model_compute_arguments_handle
+  !!     integer(c_int), intent(out) :: ierr
+  !!   end subroutine compute
+  !! end interface
+  !! \endcode
+  !!
   !! \sa KIM::Model::Compute, KIM_Model_Compute
   !!
   !! \since 2.0
@@ -743,6 +869,25 @@ contains
 
   !> \brief \copybrief KIM::Model::Extension
   !!
+  !! A Fortran PM may provide a KIM::MODEL_ROUTINE_NAME::Extension routine.
+  !! The interface for this is given here (see also
+  !! KIM::ModelExtensionFunction, \ref KIM_ModelExtensionFunction).
+  !!
+  !! \code{.f90}
+  !! interface
+  !!   recursive subroutine extension(model_extension_handle, &
+  !!     extension_structure, ierr) bind(c)
+  !!     use, intrinsic :: iso_c_binding
+  !!     use kim_model_headers_module
+  !!     implicit none
+  !!     type(kim_model_extension_handle_type), intent(in) :: &
+  !!       model_extension_handle
+  !!     type(c_ptr), intent(in), value :: extension_structure
+  !!     integer(c_int), intent(out) :: ierr
+  !!   end subroutine extension
+  !! end interface
+  !! \endcode
+  !!
   !! \sa KIM::Model::Extension, KIM_Model_Extension
   !!
   !! \since 2.0
@@ -774,6 +919,22 @@ contains
 
   !> \brief \copybrief KIM::Model::ClearThenRefresh
   !!
+  !! A Fortran PM may need to provide a KIM::MODEL_ROUTINE_NAME::Refresh
+  !! routine.  The interface for this is given here (see also
+  !! KIM::ModelRefreshFunction, \ref KIM_ModelRefreshFunction).
+  !!
+  !! \code{.f90}
+  !! interface
+  !!   recursive subroutine refresh(model_refresh_handle, ierr) bind(c)
+  !!     use, intrinsic :: iso_c_binding
+  !!     use kim_model_headers_module
+  !!     implicit none
+  !!     type(kim_model_refresh_handle_type), intent(in) :: model_refresh_handle
+  !!     integer(c_int), intent(out) :: ierr
+  !!   end subroutine refresh
+  !! end interface
+  !! \endcode
+  !!
   !! \sa KIM::Model::ClearThenRefresh, KIM_Model_ClearThenRefresh
   !!
   !! \since 2.0
@@ -798,6 +959,26 @@ contains
   end subroutine kim_model_clear_then_refresh
 
   !> \brief \copybrief KIM::Model::WriteParameterizedModel
+  !!
+  !! A Fortran PM using a MD may provide a
+  !! KIM::MODEL_ROUTINE_NAME::WriteParameterizedMdoel routine.  The interface
+  !! for this is given here (see also
+  !! KIM::ModelWriteParameterizedModelFunction, \ref
+  !! KIM_ModelWriteParameterizedModelFunction).
+  !!
+  !! \code{.f90}
+  !! interface
+  !!   recursive subroutine write_parameterized_model( &
+  !!     model_write_parameterized_model_handle, ierr) bind(c)
+  !!     use, intrinsic :: iso_c_binding
+  !!     use kim_model_headers_module
+  !!     implicit none
+  !!     type(kim_model_write_parameterized_model_handle_type), intent(in) &
+  !!       :: model_write_parameterized_model_handle
+  !!     integer(c_int), intent(out) :: ierr
+  !!   end subroutine write_parameterized_model
+  !! end interface
+  !! \endcode
   !!
   !! \sa KIM::Model::WriteParameterizedModel, KIM_Model_WriteParameterizedModel
   !!

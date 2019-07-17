@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-2.0.2 package.
+// Release: This file is part of the kim-api-2.1.0 package.
 //
 
 #include <algorithm>
@@ -43,8 +43,12 @@
 #include "KIM_Log.hpp"
 #endif
 
-#ifndef KIMHDR_OLD_KIM_API_DIRS_H
-#include "old_KIM_API_DIRS.h"
+#ifndef KIM_COLLECTION_ITEM_TYPE_HPP_
+#include "KIM_CollectionItemType.hpp"
+#endif
+
+#ifndef KIM_COLLECTIONS_HPP_
+#include "KIM_Collections.hpp"
 #endif
 
 #ifndef KIM_MODEL_IMPLEMENTATION_HPP_
@@ -221,15 +225,17 @@ KIM_TimeUnit makeTimeUnitC(KIM::TimeUnit const timeUnit)
 }  // namespace
 
 // log helpers
-#define SNUM(x) \
-  static_cast<std::ostringstream &>(std::ostringstream() << std::dec << x).str()
-#define SPTR(x)                                                      \
-  static_cast<std::ostringstream &>(std::ostringstream()             \
-                                    << static_cast<void const *>(x)) \
+#define SNUM(x)                                                \
+  static_cast<std::ostringstream const &>(std::ostringstream() \
+                                          << std::dec << x)    \
       .str()
-#define SFUNC(x)                                                             \
-  static_cast<std::ostringstream &>(std::ostringstream()                     \
-                                    << reinterpret_cast<KIM::Function *>(x)) \
+#define SPTR(x)                                                            \
+  static_cast<std::ostringstream const &>(std::ostringstream()             \
+                                          << static_cast<void const *>(x)) \
+      .str()
+#define SFUNC(x)                                                    \
+  static_cast<std::ostringstream const &>(                          \
+      std::ostringstream() << reinterpret_cast<KIM::Function *>(x)) \
       .str()
 
 
@@ -282,6 +288,25 @@ int ModelImplementation::Create(
       __FILE__);
 #endif
 
+  Collections * col;
+  error = Collections::Create(&col);
+  if (error)
+  {
+#if DEBUG_VERBOSITY
+    pModelImplementation->LogEntry(
+        LOG_VERBOSITY::debug,
+        "Destroying ModelImplementation object and exit " + callString,
+        __LINE__,
+        __FILE__);
+#endif
+    delete pModelImplementation;  // also deletes pLog
+
+    return true;
+  }
+  col->SetLogID(pLog->GetID() + "_Collections");
+
+  pModelImplementation->collections_ = col;
+
   error = pModelImplementation->ModelCreate(numbering,
                                             requestedLengthUnit,
                                             requestedEnergyUnit,
@@ -298,7 +323,7 @@ int ModelImplementation::Create(
         __LINE__,
         __FILE__);
 #endif
-    delete pModelImplementation;  // also deletes pLog
+    delete pModelImplementation;  // also deletes pLog and collections object
 
     return true;
   }
@@ -365,7 +390,7 @@ void ModelImplementation::Destroy(
                  __LINE__,
                  __FILE__);
 #endif
-  delete *modelImplementation;  // also deletes Log object
+  delete *modelImplementation;  // also deletes Log & collections objects
   *modelImplementation = NULL;
 }
 
@@ -830,7 +855,7 @@ int ModelImplementation::GetNumberOfParameterFiles(
   LOG_DEBUG("Enter  " + callString);
 
 #if ERROR_VERBOSITY
-  if (itemType_ != SharedLibrary::PARAMETERIZED_MODEL)
+  if (modelDriverName_ == "")
   {
     LOG_ERROR("Only parameterized models have parameter files.");
     LOG_DEBUG("Exit 1=" + callString);
@@ -854,7 +879,7 @@ int ModelImplementation::GetParameterFileName(
   LOG_DEBUG("Enter  " + callString);
 
 #if ERROR_VERBOSITY
-  if (itemType_ != SharedLibrary::PARAMETERIZED_MODEL)
+  if (modelDriverName_ == "")
   {
     LOG_ERROR("Only parameterized models have parameter files.");
     LOG_DEBUG("Exit 1=" + callString);
@@ -1067,6 +1092,13 @@ int ModelImplementation::GetParameter(int const parameterIndex,
     return true;
   }
 
+  if (parameterDataType_[parameterIndex] != DATA_TYPE::Integer)
+  {
+    LOG_ERROR("Data type of parameter is not Integer.");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
+
   if ((arrayIndex < 0) || (arrayIndex >= parameterExtent_[parameterIndex]))
   {
     LOG_ERROR("Invalid parameter arrayIndex, " + SNUM(arrayIndex) + ".");
@@ -1099,6 +1131,13 @@ int ModelImplementation::GetParameter(int const parameterIndex,
           >= parameterPointer_.size()))
   {
     LOG_ERROR("Invalid parameter index, " + SNUM(parameterIndex) + ".");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
+
+  if (parameterDataType_[parameterIndex] != DATA_TYPE::Double)
+  {
+    LOG_ERROR("Data type of parameter is not Double.");
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
@@ -1139,6 +1178,13 @@ int ModelImplementation::SetParameter(int const parameterIndex,
     return true;
   }
 
+  if (parameterDataType_[parameterIndex] != DATA_TYPE::Integer)
+  {
+    LOG_ERROR("Data type of parameter is not Integer.");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
+
   if ((arrayIndex < 0) || (arrayIndex >= parameterExtent_[parameterIndex]))
   {
     LOG_ERROR("Invalid parameter arrayIndex, " + SNUM(arrayIndex) + ".");
@@ -1171,6 +1217,13 @@ int ModelImplementation::SetParameter(int const parameterIndex,
           >= parameterPointer_.size()))
   {
     LOG_ERROR("Invalid parameter index, " + SNUM(parameterIndex) + ".");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
+
+  if (parameterDataType_[parameterIndex] != DATA_TYPE::Double)
+  {
+    LOG_ERROR("Data type of parameter is not Double.");
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
@@ -1396,7 +1449,7 @@ int ModelImplementation::WriteParameterizedModel(
   LOG_DEBUG("Enter  " + callString);
 
 #if ERROR_VERBOSITY
-  if (itemType_ != SharedLibrary::PARAMETERIZED_MODEL)
+  if (modelDriverName_ == "")
   {
     LOG_ERROR("Only parameterized models can implement the "
               "WritePrameterizedModel() routine.");
@@ -1801,7 +1854,7 @@ std::string const & ModelImplementation::ToString() const
   ss << "Model object\n"
      << "------------\n\n";
   ss << "Model Name : " << modelName_ << "\n";
-  if (itemType_ == SharedLibrary::PARAMETERIZED_MODEL)
+  if (modelDriverName_ != "")
   { ss << "Model Driver Name : " << modelDriverName_ << "\n"; }
   ss << "Log ID : " << log_->GetID() << "\n";
   ss << "\n";
@@ -1947,7 +2000,7 @@ std::string const & ModelImplementation::ToString() const
 
 ModelImplementation::ModelImplementation(SharedLibrary * const sharedLibrary,
                                          Log * const log) :
-    itemType_(SharedLibrary::STAND_ALONE_MODEL),
+    collections_(NULL),
     modelName_(""),
     modelDriverName_(""),
     sharedLibrary_(sharedLibrary),
@@ -2003,6 +2056,8 @@ ModelImplementation::~ModelImplementation()
 
   delete sharedLibrary_;
 
+  if (collections_) Collections::Destroy(&collections_);
+
   LOG_DEBUG("Destroying Log object and exit " + callString);
   Log::Destroy(&log_);
 }
@@ -2049,15 +2104,17 @@ int ModelImplementation::ModelCreate(
     return true;
   }
 
-  std::vector<std::string> sharedLibraryList;
-  if (!findItem(OLD_KIM::KIM_MODELS, modelName, &sharedLibraryList, NULL))
+  std::string const * itemFilePath;
+  error = collections_->GetItemLibraryFileNameAndCollection(
+      COLLECTION_ITEM_TYPE::portableModel, modelName, &itemFilePath, NULL);
+  if (error)
   {
     LOG_ERROR("Could not find model shared library.");
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
 
-  error = sharedLibrary_->Open(sharedLibraryList[OLD_KIM::IE_FULLPATH]);
+  error = sharedLibrary_->Open(*itemFilePath);
   if (error)
   {
     LOG_ERROR("Could not open model shared library.");
@@ -2065,10 +2122,21 @@ int ModelImplementation::ModelCreate(
     return true;
   }
 
-  error = sharedLibrary_->GetType(&itemType_);
-  switch (itemType_)
+  // get driver name
+  error = sharedLibrary_->GetDriverName(&modelDriverName_);
+  if (error)
   {
-    case SharedLibrary::STAND_ALONE_MODEL:
+    LOG_ERROR("Could not get Model Driver name.");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
+
+  error = sharedLibrary_->GetType(&itemType_);
+  {
+    using namespace COLLECTION_ITEM_TYPE;
+
+    if ((itemType_ == portableModel) && (modelDriverName_ == ""))
+    {
       LOG_DEBUG("Initializing a stand alone model.");
       error = InitializeStandAloneModel(requestedLengthUnit,
                                         requestedEnergyUnit,
@@ -2081,8 +2149,9 @@ int ModelImplementation::ModelCreate(
         LOG_DEBUG("Exit 1=" + callString);
         return true;
       }
-      break;
-    case SharedLibrary::PARAMETERIZED_MODEL:
+    }
+    else if (itemType_ == portableModel)
+    {
       LOG_DEBUG("Initializing a parameterized model.");
       error = InitializeParameterizedModel(requestedLengthUnit,
                                            requestedEnergyUnit,
@@ -2095,22 +2164,25 @@ int ModelImplementation::ModelCreate(
         LOG_DEBUG("Exit 1=" + callString);
         return true;
       }
-      break;
-    case SharedLibrary::MODEL_DRIVER:
+    }
+    else if (itemType_ == modelDriver)
+    {
       LOG_ERROR("Creation of a model driver is not allowed.");
       LOG_DEBUG("Exit 1=" + callString);
       return true;
-      break;
-    case SharedLibrary::SIMULATOR_MODEL:
+    }
+    else if (itemType_ == simulatorModel)
+    {
       LOG_ERROR("Creation of a simulator model is not allowed.");
       LOG_DEBUG("Exit 1=" + callString);
       return true;
-      break;
-    default:
+    }
+    else
+    {
       LOG_ERROR("Creation of an unknown model type is not allowed.");
       LOG_DEBUG("Exit 1=" + callString);
       return true;
-      break;
+    }
   }
 
 #if ERROR_VERBOSITY
@@ -2835,7 +2907,7 @@ int ModelImplementation::InitializeStandAloneModel(
                             KIM_ChargeUnit const requestedChargeUnit,
                             KIM_TemperatureUnit const requestedTemperatureUnit,
                             KIM_TimeUnit const requestedTimeUnit,
-                            int * const);
+                            int * const ierr);
   ModelCreateF * FCreate = reinterpret_cast<ModelCreateF *>(functionPointer);
 
   struct Mdl
@@ -2932,15 +3004,6 @@ int ModelImplementation::InitializeParameterizedModel(
   }
 #endif
 
-  // get driver name
-  error = sharedLibrary_->GetDriverName(&modelDriverName_);
-  if (error)
-  {
-    LOG_ERROR("Could not get Model Driver name.");
-    LOG_DEBUG("Exit 1=" + callString);
-    return true;
-  }
-
   // write parameter files to scratch space
   error = WriteParameterFiles();
   if (error)
@@ -2959,18 +3022,17 @@ int ModelImplementation::InitializeParameterizedModel(
     return true;
   }
 
-  std::vector<std::string> sharedLibraryList;
-  if (!findItem(OLD_KIM::KIM_MODEL_DRIVERS,
-                modelDriverName_,
-                &sharedLibraryList,
-                NULL))
+  std::string const * itemFilePath;
+  error = collections_->GetItemLibraryFileNameAndCollection(
+      COLLECTION_ITEM_TYPE::modelDriver, modelDriverName_, &itemFilePath, NULL);
+  if (error)
   {
     LOG_ERROR("Could not find model driver shared library.");
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
 
-  error = sharedLibrary_->Open(sharedLibraryList[OLD_KIM::IE_FULLPATH]);
+  error = sharedLibrary_->Open(*itemFilePath);
   if (error)
   {
     LOG_ERROR("Could not open model driver shared library.");
@@ -2979,9 +3041,9 @@ int ModelImplementation::InitializeParameterizedModel(
   }
 
   // check that it is a driver
-  SharedLibrary::ITEM_TYPE itemType;
+  CollectionItemType itemType;
   error = sharedLibrary_->GetType(&itemType);
-  if ((error) || (itemType != SharedLibrary::MODEL_DRIVER))
+  if ((error) || (itemType != COLLECTION_ITEM_TYPE::modelDriver))
   {
     LOG_ERROR("Invalid model driver shared library.");
     LOG_DEBUG("Exit 1=" + callString);
@@ -3118,7 +3180,9 @@ int ModelImplementation::WriteParameterFiles()
   for (int i = 0; i < numberOfParameterFiles_; ++i)
   {
     std::stringstream templateString;
-    templateString << P_tmpdir << "/" << fileNameString;
+    templateString << P_tmpdir
+                   << ((*(--(std::string(P_tmpdir).end())) == '/') ? "" : "/")
+                   << fileNameString;
     char * cstr = strdup(templateString.str().c_str());
     int fileid = mkstemp(cstr);
     if (fileid == -1)

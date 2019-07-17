@@ -1,0 +1,6 @@
+# Must match line exactly
+#
+
+cpp/src/edn-cpp/edn.hpp
+cpp/src/edn-cpp/example.cpp
+cpp/src/edn-cpp/repl.cpp

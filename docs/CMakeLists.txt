@@ -29,7 +29,7 @@
 #
 
 #
-# Release: This file is part of the kim-api-2.0.2 package.
+# Release: This file is part of the kim-api-2.1.0 package.
 #
 
 cmake_minimum_required(VERSION 3.9)
@@ -51,12 +51,11 @@ set(DOXYGEN_EXTRACT_ALL          YES)
 set(DOXYGEN_EXTRACT_STATIC       YES)
 set(DOXYGEN_EXTRACT_ANON_NSPACES YES)
 set(DOXYGEN_FILE_PATTERNS
-  "*.c" "*.cc" "*.cxx" "*.cpp" "*.c++" "*.java" "*.ii" "*.ixx" "*.ipp" "*.i++"
-  "*.inl" "*.idl" "*.ddl" "*.odl" "*.h" "*.h.in" "*.hh" "*.hxx" "*.hpp"
-  "*.hpp.in" "*.h++" "*.cs" "*.d" "*.php" "*.php4" "*.php5" "*.phtml" "*.inc"
-  "*.m" "*.markdown" "*.md" "*.mm" "*.dox" "*.py" "*.pyw" "*.f90" "*.f95"
-  "*.f03" "*.f08" "*.f" "*.for" "*.tcl" "*.vhd" "*.vhdl" "*.ucf" "*.qsf"
-  "Makefile" "CMakeLists.txt" "*.tpl" "*.sh" "*.fd" "*.params" "README"
+  "*.c" "*.cpp" "*.h" "*.h.in" "*.hpp" "*.hpp.in" "*.inc" "*.f90"
+  )
+# additional patterns for examples
+set(DOXYGEN_FILE_PATTERNS ${DOXYGEN_FILE_PATTERNS}
+  "*.CDDL" "*.txt" "*.sh" "README" "*.params" "*.in" "*.bib" "*.edn"
   )
 set(DOXYGEN_EXTENSION_MAPPING    "in=C++")
 
@@ -73,7 +72,7 @@ if(READTHEDOCS)
 endif(READTHEDOCS)
 
 set(SOURCES
-  "src/introduction.txt"
+  "src/table-of-contents.txt"
   "src/features.txt"
   "src/theory.txt"
   "src/implementation.txt"
@@ -83,7 +82,8 @@ set(SOURCES
   "../fortran/include/"
   "../NEWS"
   "../examples/model-drivers/"
-  "../examples/models/"
+  "../examples/portable-models/"
+  "../examples/simulator-models/"
   "../examples/simulators/"
   )
 

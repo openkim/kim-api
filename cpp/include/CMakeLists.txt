@@ -29,7 +29,7 @@
 #
 
 #
-# Release: This file is part of the kim-api-2.0.2 package.
+# Release: This file is part of the kim-api-2.1.0 package.
 #
 
 
@@ -40,6 +40,9 @@ configure_file(KIM_Version.hpp.in ${CMAKE_BINARY_DIR}/KIM_Version.hpp)
 
 set(CPP_HEADERS
   KIM_ChargeUnit.hpp
+  KIM_Collection.hpp
+  KIM_CollectionItemType.hpp
+  KIM_Collections.hpp
   KIM_ComputeArgumentName.hpp
   KIM_ComputeArguments.hpp
   KIM_ComputeCallbackName.hpp
@@ -68,6 +71,7 @@ set(CPP_HEADERS
   KIM_Numbering.hpp
   KIM_SemVer.hpp
   KIM_SimulatorHeaders.hpp
+  KIM_SimulatorModel.hpp
   KIM_SpeciesName.hpp
   KIM_SupportedExtensions.hpp
   KIM_SupportStatus.hpp

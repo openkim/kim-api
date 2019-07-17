@@ -28,8 +28,65 @@
 #
 
 #
-# Release: This file is part of the kim-api-2.0.2 package.
+# Release: This file is part of the kim-api-2.1.0 package.
 #
+
+
+=== kim-api-2.1.0 =============== 16Jul2019 ====================================
+
+* Added new KIM::SimulatorModel interface providing programatic support to
+  simulators for packaging of parameter files, input commands, and metadata
+  necessary to run a simulator's native potentials.
+
+* Added new KIM::Collections interface (and the supporting extensible
+  enumerations KIM::Collection and KIM::CollectionItemTypes) providing
+  programatic access to the KIM API Collections and its configuration settings.
+  (This included a refactor and removal of old_KIM_API_DIRS.*.)
+
+* Convert from old 'models' to 'portable-models' nomenclature for KIM API
+  collections, including environment variables, configuration file, etc.  (For
+  backward compatibility, the old configuration file format is still accepted.)
+
+* Added support for Metadata files to (internal) KIM::SharedLibrary and
+  programatic access to these files from the new KIM::Collections interface.
+
+* Automatically add standard openkim.org metadata files (kimspec.edn,
+  kimprovenance.edn, and kimcite-*.bib) to an item's shared library if they
+  exist.
+
+* Significant documentation updates to describe the new interfaces as well as
+  changing to the the Portable Model (PM) and Simulator Model (SM) terminology.
+
+* Added explicit documentation of Fortran interfaces for routines called by the
+  KIM API (ModelCreate, ModelDestroy, GetNeighborList, etc.).
+
+* Added mention of "Toy Models" to documentation.
+
+* Added data-type error checking for Portable Model parameter get/set routines;
+  Thanks to Daniel Schopf.
+
+* Bug fixes and improvements to kim-api-collections-management script
+
+* Added support for Include-What-You-Use (IWYU).
+
+* Added (internal) copy of edn-cpp parser for use with SMs.
+
+* Updated existing examples as necessary and added SM example.
+
+* Added new "unit-test" examples of simulators using the Collections and SM
+  interfaces.
+
+* Improvement to pkgconfig support; Thanks to Christoph Junghans.
+
+* Added new tests to CI, based on INSTALL file.
+
+* Updates create-package script and added run-cmds-from-install script.
+
+* Added .clang-format-hook-ignore file and mechanism (specifically for edn-cpp).
+
+* Updates to better support binary installation on various systems.
+
+* Added CDDL headers to files that did not have them.
 
 
 === kim-api-2.0.2 =============== 28Mar2019 ====================================

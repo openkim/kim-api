@@ -29,7 +29,7 @@
 #
 
 #
-# Release: This file is part of the kim-api-2.0.2 package.
+# Release: This file is part of the kim-api-2.1.0 package.
 #
 
 
@@ -39,6 +39,10 @@ configure_file(KIM_Configuration.hpp.in ${CMAKE_BINARY_DIR}/KIM_Configuration.hp
 
 set(CPP_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ChargeUnit.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/KIM_Collection.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/KIM_CollectionItemType.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/KIM_Collections.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/KIM_CollectionsImplementation.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ComputeArgumentName.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ComputeArguments.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ComputeCallbackName.cpp
@@ -64,24 +68,30 @@ set(CPP_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_SemVer.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_SpeciesName.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_SupportStatus.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/KIM_SimulatorModel.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/KIM_SimulatorModelImplementation.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_TemperatureUnit.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_TimeUnit.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ComputeArgumentsImplementation.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_LogImplementation.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ModelImplementation.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_SharedLibrary.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/old_KIM_API_DIRS.cpp
   )
 
 target_sources(kim-api PRIVATE ${CPP_SOURCES})
 
-
 add_library(kim-loader STATIC
+  KIM_Collection.cpp
+  KIM_CollectionItemType.cpp
+  KIM_Collections.cpp
+  KIM_CollectionsImplementation.cpp
+  KIM_LanguageName.cpp
   KIM_LogVerbosity.cpp
   KIM_Log.cpp
   KIM_LogImplementation.cpp
   KIM_SharedLibrary.cpp
-  old_KIM_API_DIRS.cpp
+  KIM_SimulatorModel.cpp
+  KIM_SimulatorModelImplementation.cpp
   )
 target_include_directories(kim-loader PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}

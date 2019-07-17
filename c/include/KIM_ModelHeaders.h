@@ -29,13 +29,14 @@
 /*                                                                            */
 
 /*                                                                            */
-/* Release: This file is part of the kim-api-2.0.2 package.                   */
+/* Release: This file is part of the kim-api-2.1.0 package.                   */
 /*                                                                            */
 
 
 #ifndef KIM_MODEL_HEADERS_H_
 #define KIM_MODEL_HEADERS_H_
 
+/* IWYU pragma: begin_exports */
 #ifndef KIM_MODEL_CREATE_H_
 #include "KIM_ModelCreate.h"
 #endif
@@ -119,5 +120,6 @@
 #ifndef KIM_MODEL_DESTROY_H_
 #include "KIM_ModelDestroy.h"
 #endif
+/* IWYU pragma: end_exports */
 
 #endif /* KIM_MODEL_HEADERS_H_ */

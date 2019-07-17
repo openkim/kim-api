@@ -27,7 +27,7 @@
 !
 
 !
-! Release: This file is part of the kim-api-2.0.2 package.
+! Release: This file is part of the kim-api-2.1.0 package.
 !
 
 
@@ -221,6 +221,34 @@ contains
 
   !> \brief \copybrief KIM::ModelComputeArguments::GetNeighborList
   !!
+  !! A Fortran PM must provide a KIM::MODEL_ROUTINE_NAME::GetNeighbotList
+  !! routine.  The interface for this is given here (see also
+  !! KIM::GetNeighborListFunction, \ref KIM_GetNeighborListFunction).
+  !!
+  !! \code{.f90}
+  !! interface
+  !!   recursive subroutine get_neighbor_list(data_object, &
+  !!     number_of_neighbor_lists, cutoffs, neighbor_list_index, &
+  !!     particle_number, number_of_neighbors, neighbors_of_particle, ierr) &
+  !!     bind(c)
+  !!     use, intrinsic :: iso_c_binding
+  !!     implicit none
+  !!     type(c_ptr), intent(in), value :: data_object
+  !!     integer(c_int), intent(in), value :: number_of_neighbor_lists
+  !!     real(c_double), intent(in) :: cutoffs(*)
+  !!     integer(c_int), intent(in), value :: neighbor_list_index
+  !!     integer(c_int), intent(in), value :: particle_number
+  !!     integer(c_int), intent(out) :: number_of_neighbors
+  !!     type(c_ptr), intent(out) :: neighbors_of_particle
+  !!     integer(c_int), intent(out) :: ierr
+  !!   end subroutine get_neighbor_ilst
+  !! end interface
+  !! \endcode
+  !!
+  !! \note The use of the "assumed size" type for `cutoffs` above is necessary
+  !! for strict conformance to the Fortran/C interoperability standard.  The
+  !! cutoffs array is expected to be of shape \c [number_of_neighbor_lists].
+  !!
   !! \sa KIM::ModelComputeArguments::GetNeighborList,
   !! KIM_ModelComputeArguments_GetNeighborList
   !!
@@ -270,6 +298,27 @@ contains
 
   !> \brief \copybrief KIM::ModelComputeArguments::ProcessDEDrTerm
   !!
+  !! A Fortran PM may provide a KIM::MODEL_ROUTINE_NAME::ProcessDEDrTerm
+  !! routine.  The interface for this is given here (see also
+  !! KIM::ProcessDEDrTermFunction, \ref KIM_ProcessDEDrTermFunction).
+  !!
+  !! \code{.f90}
+  !! interface
+  !!   recursive subroutine process_dedr_term(data_object, de, r, dx, i, j, &
+  !!     ierr) bind(c)
+  !!     use, intrinsic :: iso_c_binding
+  !!     implicit none
+  !!     type(c_ptr), intent(in), value :: data_object
+  !!     real(c_double), intent(in), value :: de
+  !!     real(c_double), intent(in), value :: r
+  !!     real(c_double), intent(in) :: dx(3)
+  !!     integer(c_int), intent(in), value :: i
+  !!     integer(c_int), intent(in), value :: j
+  !!     integer(c_int), intent(out) :: ierr
+  !!   end subroutine process_dedr_term
+  !! end interface
+  !! \endcode
+  !!
   !! \sa KIM::ModelComputeArguments::ProcessDEDrTerm,
   !! KIM_ModelComputeArguments_ProcessDEDrTerm
   !!
@@ -310,6 +359,27 @@ contains
   end subroutine kim_model_compute_arguments_process_dedr_term
 
   !> \brief \copybrief KIM::ModelComputeArguments::ProcessD2EDr2Term
+  !!
+  !! A Fortran PM may provide a KIM::MODEL_ROUTINE_NAME::ProcessD2EDr2Term
+  !! routine.  The interface for this is given here (see also
+  !! KIM::ProcessD2EDr2TermFunction, \ref KIM_ProcessD2EDr2TermFunction).
+  !!
+  !! \code{.f90}
+  !! interface
+  !!   recursive subroutine process_d2edr2_term(data_object, de, r, dx, i, j, &
+  !!     ierr) bind(c)
+  !!     use, intrinsic :: iso_c_binding
+  !!     implicit none
+  !!     type(c_ptr), intent(in), value :: data_object
+  !!     real(c_double), intent(in), value :: de
+  !!     real(c_double), intent(in) :: r(2)
+  !!     real(c_double), intent(in) :: dx(3,2)
+  !!     integer(c_int), intent(in) :: i(2)
+  !!     integer(c_int), intent(in) :: j(2)
+  !!     integer(c_int), intent(out) :: ierr
+  !!   end subroutine process_d2edr2_term
+  !! end interface
+  !! \endcode
   !!
   !! \sa KIM::ModelComputeArguments::ProcessD2EDr2Term,
   !! KIM_ModelComputeArguments_ProcessD2EDr2Term

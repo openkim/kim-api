@@ -230,12 +230,10 @@ int LennardJones612Implementation::ComputeArgumentsCreate(
 
 //******************************************************************************
 int LennardJones612Implementation::ComputeArgumentsDestroy(
-    KIM::ModelComputeArgumentsDestroy * const modelComputeArgumentsDestroy)
-    const
+    KIM::ModelComputeArgumentsDestroy * const
+    /* modelComputeArgumentsDestroy */) const
 {
   int ier;
-
-  (void) modelComputeArgumentsDestroy;  // avoid unused parameter warning
 
   // nothing else to do for this case
 
@@ -335,7 +333,7 @@ int LennardJones612Implementation::OpenParameterFiles(
 //
 int LennardJones612Implementation::ProcessParameterFiles(
     KIM::ModelDriverCreate * const modelDriverCreate,
-    int const numberParameterFiles,
+    int const /* numberParameterFiles */,
     FILE * const parameterFilePointers[MAX_PARAMETER_FILES])
 {
   int N, ier;
@@ -344,8 +342,6 @@ int LennardJones612Implementation::ProcessParameterFiles(
   char * nextLinePtr;
   int iIndex, jIndex, indx, iiIndex, jjIndex;
   double nextCutoff, nextEpsilon, nextSigma;
-
-  (void) numberParameterFiles;  // avoid unused parameter warning
 
   nextLinePtr = nextLine;
 
@@ -674,8 +670,10 @@ int LennardJones612Implementation::RegisterKIMComputeArgumentsSettings(
 
 //******************************************************************************
 // helper macro
-#define SNUM(x) \
-  static_cast<std::ostringstream &>(std::ostringstream() << std::dec << x).str()
+#define SNUM(x)                                                \
+  static_cast<std::ostringstream const &>(std::ostringstream() \
+                                          << std::dec << x)    \
+      .str()
 //******************************************************************************
 #undef KIM_LOGGER_OBJECT_NAME
 #define KIM_LOGGER_OBJECT_NAME modelDriverCreate
@@ -1046,13 +1044,10 @@ void LennardJones612Implementation::ProcessVirialTerm(
     const double & dEidr,
     const double & rij,
     const double * const r_ij,
-    const int & i,
-    const int & j,
+    const int & /* i */,
+    const int & /* j */,
     VectorOfSizeSix virial) const
 {
-  (void) i;  // avoid unused parameter warning
-  (void) j;
-
   double const v = dEidr / rij;
 
   virial[0] += v * r_ij[0] * r_ij[0];

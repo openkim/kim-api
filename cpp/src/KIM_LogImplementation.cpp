@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-2.0.2 package.
+// Release: This file is part of the kim-api-2.1.0 package.
 //
 
 
@@ -50,9 +50,9 @@
 #define LOG_FILE "kim.log"
 
 // log helper
-#define SPTR(x)                                                      \
-  static_cast<std::ostringstream &>(std::ostringstream()             \
-                                    << static_cast<void const *>(x)) \
+#define SPTR(x)                                                            \
+  static_cast<std::ostringstream const &>(std::ostringstream()             \
+                                          << static_cast<void const *>(x)) \
       .str()
 
 

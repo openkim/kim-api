@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-2.0.2 package.
+// Release: This file is part of the kim-api-2.1.0 package.
 //
 
 
@@ -88,6 +88,7 @@ namespace KIM
 {
 // Forward declaration
 class Log;
+class Collections;
 
 class ModelImplementation
 {
@@ -270,7 +271,8 @@ class ModelImplementation
 
   int IsCIdentifier(std::string const & id) const;
 
-  SharedLibrary::ITEM_TYPE itemType_;
+  Collections * collections_;
+  CollectionItemType itemType_;
   std::string modelName_;
   std::string modelDriverName_;
 

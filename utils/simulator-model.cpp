@@ -27,21 +27,14 @@
 //
 
 //
-// Release: This file is part of the kim-api-2.0.2 package.
+// Release: This file is part of the kim-api-2.1.0 package.
 //
 
-#include "KIM_Configuration.hpp"
-#include "KIM_SharedLibrary.hpp"
+#include "KIM_SimulatorModel.hpp"
 #include "KIM_Version.hpp"
-#include "old_KIM_API_DIRS.h"
 #include <cstdio>
-#include <cstdlib>
-#include <cstring>
 #include <iostream>
-#include <list>
-#include <string>
-#include <vector>
-using namespace OLD_KIM;
+#include <stdlib.h>
 
 void usage(std::string name)
 {
@@ -57,7 +50,7 @@ void usage(std::string name)
             << "number-of-parameter-files\n"
             << "  " << name << " "
             << "<simulator-model-name> "
-            << "(metadata-file | <one-based-parameter-file-index>) "
+            << "(smspec-file | <one-based-parameter-file-index>) "
             << "(data | name)\n"
             << "  " << name << " "
             << "--version\n";
@@ -79,118 +72,127 @@ int main(int argc, char * argv[])
     return 0;
   }
 
-  char const * modelname = argv[1];
+  char const * const simulatorModelName = argv[1];
 
-  int error;
-  KIM::SharedLibrary sharedLib(NULL);
-
-  // get item shared library file name
-  std::vector<std::string> item;
-  bool accessible = findItem(KIM_SIMULATOR_MODELS, modelname, &item, NULL);
-  if (accessible)
+  KIM::SimulatorModel * simulatorModel;
+  int error = KIM::SimulatorModel::Create(simulatorModelName, &simulatorModel);
+  if (error)
   {
-    error = sharedLib.Open(item[OLD_KIM::IE_FULLPATH]);
-    if (error)
-    {
-      std::cout << "* Error: A problem occurred with the Simulator Model "
-                   "shared library file for name: '"
-                << modelname << "'" << std::endl;
-      return 1;
-    }
-
-    if (argc == 2)
-    {
-      std::cout << "SIMULATOR_MODEL";
-      return 0;
-    }
+    std::cout << "* Error: Could not create object for name: '"
+              << simulatorModelName << "'" << std::endl;
+    return 1;
   }
-  else
+
+  int returnValue = 0;
+
+  if (argc == 2)
   {
-    if (argc == 2)
-    {
-      std::cout << "NOT_A_SIMULATOR_MODEL";
-      return 4;
-    }
-    else
-    {
-      std::cout << "* Error: The Simulator Model shared library file is not "
-                   "readable for name: '"
-                << modelname << "'" << std::endl;
-      return 2;
-    }
+    std::cout << "SIMULATOR_MODEL";
+    returnValue = 0;
+    goto cleanup;
   }
 
   if (std::string(argv[2]) == "number-of-parameter-files")
   {
     int number;
-    error = sharedLib.GetNumberOfParameterFiles(&number);
-    if (error)
-    {
-      std::cout << "* Error: cannot get number of parameter files."
-                << std::endl;
-      sharedLib.Close();
-      return 5;
-    }
-    else
-    {
-      std::cout << number << std::endl;
-      sharedLib.Close();
-      return 0;
-    }
+    simulatorModel->GetNumberOfParameterFiles(&number);
+    std::cout << number << std::endl;
+    returnValue = 0;
+    goto cleanup;
   }
   else if (argc < 4)
   {
     usage(argv[0]);
-    return -2;
+    returnValue = -2;
+    goto cleanup;
   }
   else
   {
-    std::string name;
-    unsigned int len;
-    unsigned char const * data;
-    if (std::string(argv[2]) == "metadata-file")
+    std::string const * dirName;
+    simulatorModel->GetParameterFileDirectoryName(&dirName);
+    std::string const * name;
+    if (std::string(argv[2]) == "smspec-file")
     {
-      error = sharedLib.GetMetadataFile(&name, &len, &data);
-      if (error)
+      simulatorModel->GetSpecificationFileName(&name);
+      std::string const filePath = *dirName + "/" + *name;
+      FILE * file = fopen(filePath.c_str(), "r");
+      if (file == NULL)
       {
-        std::cout << "* Error: unable to get metadata file." << std::endl;
-        return 6;
+        std::cout << "* Error: unable to open smspec file." << std::endl;
+        returnValue = 8;
+        goto cleanup;
       }
+      fseek(file, 0, SEEK_END);
+      long int size = ftell(file);
+      fclose(file);
+      file = fopen(filePath.c_str(), "r");
+      unsigned char * fileData = new unsigned char[size];
+      fread(fileData, sizeof(unsigned char), size, file);
+      fclose(file);
+
+      if (std::string(argv[3]) == "name") { std::cout << *name << std::endl; }
+      else if (std::string(argv[3]) == "data")
+      {
+        fwrite(fileData, sizeof(unsigned char), size, stdout);
+      }
+      delete[] fileData;
     }
     else  // one-based parameter file index provided
     {
       int number;
-      error = sharedLib.GetNumberOfParameterFiles(&number);
+      simulatorModel->GetNumberOfParameterFiles(&number);
       int index = atol(argv[2]);
       if ((index < 1) || (index > number))
       {
         std::cout << "* Error: invalid index provided." << std::endl;
-        return 7;
+        returnValue = 7;
+        goto cleanup;
       }
       else
       {
+        std::string const * dirName;
+        simulatorModel->GetParameterFileDirectoryName(&dirName);
         // The command line interface uses a one-based index for compatibility
         // with external scripts.  The SharedLibrary API uses a zero-based
         // index consistent with standard C++ convention.
-        error = sharedLib.GetParameterFile(index - 1, &name, &len, &data);
+        error = simulatorModel->GetParameterFileName(index - 1, &name);
         if (error)
         {
-          std::cout << "* Error: unable to get parameter file." << std::endl;
-          return 8;
+          std::cout << "* Error: unable to get parameter file name."
+                    << std::endl;
+          returnValue = 8;
+          goto cleanup;
         }
+        std::string const filePath = *dirName + "/" + *name;
+        FILE * file = fopen(filePath.c_str(), "r");
+        if (file == NULL)
+        {
+          std::cout << "* Error: unable to open parameter file." << std::endl;
+          returnValue = 8;
+          goto cleanup;
+        }
+        fseek(file, 0, SEEK_END);
+        long int size = ftell(file);
+        fclose(file);
+        file = fopen(filePath.c_str(), "r");
+        unsigned char * fileData = new unsigned char[size];
+        fread(fileData, sizeof(unsigned char), size, file);
+        fclose(file);
+
+        if (std::string(argv[3]) == "name") { std::cout << *name << std::endl; }
+        else if (std::string(argv[3]) == "data")
+        {
+          fwrite(fileData, sizeof(unsigned char), size, stdout);
+        }
+        delete[] fileData;
       }
     }
 
-    if (std::string(argv[3]) == "name") { std::cout << name << std::endl; }
-    else if (std::string(argv[3]) == "data")
-    {
-      fwrite(data, sizeof(unsigned char), len, stdout);
-    }
-
-    sharedLib.Close();
-    return 0;
+    returnValue = 0;
+    goto cleanup;
   }
 
-  // something is wrong...
-  return 9;
+cleanup:
+  KIM::SimulatorModel::Destroy(&simulatorModel);
+  return returnValue;
 }

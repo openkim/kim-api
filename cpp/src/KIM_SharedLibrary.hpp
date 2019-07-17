@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-2.0.2 package.
+// Release: This file is part of the kim-api-2.1.0 package.
 //
 
 
@@ -35,6 +35,7 @@
 #define KIM_SHARED_LIBRARY_HPP_
 
 #include <string>
+#include <vector>
 
 #ifndef KIM_FUNCTION_TYPES_HPP_
 #include "KIM_FunctionTypes.hpp"
@@ -42,6 +43,14 @@
 
 #ifndef KIM_LOG_HPP_
 #include "KIM_Log.hpp"
+#endif
+
+#ifndef KIM_LANGUAGE_NAME_HPP_
+#include "KIM_LanguageName.hpp"
+#endif
+
+#ifndef KIM_COLLECTION_ITEM_TYPE_HPP_
+#include "KIM_CollectionItemType.hpp"
 #endif
 
 namespace KIM
@@ -60,17 +69,10 @@ class SharedLibrary
   SharedLibrary(Log * const log);
   ~SharedLibrary();
 
-  enum ITEM_TYPE {
-    STAND_ALONE_MODEL,
-    PARAMETERIZED_MODEL,
-    SIMULATOR_MODEL,
-    MODEL_DRIVER
-  };
-
   int Open(std::string const & sharedLibraryName);
   int Close();
   int GetName(std::string * const name) const;
-  int GetType(ITEM_TYPE * const type) const;
+  int GetType(CollectionItemType * const type) const;
   int GetCreateFunctionPointer(LanguageName * const languageName,
                                Function ** const functionPointer) const;
   int GetNumberOfParameterFiles(int * const numberOfParameterFiles) const;
@@ -78,11 +80,16 @@ class SharedLibrary
                        std::string * const parameterFileName,
                        unsigned int * const parameterFileLength,
                        unsigned char const ** const parameterFileData) const;
-  int GetMetadataFile(std::string * const metadataFileName,
+  int GetSimulatorModelSpecificationFile(
+      std::string * const specFileName,
+      unsigned int * const specFileLength,
+      unsigned char const ** const specFileData) const;
+  int GetDriverName(std::string * const driverName) const;
+  int GetNumberOfMetadataFiles(int * const numberOfMetadataFiles) const;
+  int GetMetadataFile(int const index,
+                      std::string * const metadataFileName,
                       unsigned int * const metadataFileLength,
                       unsigned char const ** const metadataFileData) const;
-  int GetDriverName(std::string * const driverName) const;
-  int GetCompiledWithVersion(std::string * const versionString) const;
 
   void LogEntry(LogVerbosity const logVerbosity,
                 std::string const & message,
@@ -90,10 +97,28 @@ class SharedLibrary
                 std::string const & fileName) const;
 
  private:
+  struct EmbeddedFile
+  {
+    char const * fileName;
+    unsigned int fileLength;
+    unsigned char const * filePointer;
+  };  // struct EmbeddedFile
+
   std::string sharedLibraryName_;
   void * sharedLibraryHandle_;
   int const * sharedLibrarySchemaVersion_;
-  SHARED_LIBRARY_SCHEMA::SharedLibrarySchemaV1 const * sharedLibrarySchema_;
+
+  CollectionItemType itemType_;
+  std::string itemName_;
+  LanguageName createLanguageName_;
+  Function * createRoutine_;
+  std::string driverName_;
+  EmbeddedFile simulatorModelSpecificationFile_;
+  int numberOfParameterFiles_;
+  std::vector<EmbeddedFile> parameterFiles_;
+  int numberOfMetadataFiles_;
+  std::vector<EmbeddedFile> metadataFiles_;
+
   Log * log_;
 };  // class SharedLibrary
 }  // namespace KIM

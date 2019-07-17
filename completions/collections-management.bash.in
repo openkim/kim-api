@@ -27,7 +27,7 @@
 #
 
 #
-# Release: This file is part of the kim-api-2.0.2 package.
+# Release: This file is part of the kim-api-2.1.0 package.
 #
 
 _@KIM_API_C_ID_PROJECT_NAME@_collections_management()
@@ -36,7 +36,7 @@ _@KIM_API_C_ID_PROJECT_NAME@_collections_management()
   collections_info=@CMAKE_INSTALL_FULL_LIBEXECDIR@/@PROJECT_NAME@/@PROJECT_NAME@-collections-info
 
   local cur subcommands opts
-  subcommands="list set-user-model-drivers-dir set-user-models-dir "
+  subcommands="list set-user-model-drivers-dir set-user-portable-models-dir "
   subcommands="${subcommands} set-user-simulator-models-dir install reinstall"
   subcommands="${subcommands} remove remove-all"
 
@@ -123,7 +123,7 @@ _@KIM_API_C_ID_PROJECT_NAME@_collections_management()
         fi
         local models drivers simulator_models
         drivers=`${collections_info} model_drivers | sed -e 's|[^[:space:]]* \([^[:space:]]*\) .*|\1|'`
-        models=`${collections_info} models | sed -e 's|[^[:space:]]* \([^[:space:]]*\) .*|\1|'`
+        models=`${collections_info} portable_models | sed -e 's|[^[:space:]]* \([^[:space:]]*\) .*|\1|'`
         drivers=`${collections_info} simulator_models | sed -e 's|[^[:space:]]* \([^[:space:]]*\) .*|\1|'`
         opts="${opts} ${drivers} ${models} ${simulator_models}"
 

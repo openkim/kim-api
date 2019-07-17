@@ -29,10 +29,10 @@
 #
 
 #
-# Release: This file is part of the kim-api-2.0.2 package.
+# Release: This file is part of the kim-api-2.1.0 package.
 #
 
 
 cmake_minimum_required(VERSION 3.4)
 
-add_subdirectory(ex_sim_model_Si_mod_tersoff)
+add_subdirectory(Sim_LAMMPS_LJcut_AkersonElliott_Alchemy_PbAu)

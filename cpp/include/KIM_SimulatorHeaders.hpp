@@ -27,15 +27,32 @@
 //
 
 //
-// Release: This file is part of the kim-api-2.0.2 package.
+// Release: This file is part of the kim-api-2.1.0 package.
 //
 
 
 #ifndef KIM_SIMULATOR_HEADERS_HPP_
 #define KIM_SIMULATOR_HEADERS_HPP_
 
+// IWYU pragma: begin_exports
+#ifndef KIM_COLLECTIONS_HPP_
+#include "KIM_Collections.hpp"
+#endif
+
+#ifndef KIM_COLLECTION_HPP_
+#include "KIM_Collection.hpp"
+#endif
+
+#ifndef KIM_COLLECTION_ITEM_TYPE_HPP_
+#include "KIM_CollectionItemType.hpp"
+#endif
+
 #ifndef KIM_MODEL_HPP_
 #include "KIM_Model.hpp"
+#endif
+
+#ifndef KIM_SIMULATOR_MODEL_HPP_
+#include "KIM_SimulatorModel.hpp"
 #endif
 
 #ifndef KIM_LOG_VERBOSITY_HPP_
@@ -81,5 +98,6 @@
 #ifndef KIM_SUPPORT_STATUS_HPP_
 #include "KIM_SupportStatus.hpp"
 #endif
+// IWYU pragma: end_exports
 
 #endif  // KIM_SIMULATOR_HEADERS_HPP_

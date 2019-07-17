@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-2.0.2 package.
+// Release: This file is part of the kim-api-2.1.0 package.
 //
 
 
@@ -37,7 +37,7 @@
 #include <string>
 
 #ifndef KIM_FUNCTION_TYPES_HPP_
-#include "KIM_FunctionTypes.hpp"
+#include "KIM_FunctionTypes.hpp"  // IWYU pragma: export
 #endif
 
 namespace KIM

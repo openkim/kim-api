@@ -29,7 +29,7 @@
 #
 
 #
-# Release: This file is part of the kim-api-2.0.2 package.
+# Release: This file is part of the kim-api-2.1.0 package.
 #
 
 
@@ -47,7 +47,9 @@ set(TEST_MODELS
   ex_model_Ar_SLJ_MultiCutoff
   )
 
+add_subdirectory(collections-example)
 add_subdirectory(ex_test_Ar_fcc_cluster)
 add_subdirectory(ex_test_Ar_fcc_cluster_cpp)
 add_subdirectory(ex_test_Ar_fcc_cluster_fortran)
+add_subdirectory(simulator-model-example)
 add_subdirectory(utility_forces_numer_deriv)

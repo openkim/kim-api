@@ -29,7 +29,7 @@
 #
 
 #
-# Release: This file is part of the kim-api-2.0.2 package.
+# Release: This file is part of the kim-api-2.1.0 package.
 #
 
 
@@ -47,7 +47,7 @@ install(
   "${CMAKE_CURRENT_BINARY_DIR}/${CONFIG_FILE}"
   "${CMAKE_CURRENT_BINARY_DIR}/${CONFIG_VERSION_FILE}"
   DESTINATION
-  ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME}/${KIM_API_CMAKE_DIR_IDENTIFIER}
+  ${CMAKE_INSTALL_DATADIR}/cmake/${PROJECT_NAME}
   )
 
 target_include_directories(kim-api PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
@@ -56,6 +56,7 @@ set(ITEM_BUILD_SOURCES
   KIM_SharedLibrarySchema.hpp
   item-wrapper.cpp.in
   item-info.txt.in
+  item-compiled-with-version.txt.in
   )
 
 install(

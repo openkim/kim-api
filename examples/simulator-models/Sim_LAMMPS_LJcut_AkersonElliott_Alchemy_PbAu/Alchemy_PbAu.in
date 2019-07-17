@@ -1,0 +1,8 @@
+if "${alchemy_mapping} == Pb" then &
+  "pair_coeff ${alchemy_curr_type} ${alchemy_curr_type}  0.8589880  2.6014200  10.4057000" &
+elif "${alchemy_mapping} == Au" &
+  "pair_coeff ${alchemy_curr_type} ${alchemy_curr_type}  2.3058000  2.4232400   9.6929800"
+
+next alchemy_curr_type
+next alchemy_mapping
+jump SELF

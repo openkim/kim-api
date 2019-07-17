@@ -29,13 +29,14 @@
 /*                                                                            */
 
 /*                                                                            */
-/* Release: This file is part of the kim-api-2.0.2 package.                   */
+/* Release: This file is part of the kim-api-2.1.0 package.                   */
 /*                                                                            */
 
 
 #ifndef KIM_UNIT_SYSTEM_H_
 #define KIM_UNIT_SYSTEM_H_
 
+/* IWYU pragma: begin_exports */
 #ifndef KIM_LENGTH_UNIT_H_
 #include "KIM_LengthUnit.h"
 #endif
@@ -55,5 +56,6 @@
 #ifndef KIM_TIME_UNIT_H_
 #include "KIM_TimeUnit.h"
 #endif
+/* IWYU pragma: end_exports */
 
 #endif /* KIM_UNIT_SYSTEM_H_ */

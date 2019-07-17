@@ -29,7 +29,7 @@
 /*                                                                            */
 
 /*                                                                            */
-/* Release: This file is part of the kim-api-2.0.2 package.                   */
+/* Release: This file is part of the kim-api-2.1.0 package.                   */
 /*                                                                            */
 
 
@@ -68,7 +68,7 @@ typedef struct KIM_ChargeUnit KIM_ChargeUnit;
 /**
  ** \brief \copybrief KIM::ChargeUnit::ChargeUnit(std::string const &)
  **
- ** \sa KIM::ChargeUnit::ChargeUnit(std::string const &), ,
+ ** \sa KIM::ChargeUnit::ChargeUnit(std::string const &),
  ** kim_charge_unit_module::kim_from_string
  **
  ** \since 2.0

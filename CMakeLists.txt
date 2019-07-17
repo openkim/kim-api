@@ -29,7 +29,7 @@
 #
 
 #
-# Release: This file is part of the kim-api-2.0.2 package.
+# Release: This file is part of the kim-api-2.1.0 package.
 #
 
 
@@ -68,7 +68,7 @@ mark_as_advanced(KIM_API_ENABLE_COVERAGE)
 #
 # Define main project
 #
-project(${KIM_API_PROJECT_NAME} VERSION 2.0.2 LANGUAGES CXX C Fortran)  # must remain a single line for create-pacakge script
+project(${KIM_API_PROJECT_NAME} VERSION 2.1.0 LANGUAGES CXX C Fortran)  # must remain a single line for create-pacakge script
 set(PROJECT_DESCRIPTION "An Application Programming Interface (API) for the Knowledgebase of Interatomic Models (KIM).")
 include(GNUInstallDirs)  # needs to come after call to project()
 include(Bash-CompletionConfig)  # set install dirs for bash completions
@@ -95,9 +95,9 @@ include(DefineInternalVariables)
 if((NOT KIM_API_SYSTEM_MODEL_DRIVERS_DIR) OR (KIM_API_SYSTEM_MODEL_DRIVERS_DIR MATCHES "^:"))
   set(KIM_API_SYSTEM_MODEL_DRIVERS_DIR "${CMAKE_INSTALL_FULL_LIBDIR}/${PROJECT_NAME}/${KIM_API_MODEL_DRIVER_PLURAL_IDENTIFIER}${KIM_API_SYSTEM_MODEL_DRIVERS_DIR}" CACHE STRING "System collection (colon-separated) model drivers directory list" FORCE)
 endif()
-mark_as_advanced(KIM_API_SYSTEM_MODEL_DRIVERS_DIR)
-if((NOT KIM_API_SYSTEM_MODELS_DIR) OR (KIM_API_SYSTEM_MODELS_DIR MATCHES "^:"))
-  set(KIM_API_SYSTEM_MODELS_DIR "${CMAKE_INSTALL_FULL_LIBDIR}/${PROJECT_NAME}/${KIM_API_MODEL_PLURAL_IDENTIFIER}${KIM_API_SYSTEM_MODELS_DIR}" CACHE STRING "System collection (colon-separated) models directory list" FORCE)
+mark_as_advanced(KIM_API_SYSTEM_PORTABLE_MODEL_DRIVERS_DIR)
+if((NOT KIM_API_SYSTEM_PORTABLE_MODELS_DIR) OR (KIM_API_SYSTEM_PORTABLE_MODELS_DIR MATCHES "^:"))
+  set(KIM_API_SYSTEM_PORTABLE_MODELS_DIR "${CMAKE_INSTALL_FULL_LIBDIR}/${PROJECT_NAME}/${KIM_API_PORTABLE_MODEL_PLURAL_IDENTIFIER}${KIM_API_SYSTEM_PORTABLE_MODELS_DIR}" CACHE STRING "System collection (colon-separated) portable models directory list" FORCE)
 endif()
 mark_as_advanced(KIM_API_SYSTEM_MODELS_DIR)
 if((NOT KIM_API_SYSTEM_SIMULATOR_MODELS_DIR) OR (KIM_API_SYSTEM_SIMULATOR_MODELS_DIR MATCHES "^:"))
@@ -120,6 +120,7 @@ set_target_properties(kim-api
 target_include_directories(kim-api PUBLIC $<TARGET_PROPERTY:kim-api,Fortran_MODULE_DIRECTORY>)
 target_include_directories(kim-api PUBLIC ${CMAKE_BINARY_DIR})
 target_link_libraries(kim-api ${CMAKE_DL_LIBS})
+
 
 # Add include subdirectories
 #
@@ -151,7 +152,7 @@ endif()
 if(KIM_API_BUILD_EXAMPLES)
   list(APPEND CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR}/cmake/Modules)
   add_subdirectory(examples/model-drivers)
-  add_subdirectory(examples/models)
+  add_subdirectory(examples/portable-models)
   add_subdirectory(examples/simulator-models)
   add_subdirectory(examples/simulators)
 endif()

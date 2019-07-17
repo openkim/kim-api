@@ -27,20 +27,23 @@
 //
 
 //
-// Release: This file is part of the kim-api-2.0.2 package.
+// Release: This file is part of the kim-api-2.1.0 package.
 //
 
 
 #ifndef KIM_SHARED_LIBRARY_SCHEMA_HPP_
 #define KIM_SHARED_LIBRARY_SCHEMA_HPP_
 
-#define KIM_SHARED_LIBRARY_SCHEMA_VERSION 1
+#define KIM_SHARED_LIBRARY_SCHEMA_VERSION 2
 
 
 #ifndef KIM_FUNCTION_TYPES_HPP_
 #include "KIM_FunctionTypes.hpp"
 #endif
 
+#ifndef KIM_COLLECTION_ITEM_TYPE_HPP_
+#include "KIM_CollectionItemType.hpp"
+#endif
 
 namespace KIM
 {
@@ -50,6 +53,27 @@ class LanguageName;
 
 namespace SHARED_LIBRARY_SCHEMA
 {
+struct SharedLibrarySchemaV2
+{
+  struct EmbeddedFile
+  {
+    char const * fileName;
+    unsigned int const fileLength;
+    unsigned char const * const filePointer;
+  };  // struct EmbeddedFile
+
+  CollectionItemType const itemType;
+  char const * const itemName;
+  LanguageName const createLanguageName;
+  Function * createRoutine;
+  char const * const driverName;
+  EmbeddedFile const * const simulatorModelSpecificationFile;
+  int const numberOfParameterFiles;
+  EmbeddedFile const * const parameterFiles;
+  int const numberOfMetadataFiles;
+  EmbeddedFile const * const metadataFiles;
+};  // struct SharedLibrarySchemaV2
+
 struct SharedLibrarySchemaV1
 {
   enum ITEM_TYPE {

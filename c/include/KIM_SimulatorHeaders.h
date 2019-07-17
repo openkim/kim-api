@@ -29,15 +29,32 @@
 /*                                                                            */
 
 /*                                                                            */
-/* Release: This file is part of the kim-api-2.0.2 package.                   */
+/* Release: This file is part of the kim-api-2.1.0 package.                   */
 /*                                                                            */
 
 
 #ifndef KIM_SIMULATOR_HEADERS_H_
 #define KIM_SIMULATOR_HEADERS_H_
 
+/* IWYU pragma: begin_exports */
+#ifndef KIM_COLLECTIONS_H_
+#include "KIM_Collections.h"
+#endif
+
+#ifndef KIM_COLLECTION_H_
+#include "KIM_Collection.h"
+#endif
+
+#ifndef KIM_COLLECTION_ITEM_TYPE_H_
+#include "KIM_CollectionItemType.h"
+#endif
+
 #ifndef KIM_MODEL_H_
 #include "KIM_Model.h"
+#endif
+
+#ifndef KIM_SIMULATOR_MODEL_H_
+#include "KIM_SimulatorModel.h"
 #endif
 
 #ifndef KIM_LOG_VERBOSITY_H_
@@ -83,5 +100,6 @@
 #ifndef KIM_SUPPORT_STATUS_H_
 #include "KIM_SupportStatus.h"
 #endif
+/* IWYU pragma: end_exports */
 
 #endif /* KIM_SIMULATOR_HEADERS_H_ */
