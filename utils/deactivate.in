@@ -30,19 +30,27 @@
 #
 
 #
-# Release: This file is part of the kim-api-2.1.0 package.
+# Release: This file is part of the kim-api.git repository.
 #
 
 
 # Ensure that this script is sourced, not executed
-if test x"`basename "$0" 2> /dev/null`" \
-        = x"@PROJECT_NAME@-deactivate"; then
-  (>&2 printf "Error:\t@PROJECT_NAME@-deactivate must be sourced.\n"
-   printf "\tRun 'source @PROJECT_NAME@-deactivate' not "
-   printf "'@PROJECT_NAME@-deactivate'.\n")
-  exit 1
+BASENAME_SOURCE=`basename -- "$0" 2> /dev/null`
+
+if test -n "$ZSH_VERSION"; then
+    if test $options[posixargzero] != "on"; then
+        setopt posixargzero
+        BASENAME_SOURCE=`basename -- "$0" 2> /dev/null`
+        setopt posixargzero
+    fi
 fi
 
+if test x"${BASENAME_SOURCE}" = x"@PROJECT_NAME@-deactivate"; then
+    (>&2 printf "\nError:\t@PROJECT_NAME@-deactivate must be sourced.\n"
+    printf "\tRun 'source @PROJECT_NAME@-deactivate' not "
+    printf "'@PROJECT_NAME@-deactivate'.\n")
+    exit 1
+fi
 
 export PATH=`printf "${PATH}" | sed -e "s|:@CMAKE_INSTALL_FULL_BINDIR@|:|g" \
                                     -e "s|^@CMAKE_INSTALL_FULL_BINDIR@:*||" \
