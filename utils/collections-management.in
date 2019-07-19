@@ -347,7 +347,8 @@ get_build_install_item () {
       fi
       list="`printf -- "%s" "${list}" | \
                      sed -e 's/\[//g' -e 's/\]//g' \
-                     -e 's/{"kim-api-version": "\([0-9.]*\)", "kimcode": "\([^"]*\)"},*/\1:\2/g'`"
+                     -e 's/{"kim-api-version": "\([0-9.]*\)", "kimcode": "\([^"]*\)"},*/\1:\2/g' \
+                     -e 's/{"kimcode": "\([^"]*\)", "kim-api-version": "\([0-9.]*\)"},*/\2:\1/g'`"
       for version in ${list}; do \
         if check_version_compatibility "${version}"; then
           local modname="`printf -- "%s" "${version}" | sed -e s/[^:]*://`"
