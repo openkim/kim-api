@@ -135,7 +135,7 @@ program collections_example_fortran
 
   call kim_get_specification_file_name(sm, spec_name)
   print '("SM spec file name is ",A)', trim(spec_name)
-  ierr = c_system("cat "//trim(dir_name)//"/"//trim(spec_name))
+  ierr = c_system("cat "//trim(dir_name)//"/"//trim(spec_name)//c_null_char)
 
   call kim_get_number_of_parameter_files(sm, extent)
   print '("SM has ",I1," parameter files:")', extent
@@ -145,7 +145,7 @@ program collections_example_fortran
       call my_error("Unable to get parameter file name.")
     else
       print '("Parameter file ",I2," has name ",A)', i, trim(param_name)
-      ierr = c_system("cat "//trim(dir_name)//"/"//trim(param_name))
+      ierr = c_system("cat "//trim(dir_name)//"/"//trim(param_name)//c_null_char)
       print *,""
     end if
   end do
