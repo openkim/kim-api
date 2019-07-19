@@ -96,7 +96,7 @@ program collections_example_fortran
     if (ierr /= 0) then
       call my_error("Unable to get species.")
     else
-      print '("	",I2," ",A)', i, trim(species)
+      print '(A,I2," ",A)', achar(9), i, trim(species)
     end if
   end do
   print *, ""
@@ -118,7 +118,7 @@ program collections_example_fortran
       if (ierr /= 0) then
         call my_error("Unable to get field line.")
       else
-        print '("	",A)', trim(line)
+        print '(A,A)', achar(9), trim(line)
       end if
     end do
   end do

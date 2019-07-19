@@ -73,7 +73,7 @@ contains
 
     do i=1,extent
       call kim_get_directory_name(col, i, dir_str, ierr)
-      print '("	",A)', trim(dir_str)
+      print '(A,A)', achar(9), trim(dir_str)
     end do
 
     call kim_cache_list_of_directory_names(col, collection, &
@@ -84,7 +84,7 @@ contains
 
     do i=1,extent
       call kim_get_directory_name(col, i, dir_str, ierr)
-      print '("	",A)', trim(dir_str)
+      print '(A,A)', achar(9), trim(dir_str)
     end do
 
     call kim_cache_list_of_directory_names(col, collection, &
@@ -95,7 +95,7 @@ contains
 
     do i=1,extent
       call kim_get_directory_name(col, i, dir_str, ierr)
-      print '("	",A)', trim(dir_str)
+      print '(A,A)', achar(9), trim(dir_str)
     end do
   end subroutine dirs_for_collection
 
@@ -123,7 +123,7 @@ contains
 
     do i=1,extent
       call kim_get_item_name_by_collection_and_type(col, i, name_str, ierr)
-      print '("	",A)', trim(name_str)
+      print '(A,A)', achar(9), trim(name_str)
     end do
 
     call kim_cache_list_of_item_names_by_collection_and_type(col, kc, &
@@ -134,7 +134,7 @@ contains
 
     do i=1,extent
       call kim_get_item_name_by_collection_and_type(col, i, name_str, ierr)
-      print '("	",A)', trim(name_str)
+      print '(A,A)', achar(9), trim(name_str)
     end do
 
     call kim_cache_list_of_item_names_by_collection_and_type(col, kc, &
@@ -145,7 +145,7 @@ contains
 
     do i=1,extent
       call kim_get_item_name_by_collection_and_type(col, i, name_str, ierr)
-      print '("	",A)', trim(name_str)
+      print '(A,A)', achar(9), trim(name_str)
     end do
   end subroutine names_for_collection
 end module utilities
@@ -234,7 +234,7 @@ program collections_example_fortran
   print '(A," :")', trim(item_type_str)
   do i=1,extent
     call kim_get_item_name_by_type(col, i, name, ierr)
-    print '("	",A)', trim(name)
+    print '(A,A)', achar(9), trim(name)
   end do
 
   it = KIM_COLLECTION_ITEM_TYPE_PORTABLE_MODEL
@@ -243,7 +243,7 @@ program collections_example_fortran
   print '(A," :")', trim(item_type_str)
   do i=1,extent
     call kim_get_item_name_by_type(col, i, name, ierr)
-    print '("	",A)', trim(name)
+    print '(A,A)', achar(9), trim(name)
   end do
 
   it = KIM_COLLECTION_ITEM_TYPE_SIMULATOR_MODEL
@@ -252,7 +252,7 @@ program collections_example_fortran
   print '(A," :")', trim(item_type_str)
   do i=1,extent
     call kim_get_item_name_by_type(col, i, name, ierr)
-    print '("	",A)', trim(name)
+    print '(A,A)', achar(9), trim(name)
   end do
 
   call kim_collections_destroy(col)
