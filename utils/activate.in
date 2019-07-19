@@ -35,12 +35,21 @@
 
 
 # Ensure that this script is sourced, not executed
-if test x"`basename "$0" 2> /dev/null`" \
-        = x"@PROJECT_NAME@-activate"; then
-  (>&2 printf "Error:\t@PROJECT_NAME@-activate must be sourced.\n"
-   printf "\tRun 'source @PROJECT_NAME@-activate' not "
-   printf "'@PROJECT_NAME@-activate'.\n")
-  exit 1
+BASENAME_SOURCE=`basename -- "$0" 2> /dev/null`
+
+if test -n "$ZSH_VERSION"; then
+    if test $options[posixargzero] != "on"; then
+        setopt posixargzero
+        BASENAME_SOURCE=`basename -- "$0" 2> /dev/null`
+        setopt posixargzero
+    fi
+fi
+
+if test x"${BASENAME_SOURCE}" = x"@PROJECT_NAME@-activate"; then
+    (>&2 printf "\nError:\t@PROJECT_NAME@-activate must be sourced.\n"
+    printf "\tRun 'source @PROJECT_NAME@-activate' not "
+    printf "'@PROJECT_NAME@-activate'.\n")
+    exit 1
 fi
 
 export PATH="@CMAKE_INSTALL_FULL_BINDIR@:${PATH}"
