@@ -145,7 +145,8 @@ program collections_example_fortran
       call my_error("Unable to get parameter file name.")
     else
       print '("Parameter file ",I2," has name ",A)', i, trim(param_name)
-      ierr = c_system("cat "//trim(dir_name)//"/"//trim(param_name)//c_null_char)
+      ierr = c_system( &
+        "cat "//trim(dir_name)//"/"//trim(param_name)//c_null_char)
       print *,""
     end if
   end do
