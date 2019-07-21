@@ -491,9 +491,8 @@ void PrivateGetListOfItemNamesByCollectionAndType(
     {
       std::string const libName(LibraryName(itemType, *dir, *subDir));
 
-      KIM::SharedLibrary sharedLibrary(log);
-      int error = sharedLibrary.Open(libName);
-      if (!error) { names.push_back(*subDir); }
+      struct stat statBuf;
+      if (0 == stat(libName.c_str(), &statBuf)) { names.push_back(*subDir); }
     }
   }
 }
@@ -520,12 +519,12 @@ int PrivateGetItemLibraryFileNameByCollectionAndType(
   ParseColonSeparatedList(dirsMap[itemType], listOfDirs);
 
   std::string libPath;
-  KIM::SharedLibrary lib(log);
   std::list<std::string>::const_iterator dir;
   for (dir = listOfDirs.begin(); dir != listOfDirs.end(); ++dir)
   {
-    int error = lib.Open(libPath = LibraryName(itemType, *dir, itemName));
-    if (!error) break;
+    struct stat statBuf;
+    libPath = LibraryName(itemType, *dir, itemName);
+    if (0 == stat(libPath.c_str(), &statBuf)) break;
     libPath = "";
   }
 
