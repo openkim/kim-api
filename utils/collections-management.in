@@ -54,7 +54,7 @@ usage () {
   printf "  ${command} set-user-simulator-models-dir <directory>\n"
   printf "  ${command} install [--force]\n"
   printf "          (CWD | environment | user | system [--sudo])\n"
-  printf "          (<openkim-item-id>... | <local-item-path>... | OpenKIM )\n"
+  printf "          (<openkim-item-id>... | <local-item-path>... | OpenKIM)\n"
   printf "  ${command} reinstall [--force|--interactive] [--sudo]\n"
   printf "          (<openkim-item-id> | <local-item-path>)...\n"
   printf "  ${command} remove [--force|--interactive] [--sudo] <item-id>...\n"
@@ -84,7 +84,8 @@ usage () {
   printf "      of the corresponding list.)\n"
   printf "    * 'install --force' is essentially equivalent to 'reinstall', but works\n"
   printf "      even when the item is not currently installed.\n"
-  printf "    * 'OpenKIM' installs all 'current' items found at openkim.org.\n"
+  printf "    * 'OpenKIM' installs (overwriting items already installed) the latest dated\n"
+  printf "      release of all KIM Models found at openkim.org.\n"
   printf "\n"
   printf "reinstall:\n"
   printf "  Remove and reinstall items.\n"
@@ -327,32 +328,39 @@ get_build_install_item () {
 
     # download item (and possibly its driver)
     if test x"OpenKIM" = x"${item_type}"; then
-      local query='query={"type":{"$regex":"mo|sm"},"kim-api-version":{"$regex":"^'"${major_version}"'\\."}}'
-      query="${query}"'&fields={"kimcode":1, "kim-api-version":1}'
-      query="${query}"'&database=obj'
-      local list
-      list="`wget -q -O - --post-data="${query}" https://query.openkim.org/api`"
-      if test $? -ne 0; then  # wget failed
-        printf "*** ERROR *** Unable to successfully contact openkim.org to download models.\n"
+      # find most recent release archive name
+      local archive_basename=`wget -q -O - https://s3.openkim.org/archives/collection | \
+        sed -e '/openkim-models-[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9].txz/!d' | sed -e '$!d' | \
+        sed -e 's/^.*\(openkim-models-.*\)\.txz.*$/\1/'`
+      # download archive
+      printf "Downloading..............#%s\n" "${archive_basename}" | sed -e 's/ /./g' -e 's/#/ /g'
+      if wget -q --content-disposition "https://s3.openkim.org/archives/collection/${archive_basename}.txz"; then
+        tar Jxf "${archive_basename}.txz" && rm -f "${archive_basename}.txz"
+      else
+        printf "                Unable to download ${archive_basename}.txz from https://s3.openkim.org.\n"
         return 1
       fi
-      list="`printf -- "%s" "${list}" | \
-                     sed -e 's/\[//g' -e 's/\]//g' \
-                     -e 's/{"kim-api-version": "\([0-9.]*\)", "kimcode": "\([^"]*\)"},*/\1:\2/g' \
-                     -e 's/{"kimcode": "\([^"]*\)", "kim-api-version": "\([0-9.]*\)"},*/\2:\1/g'`"
-      for version in ${list}; do \
-        if check_version_compatibility "${version}"; then
-          local modname="`printf -- "%s" "${version}" | sed -e s/[^:]*://`"
-          get_build_install_item "$install_collection" "${modname}" "${force}" "${use_sudo}" "${PASSWORD}" || return 1
-        fi
-      done
+      # configure archive
+      cd "./${archive_basename}" && mkdir build && cd build
+      if ! ${cmake_command} ../ -DKIM_API_INSTALL_COLLECTION="`printf ${install_collection} | tr "[:lower:]" "[:upper:]"`" > ./cmake-log.txt 2>&1; then
+        cat ./cmake-log.txt
+        return 1
+      fi
+      # build and install archive
+      if ! ((${make_command} clean && ${make_command} && ${make_command} CTEST_OUTPUT_ON_FAILURE=1 test) && \
+              if test x"sudo-yes" = x"${use_sudo}"; then
+                printf -- "%s\n" "${PASSWORD}" | sudo -k -S ${make_command} install 2> /dev/null
+              else
+                ${make_command} install
+              fi); then
+        return 1
+      fi
     else
       if test x"" = x"${local_build_path}"; then
         if check_item_compatibility "${item_name}"; then
           printf "Downloading..............#%s\n" "${item_name}" | sed -e 's/ /./g' -e 's/#/ /g'
           if wget -q --content-disposition "https://openkim.org/download/${item_name}.txz"; then
-            tar Jxf "${item_name}.txz" 2>&1 | sed -e 's/^/                /' &&
-              rm -f "${item_name}.txz"
+            tar Jxf "${item_name}.txz" && rm -f "${item_name}.txz"
           else
             printf "                Unable to download ${item_name} from https://openkim.org.  Check the KIM Item ID for errors.\n"
             return 1
