@@ -92,9 +92,9 @@ _@KIM_API_C_ID_PROJECT_NAME@_collections_management()
         opts=""
         if test ${COMP_CWORD} -eq `expr ${collection_position} + 1` \
                 -a x"system" = x"${COMP_WORDS[${collection_position}]}"; then
-          opts="--sudo OpenKIM OpenKIM_with_history"
+          opts="--sudo OpenKIM"
         elif test ${COMP_CWORD} -eq 3; then
-          opts="OpenKIM OpenKIM_with_history"
+          opts="OpenKIM"
         fi
 
         local query='query={"type":{"$regex":"md|mo|sm"},"kim-api-version":{"$regex":"^@PROJECT_VERSION_MAJOR@\\."}}'
