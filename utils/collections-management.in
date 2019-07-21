@@ -38,7 +38,7 @@ collections_info=@CMAKE_INSTALL_FULL_LIBEXECDIR@/@PROJECT_NAME@/@PROJECT_NAME@-c
 major_version=@PROJECT_VERSION_MAJOR@
 kim_version_string="@PROJECT_VERSION_STRING@"
 
-make_command="make"
+make_command="make -j2"
 cmake_command="cmake"
 
 
