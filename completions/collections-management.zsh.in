@@ -25,12 +25,14 @@
 # Contributors:
 #    Ryan S. Elliott
 #    Yaser Afshar
+#
 
 #
 # Release: This file is part of the kim-api.git repository.
 #
 
-if test -n ${ZSH_VERSION}; then
+
+if test -n "${ZSH_VERSION}"; then
   # While complete is a bash builtin function, ZSH comes with
   # bashcompinit that creates the same functionality.
 
@@ -40,10 +42,10 @@ if test -n ${ZSH_VERSION}; then
   bashcompinit
 
   autoload -U +X compinit
-  if test x"${ZSH_DISABLE_COMPFIX}" = xtrue; then
+  if test x"${ZSH_DISABLE_COMPFIX}" = x"true"; then
     compinit -u
   else
     compinit
   fi
 fi
-source "@BASH_COMPLETION_COMPLETIONSDIR@/@PROJECT_NAME@-collections-management.bash"
+source "@ZSH_COMPLETION_COMPLETIONSDIR@/@PROJECT_NAME@-collections-management.bash"
