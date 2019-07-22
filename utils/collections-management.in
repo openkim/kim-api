@@ -476,42 +476,22 @@ split_items_list_into_collections () {
   local item_type="$1"
   local items_list="$2"
 
-  local cwd_collection=""; local number_cwd=0
-  local env_collection=""; local number_env=0
-  local usr_collection=""; local number_usr=0
-  local sys_collection=""; local number_sys=0
-  while read line; do
-    local collection="`printf -- "%s" "$line" | sed -e 's/\([^ ]*\) .*/\1/'`"
-    local name="`printf -- "%s" "$line" | sed -e 's/[^ ]* \([^ ]*\) .*/\1/'`"
-    local directory="`printf -- "%s" "$line" | sed -e 's/[^ ]* [^ ]* \([^ ]*\).*/\1/'`"
-    case $collection in
-      "")
-      # empty do nothing
-      ;;
-      currentWorkingDirectory)
-        number_cwd="`expr $number_cwd \+ 1`"
-        cwd_collection="${cwd_collection}\t${name}\n"
-        ;;
-      environmentVariable)
-        number_env="`expr $number_env \+ 1`"
-        env_collection="${env_collection}\t${name}\n"
-        ;;
-      user)
-        number_usr="`expr $number_usr \+ 1`"
-        usr_collection="${usr_collection}\t${name}\n"
-        ;;
-      system)
-        number_sys="`expr $number_sys \+ 1`"
-        sys_collection="${sys_collection}\t${name}\n"
-        ;;
-      *)
-        printf "Error unknown collection!\n"
-        exit 1
-        ;;
-    esac
-  done <<EOF
-${items_list}
-EOF
+  local cwd_collection=`printf "${items_list}" | grep "^currentWorkingDirectory" | \
+                        sed -e 's/^currentWorkingDirectory \([^ ]*\) .*$/	\1/'`
+  local number_cwd=`printf "${cwd_collection}" | grep -c ''`
+  if test x"" = x"${number_cwd}"; then number_cwd=0; fi
+  local env_collection=`printf "${items_list}" | grep "^environmentVariable" | \
+                        sed -e 's/^environmentVariable \([^ ]*\) .*$/	\1/'`
+  local number_env=`printf "${env_collection}" | grep -c ''`
+  if test x"" = x"${number_env}"; then number_env=0; fi
+  local usr_collection=`printf "${items_list}" | grep "^user" | \
+                        sed -e 's/^user \([^ ]*\) .*$/	\1/'`
+  local number_usr=`printf "${usr_collection}" | grep -c ''`
+  if test x"" = x"${number_usr}"; then number_usr=0; fi
+  local sys_collection=`printf "${items_list}" | grep "^system" | \
+                        sed -e 's/^system \([^ ]*\) .*$/	\1/'`
+  local number_sys=`printf "${sys_collection}" | grep -c ''`
+  if test x"" = x"${number_sys}"; then number_sys=0; fi
 
   if test x"${item_type}" = x"drivers"; then
     drivers_cwd_collection=${cwd_collection}
@@ -561,7 +541,7 @@ print_collection_item_list () {
   fi
   printf "\n"
   if test ${number_of_items_in_list} -gt 0; then
-    printf -- "${item_list}"  # expected to have control characters
+    printf -- "${item_list}\n"  # expected to have control characters
   else
     printf "\t--empty--\n"
   fi
