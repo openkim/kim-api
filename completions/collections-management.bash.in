@@ -51,11 +51,7 @@ _@KIM_API_C_ID_PROJECT_NAME@_collections_management()
       list)
         opts=""
         if test ${COMP_CWORD} -eq 2; then
-          opts="--with-version --log"
-        elif test ${COMP_CWORD} -eq 3 -a x"--with-version" = x"${COMP_WORDS[2]}"; then
           opts="--log"
-        elif test ${COMP_CWORD} -eq 3 -a x"--log" = x"${COMP_WORDS[2]}"; then
-          opts="--with-version"
         else
           return 1
         fi

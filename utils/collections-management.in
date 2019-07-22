@@ -48,7 +48,7 @@ usage () {
 
   # Follows docopt.org format
   printf "Usage:\n"
-  printf "  ${command} list [--with-version] [--log]\n"
+  printf "  ${command} list [--log]\n"
   printf "  ${command} set-user-model-drivers-dir <directory>\n"
   printf "  ${command} set-user-portable-models-dir <directory>\n"
   printf "  ${command} set-user-simulator-models-dir <directory>\n"
@@ -64,7 +64,6 @@ usage () {
 
   printf "list:\n"
   printf "  List installed kim-api model drivers, models, and simulator models\n"
-  printf "    * '--with-version' print the kim-api version used to compiled the item.\n"
   printf "    * '--log' generate a kim.log file.  This will show any errors that\n"
   printf "      occur as the utility searches for installed items.\n"
   printf "\n"
@@ -476,7 +475,6 @@ remove_item () {
 split_items_list_into_collections () {
   local item_type="$1"
   local items_list="$2"
-  local with_version="$3"
 
   local cwd_collection=""; local number_cwd=0
   local env_collection=""; local number_env=0
@@ -485,43 +483,26 @@ split_items_list_into_collections () {
   while read line; do
     local collection="`printf -- "%s" "$line" | sed -e 's/\([^ ]*\) .*/\1/'`"
     local name="`printf -- "%s" "$line" | sed -e 's/[^ ]* \([^ ]*\) .*/\1/'`"
-    local directory="`printf -- "%s" "$line" | sed -e 's/[^ ]* [^ ]* \([^ ]*\) .*/\1/'`"
-    local version="`printf -- "%s" "$line" | sed -e 's/[^ ]* [^ ]* [^ ]* \([^ ]*\).*/\1/'`"
+    local directory="`printf -- "%s" "$line" | sed -e 's/[^ ]* [^ ]* \([^ ]*\).*/\1/'`"
     case $collection in
       "")
       # empty do nothing
       ;;
       currentWorkingDirectory)
         number_cwd="`expr $number_cwd \+ 1`"
-        cwd_collection="${cwd_collection}\t${name}"
-        if test x"${with_version}" = x"yes"; then
-          cwd_collection="${cwd_collection}\n\t\t${version}"
-        fi
-        cwd_collection="${cwd_collection}\n"
+        cwd_collection="${cwd_collection}\t${name}\n"
         ;;
       environmentVariable)
         number_env="`expr $number_env \+ 1`"
-        env_collection="${env_collection}\t${name}"
-        if test x"${with_version}" = x"yes"; then
-          env_collection="${env_collection}\n\t\t${version}"
-        fi
-        env_collection="${env_collection}\n"
+        env_collection="${env_collection}\t${name}\n"
         ;;
       user)
         number_usr="`expr $number_usr \+ 1`"
-        usr_collection="${usr_collection}\t${name}"
-        if test x"${with_version}" = x"yes"; then
-          usr_collection="${usr_collection}\n\t\t${version}"
-        fi
-        usr_collection="${usr_collection}\n"
+        usr_collection="${usr_collection}\t${name}\n"
         ;;
       system)
         number_sys="`expr $number_sys \+ 1`"
-        sys_collection="${sys_collection}\t${name}"
-        if test x"${with_version}" = x"yes"; then
-          sys_collection="${sys_collection}\n\t\t${version}"
-        fi
-        sys_collection="${sys_collection}\n"
+        sys_collection="${sys_collection}\t${name}\n"
         ;;
       *)
         printf "Error unknown collection!\n"
@@ -587,9 +568,8 @@ print_collection_item_list () {
 }
 
 print_list_of_items () {
-  local with_version=$1
   local with_log
-  if test x"$2" = x"yes"; then
+  if test x"$1" = x"yes"; then
     with_log="--log"
   else
     with_log=""
@@ -642,11 +622,11 @@ print_list_of_items () {
 
 
   model_drivers_list="`${collections_info} model_drivers ${with_log}`"; if test $? -ne 0; then return 1; fi
-  split_items_list_into_collections "drivers" "${model_drivers_list}" "${with_version}"
+  split_items_list_into_collections "drivers" "${model_drivers_list}"
   models_list="`${collections_info} portable_models ${with_log}`"; if test $? -ne 0; then return 1; fi
-  split_items_list_into_collections "models" "${models_list}" "${with_version}"
+  split_items_list_into_collections "models" "${models_list}"
   simulator_models_list="`${collections_info} simulator_models ${with_log}`"; if test $? -ne 0; then return 1; fi
-  split_items_list_into_collections "simulator_models" "${simulator_models_list}" "${with_version}"
+  split_items_list_into_collections "simulator_models" "${simulator_models_list}"
 
   printf "\n\n\n"
   printf "Current Working Directory Collection\n"
@@ -755,13 +735,9 @@ case $command in
       exit 1
     fi
     shift
-    list_with_version="no"
     list_with_log="no"
     for arg in "$@"; do
       case "$arg" in
-        --with-version)
-          list_with_version="yes"
-          ;;
         --log)
           list_with_log="yes"
           ;;
@@ -772,7 +748,7 @@ case $command in
           ;;
       esac
     done
-    print_list_of_items "${list_with_version}" "${list_with_log}"
+    print_list_of_items "${list_with_log}"
     ;;
   set-user-drivers-dir)
     if test $# -lt 2; then
