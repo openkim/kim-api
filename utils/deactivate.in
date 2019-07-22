@@ -49,7 +49,7 @@ fi
 if test x"${BASENAME_SOURCE}" = x"@PROJECT_NAME@-deactivate"; then
   (>&2 printf "\nError:\t@PROJECT_NAME@-deactivate must be sourced.\n"
    printf "\tRun 'source @PROJECT_NAME@-deactivate' not "
-   printf "'@PROJECT_NAME@-deactivate'.\n")
+   printf "'@PROJECT_NAME@-deactivate'.\n\n")
   exit 1
 fi
 

@@ -35,6 +35,13 @@ _@KIM_API_C_ID_PROJECT_NAME@_collections_management()
   local collections_info
   collections_info=@CMAKE_INSTALL_FULL_LIBEXECDIR@/@PROJECT_NAME@/@PROJECT_NAME@-collections-info
 
+  local cd_type
+  if test -n "${ZSH_VERSION}"; then
+    cd_type=`type -w _cd | sed -e 's/^[^:]*: *//'`
+  else
+    cd_type=`type -t _cd`
+  fi
+
   local cur subcommands opts
   subcommands="list set-user-model-drivers-dir set-user-portable-models-dir "
   subcommands="${subcommands} set-user-simulator-models-dir install reinstall"
@@ -66,7 +73,7 @@ _@KIM_API_C_ID_PROJECT_NAME@_collections_management()
         if test ${COMP_CWORD} -gt 2; then
           return 1
         else
-          if test x"function" = x"`type -t _cd`"; then  # check if bash_completion has been loaded & _cd defined
+          if test x"function" = x"${cd_type}"; then  # check if bash_completion has been loaded & _cd defined
             _cd
           fi
           return 0
@@ -106,7 +113,7 @@ _@KIM_API_C_ID_PROJECT_NAME@_collections_management()
                     -e 's/{"kimcode": "\([^"]*\)"},*/\1/g'`
         opts="${opts} ${list}"
 
-        if test x"function" = x"`type -t _cd`"; then  # check if bash_completion has been loaded & _cd defined
+        if test x"function" = x"cd_type"; then  # check if bash_completion has been loaded & _cd defined
           _cd
         fi
         COMPREPLY=( "${COMPREPLY[@]}" $(compgen -W "${opts}" -- "${cur}") )
@@ -128,7 +135,7 @@ _@KIM_API_C_ID_PROJECT_NAME@_collections_management()
         opts="${opts} ${drivers} ${models} ${simulator_models}"
 
         if test x"reinstall" = x"${COMP_WORDS[1]}"; then
-          if test x"function" = x"`type -t _cd`"; then  # check if bash_completion has been loaded & _cd defined
+          if test x"function" = x"cd_type"; then  # check if bash_completion has been loaded & _cd defined
             _cd
           fi
         fi
