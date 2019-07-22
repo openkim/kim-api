@@ -30,10 +30,12 @@
 # Release: This file is part of the kim-api.git repository.
 #
 
-# - bash-completionConfig
-#
-# Sets the install path for bash completions
 
+# - CompletionConfig
+#
+# Sets the install paths for completions
+
+# bash completions
 find_package(bash-completion QUIET)
 if(NOT
     ((BASH_COMPLETION_FOUND)
@@ -44,3 +46,7 @@ if(NOT
   set(BASH_COMPLETION_COMPLETIONSDIR "${CMAKE_INSTALL_FULL_SYSCONFDIR}/bash_completion.d")
 endif()
 message(STATUS "Using bash-completion dir ${BASH_COMPLETION_COMPLETIONSDIR}")
+
+# zsh completions
+set(ZSH_COMPLETION_COMPLETIONSDIR "${CMAKE_INSTALL_FULL_SYSCONFDIR}/zsh_completion.d")
+message(STATUS "Using zsh-completion dir ${ZSH_COMPLETION_COMPLETIONSDIR}")

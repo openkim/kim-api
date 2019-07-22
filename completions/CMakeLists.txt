@@ -41,7 +41,6 @@ set(ZSH_COMPLETIONS ${PROJECT_NAME}-collections-management.zsh)
 string(MAKE_C_IDENTIFIER "${PROJECT_NAME}" KIM_API_C_ID_PROJECT_NAME)
 
 configure_file(collections-management.bash.in ${BASH_COMPLETIONS} @ONLY)
-set(ZSH_COMPLETION_COMPLETIONSDIR "${CMAKE_INSTALL_FULL_SYSCONFDIR}/zsh_completion.d")
 configure_file(collections-management.zsh.in ${ZSH_COMPLETIONS} @ONLY)
 
 install(
