@@ -19,14 +19,11 @@
 #
 
 #
-# Copyright (c) 2013--2019, Regents of the University of Minnesota.
+# Copyright (c) 2018--2019, Regents of the University of Minnesota.
 # All rights reserved.
 #
 # Contributors:
-#    Richard Berger
-#    Christoph Junghans
 #    Ryan S. Elliott
-#    Jim Madge
 #    Yaser Afshar
 #
 
@@ -35,21 +32,20 @@
 #
 
 
-set(BASH_COMPLETIONS ${PROJECT_NAME}-collections-management.bash)
-set(ZSH_COMPLETIONS ${PROJECT_NAME}-collections-management.zsh)
+if test -n "${ZSH_VERSION}"; then
+  # While complete is a bash builtin function, ZSH comes with
+  # bashcompinit that creates the same functionality.
 
-string(MAKE_C_IDENTIFIER "${PROJECT_NAME}" KIM_API_C_ID_PROJECT_NAME)
+  # The option -U suppresses the alias expansion during reading
+  # using functions in ZSH.
+  autoload -U +X bashcompinit
+  bashcompinit
 
-configure_file(collections-management.bash.in ${BASH_COMPLETIONS} @ONLY)
-configure_file(collections-management.zsh.in ${ZSH_COMPLETIONS} @ONLY)
-
-install(
-  FILES ${CMAKE_CURRENT_BINARY_DIR}/${BASH_COMPLETIONS}
-  DESTINATION ${BASH_COMPLETION_COMPLETIONSDIR}
-  )
-install(
-  FILES
-  ${CMAKE_CURRENT_BINARY_DIR}/${ZSH_COMPLETIONS}
-  ${CMAKE_CURRENT_BINARY_DIR}/${BASH_COMPLETIONS}
-  DESTINATION ${ZSH_COMPLETION_COMPLETIONSDIR}
-  )
+  autoload -U +X compinit
+  if test x"${ZSH_DISABLE_COMPFIX}" = x"true"; then
+    compinit -u
+  else
+    compinit
+  fi
+fi
+source "@ZSH_COMPLETION_COMPLETIONSDIR@/@PROJECT_NAME@-collections-management.bash"
