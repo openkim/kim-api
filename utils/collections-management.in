@@ -705,7 +705,7 @@ get_password () {
   exec < /dev/tty || return 1
 
   # TTY current settings in a stty-readable form
-  tty_current_settings=$(stty -g) || return 1
+  tty_current_settings=`stty -g` || return 1
 
   # Restore the settings on exit of the subshell or on
   # receiving SIGINT or SIGTERM
@@ -725,7 +725,11 @@ get_password () {
   IFS= read -r PASSWORD; exit_status=$?
 
   # Display a newline to acknowledge the entered password
-  echo > /dev/tty
+  printf "\n" > /dev/tty
+
+  # Restore the settings now
+  stty "${tty_current_settings}"
+  trap - EXIT INT TERM
 
   if test "${exit_status}" -ne 0; then
     printf "*** ERROR *** Failed to read the entered password.\n"
