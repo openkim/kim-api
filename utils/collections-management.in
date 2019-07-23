@@ -698,17 +698,41 @@ print_list_of_items () {
   printf "\n"
 }
 
-
 get_password () {
-  printf "Enter Password : "
-  stty -echo
-  trap 'stty echo' EXIT
-  read PASSWORD
-  stty echo
-  trap - EXIT
-  printf "\n"
-  if ! (printf -- "%s\n" "${PASSWORD}" | \
-          sudo -k -S printf "" > /dev/null 2>&1); then
+  # To be sure of reading data from the terminal no matter
+  # how output has been redirected. Must redirect stdin
+  # to the controlling terminal
+  exec < /dev/tty || return 1
+
+  # TTY current settings in a stty-readable form
+  tty_current_settings=$(stty -g) || return 1
+
+  # Restore the settings on exit of the subshell or on
+  # receiving SIGINT or SIGTERM
+  trap 'stty "${tty_current_settings}"' EXIT INT TERM
+
+  # Echo input characters, and disable terminal local echo
+  stty -echo || return 1
+
+  # Redirect stdout back to /dev/tty
+  printf "Enter Password : " > /dev/tty
+
+  # Read the password
+  # The Internal Field Separator (IFS), is commonly used with read command,
+  # parameter expansions and command substitution.
+  # The 'IFS=' prefix keeps read from trimming spaces and tabs,
+  # the -r keeps it from trying to parse backslashes as escapes
+  IFS= read -r PASSWORD; exit_status=$?
+
+  # Display a newline to acknowledge the entered password
+  echo > /dev/tty
+
+  if test "${exit_status}" -ne 0; then
+    printf "*** ERROR *** Failed to read the entered password.\n"
+    return 1
+  fi
+
+  if !(printf -- '%s\n' "${PASSWORD}" | sudo -k -S printf "" > /dev/null 2>&1); then
     printf "Bad password.\n"
     return 1
   fi
