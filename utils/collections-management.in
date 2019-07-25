@@ -659,48 +659,22 @@ print_list_of_items () {
   printf "\n"
 }
 
-signal_handler() {
-  # Restore the settings on exit
-  stty "${tty_current_settings}"
-  trap - EXIT INT TERM
-  if test x"${exit_status}" = x""; then
-    exit
-  else
-    exit_status=
-  fi
-}
-
-exit_handler() {
-  local signal_exit_status
-  if test x"${exit_status}" != x""; then
-    signal_exit_status="${exit_status}"
-  else
-    signal_exit_status=$?
-  fi
-  exit_status="exit"
-  signal_handler
-  exit "${signal_exit_status}"
-}
-
 get_password () {
   # Read the password from stdin
-  PASSWORD="$(
+  PASSWORD=`
     # To be sure of reading data from the terminal no matter
     # how output has been redirected. Must redirect stdin
     # to the controlling terminal
-    exec < /dev/tty || exit
+    exec < /dev/tty || return 1
 
     # TTY current settings in a stty-readable form
-    tty_current_settings=`stty -g` || exit
-
-    # Restore the settings on receiving SIGINT or SIGTERM signal
-    trap 'signal_handler' INT TERM
+    tty_current_settings=\`stty -g\` || return 1
 
     # Restore the settings on receiving EXIT signal
-    trap 'signal_handler' EXIT
+    trap 'stty ${tty_current_settings} > /dev/null 2>&1' EXIT
 
     # Echo input characters, and disable terminal local echo
-    stty -echo || exit_handler
+    stty -echo || return 1
 
     # Redirect stdout back to /dev/tty
     printf "Enter Password : " > /dev/tty
@@ -710,20 +684,21 @@ get_password () {
     # parameter expansions and command substitution.
     # The 'IFS=' prefix keeps read from trimming spaces and tabs,
     # the -r keeps it from trying to parse backslashes as escapes
-    IFS= read -r password; exit_status=$?
+    local error_status
+    error_status=0
+    IFS= read -r password || error_status=1
+
+    if test "${error_status}" -ne 0; then
+      printf "\n*** ERROR *** read command failed to get the entered password. \n"
+      return 1
+    fi
 
     # Display a newline to acknowledge the entered password
     printf "\n" > /dev/tty
 
-    if test "${exit_status}" -ne 0; then
-      printf "*** ERROR *** read command failed to get the entered password. \n"
-    fi
-
     # Return the entered password
     printf '%s\n' "$password"
-
-    exit_handler
-  )"
+  ` || return 1
 
   if !(printf -- '%s\n' "${PASSWORD}" | sudo -k -S printf "" > /dev/null 2>&1); then
     printf "Bad password.\n"
