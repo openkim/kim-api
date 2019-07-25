@@ -29,7 +29,7 @@
 #
 
 #
-# Release: This file is part of the kim-api-2.1.0 package.
+# Release: This file is part of the kim-api-2.1.1 package.
 #
 -->
 
@@ -38,7 +38,9 @@
 [![Coverity Scan](https://scan.coverity.com/projects/16411/badge.svg?flat=1)](https://scan.coverity.com/projects/openkim-kim-api)
 [![codecov](https://codecov.io/gh/openkim/kim-api/branch/master/graph/badge.svg)](https://codecov.io/gh/openkim/kim-api/branch/master)
 
-============================= The KIM API package =============================
+<p align="center"><h2>The KIM API package</h2></p>
+
+<a href="https://repology.org/project/kim-api/versions"><img src="https://repology.org/badge/vertical-allrepos/kim-api.svg" alt="Packaging status" align="right" style="padding:5px;"/></a>
 
 The KIM API package is a system-level library that aims to give computer
 programmers the ability to write atomistic or molecular simulation programs

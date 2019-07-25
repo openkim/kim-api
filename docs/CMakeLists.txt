@@ -29,7 +29,7 @@
 #
 
 #
-# Release: This file is part of the kim-api-2.1.0 package.
+# Release: This file is part of the kim-api-2.1.1 package.
 #
 
 cmake_minimum_required(VERSION 3.9)

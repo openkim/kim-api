@@ -27,7 +27,7 @@
 !
 
 !
-! Release: This file is part of the kim-api-2.1.0 package.
+! Release: This file is part of the kim-api-2.1.1 package.
 !
 
 
@@ -558,7 +558,8 @@ contains
       dfile_length, pfile_raw_data, available_as_string, pfile_string)
     if (ierr .eq. 0) then
       if (dfile_length < 0) then
-        file_length = 2*(2147483648_c_long) + int(dfile_length, c_long)
+        file_length = 2*(int(huge(dfile_length), c_long) + 1) &
+          + int(dfile_length, c_long)
       else
         file_length = int(dfile_length, c_long)
       end if
@@ -612,7 +613,8 @@ contains
       dfile_length, pfile_raw_data, available_as_string, pfile_string)
     if (ierr .eq. 0) then
       if (dfile_length < 0) then
-        file_length = 2*(2147483648_c_long) + int(dfile_length, c_long)
+        file_length = 2*(int(huge(dfile_length), c_long) + 1) &
+          + int(dfile_length, c_long)
       else
         file_length = int(dfile_length, c_long)
       end if
@@ -928,7 +930,8 @@ contains
       pfile_string)
     if (ierr .eq. 0) then
       if (dfile_length < 0) then
-        file_length = 2*(2147483648_c_long) + int(dfile_length, c_long)
+        file_length = 2*(int(huge(dfile_length), c_long) + 1) &
+          + int(dfile_length, c_long)
       else
         file_length = int(dfile_length, c_long)
       end if
@@ -985,7 +988,8 @@ contains
       pfile_string)
     if (ierr .eq. 0) then
       if (dfile_length < 0) then
-        file_length = 2*(2147483648_c_long) + int(dfile_length, c_long)
+        file_length = 2*(int(huge(dfile_length), c_long) + 1) &
+          + int(dfile_length, c_long)
       else
         file_length = int(dfile_length, c_long)
       end if

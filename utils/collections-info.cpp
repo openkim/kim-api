@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-2.1.0 package.
+// Release: This file is part of the kim-api-2.1.1 package.
 //
 
 #include "KIM_Collection.hpp"
@@ -306,34 +306,12 @@ void listItems(KIM::CollectionItemType const type,
 
           if (!error)
           {
-            std::string const notAvailable("VERSION-NOT-AVAILABLE");
-            std::string const * itemCompVer = &notAvailable;
-            int mdExtent;
-            col->CacheListOfItemMetadataFilesByCollectionAndType(
-                colList[i], type, *itemName, &mdExtent);
-            for (int k = 0; k < mdExtent; ++k)
-            {
-              std::string const * mdFileName;
-              std::string const * mdStr;
-              int asString;
-              error = col->GetItemMetadataFileByCollectionAndType(
-                  k, &mdFileName, NULL, NULL, &asString, &mdStr);
-              if ((!error) && (*mdFileName == "item-compiled-with-version.txt")
-                  && (asString))
-              {
-                itemCompVer = mdStr;
-                break;
-              }
-            }
-
             std::size_t found = itemLibraryFileName->find_last_of("/");
             std::string dir = itemLibraryFileName->substr(0, found);
             found = dir.find_last_of("/");
             dir = dir.substr(0, found);
-            std::string s(*itemCompVer);
-            s.erase(s.find_last_not_of(" \n\r\t") + 1);  // rtrim
             std::cout << colList[i].ToString() << " " << *itemName << " " << dir
-                      << " " << s << std::endl;
+                      << std::endl;
           }
         }
       }
@@ -347,33 +325,12 @@ void listItems(KIM::CollectionItemType const type,
 
       if (!error)
       {
-        std::string const notAvailable("VERSION-NOT-AVAILABLE");
-        std::string const * itemCompVer = &notAvailable;
-        int extent;
-        col->CacheListOfItemMetadataFilesByCollectionAndType(
-            collection, type, name, &extent);
-        for (int j = 0; j < extent; ++j)
-        {
-          std::string const * mdFileName;
-          std::string const * mdStr;
-          int asString;
-          error = col->GetItemMetadataFileByCollectionAndType(
-              j, &mdFileName, NULL, NULL, &asString, &mdStr);
-          if ((!error) && (*mdFileName == "item-compiled-with-version.txt")
-              && (asString))
-          {
-            itemCompVer = mdStr;
-            break;
-          }
-        }
         std::size_t found = itemFileName->find_last_of("/");
         std::string dir = itemFileName->substr(0, found);
         found = dir.find_last_of("/");
         dir = dir.substr(0, found);
-        std::string s(*itemCompVer);
-        s.erase(s.find_last_not_of(" \n\r\t") + 1);  // rtrim
-        std::cout << collection.ToString() << " " << name << " " << dir << " "
-                  << s << std::endl;
+        std::cout << collection.ToString() << " " << name << " " << dir
+                  << std::endl;
       }
     }
 

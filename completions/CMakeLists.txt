@@ -27,20 +27,29 @@
 #    Christoph Junghans
 #    Ryan S. Elliott
 #    Jim Madge
+#    Yaser Afshar
 #
 
 #
-# Release: This file is part of the kim-api-2.1.0 package.
+# Release: This file is part of the kim-api-2.1.1 package.
 #
 
 
 set(BASH_COMPLETIONS ${PROJECT_NAME}-collections-management.bash)
+set(ZSH_COMPLETIONS ${PROJECT_NAME}-collections-management.zsh)
 
 string(MAKE_C_IDENTIFIER "${PROJECT_NAME}" KIM_API_C_ID_PROJECT_NAME)
 
 configure_file(collections-management.bash.in ${BASH_COMPLETIONS} @ONLY)
+configure_file(collections-management.zsh.in ${ZSH_COMPLETIONS} @ONLY)
 
 install(
   FILES ${CMAKE_CURRENT_BINARY_DIR}/${BASH_COMPLETIONS}
   DESTINATION ${BASH_COMPLETION_COMPLETIONSDIR}
+  )
+install(
+  FILES
+  ${CMAKE_CURRENT_BINARY_DIR}/${ZSH_COMPLETIONS}
+  ${CMAKE_CURRENT_BINARY_DIR}/${BASH_COMPLETIONS}
+  DESTINATION ${ZSH_COMPLETION_COMPLETIONSDIR}
   )

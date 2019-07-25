@@ -59,6 +59,12 @@ program collections_example_fortran
   use error
   use kim_simulator_headers_module
   implicit none
+  interface
+    integer(c_int) function c_system(cmd) bind(c,name="system")
+      use, intrinsic :: iso_c_binding
+      character(c_char), intent(in) :: cmd(*)
+    end function c_system
+  end interface
 
   integer(c_int) :: ierr
   integer(c_int) :: extent
@@ -96,7 +102,7 @@ program collections_example_fortran
     if (ierr /= 0) then
       call my_error("Unable to get species.")
     else
-      print '("	",I2," ",A)', i, trim(species)
+      print '(A,I2," ",A)', achar(9), i, trim(species)
     end if
   end do
   print *, ""
@@ -118,7 +124,7 @@ program collections_example_fortran
       if (ierr /= 0) then
         call my_error("Unable to get field line.")
       else
-        print '("	",A)', trim(line)
+        print '(A,A)', achar(9), trim(line)
       end if
     end do
   end do
@@ -129,7 +135,7 @@ program collections_example_fortran
 
   call kim_get_specification_file_name(sm, spec_name)
   print '("SM spec file name is ",A)', trim(spec_name)
-  ierr = system("cat "//trim(dir_name)//"/"//trim(spec_name))
+  ierr = c_system("cat "//trim(dir_name)//"/"//trim(spec_name)//c_null_char)
 
   call kim_get_number_of_parameter_files(sm, extent)
   print '("SM has ",I1," parameter files:")', extent
@@ -139,7 +145,8 @@ program collections_example_fortran
       call my_error("Unable to get parameter file name.")
     else
       print '("Parameter file ",I2," has name ",A)', i, trim(param_name)
-      ierr = system("cat "//trim(dir_name)//"/"//trim(param_name))
+      ierr = c_system( &
+        "cat "//trim(dir_name)//"/"//trim(param_name)//c_null_char)
       print *,""
     end if
   end do

@@ -29,7 +29,7 @@
 #
 
 #
-# Release: This file is part of the kim-api-2.1.0 package.
+# Release: This file is part of the kim-api-2.1.1 package.
 #
 
 
@@ -68,10 +68,10 @@ mark_as_advanced(KIM_API_ENABLE_COVERAGE)
 #
 # Define main project
 #
-project(${KIM_API_PROJECT_NAME} VERSION 2.1.0 LANGUAGES CXX C Fortran)  # must remain a single line for create-pacakge script
+project(${KIM_API_PROJECT_NAME} VERSION 2.1.1 LANGUAGES CXX C Fortran)  # must remain a single line for create-pacakge script
 set(PROJECT_DESCRIPTION "An Application Programming Interface (API) for the Knowledgebase of Interatomic Models (KIM).")
 include(GNUInstallDirs)  # needs to come after call to project()
-include(Bash-CompletionConfig)  # set install dirs for bash completions
+include(CompletionConfig)  # set install dirs for completions
 include(DefaultRPATHSettings)
 include(DefineVersionVariables)
 

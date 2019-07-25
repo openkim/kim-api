@@ -28,8 +28,40 @@
 #
 
 #
-# Release: This file is part of the kim-api-2.1.0 package.
+# Release: This file is part of the kim-api-2.1.1 package.
 #
+
+
+=== kim-api-2.1.1 =============== 24Jul2019 ====================================
+
+* Refactor 'kim-api-collections-management list' code for performance.
+
+* Update collections-management to use 'make -j2' for improved performance.
+
+* Improve kim-api-collections-management handling of passwords for use with
+  sudo.  Specifically, support reading of passwords with whitespace and other
+  special characters.
+
+* Add zsh support to activate/deactivate scripts & zsh completions.
+
+* Fix c_long overflow (for i386 systems) bug in Fortran kim_collections_module.
+
+* Rework 'kim-api-collections-management install xxx OpenKIM' behavior.  Now
+  installs the latest official release archive found at
+  https://s3.openkim.org/archives/collection/.  This also greatly reduces the
+  total build and install time.
+
+* Redefine/refactor KIM::Collections behavior for finding item names.
+  Previously, a shared library file was found, opened, and checked for
+  validity.  To significantly improve performance, now simply the existence of
+  the shared library file is used to identify available item names.
+
+* Redefine/refactor collections-management and collections-info to remove
+  '--with-version' option.
+
+* Fixup and improve Fortran example codes.
+
+* Added reopology.org graphic of available binaries to README.md.
 
 
 === kim-api-2.1.0 =============== 16Jul2019 ====================================

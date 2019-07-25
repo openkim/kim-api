@@ -28,17 +28,18 @@
 # Contributors:
 #    Ryan S. Elliott
 #    John S. Spear
+#    Yaser Afshar
 #
 
 #
-# Release: This file is part of the kim-api-2.1.0 package.
+# Release: This file is part of the kim-api-2.1.1 package.
 #
 
 collections_info=@CMAKE_INSTALL_FULL_LIBEXECDIR@/@PROJECT_NAME@/@PROJECT_NAME@-collections-info
 major_version=@PROJECT_VERSION_MAJOR@
 kim_version_string="@PROJECT_VERSION_STRING@"
 
-make_command="make"
+make_command="make -j2"
 cmake_command="cmake"
 
 
@@ -48,14 +49,13 @@ usage () {
 
   # Follows docopt.org format
   printf "Usage:\n"
-  printf "  ${command} list [--with-version] [--log]\n"
+  printf "  ${command} list [--log]\n"
   printf "  ${command} set-user-model-drivers-dir <directory>\n"
   printf "  ${command} set-user-portable-models-dir <directory>\n"
   printf "  ${command} set-user-simulator-models-dir <directory>\n"
   printf "  ${command} install [--force]\n"
   printf "          (CWD | environment | user | system [--sudo])\n"
-  printf "          (<openkim-item-id>... | <local-item-path>... | OpenKIM |\n"
-  printf "           OpenKIM_with_history)\n"
+  printf "          (<openkim-item-id>... | <local-item-path>... | OpenKIM)\n"
   printf "  ${command} reinstall [--force|--interactive] [--sudo]\n"
   printf "          (<openkim-item-id> | <local-item-path>)...\n"
   printf "  ${command} remove [--force|--interactive] [--sudo] <item-id>...\n"
@@ -65,7 +65,6 @@ usage () {
 
   printf "list:\n"
   printf "  List installed kim-api model drivers, models, and simulator models\n"
-  printf "    * '--with-version' print the kim-api version used to compiled the item.\n"
   printf "    * '--log' generate a kim.log file.  This will show any errors that\n"
   printf "      occur as the utility searches for installed items.\n"
   printf "\n"
@@ -85,9 +84,8 @@ usage () {
   printf "      of the corresponding list.)\n"
   printf "    * 'install --force' is essentially equivalent to 'reinstall', but works\n"
   printf "      even when the item is not currently installed.\n"
-  printf "    * 'OpenKIM' installs all 'current' items found at openkim.org,\n"
-  printf "      whereas 'OpenKIM_with_history' installs all 'current'\n"
-  printf "      and all 'old' items.\n"
+  printf "    * 'OpenKIM' installs (overwriting items already installed) the latest dated\n"
+  printf "      release of all KIM Models found at openkim.org.\n"
   printf "\n"
   printf "reinstall:\n"
   printf "  Remove and reinstall items.\n"
@@ -296,9 +294,6 @@ get_build_install_item () {
   if test x"OpenKIM" = x"${item_name}"; then
     found_item=""
     item_type="OpenKIM"
-  elif test x"OpenKIM_with_history" = x"${item_name}"; then
-    found_item=""
-    item_type="OpenKIM_with_history"
   else
     found_item="`${collections_info} model_drivers find "${item_name}"`"; if test $? -ne 0; then return 1; fi
     found_item="${found_item}""`${collections_info} portable_models find "${item_name}"`"; if test $? -ne 0; then return 1; fi
@@ -332,35 +327,40 @@ get_build_install_item () {
     cd "${build_dir}" || return 1
 
     # download item (and possibly its driver)
-    if test x"OpenKIM" = x"${item_type}" -o x"OpenKIM_with_history" = x"${item_type}"; then
-      local query='query={"type":{"$regex":"mo|sm"},"kim-api-version":{"$regex":"^'"${major_version}"'\\."}}'
-      query="${query}"'&fields={"kimcode":1, "kim-api-version":1}'
-      query="${query}"'&database=obj'
-      if test x"OpenKIM_with_history" = x"${item_type}"; then
-        query="${query}"'&history=on'
-      fi
-      local list
-      list="`wget -q -O - --post-data="${query}" https://query.openkim.org/api`"
-      if test $? -ne 0; then  # wget failed
-        printf "*** ERROR *** Unable to successfully contact openkim.org to download models.\n"
+    if test x"OpenKIM" = x"${item_type}"; then
+      # find most recent release archive name
+      local archive_basename=`wget -q -O - https://s3.openkim.org/archives/collection | \
+        sed -e '/openkim-models-[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9].txz/!d' | sed -e '$!d' | \
+        sed -e 's/^.*\(openkim-models-.*\)\.txz.*$/\1/'`
+      # download archive
+      printf "Downloading..............#%s\n" "${archive_basename}" | sed -e 's/ /./g' -e 's/#/ /g'
+      if wget -q --content-disposition "https://s3.openkim.org/archives/collection/${archive_basename}.txz"; then
+        tar Jxf "${archive_basename}.txz" && rm -f "${archive_basename}.txz"
+      else
+        printf "                Unable to download ${archive_basename}.txz from https://s3.openkim.org.\n"
         return 1
       fi
-      list="`printf -- "%s" "${list}" | \
-                     sed -e 's/\[//g' -e 's/\]//g' \
-                     -e 's/{"kim-api-version": "\([0-9.]*\)", "kimcode": "\([^"]*\)"},*/\1:\2/g'`"
-      for version in ${list}; do \
-        if check_version_compatibility "${version}"; then
-          local modname="`printf -- "%s" "${version}" | sed -e s/[^:]*://`"
-          get_build_install_item "$install_collection" "${modname}" "${force}" "${use_sudo}" "${PASSWORD}" || return 1
-        fi
-      done
+      # configure archive
+      cd "./${archive_basename}" && mkdir build && cd build
+      if ! ${cmake_command} ../ -DKIM_API_INSTALL_COLLECTION="`printf ${install_collection} | tr "[:lower:]" "[:upper:]"`" > ./cmake-log.txt 2>&1; then
+        cat ./cmake-log.txt
+        return 1
+      fi
+      # build and install archive
+      if ! ((${make_command} clean && ${make_command} && ${make_command} CTEST_OUTPUT_ON_FAILURE=1 test) && \
+              if test x"sudo-yes" = x"${use_sudo}"; then
+                printf -- "%s\n" "${PASSWORD}" | sudo -k -S ${make_command} install 2> /dev/null
+              else
+                ${make_command} install
+              fi); then
+        return 1
+      fi
     else
       if test x"" = x"${local_build_path}"; then
         if check_item_compatibility "${item_name}"; then
           printf "Downloading..............#%s\n" "${item_name}" | sed -e 's/ /./g' -e 's/#/ /g'
           if wget -q --content-disposition "https://openkim.org/download/${item_name}.txz"; then
-            tar Jxf "${item_name}.txz" 2>&1 | sed -e 's/^/                /' &&
-              rm -f "${item_name}.txz"
+            tar Jxf "${item_name}.txz" && rm -f "${item_name}.txz"
           else
             printf "                Unable to download ${item_name} from https://openkim.org.  Check the KIM Item ID for errors.\n"
             return 1
@@ -476,61 +476,23 @@ remove_item () {
 split_items_list_into_collections () {
   local item_type="$1"
   local items_list="$2"
-  local with_version="$3"
 
-  local cwd_collection=""; local number_cwd=0
-  local env_collection=""; local number_env=0
-  local usr_collection=""; local number_usr=0
-  local sys_collection=""; local number_sys=0
-  while read line; do
-    local collection="`printf -- "%s" "$line" | sed -e 's/\([^ ]*\) .*/\1/'`"
-    local name="`printf -- "%s" "$line" | sed -e 's/[^ ]* \([^ ]*\) .*/\1/'`"
-    local directory="`printf -- "%s" "$line" | sed -e 's/[^ ]* [^ ]* \([^ ]*\) .*/\1/'`"
-    local version="`printf -- "%s" "$line" | sed -e 's/[^ ]* [^ ]* [^ ]* \([^ ]*\).*/\1/'`"
-    case $collection in
-      "")
-      # empty do nothing
-      ;;
-      currentWorkingDirectory)
-        number_cwd="`expr $number_cwd \+ 1`"
-        cwd_collection="${cwd_collection}\t${name}"
-        if test x"${with_version}" = x"yes"; then
-          cwd_collection="${cwd_collection}\n\t\t${version}"
-        fi
-        cwd_collection="${cwd_collection}\n"
-        ;;
-      environmentVariable)
-        number_env="`expr $number_env \+ 1`"
-        env_collection="${env_collection}\t${name}"
-        if test x"${with_version}" = x"yes"; then
-          env_collection="${env_collection}\n\t\t${version}"
-        fi
-        env_collection="${env_collection}\n"
-        ;;
-      user)
-        number_usr="`expr $number_usr \+ 1`"
-        usr_collection="${usr_collection}\t${name}"
-        if test x"${with_version}" = x"yes"; then
-          usr_collection="${usr_collection}\n\t\t${version}"
-        fi
-        usr_collection="${usr_collection}\n"
-        ;;
-      system)
-        number_sys="`expr $number_sys \+ 1`"
-        sys_collection="${sys_collection}\t${name}"
-        if test x"${with_version}" = x"yes"; then
-          sys_collection="${sys_collection}\n\t\t${version}"
-        fi
-        sys_collection="${sys_collection}\n"
-        ;;
-      *)
-        printf "Error unknown collection!\n"
-        exit 1
-        ;;
-    esac
-  done <<EOF
-${items_list}
-EOF
+  local cwd_collection=`printf "${items_list}" | grep "^currentWorkingDirectory" | \
+                        sed -e 's/^currentWorkingDirectory \([^ ]*\) .*$/	\1/'`
+  local number_cwd=`printf "${cwd_collection}" | grep -c ''`
+  if test x"" = x"${number_cwd}"; then number_cwd=0; fi
+  local env_collection=`printf "${items_list}" | grep "^environmentVariable" | \
+                        sed -e 's/^environmentVariable \([^ ]*\) .*$/	\1/'`
+  local number_env=`printf "${env_collection}" | grep -c ''`
+  if test x"" = x"${number_env}"; then number_env=0; fi
+  local usr_collection=`printf "${items_list}" | grep "^user" | \
+                        sed -e 's/^user \([^ ]*\) .*$/	\1/'`
+  local number_usr=`printf "${usr_collection}" | grep -c ''`
+  if test x"" = x"${number_usr}"; then number_usr=0; fi
+  local sys_collection=`printf "${items_list}" | grep "^system" | \
+                        sed -e 's/^system \([^ ]*\) .*$/	\1/'`
+  local number_sys=`printf "${sys_collection}" | grep -c ''`
+  if test x"" = x"${number_sys}"; then number_sys=0; fi
 
   if test x"${item_type}" = x"drivers"; then
     drivers_cwd_collection=${cwd_collection}
@@ -580,16 +542,15 @@ print_collection_item_list () {
   fi
   printf "\n"
   if test ${number_of_items_in_list} -gt 0; then
-    printf -- "${item_list}"  # expected to have control characters
+    printf -- "${item_list}\n"  # expected to have control characters
   else
     printf "\t--empty--\n"
   fi
 }
 
 print_list_of_items () {
-  local with_version=$1
   local with_log
-  if test x"$2" = x"yes"; then
+  if test x"$1" = x"yes"; then
     with_log="--log"
   else
     with_log=""
@@ -642,11 +603,11 @@ print_list_of_items () {
 
 
   model_drivers_list="`${collections_info} model_drivers ${with_log}`"; if test $? -ne 0; then return 1; fi
-  split_items_list_into_collections "drivers" "${model_drivers_list}" "${with_version}"
+  split_items_list_into_collections "drivers" "${model_drivers_list}"
   models_list="`${collections_info} portable_models ${with_log}`"; if test $? -ne 0; then return 1; fi
-  split_items_list_into_collections "models" "${models_list}" "${with_version}"
+  split_items_list_into_collections "models" "${models_list}"
   simulator_models_list="`${collections_info} simulator_models ${with_log}`"; if test $? -ne 0; then return 1; fi
-  split_items_list_into_collections "simulator_models" "${simulator_models_list}" "${with_version}"
+  split_items_list_into_collections "simulator_models" "${simulator_models_list}"
 
   printf "\n\n\n"
   printf "Current Working Directory Collection\n"
@@ -698,17 +659,48 @@ print_list_of_items () {
   printf "\n"
 }
 
-
 get_password () {
-  printf "Enter Password : "
-  stty -echo
-  trap 'stty echo' EXIT
-  read PASSWORD
-  stty echo
-  trap - EXIT
-  printf "\n"
-  if ! (printf -- "%s\n" "${PASSWORD}" | \
-          sudo -k -S printf "" > /dev/null 2>&1); then
+  # Read the password from stdin
+  PASSWORD=`
+    # To be sure of reading data from the terminal no matter
+    # how output has been redirected. Must redirect stdin
+    # to the controlling terminal
+    exec < /dev/tty || return 1
+
+    # TTY current settings in a stty-readable form
+    tty_current_settings=\`stty -g\` || return 1
+
+    # Restore the settings on receiving EXIT signal
+    trap 'stty ${tty_current_settings} > /dev/null 2>&1' EXIT
+
+    # Echo input characters, and disable terminal local echo
+    stty -echo || return 1
+
+    # Redirect stdout back to /dev/tty
+    printf "Enter Password : " > /dev/tty
+
+    # Read the password
+    # The Internal Field Separator (IFS), is commonly used with read command,
+    # parameter expansions and command substitution.
+    # The 'IFS=' prefix keeps read from trimming spaces and tabs,
+    # the -r keeps it from trying to parse backslashes as escapes
+    local error_status
+    error_status=0
+    IFS= read -r password || error_status=1
+
+    if test "${error_status}" -ne 0; then
+      printf "\n*** ERROR *** read command failed to get the entered password. \n"
+      return 1
+    fi
+
+    # Display a newline to acknowledge the entered password
+    printf "\n" > /dev/tty
+
+    # Return the entered password
+    printf '%s\n' "$password"
+  ` || return 1
+
+  if !(printf -- '%s\n' "${PASSWORD}" | sudo -k -S printf "" > /dev/null 2>&1); then
     printf "Bad password.\n"
     return 1
   fi
@@ -755,13 +747,9 @@ case $command in
       exit 1
     fi
     shift
-    list_with_version="no"
     list_with_log="no"
     for arg in "$@"; do
       case "$arg" in
-        --with-version)
-          list_with_version="yes"
-          ;;
         --log)
           list_with_log="yes"
           ;;
@@ -772,7 +760,7 @@ case $command in
           ;;
       esac
     done
-    print_list_of_items "${list_with_version}" "${list_with_log}"
+    print_list_of_items "${list_with_log}"
     ;;
   set-user-drivers-dir)
     if test $# -lt 2; then

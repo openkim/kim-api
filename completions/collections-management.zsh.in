@@ -19,13 +19,12 @@
 #
 
 #
-# Copyright (c) 2013--2019, Regents of the University of Minnesota.
+# Copyright (c) 2018--2019, Regents of the University of Minnesota.
 # All rights reserved.
 #
 # Contributors:
-#    Richard Berger
-#    Christoph Junghans
 #    Ryan S. Elliott
+#    Yaser Afshar
 #
 
 #
@@ -33,29 +32,20 @@
 #
 
 
-#
-# Required preamble
-#
+if test -n "${ZSH_VERSION}"; then
+  # While complete is a bash builtin function, ZSH comes with
+  # bashcompinit that creates the same functionality.
 
-cmake_minimum_required(VERSION 3.4)
+  # The option -U suppresses the alias expansion during reading
+  # using functions in ZSH.
+  autoload -U +X bashcompinit
+  bashcompinit
 
-list(APPEND CMAKE_PREFIX_PATH $ENV{KIM_API_CMAKE_PREFIX_DIR})
-find_package(KIM-API 2.0 REQUIRED CONFIG)
-if(NOT TARGET kim-api)
-  enable_testing()
-  project("${KIM_API_PROJECT_NAME}" VERSION "${KIM_API_VERSION}"
-    LANGUAGES CXX C Fortran)
-endif()
-
-# End preamble
-
-
-set(MODEL_NAME "ex_model_Ar_P_MLJ_Fortran")
-
-add_kim_api_model_library(
-  NAME                    ${MODEL_NAME}
-  CREATE_ROUTINE_NAME     "model_create_routine"
-  CREATE_ROUTINE_LANGUAGE "fortran"
-  )
-
-target_sources(${MODEL_NAME} PRIVATE ${MODEL_NAME}.f90)
+  autoload -U +X compinit
+  if test x"${ZSH_DISABLE_COMPFIX}" = x"true"; then
+    compinit -u
+  else
+    compinit
+  fi
+fi
+source "@ZSH_COMPLETION_COMPLETIONSDIR@/@PROJECT_NAME@-collections-management.bash"

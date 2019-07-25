@@ -27,13 +27,20 @@
 #
 
 #
-# Release: This file is part of the kim-api-2.1.0 package.
+# Release: This file is part of the kim-api-2.1.1 package.
 #
 
 _@KIM_API_C_ID_PROJECT_NAME@_collections_management()
 {
   local collections_info
   collections_info=@CMAKE_INSTALL_FULL_LIBEXECDIR@/@PROJECT_NAME@/@PROJECT_NAME@-collections-info
+
+  local cd_type
+  if test -n "${ZSH_VERSION}"; then
+    cd_type=`type -w _cd | sed -e 's/^[^:]*: *//'`
+  else
+    cd_type=`type -t _cd`
+  fi
 
   local cur subcommands opts
   subcommands="list set-user-model-drivers-dir set-user-portable-models-dir "
@@ -51,11 +58,7 @@ _@KIM_API_C_ID_PROJECT_NAME@_collections_management()
       list)
         opts=""
         if test ${COMP_CWORD} -eq 2; then
-          opts="--with-version --log"
-        elif test ${COMP_CWORD} -eq 3 -a x"--with-version" = x"${COMP_WORDS[2]}"; then
           opts="--log"
-        elif test ${COMP_CWORD} -eq 3 -a x"--log" = x"${COMP_WORDS[2]}"; then
-          opts="--with-version"
         else
           return 1
         fi
@@ -66,7 +69,7 @@ _@KIM_API_C_ID_PROJECT_NAME@_collections_management()
         if test ${COMP_CWORD} -gt 2; then
           return 1
         else
-          if test x"function" = x"`type -t _cd`"; then  # check if bash_completion has been loaded & _cd defined
+          if test x"function" = x"${cd_type}"; then  # check if bash_completion has been loaded & _cd defined
             _cd
           fi
           return 0
@@ -92,9 +95,9 @@ _@KIM_API_C_ID_PROJECT_NAME@_collections_management()
         opts=""
         if test ${COMP_CWORD} -eq `expr ${collection_position} + 1` \
                 -a x"system" = x"${COMP_WORDS[${collection_position}]}"; then
-          opts="--sudo OpenKIM OpenKIM_with_history"
+          opts="--sudo OpenKIM"
         elif test ${COMP_CWORD} -eq 3; then
-          opts="OpenKIM OpenKIM_with_history"
+          opts="OpenKIM"
         fi
 
         local query='query={"type":{"$regex":"md|mo|sm"},"kim-api-version":{"$regex":"^@PROJECT_VERSION_MAJOR@\\."}}'
@@ -106,7 +109,7 @@ _@KIM_API_C_ID_PROJECT_NAME@_collections_management()
                     -e 's/{"kimcode": "\([^"]*\)"},*/\1/g'`
         opts="${opts} ${list}"
 
-        if test x"function" = x"`type -t _cd`"; then  # check if bash_completion has been loaded & _cd defined
+        if test x"function" = x"cd_type"; then  # check if bash_completion has been loaded & _cd defined
           _cd
         fi
         COMPREPLY=( "${COMPREPLY[@]}" $(compgen -W "${opts}" -- "${cur}") )
@@ -128,7 +131,7 @@ _@KIM_API_C_ID_PROJECT_NAME@_collections_management()
         opts="${opts} ${drivers} ${models} ${simulator_models}"
 
         if test x"reinstall" = x"${COMP_WORDS[1]}"; then
-          if test x"function" = x"`type -t _cd`"; then  # check if bash_completion has been loaded & _cd defined
+          if test x"function" = x"cd_type"; then  # check if bash_completion has been loaded & _cd defined
             _cd
           fi
         fi

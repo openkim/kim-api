@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-2.1.0 package.
+// Release: This file is part of the kim-api-2.1.1 package.
 //
 
 #include "KIM_SimulatorModel.hpp"
