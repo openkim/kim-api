@@ -477,21 +477,29 @@ split_items_list_into_collections () {
   local item_type="$1"
   local items_list="$2"
 
-  local cwd_collection=`printf "${items_list}" | grep "^currentWorkingDirectory" | \
-                        sed -e 's/^currentWorkingDirectory \([^ ]*\) .*$/	\1/'`
-  local number_cwd=`printf "${cwd_collection}" | grep -c ''`
+  local cwd_collection
+  cwd_collection==`printf "${items_list}" | grep "^currentWorkingDirectory" | \
+                   sed -e 's/^currentWorkingDirectory \([^ ]*\) .*$/	\1/'`
+  local number_cwd
+  number_cwd=`printf "${cwd_collection}" | grep -c ''`
   if test x"" = x"${number_cwd}"; then number_cwd=0; fi
-  local env_collection=`printf "${items_list}" | grep "^environmentVariable" | \
-                        sed -e 's/^environmentVariable \([^ ]*\) .*$/	\1/'`
-  local number_env=`printf "${env_collection}" | grep -c ''`
+  local env_collection
+  env_collection=`printf "${items_list}" | grep "^environmentVariable" | \
+                  sed -e 's/^environmentVariable \([^ ]*\) .*$/	\1/'`
+  local number_env
+  number_env=`printf "${env_collection}" | grep -c ''`
   if test x"" = x"${number_env}"; then number_env=0; fi
-  local usr_collection=`printf "${items_list}" | grep "^user" | \
-                        sed -e 's/^user \([^ ]*\) .*$/	\1/'`
-  local number_usr=`printf "${usr_collection}" | grep -c ''`
+  local usr_collection
+  usr_collection=`printf "${items_list}" | grep "^user" | \
+                  sed -e 's/^user \([^ ]*\) .*$/	\1/'`
+  local number_usr
+  number_usr=`printf "${usr_collection}" | grep -c ''`
   if test x"" = x"${number_usr}"; then number_usr=0; fi
-  local sys_collection=`printf "${items_list}" | grep "^system" | \
-                        sed -e 's/^system \([^ ]*\) .*$/	\1/'`
-  local number_sys=`printf "${sys_collection}" | grep -c ''`
+  local sys_collection
+  sys_collection=`printf "${items_list}" | grep "^system" | \
+                  sed -e 's/^system \([^ ]*\) .*$/	\1/'`
+  local number_sys
+  number_sys=`printf "${sys_collection}" | grep -c ''`
   if test x"" = x"${number_sys}"; then number_sys=0; fi
 
   if test x"${item_type}" = x"drivers"; then
