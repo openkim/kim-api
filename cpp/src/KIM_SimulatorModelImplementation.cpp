@@ -848,15 +848,6 @@ int SimulatorModelImplementation::Initialize(
     return true;
   }
 
-  // close model and open driver
-  error = sharedLibrary_->Close();
-  if (error)
-  {
-    LOG_ERROR("Could not close model shared library.");
-    LOG_DEBUG("Exit 1=" + callString);
-    return true;
-  }
-
   OpenAndInitializeTemplateMap();
 
   LOG_DEBUG("Exit 0=" + callString);
