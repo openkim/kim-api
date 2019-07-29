@@ -409,29 +409,31 @@ contains
   !!
   !! \since 2.1
   recursive subroutine kim_collections_get_item_type(collections_handle, &
-    item_type, ierr)
+    item_name, item_type, ierr)
     use kim_interoperable_types_module, only : kim_collections_type
     use kim_collection_item_type_module, only : kim_collection_item_type_type
     implicit none
     interface
-     integer(c_int) recursive function get_item_type(collections, item_type) &
-        bind(c, name="KIM_Collections_GetItemType")
+      integer(c_int) recursive function get_item_type(collections, &
+        item_name, item_type) bind(c, name="KIM_Collections_GetItemType")
         use, intrinsic :: iso_c_binding
         use kim_interoperable_types_module, only : kim_collections_type
         use kim_collection_item_type_module, only : &
           kim_collection_item_type_type
         implicit none
         type(kim_collections_type), intent(in) :: collections
+        character(c_char), intent(in) :: item_name(*)
         type(kim_collection_item_type_type), intent(out) :: item_type
       end function get_item_type
     end interface
     type(kim_collections_handle_type), intent(in) :: collections_handle
+    character(len=*, kind=c_char), intent(in) :: item_name
     type(kim_collection_item_type_type), intent(out) :: item_type
     integer(c_int), intent(out) :: ierr
     type(kim_collections_type), pointer :: collections
 
     call c_f_pointer(collections_handle%p, collections)
-    ierr = get_item_type(collections, item_type)
+    ierr = get_item_type(collections, trim(item_name)//c_null_char, item_type)
   end subroutine kim_collections_get_item_type
 
   !> \brief \copybrief KIM::Collections::GetItemLibraryFileNameAndCollection
@@ -442,27 +444,32 @@ contains
   !! \since 2.1
   recursive subroutine &
     kim_collections_get_item_library_file_name_and_collection( &
-    collections_handle, item_name, file_name, collection, ierr)
+    collections_handle, item_type, item_name, file_name, collection, ierr)
     use kim_interoperable_types_module, only : kim_collections_type
     use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
     use kim_collection_module, only : kim_collection_type
+    use kim_collection_item_type_module, only : kim_collection_item_type_type
     implicit none
     interface
       integer(c_int) recursive function &
-        get_item_library_file_name_and_collection(collections, item_name, &
-        file_name, collection) &
+        get_item_library_file_name_and_collection(collections, item_type, &
+        item_name, file_name, collection) &
         bind(c, name="KIM_Collections_GetItemLibraryFileNameAndCollection")
         use, intrinsic :: iso_c_binding
         use kim_interoperable_types_module, only : kim_collections_type
         use kim_collection_module, only : kim_collection_type
+        use kim_collection_item_type_module, only : &
+          kim_collection_item_type_type
         implicit none
         type(kim_collections_type), intent(in) :: collections
+        type(kim_collection_item_type_type), intent(in), value :: item_type
         character(c_char), intent(in) :: item_name(*)
         type(c_ptr), intent(out) :: file_name
         type(kim_collection_type), intent(out) :: collection
       end function get_item_library_file_name_and_collection
     end interface
     type(kim_collections_handle_type), intent(in) :: collections_handle
+    type(kim_collection_item_type_type), intent(in) :: item_type
     character(len=*, kind=c_char), intent(in) :: item_name
     character(len=*, kind=c_char), intent(out) :: file_name
     type(kim_collection_type), intent(out) :: collection
@@ -472,7 +479,7 @@ contains
     type(c_ptr) :: pfile_name
 
     call c_f_pointer(collections_handle%p, collections)
-    ierr = get_item_library_file_name_and_collection(collections, &
+    ierr = get_item_library_file_name_and_collection(collections, item_type, &
       trim(item_name)//c_null_char, pfile_name, collection)
     call kim_convert_c_char_ptr_to_string(pfile_name, file_name)
   end subroutine kim_collections_get_item_library_file_name_and_collection
@@ -530,14 +537,14 @@ contains
       integer(c_int) recursive function get_item_metadata_file_length( &
         collections, index, file_name, file_length, file_raw_data, &
         available_as_string, file_string) &
-        bind(c, name="KIM_Collections_GetItemMetadataFile")
+        bind(c, name="KIM_Collections_GetItemMetadataFile_fortran")
         use, intrinsic :: iso_c_binding
         use kim_interoperable_types_module, only : kim_collections_type
         implicit none
         type(kim_collections_type), intent(in) :: collections
         integer(c_int), intent(in), value :: index
         type(c_ptr), intent(out) :: file_name
-        integer(c_int), intent(out) :: file_length
+        integer(c_long), intent(out) :: file_length
         type(c_ptr), intent(out) :: file_raw_data
         integer(c_int), intent(out) :: available_as_string
         type(c_ptr), intent(out) :: file_string
@@ -550,20 +557,11 @@ contains
     integer(c_int), intent(out) :: ierr
     type(kim_collections_type), pointer :: collections
 
-    integer(c_int) dfile_length
     type(c_ptr) pfile_name, pfile_raw_data, pfile_string
 
     call c_f_pointer(collections_handle%p, collections)
     ierr = get_item_metadata_file_length(collections, index-1, pfile_name, &
-      dfile_length, pfile_raw_data, available_as_string, pfile_string)
-    if (ierr .eq. 0) then
-      if (dfile_length < 0) then
-        file_length = 2*(int(huge(dfile_length), c_long) + 1) &
-          + int(dfile_length, c_long)
-      else
-        file_length = int(dfile_length, c_long)
-      end if
-    end if
+      file_length, pfile_raw_data, available_as_string, pfile_string)
   end subroutine kim_collections_get_item_metadata_file_length
 
   !> \brief Get the item's metadata file values.
@@ -581,14 +579,14 @@ contains
       integer(c_int) recursive function get_item_metadata_file_values( &
         collections, index, file_name, file_length, file_raw_data, &
         available_as_string, file_string) &
-        bind(c, name="KIM_Collections_GetItemMetadataFile")
+        bind(c, name="KIM_Collections_GetItemMetadataFile_fortran")
         use, intrinsic :: iso_c_binding
         use kim_interoperable_types_module, only : kim_collections_type
         implicit none
         type(kim_collections_type), intent(in) :: collections
         integer(c_int), intent(in), value :: index
         type(c_ptr), intent(out) :: file_name
-        integer(c_int), intent(out) :: file_length
+        integer(c_long), intent(out) :: file_length
         type(c_ptr), intent(out) :: file_raw_data
         integer(c_int), intent(out) :: available_as_string
         type(c_ptr), intent(out) :: file_string
@@ -602,7 +600,6 @@ contains
     integer(c_int), intent(out) :: ierr
     type(kim_collections_type), pointer :: collections
 
-    integer(c_int) dfile_length
     integer(c_long) file_length
     integer(c_int) available_as_string
     type(c_ptr) pfile_name, pfile_raw_data, pfile_string
@@ -610,14 +607,8 @@ contains
 
     call c_f_pointer(collections_handle%p, collections)
     ierr = get_item_metadata_file_values(collections, index-1, pfile_name, &
-      dfile_length, pfile_raw_data, available_as_string, pfile_string)
+      file_length, pfile_raw_data, available_as_string, pfile_string)
     if (ierr .eq. 0) then
-      if (dfile_length < 0) then
-        file_length = 2*(int(huge(dfile_length), c_long) + 1) &
-          + int(dfile_length, c_long)
-      else
-        file_length = int(dfile_length, c_long)
-      end if
       if (size(file_raw_data) < file_length) then
         ierr = 1
         return
@@ -901,14 +892,15 @@ contains
         get_item_metadata_file_length_by_coll_and_type(collections, index, &
         file_name, file_length, file_raw_data, available_as_string, &
         file_string) &
-        bind(c, name="KIM_Collections_GetItemMetadataFileByCollectionAndType")
+        bind(c, &
+        name="KIM_Collections_GetItemMetadataFileByCollectionAndType_fortran")
         use, intrinsic :: iso_c_binding
         use kim_interoperable_types_module, only : kim_collections_type
         implicit none
         type(kim_collections_type), intent(in) :: collections
         integer(c_int), intent(in), value :: index
         type(c_ptr), intent(out) :: file_name
-        integer(c_int), intent(out) :: file_length
+        integer(c_long), intent(out) :: file_length
         type(c_ptr), intent(out) :: file_raw_data
         integer(c_int), intent(out) :: available_as_string
         type(c_ptr), intent(out) :: file_string
@@ -921,21 +913,12 @@ contains
     integer(c_int), intent(out) :: ierr
     type(kim_collections_type), pointer :: collections
 
-    integer(c_int) dfile_length
     type(c_ptr) pfile_name, pfile_raw_data, pfile_string
 
     call c_f_pointer(collections_handle%p, collections)
     ierr = get_item_metadata_file_length_by_coll_and_type(collections, &
-      index-1, pfile_name, dfile_length, pfile_raw_data, available_as_string, &
+      index-1, pfile_name, file_length, pfile_raw_data, available_as_string, &
       pfile_string)
-    if (ierr .eq. 0) then
-      if (dfile_length < 0) then
-        file_length = 2*(int(huge(dfile_length), c_long) + 1) &
-          + int(dfile_length, c_long)
-      else
-        file_length = int(dfile_length, c_long)
-      end if
-    end if
   end subroutine kim_collections_get_item_metadata_file_length_by_coll_and_type
 
   !> \brief Get the item's metadata file values.
@@ -955,14 +938,15 @@ contains
         get_item_metadata_file_values_by_coll_and_type(collections, index, &
         file_name, file_length, file_raw_data, available_as_string, &
         file_string) &
-        bind(c, name="KIM_Collections_GetItemMetadataFileByCollectionAndType")
+        bind(c, &
+        name="KIM_Collections_GetItemMetadataFileByCollectionAndType_fortran")
         use, intrinsic :: iso_c_binding
         use kim_interoperable_types_module, only : kim_collections_type
         implicit none
         type(kim_collections_type), intent(in) :: collections
         integer(c_int), intent(in), value :: index
         type(c_ptr), intent(out) :: file_name
-        integer(c_int), intent(out) :: file_length
+        integer(c_long), intent(out) :: file_length
         type(c_ptr), intent(out) :: file_raw_data
         integer(c_int), intent(out) :: available_as_string
         type(c_ptr), intent(out) :: file_string
@@ -976,7 +960,6 @@ contains
     integer(c_int), intent(out) :: ierr
     type(kim_collections_type), pointer :: collections
 
-    integer(c_int) dfile_length
     integer(c_long) file_length
     integer(c_int) available_as_string
     type(c_ptr) pfile_name, pfile_raw_data, pfile_string
@@ -984,15 +967,9 @@ contains
 
     call c_f_pointer(collections_handle%p, collections)
     ierr = get_item_metadata_file_values_by_coll_and_type(collections, &
-      index-1, pfile_name, dfile_length, pfile_raw_data, available_as_string, &
+      index-1, pfile_name, file_length, pfile_raw_data, available_as_string, &
       pfile_string)
     if (ierr .eq. 0) then
-      if (dfile_length < 0) then
-        file_length = 2*(int(huge(dfile_length), c_long) + 1) &
-          + int(dfile_length, c_long)
-      else
-        file_length = int(dfile_length, c_long)
-      end if
       if (size(file_raw_data) < file_length) then
         ierr = 1
         return
