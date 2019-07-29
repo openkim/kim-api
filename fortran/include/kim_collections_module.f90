@@ -24,6 +24,7 @@
 !
 ! Contributors:
 !    Ryan S. Elliott
+!    Yaser Afshar
 !
 
 !
@@ -545,7 +546,7 @@ contains
     end interface
     type(kim_collections_handle_type), intent(in) :: collections_handle
     integer(c_int), intent(in) :: index
-    integer(c_long), intent(out) :: file_length
+    integer(c_long_long), intent(out) :: file_length
     integer(c_int), intent(out) :: available_as_string
     integer(c_int), intent(out) :: ierr
     type(kim_collections_type), pointer :: collections
@@ -558,10 +559,10 @@ contains
       dfile_length, pfile_raw_data, available_as_string, pfile_string)
     if (ierr .eq. 0) then
       if (dfile_length < 0) then
-        file_length = 2*(int(huge(dfile_length), c_long) + 1) &
-          + int(dfile_length, c_long)
+        file_length = 2*(int(huge(1_c_int), c_long_long) + 1_c_long_long) &
+          + int(dfile_length, c_long_long)
       else
-        file_length = int(dfile_length, c_long)
+        file_length = int(dfile_length, c_long_long)
       end if
     end if
   end subroutine kim_collections_get_item_metadata_file_length
@@ -603,7 +604,7 @@ contains
     type(kim_collections_type), pointer :: collections
 
     integer(c_int) dfile_length
-    integer(c_long) file_length
+    integer(c_long_long) file_length
     integer(c_int) available_as_string
     type(c_ptr) pfile_name, pfile_raw_data, pfile_string
     integer(c_signed_char), pointer :: file_raw_data_fpointer(:)
@@ -613,10 +614,10 @@ contains
       dfile_length, pfile_raw_data, available_as_string, pfile_string)
     if (ierr .eq. 0) then
       if (dfile_length < 0) then
-        file_length = 2*(int(huge(dfile_length), c_long) + 1) &
-          + int(dfile_length, c_long)
+        file_length = 2*(int(huge(1_c_int), c_long_long) + 1_c_long_long) &
+          + int(dfile_length, c_long_long)
       else
-        file_length = int(dfile_length, c_long)
+        file_length = int(dfile_length, c_long_long)
       end if
       if (size(file_raw_data) < file_length) then
         ierr = 1
@@ -916,7 +917,7 @@ contains
     end interface
     type(kim_collections_handle_type), intent(in) :: collections_handle
     integer(c_int), intent(in), value :: index
-    integer(c_long), intent(out) :: file_length
+    integer(c_long_long), intent(out) :: file_length
     integer(c_int), intent(out) :: available_as_string
     integer(c_int), intent(out) :: ierr
     type(kim_collections_type), pointer :: collections
@@ -930,10 +931,10 @@ contains
       pfile_string)
     if (ierr .eq. 0) then
       if (dfile_length < 0) then
-        file_length = 2*(int(huge(dfile_length), c_long) + 1) &
-          + int(dfile_length, c_long)
+        file_length = 2*(int(huge(1_c_int), c_long_long) + 1_c_long_long) &
+          + int(dfile_length, c_long_long)
       else
-        file_length = int(dfile_length, c_long)
+        file_length = int(dfile_length, c_long_long)
       end if
     end if
   end subroutine kim_collections_get_item_metadata_file_length_by_coll_and_type
@@ -977,7 +978,7 @@ contains
     type(kim_collections_type), pointer :: collections
 
     integer(c_int) dfile_length
-    integer(c_long) file_length
+    integer(c_long_long) file_length
     integer(c_int) available_as_string
     type(c_ptr) pfile_name, pfile_raw_data, pfile_string
     integer(c_signed_char), pointer :: file_raw_data_fpointer(:)
@@ -988,10 +989,10 @@ contains
       pfile_string)
     if (ierr .eq. 0) then
       if (dfile_length < 0) then
-        file_length = 2*(int(huge(dfile_length), c_long) + 1) &
-          + int(dfile_length, c_long)
+        file_length = 2*(int(huge(1_c_int), c_long_long) + 1_c_long_long) &
+          + int(dfile_length, c_long_long)
       else
-        file_length = int(dfile_length, c_long)
+        file_length = int(dfile_length, c_long_long)
       end if
       if (size(file_raw_data) < file_length) then
         ierr = 1
