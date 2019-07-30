@@ -32,6 +32,25 @@
 #
 
 
+=== kim-api-2.1.2 =============== 29Jul2019 ====================================
+
+* Fixup Fortran kim_collections_module interfaces to be consistent with c/c++.
+
+* Fixup collections-management for portabability to dash.
+
+* Improve item-wrapper.cpp.in for more standard compliant MD, MO, SM behavior.
+
+* Improve zsh completion install behavior.
+
+* Fixup Fortran c_long communication and overflow behavior.
+
+* Add missing testing of interface in examples/simulators/collections-example.
+
+* Improve example/simulators to remove warnings.
+
+* Fix bug in KIM::SimulatorModel::Create().
+
+
 === kim-api-2.1.1 =============== 24Jul2019 ====================================
 
 * Refactor 'kim-api-collections-management list' code for performance.
