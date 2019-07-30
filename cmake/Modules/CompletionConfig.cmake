@@ -27,7 +27,7 @@
 #
 
 #
-# Release: This file is part of the kim-api-2.1.1 package.
+# Release: This file is part of the kim-api-2.1.2 package.
 #
 
 
@@ -45,8 +45,9 @@ if(NOT
     )
   set(BASH_COMPLETION_COMPLETIONSDIR "${CMAKE_INSTALL_FULL_SYSCONFDIR}/bash_completion.d")
 endif()
+set(BASH_COMPLETION_COMPLETIONSDIR "${BASH_COMPLETION_COMPLETIONSDIR}" CACHE PATH "Default directory where bash completions are installed")
 message(STATUS "Using bash-completion dir ${BASH_COMPLETION_COMPLETIONSDIR}")
 
 # zsh completions
-set(ZSH_COMPLETION_COMPLETIONSDIR "${CMAKE_INSTALL_FULL_SYSCONFDIR}/zsh_completion.d")
+set(ZSH_COMPLETION_COMPLETIONSDIR "${CMAKE_INSTALL_FULL_SYSCONFDIR}/zsh_completion.d" CACHE PATH "Default directory where zsh completions are installed")
 message(STATUS "Using zsh-completion dir ${ZSH_COMPLETION_COMPLETIONSDIR}")

@@ -31,7 +31,7 @@
 #
 
 #
-# Release: This file is part of the kim-api-2.1.1 package.
+# Release: This file is part of the kim-api-2.1.2 package.
 #
 
 
@@ -47,9 +47,15 @@ install(
   FILES ${CMAKE_CURRENT_BINARY_DIR}/${BASH_COMPLETIONS}
   DESTINATION ${BASH_COMPLETION_COMPLETIONSDIR}
   )
+
 install(
   FILES
   ${CMAKE_CURRENT_BINARY_DIR}/${ZSH_COMPLETIONS}
+  DESTINATION ${ZSH_COMPLETION_COMPLETIONSDIR}
+  RENAME "_${PROJECT_NAME}-collections-management"
+  )
+install(
+  FILES
   ${CMAKE_CURRENT_BINARY_DIR}/${BASH_COMPLETIONS}
   DESTINATION ${ZSH_COMPLETION_COMPLETIONSDIR}
   )

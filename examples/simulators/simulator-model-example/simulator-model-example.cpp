@@ -123,7 +123,8 @@ int main()
     SM->GetSpecificationFileName(&pSpecName);
     std::cout << "SM spec file name is " << *pSpecName << std::endl
               << std::endl;
-    system((std::string("cat ") + *pDirName + "/" + *pSpecName).c_str());
+    error
+        = system((std::string("cat ") + *pDirName + "/" + *pSpecName).c_str());
     std::cout << std::endl;
 
     int numberParamFiles;
@@ -143,7 +144,7 @@ int main()
       {
         std::cout << "Parameter file " << std::setw(2) << i
                   << " has name : " << *pParamFileName << std::endl;
-        system(
+        error = system(
             (std::string("cat ") + *pDirName + "/" + *pParamFileName).c_str());
         std::cout << std::endl;
       }

@@ -250,6 +250,58 @@ int main()
     }
   }
 
+  {
+    char const * fileName;
+    KIM_Collection collection;
+    int error = KIM_Collections_GetItemLibraryFileNameAndCollection(
+        col,
+        KIM_COLLECTION_ITEM_TYPE_simulatorModel,
+        "Sim_LAMMPS_LJcut_AkersonElliott_Alchemy_PbAu",
+        &fileName,
+        &collection);
+    if (!error)
+      std::cout
+          << "Simulator Model Sim_LAMMPS_LJcut_AkersonElliott_Alchemy_PbAu"
+          << " has library name '" << fileName << "' and is part of the '"
+          << KIM_Collection_ToString(collection) << "' collection."
+          << std::endl;
+    else
+      std::cout << "Error from GetItemLibraryFileNameAndCollection."
+                << std::endl;
+  }
+
+  {
+    int extent;
+    int error = KIM_Collections_CacheListOfItemMetadataFiles(
+        col,
+        KIM_COLLECTION_ITEM_TYPE_simulatorModel,
+        "Sim_LAMMPS_LJcut_AkersonElliott_Alchemy_PbAu",
+        &extent);
+    if (error)
+      std::cout << "Error from CacheListOfItemMetadataFiles." << std::endl;
+    else
+    {
+      char const * fileName;
+      unsigned int fileLength;
+      unsigned char const * fileRawData;
+      int availableAsString;
+      char const * fileString;
+      for (int i = 0; i < extent; ++i)
+      {
+        KIM_Collections_GetItemMetadataFile(col,
+                                            i,
+                                            &fileName,
+                                            &fileLength,
+                                            &fileRawData,
+                                            &availableAsString,
+                                            &fileString);
+        std::cout << "Metadata File " << i << ", " << fileName
+                  << ", is of length " << fileLength << std::endl
+                  << fileString << std::endl;
+      }
+    }
+  }
+
   KIM_Collections_Destroy(&col);
   return 0;
 }

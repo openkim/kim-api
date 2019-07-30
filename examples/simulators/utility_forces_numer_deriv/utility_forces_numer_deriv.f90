@@ -178,6 +178,7 @@ recursive subroutine check_model_compatibility(compute_arguments_handle, &
 
   ! assume fail
   model_is_compatible = .false.
+  forces_optional = .false.
   ierr = 0
 
   ! check arguments
@@ -290,6 +291,8 @@ integer(c_int) code
 
 ! Initialize error flag
 ier = 1
+
+num_species = 0 ! initialize
 
 call kim_get_number_of_species_names(total_num_species)
 
@@ -646,6 +649,7 @@ contains
    real(c_double) errt,fac,hh,a(NTAB,NTAB),fp,fm,coordorig
 
    dfridr = 0.0_cd ! initialize
+   err=BIG ! initialize
 
    if (abs(h).le.tiny(0.0_cd)) then  ! avoid division by zero
       ierr = 1
@@ -677,7 +681,6 @@ contains
                             do_update_list,coordsave,       &
                             neighObject,ierr)
    a(1,1)=(fp-fm)/(2.0_cd*hh)
-   err=BIG
    ! successive columns in the Neville tableau will go to smaller step sizes
    ! and higher orders of extrapolation
    do i=2,NTAB

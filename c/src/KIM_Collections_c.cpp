@@ -29,8 +29,12 @@
 //
 
 //
-// Release: This file is part of the kim-api-2.1.1 package.
+// Release: This file is part of the kim-api-2.1.2 package.
 //
+
+
+#include <climits>
+#include <iostream>
 
 #ifndef KIM_LOG_VERBOSITY_HPP_
 #include "KIM_LogVerbosity.hpp"
@@ -214,6 +218,40 @@ int KIM_Collections_GetItemMetadataFile(
   }
 }
 
+extern "C" {
+int KIM_Collections_GetItemMetadataFile_fortran(
+    KIM_Collections * const collections,
+    int const index,
+    char const ** const fileName,
+    long * const fileLength,
+    unsigned char const ** const fileRawData,
+    int * const availableAsString,
+    char const ** const fileString)
+{
+  unsigned int uFileLength;
+  int error = KIM_Collections_GetItemMetadataFile(collections,
+                                                  index,
+                                                  fileName,
+                                                  &uFileLength,
+                                                  fileRawData,
+                                                  availableAsString,
+                                                  fileString);
+  if (error)
+    return true;
+  else if ((sizeof(int) == sizeof(long)) && (uFileLength > INT_MAX))
+  {
+    std::cerr << "* Error : long overflow for fileLength. " << __FILE__ << ":"
+              << __LINE__ << std::endl;
+    return true;
+  }
+  else
+  {
+    *fileLength = static_cast<long>(uFileLength);
+    return false;
+  }
+}
+}  // extern "C"
+
 int KIM_Collections_CacheListOfItemNamesByType(
     KIM_Collections * const collections,
     KIM_CollectionItemType const itemType,
@@ -360,6 +398,41 @@ int KIM_Collections_GetItemMetadataFileByCollectionAndType(
     return false;
   }
 }
+
+extern "C" {
+int KIM_Collections_GetItemMetadataFileByCollectionAndType_fortran(
+    KIM_Collections * const collections,
+    int const index,
+    char const ** const fileName,
+    long * const fileLength,
+    unsigned char const ** const fileRawData,
+    int * const availableAsString,
+    char const ** const fileString)
+{
+  unsigned int uFileLength;
+  int error = KIM_Collections_GetItemMetadataFileByCollectionAndType(
+      collections,
+      index,
+      fileName,
+      &uFileLength,
+      fileRawData,
+      availableAsString,
+      fileString);
+  if (error)
+    return true;
+  else if ((sizeof(int) == sizeof(long)) && (uFileLength > INT_MAX))
+  {
+    std::cerr << "* Error : long overflow for fileLength. " << __FILE__ << ":"
+              << __LINE__ << std::endl;
+    return true;
+  }
+  else
+  {
+    *fileLength = static_cast<long>(uFileLength);
+    return false;
+  }
+}
+}  // extern "C"
 
 void KIM_Collections_GetProjectNameAndSemVer(
     KIM_Collections * const collections,

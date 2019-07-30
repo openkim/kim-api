@@ -168,12 +168,17 @@ program collections_example_fortran
   integer(c_int) :: extent
   integer(c_int) :: i
   type(kim_collections_handle_type) :: col
+  type(kim_collection_type) col_t
   type(kim_collection_item_type_type) it
   character(len=2048, kind=c_char) project_name
   character(len=2048, kind=c_char) sem_ver
   character(len=2048, kind=c_char) name
   character(len=2048, kind=c_char) value
   character(len=2048, kind=c_char) file_name
+  integer(c_long) file_length
+  integer(c_int) available_as_string
+  integer(c_signed_char) file_raw_data(10000)
+  character(len=10000, kind=c_char) file_string
   character(len=2048, kind=c_char) item_type_str
 
   call kim_collections_create(col, ierr)
@@ -254,6 +259,33 @@ program collections_example_fortran
     call kim_get_item_name_by_type(col, i, name, ierr)
     print '(A,A)', achar(9), trim(name)
   end do
+
+  call kim_get_item_library_file_name_and_collection(col, it, &
+    trim("Sim_LAMMPS_LJcut_AkersonElliott_Alchemy_PbAu"), name, col_t, ierr)
+  if (ierr /= 0) then
+    print '(A)', "Error from GetItemLibraryFileNameAndCollection"
+  else
+    call kim_to_string(col_t, value)
+    print '(A,A,A,A,A)', &
+      "Simulator Model Sim_LAMMPS_LJcut_AkersonElliott_Alchemy_PbAu has library name '", &
+      trim(name), "' and is part of the '", trim(value), "' collection."
+  end if
+
+  call kim_cache_list_of_item_metadata_files(col, it, &
+    trim("Sim_LAMMPS_LJcut_AkersonElliott_Alchemy_PbAu"), extent, ierr)
+  if (ierr /= 0) then
+    print '(A)', "Error from CacheListOfItemMetadataFiles"
+  else
+    do i=1,extent
+      call kim_get_item_metadata_file_length(col, i, file_length, &
+        available_as_string, ierr)
+      call kim_get_item_metadata_file_values(col, i, file_name, &
+        file_raw_data, file_string, ierr)
+      print '(A,I2,A,A,A,I6)', "Metadata File ", i, ", ", trim(file_name), &
+        ", is of length", file_length
+      print '(A)', trim(file_string)
+    end do
+  end if
 
   call kim_collections_destroy(col)
 

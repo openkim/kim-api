@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-2.1.1 package.
+// Release: This file is part of the kim-api-2.1.2 package.
 //
 
 
@@ -844,15 +844,6 @@ int SimulatorModelImplementation::Initialize(
   if (simulatorSupportedSpecies_.size() == 0)
   {
     LOG_ERROR("Required specification field 'supported-species' not found.");
-    LOG_DEBUG("Exit 1=" + callString);
-    return true;
-  }
-
-  // close model and open driver
-  error = sharedLibrary_->Close();
-  if (error)
-  {
-    LOG_ERROR("Could not close model shared library.");
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }

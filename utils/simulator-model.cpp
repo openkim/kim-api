@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-2.1.1 package.
+// Release: This file is part of the kim-api-2.1.2 package.
 //
 
 #include "KIM_SimulatorModel.hpp"
@@ -127,8 +127,15 @@ int main(int argc, char * argv[])
       fclose(file);
       file = fopen(filePath.c_str(), "r");
       unsigned char * fileData = new unsigned char[size];
-      fread(fileData, sizeof(unsigned char), size, file);
+      size_t numberReadObjects;
+      numberReadObjects = fread(fileData, sizeof(unsigned char), size, file);
       fclose(file);
+      if (numberReadObjects != static_cast<size_t>(size))
+      {
+        std::cout << "* Error: unable to fully read smspec file." << std::endl;
+        returnValue = 8;
+        goto cleanup;
+      }
 
       if (std::string(argv[3]) == "name") { std::cout << *name << std::endl; }
       else if (std::string(argv[3]) == "data")
@@ -176,8 +183,16 @@ int main(int argc, char * argv[])
         fclose(file);
         file = fopen(filePath.c_str(), "r");
         unsigned char * fileData = new unsigned char[size];
-        fread(fileData, sizeof(unsigned char), size, file);
+        size_t numberReadObjects;
+        numberReadObjects = fread(fileData, sizeof(unsigned char), size, file);
         fclose(file);
+        if (numberReadObjects != static_cast<size_t>(size))
+        {
+          std::cout << "* Error: unable to fully read parameter file."
+                    << std::endl;
+          returnValue = 8;
+          goto cleanup;
+        }
 
         if (std::string(argv[3]) == "name") { std::cout << *name << std::endl; }
         else if (std::string(argv[3]) == "data")
