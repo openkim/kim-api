@@ -478,7 +478,7 @@ split_items_list_into_collections () {
   local items_list="$2"
 
   local cwd_collection
-  cwd_collection==`printf "${items_list}" | grep "^currentWorkingDirectory" | \
+  cwd_collection=`printf "${items_list}" | grep "^currentWorkingDirectory" | \
                    sed -e 's/^currentWorkingDirectory \([^ ]*\) .*$/	\1/'`
   local number_cwd
   number_cwd=`printf "${cwd_collection}" | grep -c ''`
