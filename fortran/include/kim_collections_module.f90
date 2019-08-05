@@ -534,7 +534,7 @@ contains
     use kim_interoperable_types_module, only : kim_collections_type
     implicit none
     interface
-      integer(c_int) recursive function get_item_metadata_file_length( &
+      integer(c_int) recursive function get_item_metadata_file( &
         collections, index, file_name, file_length, file_raw_data, &
         available_as_string, file_string) &
         bind(c, name="KIM_Collections_GetItemMetadataFile_fortran")
@@ -548,7 +548,7 @@ contains
         type(c_ptr), intent(out) :: file_raw_data
         integer(c_int), intent(out) :: available_as_string
         type(c_ptr), intent(out) :: file_string
-      end function get_item_metadata_file_length
+      end function get_item_metadata_file
     end interface
     type(kim_collections_handle_type), intent(in) :: collections_handle
     integer(c_int), intent(in) :: index
@@ -560,7 +560,7 @@ contains
     type(c_ptr) pfile_name, pfile_raw_data, pfile_string
 
     call c_f_pointer(collections_handle%p, collections)
-    ierr = get_item_metadata_file_length(collections, index-1, pfile_name, &
+    ierr = get_item_metadata_file(collections, index-1, pfile_name, &
       file_length, pfile_raw_data, available_as_string, pfile_string)
   end subroutine kim_collections_get_item_metadata_file_length
 
@@ -576,7 +576,7 @@ contains
     use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
     implicit none
     interface
-      integer(c_int) recursive function get_item_metadata_file_values( &
+      integer(c_int) recursive function get_item_metadata_file( &
         collections, index, file_name, file_length, file_raw_data, &
         available_as_string, file_string) &
         bind(c, name="KIM_Collections_GetItemMetadataFile_fortran")
@@ -590,7 +590,7 @@ contains
         type(c_ptr), intent(out) :: file_raw_data
         integer(c_int), intent(out) :: available_as_string
         type(c_ptr), intent(out) :: file_string
-      end function get_item_metadata_file_values
+      end function get_item_metadata_file
     end interface
     type(kim_collections_handle_type), intent(in) :: collections_handle
     integer(c_int), intent(in) :: index
@@ -606,7 +606,7 @@ contains
     integer(c_signed_char), pointer :: file_raw_data_fpointer(:)
 
     call c_f_pointer(collections_handle%p, collections)
-    ierr = get_item_metadata_file_values(collections, index-1, pfile_name, &
+    ierr = get_item_metadata_file(collections, index-1, pfile_name, &
       file_length, pfile_raw_data, available_as_string, pfile_string)
     if (ierr .eq. 0) then
       if (size(file_raw_data) < file_length) then
@@ -889,7 +889,7 @@ contains
     implicit none
     interface
       integer(c_int) recursive function &
-        get_item_metadata_file_length_by_coll_and_type(collections, index, &
+        get_item_metadata_file_by_coll_and_type(collections, index, &
         file_name, file_length, file_raw_data, available_as_string, &
         file_string) &
         bind(c, &
@@ -904,7 +904,7 @@ contains
         type(c_ptr), intent(out) :: file_raw_data
         integer(c_int), intent(out) :: available_as_string
         type(c_ptr), intent(out) :: file_string
-      end function get_item_metadata_file_length_by_coll_and_type
+      end function get_item_metadata_file_by_coll_and_type
     end interface
     type(kim_collections_handle_type), intent(in) :: collections_handle
     integer(c_int), intent(in), value :: index
@@ -916,7 +916,7 @@ contains
     type(c_ptr) pfile_name, pfile_raw_data, pfile_string
 
     call c_f_pointer(collections_handle%p, collections)
-    ierr = get_item_metadata_file_length_by_coll_and_type(collections, &
+    ierr = get_item_metadata_file_by_coll_and_type(collections, &
       index-1, pfile_name, file_length, pfile_raw_data, available_as_string, &
       pfile_string)
   end subroutine kim_collections_get_item_metadata_file_length_by_coll_and_type
@@ -935,7 +935,7 @@ contains
     implicit none
     interface
       integer(c_int) recursive function &
-        get_item_metadata_file_values_by_coll_and_type(collections, index, &
+        get_item_metadata_file_by_coll_and_type(collections, index, &
         file_name, file_length, file_raw_data, available_as_string, &
         file_string) &
         bind(c, &
@@ -950,7 +950,7 @@ contains
         type(c_ptr), intent(out) :: file_raw_data
         integer(c_int), intent(out) :: available_as_string
         type(c_ptr), intent(out) :: file_string
-      end function get_item_metadata_file_values_by_coll_and_type
+      end function get_item_metadata_file_by_coll_and_type
     end interface
     type(kim_collections_handle_type), intent(in) :: collections_handle
     integer(c_int), intent(in) :: index
@@ -966,7 +966,7 @@ contains
     integer(c_signed_char), pointer :: file_raw_data_fpointer(:)
 
     call c_f_pointer(collections_handle%p, collections)
-    ierr = get_item_metadata_file_values_by_coll_and_type(collections, &
+    ierr = get_item_metadata_file_by_coll_and_type(collections, &
       index-1, pfile_name, file_length, pfile_raw_data, available_as_string, &
       pfile_string)
     if (ierr .eq. 0) then
