@@ -431,20 +431,48 @@ int PrivateGetUserDirs(KIM::Log * log, ItemTypeToStringMap & dirsMap)
     dirsMap[portableModel] = val;
 
     cfl.getline(line, LINELEN);
-    if ((cfl.fail())
-        || (ProcessConfigFileLine(line,
-                                  configFile,
-                                  KIM_SIMULATOR_MODEL_PLURAL_DIR_IDENTIFIER,
-                                  log,
-                                  val)))
+    if (!cfl.fail())
     {
-      cfl.close();
-      return true;
+      if (ProcessConfigFileLine(line,
+                                configFile,
+                                KIM_SIMULATOR_MODEL_PLURAL_DIR_IDENTIFIER,
+                                log,
+                                val))
+      {
+        cfl.close();
+        return true;
+      }
+      else
+      {
+        cfl.close();
+        dirsMap[simulatorModel] = val;
+      }
     }
     else
-      dirsMap[simulatorModel] = val;
+    {
+      cfl.close();
 
-    cfl.close();
+      // unable to read SM settings; rewrite file with default SM location
+      size_t const pos = configFile.find_last_of('/');
+      std::string const path = configFile.substr(0, pos);
+      // std::string const name = configFile->substr(pos+1);  // NOT USED
+      std::ofstream fl;
+
+      dirsMap[simulatorModel] = ProcessConfigFileDirectoryString(
+          KIM_USER_SIMULATOR_MODEL_PLURAL_DIR_DEFAULT);
+      if (MakeDirWrapper(dirsMap[simulatorModel].c_str(), 0755)) return true;
+
+      fl.open(configFile.c_str(), std::ofstream::out);
+      fl << KIM_MODEL_DRIVER_PLURAL_DIR_IDENTIFIER " = " << dirsMap[modelDriver]
+         << "\n";
+      fl << KIM_PORTABLE_MODEL_PLURAL_DIR_IDENTIFIER " = "
+         << dirsMap[portableModel] << "\n";
+      fl << KIM_SIMULATOR_MODEL_PLURAL_DIR_IDENTIFIER " = "
+         << ProcessConfigFileDirectoryString(
+                KIM_USER_SIMULATOR_MODEL_PLURAL_DIR_DEFAULT)
+         << "\n";
+      fl.close();
+    }
   }
 
   return false;
