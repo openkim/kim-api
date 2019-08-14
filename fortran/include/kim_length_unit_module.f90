@@ -95,13 +95,13 @@ module kim_length_unit_module
     bind(c, name="KIM_LENGTH_UNIT_A") &
     :: KIM_LENGTH_UNIT_A
 
-  !> \brief \copybrief KIM::LENGTH_UNIT::Bhor
+  !> \brief \copybrief KIM::LENGTH_UNIT::Bohr
   !!
-  !! \sa KIM::LENGTH_UNIT::Bhor, KIM_LENGTH_UNIT_Bhor
+  !! \sa KIM::LENGTH_UNIT::Bohr, KIM_LENGTH_UNIT_Bohr
   !!
   !! \since 2.0
   type(kim_length_unit_type), protected, save, &
-    bind(c, name="KIM_LENGTH_UNIT_Bhor") &
+    bind(c, name="KIM_LENGTH_UNIT_Bohr") &
     :: KIM_LENGTH_UNIT_BOHR
 
   !> \brief \copybrief KIM::LENGTH_UNIT::cm
