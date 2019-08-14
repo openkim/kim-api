@@ -54,7 +54,8 @@ class ChargeUnit
   /// \note This should not be directly accessed and is only public for
   /// cross-language reasons.
   ///
-  /// \sa KIM_ChargeUnit::chargeUnitID, kim_charge_unit_module::charge_unit_id
+  /// \sa KIM_ChargeUnit::chargeUnitID,
+  /// kim_charge_unit_module::kim_charge_unit_type::charge_unit_id
   ///
   /// \since 2.0
   int chargeUnitID;

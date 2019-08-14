@@ -74,9 +74,7 @@ typedef struct KIM_CollectionItemType KIM_CollectionItemType;
  **
  ** \copydetails KIM::Collections
  **
- ** \sa KIM::Collections, kim_collections_module::kim_collections_handle_type
- **
- ** \since 2.1
+ ** <!-- see also and since not needed here due to use of copydetails -->
  **/
 typedef struct KIM_Collections KIM_Collections;
 #endif
@@ -235,7 +233,7 @@ int KIM_Collections_GetItemLibraryFileNameByCollectionAndType(
  **
  ** \sa KIM::Collections::CacheListOfItemMetadataFilesByCollectionAndType,
  ** kim_collections_module::<!--
- ** -->kim_cache_list_of_metadata_files_by_collection_and_type
+ ** -->kim_cache_list_of_item_metadata_files_by_collection_and_type
  **
  ** \since 2.1
  **/

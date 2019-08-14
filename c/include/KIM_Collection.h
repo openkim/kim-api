@@ -145,7 +145,7 @@ extern KIM_Collection const KIM_COLLECTION_environmentVariable;
  ** \brief \copybrief KIM::COLLECTION::currentWorkingDirectory
  **
  ** \sa KIM::COLLECTION::currentWorkingDirectory,
- ** kim_collection_module::kim_collection_currentWorkingDirectory
+ ** kim_collection_module::kim_collection_current_working_directory
  **
  ** \since 2.1
  **/

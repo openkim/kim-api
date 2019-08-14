@@ -54,10 +54,7 @@ typedef struct KIM_LogVerbosity KIM_LogVerbosity;
  **
  ** \copydetails KIM::SimulatorModel
  **
- ** \sa KIM::SimulatorModel,
- ** kim_simulator_model_module::kim_simulatormodel_handle_type
- **
- ** \since 2.1
+ ** <!-- see also and since not needed here due to use of copydetails -->
  **/
 typedef struct KIM_SimulatorModel KIM_SimulatorModel;
 #endif

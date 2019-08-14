@@ -438,7 +438,7 @@ class Collections
   /// kim_collections_module::kim_get_item_metadata_file_length_<!--
   /// -->by_collection_and_type,
   /// kim_collections_module::kim_get_item_metadata_file_values_<!--
-  /// -->_by_collection_and_type
+  /// -->by_collection_and_type
   ///
   /// \since 2.1
   int GetItemMetadataFileByCollectionAndType(
@@ -581,7 +581,7 @@ class Collections
   ///
   /// \param[in] logID String identifying the Collections object's Log object.
   ///
-  /// \sa KIM_Collections_SetLogID, kim_Collections_module::kim_set_log_id
+  /// \sa KIM_Collections_SetLogID, kim_collections_module::kim_set_log_id
   ///
   /// \since 2.1
   void SetLogID(std::string const & logID);
