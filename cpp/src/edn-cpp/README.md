@@ -60,6 +60,7 @@ If you define DEBUG you will see debug output when using pprint. This looks like
 Which is nice when proving things are parsing as you expect. 
 
 ##api
+
 	list<EdnToken> lex(string ednString)
 	
 	EdnNode read(string ednString)
@@ -87,6 +88,7 @@ Which is nice when proving things are parsing as you expect.
 	EdnNode handleTagged(EdnToken token, EdnNode value)
 	
 ##structs
+
 	EdnToken
 		TokenType type
 		int line
@@ -99,6 +101,7 @@ Which is nice when proving things are parsing as you expect.
 		list<EdnNode> values #used for collections
 		
 ##enums
+
 	TokenType
 		TokenString
 		TokenAtom
