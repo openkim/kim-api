@@ -139,9 +139,9 @@ EOF
   fi
 done
 
-# Change branch id in README.md badge links
+# Change branch id in README.md links
 ed "README.md" > /dev/null 2>&1 <<EOF
-g/^\[!/s/devel/master/g
+g/^\[/s/devel/master/g
 w
 q
 EOF
