@@ -29,7 +29,7 @@
 #
 
 #
-# Release: This file is part of the kim-api-2.1.2 package.
+# Release: This file is part of the kim-api-2.1.3 package.
 #
 
 
@@ -110,7 +110,7 @@ EOF
 
 # Change kim-api.git to release version string
 # replace c /* */ comments
-orig_string="kim-api-2.1.2 package.  "  # include trailing space to keep this from catching non /* */ comments
+orig_string="kim-api-2.1.3 package.  "  # include trailing space to keep this from catching non /* */ comments
 new_string="${fullpackagename} package."
 num_spaces=`expr ${#new_string} - ${#orig_string}`
 if test ${num_spaces} -le 0; then
@@ -139,9 +139,9 @@ EOF
   fi
 done
 
-# Change branch id in README.md badge links
+# Change branch id in README.md links
 ed "README.md" > /dev/null 2>&1 <<EOF
-g/^\[!/s/devel/master/g
+g/^\[/s/devel/master/g
 w
 q
 EOF

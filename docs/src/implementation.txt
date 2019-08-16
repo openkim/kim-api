@@ -31,7 +31,7 @@
 /*                                                                            */
 
 /*                                                                            */
-/* Release: This file is part of the kim-api-2.1.2 package.                   */
+/* Release: This file is part of the kim-api-2.1.3 package.                   */
 /*                                                                            */
 
 /**
@@ -39,7 +39,8 @@
 
 Previous Section: \ref theory.
 
-## \anchor kim_api_pmi The %KIM API Portable Model Interface (%KIM API/PMI)
+\anchor kim_api_pmi
+## The KIM API Portable Model Interface (KIM API/PMI)
 
 In code, Portable Models (PMs) and Model Drivers (MDs) consist of up to eight
 routines which perform specific tasks.
@@ -464,8 +465,8 @@ KIM::ModelCreate, KIM::ModelDestroy, KIM::ModelDriverCreate,
 KIM::ModelExtension, KIM::ModelRefresh, and KIM::ModelWriteParameterizedModel
 interfaces for more details of the %KIM API/PMI from the PM's perspective.
 
-
-## \anchor kim_api_smi The %KIM API Simulator Model Interface (%KIM API/SMI)
+\anchor kim_api_smi
+## The KIM API Simulator Model Interface (KIM API/SMI)
 
 In code, Simulator Models (SMs) are simply a set of <em>parameter files</em>
 and a <em>specification file</em> which contains simulator input commands and

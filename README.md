@@ -29,7 +29,7 @@
 #
 
 #
-# Release: This file is part of the kim-api-2.1.2 package.
+# Release: This file is part of the kim-api-2.1.3 package.
 #
 -->
 
@@ -50,8 +50,58 @@ the codes are written.  It is part of the larger KIM project
 (https://openkim.org).
 
 
-See the INSTALL file for instructions on how to build and install the package
-and its documentation.
+Documentation
+-------------
+
+[Full documentation](https://kim-api.readthedocs.io/en/master) is available online via [readthedocs.org](https://readthedocs.org)
+
+
+Download
+--------
+
+All official release archives of the KIM API package can be downloaded from:
+
+[https://openkim.org/kim-api/previous-versions](https://openkim.org/kim-api/previous-versions)
+
+Release notes are available in the [NEWS](NEWS) file.
+
+
+Installation
+------------
+
+See the [INSTALL](INSTALL) file for instructions on how to build and install
+the package and its documentation.
+
+
+Contributing
+------------
+
+Just send us a [pull request](https://help.github.com/articles/using-pull-requests/).
+When you send your request, make `devel` the destination branch on the
+[kim-api repository](https://github.com/openkim/kim-api).
+
+Please see the [README_GIT](README_GIT) file for some additional details.
+
+
+Issues, bugs, requests, ideas
+-----------------------------
+
+Use the [issues](https://github.com/openkim/kim-api/issues) tracker to report
+bugs.
+
+
+License
+-------
+
+The KIM API is distributed under the terms of the Common Development and
+Distribution License (CDDL) Version 1.0.
+
+All new contributions must be made under this license.
+
+See [LICENSE.CDDL](LICENSE.CDDL) and
+[http://opensource.org/licenses/CDDL-1.0](http://opensource.org/licenses/CDDL-1.0)
+for details.
+
 
 *******************************************************************************
 

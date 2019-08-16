@@ -32,7 +32,7 @@
 #
 
 #
-# Release: This file is part of the kim-api-2.1.2 package.
+# Release: This file is part of the kim-api-2.1.3 package.
 #
 
 collections_info=@CMAKE_INSTALL_FULL_LIBEXECDIR@/@PROJECT_NAME@/@PROJECT_NAME@-collections-info
@@ -478,7 +478,7 @@ split_items_list_into_collections () {
   local items_list="$2"
 
   local cwd_collection
-  cwd_collection==`printf "${items_list}" | grep "^currentWorkingDirectory" | \
+  cwd_collection=`printf "${items_list}" | grep "^currentWorkingDirectory" | \
                    sed -e 's/^currentWorkingDirectory \([^ ]*\) .*$/	\1/'`
   local number_cwd
   number_cwd=`printf "${cwd_collection}" | grep -c ''`

@@ -27,7 +27,7 @@
 !
 
 !
-! Release: This file is part of the kim-api-2.1.2 package.
+! Release: This file is part of the kim-api-2.1.3 package.
 !
 
 
@@ -94,7 +94,7 @@ module kim_support_status_module
     bind(c, name="KIM_SUPPORT_STATUS_notSupported") &
     :: KIM_SUPPORT_STATUS_NOT_SUPPORTED
 
-  !> \brief \copybrief KIM::SUPPORT_STATUS::requried
+  !> \brief \copybrief KIM::SUPPORT_STATUS::required
   !!
   !! \sa KIM::SUPPORT_STATUS::required, KIM_SUPPORT_STATUS_required
   !!

@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-2.1.2 package.
+// Release: This file is part of the kim-api-2.1.3 package.
 //
 
 
@@ -171,7 +171,7 @@ extern CollectionItemType const simulatorModel;
 ///             CollectionItemType's defined by the %KIM API.
 ///
 /// \sa KIM_COLLECTION_ITEM_TYPE_GetNumberOfCollectionItemTypes,
-/// kim_collection_item_types_module::kim_get_number_of_collection_item_types
+/// kim_collection_item_type_module::kim_get_number_of_collection_item_types
 ///
 /// \since 2.1
 void GetNumberOfCollectionItemTypes(int * const numberOfCollectionItemTypes);
