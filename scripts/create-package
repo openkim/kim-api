@@ -175,6 +175,8 @@ printf "  git checkout '${devel_branch}'\n"
 printf "  emacs CMakeLists.txt  # Bump version number to next patch value.\n"
 printf "  git add CMakeLists.txt\n"
 printf "  git commit  # message: Bump version to vX.Y.Z\n"
+printf "  git push origin\n"
+printf "  git push github\n"
 
 printf "\n"
 internal_notes="/Users/relliott/unison-sync/KIM/kim-release-process-notes/kim-api-internal-release-process-notes"
