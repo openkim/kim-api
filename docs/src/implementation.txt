@@ -77,7 +77,7 @@ each of the routines itemized above, the following table lists (i) the
 associated KIM::ModelRoutineName extensible enumeration constant, (ii) links to
 the associated %KIM API/PMI interface(s) available within the routine, (iii)
 links to the routine's prototype (in C++, C, and Fortran), and (iv) whether the
-%KIM API/MPI requires a PM or MD to provide the routine, or if it is optional.
+%KIM API/PMI requires a PM or MD to provide the routine, or if it is optional.
 
 <table><caption align=top></caption>
 <tr>
@@ -88,7 +88,7 @@ links to the routine's prototype (in C++, C, and Fortran), and (iv) whether the
   </th><th>
     Routine prototype (C++; C; Fortran)
   </th><th>
-    %KIM API/MPI Required / Optional
+    %KIM API/PMI Required / Optional
   </th>
 </tr>
 <tr>
@@ -316,11 +316,11 @@ a support status value, as part of its <em>ModelComputeArgumentsCreate</em>
 routine, for every compute-argument and compute-callback defined by the %KIM
 API/PMI.  Some arguments and callbacks are required by the %KIM API and can
 only have a support status of <em>requiredByAPI</em>.  All other arguments and
-callbacks are not required by the %KIM API/MPI, and therefore the PM may set
+callbacks are not required by the %KIM API/PMI, and therefore the PM may set
 their support status to any one of the three remaining options:
 <em>required</em>, <em>optional</em>, or <em>notSupported</em>.  Just before
 the PM's <em>ModelComputeArgumentsCreate</em> routine is executed, the %KIM
-API/MPI initializes the support status of all arguments and callbacks to either
+API/PMI initializes the support status of all arguments and callbacks to either
 <em>requiredByAPI</em> or <em>notSupported</em>, as indicated in the below
 tables.  It is the responsibility of the simulator to use the
 KIM::ComputeArguments object interface to determine the support status of each
@@ -618,7 +618,7 @@ LocalWords:  Modelcompureargumentsdestroy ModelExtension CMake PMI PMs MDs tr
 LocalWords:  modelWillNotRequestNeighborsOfNoncontributingParticles td br PM's
 LocalWords:  ModelWriteParameterizedModel requestedUnitsAccepted SMI SMs SM's
 LocalWords:  metadata programatic SM SMI's nondimensional Lennard openkim org
-LocalWords:  pmi smi MPI ModelCreateFunction ModelDriverCreateFunction LAMMPS
+LocalWords:  pmi smi PMI ModelCreateFunction ModelDriverCreateFunction LAMMPS
 LocalWords:  ModelComputeArgumentsCreateFunction ModelComputeFunction ReaxFF
 LocalWords:  ModelExtensionFunction ModelRefreshFunction ModelDestroyFunction
 LocalWords:  ModelWriteParameterizedModelFunction CHO REAX reax lmp coeff qeq
