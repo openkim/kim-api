@@ -106,7 +106,11 @@ int KIM_Collections_Create(KIM_Collections ** const collections)
   KIM::Collections * pCollections;
   int error = KIM::Collections::Create(&pCollections);
 
-  if (error) { return true; }
+  if (error)
+  {
+    *collections = NULL;
+    return true;
+  }
   else
   {
     (*collections) = new KIM_Collections;
@@ -117,10 +121,13 @@ int KIM_Collections_Create(KIM_Collections ** const collections)
 
 void KIM_Collections_Destroy(KIM_Collections ** const collections)
 {
-  KIM::Collections * pCollections
-      = reinterpret_cast<KIM::Collections *>((*collections)->p);
+  if (*collections)
+  {
+    KIM::Collections * pCollections
+        = reinterpret_cast<KIM::Collections *>((*collections)->p);
 
-  KIM::Collections::Destroy(&pCollections);
+    KIM::Collections::Destroy(&pCollections);
+  }
   delete (*collections);
   *collections = NULL;
 }
@@ -151,7 +158,10 @@ int KIM_Collections_GetItemLibraryFileNameAndCollection(
       &pStrFileName,
       reinterpret_cast<KIM::Collection *>(collection));
   if (error)
+  {
+    *fileName = NULL;
     return true;
+  }
   else
   {
     *fileName = pStrFileName->c_str();
@@ -203,17 +213,16 @@ int KIM_Collections_GetItemMetadataFile(
                                                 availableAsString,
                                                 ppStrFileString);
   if (error)
+  {
+    if (fileName) *fileName = NULL;
+    if (fileString) *fileString = NULL;
     return true;
+  }
   else
   {
-    if (fileName != NULL) *fileName = pStrFileName->c_str();
-    if (fileString != NULL)
-    {
-      if (pStrFileString == NULL)
-        *fileString = NULL;
-      else
-        *fileString = pStrFileString->c_str();
-    }
+    if (fileName) *fileName = pStrFileName ? pStrFileName->c_str() : NULL;
+    if (fileString)
+      *fileString = pStrFileString ? pStrFileString->c_str() : NULL;
     return false;
   }
 }
@@ -237,11 +246,15 @@ int KIM_Collections_GetItemMetadataFile_fortran(
                                                   availableAsString,
                                                   fileString);
   if (error)
+  {
+    *fileLength = NULL;
     return true;
+  }
   else if ((sizeof(int) == sizeof(long)) && (uFileLength > INT_MAX))
   {
     std::cerr << "* Error : long overflow for fileLength. " << __FILE__ << ":"
               << __LINE__ << std::endl;
+    *fileLength = NULL;
     return true;
   }
   else
@@ -272,10 +285,13 @@ int KIM_Collections_GetItemNameByType(KIM_Collections * const collections,
   std::string const * pStrItemName;
   int error = pCollections->GetItemNameByType(index, &pStrItemName);
   if (error)
+  {
+    *itemName = NULL;
     return true;
+  }
   else
   {
-    *itemName = pStrItemName->c_str();
+    *itemName = pStrItemName ? pStrItemName->c_str() : NULL;
     return false;
   }
 }
@@ -303,10 +319,13 @@ int KIM_Collections_GetItemNameByCollectionAndType(
   int error
       = pCollections->GetItemNameByCollectionAndType(index, &pStrItemName);
   if (error)
+  {
+    *itemName = NULL;
     return true;
+  }
   else
   {
-    *itemName = pStrItemName->c_str();
+    *itemName = pStrItemName ? pStrItemName->c_str() : NULL;
     return false;
   }
 }
@@ -327,10 +346,13 @@ int KIM_Collections_GetItemLibraryFileNameByCollectionAndType(
       itemName,
       &pStrFileName);
   if (error)
+  {
+    *itemName = NULL;
     return true;
+  }
   else
   {
-    *fileName = pStrFileName->c_str();
+    *fileName = pStrFileName ? pStrFileName->c_str() : NULL;
     return false;
   }
 }
@@ -384,17 +406,16 @@ int KIM_Collections_GetItemMetadataFileByCollectionAndType(
                                                              availableAsString,
                                                              ppStrFileString);
   if (error)
+  {
+    if (fileName) *fileName = NULL;
+    if (fileString) *fileString = NULL;
     return true;
+  }
   else
   {
-    if (fileName != NULL) *fileName = pStrFileName->c_str();
-    if (fileString != NULL)
-    {
-      if (pStrFileString == NULL)
-        *fileString = NULL;
-      else
-        *fileString = pStrFileString->c_str();
-    }
+    if (fileName) *fileName = pStrFileName ? pStrFileName->c_str() : NULL;
+    if (fileString)
+      *fileString = pStrFileString ? pStrFileString->c_str() : NULL;
     return false;
   }
 }
@@ -419,11 +440,15 @@ int KIM_Collections_GetItemMetadataFileByCollectionAndType_fortran(
       availableAsString,
       fileString);
   if (error)
+  {
+    *fileLength = NULL;
     return true;
+  }
   else if ((sizeof(int) == sizeof(long)) && (uFileLength > INT_MAX))
   {
     std::cerr << "* Error : long overflow for fileLength. " << __FILE__ << ":"
               << __LINE__ << std::endl;
+    *fileLength = NULL;
     return true;
   }
   else
@@ -456,8 +481,9 @@ void KIM_Collections_GetProjectNameAndSemVer(
     ppStrSemVer = &pStrSemVer;
 
   pCollections->GetProjectNameAndSemVer(ppStrProjectName, ppStrSemVer);
-  if (projectName != NULL) *projectName = pStrProjectName->c_str();
-  if (semVer != NULL) *semVer = pStrSemVer->c_str();
+  if (projectName)
+    *projectName = pStrProjectName ? pStrProjectName->c_str() : NULL;
+  if (semVer) *semVer = pStrSemVer ? pStrSemVer->c_str() : NULL;
 }
 
 int KIM_Collections_GetEnvironmentVariableName(
@@ -471,10 +497,13 @@ int KIM_Collections_GetEnvironmentVariableName(
   int error = pCollections->GetEnvironmentVariableName(
       makeItemTypeCpp(itemType), &pStrName);
   if (error)
+  {
+    *name = NULL;
     return true;
+  }
   else
   {
-    *name = pStrName->c_str();
+    *name = pStrName ? pStrName->c_str() : NULL;
     return false;
   }
 }
@@ -502,8 +531,8 @@ void KIM_Collections_GetConfigurationFileEnvironmentVariable(
 
   pCollections->GetConfigurationFileEnvironmentVariable(ppStrName, ppStrValue);
 
-  if (name != NULL) *name = pStrName->c_str();
-  if (value != NULL) *value = pStrValue->c_str();
+  if (name) *name = pStrName ? pStrName->c_str() : NULL;
+  if (value) *value = pStrValue ? pStrValue->c_str() : NULL;
 }
 
 void KIM_Collections_GetConfigurationFileName(
@@ -513,7 +542,7 @@ void KIM_Collections_GetConfigurationFileName(
 
   std::string const * pStrFileName;
   pCollections->GetConfigurationFileName(&pStrFileName);
-  *fileName = pStrFileName->c_str();
+  *fileName = pStrFileName ? pStrFileName->c_str() : NULL;
 }
 
 int KIM_Collections_CacheListOfDirectoryNames(
@@ -537,10 +566,13 @@ int KIM_Collections_GetDirectoryName(KIM_Collections * const collections,
   std::string const * pStrDirectoryName;
   int error = pCollections->GetDirectoryName(index, &pStrDirectoryName);
   if (error)
+  {
+    *directoryName = NULL;
     return true;
+  }
   else
   {
-    *directoryName = pStrDirectoryName->c_str();
+    *directoryName = pStrDirectoryName ? pStrDirectoryName->c_str() : NULL;
     return true;
   }
 }

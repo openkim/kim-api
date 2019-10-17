@@ -221,9 +221,7 @@ void LogImplementation::LogEntry(LogVerbosity const logVerbosity,
 }
 
 LogImplementation::LogImplementation() :
-    idString_(SPTR(this)),
-    latestTimeStamp_(""),
-    sequence_(0)
+    idString_(SPTR(this)), latestTimeStamp_(""), sequence_(0)
 {
   verbosity_.push(defaultLogVerbosity.top());
 }

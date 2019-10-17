@@ -75,7 +75,11 @@ int KIM_SimulatorModel_Create(char const * const simulatorModelName,
   KIM::SimulatorModel * pSimulatorModel;
   int error
       = KIM::SimulatorModel::Create(simulatorModelNameC, &pSimulatorModel);
-  if (error) { return true; }
+  if (error)
+  {
+    *simulatorModel = NULL;
+    return true;
+  }
   else
   {
     (*simulatorModel) = new KIM_SimulatorModel;
@@ -86,10 +90,13 @@ int KIM_SimulatorModel_Create(char const * const simulatorModelName,
 
 void KIM_SimulatorModel_Destroy(KIM_SimulatorModel ** const simulatorModel)
 {
-  KIM::SimulatorModel * pSimulatorModel
-      = reinterpret_cast<KIM::SimulatorModel *>((*simulatorModel)->p);
+  if (*simulatorModel)
+  {
+    KIM::SimulatorModel * pSimulatorModel
+        = reinterpret_cast<KIM::SimulatorModel *>((*simulatorModel)->p);
 
-  KIM::SimulatorModel::Destroy(&pSimulatorModel);
+    KIM::SimulatorModel::Destroy(&pSimulatorModel);
+  }
   delete (*simulatorModel);
   *simulatorModel = NULL;
 }
@@ -141,7 +148,10 @@ int KIM_SimulatorModel_GetSupportedSpecies(
   std::string const * pStrSpecies;
   int error = pSimulatorModel->GetSupportedSpecies(index, &pStrSpecies);
   if (error)
+  {
+    *speciesName = NULL;
     return true;
+  }
   else
   {
     *speciesName = pStrSpecies->c_str();
@@ -210,7 +220,10 @@ int KIM_SimulatorModel_GetSimulatorFieldMetadata(
   int error = pSimulatorModel->GetSimulatorFieldMetadata(
       fieldIndex, extent, ppStrFieldName);
   if (error)
+  {
+    if (fieldName) *fieldName = NULL;
     return true;
+  }
   else
   {
     if (fieldName != NULL) *fieldName = pStrFieldName->c_str();
@@ -230,7 +243,10 @@ int KIM_SimulatorModel_GetSimulatorFieldLine(
   int error = pSimulatorModel->GetSimulatorFieldLine(
       fieldIndex, lineIndex, &pStrLineValue);
   if (error)
+  {
+    *lineValue = NULL;
     return true;
+  }
   else
   {
     *lineValue = pStrLineValue->c_str();
@@ -280,7 +296,10 @@ int KIM_SimulatorModel_GetParameterFileName(
   int error
       = pSimulatorModel->GetParameterFileName(index, &pStrParameterFileName);
   if (error)
+  {
+    *parameterFileName = NULL;
     return true;
+  }
   else
   {
     *parameterFileName = pStrParameterFileName->c_str();
