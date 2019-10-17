@@ -106,7 +106,11 @@ int KIM_Collections_Create(KIM_Collections ** const collections)
   KIM::Collections * pCollections;
   int error = KIM::Collections::Create(&pCollections);
 
-  if (error) { return true; }
+  if (error)
+  {
+    *collections = NULL;
+    return true;
+  }
   else
   {
     (*collections) = new KIM_Collections;
@@ -117,13 +121,17 @@ int KIM_Collections_Create(KIM_Collections ** const collections)
 
 void KIM_Collections_Destroy(KIM_Collections ** const collections)
 {
-  KIM::Collections * pCollections
-      = reinterpret_cast<KIM::Collections *>((*collections)->p);
+  if (*collections)
+  {
+    KIM::Collections * pCollections
+        = reinterpret_cast<KIM::Collections *>((*collections)->p);
 
-  KIM::Collections::Destroy(&pCollections);
+    KIM::Collections::Destroy(&pCollections);
+  }
   delete (*collections);
   *collections = NULL;
 }
+
 
 int KIM_Collections_GetItemType(KIM_Collections * const collections,
                                 char const * const itemName,

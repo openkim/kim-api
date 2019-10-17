@@ -186,7 +186,10 @@ int KIM_ModelDriverCreate_GetParameterFileName(
   int error = pModelDriverCreate->GetParameterFileName(index, ppStr);
 
   if (error)
+  {
+    if (parameterFileName) *parameterFileName = NULL;
     return true;
+  }
   else
   {
     if (parameterFileName != NULL) *parameterFileName = pStr->c_str();
