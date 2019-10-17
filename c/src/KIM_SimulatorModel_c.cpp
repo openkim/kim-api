@@ -214,7 +214,7 @@ int KIM_SimulatorModel_GetSimulatorFieldMetadata(
   else
   {
     if (fieldName != NULL) *fieldName = pStrFieldName->c_str();
-    return true;
+    return false;
   }
 }
 
