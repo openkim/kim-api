@@ -482,9 +482,25 @@ void PrivateGetSystemDirs(ItemTypeToStringMap & dirsMap)
 {
   using namespace KIM::COLLECTION_ITEM_TYPE;
 
-  dirsMap[modelDriver] = KIM_SYSTEM_MODEL_DRIVERS_DIR;
-  dirsMap[portableModel] = KIM_SYSTEM_PORTABLE_MODELS_DIR;
-  dirsMap[simulatorModel] = KIM_SYSTEM_SIMULATOR_MODELS_DIR;
+
+  std::string md = KIM_SYSTEM_MODEL_DRIVERS_DIR;
+  std::string pm = KIM_SYSTEM_PORTABLE_MODELS_DIR;
+  std::string sm = KIM_SYSTEM_SIMULATOR_MODELS_DIR;
+
+  // Hack: Explicitly erase trailing null's to support conda packaging behavior
+  //       This assumes that the strings are NOT ';' separated lists which
+  //       could lead to embedded null's in the middel of the string.
+  //
+  // This possibility is due to complex handling of string literals in C++.
+  // (Behavior is inconsistent between compilers.)
+  md.erase(md.find_first_of('\0'), std::string::npos);
+  pm.erase(pm.find('\0'), std::string::npos);
+  sm.erase(sm.find('\0'), std::string::npos);
+  // End of Hack
+
+  dirsMap[modelDriver] = md;
+  dirsMap[portableModel] = pm;
+  dirsMap[simulatorModel] = sm;
 }
 
 void PrivateGetListOfItemNamesByCollectionAndType(
