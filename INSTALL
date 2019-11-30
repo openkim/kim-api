@@ -324,6 +324,11 @@ Congratulations, you have now successfully installed the KIM API.  If you would
 like to learn more about the KIM API, read the documentation in the docs
 directory (/usr/local/share/doc/kim-api).
 
+If you would like to install the latest release of all models from
+https://openkim.org, you can do:
+
+   $ kim-api-collections-management install system --sudo OpenKIM
+
 D.2 CMAKE BUILD OPTIONS
 
 The KIM API defines a number of specific build options which are detailed in
