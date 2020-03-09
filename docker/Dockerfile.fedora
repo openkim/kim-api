@@ -34,31 +34,65 @@
 
 FROM fedora:latest
 
-ARG COVERAGE
-ARG SANITIZE
-ARG IWYU
-ARG CC
-ARG CXX
-ARG CXXFLAGS
-ARG FC
-ARG CMAKE_BUILD_TYPE
+ARG B_COVERAGE
+ENV COVERAGE $B_COVERAGE
+ARG B_SANITIZE
+ENV SANITIZE $B_SANITIZE
+ARG B_IWYU
+ENV IWYU $B_IWYU
+ARG B_CC
+ENV CC $B_CC
+ARG B_CXX
+ENV CXX $B_CXX
+ARG B_CXXFLAGS
+ENV CXXFLAGS $B_CXXFLAGS
+ARG B_FC
+ENV FC $B_FC
+ARG B_INSTALL_PREFIX
+ENV INSTALL_PREFIX $B_INSTALL_PREFIX
+ARG B_LIB_DIR
+ENV LIB_DIR $B_LIB_DIR
+ARG B_BASH_COMPLETION_DIR
+ENV BASH_COMPLETION_DIR $B_BASH_COMPLETION_DIR
+ARG B_CMAKE_BUILD_TYPE
+ENV CMAKE_BUILD_TYPE $B_CMAKE_BUILD_TYPE
 
 #for coverage
-ARG CI
-ARG TRAVIS
-ARG TRAVIS_BRANCH
-ARG TRAVIS_JOB_NUMBER
-ARG TRAVIS_PULL_REQUEST
-ARG TRAVIS_JOB_ID
-ARG TRAVIS_TAG
-ARG TRAVIS_REPO_SLUG
-ARG TRAVIS_COMMIT
-ARG TRAVIS_OS_NAME
+ARG B_CI
+ENV CI $B_CI
+ARG B_TRAVIS
+ENV TRAVIS $B_TRAVIS
+ARG B_TRAVIS_BRANCH
+ENV TRAVIS_BRANCH $B_TRAVIS_BRANCH
+ARG B_TRAVIS_JOB_NUMBER
+ENV TRAVIS_JOB_NUMBER $B_TRAVIS_JOB_NUMBER
+ARG B_TRAVIS_PULL_REQUEST
+ENV TRAVIS_PULL_REQUEST $B_TRAVIS_PULL_REQUEST
+ARG B_TRAVIS_JOB_ID
+ENV TRAVIS_JOB_ID $B_TRAVIS_JOB_ID
+ARG B_TRAVIS_TAG
+ENV TRAVIS_TAG $B_TRAVIS_TAG
+ARG B_TRAVIS_REPO_SLUG
+ENV TRAVIS_REPO_SLUG $B_TRAVIS_REPO_SLUG
+ARG B_TRAVIS_COMMIT
+ENV TRAVIS_COMMIT $B_TRAVIS_COMMIT
+ARG B_TRAVIS_OS_NAME
+ENV TRAVIS_OS_NAME $B_TRAVIS_OS_NAME
 
-RUN dnf -y install make cmake git gcc gcc-c++ gcc-gfortran ccache wget vim-common xz \
-                   findutils ${SANITIZE:+libasan} iwyu
-RUN wget -O /usr/bin/codecov https://codecov.io/bash
-RUN chmod +x /usr/bin/codecov
+
+RUN dnf -y install \
+        make \
+        cmake \
+        git \
+        gcc \
+        gcc-c++ \
+        gcc-gfortran \
+        ccache \
+        wget \
+        vim-common xz \
+        findutils \
+        ${SANITIZE:+libasan} \
+        ${IWYU:+iwyu}
 
 RUN useradd -m kim
 USER kim
@@ -72,56 +106,5 @@ USER root
 RUN chown -R kim:kim /home/kim/kim-api /home/kim/.ccache
 USER kim
 
-RUN env
-
 WORKDIR /home/kim/kim-api
-RUN mkdir build
-WORKDIR build
-RUN ccache -z
-RUN cmake -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} \
-          -DCMAKE_INSTALL_PREFIX=/usr \
-          ${COVERAGE:+-DKIM_API_ENABLE_COVERAGE=ON} \
-          ${SANITIZE:+-DKIM_API_ENABLE_SANITIZE=ON} \
-          ${IWYU:+-DCMAKE_CXX_INCLUDE_WHAT_YOU_USE=include-what-you-use} \
-          ${IWYU:+-DCMAKE_C_INCLUDE_WHAT_YOU_USE=include-what-you-use} \
-  ..
-RUN make -j2
-RUN ccache -s
-RUN make test
-RUN make install DESTDIR=${PWD}/destdir && \
-    rm -rf ${PWD}/destdir/usr/{bin,include,lib64,libexec,share} && \
-    rm -rf ${PWD}/destdir/etc && \
-    rmdir ${PWD}/destdir/usr && \
-    rmdir ${PWD}/destdir
-RUN if [ ${COVERAGE} ]; then \
-  if [ ${CC} = clang ]; then \
-    codecov -R ${PWD}/../../${TRAVIS_REPO_SLUG#*/} -F "${CC}" -x "llvm-cov gcov" 2>&1 | grep -v "arcs.*block"; \
-  else \
-    codecov -R ${PWD}/../../${TRAVIS_REPO_SLUG#*/} -F "${CC}" 2>&1 | grep -v "arcs.*block"; \
-  fi; \
-fi
-USER root
-RUN make install
-USER kim
-WORKDIR /home/kim/kim-api
-RUN rm -rf build
-RUN mkdir build
-WORKDIR build
-RUN cmake -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} \
-          -DCMAKE_INSTALL_PREFIX=${PWD}/test-install \
-          -DKIM_API_BUILD_EXAMPLES=OFF \
-          ${COVERAGE:+-DKIM_API_ENABLE_COVERAGE=ON} \
-          ${SANITIZE:+-DKIM_API_ENABLE_SANITIZE=ON} \
-          ${IWYU:+-DCMAKE_CXX_INCLUDE_WHAT_YOU_USE=include-what-you-use} \
-          ${IWYU:+-DCMAKE_C_INCLUDE_WHAT_YOU_USE=include-what-you-use} \
-  ..
-RUN make -j2 install
-RUN ccache -s
-RUN source ./test-install/bin/kim-api-activate && \
-    kim-api-collections-management install system `find ../examples/model-drivers -mindepth 1 -maxdepth 1 -type d` && \
-    kim-api-collections-management install system `find ../examples/portable-models -mindepth 1 -maxdepth 1 -type d` && \
-    kim-api-collections-management install system `find ../examples/simulator-models -mindepth 1 -maxdepth 1 -type d` && \
-    kim-api-collections-management list
-
-RUN mkdir "${PWD}/WORKSPACE"
-RUN ../scripts/run-cmds-from-install IN_WORKSPACE "${PWD}/WORKSPACE" "${PWD}/.."
+CMD scripts/ci-build-and-test-script.sh
