@@ -45,8 +45,13 @@ matrix:
     - name: "osX Debug, Sanitize, Coverage"
       if: branch != coverity_scan
       os: osx
-      osx_image: xcode9.2
-      env: CMAKE_BUILD_TYPE=Debug SANITIZE=true COVERAGE=true COVERITY=false
+      env: INSTALL_PREFIX=/usr/local \
+           LIB_DIR=lib \
+           BASH_COMPLETION_DIR=/usr/local/etc \
+           CMAKE_BUILD_TYPE=Debug \
+           SANITIZE=true \
+           COVERAGE=true \
+           COVERITY=false
       before_script:
         - brew update &> /dev/null &&
           brew install gcc@6 ccache iwyu &&
@@ -57,40 +62,19 @@ matrix:
           export IWYU=YES
         - env
       script:
-        - mkdir build &&
-          cd build &&
-          ccache -z &&
-          cmake -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} ${SANITIZE:+-DKIM_API_ENABLE_SANITIZE=ON} ${COVERAGE:+-DKIM_API_ENABLE_COVERAGE=ON} ${IWYU:+-DCMAKE_CXX_INCLUDE_WHAT_YOU_USE=include-what-you-use} ${IWYU:+-DCMAKE_C_INCLUDE_WHAT_YOU_USE=include-what-you-use} .. &&
-          make -j2 &&
-          ccache -s &&
-          make test &&
-          if test x"${COVERAGE}" != x""; then bash <(curl -s https://codecov.io/bash | sed -e's/execdir/exec/g') -x gcov-6; fi &&
-          mkdir ./destdir &&
-          make install DESTDIR=${PWD}/destdir &&
-          rm -rf ./destdir/usr/local/{bin,etc,include,lib,libexec,share} &&
-          rmdir ./destdir/usr/local &&
-          rmdir ./destdir/usr &&
-          rmdir ./destdir &&
-          cd ../ &&
-          rm -rf build &&
-          mkdir build &&
-          cd build &&
-          ccache -z &&
-          cmake -DCMAKE_INSTALL_PREFIX=${PWD}/test-install -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DKIM_API_BUILD_EXAMPLES=OFF ${SANITIZE:+-DKIM_API_ENABLE_SANITIZE=ON} ${COVERAGE:+-DKIM_API_ENABLE_COVERAGE=ON} ${IWYU:+-DCMAKE_CXX_INCLUDE_WHAT_YOU_USE=include-what-you-use} {$IWYU:+-DCMAKE_C_INCLUDE_WHAT_YOU_USE=include-what-you-use} .. &&
-          make -j2 install &&
-          ccache -s &&
-          source ./test-install/bin/kim-api-activate &&
-          kim-api-collections-management install system `find ../examples/model-drivers -type d -mindepth 1 -maxdepth 1` &&
-          kim-api-collections-management install system `find ../examples/portable-models -type d -mindepth 1 -maxdepth 1` &&
-          kim-api-collections-management install system `find ../examples/simulator-models -type d -mindepth 1 -maxdepth 1` &&
-          kim-api-collections-management list &&
-          mkdir "${PWD}/WORKSPACE" &&
-          ../scripts/run-cmds-from-install IN_WORKSPACE "${PWD}/WORKSPACE" "${PWD}/.."
-    - name: "linux fedora, Debug, Sanitize, Dockehub"
+        - ./scripts/ci-build-and-test-script.sh
+    - name: "linux fedora, Debug, Sanitize"
       if: branch != coverity_scan
       os: linux
       services: docker
-      env: DISTRO=fedora CMAKE_BUILD_TYPE=Debug SANITIZE=true COVERITY=false DOCKERHUB=true
+      env: DISTRO=fedora \
+           INSTALL_PREFIX=/usr \
+           LIB_DIR=lib64 \
+           BASH_COMPLETION_DIR=/etc \
+           CMAKE_BUILD_TYPE=Debug \
+           SANITIZE=true \
+           COVERAGE="" \
+           COVERITY=false
       before_script:
         - mkdir ${HOME}/docker &&
           cp -v docker/Dockerfile.${DISTRO} ${HOME}/docker/Dockerfile &&
@@ -100,33 +84,32 @@ matrix:
         - env
       script:
         - travis_retry docker build -t ${TRAVIS_REPO_SLUG}:${DISTRO}
-                   --build-arg CC=${CC}
-                   --build-arg CXX=${CXX}
-                   --build-arg FC=${FC}
-                   --build-arg CXXFLAGS="${CXXFLAGS}"
-                   --build-arg CMAKE_BUILD_TYPE="${CMAKE_BUILD_TYPE}"
-                   --build-arg COVERAGE="${COVERAGE}"
-                   --build-arg SANITIZE="${SANITIZE}"
-                   --build-arg IWYU=${LEAVE_EMPTY_WHILE_FEDORAS_IWYU_IS_SO_OLD:+}
-                   --build-arg CI=${CI}
-                   --build-arg TRAVIS=${TRAVIS}
-                   --build-arg TRAVIS_OS_NAME=${DISTRO:-fedora}
-                   --build-arg TRAVIS_BRANCH=${TRAVIS_BRANCH}
-                   --build-arg TRAVIS_JOB_NUMBER=${TRAVIS_JOB_NUMBER}
-                   --build-arg TRAVIS_PULL_REQUEST=${TRAVIS_PULL_REQUEST}
-                   --build-arg TRAVIS_JOB_ID=${TRAVIS_JOB_ID}
-                   --build-arg TRAVIS_TAG=${TRAVIS_TAG}
-                   --build-arg TRAVIS_REPO_SLUG=${TRAVIS_REPO_SLUG}
-                   --build-arg TRAVIS_COMMIT=${TRAVIS_COMMIT}
+                   --build-arg B_CC=${CC}
+                   --build-arg B_CXX=${CXX}
+                   --build-arg B_FC=${FC}
+                   --build-arg B_CXXFLAGS="${CXXFLAGS}"
+                   --build-arg B_INSTALL_PREFIX="${INSTALL_PREFIX}"
+                   --build-arg B_LIB_DIR="${LIB_DIR}"
+                   --build-arg B_BASH_COMPLETION_DIR="${BASH_COMPLETION_DIR}"
+                   --build-arg B_CMAKE_BUILD_TYPE="${CMAKE_BUILD_TYPE}"
+                   --build-arg B_COVERAGE="${COVERAGE}"
+                   --build-arg B_SANITIZE="${SANITIZE}"
+                   --build-arg B_IWYU=${LEAVE_EMPTY_WHILE_FEDORAS_IWYU_IS_SO_OLD:+}
+                   --build-arg B_CI=${CI}
+                   --build-arg B_TRAVIS=${TRAVIS}
+                   --build-arg B_TRAVIS_OS_NAME=${DISTRO:-fedora}
+                   --build-arg B_TRAVIS_BRANCH=${TRAVIS_BRANCH}
+                   --build-arg B_TRAVIS_JOB_NUMBER=${TRAVIS_JOB_NUMBER}
+                   --build-arg B_TRAVIS_PULL_REQUEST=${TRAVIS_PULL_REQUEST}
+                   --build-arg B_TRAVIS_JOB_ID=${TRAVIS_JOB_ID}
+                   --build-arg B_TRAVIS_TAG=${TRAVIS_TAG}
+                   --build-arg B_TRAVIS_REPO_SLUG=${TRAVIS_REPO_SLUG}
+                   --build-arg B_TRAVIS_COMMIT=${TRAVIS_COMMIT}
                    ${HOME}/docker/ &&
+          docker run -it --cap-add SYS_PTRACE --cidfile container.pid ${TRAVIS_REPO_SLUG}:${DISTRO} &&
           rm -rf $HOME/.ccache &&
-          CON=$(docker run -d ${TRAVIS_REPO_SLUG}:${DISTRO} /bin/bash) &&
+          CON=`cat container.pid` &&
           docker cp ${CON}:/home/kim/.ccache ${HOME}/
-      after_success:
-        - if [[ ${DOCKERHUB} && ${DOCKER_USERNAME} && ${DOCKER_PASSWORD} && ${TRAVIS_BRANCH} == master && ${TRAVIS_PULL_REQUEST} == false ]]; then
-            docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
-            docker push "${TRAVIS_REPO_SLUG}:${DISTRO}";
-          fi
     - name: "Coverity Scan"
       if: branch = coverity_scan
       os: linux
