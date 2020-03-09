@@ -70,6 +70,12 @@
 
 namespace
 {
+void EraseTrailingNulls(std::string & str)
+{
+  size_t first = str.find_first_of('\0');
+  if (first != std::string::npos) str.erase(first, std::string::npos);
+}
+
 typedef std::map<KIM::CollectionItemType,
                  std::string,
                  KIM::COLLECTION_ITEM_TYPE::Comparator>
@@ -493,9 +499,9 @@ void PrivateGetSystemDirs(ItemTypeToStringMap & dirsMap)
   //
   // This possibility is due to complex handling of string literals in C++.
   // (Behavior is inconsistent between compilers.)
-  md.erase(md.find_first_of('\0'), std::string::npos);
-  pm.erase(pm.find('\0'), std::string::npos);
-  sm.erase(sm.find('\0'), std::string::npos);
+  EraseTrailingNulls(md);
+  EraseTrailingNulls(pm);
+  EraseTrailingNulls(sm);
   // End of Hack
 
   dirsMap[modelDriver] = md;
