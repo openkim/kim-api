@@ -76,7 +76,7 @@ int Model::Create(Numbering const numbering,
 
 void Model::Destroy(Model ** const model)
 {
-  ModelImplementation::Destroy(&((*model)->pimpl));
+  if (*model != NULL) { ModelImplementation::Destroy(&((*model)->pimpl)); }
   delete *model;
   *model = NULL;
 }

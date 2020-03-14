@@ -268,7 +268,11 @@ int ModelImplementation::Create(
 
   Log * pLog;
   int error = Log::Create(&pLog);
-  if (error) { return true; }
+  if (error)
+  {
+    *modelImplementation = NULL;
+    return true;
+  }
 
   ModelImplementation * pModelImplementation;
   pModelImplementation = new ModelImplementation(new SharedLibrary(pLog), pLog);
@@ -300,7 +304,7 @@ int ModelImplementation::Create(
         __FILE__);
 #endif
     delete pModelImplementation;  // also deletes pLog
-
+    *modelImplementation = NULL;
     return true;
   }
   col->SetLogID(pLog->GetID() + "_Collections");
@@ -324,7 +328,7 @@ int ModelImplementation::Create(
         __FILE__);
 #endif
     delete pModelImplementation;  // also deletes pLog and collections object
-
+    *modelImplementation = NULL;
     return true;
   }
 
@@ -374,22 +378,26 @@ int ModelImplementation::Create(
 void ModelImplementation::Destroy(
     ModelImplementation ** const modelImplementation)
 {
+  if (*modelImplementation != NULL)
+  {
 #if DEBUG_VERBOSITY
-  std::string callString = "Destroy(" + SPTR(modelImplementation) + ").";
-  (*modelImplementation)
-      ->LogEntry(
-          LOG_VERBOSITY::debug, "Enter  " + callString, __LINE__, __FILE__);
+    std::string callString = "Destroy(" + SPTR(modelImplementation) + ").";
+    (*modelImplementation)
+        ->LogEntry(
+            LOG_VERBOSITY::debug, "Enter  " + callString, __LINE__, __FILE__);
 #endif
 
-  (*modelImplementation)->ModelDestroy();
+    (*modelImplementation)->ModelDestroy();
 
 #if DEBUG_VERBOSITY
-  (*modelImplementation)
-      ->LogEntry(LOG_VERBOSITY::debug,
-                 "Destroying ModelImplementation object and exit " + callString,
-                 __LINE__,
-                 __FILE__);
+    (*modelImplementation)
+        ->LogEntry(LOG_VERBOSITY::debug,
+                   "Destroying ModelImplementation object and exit "
+                       + callString,
+                   __LINE__,
+                   __FILE__);
 #endif
+  }
   delete *modelImplementation;  // also deletes Log & collections objects
   *modelImplementation = NULL;
 }

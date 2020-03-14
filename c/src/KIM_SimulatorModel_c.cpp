@@ -75,7 +75,11 @@ int KIM_SimulatorModel_Create(char const * const simulatorModelName,
   KIM::SimulatorModel * pSimulatorModel;
   int error
       = KIM::SimulatorModel::Create(simulatorModelNameC, &pSimulatorModel);
-  if (error) { return true; }
+  if (error)
+  {
+    *simulatorModel = NULL;
+    return true;
+  }
   else
   {
     (*simulatorModel) = new KIM_SimulatorModel;
@@ -86,10 +90,13 @@ int KIM_SimulatorModel_Create(char const * const simulatorModelName,
 
 void KIM_SimulatorModel_Destroy(KIM_SimulatorModel ** const simulatorModel)
 {
-  KIM::SimulatorModel * pSimulatorModel
-      = reinterpret_cast<KIM::SimulatorModel *>((*simulatorModel)->p);
+  if (*simulatorModel != NULL)
+  {
+    KIM::SimulatorModel * pSimulatorModel
+        = reinterpret_cast<KIM::SimulatorModel *>((*simulatorModel)->p);
 
-  KIM::SimulatorModel::Destroy(&pSimulatorModel);
+    KIM::SimulatorModel::Destroy(&pSimulatorModel);
+  }
   delete (*simulatorModel);
   *simulatorModel = NULL;
 }
@@ -214,7 +221,7 @@ int KIM_SimulatorModel_GetSimulatorFieldMetadata(
   else
   {
     if (fieldName != NULL) *fieldName = pStrFieldName->c_str();
-    return true;
+    return false;
   }
 }
 

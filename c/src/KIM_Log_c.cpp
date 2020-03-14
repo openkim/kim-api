@@ -72,7 +72,11 @@ int KIM_Log_Create(KIM_Log ** const log)
 {
   KIM::Log * pLog;
   int error = KIM::Log::Create(&pLog);
-  if (error) { return true; }
+  if (error)
+  {
+    *log = NULL;
+    return true;
+  }
   else
   {
     (*log) = new KIM_Log;
@@ -83,9 +87,12 @@ int KIM_Log_Create(KIM_Log ** const log)
 
 void KIM_Log_Destroy(KIM_Log ** const log)
 {
-  KIM::Log * pLog = reinterpret_cast<KIM::Log *>((*log)->p);
+  if (*log != NULL)
+  {
+    KIM::Log * pLog = reinterpret_cast<KIM::Log *>((*log)->p);
 
-  KIM::Log::Destroy(&pLog);
+    KIM::Log::Destroy(&pLog);
+  }
   delete (*log);
   *log = NULL;
 }
