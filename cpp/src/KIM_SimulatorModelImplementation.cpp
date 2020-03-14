@@ -879,9 +879,9 @@ int SimulatorModelImplementation::ParseEdn(edn::EdnNode & node) const
   {
     node = edn::read(ednString);
   }
-  catch (char const * e)
+  catch (std::string e)
   {
-    LOG_ERROR("Unable to parse EDN file: " + std::string(e) + ".");
+    LOG_ERROR("Unable to parse EDN file: " + e + ".");
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
