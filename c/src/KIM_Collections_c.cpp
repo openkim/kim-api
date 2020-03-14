@@ -132,7 +132,6 @@ void KIM_Collections_Destroy(KIM_Collections ** const collections)
   *collections = NULL;
 }
 
-
 int KIM_Collections_GetItemType(KIM_Collections * const collections,
                                 char const * const itemName,
                                 KIM_CollectionItemType * const itemType)
