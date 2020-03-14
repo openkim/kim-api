@@ -71,18 +71,11 @@ extern "C" {
 int KIM_Log_Create(KIM_Log ** const log)
 {
   KIM::Log * pLog;
-  int error = KIM::Log::Create(&pLog);
-  if (error)
-  {
-    *log = NULL;
-    return true;
-  }
-  else
-  {
-    (*log) = new KIM_Log;
-    (*log)->p = (void *) pLog;
-    return false;
-  }
+  KIM::Log::Create(&pLog);  // always returns false
+
+  (*log) = new KIM_Log;
+  (*log)->p = (void *) pLog;
+  return false;
 }
 
 void KIM_Log_Destroy(KIM_Log ** const log)

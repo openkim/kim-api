@@ -105,7 +105,6 @@ int KIM_Collections_Create(KIM_Collections ** const collections)
 {
   KIM::Collections * pCollections;
   int error = KIM::Collections::Create(&pCollections);
-
   if (error)
   {
     *collections = NULL;
