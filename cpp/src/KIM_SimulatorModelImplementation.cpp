@@ -86,7 +86,11 @@ int SimulatorModelImplementation::Create(
 
   Log * pLog;
   int error = Log::Create(&pLog);
-  if (error) { return true; }
+  if (error)
+  {
+    *simulatorModelImplementation = NULL;
+    return true;
+  }
 
   SimulatorModelImplementation * pSimulatorModelImplementation;
   pSimulatorModelImplementation
@@ -114,7 +118,7 @@ int SimulatorModelImplementation::Create(
         __FILE__);
 #endif
     delete pSimulatorModelImplementation;  // also deletes pLog
-
+    *simulatorModelImplementation = NULL;
     return true;
   }
   col->SetLogID(pLog->GetID() + "_Collections");
@@ -133,7 +137,7 @@ int SimulatorModelImplementation::Create(
 #endif
     delete pSimulatorModelImplementation;  // also deletes Log object and
                                            // collections object
-
+    *simulatorModelImplementation = NULL;
     return true;
   }
 
@@ -879,9 +883,9 @@ int SimulatorModelImplementation::ParseEdn(edn::EdnNode & node) const
   {
     node = edn::read(ednString);
   }
-  catch (std::string e)
+  catch (char const * e)
   {
-    LOG_ERROR("Unable to parse EDN file: " + e + ".");
+    LOG_ERROR("Unable to parse EDN file: " + std::string(e) + ".");
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }

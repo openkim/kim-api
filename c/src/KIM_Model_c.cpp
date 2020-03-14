@@ -196,7 +196,11 @@ int KIM_Model_Create(KIM_Numbering const numbering,
                                modelNameC,
                                requestedUnitsAccepted,
                                &pModel);
-  if (err) { return true; }
+  if (err)
+  {
+    *model = NULL;
+    return true;
+  }
   else
   {
     (*model) = new KIM_Model;
@@ -207,9 +211,12 @@ int KIM_Model_Create(KIM_Numbering const numbering,
 
 void KIM_Model_Destroy(KIM_Model ** const model)
 {
-  KIM::Model * pModel = reinterpret_cast<KIM::Model *>((*model)->p);
+  if (*model != NULL)
+  {
+    KIM::Model * pModel = reinterpret_cast<KIM::Model *>((*model)->p);
 
-  KIM::Model::Destroy(&pModel);
+    KIM::Model::Destroy(&pModel);
+  }
   delete (*model);
   *model = NULL;
 }
@@ -272,7 +279,11 @@ int KIM_Model_ComputeArgumentsCreate(
   KIM::ComputeArguments * pComputeArguments;
 
   int err = pModel->ComputeArgumentsCreate(&pComputeArguments);
-  if (err) { return true; }
+  if (err)
+  {
+    *computeArguments = NULL;
+    return true;
+  }
   else
   {
     (*computeArguments) = new KIM_ComputeArguments;
@@ -287,17 +298,17 @@ int KIM_Model_ComputeArgumentsDestroy(
 {
   CONVERT_POINTER;
 
-  KIM::ComputeArguments * pComputeArguments
-      = reinterpret_cast<KIM::ComputeArguments *>((*computeArguments)->p);
-
-  int err = pModel->ComputeArgumentsDestroy(&pComputeArguments);
-  if (err) { return true; }
-  else
+  int err = false;
+  if (*computeArguments != NULL)
   {
-    delete (*computeArguments);
-    *computeArguments = NULL;
-    return false;
+    KIM::ComputeArguments * pComputeArguments
+        = reinterpret_cast<KIM::ComputeArguments *>((*computeArguments)->p);
+
+    err = pModel->ComputeArgumentsDestroy(&pComputeArguments);
   }
+  delete (*computeArguments);
+  *computeArguments = NULL;
+  return err;
 }
 
 int KIM_Model_Compute(KIM_Model const * const model,
