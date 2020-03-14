@@ -187,16 +187,17 @@ int KIM_Model_Create(KIM_Numbering const numbering,
 {
   std::string modelNameC(modelName);
   KIM::Model * pModel;
-  int err = KIM::Model::Create(makeNumberingCpp(numbering),
-                               makeLengthUnitCpp(requestedLengthUnit),
-                               makeEnergyUnitCpp(requestedEnergyUnit),
-                               makeChargeUnitCpp(requestedChargeUnit),
-                               makeTemperatureUnitCpp(requestedTemperatureUnit),
-                               makeTimeUnitCpp(requestedTimeUnit),
-                               modelNameC,
-                               requestedUnitsAccepted,
-                               &pModel);
-  if (err)
+  int error
+      = KIM::Model::Create(makeNumberingCpp(numbering),
+                           makeLengthUnitCpp(requestedLengthUnit),
+                           makeEnergyUnitCpp(requestedEnergyUnit),
+                           makeChargeUnitCpp(requestedChargeUnit),
+                           makeTemperatureUnitCpp(requestedTemperatureUnit),
+                           makeTimeUnitCpp(requestedTimeUnit),
+                           modelNameC,
+                           requestedUnitsAccepted,
+                           &pModel);
+  if (error)
   {
     *model = NULL;
     return true;
@@ -278,8 +279,8 @@ int KIM_Model_ComputeArgumentsCreate(
 
   KIM::ComputeArguments * pComputeArguments;
 
-  int err = pModel->ComputeArgumentsCreate(&pComputeArguments);
-  if (err)
+  int error = pModel->ComputeArgumentsCreate(&pComputeArguments);
+  if (error)
   {
     *computeArguments = NULL;
     return true;
@@ -298,17 +299,17 @@ int KIM_Model_ComputeArgumentsDestroy(
 {
   CONVERT_POINTER;
 
-  int err = false;
+  int error = false;
   if (*computeArguments != NULL)
   {
     KIM::ComputeArguments * pComputeArguments
         = reinterpret_cast<KIM::ComputeArguments *>((*computeArguments)->p);
 
-    err = pModel->ComputeArgumentsDestroy(&pComputeArguments);
+    error = pModel->ComputeArgumentsDestroy(&pComputeArguments);
   }
   delete (*computeArguments);
   *computeArguments = NULL;
-  return err;
+  return error;
 }
 
 int KIM_Model_Compute(KIM_Model const * const model,
