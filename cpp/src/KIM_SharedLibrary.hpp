@@ -102,6 +102,8 @@ class SharedLibrary
     char const * fileName;
     unsigned int fileLength;
     unsigned char const * filePointer;
+
+    EmbeddedFile();
   };  // struct EmbeddedFile
 
   std::string sharedLibraryName_;

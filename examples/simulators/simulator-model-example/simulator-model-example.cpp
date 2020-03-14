@@ -42,7 +42,7 @@ int main()
   if (error)
   {
     std::cout << "Can't create SM." << std::endl;
-    goto fail;
+    return 1;
   }
 
   {

@@ -68,6 +68,11 @@ namespace KIM
 
 #include "KIM_LogMacros.hpp"
 #define KIM_LOGGER_OBJECT_NAME this
+SharedLibrary::SharedLibrary::EmbeddedFile::EmbeddedFile() :
+    fileName(NULL), fileLength(0), filePointer(NULL)
+{
+}
+
 SharedLibrary::SharedLibrary(Log * const log) :
     sharedLibraryHandle_(NULL),
     sharedLibrarySchemaVersion_(NULL),

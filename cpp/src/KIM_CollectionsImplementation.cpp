@@ -1192,23 +1192,25 @@ int CollectionsImplementation::GetItemMetadataFileByCollectionAndType(
     return true;
   }
 
-  if (fileName)
+  if (fileName != NULL)
     *fileName
         = &(cacheListOfItemMetadataFilesByCollectionAndType_FileNames_[index]);
-  if (fileLength)
+  if (fileLength != NULL)
     *fileLength
         = (cacheListOfItemMetadataFilesByCollectionAndType_FileRawData_[index]
                .length()
            - 1);
-  if (fileRawData)
+  if (fileRawData != NULL)
     *fileRawData = reinterpret_cast<unsigned char const *>(
         cacheListOfItemMetadataFilesByCollectionAndType_FileRawData_[index]
             .c_str());
-  if (availableAsString)
+  if (availableAsString != NULL)
     *availableAsString
         = cacheListOfItemMetadataFilesByCollectionAndType_AvailableAsString_
             [index];
-  if ((*availableAsString) && (fileString))
+  if ((cacheListOfItemMetadataFilesByCollectionAndType_AvailableAsString_
+           [index])
+      && (fileString != NULL))
     *fileString = &(
         cacheListOfItemMetadataFilesByCollectionAndType_FileRawData_[index]);
 
