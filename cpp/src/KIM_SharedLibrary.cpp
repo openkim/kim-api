@@ -153,7 +153,7 @@ int SharedLibrary::Open(std::string const & sharedLibraryName)
     createRoutine_ = schemaV2->createRoutine;
     driverName_ = ((schemaV2->driverName) ? schemaV2->driverName : "");
 
-    if (schemaV2->simulatorModelSpecificationFile)
+    if (schemaV2->simulatorModelSpecificationFile != NULL)
     {
       simulatorModelSpecificationFile_.fileName
           = schemaV2->simulatorModelSpecificationFile->fileName;
@@ -223,7 +223,7 @@ int SharedLibrary::Open(std::string const & sharedLibraryName)
     createRoutine_ = schemaV1->createRoutine;
     driverName_ = ((schemaV1->driverName) ? schemaV1->driverName : "");
 
-    if (schemaV1->metadataFile)
+    if (schemaV1->metadataFile != NULL)
     {
       simulatorModelSpecificationFile_.fileName
           = schemaV1->metadataFile->fileName;
@@ -354,8 +354,8 @@ int SharedLibrary::GetCreateFunctionPointer(
     return true;  // not open
   }
 
-  if (languageName) *languageName = createLanguageName_;
-  if (functionPointer) *functionPointer = createRoutine_;
+  if (languageName != NULL) *languageName = createLanguageName_;
+  if (functionPointer != NULL) *functionPointer = createRoutine_;
 
   LOG_DEBUG("Exit 0=" + callString);
   return false;
@@ -420,10 +420,11 @@ int SharedLibrary::GetParameterFile(
     return true;
   }
 
-  if (parameterFileName) *parameterFileName = (parameterFiles_[index]).fileName;
-  if (parameterFileLength)
+  if (parameterFileName != NULL)
+    *parameterFileName = (parameterFiles_[index]).fileName;
+  if (parameterFileLength != NULL)
     *parameterFileLength = (parameterFiles_[index]).fileLength;
-  if (parameterFileData)
+  if (parameterFileData != NULL)
     *parameterFileData = (parameterFiles_[index]).filePointer;
 
   LOG_DEBUG("Exit 0=" + callString);
@@ -479,10 +480,12 @@ int SharedLibrary::GetMetadataFile(
     return true;
   }
 
-  if (metadataFileName) *metadataFileName = (metadataFiles_[index]).fileName;
-  if (metadataFileLength)
+  if (metadataFileName != NULL)
+    *metadataFileName = (metadataFiles_[index]).fileName;
+  if (metadataFileLength != NULL)
     *metadataFileLength = (metadataFiles_[index]).fileLength;
-  if (metadataFileData) *metadataFileData = (metadataFiles_[index]).filePointer;
+  if (metadataFileData != NULL)
+    *metadataFileData = (metadataFiles_[index]).filePointer;
 
   LOG_DEBUG("Exit 0=" + callString);
   return false;
@@ -515,10 +518,11 @@ int SharedLibrary::GetSimulatorModelSpecificationFile(
     return true;
   }
 
-  if (specFileName) *specFileName = (simulatorModelSpecificationFile_).fileName;
-  if (specFileLength)
+  if (specFileName != NULL)
+    *specFileName = (simulatorModelSpecificationFile_).fileName;
+  if (specFileLength != NULL)
     *specFileLength = (simulatorModelSpecificationFile_).fileLength;
-  if (specFileData)
+  if (specFileData != NULL)
     *specFileData = (simulatorModelSpecificationFile_).filePointer;
 
   LOG_DEBUG("Exit 0=" + callString);
@@ -557,7 +561,7 @@ void SharedLibrary::LogEntry(LogVerbosity const logVerbosity,
                              int const lineNumber,
                              std::string const & fileName) const
 {
-  if (log_) log_->LogEntry(logVerbosity, message, lineNumber, fileName);
+  if (log_ != NULL) log_->LogEntry(logVerbosity, message, lineNumber, fileName);
 }
 
 }  // namespace KIM

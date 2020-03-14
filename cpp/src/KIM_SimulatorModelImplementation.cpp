@@ -185,8 +185,8 @@ void SimulatorModelImplementation::GetSimulatorNameAndVersion(
 #endif
   LOG_DEBUG("Enter  " + callString);
 
-  if (simulatorName) *simulatorName = &simulatorName_;
-  if (simulatorVersion) *simulatorVersion = &simulatorVersion_;
+  if (simulatorName != NULL) *simulatorName = &simulatorName_;
+  if (simulatorVersion != NULL) *simulatorVersion = &simulatorVersion_;
 
   LOG_DEBUG("Exit 0=" + callString);
 }
@@ -396,8 +396,8 @@ int SimulatorModelImplementation::GetSimulatorFieldMetadata(
   }
 #endif
 
-  if (extent) *extent = originalSimulatorFields_[fieldIndex].size();
-  if (fieldName) *fieldName = &simulatorFieldNames_[fieldIndex];
+  if (extent != NULL) *extent = originalSimulatorFields_[fieldIndex].size();
+  if (fieldName != NULL) *fieldName = &simulatorFieldNames_[fieldIndex];
 
   LOG_DEBUG("Exit 0=" + callString);
   return false;
@@ -718,7 +718,7 @@ SimulatorModelImplementation::~SimulatorModelImplementation()
 
   delete sharedLibrary_;
 
-  if (collections_) Collections::Destroy(&collections_);
+  if (collections_ != NULL) Collections::Destroy(&collections_);
 
   LOG_DEBUG("Destroying Log object and exit " + callString);
   Log::Destroy(&log_);

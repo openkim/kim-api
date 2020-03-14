@@ -2064,7 +2064,7 @@ ModelImplementation::~ModelImplementation()
 
   delete sharedLibrary_;
 
-  if (collections_) Collections::Destroy(&collections_);
+  if (collections_ != NULL) Collections::Destroy(&collections_);
 
   LOG_DEBUG("Destroying Log object and exit " + callString);
   Log::Destroy(&log_);
