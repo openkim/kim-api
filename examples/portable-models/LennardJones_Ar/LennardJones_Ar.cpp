@@ -26,8 +26,10 @@
 //    Ryan S. Elliott
 //
 
+
 #include "KIM_LogMacros.hpp"
 #include "KIM_ModelHeaders.hpp"
+#include <cstddef>
 #include <math.h>
 
 #define DIMENSION 3

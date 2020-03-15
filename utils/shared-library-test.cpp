@@ -30,7 +30,9 @@
 // Release: This file is part of the kim-api.git repository.
 //
 
+
 #include "KIM_Version.hpp"
+#include <cstddef>
 #include <dlfcn.h>
 #include <iostream>
 #include <string>

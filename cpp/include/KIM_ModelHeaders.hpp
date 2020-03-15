@@ -34,7 +34,7 @@
 #ifndef KIM_MODEL_HEADERS_HPP_
 #define KIM_MODEL_HEADERS_HPP_
 
-// IWYU pragma: begin_export
+// IWYU pragma: begin_exports
 #ifndef KIM_MODEL_CREATE_HPP_
 #include "KIM_ModelCreate.hpp"
 #endif
@@ -118,6 +118,6 @@
 #ifndef KIM_MODEL_DESTROY_HPP_
 #include "KIM_ModelDestroy.hpp"
 #endif
-// IWYU pragma: end_export
+// IWYU pragma: end_exports
 
 #endif  // KIM_MODEL_HEADERS_HPP_

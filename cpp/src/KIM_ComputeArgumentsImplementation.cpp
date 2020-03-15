@@ -30,6 +30,8 @@
 // Release: This file is part of the kim-api.git repository.
 //
 
+
+#include <cstddef>
 #include <iomanip>
 #include <sstream>
 

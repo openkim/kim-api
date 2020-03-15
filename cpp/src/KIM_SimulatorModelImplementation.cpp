@@ -32,15 +32,26 @@
 
 
 #include "edn-cpp/edn.hpp"
+#include <algorithm>
+#include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <dirent.h>
 #include <fstream>
 #include <iomanip>
+#include <iterator>
+#include <list>
 #include <sstream>
-#include <streambuf>
-#include <unistd.h>
+#include <unistd.h>  // IWYU pragma: keep
 
+
+#ifndef KIM_SIMULATOR_MODEL_IMPLEMENTATION_HPP_
+#include "KIM_SimulatorModelImplementation.hpp"
+#endif
+
+#ifndef KIM_LOG_VERBOSITY_HPP_
+#include "KIM_LogVerbosity.hpp"
+#endif
 
 #ifndef KIM_LOG_HPP_
 #include "KIM_Log.hpp"
@@ -54,8 +65,8 @@
 #include "KIM_Collections.hpp"
 #endif
 
-#ifndef KIM_SIMULATOR_MODEL_IMPLEMENTATION_HPP_
-#include "KIM_SimulatorModelImplementation.hpp"
+#ifndef KIM_SHARED_LIBRARY_HPP_
+#include "KIM_SharedLibrary.hpp"
 #endif
 
 

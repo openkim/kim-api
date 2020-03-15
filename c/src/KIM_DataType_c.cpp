@@ -32,6 +32,9 @@
 // Release: This file is part of the kim-api.git repository.
 //
 
+
+#include <string>
+
 #ifndef KIM_DATA_TYPE_HPP_
 #include "KIM_DataType.hpp"
 #endif

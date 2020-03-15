@@ -31,6 +31,12 @@
 //
 
 
+#include <cstddef>
+
+#ifndef KIM_LOG_VERBOSITY_HPP_
+#include "KIM_LogVerbosity.hpp"
+#endif
+
 #ifndef KIM_SIMULATOR_MODEL_HPP_
 #include "KIM_SimulatorModel.hpp"
 #endif

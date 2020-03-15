@@ -30,11 +30,13 @@
 // Release: This file is part of the kim-api.git repository.
 //
 
+
 #include "KIM_SimulatorModel.hpp"
 #include "KIM_Version.hpp"
 #include <cstdio>
+#include <cstdlib>
 #include <iostream>
-#include <stdlib.h>
+#include <string>
 
 void usage(std::string name)
 {

@@ -31,8 +31,9 @@
 //
 
 
+#include <cctype>
+#include <cstdio>
 #include <cstring>
-#include <iomanip>
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -45,6 +46,8 @@
 #ifndef KIM_LOG_VERBOSITY_HPP_
 #include "KIM_LogVerbosity.hpp"
 #endif
+
+#include "KIM_LOG_DEFINES.inc"
 
 #define LOG_DIR "."
 #define LOG_FILE "kim.log"
@@ -221,9 +224,7 @@ void LogImplementation::LogEntry(LogVerbosity const logVerbosity,
 }
 
 LogImplementation::LogImplementation() :
-    idString_(SPTR(this)),
-    latestTimeStamp_(""),
-    sequence_(0)
+    idString_(SPTR(this)), latestTimeStamp_(""), sequence_(0)
 {
   verbosity_.push(defaultLogVerbosity.top());
 }

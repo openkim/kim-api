@@ -32,6 +32,9 @@
 // Release: This file is part of the kim-api.git repository.
 //
 
+
+#include <string>
+
 #ifndef KIM_TIME_UNIT_HPP_
 #include "KIM_TimeUnit.hpp"
 #endif

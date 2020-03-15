@@ -31,6 +31,12 @@
 //
 
 
+#include <cstddef>
+
+#ifndef KIM_LOG_VERBOSITY_HPP_
+#include "KIM_LogVerbosity.hpp"
+#endif
+
 #ifndef KIM_MODEL_COMPUTE_ARGUMENTS_DESTROY_HPP_
 #include "KIM_ModelComputeArgumentsDestroy.hpp"
 #endif

@@ -39,6 +39,7 @@
 #include <errno.h>
 #include <fstream>
 #include <iostream>
+#include <list>
 #include <map>
 #include <sstream>
 #include <sys/stat.h>
@@ -52,6 +53,11 @@
 #ifndef KIM_COLLECTIONS_IMPLEMENTATION_HPP_
 #include "KIM_CollectionsImplementation.hpp"
 #endif
+
+#ifndef KIM_SHARED_LIBRARY_HPP_
+#include "KIM_SharedLibrary.hpp"
+#endif
+
 
 // log helpers
 #define SNUM(x)                                                \

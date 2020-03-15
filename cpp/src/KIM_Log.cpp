@@ -30,6 +30,9 @@
 // Release: This file is part of the kim-api.git repository.
 //
 
+
+#include <cstddef>
+
 #ifndef KIM_LOG_HPP_
 #include "KIM_Log.hpp"
 #endif

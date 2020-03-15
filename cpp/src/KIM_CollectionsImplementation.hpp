@@ -34,23 +34,20 @@
 #ifndef KIM_COLLECTIONS_IMPLEMENTATION_HPP_
 #define KIM_COLLECTIONS_IMPLEMENTATION_HPP_
 
-#include <list>
+#include <sstream>
+#include <string>
 #include <vector>
 
 #ifndef KIM_LOG_VERBOSITY_HPP_
 #include "KIM_LogVerbosity.hpp"
 #endif
 
-#ifndef KIM_COLLECTION_HPP_
-#include "KIM_Collection.hpp"
-#endif
-
 #ifndef KIM_COLLECTION_ITEM_TYPE_HPP_
 #include "KIM_CollectionItemType.hpp"
 #endif
 
-#ifndef KIM_SHARED_LIBRARY_HPP_
-#include "KIM_SharedLibrary.hpp"
+#ifndef KIM_COLLECTION_HPP_
+#include "KIM_Collection.hpp"
 #endif
 
 

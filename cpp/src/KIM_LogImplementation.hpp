@@ -34,7 +34,6 @@
 #ifndef KIM_LOG_IMPLEMENTATION_HPP_
 #define KIM_LOG_IMPLEMENTATION_HPP_
 
-#include <fstream>
 #include <stack>
 #include <string>
 

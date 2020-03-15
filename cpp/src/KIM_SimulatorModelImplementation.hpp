@@ -35,15 +35,12 @@
 #define KIM_SIMULATOR_MODEL_IMPLEMENTATION_HPP_
 
 #include <map>
+#include <sstream>
 #include <string>
 #include <vector>
 
 #ifndef KIM_LOG_VERBOSITY_HPP_
 #include "KIM_LogVerbosity.hpp"
-#endif
-
-#ifndef KIM_SHARED_LIBRARY_HPP_
-#include "KIM_SharedLibrary.hpp"
 #endif
 
 
@@ -58,6 +55,7 @@ namespace KIM
 // Forward declarations
 class Log;
 class Collections;
+class SharedLibrary;
 
 class SimulatorModelImplementation
 {

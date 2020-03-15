@@ -43,16 +43,24 @@
 #include "KIM_Log.hpp"
 #endif
 
+#ifndef KIM_MODEL_IMPLEMENTATION_HPP_
+#include "KIM_ModelImplementation.hpp"
+#endif
+
 #ifndef KIM_COLLECTION_ITEM_TYPE_HPP_
 #include "KIM_CollectionItemType.hpp"
+#endif
+
+#ifndef KIM_COMPUTE_ARGUMENTS_HPP_
+#include "KIM_ComputeArguments.hpp"
 #endif
 
 #ifndef KIM_COLLECTIONS_HPP_
 #include "KIM_Collections.hpp"
 #endif
 
-#ifndef KIM_MODEL_IMPLEMENTATION_HPP_
-#include "KIM_ModelImplementation.hpp"
+#ifndef KIM_SHARED_LIBRARY_HPP_
+#include "KIM_SharedLibrary.hpp"
 #endif
 
 #ifndef KIM_COMPUTE_ARGUMENTS_IMPLEMENTATION_HPP_
@@ -78,8 +86,6 @@ struct KIM_ModelCreate
 
 #ifndef KIM_MODEL_DRIVER_CREATE_H_
 extern "C" {
-#include "KIM_ModelDriverCreate.h"
-
 struct KIM_ModelDriverCreate
 {
   void * p;
@@ -89,8 +95,6 @@ struct KIM_ModelDriverCreate
 
 #ifndef KIM_MODEL_COMPUTE_ARGUMENTS_CREATE_H_
 extern "C" {
-#include "KIM_ModelComputeArgumentsCreate.h"
-
 struct KIM_ModelComputeArgumentsCreate
 {
   void * p;
@@ -100,8 +104,6 @@ struct KIM_ModelComputeArgumentsCreate
 
 #ifndef KIM_MODEL_REFRESH_H_
 extern "C" {
-#include "KIM_ModelRefresh.h"
-
 struct KIM_ModelRefresh
 {
   void * p;
@@ -111,8 +113,6 @@ struct KIM_ModelRefresh
 
 #ifndef KIM_MODEL_COMPUTE_H_
 extern "C" {
-#include "KIM_ModelCompute.h"
-
 struct KIM_ModelCompute
 {
   void * p;
@@ -122,8 +122,6 @@ struct KIM_ModelCompute
 
 #ifndef KIM_MODEL_EXTENSION_H_
 extern "C" {
-#include "KIM_ModelExtension.h"
-
 struct KIM_ModelExtension
 {
   void * p;
@@ -133,8 +131,6 @@ struct KIM_ModelExtension
 
 #ifndef KIM_MODEL_WRITE_PARAMETERIZED_MODEL_H_
 extern "C" {
-#include "KIM_ModelWriteParameterizedModel.h"
-
 struct KIM_ModelWriteParameterizedModel
 {
   void * p;
@@ -144,8 +140,6 @@ struct KIM_ModelWriteParameterizedModel
 
 #ifndef KIM_MODEL_COMPUTE_ARGUMENTS_H_
 extern "C" {
-#include "KIM_ModelComputeArguments.h"
-
 struct KIM_ModelComputeArguments
 {
   void * p;
@@ -155,8 +149,6 @@ struct KIM_ModelComputeArguments
 
 #ifndef KIM_MODEL_COMPUTE_ARGUMENTS_DESTROY_H_
 extern "C" {
-#include "KIM_ModelComputeArgumentsDestroy.h"
-
 struct KIM_ModelComputeArgumentsDestroy
 {
   void * p;
@@ -166,8 +158,6 @@ struct KIM_ModelComputeArgumentsDestroy
 
 #ifndef KIM_MODEL_DESTROY_H_
 extern "C" {
-#include "KIM_ModelDestroy.h"
-
 struct KIM_ModelDestroy
 {
   void * p;
@@ -250,8 +240,10 @@ class ModelRefresh;
 class ModelCompute;
 class ModelComputeArguments;
 class ModelDestroy;
+class ModelExtension;
 class ModelComputeArgumentsCreate;
 class ModelComputeArgumentsDestroy;
+class ModelWriteParameterizedModel;
 
 int ModelImplementation::Create(
     Numbering const numbering,

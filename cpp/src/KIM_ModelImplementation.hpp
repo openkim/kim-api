@@ -47,6 +47,10 @@
 #include "KIM_LogVerbosity.hpp"
 #endif
 
+#ifndef KIM_COLLECTION_ITEM_TYPE_HPP_
+#include "KIM_CollectionItemType.hpp"
+#endif
+
 #ifndef KIM_DATA_TYPE_HPP_
 #include "KIM_DataType.hpp"
 #endif
@@ -71,24 +75,14 @@
 #include "KIM_SpeciesName.hpp"
 #endif
 
-#ifndef KIM_SUPPORT_STATUS_HPP_
-#include "KIM_SupportStatus.hpp"
-#endif
-
-#ifndef KIM_COMPUTE_ARGUMENTS_HPP_
-#include "KIM_ComputeArguments.hpp"
-#endif
-
-#ifndef KIM_SHARED_LIBRARY_HPP_
-#include "KIM_SharedLibrary.hpp"
-#endif
-
 
 namespace KIM
 {
 // Forward declaration
 class Log;
 class Collections;
+class ComputeArguments;
+class SharedLibrary;
 
 class ModelImplementation
 {

@@ -30,8 +30,8 @@
 // Release: This file is part of the kim-api.git repository.
 //
 
+
 #include <map>
-#include <vector>
 
 #ifndef KIM_SPECIES_NAME_HPP_
 #include "KIM_SpeciesName.hpp"

@@ -32,6 +32,10 @@
 // Release: This file is part of the kim-api.git repository.
 //
 
+
+#include <cstddef>
+#include <string>
+
 #ifndef KIM_LOG_VERBOSITY_HPP_
 #include "KIM_LogVerbosity.hpp"
 #endif

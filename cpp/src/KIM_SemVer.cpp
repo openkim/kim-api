@@ -31,8 +31,9 @@
 //
 
 
-#include "stdlib.h"
-#include "vector"
+#include <algorithm>
+#include <cstdlib>
+#include <vector>
 
 #ifndef KIM_VERSION_HPP_
 #include "KIM_Version.hpp"

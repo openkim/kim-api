@@ -31,6 +31,28 @@
 //
 
 
+#include <cstddef>
+
+#ifndef KIM_LOG_VERBOSITY_HPP_
+#include "KIM_LogVerbosity.hpp"
+#endif
+
+#ifndef KIM_MODEL_ROUTINE_NAME_HPP_
+#include "KIM_ModelRoutineName.hpp"
+#endif
+
+#ifndef KIM_NUMBERING_HPP_
+#include "KIM_Numbering.hpp"
+#endif
+
+#ifndef KIM_SPECIES_NAME_HPP_
+#include "KIM_SpeciesName.hpp"
+#endif
+
+#ifndef KIM_UNIT_SYSTEM_HPP_
+#include "KIM_UnitSystem.hpp"
+#endif
+
 #ifndef KIM_MODEL_HPP_
 #include "KIM_Model.hpp"
 #endif

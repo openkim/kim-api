@@ -32,8 +32,9 @@
 #define LENNARD_JONES_612_IMPLEMENTATION_HPP_
 
 #include "KIM_LogMacros.hpp"
-#include "LennardJones612.hpp"
+#include "KIM_ModelDriverHeaders.hpp"
 #include <cmath>
+#include <cstdio>
 #include <vector>
 
 #define DIMENSION 3

@@ -30,7 +30,6 @@
 #include "KIM_Collection.hpp"
 #include "KIM_CollectionItemType.hpp"
 #include "KIM_Collections.hpp"
-#include <iomanip>
 #include <iostream>
 #include <string>
 

@@ -30,6 +30,10 @@
 // Release: This file is part of the kim-api.git repository.
 //
 
+
+#include <cstddef>
+#include <string>
+
 #ifndef KIM_LOG_VERBOSITY_HPP_
 #include "KIM_LogVerbosity.hpp"
 #endif
@@ -84,15 +88,6 @@ extern "C" {
 #endif
 }  // extern "C"
 
-#ifndef KIM_COMPUTE_ARGUMENTS_HPP_
-#include "KIM_ComputeArguments.hpp"
-#endif
-extern "C" {
-#ifndef KIM_COMPUTE_ARGUMENTS_H_
-#include "KIM_ComputeArguments.h"
-#endif
-}  // extern "C"
-
 #ifndef KIM_MODEL_HPP_
 #include "KIM_Model.hpp"
 #endif
@@ -101,6 +96,13 @@ extern "C" {
 #include "KIM_Model.h"
 #endif
 }  // extern "C"
+
+
+namespace KIM
+{
+// Forward declarations
+class ComputeArguments;
+}  // namespace KIM
 
 
 struct KIM_ComputeArguments

@@ -48,7 +48,6 @@ class LanguageName;
 class ComputeArgumentName;
 class ComputeCallbackName;
 class SupportStatus;
-class ModelImplementation;
 class ComputeArgumentsImplementation;
 
 

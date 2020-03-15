@@ -28,14 +28,9 @@
 //
 
 
-#include <cmath>
-#include <cstdlib>
-#include <cstring>
-#include <fstream>
-#include <iostream>
-
 #include "LennardJones612.hpp"
 #include "LennardJones612Implementation.hpp"
+#include <cstddef>
 
 
 //==============================================================================

@@ -33,6 +33,8 @@
 //
 
 
+#include <string>
+
 #ifndef KIM_MODEL_ROUTINE_NAME_HPP_
 #include "KIM_ModelRoutineName.hpp"
 #endif

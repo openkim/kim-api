@@ -30,7 +30,9 @@
 // Release: This file is part of the kim-api.git repository.
 //
 
-#include "string.h"
+
+#include <cstring>
+#include <string>
 
 #ifndef KIM_SEM_VER_HPP_
 #include "KIM_SemVer.hpp"

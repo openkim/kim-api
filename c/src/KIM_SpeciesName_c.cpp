@@ -32,6 +32,9 @@
 // Release: This file is part of the kim-api.git repository.
 //
 
+
+#include <string>
+
 #ifndef KIM_SPECIES_NAME_HPP_
 #include "KIM_SpeciesName.hpp"
 #endif

@@ -31,6 +31,24 @@
 //
 
 
+#include <cstddef>
+
+#ifndef KIM_LOG_VERBOSITY_HPP_
+#include "KIM_LogVerbosity.hpp"
+#endif
+
+#ifndef KIM_COMPUTE_ARGUMENT_NAME_HPP_
+#include "KIM_ComputeArgumentName.hpp"
+#endif
+
+#ifndef KIM_COMPUTE_CALLBACK_NAME_HPP_
+#include "KIM_ComputeCallbackName.hpp"
+#endif
+
+#ifndef KIM_SUPPORT_STATUS_HPP_
+#include "KIM_SupportStatus.hpp"
+#endif
+
 #ifndef KIM_MODEL_COMPUTE_ARGUMENTS_CREATE_HPP_
 #include "KIM_ModelComputeArgumentsCreate.hpp"
 #endif

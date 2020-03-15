@@ -32,6 +32,9 @@
 // Release: This file is part of the kim-api.git repository.
 //
 
+
+#include <string>
+
 #ifndef KIM_ENERGY_UNIT_HPP_
 #include "KIM_EnergyUnit.hpp"
 #endif

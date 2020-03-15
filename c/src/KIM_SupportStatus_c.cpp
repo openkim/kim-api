@@ -32,6 +32,9 @@
 // Release: This file is part of the kim-api.git repository.
 //
 
+
+#include <string>
+
 #ifndef KIM_SUPPORT_STATUS_HPP_
 #include "KIM_SupportStatus.hpp"
 #endif

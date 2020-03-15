@@ -26,14 +26,13 @@
 //    Ryan S. Elliott
 //
 
+
 extern "C" {
 #include "KIM_Collection.h"
 #include "KIM_CollectionItemType.h"
 #include "KIM_Collections.h"
 }
-#include <iomanip>
 #include <iostream>
-#include <string>
 
 void dirsForCollection(KIM_Collection const collection,
                        KIM_Collections * const col)

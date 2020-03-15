@@ -29,14 +29,14 @@
 
 
 #include <cmath>
-#include <cstdlib>
 #include <cstring>
-#include <fstream>
-#include <iostream>
+#include <iostream>  // IWYU pragma: keep  BUG-WORK-AROUND
 #include <map>
 #include <sstream>
+#include <string>
 
 #include "KIM_ModelDriverHeaders.hpp"
+#include "LennardJones612.hpp"
 #include "LennardJones612Implementation.hpp"
 
 #define MAXLINE 1024

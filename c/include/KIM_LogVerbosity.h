@@ -36,9 +36,6 @@
 #ifndef KIM_LOG_VERBOSITY_H_
 #define KIM_LOG_VERBOSITY_H_
 
-#ifndef KIM_LOG_DEFINES_INC_
-#include "KIM_LOG_DEFINES.inc"
-#endif
 
 /**
  ** \brief \copybrief KIM::LogVerbosity

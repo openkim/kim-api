@@ -41,8 +41,8 @@
 #include "KIM_FunctionTypes.hpp"
 #endif
 
-#ifndef KIM_LOG_HPP_
-#include "KIM_Log.hpp"
+#ifndef KIM_LOG_VERBOSITY_HPP_
+#include "KIM_LogVerbosity.hpp"
 #endif
 
 #ifndef KIM_LANGUAGE_NAME_HPP_
@@ -56,11 +56,7 @@
 namespace KIM
 {
 // Forward declarations
-class LanguageName;
-namespace SHARED_LIBRARY_SCHEMA
-{
-struct SharedLibrarySchemaV1;
-}  // namespace SHARED_LIBRARY_SCHEMA
+class Log;
 
 
 class SharedLibrary

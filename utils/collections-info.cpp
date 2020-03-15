@@ -30,6 +30,7 @@
 // Release: This file is part of the kim-api.git repository.
 //
 
+
 #include "KIM_Collection.hpp"
 #include "KIM_CollectionItemType.hpp"
 #include "KIM_Collections.hpp"
@@ -38,8 +39,6 @@
 #include "KIM_Version.hpp"
 #include <cstring>
 #include <iostream>
-#include <list>
-#include <sstream>
 #include <string>
 #include <vector>
 
@@ -96,8 +95,7 @@ void env(ENV_OPTIONS const opt)
 
   switch (opt)
   {
-    case E_ENV:
-    {
+    case E_ENV: {
       using namespace KIM::COLLECTION_ITEM_TYPE;
       std::string const * envName;
       col->GetEnvironmentVariableName(modelDriver, &envName);
@@ -112,8 +110,7 @@ void env(ENV_OPTIONS const opt)
       std::cout << std::endl;
       break;
     }
-    case E_MODEL_DRIVERS:
-    {
+    case E_MODEL_DRIVERS: {
       int extent;
       col->CacheListOfDirectoryNames(KIM::COLLECTION::environmentVariable,
                                      KIM::COLLECTION_ITEM_TYPE::modelDriver,
@@ -121,8 +118,7 @@ void env(ENV_OPTIONS const opt)
       printDirs(extent, col);
       break;
     }
-    case E_PORTABLE_MODELS:
-    {
+    case E_PORTABLE_MODELS: {
       int extent;
       col->CacheListOfDirectoryNames(KIM::COLLECTION::environmentVariable,
                                      KIM::COLLECTION_ITEM_TYPE::portableModel,
@@ -130,8 +126,7 @@ void env(ENV_OPTIONS const opt)
       printDirs(extent, col);
       break;
     }
-    case E_SIMULATOR_MODELS:
-    {
+    case E_SIMULATOR_MODELS: {
       int extent;
       col->CacheListOfDirectoryNames(KIM::COLLECTION::environmentVariable,
                                      KIM::COLLECTION_ITEM_TYPE::simulatorModel,
@@ -160,23 +155,20 @@ void configFile(CONFIG_FILE_OPTIONS const opt)
 
   switch (opt)
   {
-    case CF_ENV:
-    {
+    case CF_ENV: {
       std::string const * fl;
       std::string const * val;
       col->GetConfigurationFileEnvironmentVariable(&fl, &val);
       std::cout << *fl << " " << *val << std::endl;
       break;
     }
-    case CF_NAME:
-    {
+    case CF_NAME: {
       std::string const * dir;
       col->GetConfigurationFileName(&dir);
       std::cout << *dir << std::endl;
       break;
     }
-    case CF_MODEL_DRIVERS:
-    {
+    case CF_MODEL_DRIVERS: {
       int extent;
       col->CacheListOfDirectoryNames(KIM::COLLECTION::user,
                                      KIM::COLLECTION_ITEM_TYPE::modelDriver,
@@ -184,8 +176,7 @@ void configFile(CONFIG_FILE_OPTIONS const opt)
       printDirs(extent, col);
       break;
     }
-    case CF_PORTABLE_MODELS:
-    {
+    case CF_PORTABLE_MODELS: {
       int extent;
       col->CacheListOfDirectoryNames(KIM::COLLECTION::user,
                                      KIM::COLLECTION_ITEM_TYPE::portableModel,
@@ -193,8 +184,7 @@ void configFile(CONFIG_FILE_OPTIONS const opt)
       printDirs(extent, col);
       break;
     }
-    case CF_SIMULATOR_MODELS:
-    {
+    case CF_SIMULATOR_MODELS: {
       int extent;
       col->CacheListOfDirectoryNames(KIM::COLLECTION::user,
                                      KIM::COLLECTION_ITEM_TYPE::simulatorModel,
@@ -233,8 +223,7 @@ void sys(SYS_OPTIONS const opt)
 
   switch (opt)
   {
-    case S_MODEL_DRIVERS:
-    {
+    case S_MODEL_DRIVERS: {
       int extent;
       col->CacheListOfDirectoryNames(KIM::COLLECTION::system,
                                      KIM::COLLECTION_ITEM_TYPE::modelDriver,
@@ -242,8 +231,7 @@ void sys(SYS_OPTIONS const opt)
       printDirs(extent, col);
       break;
     }
-    case S_PORTABLE_MODELS:
-    {
+    case S_PORTABLE_MODELS: {
       int extent;
       col->CacheListOfDirectoryNames(KIM::COLLECTION::system,
                                      KIM::COLLECTION_ITEM_TYPE::portableModel,
@@ -251,8 +239,7 @@ void sys(SYS_OPTIONS const opt)
       printDirs(extent, col);
       break;
     }
-    case S_SIMULATOR_MODELS:
-    {
+    case S_SIMULATOR_MODELS: {
       int extent;
       col->CacheListOfDirectoryNames(KIM::COLLECTION::system,
                                      KIM::COLLECTION_ITEM_TYPE::simulatorModel,

@@ -36,6 +36,10 @@
 #include "KIM_LogVerbosity.hpp"
 #endif
 
+#ifndef KIM_LOG_DEFINES_INC_
+#include "KIM_LOG_DEFINES.inc"
+#endif
+
 namespace KIM
 {
 // Order is important

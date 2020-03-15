@@ -31,6 +31,18 @@
 //
 
 
+#include <cstddef>
+
+#ifndef KIM_FUNCTION_TYPES_HPP_
+#include "KIM_FunctionTypes.hpp"
+#endif
+
+extern "C" {
+#ifndef KIM_FUNCTION_TYPES_H_
+#include "KIM_FunctionTypes.h"  // IWYU pragma: keep
+#endif
+}
+
 #ifndef KIM_LANGUAGE_NAME_HPP_
 #include "KIM_LanguageName.hpp"
 #endif
@@ -43,33 +55,6 @@
 #include "KIM_SharedLibrarySchema.hpp"
 #endif
 
-#ifndef KIM_FUNCTION_TYPES_HPP_
-#include "KIM_FunctionTypes.hpp"
-#endif
-
-extern "C" {
-#ifndef KIM_FUNCTION_TYPES_H_
-#include "KIM_FunctionTypes.h"
-#endif
-}
-
-extern "C" {
-#ifndef KIM_UNIT_SYSTEM_H_
-#include "KIM_UnitSystem.h"
-#endif
-}
-
-extern "C" {
-#ifndef KIM_MODEL_DRIVER_CREATE_H_
-#include "KIM_ModelDriverCreate.h"
-#endif
-}
-
-extern "C" {
-#ifndef KIM_MODEL_CREATE_H_
-#include "KIM_ModelCreate.h"
-#endif
-}
 
 using namespace KIM::SHARED_LIBRARY_SCHEMA;
 

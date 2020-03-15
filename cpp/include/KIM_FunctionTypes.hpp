@@ -37,11 +37,11 @@
 namespace KIM
 {
 // Forward declarations
-class LengthUnit;
-class EnergyUnit;
-class ChargeUnit;
-class TemperatureUnit;
-class TimeUnit;
+class LengthUnit;  // IWYU pragma: keep  BUG-WORK-AROUND
+class EnergyUnit;  // IWYU pragma: keep  BUG-WORK-AROUND
+class ChargeUnit;  // IWYU pragma: keep  BUG-WORK-AROUND
+class TemperatureUnit;  // IWYU pragma: keep  BUG-WORK-AROUND
+class TimeUnit;  // IWYU pragma: keep  BUG-WORK-AROUND
 class ModelCreate;
 class ModelDriverCreate;
 class ModelCompute;

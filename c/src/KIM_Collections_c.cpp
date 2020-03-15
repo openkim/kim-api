@@ -34,7 +34,9 @@
 
 
 #include <climits>
+#include <cstddef>
 #include <iostream>
+#include <string>
 
 #ifndef KIM_LOG_VERBOSITY_HPP_
 #include "KIM_LogVerbosity.hpp"

@@ -42,8 +42,8 @@
 #include "KIM_LogVerbosity.hpp"
 #endif
 
-#ifndef KIM_LANGUAGE_NAME_HPP_
-#include "KIM_LanguageName.hpp"
+#ifndef KIM_LOG_HPP_
+#include "KIM_Log.hpp"
 #endif
 
 #ifndef KIM_SHARED_LIBRARY_SCHEMA_HPP_

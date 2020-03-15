@@ -30,6 +30,13 @@
 // Release: This file is part of the kim-api.git repository.
 //
 
+
+#include <cstddef>
+
+#ifndef KIM_LOG_VERBOSITY_HPP_
+#include "KIM_LogVerbosity.hpp"
+#endif
+
 #ifndef KIM_MODEL_COMPUTE_HPP_
 #include "KIM_ModelCompute.hpp"
 #endif
