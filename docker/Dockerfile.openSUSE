@@ -32,7 +32,7 @@
 #
 
 
-FROM fedora:latest
+FROM opensuse/tumbleweed
 
 ARG B_COVERAGE
 ENV COVERAGE $B_COVERAGE
@@ -80,22 +80,23 @@ ARG B_TRAVIS_OS_NAME
 ENV TRAVIS_OS_NAME $B_TRAVIS_OS_NAME
 
 
-RUN dnf -y install \
+RUN zypper -n install \
         make \
         cmake \
         git \
         gcc \
         gcc-c++ \
-        gcc-gfortran \
+        gcc-fortran \
         ccache \
         wget \
-        vim-common \
+        vim \
+        tar \
         xz \
-        findutils \
-        ${SANITIZE:+libasan} \
-        ${IWYU:+iwyu}
+        ${SANITIZE:+libasan6} \
+        ${IWYU:+include-what-you-use}
 
 RUN useradd -m kim
+RUN groupadd kim
 USER kim
 ENV PATH=/usr/lib64/ccache:${PATH}
 ENV CCACHE_MAXSIZE=250M
