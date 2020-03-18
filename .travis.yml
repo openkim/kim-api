@@ -98,6 +98,24 @@ matrix:
              "${DISTRO}"
              "${TRAVIS_REPO_SLUG}:${DISTRO}"
              "${PWD}/ccache"
+    - name: "ubuntu, Debug, Sanitize"
+      if: branch != coverity_scan
+      os: linux
+      services: docker
+      env: DISTRO=ubuntu
+           CMAKE_BUILD_TYPE=Debug
+           SANITIZE=true
+      before_script:
+        - mkdir "${HOME}/work" &&
+          cd "${HOME}/work" &&
+          cp -r "${HOME}/.ccache" ccache
+        - env
+      script:
+        -  ${TRAVIS_BUILD_DIR}/scripts/ci-docker-build-and-run
+             "${TRAVIS_BUILD_DIR}"
+             "${DISTRO}"
+             "${TRAVIS_REPO_SLUG}:${DISTRO}"
+             "${PWD}/ccache"
     - name: "Coverity Scan"
       if: branch = coverity_scan
       os: linux
