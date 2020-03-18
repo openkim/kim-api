@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 #
 # CDDL HEADER START
@@ -33,14 +33,25 @@
 #
 
 
+# check for required env
+if test x"" = x"${CMAKE_BUILD_TYPE}"; then
+  printf "error: must define CMAKE_BUILD_TYPE.\n"
+  exit 1
+fi
+
+
+set -xv
 # print environment
 env
 
 mkdir build
 cd build
 ccache -z
+# cmake will respect value of the follwoing environment variables:
+#   CXX,      CC,     and FC
+#   CXXFLAGS, CFLAGS, and FFLAGS
 cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX:=/usr/local} \
-      -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE:=Debug} \
+      -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} \
       ${SANITIZE:+-DKIM_API_ENABLE_SANITIZE=ON} \
       ${COVERAGE:+-DKIM_API_ENABLE_COVERAGE=ON} \
       ${IWYU:+-DCMAKE_CXX_INCLUDE_WHAT_YOU_USE=include-what-you-use} \
@@ -51,53 +62,46 @@ make -j2 || exit $?
 ccache -s
 
 make test || exit $?
+
 if test x"${COVERAGE}" != x""; then
   curl -s https://codecov.io/bash | sed -e's/execdir/exec/g' > ${PWD}/codecov
   bash ${PWD}/codecov -x gcov-6 || exit $?
 fi
 
-# if test ${COVERAGE}; then
-#   if test x"clang" = x"${CC}"; then
-#     codecov -R ${PWD}/../../${TRAVIS_REPO_SLUG#*/} -F "${CC}" -x "llvm-cov gcov" 2>&1 | grep -v "arcs.*block"
-#   else
-#     codecov -R ${PWD}/../../${TRAVIS_REPO_SLUG#*/} -F "${CC}" 2>&1 | grep -v "arcs.*block";
-#   fi
-# fi
-
 mkdir ${PWD}/destdir
 make install DESTDIR=${PWD}/destdir || exit $?
-rm -rf ${PWD}/destdir${INSTALL_PREFIX}/{bin,include,${LIB_DIR:=lib},libexec,share} || exit $?
-rm -rf ${PWD}/destdir${BASH_COMPLETION_DIR:=${INSTALL_PREFIX}/etc} || exit $?
+rm -rf "${PWD}/destdir${INSTALL_PREFIX}/"{bin,include,libexec,share} || exit $?
+rm -rf "${PWD}/destdir${LIB_DIR:=${INSTALL_PREFIX}/lib}" || exit $?
+rm -rf "${PWD}/destdir${BASH_COMPLETION_DIR:=${INSTALL_PREFIX}/etc}" || exit $?
+set +xv
 printf -- "--- remaining installed files ---\n" &&
-  find ${PWD}/destdir &&
+  find "${PWD}/destdir" &&
   printf -- "---------------------------------\n"
+set -xv
 dir="${INSTALL_PREFIX}"
 while test x"" != x"${dir}"; do
-  printf "Removing dir: %s\n" "${PWD}/destdir${dir}"
-  rmdir ${PWD}/destdir${dir} || exit $?
+  rmdir "${PWD}/destdir${dir}" || exit $?
   dir=`printf -- "${dir}" | sed -e 's|\(.*\)/.*|\1|'`
 done
-rmdir ${PWD}/destdir || exit $?
+rmdir "${PWD}/destdir" || exit $?
 cd ../
-rm -rf build || exit $?
+rm -rf "build" || exit $?
 
 # now test collections-management and install
 mkdir build
 cd build
 ccache -z
-cmake -DCMAKE_INSTALL_PREFIX=${PWD}/test-install \
-      -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} \
+cmake -DCMAKE_INSTALL_PREFIX="${PWD}/test-install" \
+      -DCMAKE_BUILD_TYPE="${CMAKE_BUILD_TYPE}" \
       -DKIM_API_BUILD_EXAMPLES=OFF \
-      ${SANITIZE:+-DKIM_API_ENABLE_SANITIZE=ON} \
-      ${COVERAGE:+-DKIM_API_ENABLE_COVERAGE=ON} \
-      ${IWYU:+-DCMAKE_CXX_INCLUDE_WHAT_YOU_USE=include-what-you-use} \
-      {$IWYU:+-DCMAKE_C_INCLUDE_WHAT_YOU_USE=include-what-you-use} \
       .. \
   || exit $?
 make -j2 install || exit $?
 ccache -s
 
-source ${PWD}/test-install/bin/kim-api-activate || exit $?
+set +xv
+source "${PWD}/test-install/bin/kim-api-activate" || exit $?
+set -xv
 kim-api-collections-management install system `find ../examples/model-drivers -mindepth 1 -maxdepth 1 -type d` &&
   kim-api-collections-management install system `find ../examples/portable-models -mindepth 1 -maxdepth 1 -type d` &&
   kim-api-collections-management install system `find ../examples/simulator-models -mindepth 1 -maxdepth 1 -type d` &&
@@ -108,4 +112,5 @@ mkdir "${PWD}/WORKSPACE"
 ../scripts/run-cmds-from-install IN_WORKSPACE "${PWD}/WORKSPACE" "${PWD}/.." || exit $?
 
 # success
+set +xv
 exit 0

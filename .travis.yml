@@ -42,16 +42,12 @@ env:
 
 matrix:
   include:
-    - name: "osX Debug, Sanitize, Coverage"
+    - name: "macOS Debug, Sanitize, Coverage"
       if: branch != coverity_scan
       os: osx
-      env: INSTALL_PREFIX=/usr/local \
-           LIB_DIR=lib \
-           BASH_COMPLETION_DIR=/usr/local/etc \
-           CMAKE_BUILD_TYPE=Debug \
-           SANITIZE=true \
-           COVERAGE=true \
-           COVERITY=false
+      env: CMAKE_BUILD_TYPE=Debug
+           SANITIZE=true
+           COVERAGE=true
       before_script:
         - brew update &> /dev/null &&
           brew install gcc@6 ccache iwyu &&
@@ -59,105 +55,49 @@ matrix:
           export CC=gcc-6 &&
           export CXX=g++-6 &&
           export FC=gfortran-6
-          export IWYU=""
         - env
       script:
-        - ./scripts/ci-build-and-test-script.sh
-    - name: "linux fedora, Debug, Sanitize"
+        - ./scripts/ci-build-and-test
+    - name: "Fedora, Debug, Sanitize"
       if: branch != coverity_scan
       os: linux
       services: docker
-      env: DISTRO=fedora \
-           INSTALL_PREFIX=/usr \
-           LIB_DIR=lib64 \
-           BASH_COMPLETION_DIR=/etc \
-           CMAKE_BUILD_TYPE=Debug \
-           SANITIZE=true \
-           COVERAGE="" \
-           COVERITY=false
+      env: DISTRO=fedora
+           CMAKE_BUILD_TYPE=Debug
+           SANITIZE=true
       before_script:
-        - mkdir ${HOME}/docker &&
-          cp -v docker/Dockerfile.${DISTRO} ${HOME}/docker/Dockerfile &&
-          cd ../../ &&
-          mv -v ${TRAVIS_REPO_SLUG} $HOME/docker &&
-          cp -r $HOME/.ccache ${HOME}/docker/ccache
+        - mkdir "${HOME}/work" &&
+          cd "${HOME}/work" &&
+          cp -r "${HOME}/.ccache" ccache
         - env
       script:
-        - travis_retry docker build -t ${TRAVIS_REPO_SLUG}:${DISTRO}
-                   --build-arg B_CC=${CC}
-                   --build-arg B_CXX=${CXX}
-                   --build-arg B_FC=${FC}
-                   --build-arg B_CXXFLAGS="${CXXFLAGS}"
-                   --build-arg B_INSTALL_PREFIX="${INSTALL_PREFIX}"
-                   --build-arg B_LIB_DIR="${LIB_DIR}"
-                   --build-arg B_BASH_COMPLETION_DIR="${BASH_COMPLETION_DIR}"
-                   --build-arg B_CMAKE_BUILD_TYPE="${CMAKE_BUILD_TYPE}"
-                   --build-arg B_COVERAGE="${COVERAGE}"
-                   --build-arg B_SANITIZE="${SANITIZE}"
-                   --build-arg B_IWYU=${LEAVE_EMPTY_WHILE_FEDORAS_IWYU_IS_SO_OLD:+}
-                   --build-arg B_CI=${CI}
-                   --build-arg B_TRAVIS=${TRAVIS}
-                   --build-arg B_TRAVIS_OS_NAME=${DISTRO:-fedora}
-                   --build-arg B_TRAVIS_BRANCH=${TRAVIS_BRANCH}
-                   --build-arg B_TRAVIS_JOB_NUMBER=${TRAVIS_JOB_NUMBER}
-                   --build-arg B_TRAVIS_PULL_REQUEST=${TRAVIS_PULL_REQUEST}
-                   --build-arg B_TRAVIS_JOB_ID=${TRAVIS_JOB_ID}
-                   --build-arg B_TRAVIS_TAG=${TRAVIS_TAG}
-                   --build-arg B_TRAVIS_REPO_SLUG=${TRAVIS_REPO_SLUG}
-                   --build-arg B_TRAVIS_COMMIT=${TRAVIS_COMMIT}
-                   ${HOME}/docker/ &&
-          docker run -it --cap-add SYS_PTRACE --cidfile container.pid ${TRAVIS_REPO_SLUG}:${DISTRO} &&
-          rm -rf $HOME/.ccache &&
-          CON=`cat container.pid` &&
-          docker cp ${CON}:/home/kim/.ccache ${HOME}/
-    - name: "linux openSUSE, Debug, Sanitize"
+        -  ${TRAVIS_BUILD_DIR}/scripts/ci-docker-build-and-run
+             ${TRAVIS_BUILD_DIR}
+             "${DISTRO}"
+             "${TRAVIS_REPO_SLUG}:${DISTRO}"
+             "${PWD}/ccache"
+    - name: "openSUSE, Debug, IWYU, Sanitize, LTO"
       if: branch != coverity_scan
       os: linux
       services: docker
-      env: DISTRO=openSUSE \
-           INSTALL_PREFIX=/usr \
-           LIB_DIR=lib64 \
-           BASH_COMPLETION_DIR=/etc \
-           CMAKE_BUILD_TYPE=Debug \
-           SANITIZE=true \
-           COVERAGE="" \
-           COVERITY=false \
+      env: DISTRO=openSUSE
+           CMAKE_BUILD_TYPE=Debug
            IWYU=true
+           SANITIZE=true
+           CXXFLAGS="-flto=auto"
+           CFLAGS="-flto=auto"
+           FFLAGS="-flto=auto"
       before_script:
-        - mkdir ${HOME}/docker &&
-          cp -v docker/Dockerfile.${DISTRO} ${HOME}/docker/Dockerfile &&
-          cd ../../ &&
-          mv -v ${TRAVIS_REPO_SLUG} $HOME/docker &&
-          cp -r $HOME/.ccache ${HOME}/docker/ccache
+        - mkdir "${HOME}/work" &&
+          cd "${HOME}/work" &&
+          cp -r "${HOME}/.ccache" ccache
         - env
       script:
-        - travis_retry docker build -t ${TRAVIS_REPO_SLUG}:${DISTRO}
-                   --build-arg B_CC=${CC}
-                   --build-arg B_CXX=${CXX}
-                   --build-arg B_FC=${FC}
-                   --build-arg B_CXXFLAGS="${CXXFLAGS}"
-                   --build-arg B_INSTALL_PREFIX="${INSTALL_PREFIX}"
-                   --build-arg B_LIB_DIR="${LIB_DIR}"
-                   --build-arg B_BASH_COMPLETION_DIR="${BASH_COMPLETION_DIR}"
-                   --build-arg B_CMAKE_BUILD_TYPE="${CMAKE_BUILD_TYPE}"
-                   --build-arg B_COVERAGE="${COVERAGE}"
-                   --build-arg B_SANITIZE="${SANITIZE}"
-                   --build-arg B_IWYU=${IWYU:+include-what-you-use}
-                   --build-arg B_CI=${CI}
-                   --build-arg B_TRAVIS=${TRAVIS}
-                   --build-arg B_TRAVIS_OS_NAME=${DISTRO:-fedora}
-                   --build-arg B_TRAVIS_BRANCH=${TRAVIS_BRANCH}
-                   --build-arg B_TRAVIS_JOB_NUMBER=${TRAVIS_JOB_NUMBER}
-                   --build-arg B_TRAVIS_PULL_REQUEST=${TRAVIS_PULL_REQUEST}
-                   --build-arg B_TRAVIS_JOB_ID=${TRAVIS_JOB_ID}
-                   --build-arg B_TRAVIS_TAG=${TRAVIS_TAG}
-                   --build-arg B_TRAVIS_REPO_SLUG=${TRAVIS_REPO_SLUG}
-                   --build-arg B_TRAVIS_COMMIT=${TRAVIS_COMMIT}
-                   ${HOME}/docker/ &&
-          docker run -it --cap-add SYS_PTRACE --cidfile container.pid ${TRAVIS_REPO_SLUG}:${DISTRO} &&
-          rm -rf $HOME/.ccache &&
-          CON=`cat container.pid` &&
-          docker cp ${CON}:/home/kim/.ccache ${HOME}/
+        -  ${TRAVIS_BUILD_DIR}/scripts/ci-docker-build-and-run
+             "${TRAVIS_BUILD_DIR}"
+             "${DISTRO}"
+             "${TRAVIS_REPO_SLUG}:${DISTRO}"
+             "${PWD}/ccache"
     - name: "Coverity Scan"
       if: branch = coverity_scan
       os: linux

@@ -37,6 +37,8 @@
 /README_GIT                           export-ignore
 /docker                               export-ignore
 /git-hooks                            export-ignore
+/scripts/ci-build-and-test            export-ignore
+/scripts/ci-docker-build-and-run      export-ignore
 /scripts/configure-git-repo-hooks-etc export-ignore
 /scripts/create-package               export-ignore
 /scripts/run-cmds-from-install        export-ignore

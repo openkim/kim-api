@@ -34,79 +34,28 @@
 
 FROM opensuse/tumbleweed
 
-ARG B_COVERAGE
-ENV COVERAGE $B_COVERAGE
-ARG B_SANITIZE
-ENV SANITIZE $B_SANITIZE
-ARG B_IWYU
-ENV IWYU $B_IWYU
-ARG B_CC
-ENV CC $B_CC
-ARG B_CXX
-ENV CXX $B_CXX
-ARG B_CXXFLAGS
-ENV CXXFLAGS $B_CXXFLAGS
-ARG B_FC
-ENV FC $B_FC
-ARG B_INSTALL_PREFIX
-ENV INSTALL_PREFIX $B_INSTALL_PREFIX
-ARG B_LIB_DIR
-ENV LIB_DIR $B_LIB_DIR
-ARG B_BASH_COMPLETION_DIR
-ENV BASH_COMPLETION_DIR $B_BASH_COMPLETION_DIR
-ARG B_CMAKE_BUILD_TYPE
-ENV CMAKE_BUILD_TYPE $B_CMAKE_BUILD_TYPE
-
-#for coverage
-ARG B_CI
-ENV CI $B_CI
-ARG B_TRAVIS
-ENV TRAVIS $B_TRAVIS
-ARG B_TRAVIS_BRANCH
-ENV TRAVIS_BRANCH $B_TRAVIS_BRANCH
-ARG B_TRAVIS_JOB_NUMBER
-ENV TRAVIS_JOB_NUMBER $B_TRAVIS_JOB_NUMBER
-ARG B_TRAVIS_PULL_REQUEST
-ENV TRAVIS_PULL_REQUEST $B_TRAVIS_PULL_REQUEST
-ARG B_TRAVIS_JOB_ID
-ENV TRAVIS_JOB_ID $B_TRAVIS_JOB_ID
-ARG B_TRAVIS_TAG
-ENV TRAVIS_TAG $B_TRAVIS_TAG
-ARG B_TRAVIS_REPO_SLUG
-ENV TRAVIS_REPO_SLUG $B_TRAVIS_REPO_SLUG
-ARG B_TRAVIS_COMMIT
-ENV TRAVIS_COMMIT $B_TRAVIS_COMMIT
-ARG B_TRAVIS_OS_NAME
-ENV TRAVIS_OS_NAME $B_TRAVIS_OS_NAME
-
-
 RUN zypper -n install \
-        make \
+        ccache \
         cmake \
         git \
         gcc \
         gcc-c++ \
         gcc-fortran \
-        ccache \
-        wget \
-        vim \
+        include-what-you-use \
+        libasan6 \
+        make \
         tar \
-        xz \
-        ${SANITIZE:+libasan6} \
-        ${IWYU:+include-what-you-use}
+        vim \
+        wget \
+        xz
 
-RUN useradd -m kim
-RUN groupadd kim
-USER kim
-ENV PATH=/usr/lib64/ccache:${PATH}
-ENV CCACHE_MAXSIZE=250M
+# specify build prefix to be used (optional)
+ARG B_INSTALL_PREFIX="/usr"
+ENV INSTALL_PREFIX ${B_INSTALL_PREFIX}
 
-COPY kim-api/ /home/kim/kim-api
-RUN rm -rf /home/kim/.ccache
-COPY ccache/ /home/kim/.ccache
-USER root
-RUN chown -R kim:kim /home/kim/kim-api /home/kim/.ccache
-USER kim
-
-WORKDIR /home/kim/kim-api
-CMD scripts/ci-build-and-test-script.sh
+# specify directories where build files should be found
+# for this distribution (optional)
+ARG B_LIB_DIR="${B_INSTALL_PREFIX}/lib64"
+ENV LIB_DIR ${B_LIB_DIR}
+ARG B_BASH_COMPLETION_DIR="/etc"
+ENV BASH_COMPLETION_DIR ${B_BASH_COMPLETION_DIR}
