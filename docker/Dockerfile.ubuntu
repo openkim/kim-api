@@ -34,8 +34,8 @@
 
 FROM ubuntu:latest
 
-RUN apt-get -y update
-RUN apt-get -y install \
+RUN apt-get -y update && \
+    apt-get -y install --no-install-recommends \
         ccache \
         cmake \
         findutils \
@@ -48,7 +48,8 @@ RUN apt-get -y install \
         make \
         wget \
         xxd \
-        xz-utils
+        xz-utils \
+    && rm -rf /var/lib/apt/lists/*
 
 # specify build prefix to be used (optional)
 ARG B_INSTALL_PREFIX="/usr"
