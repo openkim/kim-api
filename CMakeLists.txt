@@ -160,4 +160,4 @@ endif()
 
 # Add install rules for kim-api
 #
-install(TARGETS kim-api DESTINATION ${CMAKE_INSTALL_LIBDIR})
+install(TARGETS kim-api)
