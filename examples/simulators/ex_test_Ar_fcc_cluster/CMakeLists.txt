@@ -61,7 +61,11 @@ foreach(TEST_MODEL ${TEST_MODELS})
   # TODO make a variable for "Testing" directory name
   set(TEST_DIR ${CMAKE_BINARY_DIR}/Testing/Run_${TEST_NAME}_${TEST_MODEL})
   FILE(MAKE_DIRECTORY ${TEST_DIR})
-  add_test(NAME Run_${TEST_NAME}_${TEST_MODEL} COMMAND sh -c "echo ${TEST_MODEL} | ${CMAKE_CURRENT_BINARY_DIR}/${TEST_NAME} > stdout" WORKING_DIRECTORY ${TEST_DIR})
+  # Note: Extending PATH environment variable to include the kim-api DLL directory on Windows.
+  add_test(NAME Run_${TEST_NAME}_${TEST_MODEL} 
+          COMMAND "${CMAKE_COMMAND}" -E env "PATH=$<TARGET_FILE_DIR:kim-api>:$ENV{PATH}"
+                  sh -c "echo ${TEST_MODEL} | ${CMAKE_CURRENT_BINARY_DIR}/${TEST_NAME} > stdout" 
+          WORKING_DIRECTORY ${TEST_DIR})
   # TODO : the environment variables can be abstracted for generality
   set_tests_properties(Run_${TEST_NAME}_${TEST_MODEL} PROPERTIES ENVIRONMENT "KIM_API_PORTABLE_MODELS_DIR=${CMAKE_BINARY_DIR};KIM_API_MODEL_DRIVERS_DIR=${CMAKE_BINARY_DIR}")
   if("${TEST_MODEL}" MATCHES "ex_model_Ar_.*_MultiCutoff")
