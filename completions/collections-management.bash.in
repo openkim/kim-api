@@ -109,7 +109,7 @@ _@KIM_API_C_ID_PROJECT_NAME@_collections_management()
                     -e 's/{"kimcode": "\([^"]*\)"},*/\1/g'`
         opts="${opts} ${list}"
 
-        if test x"function" = x"cd_type"; then  # check if bash_completion has been loaded & _cd defined
+        if test x"function" = x"${cd_type}"; then  # check if bash_completion has been loaded & _cd defined
           _cd
         fi
         COMPREPLY=( "${COMPREPLY[@]}" $(compgen -W "${opts}" -- "${cur}") )
