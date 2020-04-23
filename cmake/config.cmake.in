@@ -26,6 +26,7 @@
 #    Richard Berger
 #    Christoph Junghans
 #    Ryan S. Elliott
+#    Alexander Stukowski
 #
 
 #
@@ -431,8 +432,9 @@ function(add_kim_api_model_library)
     install(TARGETS ${MODEL_NAME} LIBRARY DESTINATION "${KIM_API_SIMULATOR_MODEL_INSTALL_PREFIX}/${MODEL_NAME}")
   endif()
 
-  add_test(NAME shared_library_test_${MODEL_NAME} COMMAND ${KIM_API_SHARED_LIBRARY_TEST_EXECUTABLE} $<TARGET_FILE:${MODEL_NAME}>
-    WORKING_DIRECTORY "$<TARGET_FILE_DIR:kim-api>")
+  add_test(NAME shared_library_test_${MODEL_NAME}
+           COMMAND COMMAND "${CMAKE_COMMAND}" -E env "PATH=$<TARGET_FILE_DIR:kim-api>:$ENV{PATH}"
+                           ${KIM_API_SHARED_LIBRARY_TEST_EXECUTABLE} $<TARGET_FILE:${MODEL_NAME}>)
 endfunction(add_kim_api_model_library)
 
 function(add_kim_api_model_driver_library)
@@ -552,6 +554,7 @@ function(add_kim_api_model_driver_library)
 
   install(TARGETS ${MODEL_DRIVER_NAME} LIBRARY DESTINATION "${KIM_API_MODEL_DRIVER_INSTALL_PREFIX}/${MODEL_DRIVER_NAME}")
 
-  add_test(NAME shared_library_test_${MODEL_DRIVER_NAME} COMMAND ${KIM_API_SHARED_LIBRARY_TEST_EXECUTABLE} $<TARGET_FILE:${MODEL_DRIVER_NAME}>
-    WORKING_DIRECTORY "$<TARGET_FILE_DIR:kim-api>")
+  add_test(NAME shared_library_test_${MODEL_DRIVER_NAME}
+           COMMAND "${CMAKE_COMMAND}" -E env "PATH=$<TARGET_FILE_DIR:kim-api>:$ENV{PATH}"
+           ${KIM_API_SHARED_LIBRARY_TEST_EXECUTABLE} $<TARGET_FILE:${MODEL_DRIVER_NAME}>)
 endfunction(add_kim_api_model_driver_library)

@@ -26,6 +26,7 @@
 #    Richard Berger
 #    Christoph Junghans
 #    Ryan S. Elliott
+#    Alexander Stukowski
 #
 
 #
@@ -33,6 +34,8 @@
 #
 
 
+# use 'lib' instead of '${CMAKE_SHARED_LIBRARY_PREFIX}' here to have consistency
+# of pkg-config usage across systems.
 set(PKG_CONFIG_FILE "lib${PROJECT_NAME}.pc")
 
 list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${CMAKE_INSTALL_FULL_LIBDIR}" isSystemDir)
