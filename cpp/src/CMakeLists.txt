@@ -101,12 +101,11 @@ target_include_directories(kim-loader PUBLIC
   )
 target_link_libraries(kim-loader ${CMAKE_DL_LIBS})
 
-if(${CMAKE_SYSTEM_NAME} STREQUAL CYGWIN)
-  # The KIM API code makes use of non-standard POSIX functions such as mkstemp(), which are 
-  # not available on Cygwin by default, because of the GCC compiler flags -ansi and -std=c++11.
-  # See https://stackoverflow.com/questions/21689124/mkstemp-and-fdopen-in-cygwin-1-7-28
-  # As a workaround, we undefine the __STRICT_ANSI__ macro in order to enable the required 
-  # non-standard POSIX functions again.
-  target_compile_options(kim-api PRIVATE -U__STRICT_ANSI__)
-  target_compile_options(kim-loader PRIVATE -U__STRICT_ANSI__)
-endif()
+# The KIM API code uses POSIX.1-2008 functions such as strdup() or mkstemp(), which are 
+# not part of the ISO C standard. Thus, when compiling with -std=c++98 instead of -std=gnu98,
+# these function would be unavailable. 
+# Defining _DEFAULT_SOURCE during compilation tells the GNU C Library headers to make the
+# POSIX and System V functions available also in strict ANSI C mode.
+# See also: https://www.gnu.org/software/libc/manual/html_node/Feature-Test-Macros.html
+target_compile_definitions(kim-api PRIVATE _DEFAULT_SOURCE)
+target_compile_definitions(kim-loader PRIVATE _DEFAULT_SOURCE)
