@@ -26,6 +26,7 @@
 #    Richard Berger
 #    Christoph Junghans
 #    Ryan S. Elliott
+#    Alexander Stukowski
 #
 
 #
@@ -100,3 +101,12 @@ target_include_directories(kim-loader PUBLIC
   ${CMAKE_BINARY_DIR}
   )
 target_link_libraries(kim-loader ${CMAKE_DL_LIBS})
+
+# The KIM API code uses POSIX.1-2008 functions such as strdup() or mkstemp(), which are
+# not part of the ISO C standard. Thus, when compiling with -std=c++98 instead of -std=gnu98,
+# these function would be unavailable.
+# Defining _DEFAULT_SOURCE during compilation tells the GNU C Library headers to make the
+# POSIX and System V functions available also in strict ANSI C mode.
+# See also: https://www.gnu.org/software/libc/manual/html_node/Feature-Test-Macros.html
+target_compile_definitions(kim-api PRIVATE _DEFAULT_SOURCE)
+target_compile_definitions(kim-loader PRIVATE _DEFAULT_SOURCE)

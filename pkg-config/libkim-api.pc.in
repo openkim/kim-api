@@ -26,6 +26,7 @@
 #    Richard Berger
 #    Christoph Junghans
 #    Ryan S. Elliott
+#    Alexander Stukowski
 #
 
 #
@@ -53,7 +54,7 @@ includedir=@CMAKE_INSTALL_FULL_INCLUDEDIR@/@PROJECT_NAME@
 moddir=@CMAKE_INSTALL_FULL_LIBDIR@/@PROJECT_NAME@/@KIM_API_Fortran_MODULE_DIR_IDENTIFIER@
 docdir=@CMAKE_INSTALL_FULL_DOCDIR@
 
-Name: @CMAKE_SHARED_LIBRARY_PREFIX@@PROJECT_NAME@
+Name: lib@PROJECT_NAME@
 Description: The @PROJECT_NAME@ package is a system-level library that aims to give computer programmers the ability to write atomistic or molecular simulation programs that can seamlessly interface with implementations of interatomic models, regardless of the programming language (C, C++, Fortran, Python, etc.) in which the codes are written.
 URL: https://openkim.org/kim-api
 Version: @PROJECT_VERSION_STRING_WITHOUT_BUILD_METADATA@
