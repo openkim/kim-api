@@ -34,8 +34,8 @@
 
 FROM ubuntu:latest
 
-RUN apt-get -y update && \
-    apt-get -y install --no-install-recommends \
+RUN DEBIAN_FRONTEND=noninteractive apt-get -y update && \
+    DEBIAN_FRONTEND=noninteractive apt-get -y install --no-install-recommends \
         ccache \
         cmake \
         findutils \
