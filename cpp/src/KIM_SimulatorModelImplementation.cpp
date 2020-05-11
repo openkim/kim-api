@@ -1118,6 +1118,7 @@ int SimulatorModelImplementation::WriteParameterFileDirectory()
 
   int error;
 
+#ifndef __MINGW32__
   static char const parameterFileDirectoryNameString[]
       = "kim-simulator-model-parameter-file-directory-XXXXXXXXXXXX";
   std::stringstream templateString;
@@ -1135,6 +1136,19 @@ int SimulatorModelImplementation::WriteParameterFileDirectory()
   }
   parameterFileDirectoryName_ = tmpdir;
   free(cstr);
+#else
+  // Replacement code for mkdtemp() function referenced above, which is not
+  // available on MinGW platform:
+  char * tmpdir = tmpnam(NULL);
+  int mkdir_error = tmpdir ? mkdir(tmpdir) : -1;
+  if (NULL == tmpdir || mkdir_error)
+  {
+    LOG_ERROR("Could not create a secure temporary directory.");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
+  parameterFileDirectoryName_ = tmpdir;
+#endif
 
   {
     unsigned int len;

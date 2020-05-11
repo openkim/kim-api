@@ -3176,9 +3176,10 @@ int ModelImplementation::WriteParameterFiles()
     parameterFileStringLengths.push_back(length);
   }
 
-  static char const fileNameString[] = "kim-model-parameter-file-XXXXXXXXXXXX";
   for (int i = 0; i < numberOfParameterFiles_; ++i)
   {
+#ifndef __MINGW32__
+    static char const fileNameString[] = "kim-model-parameter-file-XXXXXXXXXXXX";
     std::stringstream templateString;
     templateString << P_tmpdir
                    << ((*(--(std::string(P_tmpdir).end())) == '/') ? "" : "/")
@@ -3196,6 +3197,19 @@ int ModelImplementation::WriteParameterFiles()
     free(cstr);
 
     FILE * fl = fdopen(fileid, "w");
+#else
+    // Replacement code for mkstemp() function referenced above, which is not
+    // available on MinGW platform:
+    char * tmpfilename = tmpnam(NULL);
+    FILE * fl = tmpfilename ? fopen(tmpfilename, "w") : NULL;
+    if (!fl)
+    {
+      LOG_ERROR("Could not create a temporary file.");
+      LOG_DEBUG("Exit 1=" + callString);
+      return true;
+    }
+    parameterFileNames_.push_back(tmpfilename);
+#endif
     fwrite(parameterFileStrings[i],
            sizeof(unsigned char),
            parameterFileStringLengths[i],

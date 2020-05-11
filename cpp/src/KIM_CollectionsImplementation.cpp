@@ -153,7 +153,13 @@ void GetSubDirectories(std::string const & dir, std::list<std::string> & list)
 
 int MakeDirWrapper(std::string const & path, mode_t mode)
 {
+#ifndef __MINGW32__
   if (mkdir(path.c_str(), mode))
+#else
+  (void) mode;  // Silence warning about unused function parameter. mode is not
+                // supported on Windows platform.
+  if (mkdir(path.c_str()))
+#endif
   {
     if (EEXIST == errno)
       return false;
