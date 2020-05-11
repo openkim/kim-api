@@ -46,7 +46,9 @@ if(KIM_API_ENABLE_COVERAGE)
 endif()
 if(NOT CMAKE_C_COMPILER_ID STREQUAL Intel
     AND
-    NOT CMAKE_C_COMPILER_ID STREQUAL AppleClang)
+    NOT CMAKE_C_COMPILER_ID STREQUAL AppleClang
+    AND # Note: -pie linker flag breaks generated executables when using MinGW toolchain.
+    NOT MINGW)
   set(KIM_API_EXE_LINKER_FLAGS "${KIM_API_EXE_LINKER_FLAGS} -pie" CACHE STRING "KIM API linker flags")
 endif()
 #
