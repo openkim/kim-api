@@ -108,6 +108,14 @@ mark_as_advanced(KIM_API_SYSTEM_SIMULATOR_MODELS_DIR)
 
 include(DefaultCompilerFlags)
 
+if(MINGW)
+  # On MinGW Windows platform, make <dlfcn.h> functions (dlopen, dlsym, etc.) available
+  # using a third-party portability layer: https://github.com/dlfcn-win32/dlfcn-win32 
+  # It should be installed in the MSYS2 environemnt using the command: 
+  #   pacman -S --needed mingw-w64-x86_64-dlfcn
+  set(CMAKE_DL_LIBS "dl")
+endif()
+
 # Define kim-api target
 #
 add_library(kim-api SHARED "")
@@ -121,7 +129,6 @@ set_target_properties(kim-api
 target_include_directories(kim-api PUBLIC $<TARGET_PROPERTY:kim-api,Fortran_MODULE_DIRECTORY>)
 target_include_directories(kim-api PUBLIC ${CMAKE_BINARY_DIR})
 target_link_libraries(kim-api ${CMAKE_DL_LIBS})
-
 
 # Add include subdirectories
 #
