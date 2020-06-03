@@ -432,10 +432,45 @@ function(add_kim_api_model_library)
     install(TARGETS ${MODEL_NAME} LIBRARY DESTINATION "${KIM_API_SIMULATOR_MODEL_INSTALL_PREFIX}/${MODEL_NAME}")
   endif()
 
-  add_test(NAME shared_library_test_${MODEL_NAME}
-           COMMAND COMMAND "${CMAKE_COMMAND}" -E env "PATH=$<TARGET_FILE_DIR:kim-api>:$ENV{PATH}"
-                           ${KIM_API_SHARED_LIBRARY_TEST_EXECUTABLE} $<TARGET_FILE:${MODEL_NAME}>)
+  add_kim_api_test(NAME shared_library_test_${MODEL_NAME}
+           COMMAND ${KIM_API_SHARED_LIBRARY_TEST_EXECUTABLE} $<TARGET_FILE:${MODEL_NAME}>)
 endfunction(add_kim_api_model_library)
+
+#
+# Wrapper function for CMake's standard add_test() function, which takes care of setting up the DLL search path on Windows.
+# The function signature is the same as for the built-in add_test() function:
+#
+# add_kim_api_test(NAME <name> COMMAND <command> [<arg>...]
+#                  [CONFIGURATIONS <config>...]
+#                  [WORKING_DIRECTORY] <dir>
+#                  [COMMAND_EXPAND_LISTS])
+#
+# The wrapper function sets up the ENVIRONMENT property of the test case to extend the DLL search path.
+# Make sure you do not overwrite that property's value when setting up a custom environment 
+# for the test case. Use set_property(TEST ... APPEND PROPERTY ENVIRONMENT ...) to add further 
+# environment variables.
+#
+function(add_kim_api_test)
+
+  # Foward the function call and all arguments to the built-in add_test() function.
+  cmake_parse_arguments(PARSE_ARGV 0 KIMAPI_TEST "" "NAME" "")
+  add_test(NAME ${KIMAPI_TEST_NAME} ${KIMAPI_TEST_UNPARSED_ARGUMENTS})
+
+  # Determine the value of the PATH environment variable to be used for running the CMake test.
+  # It is required on Windows, because kim-api.dll needs to be in the search 
+  # path when running the test executables. We prepend the CMake build directory to the existing PATH variable. 
+  if(CYGWIN)
+    # CMake under Cygwin expects ':' separated path list with '/' directory separators (Unix style).
+    set_property(TEST ${KIMAPI_TEST_NAME} APPEND PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:kim-api>:$ENV{PATH}")
+  elseif(MINGW)
+    # CMake under MinGW expects ';' separated path list with '\' directory separators (Windows style). 
+    string(REPLACE ";" "\\;" PATH_VALUE "$ENV{PATH}")
+    set_property(TEST ${KIMAPI_TEST_NAME} APPEND PROPERTY ENVIRONMENT "PATH=$<SHELL_PATH:$<TARGET_FILE_DIR:kim-api>>\;${PATH_VALUE}")
+  else()
+    # No PATH needed on Unix/Linux platforms, where shared libraries are located using the rpath mechanism.
+  endif()
+
+endfunction(add_kim_api_test)
 
 function(add_kim_api_model_driver_library)
   set(options "")
@@ -554,7 +589,6 @@ function(add_kim_api_model_driver_library)
 
   install(TARGETS ${MODEL_DRIVER_NAME} LIBRARY DESTINATION "${KIM_API_MODEL_DRIVER_INSTALL_PREFIX}/${MODEL_DRIVER_NAME}")
 
-  add_test(NAME shared_library_test_${MODEL_DRIVER_NAME}
-           COMMAND "${CMAKE_COMMAND}" -E env "PATH=$<TARGET_FILE_DIR:kim-api>:$ENV{PATH}"
-           ${KIM_API_SHARED_LIBRARY_TEST_EXECUTABLE} $<TARGET_FILE:${MODEL_DRIVER_NAME}>)
+  add_kim_api_test(NAME shared_library_test_${MODEL_DRIVER_NAME}
+           COMMAND ${KIM_API_SHARED_LIBRARY_TEST_EXECUTABLE} $<TARGET_FILE:${MODEL_DRIVER_NAME}>)
 endfunction(add_kim_api_model_driver_library)
