@@ -3159,30 +3159,35 @@ int ModelImplementation::WriteParameterFiles()
   LOG_DEBUG("Enter  " + callString);
 
   sharedLibrary_->GetNumberOfParameterFiles(&numberOfParameterFiles_);
+  std::vector<std::string> parameterFileNameBase;
   std::vector<unsigned char const *> parameterFileStrings;
   std::vector<unsigned int> parameterFileStringLengths;
   for (int i = 0; i < numberOfParameterFiles_; ++i)
   {
+    std::string parameterFileName;
     unsigned char const * strPtr;
     unsigned int length;
-    int error = sharedLibrary_->GetParameterFile(i, NULL, &length, &strPtr);
+    int error = sharedLibrary_->GetParameterFile(i, 
+                                                 &parameterFileName, 
+                                                 &length, 
+                                                 &strPtr);
     if (error)
     {
       LOG_ERROR("Could not get parameter file data.");
       LOG_DEBUG("Exit 1=" + callString);
       return true;
     }
+    parameterFileNameBase.push_back(parameterFileName + "-XXXXXXXXXXXX");
     parameterFileStrings.push_back(strPtr);
     parameterFileStringLengths.push_back(length);
   }
 
-  static char const fileNameString[] = "kim-model-parameter-file-XXXXXXXXXXXX";
   for (int i = 0; i < numberOfParameterFiles_; ++i)
   {
     std::stringstream templateString;
     templateString << P_tmpdir
                    << ((*(--(std::string(P_tmpdir).end())) == '/') ? "" : "/")
-                   << fileNameString;
+                   << parameterFileNameBase[i];
     char * cstr = strdup(templateString.str().c_str());
     int fileid = mkstemp(cstr);
     if (fileid == -1)
