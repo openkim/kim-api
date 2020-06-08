@@ -33,7 +33,6 @@
 #include <algorithm>
 #include <cmath>
 #include <cstdio>
-#include <cstdlib>
 #include <cstring>
 #include <fstream>
 #include <iomanip>
@@ -3005,7 +3004,21 @@ int ModelImplementation::InitializeParameterizedModel(
 #endif
 
   // write parameter files to scratch space
-  error = WriteParameterFiles();
+  std::string parameterFileDirectoryName;
+  error
+      = sharedLibrary_->WriteParameterFileDirectory()
+        || sharedLibrary_->GetParameterFileDirectoryName(
+            &parameterFileDirectoryName)
+        || sharedLibrary_->GetNumberOfParameterFiles(&numberOfParameterFiles_);
+  for (int i = 0; i < numberOfParameterFiles_; ++i)
+  {
+    std::string parameterFileName;
+    error = error
+            || sharedLibrary_->GetParameterFile(
+                i, &parameterFileName, NULL, NULL);
+    parameterFileName = parameterFileDirectoryName + "/" + parameterFileName;
+    parameterFileNames_.push_back(parameterFileName.c_str());
+  }
   if (error)
   {
     LOG_ERROR("Could not write parameter files to scratch space.");
@@ -3013,14 +3026,9 @@ int ModelImplementation::InitializeParameterizedModel(
     return true;
   }
 
-  // close model and open driver
-  error = sharedLibrary_->Close();
-  if (error)
-  {
-    LOG_ERROR("Could not close model shared library.");
-    LOG_DEBUG("Exit 1=" + callString);
-    return true;
-  }
+  // create and open driver library
+  SharedLibrary * parameterizedModelLibrary = sharedLibrary_;
+  sharedLibrary_ = new SharedLibrary(log_);
 
   std::string const * itemFilePath;
   error = collections_->GetItemLibraryFileNameAndCollection(
@@ -3141,67 +3149,13 @@ int ModelImplementation::InitializeParameterizedModel(
   }
 
   // remove parameter files
-  for (int i = 0; i < numberOfParameterFiles_; ++i)
-  { remove(parameterFileNames_[i].c_str()); }
+  parameterizedModelLibrary->RemoveParameterFileDirectory();
+  parameterizedModelLibrary->Close();
+  delete parameterizedModelLibrary;
+  parameterizedModelLibrary = NULL;
   // clear out parameter file stuff
   numberOfParameterFiles_ = -1;
   parameterFileNames_.clear();
-
-  LOG_DEBUG("Exit 0=" + callString);
-  return false;
-}
-
-int ModelImplementation::WriteParameterFiles()
-{
-#if DEBUG_VERBOSITY
-  std::string const callString = "WriteParameterFiles().";
-#endif
-  LOG_DEBUG("Enter  " + callString);
-
-  sharedLibrary_->GetNumberOfParameterFiles(&numberOfParameterFiles_);
-  std::vector<unsigned char const *> parameterFileStrings;
-  std::vector<unsigned int> parameterFileStringLengths;
-  for (int i = 0; i < numberOfParameterFiles_; ++i)
-  {
-    unsigned char const * strPtr;
-    unsigned int length;
-    int error = sharedLibrary_->GetParameterFile(i, NULL, &length, &strPtr);
-    if (error)
-    {
-      LOG_ERROR("Could not get parameter file data.");
-      LOG_DEBUG("Exit 1=" + callString);
-      return true;
-    }
-    parameterFileStrings.push_back(strPtr);
-    parameterFileStringLengths.push_back(length);
-  }
-
-  static char const fileNameString[] = "kim-model-parameter-file-XXXXXXXXXXXX";
-  for (int i = 0; i < numberOfParameterFiles_; ++i)
-  {
-    std::stringstream templateString;
-    templateString << P_tmpdir
-                   << ((*(--(std::string(P_tmpdir).end())) == '/') ? "" : "/")
-                   << fileNameString;
-    char * cstr = strdup(templateString.str().c_str());
-    int fileid = mkstemp(cstr);
-    if (fileid == -1)
-    {
-      free(cstr);
-      LOG_ERROR("Could not create a secure temporary file.");
-      LOG_DEBUG("Exit 1=" + callString);
-      return true;
-    }
-    parameterFileNames_.push_back(cstr);
-    free(cstr);
-
-    FILE * fl = fdopen(fileid, "w");
-    fwrite(parameterFileStrings[i],
-           sizeof(unsigned char),
-           parameterFileStringLengths[i],
-           fl);
-    fclose(fl);  // also closed the fileid
-  }
 
   LOG_DEBUG("Exit 0=" + callString);
   return false;

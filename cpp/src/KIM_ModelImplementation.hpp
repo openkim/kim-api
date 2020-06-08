@@ -289,8 +289,6 @@ class ModelImplementation
       TemperatureUnit const requestedTemperatureUnit,
       TimeUnit const requestedTimeUnit);
 
-  int WriteParameterFiles();
-
   bool numberingHasBeenSet_;
   Numbering modelNumbering_;
   Numbering simulatorNumbering_;

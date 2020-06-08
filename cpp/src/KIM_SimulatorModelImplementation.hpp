@@ -143,8 +143,6 @@ class SimulatorModelImplementation
   int GetSchemaVersion();
   int ReadEdnSchemaV1();
   int Initialize(std::string const & simulatorModelName);
-  int WriteParameterFileDirectory();
-  void RemoveParameterFileDirectory();
 
   std::string parameterFileDirectoryName_;
   std::string specificationFileName_;

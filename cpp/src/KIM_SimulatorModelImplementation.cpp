@@ -34,15 +34,12 @@
 #include "edn-cpp/edn.hpp"
 #include <algorithm>
 #include <cstdio>
-#include <cstdlib>
 #include <cstring>
-#include <dirent.h>
 #include <fstream>
 #include <iomanip>
 #include <iterator>
 #include <list>
 #include <sstream>
-#include <unistd.h>  // IWYU pragma: keep
 
 
 #ifndef KIM_SIMULATOR_MODEL_IMPLEMENTATION_HPP_
@@ -725,8 +722,7 @@ SimulatorModelImplementation::~SimulatorModelImplementation()
 #endif
   LOG_DEBUG("Enter  " + callString);
 
-  RemoveParameterFileDirectory();
-
+  sharedLibrary_->RemoveParameterFileDirectory();
   delete sharedLibrary_;
 
   if (collections_ != NULL) Collections::Destroy(&collections_);
@@ -800,9 +796,25 @@ int SimulatorModelImplementation::Initialize(
     }
   }
 
-  error = WriteParameterFileDirectory();
+  // create parameter files on disk and set associated variables
+  error
+      = sharedLibrary_->WriteParameterFileDirectory()
+        || sharedLibrary_->GetSimulatorModelSpecificationFile(
+            &specificationFileName_, NULL, NULL)
+        || sharedLibrary_->GetParameterFileDirectoryName(
+            &parameterFileDirectoryName_)
+        || sharedLibrary_->GetNumberOfParameterFiles(&numberOfParameterFiles_);
+  for (int i = 0; i < numberOfParameterFiles_; ++i)
+  {
+    std::string parameterFileName;
+    error = error
+            || sharedLibrary_->GetParameterFile(
+                i, &parameterFileName, NULL, NULL);
+    if (!error) { parameterFileNames_.push_back(parameterFileName); }
+  }
   if (error)
   {
+    sharedLibrary_->RemoveParameterFileDirectory();
     LOG_ERROR("Could not write parameter file directory to scratch space.");
     LOG_DEBUG("Exit 1=" + callString);
     return true;
@@ -1107,134 +1119,5 @@ int SimulatorModelImplementation::ReadEdnSchemaV1()
 
   LOG_DEBUG("Exit 0=" + callString);
   return false;
-}
-
-int SimulatorModelImplementation::WriteParameterFileDirectory()
-{
-#if DEBUG_VERBOSITY
-  std::string const callString = "WriteParameterFileDirectory().";
-#endif
-  LOG_DEBUG("Enter  " + callString);
-
-  int error;
-
-  static char const parameterFileDirectoryNameString[]
-      = "kim-simulator-model-parameter-file-directory-XXXXXXXXXXXX";
-  std::stringstream templateString;
-  templateString << P_tmpdir
-                 << ((*(--(std::string(P_tmpdir).end())) == '/') ? "" : "/")
-                 << parameterFileDirectoryNameString;
-  char * cstr = strdup(templateString.str().c_str());
-  char * tmpdir = mkdtemp(cstr);
-  if (NULL == tmpdir)
-  {
-    free(cstr);
-    LOG_ERROR("Could not create a secure temporary directory.");
-    LOG_DEBUG("Exit 1=" + callString);
-    return true;
-  }
-  parameterFileDirectoryName_ = tmpdir;
-  free(cstr);
-
-  {
-    unsigned int len;
-    unsigned char const * specificationData;
-    error = sharedLibrary_->GetSimulatorModelSpecificationFile(
-        &specificationFileName_, &len, &specificationData);
-    if (error)
-    {
-      LOG_ERROR("Unable to get specification file.");
-      RemoveParameterFileDirectory();
-      LOG_DEBUG("Exit 1=" + callString);
-      return true;
-    }
-    std::string const specificationFilePathName
-        = parameterFileDirectoryName_ + "/" + specificationFileName_;
-    FILE * fl = fopen(specificationFilePathName.c_str(), "w");
-    if (NULL == fl)
-    {
-      LOG_ERROR("Unable to get write parameter file.");
-      RemoveParameterFileDirectory();
-      LOG_DEBUG("Exit 1=" + callString);
-      return true;
-    }
-    fwrite(specificationData, sizeof(unsigned char), len, fl);
-    fclose(fl);
-    fl = NULL;
-  }
-
-  sharedLibrary_->GetNumberOfParameterFiles(&numberOfParameterFiles_);
-  std::vector<unsigned char const *> parameterFileStrings;
-  std::vector<unsigned int> parameterFileStringLengths;
-  for (int i = 0; i < numberOfParameterFiles_; ++i)
-  {
-    std::string parameterFileName;
-    unsigned char const * strPtr;
-    unsigned int length;
-    error = sharedLibrary_->GetParameterFile(
-        i, &parameterFileName, &length, &strPtr);
-    if (error)
-    {
-      LOG_ERROR("Could not get parameter file data.");
-      LOG_DEBUG("Exit 1=" + callString);
-      return true;
-    }
-    parameterFileNames_.push_back(parameterFileName);
-
-    std::string const parameterFilePathName
-        = parameterFileDirectoryName_ + "/" + parameterFileName;
-    FILE * fl = fopen(parameterFilePathName.c_str(), "w");
-    if (NULL == fl)
-    {
-      LOG_ERROR("Unable to get write parameter file.");
-      RemoveParameterFileDirectory();
-      LOG_DEBUG("Exit 1=" + callString);
-      return true;
-    }
-    fwrite(strPtr, sizeof(unsigned char), length, fl);
-    fclose(fl);
-    fl = NULL;
-  }
-
-  LOG_DEBUG("Exit 0=" + callString);
-  return false;
-}
-
-void SimulatorModelImplementation::RemoveParameterFileDirectory()
-{
-  if (parameterFileDirectoryName_ != "")
-  {
-    int error;
-    struct dirent * dp = NULL;
-    DIR * dir = NULL;
-    dir = opendir(parameterFileDirectoryName_.c_str());
-    while ((dp = readdir(dir)))
-    {
-      // assuming no subdirectories, just files
-      if ((0 != strcmp(dp->d_name, ".")) && (0 != strcmp(dp->d_name, "..")))
-      {
-        std::string filePath = parameterFileDirectoryName_ + "/" + dp->d_name;
-        error = remove(filePath.c_str());
-        if (error)
-        {
-          LOG_ERROR("Unable to remove simulator model file '" + filePath
-                    + "'.");
-        }
-      }
-    }
-    error = remove(parameterFileDirectoryName_.c_str());
-    if (error)
-    {
-      LOG_ERROR("Unable to remove simulator model parameter file directory '"
-                + parameterFileDirectoryName_ + "'.");
-    }
-    closedir(dir);
-
-    // clear out directory and file stuff
-    parameterFileDirectoryName_ = "";
-    specificationFileName_ = "";
-    numberOfParameterFiles_ = -1;
-    parameterFileNames_.clear();
-  }
 }
 }  // namespace KIM
