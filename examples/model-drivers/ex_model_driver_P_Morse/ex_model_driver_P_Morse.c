@@ -391,7 +391,9 @@ int model_driver_create(KIM_ModelDriverCreate * const modelDriverCreate,
 {
   /* KIM variables */
   int numberOfParameterFiles;
-  char const * paramfile1name;
+  char const * paramfiledirname;
+  char const * paramfilebasename;
+  char paramfile1name[2048];
 
   /* Local variables */
   FILE * fid;
@@ -494,13 +496,16 @@ int model_driver_create(KIM_ModelDriverCreate * const modelDriverCreate,
     LOG_ERROR("Incorrect number of parameter files.");
     return ier;
   }
-  ier = KIM_ModelDriverCreate_GetParameterFileName(
-      modelDriverCreate, 0, &paramfile1name);
+  KIM_ModelDriverCreate_GetParameterFileDirectoryName(modelDriverCreate,
+                                                      &paramfiledirname);
+  ier = KIM_ModelDriverCreate_GetParameterFileBasename(
+      modelDriverCreate, 0, &paramfilebasename);
   if (ier == TRUE)
   {
-    LOG_ERROR("Unable to get parameter file name.");
+    LOG_ERROR("Unable to get parameter file basename.");
     return ier;
   }
+  sprintf(paramfile1name, "%s/%s", paramfiledirname, paramfilebasename);
 
   /* Read in model parameters from parameter file */
   fid = fopen(paramfile1name, "r");

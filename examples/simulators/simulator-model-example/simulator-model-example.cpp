@@ -133,19 +133,20 @@ int main()
               << " parameter files:" << std::endl;
     for (int i = 0; i < numberParamFiles; ++i)
     {
-      std::string const * pParamFileName;
-      error = SM->GetParameterFileName(i, &pParamFileName);
+      std::string const * pParamFileBasename;
+      error = SM->GetParameterFileBasename(i, &pParamFileBasename);
       if (error)
       {
-        std::cout << "Unable to get parameter file name." << std::endl;
+        std::cout << "Unable to get parameter file basename." << std::endl;
         goto fail;
       }
       else
       {
         std::cout << "Parameter file " << std::setw(2) << i
-                  << " has name : " << *pParamFileName << std::endl;
+                  << " has basename : " << *pParamFileBasename << std::endl;
         error = system(
-            (std::string("cat ") + *pDirName + "/" + *pParamFileName).c_str());
+            (std::string("cat ") + *pDirName + "/" + *pParamFileBasename)
+                .c_str());
         std::cout << std::endl;
       }
     }

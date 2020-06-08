@@ -707,6 +707,8 @@ integer(c_int), intent(out) :: ierr
 !-- Local variables
 integer i
 integer(c_int) :: number_of_parameter_files
+character(len=1024, kind=c_char) :: parameter_file_directory_name
+character(len=1024, kind=c_char) :: parameter_file_basename
 character(len=1024, kind=c_char) :: parameter_file_name
 integer(c_int) :: ierr2
 type(BUFFER_TYPE), pointer :: buf;
@@ -791,14 +793,18 @@ end if
 
 ! Read in model parameters from parameter file
 !
-call kim_get_parameter_file_name( &
-  model_driver_create_handle, 1, parameter_file_name, ierr)
+call kim_get_parameter_file_directory_name( &
+  model_driver_create_handle, parameter_file_directory_name)
+call kim_get_parameter_file_basename( &
+  model_driver_create_handle, 1, parameter_file_basename, ierr)
 if (ierr /= 0) then
   call kim_log_entry(model_driver_create_handle, &
-    KIM_LOG_VERBOSITY_ERROR, "Unable to get parameter file name")
+    KIM_LOG_VERBOSITY_ERROR, "Unable to get parameter file basename")
   ierr = 1
   goto 42
 end if
+parameter_file_name = trim(parameter_file_directory_name) //"/"// &
+  trim(parameter_file_basename)
 open(10,file=parameter_file_name,status="old")
 read(10,*,iostat=ierr,err=100) in_species
 read(10,*,iostat=ierr,err=100) in_cutoff
