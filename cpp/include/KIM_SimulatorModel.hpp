@@ -418,8 +418,30 @@ class SimulatorModel
   /// kim_simulator_model_module::kim_get_parameter_file_name
   ///
   /// \since 2.1
+  ///
+  /// \deprecated As of 2.2.  Please use GetParameterFileBasename() instead.
   int GetParameterFileName(int const index,
                            std::string const ** const parameterFileName) const;
+
+  /// \brief Get the basename (file name without path) of a particular
+  /// parameter file.  The file is located in the SimulatorModel's parameter
+  /// file directory.
+  ///
+  /// \param[in]  index Zero-based index for the parameter file of interest.
+  /// \param[out] parameterFileBasename Basename (file name without path) of
+  ///             the parameter file.
+  ///
+  /// \post \c parameterFileBasename is unchanged if an error occurs.
+  ///
+  /// \return \c true if \c index is invalid.
+  /// \return \c false otherwise.
+  ///
+  /// \sa KIM_SimulatorModel_GetParameterFileBasename,
+  /// kim_simulator_model_module::kim_get_parameter_file_basename
+  ///
+  /// \since 2.2
+  int GetParameterFileBasename(
+      int const index, std::string const ** const parameterFileBasename) const;
 
   /// \brief Set the \ref cache_buffer_pointers "Simulator's buffer pointer"
   /// within the SimulatorModel object.

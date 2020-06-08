@@ -313,13 +313,14 @@ void SimulatorModelImplementation::AddStandardTemplatesToMap()
 
   AddTemplateMap("parameter-file-dir", parameterFileDirectoryName_);
 
-  for (size_t i = 0; i < parameterFileNames_.size(); ++i)
+  for (size_t i = 0; i < parameterFileBasenames_.size(); ++i)
   {
     AddTemplateMap("parameter-file-basename-" + SNUM(i + 1),
-                   parameterFileNames_[i]);
+                   parameterFileBasenames_[i]);
 
     AddTemplateMap("parameter-file-" + SNUM(i + 1),
-                   parameterFileDirectoryName_ + "/" + parameterFileNames_[i]);
+                   parameterFileDirectoryName_ + "/"
+                       + parameterFileBasenames_[i]);
   }
 
   LOG_DEBUG("Exit 0=" + callString);
@@ -504,6 +505,9 @@ int SimulatorModelImplementation::GetParameterFileName(
                                  + SPTR(parameterFileName) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
+  LOG_WARNING("Use of the " + callString
+              + " function is deprecated. "
+                "Please use GetParameterFileBasename() instead.");
 
 #if ERROR_VERBOSITY
   if ((index < 0) || (index >= numberOfParameterFiles_))
@@ -514,7 +518,31 @@ int SimulatorModelImplementation::GetParameterFileName(
   }
 #endif
 
-  *parameterFileName = &parameterFileNames_[index];
+  *parameterFileName = &parameterFileBasenames_[index];
+
+  LOG_DEBUG("Exit 0=" + callString);
+  return false;
+}
+
+int SimulatorModelImplementation::GetParameterFileBasename(
+    int const index, std::string const ** const parameterFileBasename) const
+{
+#if DEBUG_VERBOSITY
+  std::string const callString = "GetParameterFileBasename(" + SNUM(index)
+                                 + ", " + SPTR(parameterFileBasename) + ").";
+#endif
+  LOG_DEBUG("Enter  " + callString);
+
+#if ERROR_VERBOSITY
+  if ((index < 0) || (index >= numberOfParameterFiles_))
+  {
+    LOG_ERROR("Invalid parameter file index, " + SNUM(index) + ".");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
+#endif
+
+  *parameterFileBasename = &parameterFileBasenames_[index];
 
   LOG_DEBUG("Exit 0=" + callString);
   return false;
@@ -642,7 +670,7 @@ std::string const & SimulatorModelImplementation::ToString() const
     ss << "\t"
        << "index : " << i << "\n"
        << "\t  "
-       << "name : " << parameterFileNames_[i] << "\n\n";
+       << "name : " << parameterFileBasenames_[i] << "\n\n";
   }
 
   ss << "Original simulator fields :\n";
@@ -806,11 +834,11 @@ int SimulatorModelImplementation::Initialize(
         || sharedLibrary_->GetNumberOfParameterFiles(&numberOfParameterFiles_);
   for (int i = 0; i < numberOfParameterFiles_; ++i)
   {
-    std::string parameterFileName;
+    std::string parameterFileBasename;
     error = error
             || sharedLibrary_->GetParameterFile(
-                i, &parameterFileName, NULL, NULL);
-    if (!error) { parameterFileNames_.push_back(parameterFileName); }
+                i, &parameterFileBasename, NULL, NULL);
+    if (!error) { parameterFileBasenames_.push_back(parameterFileBasename); }
   }
   if (error)
   {

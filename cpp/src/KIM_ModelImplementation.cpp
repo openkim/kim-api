@@ -844,6 +844,20 @@ void ModelImplementation::GetUnits(LengthUnit * const lengthUnit,
   LOG_DEBUG("Exit   " + callString);
 }
 
+void ModelImplementation::GetParameterFileDirectoryName(
+    std::string const ** const directoryName) const
+{
+#if DEBUG_VERBOSITY
+  std::string const callString
+      = "GetParameterFileDirectoryName(" + SPTR(directoryName) + ").";
+#endif
+  LOG_DEBUG("Enter  " + callString);
+
+  *directoryName = &parameterFileDirectoryName_;
+
+  LOG_DEBUG("Exit   " + callString);
+}
+
 int ModelImplementation::GetNumberOfParameterFiles(
     int * const numberOfParameterFiles) const
 {
@@ -876,6 +890,9 @@ int ModelImplementation::GetParameterFileName(
                                  + SPTR(parameterFileName) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
+  LOG_WARNING("Use of the " + callString
+              + " function is deprecated. "
+                "Please use GetParameterFileBasename() instead.");
 
 #if ERROR_VERBOSITY
   if (modelDriverName_ == "")
@@ -901,6 +918,44 @@ int ModelImplementation::GetParameterFileName(
 #endif
 
   *parameterFileName = &(parameterFileNames_[index]);
+
+  LOG_DEBUG("Exit 0=" + callString);
+  return false;
+}
+
+int ModelImplementation::GetParameterFileBasename(
+    int const index, std::string const ** const parameterFileBasename) const
+{
+#if DEBUG_VERBOSITY
+  std::string const callString = "GetParameterFileBaseame(" + SNUM(index) + ", "
+                                 + SPTR(parameterFileBasename) + ").";
+#endif
+  LOG_DEBUG("Enter  " + callString);
+
+#if ERROR_VERBOSITY
+  if (modelDriverName_ == "")
+  {
+    LOG_ERROR("Only parameterized models have parameter files.");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
+
+  if ((index < 0) || (index >= numberOfParameterFiles_))
+  {
+    LOG_ERROR("Invalid parameter file index, " + SNUM(index) + ".");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
+
+  if (parameterFileBasename == NULL)
+  {
+    LOG_ERROR("Null pointer provided for parameterFileBasename.");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
+#endif
+
+  *parameterFileBasename = &(parameterFileBasenames_[index]);
 
   LOG_DEBUG("Exit 0=" + callString);
   return false;
@@ -2003,6 +2058,7 @@ ModelImplementation::ModelImplementation(SharedLibrary * const sharedLibrary,
     modelName_(""),
     modelDriverName_(""),
     sharedLibrary_(sharedLibrary),
+    parameterFileDirectoryName_(""),
     numberOfParameterFiles_(0),
     log_(log),
     numberingHasBeenSet_(false),
@@ -3004,11 +3060,10 @@ int ModelImplementation::InitializeParameterizedModel(
 #endif
 
   // write parameter files to scratch space
-  std::string parameterFileDirectoryName;
   error
       = sharedLibrary_->WriteParameterFileDirectory()
         || sharedLibrary_->GetParameterFileDirectoryName(
-            &parameterFileDirectoryName)
+            &parameterFileDirectoryName_)
         || sharedLibrary_->GetNumberOfParameterFiles(&numberOfParameterFiles_);
   for (int i = 0; i < numberOfParameterFiles_; ++i)
   {
@@ -3016,7 +3071,8 @@ int ModelImplementation::InitializeParameterizedModel(
     error = error
             || sharedLibrary_->GetParameterFile(
                 i, &parameterFileName, NULL, NULL);
-    parameterFileName = parameterFileDirectoryName + "/" + parameterFileName;
+    parameterFileBasenames_.push_back(parameterFileName.c_str());
+    parameterFileName = parameterFileDirectoryName_ + "/" + parameterFileName;
     parameterFileNames_.push_back(parameterFileName.c_str());
   }
   if (error)
@@ -3156,6 +3212,7 @@ int ModelImplementation::InitializeParameterizedModel(
   // clear out parameter file stuff
   numberOfParameterFiles_ = -1;
   parameterFileNames_.clear();
+  parameterFileBasenames_.clear();
 
   LOG_DEBUG("Exit 0=" + callString);
   return false;

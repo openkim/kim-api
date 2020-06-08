@@ -163,6 +163,17 @@ KIM::SpeciesName makeSpeciesNameCpp(KIM_SpeciesName const speciesName)
 }  // namespace
 
 extern "C" {
+void KIM_ModelDriverCreate_GetParameterFileDirectoryName(
+    KIM_ModelDriverCreate const * const modelDriverCreate,
+    char const ** const directoryName)
+{
+  CONVERT_POINTER;
+
+  std::string const * pStr = NULL;
+  pModelDriverCreate->GetParameterFileDirectoryName(&pStr);
+  *directoryName = pStr->c_str();
+}
+
 void KIM_ModelDriverCreate_GetNumberOfParameterFiles(
     KIM_ModelDriverCreate const * const modelDriverCreate,
     int * const numberOfParameterFiles)
@@ -193,6 +204,31 @@ int KIM_ModelDriverCreate_GetParameterFileName(
   else
   {
     if (parameterFileName != NULL) *parameterFileName = pStr->c_str();
+    return false;
+  }
+}
+
+int KIM_ModelDriverCreate_GetParameterFileBasename(
+    KIM_ModelDriverCreate const * const modelDriverCreate,
+    int const index,
+    char const ** const parameterFileBasename)
+{
+  CONVERT_POINTER;
+
+  std::string const * pStr;
+  std::string const ** ppStr;
+  if (parameterFileBasename == NULL)
+    ppStr = NULL;
+  else
+    ppStr = &pStr;
+
+  int error = pModelDriverCreate->GetParameterFileBasename(index, ppStr);
+
+  if (error)
+    return true;
+  else
+  {
+    if (parameterFileBasename != NULL) *parameterFileBasename = pStr->c_str();
     return false;
   }
 }
