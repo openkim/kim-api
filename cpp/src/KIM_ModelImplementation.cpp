@@ -3046,11 +3046,12 @@ int ModelImplementation::InitializeParameterizedModel(
 #endif
   LOG_DEBUG("Enter  " + callString);
 
+  int error;
 #if ERROR_VERBOSITY
-  int error = (!requestedLengthUnit.Known()) || (!requestedEnergyUnit.Known())
-              || (!requestedChargeUnit.Known())
-              || (!requestedTemperatureUnit.Known())
-              || (!requestedTimeUnit.Known());
+  error = (!requestedLengthUnit.Known()) || (!requestedEnergyUnit.Known())
+          || (!requestedChargeUnit.Known())
+          || (!requestedTemperatureUnit.Known())
+          || (!requestedTimeUnit.Known());
   if (error)
   {
     LOG_ERROR("Invalid arguments.");
