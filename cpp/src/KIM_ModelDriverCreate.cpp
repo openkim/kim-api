@@ -71,6 +71,14 @@
 
 namespace KIM
 {
+void ModelDriverCreate::GetParameterFileDirectoryName(
+    std::string const ** const directoryName) const
+{
+  CONVERT_POINTER;
+
+  pImpl->GetParameterFileDirectoryName(directoryName);
+}
+
 void ModelDriverCreate::GetNumberOfParameterFiles(
     int * const numberOfParameterFiles) const
 {
@@ -85,6 +93,13 @@ int ModelDriverCreate::GetParameterFileName(
   CONVERT_POINTER;
 
   return pImpl->GetParameterFileName(index, parameterFileName);
+}
+int ModelDriverCreate::GetParameterFileBasename(
+    int const index, std::string const ** const parameterFileBasename) const
+{
+  CONVERT_POINTER;
+
+  return pImpl->GetParameterFileBasename(index, parameterFileBasename);
 }
 
 

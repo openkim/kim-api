@@ -80,6 +80,11 @@ class SharedLibrary
       std::string * const specFileName,
       unsigned int * const specFileLength,
       unsigned char const ** const specFileData) const;
+
+  int WriteParameterFileDirectory();
+  int GetParameterFileDirectoryName(std::string * const directoryName) const;
+  int RemoveParameterFileDirectory();
+
   int GetDriverName(std::string * const driverName) const;
   int GetNumberOfMetadataFiles(int * const numberOfMetadataFiles) const;
   int GetMetadataFile(int const index,
@@ -116,6 +121,8 @@ class SharedLibrary
   std::vector<EmbeddedFile> parameterFiles_;
   int numberOfMetadataFiles_;
   std::vector<EmbeddedFile> metadataFiles_;
+
+  std::string parameterFileDirectoryName_;
 
   Log * log_;
 };  // class SharedLibrary

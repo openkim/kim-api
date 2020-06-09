@@ -299,16 +299,19 @@ int LennardJones612Implementation::OpenParameterFiles(
     return ier;
   }
 
+  std::string const * paramFileDirName;
+  modelDriverCreate->GetParameterFileDirectoryName(&paramFileDirName);
   for (int i = 0; i < numberParameterFiles; ++i)
   {
     std::string const * paramFileName;
-    ier = modelDriverCreate->GetParameterFileName(i, &paramFileName);
+    ier = modelDriverCreate->GetParameterFileBasename(i, &paramFileName);
     if (ier)
     {
       LOG_ERROR("Unable to get parameter file name");
       return ier;
     }
-    parameterFilePointers[i] = fopen(paramFileName->c_str(), "r");
+    std::string filename = *paramFileDirName + "/" + *paramFileName;
+    parameterFilePointers[i] = fopen(filename.c_str(), "r");
     if (parameterFilePointers[i] == 0)
     {
       char message[MAXLINE];

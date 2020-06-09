@@ -157,6 +157,12 @@ int SimulatorModel::GetParameterFileName(
   return pimpl->GetParameterFileName(index, parameterFileName);
 }
 
+int SimulatorModel::GetParameterFileBasename(
+    int const index, std::string const ** const parameterFileBasename) const
+{
+  return pimpl->GetParameterFileBasename(index, parameterFileBasename);
+}
+
 void SimulatorModel::SetSimulatorBufferPointer(void * const ptr)
 {
   pimpl->SetSimulatorBufferPointer(ptr);

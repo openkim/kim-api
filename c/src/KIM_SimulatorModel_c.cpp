@@ -299,6 +299,25 @@ int KIM_SimulatorModel_GetParameterFileName(
   }
 }
 
+int KIM_SimulatorModel_GetParameterFileBasename(
+    KIM_SimulatorModel const * const simulatorModel,
+    int const index,
+    char const ** const parameterFileBasename)
+{
+  CONVERT_POINTER;
+
+  std::string const * pStrParameterFileBasename;
+  int error = pSimulatorModel->GetParameterFileBasename(
+      index, &pStrParameterFileBasename);
+  if (error)
+    return true;
+  else
+  {
+    *parameterFileBasename = pStrParameterFileBasename->c_str();
+    return false;
+  }
+}
+
 void KIM_SimulatorModel_SetSimulatorBufferPointer(
     KIM_SimulatorModel * const simulatorModel, void * const ptr)
 {
