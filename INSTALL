@@ -90,7 +90,7 @@ To install and run the KIM API package you need the following:
 
 4. The 'xxd' utility (distributed as part of the vim package).
 
-5. wget or curl, sed, grep, tar, etc. (used by the
+5. wget or curl, sed, grep, tar, uname, etc. (used by the
    kim-api-collections-management utility).
 
 6. Doxygen and Graphviz (for generating the documentation).

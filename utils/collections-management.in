@@ -38,17 +38,20 @@
 collections_info=@CMAKE_INSTALL_FULL_LIBEXECDIR@/@PROJECT_NAME@/@PROJECT_NAME@-collections-info
 major_version=@PROJECT_VERSION_MAJOR@
 kim_version_string="@PROJECT_VERSION_STRING@"
+# It (shell scripting) is easier if no whitespace allowed in kim_user_agent.
+kim_user_agent="kim-api-collections-management-(${kim_version_string}--`uname -mrs | sed -e 's/ /-/g'`)"
+
 
 make_command="make -j2"
 cmake_command="cmake"
 # determine web tool to use
 if command -v wget > /dev/null 2>&1; then
-  web_tool="wget -q"
+  web_tool="wget --user-agent ${kim_user_agent} -q"
   web_tool_query="${web_tool} -O - --post-data"
   web_tool_url_stdin="${web_tool} -O -"
   web_tool_download="${web_tool} --content-disposition"
 elif command -v curl > /dev/null 2>&1; then
-  web_tool="curl -s"
+  web_tool="curl --user-agent ${kim_user_agent} -s"
   web_tool_query="${web_tool} -o - --data"
   web_tool_url_stdin="${web_tool} -O -"
   web_tool_download="${web_tool} --remote-name"
