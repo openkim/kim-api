@@ -36,6 +36,7 @@ FROM ubuntu:latest
 
 RUN DEBIAN_FRONTEND=noninteractive apt-get -y update && \
     DEBIAN_FRONTEND=noninteractive apt-get -y install --no-install-recommends \
+        ca-certificates \
         ccache \
         cmake \
         findutils \
