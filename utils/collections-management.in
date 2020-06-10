@@ -119,6 +119,14 @@ usage () {
   printf "  Remove all items from all collections.\n"
   printf "  WARNING: This will remove the entire directory of files associated\n"
   printf "           with all items.\n"
+  printf "\n"
+  printf "\n"
+  printf "NOTE: To obtain output from the CMake configure and make steps\n"
+  printf "      set the CM_VERBOSE environment variable.\n"
+  printf "\n"
+  printf "      For script debugging, execute with the shell 'x' and/or 'v'\n"
+  printf "      options to obtain verbose output.  For example:\n"
+  printf "      'sh -xv ${command} ...'.\n"
 }
 
 check_version_compatibility () {
@@ -193,6 +201,8 @@ get_local_build_item_name () {
     if ! (${cmake_command} ../ > ./cmake-log.txt 2>&1); then
       cat ./cmake-log.txt
       return 1
+    elif test ! -z "${CM_VERBOSE}"; then
+      cat ./cmake-log.txt
     fi
 
     local item_type="`grep -- "item-type:" item-info.txt | sed -e 's/^item-type://'`"
@@ -363,6 +373,8 @@ get_build_install_item () {
       if ! ${cmake_command} ../ -DKIM_API_INSTALL_COLLECTION="`printf ${install_collection} | tr "[:lower:]" "[:upper:]"`" > ./cmake-log.txt 2>&1; then
         cat ./cmake-log.txt
         return 1
+      elif test ! -z "${CM_VERBOSE}"; then
+        cat ./cmake-log.txt
       fi
       # build and install archive
       if ! ((${make_command} clean && ${make_command} && ${make_command} CTEST_OUTPUT_ON_FAILURE=1 test) && \
@@ -393,6 +405,8 @@ get_build_install_item () {
       if ! ${cmake_command} ../ -DKIM_API_INSTALL_COLLECTION="`printf ${install_collection} | tr "[:lower:]" "[:upper:]"`" > ./cmake-log.txt 2>&1; then
         cat ./cmake-log.txt
         return 1
+      elif test ! -z "${CM_VERBOSE}"; then
+        cat ./cmake-log.txt
       fi
       item_type="`grep "item-type:" item-info.txt | sed -e 's/item-type://'`"
       item_driver_name="`grep "item-driver-name:" item-info.txt | sed -e 's/item-driver-name:"\(.*\)"/\1/'`"
@@ -408,26 +422,30 @@ get_build_install_item () {
             printf "*** WARNING *** Model Driver for this item not currently installed in any of the KIM API collections.\n%s\n\n" \
                    "                Continuing with installation of the item anyway."
         fi
-        if ! ((${make_command} clean && ${make_command} && ${make_command} CTEST_OUTPUT_ON_FAILURE=1 test) > ./make-log.txt 2>&1 && \
-                if test x"sudo-yes" = x"${use_sudo}"; then
-                  printf -- "%s\n" "${PASSWORD}" | sudo -k -S ${make_command} install 2> /dev/null
-                else
-                  ${make_command} install
-                fi); then
+        if ! (${make_command} clean && ${make_command} && ${make_command} CTEST_OUTPUT_ON_FAILURE=1 test) > ./make-log.txt 2>&1; then
           cat ./make-log.txt
           return 1
+        elif test ! -z "${CM_VERBOSE}"; then
+          cat ./make-log.txt
+        fi
+        if test x"sudo-yes" = x"${use_sudo}"; then
+          printf -- "%s\n" "${PASSWORD}" | sudo -k -S ${make_command} install 2> /dev/null
+        else
+          ${make_command} install
         fi
       elif test x"portableModel"    = x"${item_type}" -o \
                 x"modelDriver"      = x"${item_type}" -o \
                 x"simulatorModel"   = x"${item_type}"; then
-        if ! ((${make_command} clean && ${make_command} && ${make_command} CTEST_OUTPUT_ON_FAILURE=1 test) > ./make-log.txt 2>&1 && \
-                if test x"sudo-yes" = x"${use_sudo}"; then
-                  printf -- "%s\n" "${PASSWORD}" | sudo -k -S ${make_command} install 2> /dev/null
-                else
-                  ${make_command} install
-                fi); then
+        if ! (${make_command} clean && ${make_command} && ${make_command} CTEST_OUTPUT_ON_FAILURE=1 test) > ./make-log.txt 2>&1; then
           cat ./make-log.txt
           return 1
+        elif test ! -z "${CM_VERBOSE}"; then
+          cat ./make-log.txt
+        fi
+        if test x"sudo-yes" = x"${use_sudo}"; then
+          printf -- "%s\n" "${PASSWORD}" | sudo -k -S ${make_command} install 2> /dev/null
+        else
+          ${make_command} install
         fi
       else
         printf "Item '${item_name}' of unknown type '${item_type}'.\n"
