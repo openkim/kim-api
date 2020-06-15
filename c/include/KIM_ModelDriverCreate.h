@@ -157,6 +157,18 @@ typedef struct KIM_ModelDriverCreate KIM_ModelDriverCreate;
 
 
 /**
+ ** \brief \copybrief KIM::ModelDriverCreate::GetParameterFileDirectoryName
+ **
+ ** \sa KIM::ModelDriverCreate::GetParameterFileDirectoryName,
+ ** kim_model_driver_create_module::kim_get_parameter_file_directory_name
+ **
+ ** \since 2.2
+ **/
+void KIM_ModelDriverCreate_GetParameterFileDirectoryName(
+    KIM_ModelDriverCreate const * const modelDriverCreate,
+    char const ** const directoryName);
+
+/**
  ** \brief \copybrief KIM::ModelDriverCreate::GetNumberOfParameterFiles
  **
  ** \sa KIM::ModelDriverCreate::GetNumberOfParameterFiles,
@@ -175,11 +187,27 @@ void KIM_ModelDriverCreate_GetNumberOfParameterFiles(
  ** kim_model_driver_create_module::kim_get_parameter_file_name
  **
  ** \since 2.0
+ **
+ ** \deprecated As of 2.2.  Please use
+ ** KIM_ModelDriverCreate_GetParameterFileBasename() instead.
  **/
 int KIM_ModelDriverCreate_GetParameterFileName(
     KIM_ModelDriverCreate const * const modelDriverCreate,
     int const index,
     char const ** const parameterFileName);
+
+/**
+ ** \brief \copybrief KIM::ModelDriverCreate::GetParameterFileBasename
+ **
+ ** \sa KIM::ModelDriverCreate::GetParameterFileBasename,
+ ** kim_model_driver_create_module::kim_get_parameter_file_basename
+ **
+ ** \since 2.2
+ **/
+int KIM_ModelDriverCreate_GetParameterFileBasename(
+    KIM_ModelDriverCreate const * const modelDriverCreate,
+    int const index,
+    char const ** const parameterFileBasename);
 
 /**
  ** \brief \copybrief KIM::ModelDriverCreate::SetModelNumbering

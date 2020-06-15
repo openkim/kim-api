@@ -33,21 +33,32 @@
 
 # - CompletionConfig
 #
-# Sets the install paths for completions
+# Sets the install paths for completions.
+# If the user defines a location use (and cache) it.
+# If installing to "standard" loc, use system bash-completion settings if available
+# Otherwise, install into sysconfdir.
+
 
 # bash completions
-find_package(bash-completion QUIET)
-if(NOT
-    ((BASH_COMPLETION_FOUND)
-      AND
-      ("${CMAKE_INSTALL_PREFIX}" IN_LIST KIM_API_STANDARD_INSTALL_PREFIXES)
+if(NOT DEFINED BASH_COMPLETION_COMPLETIONSDIR)
+  find_package(bash-completion QUIET)
+  if(NOT
+      ((BASH_COMPLETION_FOUND)
+        AND
+        ("${CMAKE_INSTALL_PREFIX}" IN_LIST KIM_API_STANDARD_INSTALL_PREFIXES)
+        )
       )
-    )
-  set(BASH_COMPLETION_COMPLETIONSDIR "${CMAKE_INSTALL_FULL_SYSCONFDIR}/bash_completion.d")
+    set(BASH_COMPLETION_COMPLETIONSDIR "${CMAKE_INSTALL_FULL_SYSCONFDIR}/bash_completion.d")
+  endif()
+else()
+  set(BASH_COMPLETION_COMPLETIONSDIR "${BASH_COMPLETION_COMPLETIONSDIR}" CACHE PATH "Directory where bash completions are installed")
 endif()
-set(BASH_COMPLETION_COMPLETIONSDIR "${BASH_COMPLETION_COMPLETIONSDIR}" CACHE PATH "Default directory where bash completions are installed")
 message(STATUS "Using bash-completion dir ${BASH_COMPLETION_COMPLETIONSDIR}")
 
 # zsh completions
-set(ZSH_COMPLETION_COMPLETIONSDIR "${CMAKE_INSTALL_FULL_SYSCONFDIR}/zsh_completion.d" CACHE PATH "Default directory where zsh completions are installed")
+if(NOT DEFINED ZSH_COMPLETION_COMPLETIONSDIR)
+  set(ZSH_COMPLETION_COMPLETIONSDIR "${CMAKE_INSTALL_FULL_SYSCONFDIR}/zsh_completion.d")
+else()
+  set(ZSH_COMPLETION_COMPLETIONSDIR "${ZSH_COMPLETION_COMPLETIONSDIR}" CACHE PATH "Directory where zsh completions are installed")
+endif()
 message(STATUS "Using zsh-completion dir ${ZSH_COMPLETION_COMPLETIONSDIR}")

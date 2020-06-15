@@ -30,9 +30,13 @@
 // Release: This file is part of the kim-api.git repository.
 //
 
+#include <cstdio>
+#include <cstdlib>
 #include <cstring>
+#include <dirent.h>
 #include <dlfcn.h>
 #include <sstream>
+#include <unistd.h>  // IWYU pragma: keep
 
 #ifndef KIM_SHARED_LIBRARY_HPP_
 #include "KIM_SharedLibrary.hpp"
@@ -80,6 +84,7 @@ SharedLibrary::SharedLibrary(Log * const log) :
     createRoutine_(NULL),
     numberOfParameterFiles_(0),
     numberOfMetadataFiles_(0),
+    parameterFileDirectoryName_(""),
     log_(log)
 {
 #if DEBUG_VERBOSITY
@@ -275,6 +280,8 @@ int SharedLibrary::Close()
     LOG_DEBUG("Exit 1=" + callString);
     return true;  // not open
   }
+
+  RemoveParameterFileDirectory();
 
   sharedLibraryName_ = "";
   sharedLibrarySchemaVersion_ = 0;
@@ -524,6 +531,191 @@ int SharedLibrary::GetSimulatorModelSpecificationFile(
     *specFileLength = (simulatorModelSpecificationFile_).fileLength;
   if (specFileData != NULL)
     *specFileData = (simulatorModelSpecificationFile_).filePointer;
+
+  LOG_DEBUG("Exit 0=" + callString);
+  return false;
+}
+
+int SharedLibrary::WriteParameterFileDirectory()
+{
+#if DEBUG_VERBOSITY
+  std::string const callString = "WriteParameterFileDirectory().";
+#endif
+  LOG_DEBUG("Enter  " + callString);
+
+  int error;
+
+  if (sharedLibraryHandle_ == NULL)
+  {
+    LOG_ERROR("Library not open.");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;  // not open
+  }
+
+#ifndef __MINGW32__
+  static char const parameterFileDirectoryNameString[]
+      = "kim-shared-library-parameter-file-directory-XXXXXXXXXXXX";
+  std::stringstream templateString;
+  templateString << P_tmpdir
+                 << ((*(--(std::string(P_tmpdir).end())) == '/') ? "" : "/")
+                 << parameterFileDirectoryNameString;
+  char * cstr = strdup(templateString.str().c_str());
+  char * tmpdir = mkdtemp(cstr);
+  if (NULL == tmpdir)
+  {
+    free(cstr);
+    LOG_ERROR("Could not create a secure temporary directory.");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
+  parameterFileDirectoryName_ = tmpdir;
+  free(cstr);
+#else
+  // Replacement code for mkdtemp() function referenced above, which is not
+  // available on MinGW platform:
+  char * tmpdir = tmpnam(NULL);
+  int mkdir_error = tmpdir ? mkdir(tmpdir) : -1;
+  if (NULL == tmpdir || mkdir_error)
+  {
+    LOG_ERROR("Could not create a secure temporary directory.");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
+  parameterFileDirectoryName_ = tmpdir;
+#endif
+
+  if (itemType_ == KIM::COLLECTION_ITEM_TYPE::simulatorModel)
+  {
+    unsigned int len;
+    unsigned char const * specificationData;
+    std::string specFileName;
+    error = GetSimulatorModelSpecificationFile(
+        &specFileName, &len, &specificationData);
+    if (error)
+    {
+      LOG_ERROR("Unable to get specification file.");
+      RemoveParameterFileDirectory();
+      LOG_DEBUG("Exit 1=" + callString);
+      return true;
+    }
+    std::string const specificationFilePathName
+        = parameterFileDirectoryName_ + "/" + specFileName;
+    FILE * fl = fopen(specificationFilePathName.c_str(), "w");
+    if (NULL == fl)
+    {
+      LOG_ERROR("Unable to get write parameter file.");
+      RemoveParameterFileDirectory();
+      LOG_DEBUG("Exit 1=" + callString);
+      return true;
+    }
+    fwrite(specificationData, sizeof(unsigned char), len, fl);
+    fclose(fl);
+    fl = NULL;
+  }
+
+  int noParamFiles;
+  GetNumberOfParameterFiles(&noParamFiles);
+  std::vector<unsigned char const *> parameterFileStrings;
+  std::vector<unsigned int> parameterFileStringLengths;
+  for (int i = 0; i < noParamFiles; ++i)
+  {
+    std::string parameterFileName;
+    unsigned char const * strPtr;
+    unsigned int length;
+    error = GetParameterFile(i, &parameterFileName, &length, &strPtr);
+    if (error)
+    {
+      LOG_ERROR("Could not get parameter file data.");
+      LOG_DEBUG("Exit 1=" + callString);
+      return true;
+    }
+
+    std::string const parameterFilePathName
+        = parameterFileDirectoryName_ + "/" + parameterFileName;
+    FILE * fl = fopen(parameterFilePathName.c_str(), "w");
+    if (NULL == fl)
+    {
+      LOG_ERROR("Unable to get write parameter file.");
+      RemoveParameterFileDirectory();
+      LOG_DEBUG("Exit 1=" + callString);
+      return true;
+    }
+    fwrite(strPtr, sizeof(unsigned char), length, fl);
+    fclose(fl);
+    fl = NULL;
+  }
+
+  LOG_DEBUG("Exit 0=" + callString);
+  return false;
+}
+
+int SharedLibrary::GetParameterFileDirectoryName(
+    std::string * const directoryName) const
+{
+#if DEBUG_VERBOSITY
+  std::string const callString
+      = "GetParameterFileDirectoryName(" + SPTR(directoryName) + ").";
+#endif
+  LOG_DEBUG("Enter  " + callString);
+
+  if (sharedLibraryHandle_ == NULL)
+  {
+    LOG_ERROR("Library not open.");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;  // not open
+  }
+
+  *directoryName = parameterFileDirectoryName_;
+
+  LOG_DEBUG("Exit 0=" + callString);
+  return false;
+}
+
+int SharedLibrary::RemoveParameterFileDirectory()
+{
+#if DEBUG_VERBOSITY
+  std::string const callString = "RemoveParameterFileDirectory().";
+#endif
+  LOG_DEBUG("Enter  " + callString);
+
+  if (sharedLibraryHandle_ == NULL)
+  {
+    LOG_ERROR("Library not open.");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;  // not open
+  }
+
+  if (parameterFileDirectoryName_ != "")
+  {
+    int error;
+    struct dirent * dp = NULL;
+    DIR * dir = NULL;
+    dir = opendir(parameterFileDirectoryName_.c_str());
+    while ((dp = readdir(dir)))
+    {
+      // assuming no subdirectories, just files
+      if ((0 != strcmp(dp->d_name, ".")) && (0 != strcmp(dp->d_name, "..")))
+      {
+        std::string filePath = parameterFileDirectoryName_ + "/" + dp->d_name;
+        error = remove(filePath.c_str());
+        if (error)
+        {
+          LOG_ERROR("Unable to remove simulator model file '" + filePath
+                    + "'.");
+        }
+      }
+    }
+    closedir(dir);
+    error = remove(parameterFileDirectoryName_.c_str());
+    if (error)
+    {
+      LOG_ERROR("Unable to remove simulator model parameter file directory '"
+                + parameterFileDirectoryName_ + "'.");
+    }
+
+    // clear out directory name variable
+    parameterFileDirectoryName_ = "";
+  }
 
   LOG_DEBUG("Exit 0=" + callString);
   return false;

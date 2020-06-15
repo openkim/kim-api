@@ -100,6 +100,8 @@ class SimulatorModelImplementation
 
   int GetParameterFileName(int const index,
                            std::string const ** const parameterFileName) const;
+  int GetParameterFileBasename(
+      int const index, std::string const ** const parameterFileBasename) const;
 
   void SetSimulatorBufferPointer(void * const ptr);
 
@@ -143,8 +145,6 @@ class SimulatorModelImplementation
   int GetSchemaVersion();
   int ReadEdnSchemaV1();
   int Initialize(std::string const & simulatorModelName);
-  int WriteParameterFileDirectory();
-  void RemoveParameterFileDirectory();
 
   std::string parameterFileDirectoryName_;
   std::string specificationFileName_;
@@ -160,7 +160,7 @@ class SimulatorModelImplementation
   std::vector<std::vector<std::string> > simulatorFields_;
 
   int numberOfParameterFiles_;
-  std::vector<std::string> parameterFileNames_;
+  std::vector<std::string> parameterFileBasenames_;
 
   bool templateMapOpen_;
   std::map<std::string, std::string> templateMap_;

@@ -80,7 +80,7 @@ program collections_example_fortran
   character(len=2048, kind=c_char) line
   character(len=2048, kind=c_char) dir_name
   character(len=2048, kind=c_char) spec_name
-  character(len=2048, kind=c_char) param_name
+  character(len=2048, kind=c_char) param_basename
 
 
   call kim_simulator_model_create( &
@@ -140,13 +140,13 @@ program collections_example_fortran
   call kim_get_number_of_parameter_files(sm, extent)
   print '("SM has ",I1," parameter files:")', extent
   do i=1,extent
-    call kim_get_parameter_file_name(sm, i, param_name, ierr)
+    call kim_get_parameter_file_basename(sm, i, param_basename, ierr)
     if (ierr /= 0) then
-      call my_error("Unable to get parameter file name.")
+      call my_error("Unable to get parameter file basename.")
     else
-      print '("Parameter file ",I2," has name ",A)', i, trim(param_name)
+      print '("Parameter file ",I2," has basename ",A)', i, trim(param_basename)
       ierr = c_system( &
-        "cat "//trim(dir_name)//"/"//trim(param_name)//c_null_char)
+        "cat "//trim(dir_name)//"/"//trim(param_basename)//c_null_char)
       print *,""
     end if
   end do

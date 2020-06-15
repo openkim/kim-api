@@ -150,9 +150,13 @@ class ModelImplementation
                 TimeUnit * const timeUnit) const;
 
 
+  void
+  GetParameterFileDirectoryName(std::string const ** const directoryName) const;
   int GetNumberOfParameterFiles(int * const numberOfParameterFiles) const;
   int GetParameterFileName(int const index,
                            std::string const ** const parameterFileName) const;
+  int GetParameterFileBasename(
+      int const index, std::string const ** const parameterFileBasename) const;
 
   void SetParameterFileName(std::string const & filename) const;
 
@@ -271,8 +275,10 @@ class ModelImplementation
   std::string modelDriverName_;
 
   SharedLibrary * sharedLibrary_;
+  std::string parameterFileDirectoryName_;
   int numberOfParameterFiles_;
   std::vector<std::string> parameterFileNames_;
+  std::vector<std::string> parameterFileBasenames_;
 
   Log * log_;
 
@@ -288,8 +294,6 @@ class ModelImplementation
       ChargeUnit const requestedChargeUnit,
       TemperatureUnit const requestedTemperatureUnit,
       TimeUnit const requestedTimeUnit);
-
-  int WriteParameterFiles();
 
   bool numberingHasBeenSet_;
   Numbering modelNumbering_;

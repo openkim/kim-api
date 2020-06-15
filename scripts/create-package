@@ -179,7 +179,7 @@ printf "  git push origin\n"
 printf "  git push github\n"
 
 printf "\n"
-internal_notes="/Users/relliott/unison-sync/KIM/kim-release-process-notes/kim-api-internal-release-process-notes"
+internal_notes="/Users/relliott/unison-sync/KIM/kim-api-release-process-notes/kim-api-internal-release-process-notes"
 if test -f "${internal_notes}"; then
   source "${internal_notes}"
 fi

@@ -51,8 +51,10 @@ module kim_model_driver_create_module
     ! Routines
     operator (.eq.), &
     operator (.ne.), &
+    kim_get_parameter_file_directory_name, &
     kim_get_number_of_parameter_files, &
     kim_get_parameter_file_name, &
+    kim_get_parameter_file_basename, &
     kim_set_model_numbering, &
     kim_set_influence_distance_pointer, &
     kim_set_neighbor_list_pointers, &
@@ -95,6 +97,16 @@ module kim_model_driver_create_module
     module procedure kim_model_driver_create_handle_not_equal
   end interface operator (.ne.)
 
+  !> \brief \copybrief KIM::ModelDriverCreate::GetParameterFileDirectoryName
+  !!
+  !! \sa KIM::ModelDriverCreate::GetParameterFileDirectoryName,
+  !! KIM_ModelDriverCreate_GetParameterFileDirectoryName
+  !!
+  !! \since 2.2
+  interface kim_get_parameter_file_directory_name
+    module procedure kim_model_driver_create_get_parameter_file_directory_name
+  end interface kim_get_parameter_file_directory_name
+
   !> \brief \copybrief KIM::ModelDriverCreate::GetNumberOfParameterFiles
   !!
   !! \sa KIM::ModelDriverCreate::GetNumberOfParameterFiles,
@@ -111,9 +123,22 @@ module kim_model_driver_create_module
   !! KIM_ModelDriverCreate_GetParameterFileName
   !!
   !! \since 2.0
+  !!
+  !! \deprecated As of 2.2.  Please use
+  !! kim_model_driver_create_module::kim_get_parameter_file_basename() instead.
   interface kim_get_parameter_file_name
     module procedure kim_model_driver_create_get_parameter_file_name
   end interface kim_get_parameter_file_name
+
+  !> \brief \copybrief KIM::ModelDriverCreate::GetParameterFileBasename
+  !!
+  !! \sa KIM::ModelDriverCreate::GetParameterFileBasename,
+  !! KIM_ModelDriverCreate_GetParameterFileBasename
+  !!
+  !! \since 2.2
+  interface kim_get_parameter_file_basename
+    module procedure kim_model_driver_create_get_parameter_file_basename
+  end interface kim_get_parameter_file_basename
 
   !> \brief \copybrief KIM::ModelDriverCreate::SetModelNumbering
   !!
@@ -250,6 +275,41 @@ contains
     kim_model_driver_create_handle_not_equal = .not. (lhs .eq. rhs)
   end function kim_model_driver_create_handle_not_equal
 
+  !> \brief \copybrief KIM::ModelDriverCreate::GetParameterFileDirectoryName
+  !!
+  !! \sa KIM::ModelDriverCreate::GetParameterFileDirectoryName,
+  !! KIM_ModelDriverCreate_GetParameterFileDirectoryName
+  !!
+  !! \since 2.2
+  recursive subroutine &
+    kim_model_driver_create_get_parameter_file_directory_name( &
+    model_driver_create_handle, directory_name)
+    use kim_interoperable_types_module, only : kim_model_driver_create_type
+    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
+    implicit none
+    interface
+      recursive subroutine get_parameter_file_directory_name( &
+        model_driver_create, directory_name) &
+        bind(c, name="KIM_ModelDriverCreate_GetParameterFileDirectoryName")
+        use, intrinsic :: iso_c_binding
+        use kim_interoperable_types_module, only : kim_model_driver_create_type
+        implicit none
+        type(kim_model_driver_create_type), intent(in) :: model_driver_create
+        type(c_ptr), intent(out) :: directory_name
+      end subroutine get_parameter_file_directory_name
+    end interface
+    type(kim_model_driver_create_handle_type), intent(in) :: &
+      model_driver_create_handle
+    character(len=*, kind=c_char), intent(out) :: directory_name
+    type(kim_model_driver_create_type), pointer :: model_driver_create
+
+    type(c_ptr) pdirectory_name
+
+    call c_f_pointer(model_driver_create_handle%p, model_driver_create)
+    call get_parameter_file_directory_name(model_driver_create, pdirectory_name)
+    call kim_convert_c_char_ptr_to_string(pdirectory_name, directory_name)
+  end subroutine kim_model_driver_create_get_parameter_file_directory_name
+
   !> \brief \copybrief KIM::ModelDriverCreate::GetNumberOfParameterFiles
   !!
   !! \sa KIM::ModelDriverCreate::GetNumberOfParameterFiles,
@@ -288,6 +348,9 @@ contains
   !! KIM_ModelDriverCreate_GetParameterFileName
   !!
   !! \since 2.0
+  !!
+  !! \deprecated As of 2.2.  Please use
+  !! kim_model_driver_create_module::kim_get_parameter_file_basename() instead.
   recursive subroutine kim_model_driver_create_get_parameter_file_name( &
     model_driver_create_handle, index, parameter_file_name, ierr)
     use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
@@ -320,6 +383,45 @@ contains
       index-1, p)
     call kim_convert_c_char_ptr_to_string(p, parameter_file_name)
   end subroutine kim_model_driver_create_get_parameter_file_name
+
+  !> \brief \copybrief KIM::ModelDriverCreate::GetParameterFileBasename
+  !!
+  !! \sa KIM::ModelDriverCreate::GetParameterFileBasename,
+  !! KIM_ModelDriverCreate_GetParameterFileBasename
+  !!
+  !! \since 2.2
+  recursive subroutine kim_model_driver_create_get_parameter_file_basename( &
+    model_driver_create_handle, index, parameter_file_basename, ierr)
+    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
+    use kim_interoperable_types_module, only : kim_model_driver_create_type
+    implicit none
+    interface
+      integer(c_int) recursive function get_parameter_file_basename( &
+        model_driver_create, index, parameter_file_basename) &
+        bind(c, name="KIM_ModelDriverCreate_GetParameterFileBasename")
+        use, intrinsic :: iso_c_binding
+        use kim_interoperable_types_module, only : kim_model_driver_create_type
+        implicit none
+        type(kim_model_driver_create_type), intent(in) &
+          :: model_driver_create
+        integer(c_int), intent(in), value :: index
+        type(c_ptr), intent(out) :: parameter_file_basename
+      end function get_parameter_file_basename
+    end interface
+    type(kim_model_driver_create_handle_type), intent(in) &
+      :: model_driver_create_handle
+    integer(c_int), intent(in) :: index
+    character(len=*, kind=c_char), intent(out) :: parameter_file_basename
+    integer(c_int), intent(out) :: ierr
+    type(kim_model_driver_create_type), pointer :: model_driver_create
+
+    type(c_ptr) :: p
+
+    call c_f_pointer(model_driver_create_handle%p, model_driver_create)
+    ierr = get_parameter_file_basename(model_driver_create, &
+      index-1, p)
+    call kim_convert_c_char_ptr_to_string(p, parameter_file_basename)
+  end subroutine kim_model_driver_create_get_parameter_file_basename
 
   !> \brief \copybrief KIM::ModelDriverCreate::SetModelNumbering
   !!

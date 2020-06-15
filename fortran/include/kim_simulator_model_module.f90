@@ -67,6 +67,7 @@ module kim_simulator_model_module
     kim_get_specification_file_name, &
     kim_get_number_of_parameter_files, &
     kim_get_parameter_file_name, &
+    kim_get_parameter_file_basename, &
     kim_set_simulator_buffer_pointer, &
     kim_get_simulator_buffer_pointer, &
     kim_to_string, &
@@ -239,9 +240,22 @@ module kim_simulator_model_module
   !! KIM_SimulatorModel_GetParameterFileName
   !!
   !! \since 2.1
+  !!
+  !! \deprecated As of 2.2.  Please use
+  !! kim_simulator_model_module::kim_get_parameter_file_basename() instead.
   interface kim_get_parameter_file_name
     module procedure kim_simulator_model_get_parameter_file_name
   end interface kim_get_parameter_file_name
+
+  !> \brief \copybrief KIM::SimulatorModel::GetParameterFileBasename
+  !!
+  !! \sa KIM::SimulatorModel::GetParameterFileBasename,
+  !! KIM_SimulatorModel_GetParameterFileBasename
+  !!
+  !! \since 2.2
+  interface kim_get_parameter_file_basename
+    module procedure kim_simulator_model_get_parameter_file_basename
+  end interface kim_get_parameter_file_basename
 
   !> \brief \copybrief KIM::SimulatorModel::SetSimulatorBufferPointer
   !!
@@ -803,6 +817,9 @@ contains
   !! KIM_SimulatorModel_GetParameterFileName
   !!
   !! \since 2.1
+  !!
+  !! \deprecated As of 2.2.  Please use
+  !! kim_simulator_model_module::kim_get_parameter_file_basename() instead.
   recursive subroutine kim_simulator_model_get_parameter_file_name( &
     simulator_model_handle, index, parameter_file_name, ierr)
     use kim_interoperable_types_module, only : kim_simulator_model_type
@@ -834,6 +851,44 @@ contains
     call kim_convert_c_char_ptr_to_string(pparameter_file_name, &
       parameter_file_name)
   end subroutine kim_simulator_model_get_parameter_file_name
+
+  !> \brief \copybrief KIM::SimulatorModel::GetParameterFileBasename
+  !!
+  !! \sa KIM::SimulatorModel::GetParameterFileBasename,
+  !! KIM_SimulatorModel_GetParameterFileBasename
+  !!
+  !! \since 2.2
+  recursive subroutine kim_simulator_model_get_parameter_file_basename( &
+    simulator_model_handle, index, parameter_file_basename, ierr)
+    use kim_interoperable_types_module, only : kim_simulator_model_type
+    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
+    implicit none
+    interface
+      integer(c_int) recursive function get_parameter_file_basename( &
+        simulator_model, index, parameter_file_basename) &
+        bind(c, name="KIM_SimulatorModel_GetParameterFileBasename")
+        use, intrinsic :: iso_c_binding
+        use kim_interoperable_types_module, only : kim_simulator_model_type
+        implicit none
+        type(kim_simulator_model_type), intent(in) :: simulator_model
+        integer(c_int), intent(in), value :: index
+        type(c_ptr), intent(out) :: parameter_file_basename
+      end function get_parameter_file_basename
+    end interface
+    type(kim_simulator_model_handle_type), intent(in) :: simulator_model_handle
+    integer(c_int), intent(in) :: index
+    character(len=*, kind=c_char), intent(out) :: parameter_file_basename
+    integer(c_int), intent(out) :: ierr
+    type(kim_simulator_model_type), pointer :: simulator_model
+
+    type(c_ptr) pparameter_file_basename
+
+    call c_f_pointer(simulator_model_handle%p, simulator_model)
+    ierr = get_parameter_file_basename(simulator_model, index-1, &
+      pparameter_file_basename)
+    call kim_convert_c_char_ptr_to_string(pparameter_file_basename, &
+      parameter_file_basename)
+  end subroutine kim_simulator_model_get_parameter_file_basename
 
   !> \brief \copybrief KIM::SimulatorModel::SetSimulatorBufferPointer
   !!

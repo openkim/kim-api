@@ -33,7 +33,6 @@
 #include <algorithm>
 #include <cmath>
 #include <cstdio>
-#include <cstdlib>
 #include <cstring>
 #include <fstream>
 #include <iomanip>
@@ -845,6 +844,20 @@ void ModelImplementation::GetUnits(LengthUnit * const lengthUnit,
   LOG_DEBUG("Exit   " + callString);
 }
 
+void ModelImplementation::GetParameterFileDirectoryName(
+    std::string const ** const directoryName) const
+{
+#if DEBUG_VERBOSITY
+  std::string const callString
+      = "GetParameterFileDirectoryName(" + SPTR(directoryName) + ").";
+#endif
+  LOG_DEBUG("Enter  " + callString);
+
+  *directoryName = &parameterFileDirectoryName_;
+
+  LOG_DEBUG("Exit   " + callString);
+}
+
 int ModelImplementation::GetNumberOfParameterFiles(
     int * const numberOfParameterFiles) const
 {
@@ -877,6 +890,9 @@ int ModelImplementation::GetParameterFileName(
                                  + SPTR(parameterFileName) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
+  LOG_WARNING("Use of the " + callString
+              + " function is deprecated. "
+                "Please use GetParameterFileBasename() instead.");
 
 #if ERROR_VERBOSITY
   if (modelDriverName_ == "")
@@ -902,6 +918,44 @@ int ModelImplementation::GetParameterFileName(
 #endif
 
   *parameterFileName = &(parameterFileNames_[index]);
+
+  LOG_DEBUG("Exit 0=" + callString);
+  return false;
+}
+
+int ModelImplementation::GetParameterFileBasename(
+    int const index, std::string const ** const parameterFileBasename) const
+{
+#if DEBUG_VERBOSITY
+  std::string const callString = "GetParameterFileBaseame(" + SNUM(index) + ", "
+                                 + SPTR(parameterFileBasename) + ").";
+#endif
+  LOG_DEBUG("Enter  " + callString);
+
+#if ERROR_VERBOSITY
+  if (modelDriverName_ == "")
+  {
+    LOG_ERROR("Only parameterized models have parameter files.");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
+
+  if ((index < 0) || (index >= numberOfParameterFiles_))
+  {
+    LOG_ERROR("Invalid parameter file index, " + SNUM(index) + ".");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
+
+  if (parameterFileBasename == NULL)
+  {
+    LOG_ERROR("Null pointer provided for parameterFileBasename.");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
+#endif
+
+  *parameterFileBasename = &(parameterFileBasenames_[index]);
 
   LOG_DEBUG("Exit 0=" + callString);
   return false;
@@ -2004,6 +2058,7 @@ ModelImplementation::ModelImplementation(SharedLibrary * const sharedLibrary,
     modelName_(""),
     modelDriverName_(""),
     sharedLibrary_(sharedLibrary),
+    parameterFileDirectoryName_(""),
     numberOfParameterFiles_(0),
     log_(log),
     numberingHasBeenSet_(false),
@@ -2991,11 +3046,12 @@ int ModelImplementation::InitializeParameterizedModel(
 #endif
   LOG_DEBUG("Enter  " + callString);
 
+  int error;
 #if ERROR_VERBOSITY
-  int error = (!requestedLengthUnit.Known()) || (!requestedEnergyUnit.Known())
-              || (!requestedChargeUnit.Known())
-              || (!requestedTemperatureUnit.Known())
-              || (!requestedTimeUnit.Known());
+  error = (!requestedLengthUnit.Known()) || (!requestedEnergyUnit.Known())
+          || (!requestedChargeUnit.Known())
+          || (!requestedTemperatureUnit.Known())
+          || (!requestedTimeUnit.Known());
   if (error)
   {
     LOG_ERROR("Invalid arguments.");
@@ -3005,7 +3061,21 @@ int ModelImplementation::InitializeParameterizedModel(
 #endif
 
   // write parameter files to scratch space
-  error = WriteParameterFiles();
+  error
+      = sharedLibrary_->WriteParameterFileDirectory()
+        || sharedLibrary_->GetParameterFileDirectoryName(
+            &parameterFileDirectoryName_)
+        || sharedLibrary_->GetNumberOfParameterFiles(&numberOfParameterFiles_);
+  for (int i = 0; i < numberOfParameterFiles_; ++i)
+  {
+    std::string parameterFileName;
+    error = error
+            || sharedLibrary_->GetParameterFile(
+                i, &parameterFileName, NULL, NULL);
+    parameterFileBasenames_.push_back(parameterFileName.c_str());
+    parameterFileName = parameterFileDirectoryName_ + "/" + parameterFileName;
+    parameterFileNames_.push_back(parameterFileName.c_str());
+  }
   if (error)
   {
     LOG_ERROR("Could not write parameter files to scratch space.");
@@ -3013,14 +3083,9 @@ int ModelImplementation::InitializeParameterizedModel(
     return true;
   }
 
-  // close model and open driver
-  error = sharedLibrary_->Close();
-  if (error)
-  {
-    LOG_ERROR("Could not close model shared library.");
-    LOG_DEBUG("Exit 1=" + callString);
-    return true;
-  }
+  // create and open driver library
+  SharedLibrary * parameterizedModelLibrary = sharedLibrary_;
+  sharedLibrary_ = new SharedLibrary(log_);
 
   std::string const * itemFilePath;
   error = collections_->GetItemLibraryFileNameAndCollection(
@@ -3141,81 +3206,14 @@ int ModelImplementation::InitializeParameterizedModel(
   }
 
   // remove parameter files
-  for (int i = 0; i < numberOfParameterFiles_; ++i)
-  { remove(parameterFileNames_[i].c_str()); }
+  parameterizedModelLibrary->RemoveParameterFileDirectory();
+  parameterizedModelLibrary->Close();
+  delete parameterizedModelLibrary;
+  parameterizedModelLibrary = NULL;
   // clear out parameter file stuff
   numberOfParameterFiles_ = -1;
   parameterFileNames_.clear();
-
-  LOG_DEBUG("Exit 0=" + callString);
-  return false;
-}
-
-int ModelImplementation::WriteParameterFiles()
-{
-#if DEBUG_VERBOSITY
-  std::string const callString = "WriteParameterFiles().";
-#endif
-  LOG_DEBUG("Enter  " + callString);
-
-  sharedLibrary_->GetNumberOfParameterFiles(&numberOfParameterFiles_);
-  std::vector<unsigned char const *> parameterFileStrings;
-  std::vector<unsigned int> parameterFileStringLengths;
-  for (int i = 0; i < numberOfParameterFiles_; ++i)
-  {
-    unsigned char const * strPtr;
-    unsigned int length;
-    int error = sharedLibrary_->GetParameterFile(i, NULL, &length, &strPtr);
-    if (error)
-    {
-      LOG_ERROR("Could not get parameter file data.");
-      LOG_DEBUG("Exit 1=" + callString);
-      return true;
-    }
-    parameterFileStrings.push_back(strPtr);
-    parameterFileStringLengths.push_back(length);
-  }
-
-  for (int i = 0; i < numberOfParameterFiles_; ++i)
-  {
-#ifndef __MINGW32__
-    static char const fileNameString[] = "kim-model-parameter-file-XXXXXXXXXXXX";
-    std::stringstream templateString;
-    templateString << P_tmpdir
-                   << ((*(--(std::string(P_tmpdir).end())) == '/') ? "" : "/")
-                   << fileNameString;
-    char * cstr = strdup(templateString.str().c_str());
-    int fileid = mkstemp(cstr);
-    if (fileid == -1)
-    {
-      free(cstr);
-      LOG_ERROR("Could not create a secure temporary file.");
-      LOG_DEBUG("Exit 1=" + callString);
-      return true;
-    }
-    parameterFileNames_.push_back(cstr);
-    free(cstr);
-
-    FILE * fl = fdopen(fileid, "w");
-#else
-    // Replacement code for mkstemp() function referenced above, which is not
-    // available on MinGW platform:
-    char * tmpfilename = tmpnam(NULL);
-    FILE * fl = tmpfilename ? fopen(tmpfilename, "w") : NULL;
-    if (!fl)
-    {
-      LOG_ERROR("Could not create a temporary file.");
-      LOG_DEBUG("Exit 1=" + callString);
-      return true;
-    }
-    parameterFileNames_.push_back(tmpfilename);
-#endif
-    fwrite(parameterFileStrings[i],
-           sizeof(unsigned char),
-           parameterFileStringLengths[i],
-           fl);
-    fclose(fl);  // also closed the fileid
-  }
+  parameterFileBasenames_.clear();
 
   LOG_DEBUG("Exit 0=" + callString);
   return false;
