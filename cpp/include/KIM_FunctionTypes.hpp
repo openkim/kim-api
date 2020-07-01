@@ -34,14 +34,16 @@
 #ifndef KIM_FUNCTION_TYPES_HPP_
 #define KIM_FUNCTION_TYPES_HPP_
 
+#include <string>
+
 namespace KIM
 {
 // Forward declarations
-class LengthUnit;  // IWYU pragma: keep  BUG-WORK-AROUND
-class EnergyUnit;  // IWYU pragma: keep  BUG-WORK-AROUND
-class ChargeUnit;  // IWYU pragma: keep  BUG-WORK-AROUND
-class TemperatureUnit;  // IWYU pragma: keep  BUG-WORK-AROUND
-class TimeUnit;  // IWYU pragma: keep  BUG-WORK-AROUND
+class LengthUnit;  // BUG-WORK-AROUND IWYU pragma: keep
+class EnergyUnit;  // BUG-WORK-AROUND IWYU pragma: keep
+class ChargeUnit;  // BUG-WORK-AROUND IWYU pragma: keep
+class TemperatureUnit;  // BUG-WORK-AROUND IWYU pragma: keep
+class TimeUnit;  // BUG-WORK-AROUND IWYU pragma: keep
 class ModelCreate;
 class ModelDriverCreate;
 class ModelCompute;
@@ -190,6 +192,14 @@ typedef int ModelComputeArgumentsDestroyFunction(
 ///
 /// \since 2.0
 typedef int ModelDestroyFunction(ModelDestroy * const modelDestroy);
+
+/// \brief Prototype for Log PrintFunction routine.
+///
+/// \sa KIM_LogPrintFunction,
+/// kim_log_module::kim_log_push_default_print_function
+///
+/// \since 2.2
+typedef int LogPrintFunction(std::string const & entryString);
 }  // namespace KIM
 
 #endif  // KIM_FUNCTION_TYPES_HPP_

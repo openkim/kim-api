@@ -37,13 +37,18 @@
 #include <stack>
 #include <string>
 
-#ifndef KIM_LOG_VERBOSITY_HPP_
-#include "KIM_LogVerbosity.hpp"
+#ifndef KIM_FUNCTION_TYPES_HPP_
+#include "KIM_FunctionTypes.hpp"  // IWYU pragma: export
+#endif
+
+#ifndef KIM_LANGUAGE_NAME_HPP_
+#include "KIM_LanguageName.hpp"
 #endif
 
 namespace KIM
 {
 // Forward declarations
+class LogVerbosity;
 
 class LogImplementation
 {
@@ -53,6 +58,10 @@ class LogImplementation
 
   static void PushDefaultVerbosity(LogVerbosity const logVerbosity);
   static void PopDefaultVerbosity();
+
+  static void PushDefaultPrintFunction(LanguageName const languageName,
+                                       Function * const fptr);
+  static void PopDefaultPrintFunction();
 
   std::string const & GetID() const;
   void SetID(std::string const & id);
@@ -85,6 +94,9 @@ class LogImplementation
 
   std::string idString_;
   std::stack<LogVerbosity> verbosity_;
+
+  LanguageName printFunctionLanguageName_;
+  Function * printFunctionPointer_;
 
   mutable std::string latestTimeStamp_;
   mutable unsigned sequence_;

@@ -41,6 +41,10 @@
 #include "KIM_LogVerbosity.hpp"
 #endif
 
+#ifndef KIM_LANGUAGE_NAME_HPP_
+#include "KIM_LanguageName.hpp"
+#endif
+
 #ifndef KIM_LOG_IMPLEMENTATION_HPP_
 #include "KIM_LogImplementation.hpp"
 #endif
@@ -67,6 +71,17 @@ void Log::PushDefaultVerbosity(LogVerbosity const logVerbosity)
 }
 
 void Log::PopDefaultVerbosity() { LogImplementation::PopDefaultVerbosity(); }
+
+void Log::PushDefaultPrintFunction(LanguageName const languageName,
+                                   Function * const fptr)
+{
+  LogImplementation::PushDefaultPrintFunction(languageName, fptr);
+}
+
+void Log::PopDefaultPrintFunction()
+{
+  LogImplementation::PopDefaultPrintFunction();
+}
 
 std::string const & Log::GetID() const { return pimpl->GetID(); }
 
