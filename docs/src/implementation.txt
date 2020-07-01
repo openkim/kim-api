@@ -226,6 +226,45 @@ The above table also indicates which routines must be provided by a PM.  For
 optional routines, each PM must indicate that the routine is required or
 optional for use by the simulator, as described below.
 
+\note **Language restrictions implied by the %KIM API/PMI:**
+<br>
+The %KIM API/PMI implements a cross-language object-oriented-like framework.
+All persistent data (analogous to member variables) needed by a PM or MD object
+must be stored using the \ref cache_buffer_pointers "Caching Capabilities" of
+the %KIM API.  For the framework to operate correctly, without surprising
+behavior, PM and MD implementations must obey certain restrictions as described
+below.
+
+\note
+- C++
+
+  The use of static and/or global variables within PM and MD code must be
+  avoided.
+
+- C
+
+  The use of static and/or global variables within PM and MD code must be
+  avoided.
+
+- Fortran
+
+  The use of COMMON blocks must be avoided.  The use of the SAVE attribute must
+  be avoided.  Thus, variables should not be initialized when they are declared
+  (as this implies the SAVE attribute).  Further, the use of module variables,
+  except for those defined with the PARAMETER attribute, must be avoided.  (The
+  Fortran 2008 standard requires that all module variables, implicitly, have
+  the SAVE attribute; that is, they are stored in static memory.)  Similarly,
+  all Fortran subroutines and functions should have the RECURSIVE attribute
+  (this is the default starting only with the Fortran 2015 standard).  This is
+  because without the RECURSIVE attribute compilers are allowed to use static
+  memory for a subroutine's/function's local variables (effectively giving them
+  the SAVE attribute).
+
+  These restrictions are even more important if thread-safety is required.  The
+  use of RECURSIVE subroutines/functions and avoidance of using the SAVE
+  attribute help to assure that memory access conflicts are averted.
+
+
 The %KIM API/PMI provides two interfaces to be used by the Simulator,
 KIM::Model and KIM::ComputeArguments, for interacting with a PM.  The
 interaction between the simulator and a PM involves the following steps:
