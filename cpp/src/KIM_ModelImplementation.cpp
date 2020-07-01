@@ -853,7 +853,9 @@ void ModelImplementation::GetParameterFileDirectoryName(
 #endif
   LOG_DEBUG("Enter  " + callString);
 
-  *directoryName = &parameterFileDirectoryName_;
+  // Convert frame to string representation.
+  parameterFileDirectoryNameString_ = parameterFileDirectoryName_.string();
+  *directoryName = &parameterFileDirectoryNameString_;
 
   LOG_DEBUG("Exit   " + callString);
 }
@@ -2058,7 +2060,6 @@ ModelImplementation::ModelImplementation(SharedLibrary * const sharedLibrary,
     modelName_(""),
     modelDriverName_(""),
     sharedLibrary_(sharedLibrary),
-    parameterFileDirectoryName_(""),
     numberOfParameterFiles_(0),
     log_(log),
     numberingHasBeenSet_(false),
@@ -3064,8 +3065,9 @@ int ModelImplementation::InitializeParameterizedModel(
   error
       = sharedLibrary_->WriteParameterFileDirectory()
         || sharedLibrary_->GetParameterFileDirectoryName(
-            &parameterFileDirectoryName_)
+            &parameterFileDirectoryNameString_)
         || sharedLibrary_->GetNumberOfParameterFiles(&numberOfParameterFiles_);
+  parameterFileDirectoryName_ = parameterFileDirectoryNameString_;
   for (int i = 0; i < numberOfParameterFiles_; ++i)
   {
     std::string parameterFileName;
@@ -3073,8 +3075,8 @@ int ModelImplementation::InitializeParameterizedModel(
             || sharedLibrary_->GetParameterFile(
                 i, &parameterFileName, NULL, NULL);
     parameterFileBasenames_.push_back(parameterFileName.c_str());
-    parameterFileName = parameterFileDirectoryName_ + "/" + parameterFileName;
-    parameterFileNames_.push_back(parameterFileName.c_str());
+    KIM::FILESYSTEM::Path parameterFilePath = parameterFileDirectoryName_ / parameterFileName;
+    parameterFileNames_.push_back(parameterFilePath.string());
   }
   if (error)
   {

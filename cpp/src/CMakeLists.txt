@@ -102,6 +102,14 @@ target_include_directories(kim-loader PUBLIC
   )
 target_link_libraries(kim-loader ${CMAKE_DL_LIBS})
 
+if(WIN32 AND NOT CYGWIN)
+  # Activate C++17 standard on Windows, because kim-api code uses C++ filesystem library internally.
+  set_property(TARGET kim-api PROPERTY CXX_STANDARD 17)
+  set_property(TARGET kim-api PROPERTY CXX_STANDARD_REQUIRED YES)
+  set_property(TARGET kim-loader PROPERTY CXX_STANDARD 17)
+  set_property(TARGET kim-loader PROPERTY CXX_STANDARD_REQUIRED YES)
+endif()
+
 # The KIM API code uses POSIX.1-2008 functions such as strdup() or mkstemp(), which are
 # not part of the ISO C standard. Thus, when compiling with -std=c++98 instead of -std=gnu98,
 # these function would be unavailable.

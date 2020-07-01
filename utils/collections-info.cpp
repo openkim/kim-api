@@ -44,7 +44,7 @@
 
 void usage(std::string name)
 {
-  size_t beg = name.find_last_of("/");
+  size_t beg = name.find_last_of("/\\");
   if (beg != std::string::npos) name = name.substr(beg + 1, std::string::npos);
 
   // Follows docopt.org format
@@ -293,9 +293,9 @@ void listItems(KIM::CollectionItemType const type,
 
           if (!error)
           {
-            std::size_t found = itemLibraryFileName->find_last_of("/");
+            std::size_t found = itemLibraryFileName->find_last_of("/\\");
             std::string dir = itemLibraryFileName->substr(0, found);
-            found = dir.find_last_of("/");
+            found = dir.find_last_of("/\\");
             dir = dir.substr(0, found);
             std::cout << colList[i].ToString() << " " << *itemName << " " << dir
                       << std::endl;
@@ -312,9 +312,9 @@ void listItems(KIM::CollectionItemType const type,
 
       if (!error)
       {
-        std::size_t found = itemFileName->find_last_of("/");
+        std::size_t found = itemFileName->find_last_of("/\\");
         std::string dir = itemFileName->substr(0, found);
-        found = dir.find_last_of("/");
+        found = dir.find_last_of("/\\");
         dir = dir.substr(0, found);
         std::cout << collection.ToString() << " " << name << " " << dir
                   << std::endl;

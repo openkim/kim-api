@@ -75,6 +75,9 @@
 #include "KIM_SpeciesName.hpp"
 #endif
 
+#ifndef KIM_FILESYSTEM_PATH_HPP_
+#include "KIM_FilesystemPath.hpp"
+#endif
 
 namespace KIM
 {
@@ -275,7 +278,8 @@ class ModelImplementation
   std::string modelDriverName_;
 
   SharedLibrary * sharedLibrary_;
-  std::string parameterFileDirectoryName_;
+  KIM::FILESYSTEM::Path parameterFileDirectoryName_;
+  mutable std::string parameterFileDirectoryNameString_;
   int numberOfParameterFiles_;
   std::vector<std::string> parameterFileNames_;
   std::vector<std::string> parameterFileBasenames_;

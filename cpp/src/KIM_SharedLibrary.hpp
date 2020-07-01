@@ -53,6 +53,10 @@
 #include "KIM_CollectionItemType.hpp"
 #endif
 
+#ifndef KIM_FILESYSTEM_PATH_HPP_
+#include "KIM_FilesystemPath.hpp"
+#endif
+
 namespace KIM
 {
 // Forward declarations
@@ -65,9 +69,8 @@ class SharedLibrary
   SharedLibrary(Log * const log);
   ~SharedLibrary();
 
-  int Open(std::string const & sharedLibraryName);
+  int Open(KIM::FILESYSTEM::Path const & sharedLibraryName);
   int Close();
-  int GetName(std::string * const name) const;
   int GetType(CollectionItemType * const type) const;
   int GetCreateFunctionPointer(LanguageName * const languageName,
                                Function ** const functionPointer) const;
@@ -107,12 +110,11 @@ class SharedLibrary
     EmbeddedFile();
   };  // struct EmbeddedFile
 
-  std::string sharedLibraryName_;
+  KIM::FILESYSTEM::Path sharedLibraryName_;
   void * sharedLibraryHandle_;
   int const * sharedLibrarySchemaVersion_;
 
   CollectionItemType itemType_;
-  std::string itemName_;
   LanguageName createLanguageName_;
   Function * createRoutine_;
   std::string driverName_;
@@ -122,7 +124,7 @@ class SharedLibrary
   int numberOfMetadataFiles_;
   std::vector<EmbeddedFile> metadataFiles_;
 
-  std::string parameterFileDirectoryName_;
+  KIM::FILESYSTEM::Path parameterFileDirectoryName_;
 
   Log * log_;
 };  // class SharedLibrary

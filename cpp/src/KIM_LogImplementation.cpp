@@ -36,6 +36,7 @@
 #include <cstring>
 #include <iostream>
 #include <sstream>
+#include <fstream>
 #include <string>
 #include <time.h>
 
@@ -49,7 +50,6 @@
 
 #include "KIM_LOG_DEFINES.inc"
 
-#define LOG_DIR "."
 #define LOG_FILE "kim.log"
 
 // log helper
@@ -202,10 +202,11 @@ void LogImplementation::LogEntry(LogVerbosity const logVerbosity,
     // Need to figure out how to do file locking to make this work for
     // parallel computations.
 
-    FILE * file = fopen(LOG_DIR "/" LOG_FILE, "a");
-    if (file == NULL)
+    std::ofstream file;
+    file.open(LOG_FILE, std::ios_base::out | std::ios_base::app);
+    if (!file)
     {
-      std::cerr << "Unable to open " LOG_DIR "/" LOG_FILE " file." << std::endl;
+      std::cerr << "Unable to open " LOG_FILE " file." << std::endl;
     }
     else
     {
@@ -217,8 +218,7 @@ void LogImplementation::LogEntry(LogVerbosity const logVerbosity,
                                     message,
                                     lineNumber,
                                     fileName));
-      fwrite(entry.c_str(), sizeof(char), entry.length(), file);
-      fclose(file);
+      file << entry;
     }
   }
 }

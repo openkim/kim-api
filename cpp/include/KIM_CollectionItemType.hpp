@@ -41,7 +41,7 @@ namespace KIM
 /// \brief An \ref extensible_enumeration "Extensible Enumeration" for the
 /// CollectionItemType's supported by the %KIM API.
 ///
-/// The enumeration constants are contained in the COLLECTION_ITEM_TUPE
+/// The enumeration constants are contained in the COLLECTION_ITEM_TYPE
 /// namespace.
 ///
 /// \sa KIM_CollectionItemType,

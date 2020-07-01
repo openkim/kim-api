@@ -39,7 +39,7 @@
 
 void usage(std::string name)
 {
-  size_t beg = name.find_last_of("/");
+  size_t beg = name.find_last_of("/\\");
   if (beg != std::string::npos) name = name.substr(beg + 1, std::string::npos);
 
   // Follows docopt.org format
