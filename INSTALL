@@ -188,8 +188,9 @@ this file does not exist, the KIM API library will create it with a default
 configuration specifying that the user-collection files are stored in
 "${HOME}/.kim-api/model-drivers/", "${HOME}/.kim-api/portable-models/", and
 "${HOME}/.kim-api/simulator-models/".  More generally, the values in the
-configuration file may contain colon ':' separated lists of directory names
-(starting, strictly, with '/' or '~/').
+configuration file may contain colon ':' (on Windows: semi-colon ';') 
+separated lists of fully-qualified directory names (starting, strictly, with 
+'/', '~/' or a root drive letter like 'C:/').
 
 C.2.3 THE ENVIRONMENT-VARIABLE-COLLECTION
 
@@ -198,9 +199,9 @@ are specified by the run-time environment of the process for the simulator that
 uses the KIM API library.  The locations of this collection are specified by
 the environment variables "KIM_API_MODEL_DRIVERS_DIR",
 "KIM_API_PORTABLE_MODELS_DIR", and "KIM_API_SIMULATOR_MODELS_DIR".  These
-variables should contain colon ':' separated lists of absolute directory names
-where the collection MDs, PMs, and SMs, respectively, are located.  (For
-example, in bash you could execute the command
+variables should contain colon ':' (on Windows: semi-colon ';') separated lists 
+of absolute directory names where the collection MDs, PMs, and SMs, respectively, 
+are located.  (For example, in bash you could execute the command
 
    $ export KIM_API_PORTABLE_MODELS_DIR=/my-kim-stuff/models-i-am-developing:/my-kim-stuff/misc-portable-models
 

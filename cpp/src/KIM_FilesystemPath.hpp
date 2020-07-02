@@ -41,7 +41,7 @@
 // for cross-platform file path handling introduced with C++17. Otherwise,
 // fall back to our own, minimal implementation of the file path class based
 // on std::string.
-#if defined(__has_include) && __has_include(<filesystem>)
+#if __cplusplus >= 201703L && defined(__has_include) && __has_include(<filesystem>)
 
 #include <filesystem>
 #include <random>
@@ -163,8 +163,10 @@ class Path : public std::filesystem::path
 #else
 
 #include <cstring>
+#include <dirent.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <unistd.h>
 
 namespace KIM
 {
@@ -173,21 +175,27 @@ namespace FILESYSTEM
 class Path : public std::string
 {
  public:
-  // Inherit constructors from base class.
-  using std::string::string;
-  // Inherit assignment operators from base class.
-  using std::string::string::operator=;
+  Path() {}
+  Path(const std::string & other) : std::string(other) {}
+  Path(const char * str) : std::string(str) {}
 
-  // Copy constructor.
-  Path(const Path & p) = default;
-  // Copy assignment.
-  Path & operator=(const Path & p) = default;
+  Path & operator=(const std::string & other)
+  {
+    std::string::operator=(other);
+    return *this;
+  }
+
+  Path & operator=(const char * other)
+  {
+    std::string::operator=(other);
+    return *this;
+  }
 
   // Platform-dependent character for separating path entries.
 #ifndef _WIN32
-  static std::string::value_type preferred_separator = '/';
+  static const std::string::value_type preferred_separator = '/';
 #else
-  static std::string::value_type preferred_separator = '\\';
+  static const std::string::value_type preferred_separator = '\\';
 #endif
 
   // Checks whether the path is relative.
@@ -277,6 +285,43 @@ class Path : public std::string
     struct stat statBuf;
     if (0 == stat(c_str(), &statBuf)) return true;
     return false;
+  }
+
+  Path operator/(const std::string & p) const
+  {
+    Path result(*this);
+    result /= p;
+    return result;
+  }
+
+  Path & operator/=(const std::string & p)
+  {
+    if (p.empty()) return *this;
+    if (p[0] == '/') { *this = p; }
+    else
+    {
+      if ((*this)[size() - 1] != '/') *this += '/';
+      if (p.size() >= 2 && p[0] == '.' && p[1] == '/')
+        append(p.substr(2));
+      else
+        append(p);
+    }
+    return *this;
+  }
+
+  Path & concat(const std::string & p)
+  {
+    append(p);
+    return *this;
+  }
+
+  Path & make_preferred() { return *this; }
+
+  Path filename() const
+  {
+    size_type pos = rfind('/');
+    if (pos == std::string::npos) return *this;
+    return substr(pos + 1);
   }
 
   // Turns the path object into a conventional string, which can be passed to
