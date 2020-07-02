@@ -166,6 +166,8 @@ class Path : public std::filesystem::path
 #include <dirent.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <errno.h>
+#include <stdio.h>
 #include <unistd.h>
 
 namespace KIM

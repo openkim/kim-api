@@ -42,6 +42,7 @@
 #include <vector>
 #include <map>
 #include <sstream>
+#include <algorithm>
 #include <sys/stat.h>
 
 #define LINELEN 256
