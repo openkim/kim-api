@@ -52,7 +52,6 @@
 namespace KIM
 {
 // Forward declarations
-class LogVerbosity;
 
 class LogImplementation
 {
