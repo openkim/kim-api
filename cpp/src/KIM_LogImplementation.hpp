@@ -41,7 +41,7 @@
 #include "KIM_FunctionTypes.hpp"  // IWYU pragma: export
 #endif
 
-#ifnde KIM_LOG_VERBOSITY_HPP_
+#ifndef KIM_LOG_VERBOSITY_HPP_
 #include "KIM_LogVerbosity.hpp"
 #endif
 
