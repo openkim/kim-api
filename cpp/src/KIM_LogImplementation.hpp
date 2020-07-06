@@ -34,6 +34,7 @@
 #ifndef KIM_LOG_IMPLEMENTATION_HPP_
 #define KIM_LOG_IMPLEMENTATION_HPP_
 
+#include <vector>
 #include <stack>
 #include <string>
 
@@ -93,7 +94,7 @@ class LogImplementation
   std::string GetTimeStamp() const;
 
   std::string idString_;
-  std::stack<LogVerbosity> verbosity_;
+  std::stack<LogVerbosity, std::vector<LogVerbosity> > verbosity_;
 
   LanguageName printFunctionLanguageName_;
   Function * printFunctionPointer_;
