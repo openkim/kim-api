@@ -149,7 +149,7 @@ class SimulatorModelImplementation
   int ReadEdnSchemaV1();
   int Initialize(std::string const & simulatorModelName);
 
-  KIM::FILESYSTEM::Path parameterFileDirectoryName_;
+  FILESYSTEM::Path parameterFileDirectoryName_;
   mutable std::string parameterFileDirectoryNameString_;
   std::string specificationFileName_;
   int schemaVersion_;

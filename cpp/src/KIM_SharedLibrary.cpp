@@ -107,7 +107,7 @@ SharedLibrary::~SharedLibrary()
   LOG_DEBUG("Exit   " + callString);
 }
 
-int SharedLibrary::Open(KIM::FILESYSTEM::Path const & sharedLibraryName)
+int SharedLibrary::Open(FILESYSTEM::Path const & sharedLibraryName)
 {
 #if DEBUG_VERBOSITY
   std::string const callString = "Open('" + sharedLibraryName.string() + "').";
@@ -538,9 +538,8 @@ int SharedLibrary::WriteParameterFileDirectory()
     return true;  // not open
   }
 
-  parameterFileDirectoryName_
-      = KIM::FILESYSTEM::Path::create_temporary_directory(
-          "kim-shared-library-parameter-file-directory-");
+  parameterFileDirectoryName_ = FILESYSTEM::Path::create_temporary_directory(
+      "kim-shared-library-parameter-file-directory-");
   if (parameterFileDirectoryName_.empty())
   {
     LOG_ERROR("Could not create a secure temporary directory.");
@@ -562,7 +561,7 @@ int SharedLibrary::WriteParameterFileDirectory()
       LOG_DEBUG("Exit 1=" + callString);
       return true;
     }
-    KIM::FILESYSTEM::Path const specificationFilePathName
+    FILESYSTEM::Path const specificationFilePathName
         = parameterFileDirectoryName_ / specFileName;
     std::ofstream fl;
     fl.open(specificationFilePathName.c_str(),
@@ -593,7 +592,7 @@ int SharedLibrary::WriteParameterFileDirectory()
       return true;
     }
 
-    KIM::FILESYSTEM::Path const parameterFilePathName
+    FILESYSTEM::Path const parameterFilePathName
         = parameterFileDirectoryName_ / parameterFileName;
     std::ofstream fl;
     fl.open(parameterFilePathName.c_str(),

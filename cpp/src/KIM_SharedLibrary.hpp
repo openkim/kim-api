@@ -69,7 +69,7 @@ class SharedLibrary
   SharedLibrary(Log * const log);
   ~SharedLibrary();
 
-  int Open(KIM::FILESYSTEM::Path const & sharedLibraryName);
+  int Open(FILESYSTEM::Path const & sharedLibraryName);
   int Close();
   int GetType(CollectionItemType * const type) const;
   int GetCreateFunctionPointer(LanguageName * const languageName,
@@ -110,7 +110,7 @@ class SharedLibrary
     EmbeddedFile();
   };  // struct EmbeddedFile
 
-  KIM::FILESYSTEM::Path sharedLibraryName_;
+  FILESYSTEM::Path sharedLibraryName_;
   void * sharedLibraryHandle_;
   int const * sharedLibrarySchemaVersion_;
 
@@ -124,7 +124,7 @@ class SharedLibrary
   int numberOfMetadataFiles_;
   std::vector<EmbeddedFile> metadataFiles_;
 
-  KIM::FILESYSTEM::Path parameterFileDirectoryName_;
+  FILESYSTEM::Path parameterFileDirectoryName_;
 
   Log * log_;
 };  // class SharedLibrary

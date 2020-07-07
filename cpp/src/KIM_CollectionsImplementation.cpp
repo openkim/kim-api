@@ -39,10 +39,10 @@
 #include <errno.h>
 #include <fstream>
 #include <iostream>
-#include <vector>
 #include <map>
 #include <sstream>
 #include <sys/stat.h>
+#include <vector>
 
 #define LINELEN 256
 
@@ -670,7 +670,7 @@ int CollectionsImplementation::GetItemLibraryFileNameAndCollection(
 #endif
 
   Collection col;
-  KIM::FILESYSTEM::Path path;
+  FILESYSTEM::Path path;
   if (PrivateGetItemLibraryFileNameAndCollection(
           itemType, itemName, log_, &path, &col))
   {
@@ -807,7 +807,7 @@ int CollectionsImplementation::CacheListOfItemNamesByType(
 
   namespace KC = KIM::COLLECTION;
 
-  std::vector<KIM::FILESYSTEM::Path> listOfPaths;
+  std::vector<FILESYSTEM::Path> listOfPaths;
   PrivateGetListOfItemPathsByCollectionAndType(
       KC::system, itemType, log_, listOfPaths);
 
@@ -828,7 +828,7 @@ int CollectionsImplementation::CacheListOfItemNamesByType(
   // Get the item names from the KIM::FILESYSTEM::Path entries.
   cacheListOfItemNamesByType_.clear();
   cacheListOfItemNamesByType_.reserve(listOfPaths.size());
-  std::vector<KIM::FILESYSTEM::Path>::const_iterator path;
+  std::vector<FILESYSTEM::Path>::const_iterator path;
   for (path = listOfPaths.begin(); path != listOfPaths.end(); ++path)
   { cacheListOfItemNamesByType_.push_back(path->filename().string()); }
 
@@ -884,7 +884,7 @@ int CollectionsImplementation::CacheListOfItemNamesByCollectionAndType(
   }
 #endif
 
-  std::vector<KIM::FILESYSTEM::Path> listOfPaths;
+  std::vector<FILESYSTEM::Path> listOfPaths;
   PrivateGetListOfItemPathsByCollectionAndType(
       collection, itemType, log_, listOfPaths);
 
@@ -896,7 +896,7 @@ int CollectionsImplementation::CacheListOfItemNamesByCollectionAndType(
   // Extract the item names from the KIM::FILESYSTEM::Path entries.
   cacheListOfItemNamesByCollectionAndType_.clear();
   cacheListOfItemNamesByCollectionAndType_.reserve(listOfPaths.size());
-  std::vector<KIM::FILESYSTEM::Path>::const_iterator path;
+  std::vector<FILESYSTEM::Path>::const_iterator path;
   for (path = listOfPaths.begin(); path != listOfPaths.end(); ++path)
   {
     cacheListOfItemNamesByCollectionAndType_.push_back(
@@ -955,7 +955,7 @@ int CollectionsImplementation::GetItemLibraryFileNameByCollectionAndType(
   }
 #endif
 
-  KIM::FILESYSTEM::Path path;
+  FILESYSTEM::Path path;
   int error = PrivateGetItemLibraryFileNameByCollectionAndType(
       collection, itemType, itemName, log_, &path);
   if (error)
@@ -1147,7 +1147,7 @@ void CollectionsImplementation::GetConfigurationFileName(
 #endif
   LOG_DEBUG("Enter  " + callString);
 
-  KIM::FILESYSTEM::Path path;
+  FILESYSTEM::Path path;
   PrivateGetConfigurationFileName(path);
 
   // Convert from internal KIM::FILESYSTEM::Path representation to conventional
@@ -1204,10 +1204,10 @@ int CollectionsImplementation::CacheListOfDirectoryNames(
 
   // Convert from internal KIM::FILESYSTEM::Path representation to conventional
   // std::string representation.
-  KIM::FILESYSTEM::PathList const & pathList = dirsMap[itemType];
+  FILESYSTEM::PathList const & pathList = dirsMap[itemType];
   cacheListOfDirectoryNames_.clear();
   cacheListOfDirectoryNames_.reserve(pathList.size());
-  KIM::FILESYSTEM::PathList::const_iterator path;
+  FILESYSTEM::PathList::const_iterator path;
   for (path = pathList.begin(); path != pathList.end(); ++path)
   { cacheListOfDirectoryNames_.push_back(path->string()); }
 

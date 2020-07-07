@@ -278,7 +278,7 @@ class ModelImplementation
   std::string modelDriverName_;
 
   SharedLibrary * sharedLibrary_;
-  KIM::FILESYSTEM::Path parameterFileDirectoryName_;
+  FILESYSTEM::Path parameterFileDirectoryName_;
   mutable std::string parameterFileDirectoryNameString_;
   int numberOfParameterFiles_;
   std::vector<std::string> parameterFileNames_;

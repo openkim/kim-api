@@ -3075,7 +3075,8 @@ int ModelImplementation::InitializeParameterizedModel(
             || sharedLibrary_->GetParameterFile(
                 i, &parameterFileName, NULL, NULL);
     parameterFileBasenames_.push_back(parameterFileName.c_str());
-    KIM::FILESYSTEM::Path parameterFilePath = parameterFileDirectoryName_ / parameterFileName;
+    FILESYSTEM::Path parameterFilePath
+        = parameterFileDirectoryName_ / parameterFileName;
     parameterFileNames_.push_back(parameterFilePath.string());
   }
   if (error)

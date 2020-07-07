@@ -318,9 +318,9 @@ void SimulatorModelImplementation::AddStandardTemplatesToMap()
     AddTemplateMap("parameter-file-basename-" + SNUM(i + 1),
                    parameterFileBasenames_[i]);
 
-    AddTemplateMap("parameter-file-" + SNUM(i + 1),
-                   (parameterFileDirectoryName_ /
-                       parameterFileBasenames_[i]).string());
+    AddTemplateMap(
+        "parameter-file-" + SNUM(i + 1),
+        (parameterFileDirectoryName_ / parameterFileBasenames_[i]).string());
   }
 
   LOG_DEBUG("Exit 0=" + callString);
@@ -651,7 +651,8 @@ std::string const & SimulatorModelImplementation::ToString() const
   ss << "Log ID : " << log_->GetID() << "\n";
   ss << "\n";
 
-  ss << "Parameter file directory : " << parameterFileDirectoryName_.string() << "\n";
+  ss << "Parameter file directory : " << parameterFileDirectoryName_.string()
+     << "\n";
 
   ss << "Specification file name : " << specificationFileName_ << "\n\n";
 
@@ -918,7 +919,7 @@ int SimulatorModelImplementation::ParseEdn(edn::EdnNode & node) const
 #endif
   LOG_DEBUG("Enter  " + callString);
 
-  KIM::FILESYSTEM::Path const filePath
+  FILESYSTEM::Path const filePath
       = parameterFileDirectoryName_ / specificationFileName_;
   std::ifstream ifs;
   ifs.open(filePath.c_str());
