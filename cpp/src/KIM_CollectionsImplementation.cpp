@@ -88,7 +88,7 @@ typedef std::map<KIM::CollectionItemType,
 KIM::FILESYSTEM::Path LibraryName(KIM::CollectionItemType const itemType,
                                   KIM::FILESYSTEM::Path const & path)
 {
-  KIM::FILESYSTEM::Path libName = path / KIM_SHARED_MODULE_PREFIX;
+  std::string libName = KIM_SHARED_MODULE_PREFIX;
   libName += KIM_PROJECT_NAME;
   libName += "-";
 
@@ -104,7 +104,7 @@ KIM::FILESYSTEM::Path LibraryName(KIM::CollectionItemType const itemType,
 
   libName += KIM_SHARED_MODULE_SUFFIX;
 
-  return libName;
+  return path / libName;
 }
 
 int ProcessConfigFileLine(char const * const line,
