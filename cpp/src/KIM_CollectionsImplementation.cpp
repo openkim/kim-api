@@ -42,6 +42,7 @@
 #include <iostream>
 #include <map>
 #include <sstream>
+#include <algorithm>
 #include <sys/stat.h>
 #include <vector>
 
