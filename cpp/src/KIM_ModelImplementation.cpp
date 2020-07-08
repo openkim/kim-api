@@ -854,8 +854,6 @@ void ModelImplementation::GetParameterFileDirectoryName(
 #endif
   LOG_DEBUG("Enter  " + callString);
 
-  // Convert frame to string representation.
-  parameterFileDirectoryNameString_ = parameterFileDirectoryName_.string();
   *directoryName = &parameterFileDirectoryNameString_;
 
   LOG_DEBUG("Exit   " + callString);
@@ -3066,9 +3064,9 @@ int ModelImplementation::InitializeParameterizedModel(
   error
       = sharedLibrary_->WriteParameterFileDirectory()
         || sharedLibrary_->GetParameterFileDirectoryName(
-            &parameterFileDirectoryNameString_)
+            &parameterFileDirectoryName_)
         || sharedLibrary_->GetNumberOfParameterFiles(&numberOfParameterFiles_);
-  parameterFileDirectoryName_ = parameterFileDirectoryNameString_;
+  parameterFileDirectoryNameString_ = parameterFileDirectoryName_.string();
   for (int i = 0; i < numberOfParameterFiles_; ++i)
   {
     std::string parameterFileName;

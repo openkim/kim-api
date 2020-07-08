@@ -86,7 +86,8 @@ class SharedLibrary
       unsigned char const ** const specFileData) const;
 
   int WriteParameterFileDirectory();
-  int GetParameterFileDirectoryName(std::string * const directoryName) const;
+  int GetParameterFileDirectoryName(
+      FILESYSTEM::Path * const directoryName) const;
   int RemoveParameterFileDirectory();
 
   int GetDriverName(std::string * const driverName) const;

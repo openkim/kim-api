@@ -280,7 +280,7 @@ class ModelImplementation
 
   SharedLibrary * sharedLibrary_;
   FILESYSTEM::Path parameterFileDirectoryName_;
-  mutable std::string parameterFileDirectoryNameString_;
+  std::string parameterFileDirectoryNameString_;
   int numberOfParameterFiles_;
   std::vector<std::string> parameterFileNames_;
   std::vector<std::string> parameterFileBasenames_;

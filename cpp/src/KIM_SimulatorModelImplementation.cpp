@@ -465,8 +465,6 @@ void SimulatorModelImplementation::GetParameterFileDirectoryName(
 #endif
   LOG_DEBUG("Enter  " + callString);
 
-  // Convert path to conventional string representation.
-  parameterFileDirectoryNameString_ = parameterFileDirectoryName_.string();
   *directoryName = &parameterFileDirectoryNameString_;
 
   LOG_DEBUG("Exit 0=" + callString);
@@ -832,7 +830,7 @@ int SimulatorModelImplementation::Initialize(
         || sharedLibrary_->GetSimulatorModelSpecificationFile(
             &specificationFileName_, NULL, NULL)
         || sharedLibrary_->GetParameterFileDirectoryName(
-            &parameterFileDirectoryNameString_)
+            &parameterFileDirectoryName_)
         || sharedLibrary_->GetNumberOfParameterFiles(&numberOfParameterFiles_);
   for (int i = 0; i < numberOfParameterFiles_; ++i)
   {
@@ -849,8 +847,8 @@ int SimulatorModelImplementation::Initialize(
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
-  // Convert path from string representation.
-  parameterFileDirectoryName_ = parameterFileDirectoryNameString_;
+  // Convert path to string representation.
+  parameterFileDirectoryNameString_ = parameterFileDirectoryName_.string();
 
   if (GetSchemaVersion())
   {

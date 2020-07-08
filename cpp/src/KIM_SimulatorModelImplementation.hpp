@@ -151,7 +151,7 @@ class SimulatorModelImplementation
   int Initialize(std::string const & simulatorModelName);
 
   FILESYSTEM::Path parameterFileDirectoryName_;
-  mutable std::string parameterFileDirectoryNameString_;
+  std::string parameterFileDirectoryNameString_;
   std::string specificationFileName_;
   int schemaVersion_;
   std::string modelName_;

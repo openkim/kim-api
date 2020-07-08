@@ -614,7 +614,7 @@ int SharedLibrary::WriteParameterFileDirectory()
 }
 
 int SharedLibrary::GetParameterFileDirectoryName(
-    std::string * const directoryName) const
+    FILESYSTEM::Path * const directoryName) const
 {
 #if DEBUG_VERBOSITY
   std::string const callString
@@ -629,9 +629,7 @@ int SharedLibrary::GetParameterFileDirectoryName(
     return true;  // not open
   }
 
-  // Convert from internal KIM::FILESYSTEM::Path representation to conventional
-  // std::string representation.
-  *directoryName = parameterFileDirectoryName_.string();
+  *directoryName = parameterFileDirectoryName_;
 
   LOG_DEBUG("Exit 0=" + callString);
   return false;
