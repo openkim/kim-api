@@ -51,10 +51,6 @@
 #include "KIM_Collection.hpp"
 #endif
 
-#ifndef KIM_FILESYSTEM_PATH_HPP_
-#include "KIM_FilesystemPath.hpp"
-#endif
-
 namespace KIM
 {
 // Forward declaration
