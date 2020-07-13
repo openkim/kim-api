@@ -57,18 +57,22 @@ class Path
 {
  public:
   Path() {}
-  Path(const char * str) : _p(str) {}
-  Path(const std::string & str) : _p(str) {}
+  Path(const char * str) : path_(str) {}
+  Path(const std::string & str) : path_(str) {}
+#ifdef KIM_API_USE_FILESYSTEM_LIBRARY
+  Path(const std::filesystem::path & p) : path_(p) {}
+  Path(std::filesystem::path && p) : path_(std::move(p)) {}
+#endif
 
   Path & operator=(const std::string & other)
   {
-    _p = other;
+    path_ = other;
     return *this;
   }
 
   Path & operator=(const char * other)
   {
-    _p = other;
+    path_ = other;
     return *this;
   }
 
@@ -77,11 +81,11 @@ class Path
   Path operator/(const Path & p) const;
   friend bool operator<(const Path & lhs, const Path & rhs)
   {
-    return lhs._p < rhs._p;
+    return lhs.path_ < rhs.path_;
   }
   friend bool operator==(const Path & lhs, const Path & rhs)
   {
-    return lhs._p == rhs._p;
+    return lhs.path_ == rhs.path_;
   }
 
   // Concatenates the current path and the argument.
@@ -90,16 +94,16 @@ class Path
   // Turns the path object into a conventional string, which can be passed to
   // I/O functions.
 #ifdef KIM_API_USE_FILESYSTEM_LIBRARY
-  std::string string() const { return _p.string(); }
+  std::string string() const { return path_.string(); }
 #else
-  const std::string & string() const { return _p; }
+  const std::string & string() const { return path_; }
 #endif
 
   // Resets the path to an empty string.
-  void clear() { _p.clear(); }
+  void clear() { path_.clear(); }
 
   // Returns whether this path is the empty string.
-  bool empty() const { return _p.empty(); }
+  bool empty() const { return path_.empty(); }
 
   // Returns the last component of the path.
   Path filename() const;
@@ -145,7 +149,7 @@ class Path
   friend std::basic_ostream<CharT, Traits> &
   operator<<(std::basic_ostream<CharT, Traits> & os, const Path & p)
   {
-    return os << p._p;
+    return os << p.path_;
   }
 
 #ifndef KIM_API_USE_FILESYSTEM_LIBRARY
@@ -160,9 +164,9 @@ class Path
  private:
   // The internal path storage:
 #ifdef KIM_API_USE_FILESYSTEM_LIBRARY
-  std::filesystem::path _p;
+  std::filesystem::path path_;
 #else
-  std::string _p;
+  std::string path_;
 #endif
 };
 

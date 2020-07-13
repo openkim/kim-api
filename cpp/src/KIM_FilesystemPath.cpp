@@ -34,6 +34,10 @@
 #include <cstdlib>
 #include <iostream>
 
+#ifndef KIM_FILESYSTEM_PATH_HPP_
+#include "KIM_FilesystemPath.hpp"
+#endif
+
 #ifdef KIM_API_USE_FILESYSTEM_LIBRARY
 #include <random>
 #else
@@ -47,10 +51,6 @@
 #include <unistd.h>
 #endif
 
-#ifndef KIM_FILESYSTEM_PATH_HPP_
-#include "KIM_FilesystemPath.hpp"
-#endif
-
 namespace KIM
 {
 namespace FILESYSTEM
@@ -59,7 +59,7 @@ bool Path::make_directory() const
 {
 #ifdef KIM_API_USE_FILESYSTEM_LIBRARY
   std::error_code ec;
-  std::filesystem::create_directories(_p, ec);
+  std::filesystem::create_directories(path_, ec);
   if (ec)
   {
     std::cerr << "Failed to create directory " << *this << ": " << ec.message()
@@ -69,13 +69,13 @@ bool Path::make_directory() const
   return false;
 #else
   mode_t mode = 0755;
-  if (mkdir(_p.c_str(), mode))
+  if (mkdir(path_.c_str(), mode))
   {
     if (EEXIST == errno)
       return false;
     else
     {
-      std::cerr << "Failed to create directory '" << _p << "'." << std::endl;
+      std::cerr << "Failed to create directory '" << path_ << "'." << std::endl;
       return true;
     }
   }
@@ -87,7 +87,7 @@ bool Path::remove_directory_recursive() const
 {
 #ifdef KIM_API_USE_FILESYSTEM_LIBRARY
   std::error_code ec;
-  std::filesystem::remove_all(_p, ec);
+  std::filesystem::remove_all(path_, ec);
   if (ec)
   {
     std::cerr << "Failed to remove directory " << *this << ": " << ec.message()
@@ -99,18 +99,18 @@ bool Path::remove_directory_recursive() const
   int error;
   struct dirent * dp = NULL;
   DIR * dir = NULL;
-  dir = opendir(_p.c_str());
+  dir = opendir(path_.c_str());
   while ((dp = readdir(dir)))
   {
     // assuming no subdirectories, just files
     if ((0 != strcmp(dp->d_name, ".")) && (0 != strcmp(dp->d_name, "..")))
     {
       Path filePath = *this / dp->d_name;
-      remove(filePath._p.c_str());
+      remove(filePath.path_.c_str());
     }
   }
   closedir(dir);
-  error = remove(_p.c_str());
+  error = remove(path_.c_str());
   if (error) { return true; }
   return false;
 #endif
@@ -121,10 +121,10 @@ std::vector<Path> Path::subdirectories() const
 #ifdef KIM_API_USE_FILESYSTEM_LIBRARY
   std::vector<Path> resultList;
   std::error_code ec;
-  if (std::filesystem::is_directory(_p, ec))
+  if (std::filesystem::is_directory(path_, ec))
   {
-    for (auto & p : std::filesystem::directory_iterator(_p))
-      resultList.push_back(p.path());
+    for (auto & p : std::filesystem::directory_iterator(path_))
+      resultList.push_back(Path(p.path()));
   }
   return resultList;
 #else
@@ -133,7 +133,7 @@ std::vector<Path> Path::subdirectories() const
   DIR * dirp = NULL;
   struct dirent * dp = NULL;
 
-  if (NULL != (dirp = opendir(_p.c_str())))
+  if (NULL != (dirp = opendir(path_.c_str())))
   {
     do
     {
@@ -142,7 +142,7 @@ std::vector<Path> Path::subdirectories() const
           && (0 != strcmp(dp->d_name, "..")))
       {
         Path fullPath = *this / dp->d_name;
-        if ((0 == stat(fullPath._p.c_str(), &statBuf))
+        if ((0 == stat(fullPath.path_.c_str(), &statBuf))
             && (S_ISDIR(statBuf.st_mode)))
         { resultList.push_back(fullPath); }
       }
@@ -192,10 +192,10 @@ Path Path::create_temporary_directory(char const * const namePrefix)
 bool Path::exists() const
 {
 #ifdef KIM_API_USE_FILESYSTEM_LIBRARY
-  return std::filesystem::exists(_p);
+  return std::filesystem::exists(path_);
 #else
   struct stat statBuf;
-  if (0 == stat(_p.c_str(), &statBuf)) return true;
+  if (0 == stat(path_.c_str(), &statBuf)) return true;
   return false;
 #endif
 }
@@ -211,14 +211,10 @@ Path Path::current_path()
 
 Path Path::home_path()
 {
-#ifdef KIM_API_USE_FILESYSTEM_LIBRARY
-#ifndef _WIN32
-  return Path(getenv("HOME"));
-#else
-  Path homeDrive = ::_wgetenv(L"HOMEDRIVE");
-  Path homePath = ::_wgetenv(L"HOMEPATH");
-  return homeDrive / homePath;
-#endif
+#if defined(KIM_API_USE_FILESYSTEM_LIBRARY) && defined(_WIN32)
+  std::filesystem::path homeDrive = _wgetenv(L"HOMEDRIVE");
+  std::filesystem::path homePath = _wgetenv(L"HOMEPATH");
+  return Path(homeDrive / homePath);
 #else
   return Path(getenv("HOME"));
 #endif
@@ -227,9 +223,9 @@ Path Path::home_path()
 Path & Path::remove_filename()
 {
 #ifdef KIM_API_USE_FILESYSTEM_LIBRARY
-  _p.remove_filename();
+  path_.remove_filename();
 #else
-  _p = _p.substr(0, _p.find_last_of('/'));
+  path_ = path_.substr(0, path_.find_last_of('/'));
 #endif
   return *this;
 }
@@ -237,18 +233,18 @@ Path & Path::remove_filename()
 bool Path::is_relative() const
 {
 #ifdef KIM_API_USE_FILESYSTEM_LIBRARY
-  return _p.is_relative();
+  return path_.is_relative();
 #else
-  return _p.empty() || _p[0] != '/';
+  return path_.empty() || path_[0] != '/';
 #endif
 }
 
 Path & Path::operator+=(char const * const s)
 {
 #ifdef KIM_API_USE_FILESYSTEM_LIBRARY
-  _p += std::string(s);
+  path_ += std::string(s);
 #else
-  _p += s;
+  path_ += s;
 #endif
   return *this;
 }
@@ -256,9 +252,9 @@ Path & Path::operator+=(char const * const s)
 Path & Path::concat(const std::string & p)
 {
 #ifdef KIM_API_USE_FILESYSTEM_LIBRARY
-  _p.concat(p);
+  path_.concat(p);
 #else
-  _p.append(p);
+  path_.append(p);
 #endif
   return *this;
 }
@@ -266,7 +262,7 @@ Path & Path::concat(const std::string & p)
 Path & Path::make_preferred()
 {
 #ifdef KIM_API_USE_FILESYSTEM_LIBRARY
-  _p.make_preferred();
+  path_.make_preferred();
 #else
   // No-op, because '/' is the only directory separator on non-Windows
   // platforms.
@@ -277,28 +273,28 @@ Path & Path::make_preferred()
 Path Path::filename() const
 {
 #ifdef KIM_API_USE_FILESYSTEM_LIBRARY
-  return Path(_p.filename());
+  return Path(path_.filename());
 #else
-  std::string::size_type pos = _p.rfind('/');
+  std::string::size_type pos = path_.rfind('/');
   if (pos == std::string::npos) return *this;
-  return Path(_p.substr(pos + 1));
+  return Path(path_.substr(pos + 1));
 #endif
 }
 
 Path & Path::operator/=(const Path & p)
 {
 #ifdef KIM_API_USE_FILESYSTEM_LIBRARY
-  _p /= p._p;
+  path_ /= p.path_;
 #else
   if (p.empty()) return *this;
-  if (!p.is_relative()) { _p = p._p; }
+  if (!p.is_relative()) { path_ = p.path_; }
   else
   {
-    if (_p[_p.size() - 1] != '/') _p += '/';
-    if (p._p.size() >= 2 && p._p[0] == '.' && p._p[1] == '/')
-      _p.append(p._p.substr(2));
+    if (path_[path_.size() - 1] != '/') path_ += '/';
+    if (p.path_.size() >= 2 && p.path_[0] == '.' && p.path_[1] == '/')
+      path_.append(p.path_.substr(2));
     else
-      _p.append(p._p);
+      path_.append(p.path_);
   }
 #endif
   return *this;
@@ -307,7 +303,7 @@ Path & Path::operator/=(const Path & p)
 Path Path::operator/(const Path & p) const
 {
 #ifdef KIM_API_USE_FILESYSTEM_LIBRARY
-  return _p / p._p;
+  return path_ / p.path_;
 #else
   Path result(*this);
   result /= p;
