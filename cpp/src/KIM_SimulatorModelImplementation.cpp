@@ -921,7 +921,7 @@ int SimulatorModelImplementation::ParseEdn(edn::EdnNode & node) const
   FILESYSTEM::Path const filePath
       = parameterFileDirectoryName_ / specificationFileName_;
   std::ifstream ifs;
-  ifs.open(filePath.c_str());
+  ifs.open(filePath.string().c_str());
   if (!ifs.is_open())
   {
     LOG_ERROR("Unable to open simulator model metatdata file.");

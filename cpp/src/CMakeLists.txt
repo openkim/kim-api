@@ -49,6 +49,7 @@ set(CPP_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ComputeCallbackName.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_DataType.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_EnergyUnit.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/KIM_FilesystemPath.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_LanguageName.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_LengthUnit.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_Log.cpp
@@ -86,6 +87,7 @@ add_library(kim-loader STATIC
   KIM_CollectionItemType.cpp
   KIM_Collections.cpp
   KIM_CollectionsImplementation.cpp
+  KIM_FilesystemPath.cpp
   KIM_LanguageName.cpp
   KIM_LogVerbosity.cpp
   KIM_Log.cpp

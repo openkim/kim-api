@@ -37,336 +37,135 @@
 
 #include <cstdlib>
 #include <iostream>
+#include <vector>
 
 // If available on the local platform, use the std::filesystem::path class
 // for cross-platform file path handling introduced with C++17. Otherwise,
-// fall back to our own, minimal implementation of the file path class based
-// on std::string.
+// fall back to a minimal implementation based on std::string.
 #if __cplusplus >= 201703L && defined(__has_include) && __has_include(<filesystem>)
-
+#define KIM_API_USE_FILESYSTEM_LIBRARY 1
 #include <filesystem>
-#include <random>
-
-namespace KIM
-{
-namespace FILESYSTEM
-{
-class Path : public std::filesystem::path
-{
- public:
-  // Inherit constructors from base class.
-  using std::filesystem::path::path;
-  // Inherit assignment operators from base class.
-  using std::filesystem::path::operator=;
-
-  // Copy constructor.
-  Path(const Path & p) = default;
-  // Conversion constructor.
-  Path(const std::filesystem::path & p) : std::filesystem::path(p) {}
-  // Conversion constructor.
-  Path(std::filesystem::path && p) : std::filesystem::path(std::move(p)) {}
-  // Copy assignment.
-  Path & operator=(const Path & p) = default;
-
-  Path & operator+=(char const * const s)
-  {
-    std::filesystem::path::operator+=(std::string(s));
-    return *this;
-  }
-
-  // Creates a new directory, including parent directories if necessary.
-  // It's not an error if the directory to be created already exists.
-  // Returns true on error.
-  bool make_directory() const
-  {
-    std::error_code ec;
-    std::filesystem::create_directories(*this, ec);
-    if (ec)
-    {
-      std::cerr << "Failed to create directory '" << *this
-                << "': " << ec.message() << std::endl;
-      return true;
-    }
-    return false;
-  }
-
-  // Deletes the contents of this path (if it is a directory) and the contents
-  // of all its subdirectories, recursively, then deletes the file path itself.
-  // Returns true on error.
-  bool remove_directory_recursive() const
-  {
-    std::error_code ec;
-    std::filesystem::remove_all(*this, ec);
-    if (ec)
-    {
-      std::cerr << "Failed to remove directory '" << *this
-                << "': " << ec.message() << std::endl;
-      return true;
-    }
-    return false;
-  }
-
-  // Returns the list of subdirectories of this directory.
-  std::vector<Path> subdirectories() const
-  {
-    std::vector<Path> resultList;
-    std::error_code ec;
-    if (std::filesystem::is_directory(*this, ec))
-    {
-      for (auto & p : std::filesystem::directory_iterator(*this))
-        resultList.push_back(p.path());
-    }
-    return resultList;
-  }
-
-  // Checks whether the file or directory exists.
-  bool exists() const { return std::filesystem::exists(*this); }
-
-  // Returns the current working directory.
-  static Path current_path() { return Path(std::filesystem::current_path()); }
-
-  // Returns the user's home directory.
-  static Path home_path()
-  {
-#ifndef _WIN32
-    return Path(::getenv("HOME"));
 #else
-    Path homeDrive = ::_wgetenv(L"HOMEDRIVE");
-    Path homePath = ::_wgetenv(L"HOMEPATH");
-    return homeDrive / homePath;
+#include <string>
 #endif
-  }
-
-  // Creates a new empty directory that can be used to write temporary files
-  // into. Returns an empty path on failure.
-  static Path create_temporary_directory(char const * const namePrefix)
-  {
-    // Get the root directory for temporary files.
-    std::filesystem::path temp_dir = std::filesystem::temp_directory_path();
-    // Keep generating random subdirectory names until we find one that does not
-    // exists yet.
-    std::default_random_engine rnd;
-    Path temp_subdir;
-    do
-    {
-      int random_number = std::uniform_int_distribution<int>(0)(rnd);
-      std::string subdir_name = namePrefix + std::to_string(random_number);
-      temp_subdir = temp_dir / subdir_name;
-    } while (temp_subdir.exists());
-    // Create the subdirectory.
-    if (temp_subdir.make_directory()) { return Path(); }
-    return temp_subdir;
-  }
-};
-}  // namespace FILESYSTEM
-}  // namespace KIM
-
-#else
-
-#include <cstring>
-#include <dirent.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <errno.h>
-#include <stdio.h>
-#include <unistd.h>
 
 namespace KIM
 {
 namespace FILESYSTEM
 {
-class Path : public std::string
+class Path
 {
  public:
   Path() {}
-  Path(const std::string & other) : std::string(other) {}
-  Path(const char * str) : std::string(str) {}
+  Path(const char * str) : _p(str) {}
+  Path(const std::string & str) : _p(str) {}
 
   Path & operator=(const std::string & other)
   {
-    std::string::operator=(other);
+    _p = other;
     return *this;
   }
 
   Path & operator=(const char * other)
   {
-    std::string::operator=(other);
+    _p = other;
     return *this;
   }
 
+  Path & operator+=(char const * const s);
+  Path & operator/=(const Path & p);
+  Path operator/(const Path & p) const;
+  friend bool operator<(const Path & lhs, const Path & rhs)
+  {
+    return lhs._p < rhs._p;
+  }
+  friend bool operator==(const Path & lhs, const Path & rhs)
+  {
+    return lhs._p == rhs._p;
+  }
+
+  // Concatenates the current path and the argument.
+  Path & concat(const std::string & p);
+
+  // Turns the path object into a conventional string, which can be passed to
+  // I/O functions.
+#ifdef KIM_API_USE_FILESYSTEM_LIBRARY
+  std::string string() const { return _p.string(); }
+#else
+  const std::string & string() const { return _p; }
+#endif
+
+  // Resets the path to an empty string.
+  void clear() { _p.clear(); }
+
+  // Returns whether this path is the empty string.
+  bool empty() const { return _p.empty(); }
+
+  // Returns the last component of the path.
+  Path filename() const;
+
+  // Removes a single filename component from the path.
+  Path & remove_filename();
+
+  // Converts all directory separators to the preferred directory separator of
+  // the current platform.
+  Path & make_preferred();
+
+  // Creates a new directory, including parent directories if necessary.
+  // It's not an error if the directory to be created already exists.
+  // Returns true on error.
+  bool make_directory() const;
+
+  // Deletes the contents of this path (if it is a directory) and the contents
+  // of all its subdirectories, recursively, then deletes the file path itself.
+  // Returns true on error.
+  bool remove_directory_recursive() const;
+
+  // Returns the list of subdirectories of this directory.
+  std::vector<Path> subdirectories() const;
+
+  // Checks whether the file or directory exists.
+  bool exists() const;
+
+  // Checks whether the path is relative.
+  bool is_relative() const;
+
+  // Returns the current working directory.
+  static Path current_path();
+
+  // Returns the user's home directory.
+  static Path home_path();
+
+  // Creates a new empty directory that can be used to write temporary files
+  // into. Returns an empty path on failure.
+  static Path create_temporary_directory(char const * const namePrefix);
+
+  // Performs stream output on the path (operator <<).
+  template<class CharT, class Traits>
+  friend std::basic_ostream<CharT, Traits> &
+  operator<<(std::basic_ostream<CharT, Traits> & os, const Path & p)
+  {
+    return os << p._p;
+  }
+
+#ifndef KIM_API_USE_FILESYSTEM_LIBRARY
   // Platform-dependent character for separating path entries.
 #ifndef _WIN32
   static const std::string::value_type preferred_separator = '/';
 #else
   static const std::string::value_type preferred_separator = '\\';
 #endif
-
-  // Checks whether the path is relative.
-  bool is_relative() const { return empty() || (*this)[0] != '/'; }
-
-  // Removes a single filename component from the path.
-  Path & remove_filename()
-  {
-    *this = substr(0, find_last_of('/'));
-    return *this;
-  }
-
-  // Creates a new directory, including parent directories if necessary.
-  // It's not an error if the directory to be created already exists.
-  // Returns true on error.
-  bool make_directory() const
-  {
-    mode_t mode = 0755;
-    if (mkdir(c_str(), mode))
-    {
-      if (EEXIST == errno)
-        return false;
-      else
-      {
-        std::cerr << "Failed to create directory '" << *this << "'."
-                  << std::endl;
-        return true;
-      }
-    }
-    return false;
-  }
-
-  // Deletes the contents of this path (if it is a directory) and the contents
-  // of all its subdirectories, recursively, then deletes the file path itself.
-  // Returns true on error.
-  bool remove_directory_recursive() const
-  {
-    int error;
-    struct dirent * dp = NULL;
-    DIR * dir = NULL;
-    dir = opendir(c_str());
-    while ((dp = readdir(dir)))
-    {
-      // assuming no subdirectories, just files
-      if ((0 != strcmp(dp->d_name, ".")) && (0 != strcmp(dp->d_name, "..")))
-      {
-        Path filePath = *this / dp->d_name;
-        remove(filePath.c_str());
-      }
-    }
-    closedir(dir);
-    error = remove(c_str());
-    if (error) { return true; }
-    return false;
-  }
-
-  // Returns the list of subdirectories of this directory.
-  std::vector<Path> subdirectories() const
-  {
-    std::vector<Path> resultList;
-
-    DIR * dirp = NULL;
-    struct dirent * dp = NULL;
-
-    if (NULL != (dirp = opendir(c_str())))
-    {
-      do
-      {
-        struct stat statBuf;
-        if ((NULL != (dp = readdir(dirp))) && (0 != strcmp(dp->d_name, "."))
-            && (0 != strcmp(dp->d_name, "..")))
-        {
-          Path fullPath = *this / dp->d_name;
-          if ((0 == stat(fullPath.c_str(), &statBuf))
-              && (S_ISDIR(statBuf.st_mode)))
-          { resultList.push_back(fullPath); }
-        }
-      } while (NULL != dp);
-      closedir(dirp);
-    }
-    return resultList;
-  }
-
-  // Checks whether the file or directory exists.
-  bool exists() const
-  {
-    struct stat statBuf;
-    if (0 == stat(c_str(), &statBuf)) return true;
-    return false;
-  }
-
-  Path operator/(const std::string & p) const
-  {
-    Path result(*this);
-    result /= p;
-    return result;
-  }
-
-  Path & operator/=(const std::string & p)
-  {
-    if (p.empty()) return *this;
-    if (p[0] == '/') { *this = p; }
-    else
-    {
-      if ((*this)[size() - 1] != '/') *this += '/';
-      if (p.size() >= 2 && p[0] == '.' && p[1] == '/')
-        append(p.substr(2));
-      else
-        append(p);
-    }
-    return *this;
-  }
-
-  Path & concat(const std::string & p)
-  {
-    append(p);
-    return *this;
-  }
-
-  Path & make_preferred() { return *this; }
-
-  Path filename() const
-  {
-    size_type pos = rfind('/');
-    if (pos == std::string::npos) return *this;
-    return substr(pos + 1);
-  }
-
-  // Turns the path object into a conventional string, which can be passed to
-  // I/O functions.
-  const std::string & string() const { return *this; }
-
-  // Returns the current working directory.
-  static Path current_path() { return getenv("PWD"); }
-
-  // Returns the user's home directory.
-  static Path home_path() { return getenv("HOME"); }
-
-  // Creates a new empty directory that can be used to write temporary files
-  // into. Returns an empty path on failure.
-  static Path create_temporary_directory(char const * const namePrefix)
-  {
-    std::stringstream templateString;
-    templateString << P_tmpdir
-                   << ((*(--(std::string(P_tmpdir).end())) == '/') ? "" : "/")
-                   << namePrefix << "XXXXXXXXXXXX";
-    char * cstr = strdup(templateString.str().c_str());
-    char * tmpdir = mkdtemp(cstr);
-    if (NULL == tmpdir)
-    {
-      free(cstr);
-      return Path();
-    }
-    Path result = tmpdir;
-    free(cstr);
-    return result;
-  }
-};
-
-}  // namespace FILESYSTEM
-}  // namespace KIM
-
 #endif
 
-namespace KIM
-{
-namespace FILESYSTEM
-{
+ private:
+  // The internal path storage:
+#ifdef KIM_API_USE_FILESYSTEM_LIBRARY
+  std::filesystem::path _p;
+#else
+  std::string _p;
+#endif
+};
+
 class PathList : public std::vector<Path>
 {
  public:
@@ -383,50 +182,15 @@ class PathList : public std::vector<Path>
   // Creates all directories in the path list, including parent directories if
   // necessary. It's not an error if a directory to be created already exists.
   // Returns true on error.
-  bool make_directories() const
-  {
-    for (const_iterator path = begin(); path != end(); ++path)
-    {
-      if (path->make_directory()) return true;
-    }
-    return false;
-  }
+  bool make_directories() const;
 
   // Converts the path list into a colon- or semicolon-separated string list.
-  std::string string() const
-  {
-    std::string result;
-    for (const_iterator path = begin(); path != end(); ++path)
-    {
-      if (path != begin()) result += preferred_separator;
-      result += path->string();
-    }
-    return result;
-  }
+  std::string string() const;
 
   // Parses a list of filesystem paths separated by colons (or semi-colons on
   // Windows).
   // '~' at the beginning of a path is replaced with the user's home directory.
-  size_t parse(std::string::value_type const * const paths)
-  {
-    clear();
-    if (!paths) return 0;
-    // Split (semi)colon-separated path list:
-    std::basic_istringstream<std::string::value_type> iss(paths);
-    std::string token;
-    while (std::getline(iss, token, preferred_separator))
-    {
-      // Resolve references to home directory (~).
-      if (token[0] == home_directory_shortcut)
-      { push_back(Path::home_path().concat(token.substr(1))); }
-      else
-      {
-        push_back(token);
-      }
-      back().make_preferred();
-    }
-    return size();
-  }
+  size_t parse(std::string::value_type const * const paths);
 };
 
 }  // namespace FILESYSTEM

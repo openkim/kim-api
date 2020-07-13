@@ -565,7 +565,7 @@ int SharedLibrary::WriteParameterFileDirectory()
     FILESYSTEM::Path const specificationFilePathName
         = parameterFileDirectoryName_ / specFileName;
     std::ofstream fl;
-    fl.open(specificationFilePathName.c_str(),
+    fl.open(specificationFilePathName.string().c_str(),
             std::ifstream::out | std::ifstream::binary);
     fl.write(reinterpret_cast<const char *>(specificationData), len);
     if (!fl)
@@ -596,7 +596,7 @@ int SharedLibrary::WriteParameterFileDirectory()
     FILESYSTEM::Path const parameterFilePathName
         = parameterFileDirectoryName_ / parameterFileName;
     std::ofstream fl;
-    fl.open(parameterFilePathName.c_str(),
+    fl.open(parameterFilePathName.string().c_str(),
             std::ifstream::out | std::ifstream::binary);
     fl.write(reinterpret_cast<const char *>(strPtr), length);
     if (!fl)

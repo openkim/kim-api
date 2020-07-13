@@ -236,7 +236,7 @@ int PrivateGetUserDirs(KIM::Log * log, ItemTypeToStringMap & dirsMap)
   PrivateGetConfigurationFileName(configFile);
 
   std::ifstream cfl;
-  cfl.open(configFile.c_str());
+  cfl.open(configFile.string().c_str());
   if (!cfl)
   {
     // unable to open file; create with default locations
@@ -256,7 +256,7 @@ int PrivateGetUserDirs(KIM::Log * log, ItemTypeToStringMap & dirsMap)
 
     // write initial config file
     std::ofstream fl;
-    fl.open(configFile.c_str());
+    fl.open(configFile.string().c_str());
     fl << KIM_MODEL_DRIVER_PLURAL_DIR_IDENTIFIER
         " = " KIM_USER_MODEL_DRIVER_PLURAL_DIR_DEFAULT "\n";
     fl << KIM_PORTABLE_MODEL_PLURAL_DIR_IDENTIFIER
@@ -337,7 +337,7 @@ int PrivateGetUserDirs(KIM::Log * log, ItemTypeToStringMap & dirsMap)
       if (dirsMap[simulatorModel].make_directories()) return true;
 
       std::ofstream fl;
-      fl.open(configFile.c_str());
+      fl.open(configFile.string().c_str());
       fl << KIM_MODEL_DRIVER_PLURAL_DIR_IDENTIFIER " = "
          << dirsMap[modelDriver].string() << "\n";
       fl << KIM_PORTABLE_MODEL_PLURAL_DIR_IDENTIFIER " = "
