@@ -47,6 +47,7 @@
 #include <sstream>
 #include <stdio.h>
 #include <sys/stat.h>
+#include <unistd.h>  // IWYU pragma: keep
 #endif
 
 namespace KIM
