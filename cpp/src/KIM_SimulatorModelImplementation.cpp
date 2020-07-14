@@ -35,7 +35,6 @@
 #include "edn-cpp/edn.hpp"
 #include <algorithm>
 #include <cstdio>
-#include <cstring>
 #include <fstream>
 #include <iomanip>
 #include <iterator>

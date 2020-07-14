@@ -37,13 +37,9 @@
 #include <algorithm>
 #include <cstdlib>
 #include <cstring>
-#include <dirent.h>
-#include <errno.h>
 #include <fstream>
-#include <iostream>
 #include <map>
 #include <sstream>
-#include <sys/stat.h>
 #include <vector>
 
 #define LINELEN 256
@@ -56,12 +52,12 @@
 #include "KIM_CollectionsImplementation.hpp"
 #endif
 
-#ifndef KIM_SHARED_LIBRARY_HPP_
-#include "KIM_SharedLibrary.hpp"
-#endif
-
 #ifndef KIM_FILESYSTEM_PATH_HPP_
 #include "KIM_FilesystemPath.hpp"
+#endif
+
+#ifndef KIM_SHARED_LIBRARY_HPP_
+#include "KIM_SharedLibrary.hpp"
 #endif
 
 // log helpers
