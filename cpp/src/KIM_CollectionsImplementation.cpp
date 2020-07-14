@@ -34,6 +34,7 @@
 
 #include "KIM_Configuration.hpp"
 #include "KIM_Version.hpp"
+#include <algorithm>
 #include <cstdlib>
 #include <cstring>
 #include <dirent.h>
@@ -42,7 +43,6 @@
 #include <iostream>
 #include <map>
 #include <sstream>
-#include <algorithm>
 #include <sys/stat.h>
 #include <vector>
 
@@ -134,7 +134,7 @@ int ProcessConfigFileLine(char const * const line,
     return true;
   }
   word = strtok(NULL, sep);
-  userDirs.parse(word);
+  userDirs.Parse(word);
   if (userDirs.empty())  // error
   {
     if (log)
@@ -166,7 +166,7 @@ void PrivateGetConfigurationFileName(KIM::FILESYSTEM::Path & fileName)
   fileName = KIM_USER_CONFIGURATION_FILE;
 
   if (fileName.is_relative())
-  { fileName = KIM::FILESYSTEM::Path::home_path() / fileName; }
+  { fileName = KIM::FILESYSTEM::Path::HomePath() / fileName; }
 
   std::string varName;
   std::string varVal;
@@ -221,10 +221,10 @@ void PrivateGetEnvironmentDirs(ItemTypeToStringMap & dirsMap)
 {
   using namespace KIM::COLLECTION_ITEM_TYPE;
 
-  dirsMap[modelDriver].parse(getenv(KIM_ENVIRONMENT_MODEL_DRIVER_PLURAL_DIR));
-  dirsMap[portableModel].parse(
+  dirsMap[modelDriver].Parse(getenv(KIM_ENVIRONMENT_MODEL_DRIVER_PLURAL_DIR));
+  dirsMap[portableModel].Parse(
       getenv(KIM_ENVIRONMENT_PORTABLE_MODEL_PLURAL_DIR));
-  dirsMap[simulatorModel].parse(
+  dirsMap[simulatorModel].Parse(
       getenv(KIM_ENVIRONMENT_SIMULATOR_MODEL_PLURAL_DIR));
 }
 
@@ -244,15 +244,15 @@ int PrivateGetUserDirs(KIM::Log * log, ItemTypeToStringMap & dirsMap)
     path.remove_filename();
 
     // create config file directory
-    if (path.make_directory()) return true;
+    if (path.MakeDirectory()) return true;
 
     // create collection directories
-    dirsMap[modelDriver].parse(KIM_USER_MODEL_DRIVER_PLURAL_DIR_DEFAULT);
-    dirsMap[portableModel].parse(KIM_USER_PORTABLE_MODEL_PLURAL_DIR_DEFAULT);
-    dirsMap[simulatorModel].parse(KIM_USER_SIMULATOR_MODEL_PLURAL_DIR_DEFAULT);
-    if (dirsMap[modelDriver].make_directories()) return true;
-    if (dirsMap[portableModel].make_directories()) return true;
-    if (dirsMap[simulatorModel].make_directories()) return true;
+    dirsMap[modelDriver].Parse(KIM_USER_MODEL_DRIVER_PLURAL_DIR_DEFAULT);
+    dirsMap[portableModel].Parse(KIM_USER_PORTABLE_MODEL_PLURAL_DIR_DEFAULT);
+    dirsMap[simulatorModel].Parse(KIM_USER_SIMULATOR_MODEL_PLURAL_DIR_DEFAULT);
+    if (dirsMap[modelDriver].MakeDirectories()) return true;
+    if (dirsMap[portableModel].MakeDirectories()) return true;
+    if (dirsMap[simulatorModel].MakeDirectories()) return true;
 
     // write initial config file
     std::ofstream fl;
@@ -332,16 +332,16 @@ int PrivateGetUserDirs(KIM::Log * log, ItemTypeToStringMap & dirsMap)
       KIM::FILESYSTEM::Path path = configFile;
       path.remove_filename();
 
-      dirsMap[simulatorModel].parse(
+      dirsMap[simulatorModel].Parse(
           KIM_USER_SIMULATOR_MODEL_PLURAL_DIR_DEFAULT);
-      if (dirsMap[simulatorModel].make_directories()) return true;
+      if (dirsMap[simulatorModel].MakeDirectories()) return true;
 
       std::ofstream fl;
       fl.open(configFile.string().c_str());
       fl << KIM_MODEL_DRIVER_PLURAL_DIR_IDENTIFIER " = "
-         << dirsMap[modelDriver].string() << "\n";
+         << dirsMap[modelDriver].ToString() << "\n";
       fl << KIM_PORTABLE_MODEL_PLURAL_DIR_IDENTIFIER " = "
-         << dirsMap[portableModel].string() << "\n";
+         << dirsMap[portableModel].ToString() << "\n";
       fl << KIM_SIMULATOR_MODEL_PLURAL_DIR_IDENTIFIER " = "
          << KIM_USER_SIMULATOR_MODEL_PLURAL_DIR_DEFAULT << "\n";
       fl.close();
@@ -355,9 +355,9 @@ void PrivateGetSystemDirs(ItemTypeToStringMap & dirsMap)
 {
   using namespace KIM::COLLECTION_ITEM_TYPE;
 
-  dirsMap[modelDriver].parse(KIM_SYSTEM_MODEL_DRIVERS_DIR);
-  dirsMap[portableModel].parse(KIM_SYSTEM_PORTABLE_MODELS_DIR);
-  dirsMap[simulatorModel].parse(KIM_SYSTEM_SIMULATOR_MODELS_DIR);
+  dirsMap[modelDriver].Parse(KIM_SYSTEM_MODEL_DRIVERS_DIR);
+  dirsMap[portableModel].Parse(KIM_SYSTEM_PORTABLE_MODELS_DIR);
+  dirsMap[simulatorModel].Parse(KIM_SYSTEM_SIMULATOR_MODELS_DIR);
 }
 
 void PrivateGetListOfItemPathsByCollectionAndType(
@@ -380,7 +380,7 @@ void PrivateGetListOfItemPathsByCollectionAndType(
   KIM::FILESYSTEM::PathList::const_iterator dir;
   for (dir = listOfDirs.begin(); dir != listOfDirs.end(); ++dir)
   {
-    std::vector<KIM::FILESYSTEM::Path> subDirs = dir->subdirectories();
+    std::vector<KIM::FILESYSTEM::Path> subDirs = dir->Subdirectories();
 
     std::vector<KIM::FILESYSTEM::Path>::const_iterator subDir;
     for (subDir = subDirs.begin(); subDir != subDirs.end(); ++subDir)

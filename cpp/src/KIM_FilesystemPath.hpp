@@ -45,8 +45,16 @@
 #if __cplusplus >= 201703L && defined(__has_include) && __has_include(<filesystem>)
 #define KIM_API_USE_FILESYSTEM_LIBRARY 1
 #include <filesystem>
+namespace
+{
+typedef std::filesystem::path KIM_Path;
+}
 #else
 #include <string>
+namespace
+{
+typedef std::string KIM_Path;
+}
 #endif
 
 namespace KIM
@@ -56,13 +64,12 @@ namespace FILESYSTEM
 class Path
 {
  public:
+  // Platform-dependent character for separating path entries.
+  static const std::string::value_type preferred_separator;
+
   Path() {}
   Path(const char * str) : path_(str) {}
   Path(const std::string & str) : path_(str) {}
-#ifdef KIM_API_USE_FILESYSTEM_LIBRARY
-  Path(const std::filesystem::path & p) : path_(p) {}
-  Path(std::filesystem::path && p) : path_(std::move(p)) {}
-#endif
 
   Path & operator=(const std::string & other)
   {
@@ -93,11 +100,7 @@ class Path
 
   // Turns the path object into a conventional string, which can be passed to
   // I/O functions.
-#ifdef KIM_API_USE_FILESYSTEM_LIBRARY
-  std::string string() const { return path_.string(); }
-#else
-  const std::string & string() const { return path_; }
-#endif
+  std::string string() const;
 
   // Resets the path to an empty string.
   void clear() { path_.clear(); }
@@ -118,15 +121,15 @@ class Path
   // Creates a new directory, including parent directories if necessary.
   // It's not an error if the directory to be created already exists.
   // Returns true on error.
-  bool make_directory() const;
+  bool MakeDirectory() const;
 
   // Deletes the contents of this path (if it is a directory) and the contents
   // of all its subdirectories, recursively, then deletes the file path itself.
   // Returns true on error.
-  bool remove_directory_recursive() const;
+  bool RemoveDirectoryRecursive() const;
 
   // Returns the list of subdirectories of this directory.
-  std::vector<Path> subdirectories() const;
+  std::vector<Path> Subdirectories() const;
 
   // Checks whether the file or directory exists.
   bool exists() const;
@@ -138,11 +141,11 @@ class Path
   static Path current_path();
 
   // Returns the user's home directory.
-  static Path home_path();
+  static Path HomePath();
 
   // Creates a new empty directory that can be used to write temporary files
   // into. Returns an empty path on failure.
-  static Path create_temporary_directory(char const * const namePrefix);
+  static Path CreateTemporaryDirectory(char const * const namePrefix);
 
   // Performs stream output on the path (operator <<).
   template<class CharT, class Traits>
@@ -152,49 +155,32 @@ class Path
     return os << p.path_;
   }
 
-#ifndef KIM_API_USE_FILESYSTEM_LIBRARY
-  // Platform-dependent character for separating path entries.
-#ifndef _WIN32
-  static const std::string::value_type preferred_separator = '/';
-#else
-  static const std::string::value_type preferred_separator = '\\';
-#endif
-#endif
-
  private:
   // The internal path storage:
-#ifdef KIM_API_USE_FILESYSTEM_LIBRARY
-  std::filesystem::path path_;
-#else
-  std::string path_;
-#endif
+  KIM_Path path_;
 };
 
 class PathList : public std::vector<Path>
 {
  public:
   // Platform-dependent character for separating paths in the lists.
-#ifndef _WIN32
-  static const std::string::value_type preferred_separator = ':';
-#else
-  static const std::string::value_type preferred_separator = ';';
-#endif
+  static const std::string::value_type PreferredSeparator;
 
   // Platform-dependent character for home directory.
-  static const std::string::value_type home_directory_shortcut = '~';
+  static const std::string::value_type HomeDirectoryShortcut;
 
   // Creates all directories in the path list, including parent directories if
   // necessary. It's not an error if a directory to be created already exists.
   // Returns true on error.
-  bool make_directories() const;
+  bool MakeDirectories() const;
 
   // Converts the path list into a colon- or semicolon-separated string list.
-  std::string string() const;
+  std::string ToString() const;
 
   // Parses a list of filesystem paths separated by colons (or semi-colons on
   // Windows).
   // '~' at the beginning of a path is replaced with the user's home directory.
-  size_t parse(std::string::value_type const * const paths);
+  size_t Parse(std::string::value_type const * const paths);
 };
 
 }  // namespace FILESYSTEM

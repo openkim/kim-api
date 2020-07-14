@@ -539,7 +539,7 @@ int SharedLibrary::WriteParameterFileDirectory()
     return true;  // not open
   }
 
-  parameterFileDirectoryName_ = FILESYSTEM::Path::create_temporary_directory(
+  parameterFileDirectoryName_ = FILESYSTEM::Path::CreateTemporaryDirectory(
       "kim-shared-library-parameter-file-directory-");
   if (parameterFileDirectoryName_.empty())
   {
@@ -651,7 +651,7 @@ int SharedLibrary::RemoveParameterFileDirectory()
 
   if (!parameterFileDirectoryName_.empty())
   {
-    if (parameterFileDirectoryName_.remove_directory_recursive())
+    if (parameterFileDirectoryName_.RemoveDirectoryRecursive())
     {
       LOG_ERROR("Unable to remove simulator model parameter file directory '"
                 + parameterFileDirectoryName_.string() + "'.");

@@ -55,7 +55,13 @@ namespace KIM
 {
 namespace FILESYSTEM
 {
-bool Path::make_directory() const
+#ifdef KIM_API_USE_FILESYSTEM_LIBRARY
+const std::string::value_type Path::preferred_separator = ';';
+#else
+const std::string::value_type Path::preferred_separator = ':';
+#endif
+
+bool Path::MakeDirectory() const
 {
 #ifdef KIM_API_USE_FILESYSTEM_LIBRARY
   std::error_code ec;
@@ -83,7 +89,7 @@ bool Path::make_directory() const
 #endif
 }
 
-bool Path::remove_directory_recursive() const
+bool Path::RemoveDirectoryRecursive() const
 {
 #ifdef KIM_API_USE_FILESYSTEM_LIBRARY
   std::error_code ec;
@@ -116,7 +122,7 @@ bool Path::remove_directory_recursive() const
 #endif
 }
 
-std::vector<Path> Path::subdirectories() const
+std::vector<Path> Path::Subdirectories() const
 {
 #ifdef KIM_API_USE_FILESYSTEM_LIBRARY
   std::vector<Path> resultList;
@@ -153,7 +159,7 @@ std::vector<Path> Path::subdirectories() const
 #endif
 }
 
-Path Path::create_temporary_directory(char const * const namePrefix)
+Path Path::CreateTemporaryDirectory(char const * const namePrefix)
 {
 #ifdef KIM_API_USE_FILESYSTEM_LIBRARY
   // Get the root directory for temporary files.
@@ -169,7 +175,7 @@ Path Path::create_temporary_directory(char const * const namePrefix)
     temp_subdir = temp_dir / subdir_name;
   } while (temp_subdir.exists());
   // Create the subdirectory.
-  if (temp_subdir.make_directory()) { return Path(); }
+  if (temp_subdir.MakeDirectory()) { return Path(); }
   return temp_subdir;
 #else
   std::stringstream templateString;
@@ -209,7 +215,7 @@ Path Path::current_path()
 #endif
 }
 
-Path Path::home_path()
+Path Path::HomePath()
 {
 #if defined(KIM_API_USE_FILESYSTEM_LIBRARY) && defined(_WIN32)
   std::filesystem::path homeDrive = _wgetenv(L"HOMEDRIVE");
@@ -257,6 +263,15 @@ Path & Path::concat(const std::string & p)
   path_.append(p);
 #endif
   return *this;
+}
+
+std::string Path::string() const
+{
+#ifdef KIM_API_USE_FILESYSTEM_LIBRARY
+  return path_.string();
+#else
+  return path_;
+#endif
 }
 
 Path & Path::make_preferred()
@@ -311,25 +326,31 @@ Path Path::operator/(const Path & p) const
 #endif
 }
 
+
+const std::string::value_type PathList::PreferredSeparator
+    = Path::preferred_separator;
+
+const std::string::value_type PathList::HomeDirectoryShortcut = '~';
+
 // Creates all directories in the path list, including parent directories if
 // necessary. It's not an error if a directory to be created already exists.
 // Returns true on error.
-bool PathList::make_directories() const
+bool PathList::MakeDirectories() const
 {
   for (const_iterator path = begin(); path != end(); ++path)
   {
-    if (path->make_directory()) return true;
+    if (path->MakeDirectory()) return true;
   }
   return false;
 }
 
 // Converts the path list into a colon- or semicolon-separated string list.
-std::string PathList::string() const
+std::string PathList::ToString() const
 {
   std::string result;
   for (const_iterator path = begin(); path != end(); ++path)
   {
-    if (path != begin()) result += preferred_separator;
+    if (path != begin()) result += PreferredSeparator;
     result += path->string();
   }
   return result;
@@ -338,18 +359,18 @@ std::string PathList::string() const
 // Parses a list of filesystem paths separated by colons (or semi-colons on
 // Windows).
 // '~' at the beginning of a path is replaced with the user's home directory.
-size_t PathList::parse(std::string::value_type const * const paths)
+size_t PathList::Parse(std::string::value_type const * const paths)
 {
   clear();
   if (!paths) return 0;
   // Split (semi)colon-separated path list:
   std::basic_istringstream<std::string::value_type> iss(paths);
   std::string token;
-  while (std::getline(iss, token, preferred_separator))
+  while (std::getline(iss, token, PreferredSeparator))
   {
     // Resolve references to home directory (~).
-    if (token[0] == home_directory_shortcut)
-    { push_back(Path::home_path().concat(token.substr(1))); }
+    if (token[0] == HomeDirectoryShortcut)
+    { push_back(Path::HomePath().concat(token.substr(1))); }
     else
     {
       push_back(token);

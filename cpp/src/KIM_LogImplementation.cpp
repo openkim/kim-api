@@ -35,9 +35,9 @@
 #include <cctype>
 #include <cstdio>
 #include <cstring>
+#include <fstream>
 #include <iostream>
 #include <sstream>
-#include <fstream>
 #include <string>
 #include <time.h>
 
@@ -206,9 +206,7 @@ void LogImplementation::LogEntry(LogVerbosity const logVerbosity,
     std::ofstream file;
     file.open(LOG_FILE, std::ios_base::out | std::ios_base::app);
     if (!file)
-    {
-      std::cerr << "Unable to open " LOG_FILE " file." << std::endl;
-    }
+    { std::cerr << "Unable to open " LOG_FILE " file." << std::endl; }
     else
     {
       std::string tm(GetTimeStamp());
