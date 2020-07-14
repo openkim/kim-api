@@ -226,7 +226,7 @@ class Collections
   ///             block of memory of length \c fileLength.
   /// \param[out] availableAsString An integer that is set to \c true if the
   ///             metadata file has no embedded \c NULL characters, and set to
-  ///             \c fales otherwise.
+  ///             \c false otherwise.
   /// \param[out] fileString The contents of the metadata file as a string, if
   ///             `availableAsString == true`, \c NULL otherwise.
   ///
@@ -412,7 +412,7 @@ class Collections
   ///             block of memory of length \c fileLength.
   /// \param[out] availableAsString An integer that is set to \c true if the
   ///             metadata file has no embedded \c NULL characters, and set to
-  ///             \c fales otherwise.
+  ///             \c false otherwise.
   /// \param[out] fileString The contents of the metadata file as a string, if
   ///             `availableAsString == true`, \c NULL otherwise.
   ///

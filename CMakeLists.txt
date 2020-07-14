@@ -85,28 +85,35 @@ set(KIM_API_CMAKE_CXX_COMPILER "${CMAKE_CXX_COMPILER}" CACHE FILEPATH "C++ compi
 mark_as_advanced(KIM_API_CMAKE_CXX_COMPILER)
 set(KIM_API_CMAKE_Fortran_COMPILER "${CMAKE_Fortran_COMPILER}" CACHE FILEPATH "Fortran compiler filepath to be used after installation for item compilation.")
 mark_as_advanced(KIM_API_CMAKE_Fortran_COMPILER)
-#
-set(KIM_API_USER_CONFIGURATION_FILE ".${PROJECT_NAME}/config" CACHE STRING "Default configuration file name.  If not absolute, then relative to user home directory")
-mark_as_advanced(KIM_API_USER_CONFIGURATION_FILE)
 
 include(DefineInternalVariables)
 #
 # Define options dependent on internal variables
 #
-if((NOT KIM_API_SYSTEM_MODEL_DRIVERS_DIR) OR (KIM_API_SYSTEM_MODEL_DRIVERS_DIR MATCHES "^:"))
-  set(KIM_API_SYSTEM_MODEL_DRIVERS_DIR "${CMAKE_INSTALL_FULL_LIBDIR}/${PROJECT_NAME}/${KIM_API_MODEL_DRIVER_PLURAL_IDENTIFIER}${KIM_API_SYSTEM_MODEL_DRIVERS_DIR}" CACHE STRING "System collection (colon-separated) model drivers directory list" FORCE)
+set(KIM_API_USER_CONFIGURATION_FILE ".${PROJECT_NAME}/config" CACHE STRING "Default configuration file name. If not absolute, then relative to user home directory")
+mark_as_advanced(KIM_API_USER_CONFIGURATION_FILE)
+if((NOT KIM_API_SYSTEM_MODEL_DRIVERS_DIR) OR (KIM_API_SYSTEM_MODEL_DRIVERS_DIR MATCHES "^${KIM_API_PATH_SEPARATOR}"))
+  set(KIM_API_SYSTEM_MODEL_DRIVERS_DIR "${CMAKE_INSTALL_FULL_LIBDIR}/${PROJECT_NAME}/${KIM_API_MODEL_DRIVER_PLURAL_IDENTIFIER}${KIM_API_SYSTEM_MODEL_DRIVERS_DIR}" CACHE STRING "System collection (${KIM_API_PATH_SEPARATOR}-separated) model drivers directory list" FORCE)
 endif()
 mark_as_advanced(KIM_API_SYSTEM_PORTABLE_MODEL_DRIVERS_DIR)
-if((NOT KIM_API_SYSTEM_PORTABLE_MODELS_DIR) OR (KIM_API_SYSTEM_PORTABLE_MODELS_DIR MATCHES "^:"))
-  set(KIM_API_SYSTEM_PORTABLE_MODELS_DIR "${CMAKE_INSTALL_FULL_LIBDIR}/${PROJECT_NAME}/${KIM_API_PORTABLE_MODEL_PLURAL_IDENTIFIER}${KIM_API_SYSTEM_PORTABLE_MODELS_DIR}" CACHE STRING "System collection (colon-separated) portable models directory list" FORCE)
+if((NOT KIM_API_SYSTEM_PORTABLE_MODELS_DIR) OR (KIM_API_SYSTEM_PORTABLE_MODELS_DIR MATCHES "^${KIM_API_PATH_SEPARATOR}"))
+  set(KIM_API_SYSTEM_PORTABLE_MODELS_DIR "${CMAKE_INSTALL_FULL_LIBDIR}/${PROJECT_NAME}/${KIM_API_PORTABLE_MODEL_PLURAL_IDENTIFIER}${KIM_API_SYSTEM_PORTABLE_MODELS_DIR}" CACHE STRING "System collection (${KIM_API_PATH_SEPARATOR}-separated) portable models directory list" FORCE)
 endif()
 mark_as_advanced(KIM_API_SYSTEM_MODELS_DIR)
-if((NOT KIM_API_SYSTEM_SIMULATOR_MODELS_DIR) OR (KIM_API_SYSTEM_SIMULATOR_MODELS_DIR MATCHES "^:"))
-  set(KIM_API_SYSTEM_SIMULATOR_MODELS_DIR "${CMAKE_INSTALL_FULL_LIBDIR}/${PROJECT_NAME}/${KIM_API_SIMULATOR_MODEL_PLURAL_IDENTIFIER}${KIM_API_SYSTEM_SIMULATOR_MODELS_DIR}" CACHE STRING "System collection (colon-separated) simulator models directory list" FORCE)
+if((NOT KIM_API_SYSTEM_SIMULATOR_MODELS_DIR) OR (KIM_API_SYSTEM_SIMULATOR_MODELS_DIR MATCHES "^${KIM_API_PATH_SEPARATOR}"))
+  set(KIM_API_SYSTEM_SIMULATOR_MODELS_DIR "${CMAKE_INSTALL_FULL_LIBDIR}/${PROJECT_NAME}/${KIM_API_SIMULATOR_MODEL_PLURAL_IDENTIFIER}${KIM_API_SYSTEM_SIMULATOR_MODELS_DIR}" CACHE STRING "System collection (${KIM_API_PATH_SEPARATOR}-separated) simulator models directory list" FORCE)
 endif()
 mark_as_advanced(KIM_API_SYSTEM_SIMULATOR_MODELS_DIR)
 
 include(DefaultCompilerFlags)
+
+if(MINGW)
+  # On MinGW Windows platform, make <dlfcn.h> functions (dlopen, dlsym, etc.) available
+  # using a third-party portability layer: https://github.com/dlfcn-win32/dlfcn-win32 
+  # It should be installed in the MSYS2 environemnt using the command: 
+  #   pacman -S --needed mingw-w64-x86_64-dlfcn
+  set(CMAKE_DL_LIBS "dl")
+endif()
 
 # Define kim-api target
 #
@@ -121,7 +128,6 @@ set_target_properties(kim-api
 target_include_directories(kim-api PUBLIC $<TARGET_PROPERTY:kim-api,Fortran_MODULE_DIRECTORY>)
 target_include_directories(kim-api PUBLIC ${CMAKE_BINARY_DIR})
 target_link_libraries(kim-api ${CMAKE_DL_LIBS})
-
 
 # Add include subdirectories
 #

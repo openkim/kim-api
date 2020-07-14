@@ -24,6 +24,7 @@
 //
 // Contributors:
 //    Ryan S. Elliott
+//    Alexander Stukowski
 //
 
 //
@@ -31,10 +32,9 @@
 //
 
 #include <cstdio>
-#include <cstdlib>
 #include <cstring>
-#include <dirent.h>
 #include <dlfcn.h>
+#include <fstream>
 #include <sstream>
 #include <unistd.h>  // IWYU pragma: keep
 
@@ -80,7 +80,6 @@ SharedLibrary::SharedLibrary::EmbeddedFile::EmbeddedFile() :
 SharedLibrary::SharedLibrary(Log * const log) :
     sharedLibraryHandle_(NULL),
     sharedLibrarySchemaVersion_(NULL),
-    itemName_(""),
     createRoutine_(NULL),
     numberOfParameterFiles_(0),
     numberOfMetadataFiles_(0),
@@ -107,10 +106,10 @@ SharedLibrary::~SharedLibrary()
   LOG_DEBUG("Exit   " + callString);
 }
 
-int SharedLibrary::Open(std::string const & sharedLibraryName)
+int SharedLibrary::Open(FILESYSTEM::Path const & sharedLibraryName)
 {
 #if DEBUG_VERBOSITY
-  std::string const callString = "Open('" + sharedLibraryName + "').";
+  std::string const callString = "Open('" + sharedLibraryName.string() + "').";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -122,10 +121,10 @@ int SharedLibrary::Open(std::string const & sharedLibraryName)
   }
 
   sharedLibraryName_ = sharedLibraryName;
-  sharedLibraryHandle_ = dlopen(sharedLibraryName_.c_str(), RTLD_NOW);
+  sharedLibraryHandle_ = dlopen(sharedLibraryName_.string().c_str(), RTLD_NOW);
   if (sharedLibraryHandle_ == NULL)
   {
-    LOG_ERROR("Unable to open '" + sharedLibraryName_ + "'.");
+    LOG_ERROR("Unable to open '" + sharedLibraryName_.string() + "'.");
     LOG_ERROR(dlerror());
     LOG_DEBUG("Exit 1=" + callString);
     return true;
@@ -283,9 +282,8 @@ int SharedLibrary::Close()
 
   RemoveParameterFileDirectory();
 
-  sharedLibraryName_ = "";
+  sharedLibraryName_.clear();
   sharedLibrarySchemaVersion_ = 0;
-  itemName_ = "";
   createRoutine_ = NULL;
   driverName_ = "";
   simulatorModelSpecificationFile_.fileName = NULL;
@@ -306,19 +304,6 @@ int SharedLibrary::Close()
   {
     sharedLibraryHandle_ = NULL;
   }
-
-  LOG_DEBUG("Exit 0=" + callString);
-  return false;
-}
-
-int SharedLibrary::GetName(std::string * const name) const
-{
-#if DEBUG_VERBOSITY
-  std::string const callString = "GetName(" + SPTR(name) + ").";
-#endif
-  LOG_DEBUG("Enter  " + callString);
-
-  *name = itemName_;
 
   LOG_DEBUG("Exit 0=" + callString);
   return false;
@@ -552,23 +537,14 @@ int SharedLibrary::WriteParameterFileDirectory()
     return true;  // not open
   }
 
-  static char const parameterFileDirectoryNameString[]
-      = "kim-shared-library-parameter-file-directory-XXXXXXXXXXXX";
-  std::stringstream templateString;
-  templateString << P_tmpdir
-                 << ((*(--(std::string(P_tmpdir).end())) == '/') ? "" : "/")
-                 << parameterFileDirectoryNameString;
-  char * cstr = strdup(templateString.str().c_str());
-  char * tmpdir = mkdtemp(cstr);
-  if (NULL == tmpdir)
+  parameterFileDirectoryName_ = FILESYSTEM::Path::CreateTemporaryDirectory(
+      "kim-shared-library-parameter-file-directory-");
+  if (parameterFileDirectoryName_.empty())
   {
-    free(cstr);
     LOG_ERROR("Could not create a secure temporary directory.");
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
-  parameterFileDirectoryName_ = tmpdir;
-  free(cstr);
 
   if (itemType_ == KIM::COLLECTION_ITEM_TYPE::simulatorModel)
   {
@@ -584,25 +560,24 @@ int SharedLibrary::WriteParameterFileDirectory()
       LOG_DEBUG("Exit 1=" + callString);
       return true;
     }
-    std::string const specificationFilePathName
-        = parameterFileDirectoryName_ + "/" + specFileName;
-    FILE * fl = fopen(specificationFilePathName.c_str(), "w");
-    if (NULL == fl)
+    FILESYSTEM::Path const specificationFilePathName
+        = parameterFileDirectoryName_ / specFileName;
+    std::ofstream fl;
+    fl.open(specificationFilePathName.string().c_str(),
+            std::ifstream::out | std::ifstream::binary);
+    fl.write(reinterpret_cast<const char *>(specificationData), len);
+    if (!fl)
     {
       LOG_ERROR("Unable to get write parameter file.");
+      fl.close();
       RemoveParameterFileDirectory();
       LOG_DEBUG("Exit 1=" + callString);
       return true;
     }
-    fwrite(specificationData, sizeof(unsigned char), len, fl);
-    fclose(fl);
-    fl = NULL;
   }
 
   int noParamFiles;
   GetNumberOfParameterFiles(&noParamFiles);
-  std::vector<unsigned char const *> parameterFileStrings;
-  std::vector<unsigned int> parameterFileStringLengths;
   for (int i = 0; i < noParamFiles; ++i)
   {
     std::string parameterFileName;
@@ -616,19 +591,20 @@ int SharedLibrary::WriteParameterFileDirectory()
       return true;
     }
 
-    std::string const parameterFilePathName
-        = parameterFileDirectoryName_ + "/" + parameterFileName;
-    FILE * fl = fopen(parameterFilePathName.c_str(), "w");
-    if (NULL == fl)
+    FILESYSTEM::Path const parameterFilePathName
+        = parameterFileDirectoryName_ / parameterFileName;
+    std::ofstream fl;
+    fl.open(parameterFilePathName.string().c_str(),
+            std::ifstream::out | std::ifstream::binary);
+    fl.write(reinterpret_cast<const char *>(strPtr), length);
+    if (!fl)
     {
       LOG_ERROR("Unable to get write parameter file.");
+      fl.close();
       RemoveParameterFileDirectory();
       LOG_DEBUG("Exit 1=" + callString);
       return true;
     }
-    fwrite(strPtr, sizeof(unsigned char), length, fl);
-    fclose(fl);
-    fl = NULL;
   }
 
   LOG_DEBUG("Exit 0=" + callString);
@@ -636,7 +612,7 @@ int SharedLibrary::WriteParameterFileDirectory()
 }
 
 int SharedLibrary::GetParameterFileDirectoryName(
-    std::string * const directoryName) const
+    FILESYSTEM::Path * const directoryName) const
 {
 #if DEBUG_VERBOSITY
   std::string const callString
@@ -671,36 +647,16 @@ int SharedLibrary::RemoveParameterFileDirectory()
     return true;  // not open
   }
 
-  if (parameterFileDirectoryName_ != "")
+  if (!parameterFileDirectoryName_.empty())
   {
-    int error;
-    struct dirent * dp = NULL;
-    DIR * dir = NULL;
-    dir = opendir(parameterFileDirectoryName_.c_str());
-    while ((dp = readdir(dir)))
-    {
-      // assuming no subdirectories, just files
-      if ((0 != strcmp(dp->d_name, ".")) && (0 != strcmp(dp->d_name, "..")))
-      {
-        std::string filePath = parameterFileDirectoryName_ + "/" + dp->d_name;
-        error = remove(filePath.c_str());
-        if (error)
-        {
-          LOG_ERROR("Unable to remove simulator model file '" + filePath
-                    + "'.");
-        }
-      }
-    }
-    closedir(dir);
-    error = remove(parameterFileDirectoryName_.c_str());
-    if (error)
+    if (parameterFileDirectoryName_.RemoveDirectoryRecursive())
     {
       LOG_ERROR("Unable to remove simulator model parameter file directory '"
-                + parameterFileDirectoryName_ + "'.");
+                + parameterFileDirectoryName_.string() + "'.");
     }
 
     // clear out directory name variable
-    parameterFileDirectoryName_ = "";
+    parameterFileDirectoryName_.clear();
   }
 
   LOG_DEBUG("Exit 0=" + callString);

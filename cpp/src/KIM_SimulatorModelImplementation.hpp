@@ -24,6 +24,7 @@
 //
 // Contributors:
 //    Ryan S. Elliott
+//    Alexander Stukowski
 //
 
 //
@@ -43,6 +44,9 @@
 #include "KIM_LogVerbosity.hpp"
 #endif
 
+#ifndef KIM_FILESYSTEM_PATH_HPP_
+#include "KIM_FilesystemPath.hpp"
+#endif
 
 namespace edn
 {
@@ -146,7 +150,8 @@ class SimulatorModelImplementation
   int ReadEdnSchemaV1();
   int Initialize(std::string const & simulatorModelName);
 
-  std::string parameterFileDirectoryName_;
+  FILESYSTEM::Path parameterFileDirectoryName_;
+  std::string parameterFileDirectoryNameString_;
   std::string specificationFileName_;
   int schemaVersion_;
   std::string modelName_;

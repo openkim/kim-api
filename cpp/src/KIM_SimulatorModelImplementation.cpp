@@ -24,6 +24,7 @@
 //
 // Contributors:
 //    Ryan S. Elliott
+//    Alexander Stukowski
 //
 
 //
@@ -34,7 +35,6 @@
 #include "edn-cpp/edn.hpp"
 #include <algorithm>
 #include <cstdio>
-#include <cstring>
 #include <fstream>
 #include <iomanip>
 #include <iterator>
@@ -311,16 +311,16 @@ void SimulatorModelImplementation::AddStandardTemplatesToMap()
 #endif
   LOG_DEBUG("Enter  " + callString);
 
-  AddTemplateMap("parameter-file-dir", parameterFileDirectoryName_);
+  AddTemplateMap("parameter-file-dir", parameterFileDirectoryName_.string());
 
   for (size_t i = 0; i < parameterFileBasenames_.size(); ++i)
   {
     AddTemplateMap("parameter-file-basename-" + SNUM(i + 1),
                    parameterFileBasenames_[i]);
 
-    AddTemplateMap("parameter-file-" + SNUM(i + 1),
-                   parameterFileDirectoryName_ + "/"
-                       + parameterFileBasenames_[i]);
+    AddTemplateMap(
+        "parameter-file-" + SNUM(i + 1),
+        (parameterFileDirectoryName_ / parameterFileBasenames_[i]).string());
   }
 
   LOG_DEBUG("Exit 0=" + callString);
@@ -464,7 +464,7 @@ void SimulatorModelImplementation::GetParameterFileDirectoryName(
 #endif
   LOG_DEBUG("Enter  " + callString);
 
-  *directoryName = &parameterFileDirectoryName_;
+  *directoryName = &parameterFileDirectoryNameString_;
 
   LOG_DEBUG("Exit 0=" + callString);
 }
@@ -649,7 +649,8 @@ std::string const & SimulatorModelImplementation::ToString() const
   ss << "Log ID : " << log_->GetID() << "\n";
   ss << "\n";
 
-  ss << "Parameter file directory : " << parameterFileDirectoryName_ << "\n";
+  ss << "Parameter file directory : " << parameterFileDirectoryName_.string()
+     << "\n";
 
   ss << "Specification file name : " << specificationFileName_ << "\n\n";
 
@@ -722,8 +723,6 @@ SimulatorModelImplementation::SimulatorModelImplementation(
     simulatorModelName_(""),
     sharedLibrary_(sharedLibrary),
     log_(log),
-    parameterFileDirectoryName_(""),
-    specificationFileName_(""),
     schemaVersion_(0),
     modelName_(""),
     simulatorName_(""),
@@ -847,6 +846,8 @@ int SimulatorModelImplementation::Initialize(
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
+  // Convert path to string representation.
+  parameterFileDirectoryNameString_ = parameterFileDirectoryName_.string();
 
   if (GetSchemaVersion())
   {
@@ -916,10 +917,10 @@ int SimulatorModelImplementation::ParseEdn(edn::EdnNode & node) const
 #endif
   LOG_DEBUG("Enter  " + callString);
 
-  std::string const filePath
-      = parameterFileDirectoryName_ + "/" + specificationFileName_;
+  FILESYSTEM::Path const filePath
+      = parameterFileDirectoryName_ / specificationFileName_;
   std::ifstream ifs;
-  ifs.open(filePath.c_str(), std::ifstream::in);
+  ifs.open(filePath.string().c_str());
   if (!ifs.is_open())
   {
     LOG_ERROR("Unable to open simulator model metatdata file.");
