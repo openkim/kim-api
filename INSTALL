@@ -188,8 +188,8 @@ this file does not exist, the KIM API library will create it with a default
 configuration specifying that the user-collection files are stored in
 "${HOME}/.kim-api/model-drivers/", "${HOME}/.kim-api/portable-models/", and
 "${HOME}/.kim-api/simulator-models/".  More generally, the values in the
-configuration file may contain colon ':' (on Windows: semi-colon ';') 
-separated lists of fully-qualified directory names (starting, strictly, with 
+configuration file may contain colon ':' (on Windows: semi-colon ';')
+separated lists of fully-qualified directory names (starting, strictly, with
 '/', '~/' or a root drive letter like 'C:/').
 
 C.2.3 THE ENVIRONMENT-VARIABLE-COLLECTION
@@ -199,8 +199,8 @@ are specified by the run-time environment of the process for the simulator that
 uses the KIM API library.  The locations of this collection are specified by
 the environment variables "KIM_API_MODEL_DRIVERS_DIR",
 "KIM_API_PORTABLE_MODELS_DIR", and "KIM_API_SIMULATOR_MODELS_DIR".  These
-variables should contain colon ':' (on Windows: semi-colon ';') separated lists 
-of absolute directory names where the collection MDs, PMs, and SMs, respectively, 
+variables should contain colon ':' (on Windows: semi-colon ';') separated lists
+of absolute directory names where the collection MDs, PMs, and SMs, respectively,
 are located.  (For example, in bash you could execute the command
 
    $ export KIM_API_PORTABLE_MODELS_DIR=/my-kim-stuff/models-i-am-developing:/my-kim-stuff/misc-portable-models
@@ -602,12 +602,12 @@ ENVIRONMENT.
 
 SUPPORT
 
-If you have problems or questions, send an email with your question and all
-relevant information to
+Support is always available by posting questions with all relevant information
+to
 
-openkim@googlegroups.com
+<https://matsci.org/openkim>
 
-The members of the OpenKIM development team actively monitor this email list
-and will do their best to help you with your question in a timely fashion.
+Members of the OpenKIM development team actively monitor this forum and
+will do their best to respond to questions in a timely fashion.
 
 *******************************************************************************

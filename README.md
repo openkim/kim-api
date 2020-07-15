@@ -107,12 +107,12 @@ for details.
 
 SUPPORT
 
-If you have problems or questions, send an email with your question and all
-relevant information to
+Support is always available by posting questions with all relevant information
+to
 
-openkim@googlegroups.com
+<https://matsci.org/openkim>
 
-The members of the OpenKIM development team actively monitor this email list
-and will do their best to help you with your question in a timely fashion.
+Members of the OpenKIM development team actively monitor this forum and
+will do their best to respond to questions in a timely fashion.
 
 *******************************************************************************
