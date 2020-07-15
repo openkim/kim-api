@@ -58,7 +58,6 @@ namespace KIM
 {
 // Forward declarations
 class Log;
-class Collections;
 class SharedLibrary;
 
 class SimulatorModelImplementation
@@ -138,7 +137,6 @@ class SimulatorModelImplementation
                                Log * const log);
   ~SimulatorModelImplementation();
 
-  Collections * collections_;
   std::string simulatorModelName_;
 
   SharedLibrary * sharedLibrary_;

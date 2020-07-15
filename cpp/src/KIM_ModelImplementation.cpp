@@ -283,25 +283,6 @@ int ModelImplementation::Create(
       __FILE__);
 #endif
 
-  Collections * col;
-  error = Collections::Create(&col);
-  if (error)
-  {
-#if DEBUG_VERBOSITY
-    pModelImplementation->LogEntry(
-        LOG_VERBOSITY::debug,
-        "Destroying ModelImplementation object and exit " + callString,
-        __LINE__,
-        __FILE__);
-#endif
-    delete pModelImplementation;  // also deletes pLog
-    *modelImplementation = NULL;
-    return true;
-  }
-  col->SetLogID(pLog->GetID() + "_Collections");
-
-  pModelImplementation->collections_ = col;
-
   error = pModelImplementation->ModelCreate(numbering,
                                             requestedLengthUnit,
                                             requestedEnergyUnit,
@@ -318,7 +299,7 @@ int ModelImplementation::Create(
         __LINE__,
         __FILE__);
 #endif
-    delete pModelImplementation;  // also deletes pLog and collections object
+    delete pModelImplementation;  // also deletes pLog object
     *modelImplementation = NULL;
     return true;
   }
@@ -389,7 +370,7 @@ void ModelImplementation::Destroy(
                    __FILE__);
 #endif
   }
-  delete *modelImplementation;  // also deletes Log & collections objects
+  delete *modelImplementation;  // also deletes Log objects
   *modelImplementation = NULL;
 }
 
@@ -2054,7 +2035,6 @@ std::string const & ModelImplementation::ToString() const
 
 ModelImplementation::ModelImplementation(SharedLibrary * const sharedLibrary,
                                          Log * const log) :
-    collections_(NULL),
     modelName_(""),
     modelDriverName_(""),
     sharedLibrary_(sharedLibrary),
@@ -2110,8 +2090,6 @@ ModelImplementation::~ModelImplementation()
 
   delete sharedLibrary_;
 
-  if (collections_ != NULL) Collections::Destroy(&collections_);
-
   LOG_DEBUG("Destroying Log object and exit " + callString);
   Log::Destroy(&log_);
 }
@@ -2159,7 +2137,16 @@ int ModelImplementation::ModelCreate(
   }
 
   std::string const * itemFilePath;
-  error = collections_->GetItemLibraryFileNameAndCollection(
+  Collections * collections;
+  error = Collections::Create(&collections);
+  if (error)
+  {
+    LOG_ERROR("Could not create Collections object.");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
+  collections->SetLogID(log_->GetID() + "_Collections");
+  error = collections->GetItemLibraryFileNameAndCollection(
       COLLECTION_ITEM_TYPE::portableModel, modelName, &itemFilePath, NULL);
   if (error)
   {
@@ -2185,11 +2172,12 @@ int ModelImplementation::ModelCreate(
     return true;
   }
 
-  error = sharedLibrary_->GetType(&itemType_);
+  CollectionItemType itemType;
+  error = sharedLibrary_->GetType(&itemType);
   {
     using namespace COLLECTION_ITEM_TYPE;
 
-    if ((itemType_ == portableModel) && (modelDriverName_ == ""))
+    if ((itemType == portableModel) && (modelDriverName_ == ""))
     {
       LOG_DEBUG("Initializing a stand alone model.");
       error = InitializeStandAloneModel(requestedLengthUnit,
@@ -2204,14 +2192,15 @@ int ModelImplementation::ModelCreate(
         return true;
       }
     }
-    else if (itemType_ == portableModel)
+    else if (itemType == portableModel)
     {
       LOG_DEBUG("Initializing a parameterized model.");
       error = InitializeParameterizedModel(requestedLengthUnit,
                                            requestedEnergyUnit,
                                            requestedChargeUnit,
                                            requestedTemperatureUnit,
-                                           requestedTimeUnit);
+                                           requestedTimeUnit,
+                                           collections);
       if (error)
       {
         LOG_ERROR("Initialization of Parameterized Model returned error.");
@@ -2219,13 +2208,13 @@ int ModelImplementation::ModelCreate(
         return true;
       }
     }
-    else if (itemType_ == modelDriver)
+    else if (itemType == modelDriver)
     {
       LOG_ERROR("Creation of a model driver is not allowed.");
       LOG_DEBUG("Exit 1=" + callString);
       return true;
     }
-    else if (itemType_ == simulatorModel)
+    else if (itemType == simulatorModel)
     {
       LOG_ERROR("Creation of a simulator model is not allowed.");
       LOG_DEBUG("Exit 1=" + callString);
@@ -2238,6 +2227,7 @@ int ModelImplementation::ModelCreate(
       return true;
     }
   }
+  Collections::Destroy(&collections);
 
 #if ERROR_VERBOSITY
   // Error checking
@@ -3034,7 +3024,8 @@ int ModelImplementation::InitializeParameterizedModel(
     EnergyUnit const requestedEnergyUnit,
     ChargeUnit const requestedChargeUnit,
     TemperatureUnit const requestedTemperatureUnit,
-    TimeUnit const requestedTimeUnit)
+    TimeUnit const requestedTimeUnit,
+    Collections * collections)
 {
 #if DEBUG_VERBOSITY
   std::string const callString
@@ -3089,7 +3080,7 @@ int ModelImplementation::InitializeParameterizedModel(
   sharedLibrary_ = new SharedLibrary(log_);
 
   std::string const * itemFilePath;
-  error = collections_->GetItemLibraryFileNameAndCollection(
+  error = collections->GetItemLibraryFileNameAndCollection(
       COLLECTION_ITEM_TYPE::modelDriver, modelDriverName_, &itemFilePath, NULL);
   if (error)
   {

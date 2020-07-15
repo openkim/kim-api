@@ -114,25 +114,6 @@ int SimulatorModelImplementation::Create(
       __FILE__);
 #endif
 
-  Collections * col;
-  error = Collections::Create(&col);
-  if (error)
-  {
-#if DEBUG_VERBOSITY
-    pSimulatorModelImplementation->LogEntry(
-        LOG_VERBOSITY::debug,
-        "Destroying SimulatorModelImplementation object and exit " + callString,
-        __LINE__,
-        __FILE__);
-#endif
-    delete pSimulatorModelImplementation;  // also deletes pLog
-    *simulatorModelImplementation = NULL;
-    return true;
-  }
-  col->SetLogID(pLog->GetID() + "_Collections");
-
-  pSimulatorModelImplementation->collections_ = col;
-
   error = pSimulatorModelImplementation->Initialize(simulatorModelName);
   if (error)
   {
@@ -143,8 +124,7 @@ int SimulatorModelImplementation::Create(
         __LINE__,
         __FILE__);
 #endif
-    delete pSimulatorModelImplementation;  // also deletes Log object and
-                                           // collections object
+    delete pSimulatorModelImplementation;  // also deletes Log object
     *simulatorModelImplementation = NULL;
     return true;
   }
@@ -177,8 +157,7 @@ void SimulatorModelImplementation::Destroy(
                  __LINE__,
                  __FILE__);
 #endif
-  delete *simulatorModelImplementation;  // also deletes Log object and
-                                         // collections object
+  delete *simulatorModelImplementation;  // also deletes Log object
   *simulatorModelImplementation = NULL;
 }
 
@@ -719,7 +698,6 @@ std::string const & SimulatorModelImplementation::ToString() const
 
 SimulatorModelImplementation::SimulatorModelImplementation(
     SharedLibrary * const sharedLibrary, Log * const log) :
-    collections_(NULL),
     simulatorModelName_(""),
     sharedLibrary_(sharedLibrary),
     log_(log),
@@ -752,8 +730,6 @@ SimulatorModelImplementation::~SimulatorModelImplementation()
   sharedLibrary_->RemoveParameterFileDirectory();
   delete sharedLibrary_;
 
-  if (collections_ != NULL) Collections::Destroy(&collections_);
-
   LOG_DEBUG("Destroying Log object and exit " + callString);
   Log::Destroy(&log_);
 }
@@ -769,7 +745,16 @@ int SimulatorModelImplementation::Initialize(
   simulatorModelName_ = simulatorModelName;
 
   std::string const * itemFilePath;
-  int error = collections_->GetItemLibraryFileNameAndCollection(
+  Collections * collections = NULL;
+  int error = Collections::Create(&collections);
+  if (error)
+  {
+    LOG_ERROR("Could not create Collections object.");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
+  collections->SetLogID(log_->GetID() + "_Collections");
+  error = collections->GetItemLibraryFileNameAndCollection(
       COLLECTION_ITEM_TYPE::simulatorModel,
       simulatorModelName,
       &itemFilePath,
@@ -780,6 +765,7 @@ int SimulatorModelImplementation::Initialize(
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
+  Collections::Destroy(&collections);
 
   error = sharedLibrary_->Open(*itemFilePath);
   if (error)
