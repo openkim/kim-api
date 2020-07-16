@@ -765,7 +765,6 @@ int SimulatorModelImplementation::Initialize(
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
-  Collections::Destroy(&collections);
 
   error = sharedLibrary_->Open(*itemFilePath);
   if (error)
@@ -774,6 +773,7 @@ int SimulatorModelImplementation::Initialize(
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
+  Collections::Destroy(&collections);
 
   CollectionItemType itemType;
   error = sharedLibrary_->GetType(&itemType);
