@@ -44,8 +44,8 @@
 namespace KIM
 {
 // Forward declarations
-class LanguageName;
 class LogVerbosity;
+class LanguageName;
 class LogImplementation;
 
 /// \brief Provides the logging interface for the %KIM API.

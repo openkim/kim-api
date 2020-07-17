@@ -353,4 +353,14 @@ typedef int KIM_ModelComputeArgumentsDestroyFunction(
  **/
 typedef int KIM_ModelDestroyFunction(KIM_ModelDestroy * const modelDestroy);
 
+/**
+ ** \brief \copybrief KIM::LogPrintFunction
+ **
+ ** \sa KIM::LogPrintFunction,
+ ** kim_log_module::kim_log_push_default_print_function
+ **
+ ** \since 2.2
+ **/
+typedef int KIM_LogPrintFunction(char const * const entryString);
+
 #endif /* KIM_FUNCTION_TYPES_H_ */
