@@ -24,6 +24,7 @@
 //
 // Contributors:
 //    Ryan S. Elliott
+//    Alexander Stukowski
 //
 
 //
@@ -49,7 +50,6 @@
 #ifndef KIM_COLLECTION_HPP_
 #include "KIM_Collection.hpp"
 #endif
-
 
 namespace KIM
 {

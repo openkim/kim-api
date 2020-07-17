@@ -57,10 +57,17 @@ target_include_directories(shared-library-test PRIVATE ${CMAKE_BINARY_DIR})
 target_link_libraries(shared-library-test ${CMAKE_DL_LIBS})
 set_target_properties(shared-library-test PROPERTIES OUTPUT_NAME ${SHARED_LIBRARY_TEST})
 
-install(
-  TARGETS simulator-model collections-info shared-library-test
-  DESTINATION ${CMAKE_INSTALL_LIBEXECDIR}/${PROJECT_NAME}
-  )
+if(NOT WIN32 OR CYGWIN)
+  install(
+    TARGETS simulator-model collections-info shared-library-test
+    DESTINATION ${CMAKE_INSTALL_LIBEXECDIR}/${PROJECT_NAME}
+    )
+else()
+  install(
+    TARGETS simulator-model collections-info shared-library-test
+    DESTINATION ${CMAKE_INSTALL_BINDIR}
+    )
+endif()
 
 install(
   PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/${COLLECTIONS_MANAGEMENT}

@@ -24,6 +24,7 @@
 //
 // Contributors:
 //    Ryan S. Elliott
+//    Alexander Stukowski
 //
 
 //
@@ -113,25 +114,6 @@ int SimulatorModelImplementation::Create(
       __FILE__);
 #endif
 
-  Collections * col;
-  error = Collections::Create(&col);
-  if (error)
-  {
-#if DEBUG_VERBOSITY
-    pSimulatorModelImplementation->LogEntry(
-        LOG_VERBOSITY::debug,
-        "Destroying SimulatorModelImplementation object and exit " + callString,
-        __LINE__,
-        __FILE__);
-#endif
-    delete pSimulatorModelImplementation;  // also deletes pLog
-    *simulatorModelImplementation = NULL;
-    return true;
-  }
-  col->SetLogID(pLog->GetID() + "_Collections");
-
-  pSimulatorModelImplementation->collections_ = col;
-
   error = pSimulatorModelImplementation->Initialize(simulatorModelName);
   if (error)
   {
@@ -142,8 +124,7 @@ int SimulatorModelImplementation::Create(
         __LINE__,
         __FILE__);
 #endif
-    delete pSimulatorModelImplementation;  // also deletes Log object and
-                                           // collections object
+    delete pSimulatorModelImplementation;  // also deletes Log object
     *simulatorModelImplementation = NULL;
     return true;
   }
@@ -176,8 +157,7 @@ void SimulatorModelImplementation::Destroy(
                  __LINE__,
                  __FILE__);
 #endif
-  delete *simulatorModelImplementation;  // also deletes Log object and
-                                         // collections object
+  delete *simulatorModelImplementation;  // also deletes Log object
   *simulatorModelImplementation = NULL;
 }
 
@@ -310,16 +290,16 @@ void SimulatorModelImplementation::AddStandardTemplatesToMap()
 #endif
   LOG_DEBUG("Enter  " + callString);
 
-  AddTemplateMap("parameter-file-dir", parameterFileDirectoryName_);
+  AddTemplateMap("parameter-file-dir", parameterFileDirectoryName_.string());
 
   for (size_t i = 0; i < parameterFileBasenames_.size(); ++i)
   {
     AddTemplateMap("parameter-file-basename-" + SNUM(i + 1),
                    parameterFileBasenames_[i]);
 
-    AddTemplateMap("parameter-file-" + SNUM(i + 1),
-                   parameterFileDirectoryName_ + "/"
-                       + parameterFileBasenames_[i]);
+    AddTemplateMap(
+        "parameter-file-" + SNUM(i + 1),
+        (parameterFileDirectoryName_ / parameterFileBasenames_[i]).string());
   }
 
   LOG_DEBUG("Exit 0=" + callString);
@@ -463,7 +443,7 @@ void SimulatorModelImplementation::GetParameterFileDirectoryName(
 #endif
   LOG_DEBUG("Enter  " + callString);
 
-  *directoryName = &parameterFileDirectoryName_;
+  *directoryName = &parameterFileDirectoryNameString_;
 
   LOG_DEBUG("Exit 0=" + callString);
 }
@@ -648,7 +628,8 @@ std::string const & SimulatorModelImplementation::ToString() const
   ss << "Log ID : " << log_->GetID() << "\n";
   ss << "\n";
 
-  ss << "Parameter file directory : " << parameterFileDirectoryName_ << "\n";
+  ss << "Parameter file directory : " << parameterFileDirectoryName_.string()
+     << "\n";
 
   ss << "Specification file name : " << specificationFileName_ << "\n\n";
 
@@ -717,12 +698,9 @@ std::string const & SimulatorModelImplementation::ToString() const
 
 SimulatorModelImplementation::SimulatorModelImplementation(
     SharedLibrary * const sharedLibrary, Log * const log) :
-    collections_(NULL),
     simulatorModelName_(""),
     sharedLibrary_(sharedLibrary),
     log_(log),
-    parameterFileDirectoryName_(""),
-    specificationFileName_(""),
     schemaVersion_(0),
     modelName_(""),
     simulatorName_(""),
@@ -752,8 +730,6 @@ SimulatorModelImplementation::~SimulatorModelImplementation()
   sharedLibrary_->RemoveParameterFileDirectory();
   delete sharedLibrary_;
 
-  if (collections_ != NULL) Collections::Destroy(&collections_);
-
   LOG_DEBUG("Destroying Log object and exit " + callString);
   Log::Destroy(&log_);
 }
@@ -769,7 +745,16 @@ int SimulatorModelImplementation::Initialize(
   simulatorModelName_ = simulatorModelName;
 
   std::string const * itemFilePath;
-  int error = collections_->GetItemLibraryFileNameAndCollection(
+  Collections * collections = NULL;
+  int error = Collections::Create(&collections);
+  if (error)
+  {
+    LOG_ERROR("Could not create Collections object.");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
+  collections->SetLogID(log_->GetID() + "_Collections");
+  error = collections->GetItemLibraryFileNameAndCollection(
       COLLECTION_ITEM_TYPE::simulatorModel,
       simulatorModelName,
       &itemFilePath,
@@ -788,6 +773,7 @@ int SimulatorModelImplementation::Initialize(
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
+  Collections::Destroy(&collections);
 
   CollectionItemType itemType;
   error = sharedLibrary_->GetType(&itemType);
@@ -846,6 +832,8 @@ int SimulatorModelImplementation::Initialize(
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
+  // Convert path to string representation.
+  parameterFileDirectoryNameString_ = parameterFileDirectoryName_.string();
 
   if (GetSchemaVersion())
   {
@@ -915,10 +903,10 @@ int SimulatorModelImplementation::ParseEdn(edn::EdnNode & node) const
 #endif
   LOG_DEBUG("Enter  " + callString);
 
-  std::string const filePath
-      = parameterFileDirectoryName_ + "/" + specificationFileName_;
+  FILESYSTEM::Path const filePath
+      = parameterFileDirectoryName_ / specificationFileName_;
   std::ifstream ifs;
-  ifs.open(filePath.c_str(), std::ifstream::in);
+  ifs.open(filePath.string().c_str());
   if (!ifs.is_open())
   {
     LOG_ERROR("Unable to open simulator model metatdata file.");

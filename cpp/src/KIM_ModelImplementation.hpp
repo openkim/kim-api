@@ -24,6 +24,7 @@
 //
 // Contributors:
 //    Ryan S. Elliott
+//    Alexander Stukowski
 //
 
 //
@@ -45,10 +46,6 @@
 
 #ifndef KIM_LOG_VERBOSITY_HPP_
 #include "KIM_LogVerbosity.hpp"
-#endif
-
-#ifndef KIM_COLLECTION_ITEM_TYPE_HPP_
-#include "KIM_CollectionItemType.hpp"
 #endif
 
 #ifndef KIM_DATA_TYPE_HPP_
@@ -75,6 +72,9 @@
 #include "KIM_SpeciesName.hpp"
 #endif
 
+#ifndef KIM_FILESYSTEM_PATH_HPP_
+#include "KIM_FilesystemPath.hpp"
+#endif
 
 namespace KIM
 {
@@ -269,13 +269,12 @@ class ModelImplementation
 
   int IsCIdentifier(std::string const & id) const;
 
-  Collections * collections_;
-  CollectionItemType itemType_;
   std::string modelName_;
   std::string modelDriverName_;
 
   SharedLibrary * sharedLibrary_;
-  std::string parameterFileDirectoryName_;
+  FILESYSTEM::Path parameterFileDirectoryName_;
+  std::string parameterFileDirectoryNameString_;
   int numberOfParameterFiles_;
   std::vector<std::string> parameterFileNames_;
   std::vector<std::string> parameterFileBasenames_;
@@ -293,7 +292,8 @@ class ModelImplementation
       EnergyUnit const requestedEnergyUnit,
       ChargeUnit const requestedChargeUnit,
       TemperatureUnit const requestedTemperatureUnit,
-      TimeUnit const requestedTimeUnit);
+      TimeUnit const requestedTimeUnit,
+      Collections * collections);
 
   bool numberingHasBeenSet_;
   Numbering modelNumbering_;

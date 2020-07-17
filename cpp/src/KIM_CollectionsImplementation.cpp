@@ -24,6 +24,7 @@
 //
 // Contributors:
 //    Ryan S. Elliott
+//    Alexander Stukowski
 //
 
 //
@@ -33,16 +34,13 @@
 
 #include "KIM_Configuration.hpp"
 #include "KIM_Version.hpp"
+#include <algorithm>
 #include <cstdlib>
 #include <cstring>
-#include <dirent.h>
-#include <errno.h>
 #include <fstream>
-#include <iostream>
-#include <list>
 #include <map>
 #include <sstream>
-#include <sys/stat.h>
+#include <vector>
 
 #define LINELEN 256
 
@@ -54,10 +52,13 @@
 #include "KIM_CollectionsImplementation.hpp"
 #endif
 
+#ifndef KIM_FILESYSTEM_PATH_HPP_
+#include "KIM_FilesystemPath.hpp"
+#endif
+
 #ifndef KIM_SHARED_LIBRARY_HPP_
 #include "KIM_SharedLibrary.hpp"
 #endif
-
 
 // log helpers
 #define SNUM(x)                                                \
@@ -76,148 +77,38 @@
 
 namespace
 {
-void EraseTrailingNulls(std::string & str)
-{
-  size_t first = str.find_first_of('\0');
-  if (first != std::string::npos) str.erase(first, std::string::npos);
-}
-
 typedef std::map<KIM::CollectionItemType,
-                 std::string,
+                 KIM::FILESYSTEM::PathList,
                  KIM::COLLECTION_ITEM_TYPE::Comparator>
     ItemTypeToStringMap;
 
-std::string LibraryName(KIM::CollectionItemType const itemType,
-                        std::string const & path,
-                        std::string const & name)
+KIM::FILESYSTEM::Path LibraryName(KIM::CollectionItemType const itemType,
+                                  KIM::FILESYSTEM::Path const & path)
 {
-  std::string libName(path);
+  std::string libName = KIM_SHARED_MODULE_PREFIX;
+  libName += KIM_PROJECT_NAME;
+  libName += "-";
 
-  libName += "/" + name + "/" KIM_SHARED_MODULE_PREFIX + KIM_PROJECT_NAME + "-";
-
-  {
-    using namespace KIM::COLLECTION_ITEM_TYPE;
-    if (itemType == modelDriver) { libName += KIM_MODEL_DRIVER_IDENTIFIER; }
-    else if (itemType == portableModel)
-    {
-      libName += KIM_PORTABLE_MODEL_IDENTIFIER;
-    }
-    else if (itemType == simulatorModel)
-    {
-      libName += KIM_SIMULATOR_MODEL_IDENTIFIER;
-    }
-    else
-    {
-      libName += "UNKNOWN-COLLECTION-ITEM-TYPE";
-    }
-  }
+  using namespace KIM::COLLECTION_ITEM_TYPE;
+  if (itemType == modelDriver)
+    libName += KIM_MODEL_DRIVER_IDENTIFIER;
+  else if (itemType == portableModel)
+    libName += KIM_PORTABLE_MODEL_IDENTIFIER;
+  else if (itemType == simulatorModel)
+    libName += KIM_SIMULATOR_MODEL_IDENTIFIER;
+  else
+    libName += "UNKNOWN-COLLECTION-ITEM-TYPE";
 
   libName += KIM_SHARED_MODULE_SUFFIX;
 
-  return libName;
-}
-
-void ParseColonSeparatedList(std::string const & listString,
-                             std::list<std::string> & lst)
-{
-  std::istringstream iss(listString);
-  std::string token;
-  while (std::getline(iss, token, ':')) { lst.push_back(token); }
-}
-
-void GetSubDirectories(std::string const & dir, std::list<std::string> & list)
-{
-  list.clear();
-
-  DIR * dirp = NULL;
-  struct dirent * dp = NULL;
-
-  if (NULL != (dirp = opendir(dir.c_str())))
-  {
-    do
-    {
-      std::string fullPath(dir);
-      struct stat statBuf;
-      if ((NULL != (dp = readdir(dirp))) && (0 != strcmp(dp->d_name, "."))
-          && (0 != strcmp(dp->d_name, "..")))
-      {
-        fullPath.append("/").append(dp->d_name);
-        if ((0 == stat(fullPath.c_str(), &statBuf))
-            && (S_ISDIR(statBuf.st_mode)))
-        { list.push_back(dp->d_name); }
-      }
-    } while (NULL != dp);
-    closedir(dirp);
-  }
-}
-
-int MakeDirWrapper(std::string const & path, mode_t mode)
-{
-  if (mkdir(path.c_str(), mode))
-  {
-    if (EEXIST == errno)
-      return false;
-    else
-    {
-      std::cerr << "Unable to make directory '" << path << ".\n";
-      return true;
-    }
-  }
-  else
-    return false;
-}
-
-std::string ProcessConfigFileDirectoryString(std::string const & dir)
-{
-  std::string returnString = dir;
-  // must be absolute "/...." or home "~/..."
-  std::size_t found_home = returnString.find("~/");
-  std::size_t found_root = returnString.find("/");
-  if (found_home == 0)
-  {
-    // probably need a better way to get HOME
-    returnString.replace(0, 1, getenv("HOME"));
-  }
-  else if (found_root != 0)  // error
-  {
-    returnString = "";
-  }
-  else
-  {
-    // nothing to do
-  }
-
-  std::size_t pos = 0;
-  std::size_t colonLoc = 0;
-  while ((colonLoc = returnString.find(":", pos)) != std::string::npos)
-  {
-    pos = colonLoc + 1;
-    // must be absolute "/...." or home "~/..."
-    std::size_t found_home = returnString.find("~/", pos);
-    std::size_t found_root = returnString.find("/", pos);
-    if (found_home == pos)
-    {
-      // probably need a better way to get HOME
-      returnString.replace(pos, 1, getenv("HOME"));
-    }
-    else if (found_root != pos)  // error
-    {
-      returnString = "";
-    }
-    else
-    {
-      // nothing to do
-    }
-  }
-
-  return returnString;  // "" indicated an error
+  return path / libName;
 }
 
 int ProcessConfigFileLine(char const * const line,
-                          std::string const & configFile,
+                          KIM::FILESYSTEM::Path const & configFile,
                           char const * const identifier,
                           KIM::Log * const log,
-                          std::string & userDir)
+                          KIM::FILESYSTEM::PathList & userDirs)
 {
   char linecpy[LINELEN];
   char * word;
@@ -235,12 +126,12 @@ int ProcessConfigFileLine(char const * const line,
       ss << "Unknown line in " << configFile << " file: " << word << std::endl;
       log->LogEntry(KIM::LOG_VERBOSITY::error, ss, __LINE__, __FILE__);
     }
-    userDir = "";
+    userDirs.clear();
     return true;
   }
   word = strtok(NULL, sep);
-  userDir = ProcessConfigFileDirectoryString(word);
-  if (userDir == "")  // error
+  userDirs.Parse(word);
+  if (userDirs.empty())  // error
   {
     if (log)
     {
@@ -260,31 +151,28 @@ void PrivateGetConfigurationFileEnvironmentVariable(std::string & name,
   name = KIM_ENVIRONMENT_CONFIGURATION_FILE;
 
   char const * const varVal = getenv(name.c_str());
-  value = std::string("");
-  if (NULL != varVal) value = varVal;
+  if (NULL != varVal)
+    value = varVal;
+  else
+    value.clear();
 }
 
-void PrivateGetConfigurationFileName(std::string & fileName)
+void PrivateGetConfigurationFileName(KIM::FILESYSTEM::Path & fileName)
 {
   fileName = KIM_USER_CONFIGURATION_FILE;
 
-  if (fileName[0] != '/')
-  {
-    // probably need a better way to get HOME
-    fileName = std::string(getenv("HOME")).append("/").append(fileName);
-  }
+  if (fileName.is_relative())
+  { fileName = KIM::FILESYSTEM::Path::HomePath() / fileName; }
 
   std::string varName;
   std::string varVal;
   PrivateGetConfigurationFileEnvironmentVariable(varName, varVal);
-  if (varVal != "")
+  if (!varVal.empty())
   {
     // ensure we have an absolute path
-    if (varVal[0] != '/')
-    {
-      // probably need a better way to get PWD
-      fileName = std::string(getenv("PWD")).append("/").append(varVal);
-    }
+    KIM::FILESYSTEM::Path path(varVal);
+    if (path.is_relative())
+    { fileName = KIM::FILESYSTEM::Path::current_path() / path; }
     else
     {
       fileName = varVal;
@@ -320,73 +208,51 @@ void PrivateGetCWDDirs(ItemTypeToStringMap & dirsMap)
 {
   using namespace KIM::COLLECTION_ITEM_TYPE;
 
-  dirsMap[modelDriver] = ".";
-  dirsMap[portableModel] = ".";
-  dirsMap[simulatorModel] = ".";
+  dirsMap[modelDriver].push_back(".");
+  dirsMap[portableModel].push_back(".");
+  dirsMap[simulatorModel].push_back(".");
 }
 
 void PrivateGetEnvironmentDirs(ItemTypeToStringMap & dirsMap)
 {
   using namespace KIM::COLLECTION_ITEM_TYPE;
-  {
-    char const * const varVal = getenv(KIM_ENVIRONMENT_MODEL_DRIVER_PLURAL_DIR);
-    if (varVal == NULL) { dirsMap[modelDriver] = ""; }
-    else
-    {
-      dirsMap[modelDriver] = varVal;
-    }
-  }
 
-  {
-    char const * const varVal
-        = getenv(KIM_ENVIRONMENT_PORTABLE_MODEL_PLURAL_DIR);
-    if (varVal == NULL) { dirsMap[portableModel] = ""; }
-    else
-    {
-      dirsMap[portableModel] = varVal;
-    }
-  }
-
-  {
-    char const * const varVal
-        = getenv(KIM_ENVIRONMENT_SIMULATOR_MODEL_PLURAL_DIR);
-    if (varVal == NULL) { dirsMap[simulatorModel] = ""; }
-    else
-    {
-      dirsMap[simulatorModel] = varVal;
-    }
-  }
+  dirsMap[modelDriver].Parse(getenv(KIM_ENVIRONMENT_MODEL_DRIVER_PLURAL_DIR));
+  dirsMap[portableModel].Parse(
+      getenv(KIM_ENVIRONMENT_PORTABLE_MODEL_PLURAL_DIR));
+  dirsMap[simulatorModel].Parse(
+      getenv(KIM_ENVIRONMENT_SIMULATOR_MODEL_PLURAL_DIR));
 }
 
 int PrivateGetUserDirs(KIM::Log * log, ItemTypeToStringMap & dirsMap)
 {
   using namespace KIM::COLLECTION_ITEM_TYPE;
 
-  std::string configFile;
+  KIM::FILESYSTEM::Path configFile;
   PrivateGetConfigurationFileName(configFile);
 
   std::ifstream cfl;
-  cfl.open(configFile.c_str(), std::ifstream::in);
+  cfl.open(configFile.string().c_str());
   if (!cfl)
   {
     // unable to open file; create with default locations
-    size_t const pos = configFile.find_last_of('/');
-    std::string const path = configFile.substr(0, pos);
-    // std::string const name = configFile->substr(pos+1);  // NOT USED
+    KIM::FILESYSTEM::Path path = configFile;
+    path.remove_filename();
+
+    // create config file directory
+    if (path.MakeDirectory()) return true;
+
+    // create collection directories
+    dirsMap[modelDriver].Parse(KIM_USER_MODEL_DRIVER_PLURAL_DIR_DEFAULT);
+    dirsMap[portableModel].Parse(KIM_USER_PORTABLE_MODEL_PLURAL_DIR_DEFAULT);
+    dirsMap[simulatorModel].Parse(KIM_USER_SIMULATOR_MODEL_PLURAL_DIR_DEFAULT);
+    if (dirsMap[modelDriver].MakeDirectories()) return true;
+    if (dirsMap[portableModel].MakeDirectories()) return true;
+    if (dirsMap[simulatorModel].MakeDirectories()) return true;
+
+    // write initial config file
     std::ofstream fl;
-
-    if (MakeDirWrapper(path.c_str(), 0755)) return true;
-    dirsMap[modelDriver] = ProcessConfigFileDirectoryString(
-        KIM_USER_MODEL_DRIVER_PLURAL_DIR_DEFAULT);
-    dirsMap[portableModel] = ProcessConfigFileDirectoryString(
-        KIM_USER_PORTABLE_MODEL_PLURAL_DIR_DEFAULT);
-    dirsMap[simulatorModel] = ProcessConfigFileDirectoryString(
-        KIM_USER_SIMULATOR_MODEL_PLURAL_DIR_DEFAULT);
-    if (MakeDirWrapper(dirsMap[modelDriver].c_str(), 0755)) return true;
-    if (MakeDirWrapper(dirsMap[portableModel].c_str(), 0755)) return true;
-    if (MakeDirWrapper(dirsMap[simulatorModel].c_str(), 0755)) return true;
-
-    fl.open(configFile.c_str(), std::ofstream::out);
+    fl.open(configFile.string().c_str());
     fl << KIM_MODEL_DRIVER_PLURAL_DIR_IDENTIFIER
         " = " KIM_USER_MODEL_DRIVER_PLURAL_DIR_DEFAULT "\n";
     fl << KIM_PORTABLE_MODEL_PLURAL_DIR_IDENTIFIER
@@ -397,7 +263,6 @@ int PrivateGetUserDirs(KIM::Log * log, ItemTypeToStringMap & dirsMap)
   }
   else
   {
-    std::string val;
     char line[LINELEN];
     cfl.getline(line, LINELEN);
     if ((cfl.fail())
@@ -405,13 +270,11 @@ int PrivateGetUserDirs(KIM::Log * log, ItemTypeToStringMap & dirsMap)
                                   configFile,
                                   KIM_MODEL_DRIVER_PLURAL_DIR_IDENTIFIER,
                                   log,
-                                  val)))
+                                  dirsMap[modelDriver])))
     {
       cfl.close();
       return true;
     }
-    else
-      dirsMap[modelDriver] = val;
 
     cfl.getline(line, LINELEN);
     if (!cfl.fail())
@@ -420,14 +283,14 @@ int PrivateGetUserDirs(KIM::Log * log, ItemTypeToStringMap & dirsMap)
                                 configFile,
                                 KIM_PORTABLE_MODEL_PLURAL_DIR_IDENTIFIER,
                                 log,
-                                val))
+                                dirsMap[portableModel]))
       {
         if (ProcessConfigFileLine(
                 line,
                 configFile,
                 "models-dir",  // Accept old format for this line
                 log,
-                val))
+                dirsMap[portableModel]))
         {
           cfl.close();
           return true;
@@ -440,8 +303,6 @@ int PrivateGetUserDirs(KIM::Log * log, ItemTypeToStringMap & dirsMap)
       return true;
     }
 
-    dirsMap[portableModel] = val;
-
     cfl.getline(line, LINELEN);
     if (!cfl.fail())
     {
@@ -449,7 +310,7 @@ int PrivateGetUserDirs(KIM::Log * log, ItemTypeToStringMap & dirsMap)
                                 configFile,
                                 KIM_SIMULATOR_MODEL_PLURAL_DIR_IDENTIFIER,
                                 log,
-                                val))
+                                dirsMap[simulatorModel]))
       {
         cfl.close();
         return true;
@@ -457,7 +318,6 @@ int PrivateGetUserDirs(KIM::Log * log, ItemTypeToStringMap & dirsMap)
       else
       {
         cfl.close();
-        dirsMap[simulatorModel] = val;
       }
     }
     else
@@ -465,24 +325,21 @@ int PrivateGetUserDirs(KIM::Log * log, ItemTypeToStringMap & dirsMap)
       cfl.close();
 
       // unable to read SM settings; rewrite file with default SM location
-      size_t const pos = configFile.find_last_of('/');
-      std::string const path = configFile.substr(0, pos);
-      // std::string const name = configFile->substr(pos+1);  // NOT USED
-      std::ofstream fl;
+      KIM::FILESYSTEM::Path path = configFile;
+      path.remove_filename();
 
-      dirsMap[simulatorModel] = ProcessConfigFileDirectoryString(
+      dirsMap[simulatorModel].Parse(
           KIM_USER_SIMULATOR_MODEL_PLURAL_DIR_DEFAULT);
-      if (MakeDirWrapper(dirsMap[simulatorModel].c_str(), 0755)) return true;
+      if (dirsMap[simulatorModel].MakeDirectories()) return true;
 
-      fl.open(configFile.c_str(), std::ofstream::out);
-      fl << KIM_MODEL_DRIVER_PLURAL_DIR_IDENTIFIER " = " << dirsMap[modelDriver]
-         << "\n";
+      std::ofstream fl;
+      fl.open(configFile.string().c_str());
+      fl << KIM_MODEL_DRIVER_PLURAL_DIR_IDENTIFIER " = "
+         << dirsMap[modelDriver].ToString() << "\n";
       fl << KIM_PORTABLE_MODEL_PLURAL_DIR_IDENTIFIER " = "
-         << dirsMap[portableModel] << "\n";
+         << dirsMap[portableModel].ToString() << "\n";
       fl << KIM_SIMULATOR_MODEL_PLURAL_DIR_IDENTIFIER " = "
-         << ProcessConfigFileDirectoryString(
-                KIM_USER_SIMULATOR_MODEL_PLURAL_DIR_DEFAULT)
-         << "\n";
+         << KIM_USER_SIMULATOR_MODEL_PLURAL_DIR_DEFAULT << "\n";
       fl.close();
     }
   }
@@ -494,35 +351,17 @@ void PrivateGetSystemDirs(ItemTypeToStringMap & dirsMap)
 {
   using namespace KIM::COLLECTION_ITEM_TYPE;
 
-
-  std::string md = KIM_SYSTEM_MODEL_DRIVERS_DIR;
-  std::string pm = KIM_SYSTEM_PORTABLE_MODELS_DIR;
-  std::string sm = KIM_SYSTEM_SIMULATOR_MODELS_DIR;
-
-  // Hack: Explicitly erase trailing null's to support conda packaging behavior
-  //       This assumes that the strings are NOT ';' separated lists which
-  //       could lead to embedded null's in the middel of the string.
-  //
-  // This possibility is due to complex handling of string literals in C++.
-  // (Behavior is inconsistent between compilers.)
-  EraseTrailingNulls(md);
-  EraseTrailingNulls(pm);
-  EraseTrailingNulls(sm);
-  // End of Hack
-
-  dirsMap[modelDriver] = md;
-  dirsMap[portableModel] = pm;
-  dirsMap[simulatorModel] = sm;
+  dirsMap[modelDriver].Parse(KIM_SYSTEM_MODEL_DRIVERS_DIR);
+  dirsMap[portableModel].Parse(KIM_SYSTEM_PORTABLE_MODELS_DIR);
+  dirsMap[simulatorModel].Parse(KIM_SYSTEM_SIMULATOR_MODELS_DIR);
 }
 
-void PrivateGetListOfItemNamesByCollectionAndType(
+void PrivateGetListOfItemPathsByCollectionAndType(
     KIM::Collection const collection,
     KIM::CollectionItemType const itemType,
     KIM::Log * log,
-    std::list<std::string> & names)
+    std::vector<KIM::FILESYSTEM::Path> & paths)
 {
-  names.clear();
-
   ItemTypeToStringMap dirsMap;
   if (collection == KIM::COLLECTION::system)
     PrivateGetSystemDirs(dirsMap);
@@ -532,23 +371,18 @@ void PrivateGetListOfItemNamesByCollectionAndType(
     PrivateGetEnvironmentDirs(dirsMap);
   else if (collection == KIM::COLLECTION::currentWorkingDirectory)
     PrivateGetCWDDirs(dirsMap);
-  std::list<std::string> listOfDirs;
-  ParseColonSeparatedList(dirsMap[itemType], listOfDirs);
+  const KIM::FILESYSTEM::PathList & listOfDirs = dirsMap[itemType];
 
-  std::list<std::string>::const_iterator dir;
+  KIM::FILESYSTEM::PathList::const_iterator dir;
   for (dir = listOfDirs.begin(); dir != listOfDirs.end(); ++dir)
   {
-    std::list<std::string> subDirs;
-    GetSubDirectories(*dir, subDirs);
-    subDirs.sort();
+    std::vector<KIM::FILESYSTEM::Path> subDirs = dir->Subdirectories();
 
-    std::list<std::string>::const_iterator subDir;
+    std::vector<KIM::FILESYSTEM::Path>::const_iterator subDir;
     for (subDir = subDirs.begin(); subDir != subDirs.end(); ++subDir)
     {
-      std::string const libName(LibraryName(itemType, *dir, *subDir));
-
-      struct stat statBuf;
-      if (0 == stat(libName.c_str(), &statBuf)) { names.push_back(*subDir); }
+      KIM::FILESYSTEM::Path const libName = LibraryName(itemType, *subDir);
+      if (libName.exists()) { paths.push_back(*subDir); }
     }
   }
 }
@@ -558,7 +392,7 @@ int PrivateGetItemLibraryFileNameByCollectionAndType(
     KIM::CollectionItemType const itemType,
     std::string const & itemName,
     KIM::Log * log,
-    std::string * fileName)
+    KIM::FILESYSTEM::Path * const fileName)
 {
   namespace KC = KIM::COLLECTION;
 
@@ -571,24 +405,22 @@ int PrivateGetItemLibraryFileNameByCollectionAndType(
     PrivateGetEnvironmentDirs(dirsMap);
   else if (collection == KC::currentWorkingDirectory)
     PrivateGetCWDDirs(dirsMap);
-  std::list<std::string> listOfDirs;
-  ParseColonSeparatedList(dirsMap[itemType], listOfDirs);
+  const KIM::FILESYSTEM::PathList & listOfDirs = dirsMap[itemType];
 
-  std::string libPath;
-  std::list<std::string>::const_iterator dir;
+  KIM::FILESYSTEM::PathList::const_iterator dir;
   for (dir = listOfDirs.begin(); dir != listOfDirs.end(); ++dir)
   {
-    struct stat statBuf;
-    libPath = LibraryName(itemType, *dir, itemName);
-    if (0 == stat(libPath.c_str(), &statBuf)) break;
-    libPath = "";
+    KIM::FILESYSTEM::Path const libPath
+        = LibraryName(itemType, *dir / itemName);
+    if (libPath.exists())
+    {
+      if (fileName) *fileName = libPath;
+      return false;
+    }
   }
 
-  if (libPath == "") { return true; }
-
-  if (fileName) *fileName = libPath;
-
-  return false;
+  if (fileName) fileName->clear();
+  return true;
 }
 
 int PrivateGetListOfItemMetadataFilesByCollectionAndType(
@@ -604,18 +436,13 @@ int PrivateGetListOfItemMetadataFilesByCollectionAndType(
   availableAsStrings.clear();
   fileStrings.clear();
 
-  std::string path;
-  int error = PrivateGetItemLibraryFileNameByCollectionAndType(
-      collection, itemType, itemName, log, &path);
-
-  if (error) { return true; }
-
-  fileNames.clear();
-  availableAsStrings.clear();
-  fileStrings.clear();
+  KIM::FILESYSTEM::Path path;
+  if (PrivateGetItemLibraryFileNameByCollectionAndType(
+          collection, itemType, itemName, log, &path))
+  { return true; }
 
   KIM::SharedLibrary lib(log);
-  error = lib.Open(path);
+  int error = lib.Open(path);
   if (error) { return true; }
   int extent;
   error = lib.GetNumberOfMetadataFiles(&extent);
@@ -630,10 +457,10 @@ int PrivateGetListOfItemMetadataFilesByCollectionAndType(
     if (error) { return true; }
 
     fileNames.push_back(flnm);
-    fileStrings.push_back("");
-    fileStrings.rbegin()->assign(reinterpret_cast<char const *>(data), length);
+    fileStrings.push_back(std::string());
+    fileStrings.back().assign(reinterpret_cast<char const *>(data), length);
     availableAsStrings.push_back(
-        (strlen(fileStrings.rbegin()->c_str()) == length) ? true : false);
+        (strlen(fileStrings.back().c_str()) == length) ? true : false);
   }
 
   return false;
@@ -643,12 +470,12 @@ int PrivateGetItemLibraryFileNameAndCollection(
     KIM::CollectionItemType const itemType,
     std::string const & itemName,
     KIM::Log * const log,
-    std::string * const fileName,
+    KIM::FILESYSTEM::Path * const fileName,
     KIM::Collection * const collection)
 {
   namespace KC = KIM::COLLECTION;
 
-  std::string itemPath;
+  KIM::FILESYSTEM::Path itemPath;
   KIM::Collection col;
   if (!PrivateGetItemLibraryFileNameByCollectionAndType(
           KC::currentWorkingDirectory, itemType, itemName, log, &itemPath))
@@ -841,19 +668,22 @@ int CollectionsImplementation::GetItemLibraryFileNameAndCollection(
 #endif
 
   Collection col;
+  FILESYSTEM::Path path;
   if (PrivateGetItemLibraryFileNameAndCollection(
-          itemType,
-          itemName,
-          log_,
-          &getItemLibraryFileNameAndCollection_FileName_,
-          &col))
+          itemType, itemName, log_, &path, &col))
   {
     LOG_ERROR("Unable to find item.");
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
 
-  if (fileName) *fileName = &getItemLibraryFileNameAndCollection_FileName_;
+  if (fileName)
+  {
+    // Convert from internal KIM::FILESYSTEM::Path represention to conventional
+    // string representation:
+    getItemLibraryFileNameAndCollection_FileName_ = path.string();
+    *fileName = &getItemLibraryFileNameAndCollection_FileName_;
+  }
   if (collection) *collection = col;
 
   LOG_DEBUG("Exit 0=" + callString);
@@ -973,28 +803,32 @@ int CollectionsImplementation::CacheListOfItemNamesByType(
   }
 #endif
 
-  std::list<std::string> listOfNames;
-  std::list<std::string> colListOfNames;
-  {
-    namespace KC = KIM::COLLECTION;
-    PrivateGetListOfItemNamesByCollectionAndType(
-        KC::system, itemType, log_, colListOfNames);
-    listOfNames.merge(colListOfNames);
+  namespace KC = KIM::COLLECTION;
 
-    PrivateGetListOfItemNamesByCollectionAndType(
-        KC::user, itemType, log_, colListOfNames);
-    listOfNames.merge(colListOfNames);
+  std::vector<FILESYSTEM::Path> listOfPaths;
+  PrivateGetListOfItemPathsByCollectionAndType(
+      KC::system, itemType, log_, listOfPaths);
 
-    PrivateGetListOfItemNamesByCollectionAndType(
-        KC::environmentVariable, itemType, log_, colListOfNames);
-    listOfNames.merge(colListOfNames);
+  PrivateGetListOfItemPathsByCollectionAndType(
+      KC::user, itemType, log_, listOfPaths);
 
-    PrivateGetListOfItemNamesByCollectionAndType(
-        KC::currentWorkingDirectory, itemType, log_, colListOfNames);
-    listOfNames.merge(colListOfNames);
-  }
-  listOfNames.unique();
-  cacheListOfItemNamesByType_.assign(listOfNames.begin(), listOfNames.end());
+  PrivateGetListOfItemPathsByCollectionAndType(
+      KC::environmentVariable, itemType, log_, listOfPaths);
+
+  PrivateGetListOfItemPathsByCollectionAndType(
+      KC::currentWorkingDirectory, itemType, log_, listOfPaths);
+
+  // Sort path list and remove duplicates.
+  std::sort(listOfPaths.begin(), listOfPaths.end());
+  listOfPaths.erase(std::unique(listOfPaths.begin(), listOfPaths.end()),
+                    listOfPaths.end());
+
+  // Get the item names from the KIM::FILESYSTEM::Path entries.
+  cacheListOfItemNamesByType_.clear();
+  cacheListOfItemNamesByType_.reserve(listOfPaths.size());
+  std::vector<FILESYSTEM::Path>::const_iterator path;
+  for (path = listOfPaths.begin(); path != listOfPaths.end(); ++path)
+  { cacheListOfItemNamesByType_.push_back(path->filename().string()); }
 
   *extent = cacheListOfItemNamesByType_.size();
 
@@ -1048,9 +882,24 @@ int CollectionsImplementation::CacheListOfItemNamesByCollectionAndType(
   }
 #endif
 
-  std::list<std::string> lst;
-  PrivateGetListOfItemNamesByCollectionAndType(collection, itemType, log_, lst);
-  cacheListOfItemNamesByCollectionAndType_.assign(lst.begin(), lst.end());
+  std::vector<FILESYSTEM::Path> listOfPaths;
+  PrivateGetListOfItemPathsByCollectionAndType(
+      collection, itemType, log_, listOfPaths);
+
+  // Sort path list and remove duplicates.
+  std::sort(listOfPaths.begin(), listOfPaths.end());
+  listOfPaths.erase(std::unique(listOfPaths.begin(), listOfPaths.end()),
+                    listOfPaths.end());
+
+  // Extract the item names from the KIM::FILESYSTEM::Path entries.
+  cacheListOfItemNamesByCollectionAndType_.clear();
+  cacheListOfItemNamesByCollectionAndType_.reserve(listOfPaths.size());
+  std::vector<FILESYSTEM::Path>::const_iterator path;
+  for (path = listOfPaths.begin(); path != listOfPaths.end(); ++path)
+  {
+    cacheListOfItemNamesByCollectionAndType_.push_back(
+        path->filename().string());
+  }
 
   *extent = cacheListOfItemNamesByCollectionAndType_.size();
 
@@ -1104,12 +953,9 @@ int CollectionsImplementation::GetItemLibraryFileNameByCollectionAndType(
   }
 #endif
 
+  FILESYSTEM::Path path;
   int error = PrivateGetItemLibraryFileNameByCollectionAndType(
-      collection,
-      itemType,
-      itemName,
-      log_,
-      &getItemLibraryFileNameByCollectionAndType_);
+      collection, itemType, itemName, log_, &path);
   if (error)
   {
     LOG_ERROR("Unable to find item.");
@@ -1117,6 +963,9 @@ int CollectionsImplementation::GetItemLibraryFileNameByCollectionAndType(
     return true;
   }
 
+  // Convert from internal KIM::FILESYSTEM::Path representation to conventional
+  // std::string representation.
+  getItemLibraryFileNameByCollectionAndType_ = path.string();
   *fileName = &getItemLibraryFileNameByCollectionAndType_;
 
   LOG_DEBUG("Exit 0=" + callString);
@@ -1296,8 +1145,12 @@ void CollectionsImplementation::GetConfigurationFileName(
 #endif
   LOG_DEBUG("Enter  " + callString);
 
-  PrivateGetConfigurationFileName(getConfigurationFileName_);
+  FILESYSTEM::Path path;
+  PrivateGetConfigurationFileName(path);
 
+  // Convert from internal KIM::FILESYSTEM::Path representation to conventional
+  // std::string representation.
+  getConfigurationFileName_ = path.string();
   *fileName = &getConfigurationFileName_;
 
   LOG_DEBUG("Exit   " + callString);
@@ -1347,9 +1200,14 @@ int CollectionsImplementation::CacheListOfDirectoryNames(
     PrivateGetCWDDirs(dirsMap);
   }
 
-  std::list<std::string> lst;
-  ParseColonSeparatedList(dirsMap[itemType], lst);
-  cacheListOfDirectoryNames_.assign(lst.begin(), lst.end());
+  // Convert from internal KIM::FILESYSTEM::Path representation to conventional
+  // std::string representation.
+  FILESYSTEM::PathList const & pathList = dirsMap[itemType];
+  cacheListOfDirectoryNames_.clear();
+  cacheListOfDirectoryNames_.reserve(pathList.size());
+  FILESYSTEM::PathList::const_iterator path;
+  for (path = pathList.begin(); path != pathList.end(); ++path)
+  { cacheListOfDirectoryNames_.push_back(path->string()); }
 
   *extent = cacheListOfDirectoryNames_.size();
 

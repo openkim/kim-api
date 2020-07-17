@@ -26,6 +26,7 @@
 #    Richard Berger
 #    Christoph Junghans
 #    Ryan S. Elliott
+#    Alexander Stukowski
 #
 
 #
@@ -35,7 +36,15 @@
 
 # Define other internal variables
 #
-set(KIM_API_STANDARD_INSTALL_PREFIXES "/" "/usr" "/usr/local" CACHE INTERNAL "Cononical list of standard install prefixes")
+if(WIN32 AND NOT CYGWIN)
+  # Use ';' as path list separator on native Windows platform (including MinGW).
+  set(KIM_API_PATH_SEPARATOR ";" CACHE INTERNAL "Canonical separator character used in path lists")
+  set(KIM_API_STANDARD_INSTALL_PREFIXES "c:/Program Files/${PROJECT_NAME}" CACHE INTERNAL "Canonical list of standard install prefixes")
+else()
+  # Use ':' as path list separator on Linux/Unix platforms (including Cygwin and Windows Subsystem for Linux).
+  set(KIM_API_PATH_SEPARATOR ":" CACHE INTERNAL "Canonical separator character used in path lists")
+  set(KIM_API_STANDARD_INSTALL_PREFIXES "/" "/usr" "/usr/local" CACHE INTERNAL "Canonical list of standard install prefixes")
+endif()
 #
 set(KIM_API_CMAKE_DIR_IDENTIFIER "cmake" CACHE INTERNAL "Canonical id for the CMake dir")
 #
