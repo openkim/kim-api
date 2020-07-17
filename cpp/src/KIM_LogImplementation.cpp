@@ -34,6 +34,7 @@
 #include <cctype>
 #include <cstdio>
 #include <cstring>
+#include <fstream>
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -53,7 +54,6 @@
 
 #include "KIM_LOG_DEFINES.inc"
 
-#define LOG_DIR "."
 #define LOG_FILE "kim.log"
 
 // log helper
@@ -138,16 +138,16 @@ int GlobalDefaultLogPrintFunction(std::string const & entryString)
   // Need to figure out how to do file locking to make this work for
   // parallel computations.
 
-  FILE * file = fopen(LOG_DIR "/" LOG_FILE, "a");
-  if (file == NULL)
+  std::ofstream file;
+  file.open(LOG_FILE, std::ios_base::out | std::ios_base::app);
+  if (!file)
   {
-    std::cerr << "Unable to open " LOG_DIR "/" LOG_FILE " file." << std::endl;
+    std::cerr << "Unable to open " LOG_FILE " file." << std::endl;
     return true;
   }
   else
   {
-    fwrite(entryString.c_str(), sizeof(char), entryString.length(), file);
-    fclose(file);
+    file << entryString;
     return false;
   }
 }
