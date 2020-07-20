@@ -55,6 +55,9 @@ module kim_log_module
     kim_log_destroy, &
     kim_push_default_verbosity, &
     kim_pop_default_verbosity, &
+    kim_push_default_print_function, &
+    kim_pop_default_print_function, &
+    kim_convert_c_string, &
     kim_get_id, &
     kim_set_id, &
     kim_push_verbosity, &
@@ -108,6 +111,31 @@ module kim_log_module
   interface kim_pop_default_verbosity
     module procedure kim_log_pop_default_verbosity
   end interface kim_pop_default_verbosity
+
+  !> \brief \copybrief KIM::Log::PushDefaultPrintFunction
+  !!
+  !! \sa KIM::Log::PushDefaultPrintFunction, KIM_Log_PushDefaultPrintFunction
+  !!
+  !! \since 2.2
+  interface kim_push_default_print_function
+    module procedure kim_log_push_default_print_function
+  end interface kim_push_default_print_function
+
+  !> \brief \copybrief KIM::Log::PopDefaultPrintFunction
+  !!
+  !! \sa KIM::Log::PopDefaultPrintFunction, KIM_Log_PopDefaultPrintFunction
+  !!
+  !! \since 2.2
+  interface kim_pop_default_print_function
+    module procedure kim_log_pop_default_print_function
+  end interface kim_pop_default_print_function
+
+  !> \brief \copybrief kim_log_module::kim_log_convert_c_string
+  !!
+  !! \since 2.2
+  interface kim_convert_c_string
+    module procedure kim_log_convert_c_string
+  end interface kim_convert_c_string
 
   !> \brief \copybrief KIM::Log::GetID
   !!
@@ -266,6 +294,104 @@ contains
 
     call pop_default_verbosity()
   end subroutine kim_log_pop_default_verbosity
+
+  !> \brief \copybrief KIM::Log::PushDefaultPrintFunction
+  !!
+  !! A Fortran routine may provide a KIM::Log::PrintFunction routine.  The
+  !! interface for this is given here (see also KIM::LogPrintFunction, \ref
+  !! KIM_LogPrintFunction).
+  !!
+  !! \code{.f90}
+  !! interface
+  !!   recursive subroutine log_print_function(entry_string, ierr) bind(c)
+  !!     use, intrinsic :: iso_c_binding
+  !!     type(c_ptr), intent(in), value :: entry_string
+  !!     integer(c_int), intent(out) :: ierr
+  !!   end subroutine log_print_function
+  !! end interface
+  !! \endcode
+  !!
+  !! The routine must take a c_ptr pointing to a null terminated c string
+  !! representing the log message.  To work with this, the kim_log_module
+  !! provides a conversion routine: kim_log_module::kim_convert_c_string.
+  !!
+  !! An example log print function, which simply writes log messages to stdout,
+  !! is given here:
+  !!
+  !! \code{.f90}
+  !! recursive subroutine log_print_function(entry_string, ierr) bind(c)
+  !!   use, intrinsic :: iso_c_binding
+  !!   use kim_log_module, only : kim_convert_c_string
+  !!   type(c_ptr), intent(in), value :: entry_string
+  !!   integer(c_int), intent(out) :: ierr
+  !!
+  !!   character(len=2048, kind=c_char) :: message
+  !!
+  !!   call kim_convert_c_string(entry_string, message)
+  !!   print *, trim(message)
+  !!
+  !!   ierr = 0
+  !!   return
+  !! end subroutine log_print_function
+  !! \endcode
+  !!
+  !! \sa KIM::Log::PushDefaultPrintFunction, KIM_Log_PushDefaultPrintFunction
+  !!
+  !! \since 2.2
+  recursive subroutine kim_log_push_default_print_function(language_name, fptr)
+    use kim_language_name_module, only : kim_language_name_type
+    implicit none
+    interface
+      recursive subroutine push_default_print_function(language_name, fptr) &
+        bind(c, name="KIM_Log_PushDefaultPrintFunction")
+        use, intrinsic :: iso_c_binding
+        use kim_language_name_module, only : kim_language_name_type
+        implicit none
+        type(kim_language_name_type), intent(in), value :: language_name
+        type(c_funptr), intent(in), value :: fptr
+      end subroutine push_default_print_function
+    end interface
+    type(kim_language_name_type), intent(in) :: language_name
+    type(c_funptr), intent(in), value :: fptr  ! must be left as "value"!?!
+
+    call push_default_print_function(language_name, fptr)
+  end subroutine kim_log_push_default_print_function
+
+  !> \brief \copybrief KIM::Log::PopDefaultPrintFunction
+  !!
+  !! \sa KIM::Log::PopDefaultPrintFunction, KIM_Log_PopDefaultPrintFunction
+  !!
+  !! \since 2.2
+  recursive subroutine kim_log_pop_default_print_function()
+    implicit none
+    interface
+      recursive subroutine pop_default_print_function() &
+        bind(c, name="KIM_Log_PopDefaultPrintFunction")
+        use, intrinsic :: iso_c_binding
+        implicit none
+      end subroutine pop_default_print_function
+    end interface
+
+    call pop_default_print_function()
+  end subroutine kim_log_pop_default_print_function
+
+  !> \brief Convert a c sting to a Fortran string
+  !!
+  !! Convert a c string, given in terms of a char pointer to a Fortran string
+  !! variable.
+  !!
+  !! \param[in]  c_char_ptr A pointer to a null terminated c string
+  !! \param[out] string A Fortran string variable
+  !!
+  !! \since 2.2
+  recursive subroutine kim_log_convert_c_string(c_char_ptr, string)
+    use kim_convert_string_module, only :kim_convert_c_char_ptr_to_string
+    implicit none
+    type(c_ptr), intent(in), value :: c_char_ptr
+    character(len=*, kind=c_char), intent(out) :: string
+
+    call kim_convert_c_char_ptr_to_string(c_char_ptr, string)
+  end subroutine kim_log_convert_c_string
 
   !> \brief \copybrief KIM::Log::GetID
   !!

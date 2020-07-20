@@ -45,6 +45,12 @@
 #include "KIM_LogImplementation.hpp"
 #endif
 
+#ifndef KIM_FUNCTION_TYPES_H_
+extern "C" {
+#include "KIM_FunctionTypes.h"
+}  // extern "C"
+#endif
+
 #ifndef KIM_LOG_VERBOSITY_HPP_
 #include "KIM_LogVerbosity.hpp"
 #endif
@@ -283,23 +289,24 @@ void LogImplementation::LogEntry(LogVerbosity const logVerbosity,
                                   lineNumber,
                                   fileName));
 
-    LogPrintFunction * CppPrint
-        = reinterpret_cast<LogPrintFunction *>(printFunctionPointer_);
-    // KIM_LogPrintFunction * CPrint
-    //     = reinterpret_cast<KIM_LogPrintFunction *>(printFunctionPointer_);
-    typedef void LogPrintFunctionF(char const * const, int * const);
-    LogPrintFunctionF * FPrint
-        = reinterpret_cast<LogPrintFunctionF *>(printFunctionPointer_);
-
     int error = true;
     if (printFunctionLanguageName_ == LANGUAGE_NAME::cpp)
-    { error = CppPrint(entry); }
+    {
+      LogPrintFunction * CppPrint
+          = reinterpret_cast<LogPrintFunction *>(printFunctionPointer_);
+      error = CppPrint(entry);
+    }
     else if (printFunctionLanguageName_ == LANGUAGE_NAME::c)
     {
-      // error = CPrint(entry.c_str());
+      KIM_LogPrintFunction * CPrint
+          = reinterpret_cast<KIM_LogPrintFunction *>(printFunctionPointer_);
+      error = CPrint(entry.c_str());
     }
     else if (printFunctionLanguageName_ == LANGUAGE_NAME::fortran)
     {
+      typedef void(kim_log_print_function)(char const * const, int * const);
+      kim_log_print_function * FPrint
+          = reinterpret_cast<kim_log_print_function *>(printFunctionPointer_);
       FPrint(entry.c_str(), &error);
     }
     else

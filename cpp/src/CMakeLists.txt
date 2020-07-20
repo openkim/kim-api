@@ -100,6 +100,7 @@ target_include_directories(kim-loader PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}
   ../include
   ../../cmake
+  ../../c/include
   ${CMAKE_BINARY_DIR}
   )
 target_link_libraries(kim-loader ${CMAKE_DL_LIBS})
