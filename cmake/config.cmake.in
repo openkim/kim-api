@@ -373,7 +373,12 @@ function(add_kim_api_model_library)
     RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}"
     "kimspec.edn" "kimprovenance.edn" "kimcite-*.bib")
   if(KIM_STANDARD_METADATA_FILES)
-    list(APPEND MODEL_METADATA_FILES "${KIM_STANDARD_METADATA_FILES}")
+    foreach(_FL IN LISTS KIM_STANDARD_METADATA_FILES)
+      file(SHA1 "${CMAKE_CURRENT_SOURCE_DIR}/${_FL}" _FL_SHA1)
+      if (NOT "${_FL_SHA1}" STREQUAL "da39a3ee5e6b4b0d3255bfef95601890afd80709")  # sha1 hash of empty file
+        list(APPEND MODEL_METADATA_FILES "${_FL}")
+      endif()
+    endforeach()
   endif()
   #
   set(METADATA_FILE_DECLARATIONS "")
@@ -536,7 +541,12 @@ function(add_kim_api_model_driver_library)
     RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}"
     "kimspec.edn" "kimprovenance.edn" "kimcite-*.bib")
   if(KIM_STANDARD_METADATA_FILES)
-    list(APPEND MODEL_DRIVER_METADATA_FILES "${KIM_STANDARD_METADATA_FILES}")
+    foreach(_FL IN LISTS KIM_STANDARD_METADATA_FILES)
+      file(SHA1 "${CMAKE_CURRENT_SOURCE_DIR}/${_FL}" _FL_SHA1)
+      if (NOT "${_FL_SHA1}" STREQUAL "da39a3ee5e6b4b0d3255bfef95601890afd80709")  # sha1 hash of empty file
+        list(APPEND MODEL_METADATA_FILES "${_FL}")
+      endif()
+    endforeach()
   endif()
   #
   set(METADATA_FILE_DECLARATIONS "")
