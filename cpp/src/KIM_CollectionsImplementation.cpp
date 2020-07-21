@@ -104,11 +104,13 @@ KIM::FILESYSTEM::Path LibraryName(KIM::CollectionItemType const itemType,
   return path / libName;
 }
 
-int ProcessConfigFileLine(char const * const line,
-                          KIM::FILESYSTEM::Path const & configFile,
-                          char const * const identifier,
-                          KIM::Log * const log,
-                          KIM::FILESYSTEM::PathList & userDirs)
+int ProcessConfigFileLine(
+    char const * const line,
+    KIM::FILESYSTEM::Path const & configFile,
+    char const * const identifier,
+    std::vector<std::string> const & deprecatedIdentifiers,
+    KIM::Log * const log,
+    KIM::FILESYSTEM::PathList & userDirs)
 {
   char linecpy[LINELEN];
   char * word;
@@ -118,16 +120,33 @@ int ProcessConfigFileLine(char const * const line,
   linecpy[LINELEN - 1] = '\0';
 
   word = strtok(linecpy, sep);
-  if (strcmp(identifier, word))
+  bool const foundIdentifier = !strcmp(identifier, word);
+  bool const foundDeprecatedIdentifier
+      = deprecatedIdentifiers.end()
+        != std::find(deprecatedIdentifiers.begin(),
+                     deprecatedIdentifiers.end(),
+                     std::string(word));
+  if (!foundIdentifier && !foundDeprecatedIdentifier)
   {
     if (log)
     {
       std::stringstream ss;
-      ss << "Unknown line in " << configFile << " file: " << word << std::endl;
+      ss << "Expected identifier '" << identifier << "' but found '" << word
+         << "' instead in '" << configFile << "' file." << std::endl;
       log->LogEntry(KIM::LOG_VERBOSITY::error, ss, __LINE__, __FILE__);
     }
     userDirs.clear();
     return true;
+  }
+  else if (!foundIdentifier)
+  {
+    if (log)
+    {
+      std::stringstream ss;
+      ss << "Deprecated identifier '" << word << "' found in " << configFile
+         << " file.  Use '" << identifier << "' instead." << std::endl;
+      log->LogEntry(KIM::LOG_VERBOSITY::warning, ss, __LINE__, __FILE__);
+    }
   }
   word = strtok(NULL, sep);
   userDirs.Parse(word);
@@ -264,11 +283,13 @@ int PrivateGetUserDirs(KIM::Log * log, ItemTypeToStringMap & dirsMap)
   else
   {
     char line[LINELEN];
+    std::vector<std::string> deprecatedIdentifiers;
     cfl.getline(line, LINELEN);
     if ((cfl.fail())
         || (ProcessConfigFileLine(line,
                                   configFile,
                                   KIM_MODEL_DRIVER_PLURAL_DIR_IDENTIFIER,
+                                  deprecatedIdentifiers,
                                   log,
                                   dirsMap[modelDriver])))
     {
@@ -276,39 +297,29 @@ int PrivateGetUserDirs(KIM::Log * log, ItemTypeToStringMap & dirsMap)
       return true;
     }
 
+    deprecatedIdentifiers.clear();
+    deprecatedIdentifiers.push_back("models-dir");
     cfl.getline(line, LINELEN);
-    if (!cfl.fail())
-    {
-      if (ProcessConfigFileLine(line,
-                                configFile,
-                                KIM_PORTABLE_MODEL_PLURAL_DIR_IDENTIFIER,
-                                log,
-                                dirsMap[portableModel]))
-      {
-        if (ProcessConfigFileLine(
-                line,
-                configFile,
-                "models-dir",  // Accept old format for this line
-                log,
-                dirsMap[portableModel]))
-        {
-          cfl.close();
-          return true;
-        }
-      }
-    }
-    else
+    if (cfl.fail()
+        || ProcessConfigFileLine(line,
+                                 configFile,
+                                 KIM_PORTABLE_MODEL_PLURAL_DIR_IDENTIFIER,
+                                 deprecatedIdentifiers,
+                                 log,
+                                 dirsMap[portableModel]))
     {
       cfl.close();
       return true;
     }
 
+    deprecatedIdentifiers.clear();
     cfl.getline(line, LINELEN);
     if (!cfl.fail())
     {
       if (ProcessConfigFileLine(line,
                                 configFile,
                                 KIM_SIMULATOR_MODEL_PLURAL_DIR_IDENTIFIER,
+                                deprecatedIdentifiers,
                                 log,
                                 dirsMap[simulatorModel]))
       {
