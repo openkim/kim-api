@@ -45,8 +45,18 @@
 #include "KIM_LogImplementation.hpp"
 #endif
 
+#ifndef KIM_FUNCTION_TYPES_H_
+extern "C" {
+#include "KIM_FunctionTypes.h"
+}  // extern "C"
+#endif
+
 #ifndef KIM_LOG_VERBOSITY_HPP_
 #include "KIM_LogVerbosity.hpp"
+#endif
+
+#ifndef KIM_LANGUAGE_NAME_HPP_
+#include "KIM_LanguageName.hpp"
 #endif
 
 #include "KIM_LOG_DEFINES.inc"
@@ -128,6 +138,76 @@ void LogImplementation::PopDefaultVerbosity()
   { defaultLogVerbosity.push(KIM_LOG_MAXIMUM_LEVEL); }
 }
 
+namespace
+{
+int GlobalDefaultLogPrintFunction(std::string const & entryString)
+{
+  // Need to figure out how to do file locking to make this work for
+  // parallel computations.
+
+  std::ofstream file;
+  file.open(LOG_FILE, std::ios_base::out | std::ios_base::app);
+  if (!file)
+  {
+    std::cerr << "Unable to open " LOG_FILE " file." << std::endl;
+    return true;
+  }
+  else
+  {
+    file << entryString;
+    return false;
+  }
+}
+
+std::stack<LanguageName> GetDefaultLogPrintFunctionLanguageNameStack()
+{
+  std::stack<LanguageName> s;
+  s.push(LANGUAGE_NAME::cpp);
+  return s;
+}
+std::stack<LanguageName> defaultLogPrintFunctionLanguageName
+    = GetDefaultLogPrintFunctionLanguageNameStack();
+
+std::stack<Function *> GetDefaultLogPrintFunctionPointerStack()
+{
+  std::stack<Function *> s;
+  s.push(reinterpret_cast<Function *>(&GlobalDefaultLogPrintFunction));
+  return s;
+}
+std::stack<Function *> defaultLogPrintFunctionPointer
+    = GetDefaultLogPrintFunctionPointerStack();
+}  // namespace
+
+void LogImplementation::PushDefaultPrintFunction(
+    LanguageName const languageName, Function * const fptr)
+{
+  LanguageName language(languageName);
+  if (!language.Known())
+  {
+#if ERROR_VERBOSITY
+    std::cerr << "Unknown LanguageName passed to PushDefaultPrintFunction, "
+                 "using LANGUAGE_NAME::cpp."
+              << std::endl;
+#endif
+    language = LANGUAGE_NAME::cpp;
+  }
+
+  defaultLogPrintFunctionLanguageName.push(language);
+  defaultLogPrintFunctionPointer.push(fptr);
+}
+
+void LogImplementation::PopDefaultPrintFunction()
+{
+  defaultLogPrintFunctionLanguageName.pop();
+  defaultLogPrintFunctionPointer.pop();
+  if (defaultLogPrintFunctionLanguageName.empty())
+  {
+    defaultLogPrintFunctionLanguageName.push(LANGUAGE_NAME::cpp);
+    defaultLogPrintFunctionPointer.push(
+        reinterpret_cast<Function *>(&GlobalDefaultLogPrintFunction));
+  }
+}
+
 std::string const & LogImplementation::GetID() const { return idString_; }
 
 namespace
@@ -200,30 +280,58 @@ void LogImplementation::LogEntry(LogVerbosity const logVerbosity,
 
   if ((logVerb != LOG_VERBOSITY::silent) && (logVerb <= verbosity_.top()))
   {
-    // Need to figure out how to do file locking to make this work for
-    // parallel computations.
+    std::string tm(GetTimeStamp());
+    std::string entry(EntryString(logVerb.ToString(),
+                                  tm,
+                                  sequence_,
+                                  idString_,
+                                  message,
+                                  lineNumber,
+                                  fileName));
 
-    std::ofstream file;
-    file.open(LOG_FILE, std::ios_base::out | std::ios_base::app);
-    if (!file)
-    { std::cerr << "Unable to open " LOG_FILE " file." << std::endl; }
+    int error = true;
+    if (printFunctionLanguageName_ == LANGUAGE_NAME::cpp)
+    {
+      LogPrintFunction * CppPrint
+          = reinterpret_cast<LogPrintFunction *>(printFunctionPointer_);
+      error = CppPrint(entry);
+    }
+    else if (printFunctionLanguageName_ == LANGUAGE_NAME::c)
+    {
+      KIM_LogPrintFunction * CPrint
+          = reinterpret_cast<KIM_LogPrintFunction *>(printFunctionPointer_);
+      error = CPrint(entry.c_str());
+    }
+    else if (printFunctionLanguageName_ == LANGUAGE_NAME::fortran)
+    {
+      typedef void(kim_log_print_function)(char const * const, int * const);
+      kim_log_print_function * FPrint
+          = reinterpret_cast<kim_log_print_function *>(printFunctionPointer_);
+      FPrint(entry.c_str(), &error);
+    }
     else
     {
-      std::string tm(GetTimeStamp());
-      std::string entry(EntryString(logVerb.ToString(),
-                                    tm,
-                                    sequence_,
-                                    idString_,
-                                    message,
-                                    lineNumber,
-                                    fileName));
-      file << entry;
+      std::cerr
+          << "Unknown LanguageName for log PrintFunction.  Message follows."
+          << std::endl
+          << entry;
+    }
+
+    if (error)
+    {
+      std::cerr << "Error occurred in log PrintFunction.  Message follows."
+                << std::endl
+                << entry;
     }
   }
 }
 
 LogImplementation::LogImplementation() :
-    idString_(SPTR(this)), latestTimeStamp_(""), sequence_(0)
+    idString_(SPTR(this)),
+    printFunctionLanguageName_(defaultLogPrintFunctionLanguageName.top()),
+    printFunctionPointer_(defaultLogPrintFunctionPointer.top()),
+    latestTimeStamp_(""),
+    sequence_(0)
 {
   verbosity_.push(defaultLogVerbosity.top());
 }

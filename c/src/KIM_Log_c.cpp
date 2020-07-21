@@ -45,6 +45,15 @@ extern "C" {
 #endif
 }  // extern "C"
 
+#ifndef KIM_LANGUAGE_NAME_HPP_
+#include "KIM_LanguageName.hpp"
+#endif
+extern "C" {
+#ifndef KIM_LANGUAGE_NAME_H_
+#include "KIM_LanguageName.h"
+#endif
+}  // extern "C"
+
 #ifndef KIM_LOG_HPP_
 #include "KIM_Log.hpp"
 #endif
@@ -67,6 +76,11 @@ namespace
 KIM::LogVerbosity makeLogVerbosityCpp(KIM_LogVerbosity const logVerbosity)
 {
   return KIM::LogVerbosity(logVerbosity.logVerbosityID);
+}
+
+KIM::LanguageName makeLanguageNameCpp(KIM_LanguageName const languageName)
+{
+  return KIM::LanguageName(languageName.languageNameID);
 }
 }  // namespace
 
@@ -100,6 +114,14 @@ void KIM_Log_PushDefaultVerbosity(KIM_LogVerbosity const logVerbosity)
 }
 
 void KIM_Log_PopDefaultVerbosity() { KIM::Log::PopDefaultVerbosity(); }
+
+void KIM_Log_PushDefaultPrintFunction(KIM_LanguageName const languageName,
+                                      KIM_Function * const fptr)
+{
+  KIM::Log::PushDefaultPrintFunction(makeLanguageNameCpp(languageName), fptr);
+}
+
+void KIM_Log_PopDefaultPrintFunction() { KIM::Log::PopDefaultPrintFunction(); }
 
 char const * KIM_Log_GetID(KIM_Log const * const log)
 {

@@ -37,10 +37,15 @@
 #include <sstream>
 #include <string>
 
+#ifndef KIM_FUNCTION_TYPES_HPP_
+#include "KIM_FunctionTypes.hpp"  // IWYU pragma: export
+#endif
+
 namespace KIM
 {
 // Forward declarations
 class LogVerbosity;
+class LanguageName;
 class LogImplementation;
 
 /// \brief Provides the logging interface for the %KIM API.
@@ -96,6 +101,30 @@ class Log
   ///
   /// \since 2.0
   static void PopDefaultVerbosity();
+
+  /// \brief Push a new default log PrintFunction onto the %KIM API global
+  /// default log PrintFunction stack.
+  ///
+  /// The default log PrintFunction is used when creating new Log objects.
+  ///
+  /// \param[in] languageName The LanguageName of the function.
+  /// \param[in] fptr The function pointer.
+  ///
+  /// \sa KIM_Log_PushDefaultPrintFunction,
+  /// kim_log_module::kim_push_default_print_function
+  ///
+  /// \since 2.2
+  static void PushDefaultPrintFunction(LanguageName const languageName,
+                                       Function * const fptr);
+
+  /// \brief Pop a log PrintFunction from the %KIM API global default log
+  /// PrintFunction stack.
+  ///
+  /// \sa KIM_Log_PopDefaultPrintFunction,
+  /// kim_log_module::kim_pop_default_print_function
+  ///
+  /// \since 2.2
+  static void PopDefaultPrintFunction();
 
   /// \brief Get the identity of the Log object.
   ///
