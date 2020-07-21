@@ -109,8 +109,8 @@ include(DefaultCompilerFlags)
 
 if(MINGW)
   # On MinGW Windows platform, make <dlfcn.h> functions (dlopen, dlsym, etc.) available
-  # using a third-party portability layer: https://github.com/dlfcn-win32/dlfcn-win32 
-  # It should be installed in the MSYS2 environemnt using the command: 
+  # using a third-party portability layer: https://github.com/dlfcn-win32/dlfcn-win32
+  # It should be installed in the MSYS2 environemnt using the command:
   #   pacman -S --needed mingw-w64-x86_64-dlfcn
   set(CMAKE_DL_LIBS "dl")
 endif()
