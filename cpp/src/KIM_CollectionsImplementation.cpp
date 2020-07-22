@@ -273,7 +273,8 @@ int PrivateGetUserDirs(KIM::Log * log, ItemTypeToStringMap & dirsMap)
     std::ofstream fl;
     // write readme
     fl.open((path / "README.txt").string().c_str());
-    fl << "This directory was created by a kim-api installation version\n"
+    fl << "This directory was created by a kim-api installation with "
+          "<kim-api-uid>:\n"
        << "   " << KIM_VERSION_STRING "-" KIM_CONFIGURATION_TIMESTAMP << "\n"
        << "with path\n"
        << "   " << path << "\n\n"

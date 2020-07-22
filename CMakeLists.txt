@@ -44,18 +44,18 @@ include(DefaultCompilerStandards)
 
 # Define options
 #
-set(KIM_API_PROJECT_NAME "kim-api" CACHE STRING "KIM API project name string")
-mark_as_advanced(KIM_API_PROJECT_NAME)
-#
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-  set(LOG_MAX "DEBUG")
+  set(_LOG_MAX "DEBUG")
 else()
-  set(LOG_MAX "INFORMATION")
+  set(_LOG_MAX "INFORMATION")
 endif()
-set(KIM_API_LOG_MAXIMUM_LEVEL "${LOG_MAX}" CACHE STRING "Maximum log verbosity")
+set(KIM_API_LOG_MAXIMUM_LEVEL "${_LOG_MAX}" CACHE STRING "Maximum log verbosity")
 set_property(CACHE KIM_API_LOG_MAXIMUM_LEVEL PROPERTY STRINGS SILENT FATAL ERROR WARNING INFORMATION DEBUG)
 #
 option(KIM_API_BUILD_EXAMPLES "Build example Drivers, Models, Simulator Models, and Simulators" ON)
+#
+set(KIM_API_PROJECT_NAME "kim-api" CACHE STRING "KIM API project name string")
+mark_as_advanced(KIM_API_PROJECT_NAME)
 #
 option(KIM_API_ENABLE_SANITIZE "Enable AddressSanitizer" OFF)
 mark_as_advanced(KIM_API_ENABLE_SANITIZE)
@@ -120,8 +120,8 @@ include(DefaultCompilerFlags)
 
 if(MINGW)
   # On MinGW Windows platform, make <dlfcn.h> functions (dlopen, dlsym, etc.) available
-  # using a third-party portability layer: https://github.com/dlfcn-win32/dlfcn-win32 
-  # It should be installed in the MSYS2 environemnt using the command: 
+  # using a third-party portability layer: https://github.com/dlfcn-win32/dlfcn-win32
+  # It should be installed in the MSYS2 environment using the command:
   #   pacman -S --needed mingw-w64-x86_64-dlfcn
   set(CMAKE_DL_LIBS "dl")
 endif()
