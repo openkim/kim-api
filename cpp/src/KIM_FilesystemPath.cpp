@@ -44,6 +44,7 @@
 #include <cstring>
 #include <dirent.h>
 #include <errno.h>
+#include <limits.h>
 #include <sstream>
 #include <stdio.h>
 #include <sys/stat.h>
@@ -73,18 +74,46 @@ bool Path::MakeDirectory() const
   }
   return false;
 #else
-  mode_t mode = 0755;
-  if (mkdir(path_.c_str(), mode))
+  const size_t len = strlen(path_.c_str());
+  char _path[PATH_MAX];
+  char * p;
+
+  errno = 0;
+
+  /* Copy string so its mutable */
+  if (len > sizeof(_path) - 1)
   {
-    if (EEXIST == errno)
-      return false;
-    else
+    errno = ENAMETOOLONG;
+    goto errorLabel;
+  }
+  strcpy(_path, path_.c_str());
+
+  /* Iterate the string */
+  for (p = _path + 1; *p; p++)
+  {
+    if (*p == '/')
     {
-      std::cerr << "Failed to create directory '" << path_ << "'." << std::endl;
-      return true;
+      /* Temporarily truncate */
+      *p = '\0';
+
+      if (mkdir(_path, S_IRWXU) != 0)
+      {
+        if (errno != EEXIST) goto errorLabel;
+      }
+
+      *p = '/';
     }
   }
+
+  if (mkdir(_path, S_IRWXU) != 0)
+  {
+    if (errno != EEXIST) goto errorLabel;
+  }
   return false;
+
+errorLabel:
+  std::cerr << "Failed to create directory '" << path_ << "'." << std::endl;
+  return true;
 #endif
 }
 
