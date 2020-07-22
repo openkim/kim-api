@@ -437,17 +437,17 @@ Additionally, the KIM API defines the following advanced build options.
   value corresponds to a relative path (does not start with "/"), then it is
   interpreted as relative to the user's home directory "${HOME}".
 
-* KIM_API_USER_MODEL_DRIVER_PLURAL_DIR_DEFAULT
+* KIM_API_USER_MODEL_DRIVERS_DIR_DEFAULT
   (="~/.${PROJECT_NAME}/<kim-api-uid>/model-drivers") This value specifies the
   default colon ':' (semicolon ';' on windows) separated list of the MD
   directory locations for the user collection.
 
-* KIM_API_USER_PORTABLE_MODEL_PLURAL_DIR_DEFAULT
+* KIM_API_USER_PORTABLE_MODELS_DIR_DEFAULT
   (="~/.${PROJECT_NAME}/<kim-api-uid>/portable-drivers") This value specifies
   the default colon ':' (semicolon ';' on windows) separated list of the PM
   directory locations for the user collection.
 
-* KIM_API_USER_SIMULATOR_MODEL_PLURAL_DIR_DEFAULT
+* KIM_API_USER_SIMULATOR_MODELS_DIR_DEFAULT
   (="~/.${PROJECT_NAME}/<kim-api-uid>/simulator-models") This value specifies
   the default colon ':' (semicolon ';' on windows) separated list of the SM
   directory locations for the user collection.

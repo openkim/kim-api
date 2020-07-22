@@ -262,9 +262,9 @@ int PrivateGetUserDirs(KIM::Log * log, ItemTypeToStringMap & dirsMap)
     if (path.MakeDirectory()) return true;
 
     // create collection directories
-    dirsMap[modelDriver].Parse(KIM_USER_MODEL_DRIVER_PLURAL_DIR_DEFAULT);
-    dirsMap[portableModel].Parse(KIM_USER_PORTABLE_MODEL_PLURAL_DIR_DEFAULT);
-    dirsMap[simulatorModel].Parse(KIM_USER_SIMULATOR_MODEL_PLURAL_DIR_DEFAULT);
+    dirsMap[modelDriver].Parse(KIM_USER_MODEL_DRIVERS_DIR_DEFAULT);
+    dirsMap[portableModel].Parse(KIM_USER_PORTABLE_MODELS_DIR_DEFAULT);
+    dirsMap[simulatorModel].Parse(KIM_USER_SIMULATOR_MODELS_DIR_DEFAULT);
     if (dirsMap[modelDriver].MakeDirectories()) return true;
     if (dirsMap[portableModel].MakeDirectories()) return true;
     if (dirsMap[simulatorModel].MakeDirectories()) return true;
@@ -285,11 +285,11 @@ int PrivateGetUserDirs(KIM::Log * log, ItemTypeToStringMap & dirsMap)
     // write initial config file
     fl.open(configFile.string().c_str());
     fl << KIM_MODEL_DRIVER_PLURAL_DIR_IDENTIFIER
-        " = " KIM_USER_MODEL_DRIVER_PLURAL_DIR_DEFAULT "\n";
+        " = " KIM_USER_MODEL_DRIVERS_DIR_DEFAULT "\n";
     fl << KIM_PORTABLE_MODEL_PLURAL_DIR_IDENTIFIER
-        " = " KIM_USER_PORTABLE_MODEL_PLURAL_DIR_DEFAULT "\n";
+        " = " KIM_USER_PORTABLE_MODELS_DIR_DEFAULT "\n";
     fl << KIM_SIMULATOR_MODEL_PLURAL_DIR_IDENTIFIER
-        " = " KIM_USER_SIMULATOR_MODEL_PLURAL_DIR_DEFAULT "\n";
+        " = " KIM_USER_SIMULATOR_MODELS_DIR_DEFAULT "\n";
     fl.close();
   }
   else
@@ -351,8 +351,7 @@ int PrivateGetUserDirs(KIM::Log * log, ItemTypeToStringMap & dirsMap)
       KIM::FILESYSTEM::Path path = configFile;
       path.remove_filename();
 
-      dirsMap[simulatorModel].Parse(
-          KIM_USER_SIMULATOR_MODEL_PLURAL_DIR_DEFAULT);
+      dirsMap[simulatorModel].Parse(KIM_USER_SIMULATOR_MODELS_DIR_DEFAULT);
       if (dirsMap[simulatorModel].MakeDirectories()) return true;
 
       std::ofstream fl;
@@ -362,7 +361,7 @@ int PrivateGetUserDirs(KIM::Log * log, ItemTypeToStringMap & dirsMap)
       fl << KIM_PORTABLE_MODEL_PLURAL_DIR_IDENTIFIER " = "
          << dirsMap[portableModel].ToString() << "\n";
       fl << KIM_SIMULATOR_MODEL_PLURAL_DIR_IDENTIFIER " = "
-         << KIM_USER_SIMULATOR_MODEL_PLURAL_DIR_DEFAULT << "\n";
+         << KIM_USER_SIMULATOR_MODELS_DIR_DEFAULT << "\n";
       fl.close();
     }
   }
