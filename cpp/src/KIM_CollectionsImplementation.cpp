@@ -269,8 +269,19 @@ int PrivateGetUserDirs(KIM::Log * log, ItemTypeToStringMap & dirsMap)
     if (dirsMap[portableModel].MakeDirectories()) return true;
     if (dirsMap[simulatorModel].MakeDirectories()) return true;
 
-    // write initial config file
+
     std::ofstream fl;
+    // write readme
+    fl.open((path / "README.txt").string().c_str());
+    fl << "This directory was created by a kim-api installation version\n"
+       << "   " << KIM_VERSION_STRING "-" KIM_CONFIGURATION_TIMESTAMP << "\n"
+       << "with path\n"
+       << "   " << path << "\n\n"
+       << "The associated kim-api dynamic library was configured to be "
+          "installed at\n"
+       << "   " << KIM_LIBDIR << "\n\n";
+    fl.close();
+    // write initial config file
     fl.open(configFile.string().c_str());
     fl << KIM_MODEL_DRIVER_PLURAL_DIR_IDENTIFIER
         " = " KIM_USER_MODEL_DRIVER_PLURAL_DIR_DEFAULT "\n";
