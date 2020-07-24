@@ -34,12 +34,14 @@
 
 #include "KIM_Collection.hpp"
 #include "KIM_CollectionItemType.hpp"
-#include "KIM_Collections.hpp"
+#include "KIM_CollectionsImplementation.hpp"  // using non-public internal API
+#include "KIM_FilesystemPath.hpp"  // using non-public internal API
 #include "KIM_Log.hpp"
 #include "KIM_LogVerbosity.hpp"
 #include "KIM_Version.hpp"
 #include <cstring>
 #include <iostream>
+#include <map>
 #include <string>
 #include <vector>
 
@@ -56,6 +58,9 @@ void usage(std::string name)
       << "  " << name
       << " config_file (env | name | model_drivers | portable_models | "
          "simulator_models)\n"
+      << "  " << name
+      << " write_config_file <file-name> <model-drivers-dirs> "
+         "<portable-models-dirs> <simulator-models-dir>\n"
       << "  " << name << " type <item-name>\n"
       << "  " << name << " metadata <item-name>\n"
       << "  " << name
@@ -72,7 +77,8 @@ void usage(std::string name)
 
 namespace CI
 {
-void printDirs(int const extent, KIM::Collections const * const col)
+void printDirs(int const extent,
+               KIM::CollectionsImplementation const * const col)
 {
   for (int i = 0; i < extent; ++i)
   {
@@ -91,8 +97,8 @@ enum ENV_OPTIONS {
 void env(ENV_OPTIONS const opt)
 {
   KIM::Log::PushDefaultVerbosity(KIM::LOG_VERBOSITY::silent);
-  KIM::Collections * col;
-  KIM::Collections::Create(&col);
+  KIM::CollectionsImplementation * col;
+  KIM::CollectionsImplementation::Create(&col);
 
   switch (opt)
   {
@@ -137,7 +143,7 @@ void env(ENV_OPTIONS const opt)
     }
   }
 
-  KIM::Collections::Destroy(&col);
+  KIM::CollectionsImplementation::Destroy(&col);
   KIM::Log::PopDefaultVerbosity();
 }
 
@@ -151,8 +157,8 @@ enum CONFIG_FILE_OPTIONS {
 void configFile(CONFIG_FILE_OPTIONS const opt)
 {
   KIM::Log::PushDefaultVerbosity(KIM::LOG_VERBOSITY::silent);
-  KIM::Collections * col;
-  KIM::Collections::Create(&col);
+  KIM::CollectionsImplementation * col;
+  KIM::CollectionsImplementation::Create(&col);
 
   switch (opt)
   {
@@ -195,15 +201,15 @@ void configFile(CONFIG_FILE_OPTIONS const opt)
     }
   }
 
-  KIM::Collections::Destroy(&col);
+  KIM::CollectionsImplementation::Destroy(&col);
   KIM::Log::PopDefaultVerbosity();
 }
 
 void project()
 {
   KIM::Log::PushDefaultVerbosity(KIM::LOG_VERBOSITY::silent);
-  KIM::Collections * col;
-  KIM::Collections::Create(&col);
+  KIM::CollectionsImplementation * col;
+  KIM::CollectionsImplementation::Create(&col);
 
   std::string const * project;
   std::string const * version;
@@ -211,7 +217,7 @@ void project()
 
   std::cout << *project << " " << *version << std::endl;
 
-  KIM::Collections::Destroy(&col);
+  KIM::CollectionsImplementation::Destroy(&col);
   KIM::Log::PopDefaultVerbosity();
 }
 
@@ -219,8 +225,8 @@ enum SYS_OPTIONS { S_MODEL_DRIVERS, S_PORTABLE_MODELS, S_SIMULATOR_MODELS };
 void sys(SYS_OPTIONS const opt)
 {
   KIM::Log::PushDefaultVerbosity(KIM::LOG_VERBOSITY::silent);
-  KIM::Collections * col;
-  KIM::Collections::Create(&col);
+  KIM::CollectionsImplementation * col;
+  KIM::CollectionsImplementation::Create(&col);
 
   switch (opt)
   {
@@ -250,7 +256,7 @@ void sys(SYS_OPTIONS const opt)
     }
   }
 
-  KIM::Collections::Destroy(&col);
+  KIM::CollectionsImplementation::Destroy(&col);
   KIM::Log::PopDefaultVerbosity();
 }
 
@@ -263,8 +269,8 @@ void listItems(KIM::CollectionItemType const type,
     KIM::Log::PushDefaultVerbosity(KIM::LOG_VERBOSITY::debug);
   else
     KIM::Log::PushDefaultVerbosity(KIM::LOG_VERBOSITY::silent);
-  KIM::Collections * col;
-  int error = KIM::Collections::Create(&col);
+  KIM::CollectionsImplementation * col;
+  int error = KIM::CollectionsImplementation::Create(&col);
 
   if (!error)
   {
@@ -322,7 +328,7 @@ void listItems(KIM::CollectionItemType const type,
       }
     }
 
-    KIM::Collections::Destroy(&col);
+    KIM::CollectionsImplementation::Destroy(&col);
   }
 
   KIM::Log::PopDefaultVerbosity();
@@ -332,6 +338,7 @@ void listItems(KIM::CollectionItemType const type,
 
 int processEnv(int argc, char * argv[]);
 int processConfigFile(int argc, char * argv[]);
+int writeConfigFile(int argc, char * argv[]);
 int getItemType(int argc, char * argv[]);
 int getItemMetadata(int argc, char * argv[]);
 int processSystem(int argc, char * argv[]);
@@ -348,6 +355,10 @@ int main(int argc, char * argv[])
     else if (0 == strcmp("config_file", argv[1]))
     {
       returnVal = processConfigFile(argc, argv);
+    }
+    else if (0 == strcmp("write_config_file", argv[1]))
+    {
+      returnVal = writeConfigFile(argc, argv);
     }
     else if (0 == strcmp("type", argv[1]))
     {
@@ -449,6 +460,29 @@ int processConfigFile(int argc, char * argv[])
   return returnVal;
 }
 
+int writeConfigFile(int argc, char * argv[])
+{
+  int returnVal = 0;
+  if (argc != 6) { returnVal = 1; }
+  else
+  {
+    using namespace KIM::COLLECTION_ITEM_TYPE;
+    KIM::FILESYSTEM::Path fileName(argv[2]);
+    std::map<KIM::CollectionItemType,
+             KIM::FILESYSTEM::PathList,
+             KIM::COLLECTION_ITEM_TYPE::Comparator>
+        dirsMap;
+    if (!dirsMap[modelDriver].Parse(argv[3])) return 1;
+    if (!dirsMap[portableModel].Parse(argv[4])) return 1;
+    if (!dirsMap[simulatorModel].Parse(argv[5])) return 1;
+
+    returnVal = KIM::CollectionsImplementation::
+        WriteConfigurationFileAndCreateDirectories(fileName, dirsMap);
+  }
+
+  return returnVal;
+}
+
 int getItemType(int argc, char * argv[])
 {
   int returnVal = 0;
@@ -456,8 +490,8 @@ int getItemType(int argc, char * argv[])
   else
   {
     KIM::Log::PushDefaultVerbosity(KIM::LOG_VERBOSITY::silent);
-    KIM::Collections * col;
-    int error = KIM::Collections::Create(&col);
+    KIM::CollectionsImplementation * col;
+    int error = KIM::CollectionsImplementation::Create(&col);
     if (!error)
     {
       KIM::CollectionItemType itemType;
@@ -469,7 +503,7 @@ int getItemType(int argc, char * argv[])
         std::cout << itemType.ToString() << std::endl;
       }
 
-      KIM::Collections::Destroy(&col);
+      KIM::CollectionsImplementation::Destroy(&col);
     }
 
     KIM::Log::PopDefaultVerbosity();
@@ -485,8 +519,8 @@ int getItemMetadata(int argc, char * argv[])
   else
   {
     KIM::Log::PushDefaultVerbosity(KIM::LOG_VERBOSITY::silent);
-    KIM::Collections * col;
-    int error = KIM::Collections::Create(&col);
+    KIM::CollectionsImplementation * col;
+    int error = KIM::CollectionsImplementation::Create(&col);
 
     if (!error)
     {
@@ -537,7 +571,7 @@ int getItemMetadata(int argc, char * argv[])
         }
       }
 
-      KIM::Collections::Destroy(&col);
+      KIM::CollectionsImplementation::Destroy(&col);
     }
 
     KIM::Log::PopDefaultVerbosity();

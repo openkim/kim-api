@@ -181,6 +181,14 @@ class PathList : public std::vector<Path>
   // Windows).
   // '~' at the beginning of a path is replaced with the user's home directory.
   size_t Parse(std::string::value_type const * const paths);
+
+  // Performs stream output on the path (operator <<).
+  template<class CharT, class Traits>
+  friend std::basic_ostream<CharT, Traits> &
+  operator<<(std::basic_ostream<CharT, Traits> & os, const PathList & p)
+  {
+    return os << p.ToString();
+  }
 };
 
 }  // namespace FILESYSTEM

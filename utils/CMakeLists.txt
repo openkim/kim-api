@@ -49,6 +49,7 @@ target_link_libraries(simulator-model kim-loader)
 set_target_properties(simulator-model PROPERTIES OUTPUT_NAME ${SIMULATOR_MODEL})
 
 add_executable(collections-info collections-info.cpp)
+target_include_directories(collections-info PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../cpp/src")
 target_link_libraries(collections-info kim-loader)
 set_target_properties(collections-info PROPERTIES OUTPUT_NAME ${COLLECTIONS_INFO})
 
