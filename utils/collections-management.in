@@ -272,9 +272,7 @@ rewrite_config_file_item_type_dir () {
       return 1
     fi
 
-    printf "@KIM_API_MODEL_DRIVER_PLURAL_DIR_IDENTIFIER@ = %s\n" "${drivers_dir}"             >  "${config_file_name}" || return 1
-    printf "@KIM_API_PORTABLE_MODEL_PLURAL_DIR_IDENTIFIER@ = %s\n" "${models_dir}"            >> "${config_file_name}"
-    printf "@KIM_API_SIMULATOR_MODEL_PLURAL_DIR_IDENTIFIER@ = %s\n" "${simulator_models_dir}" >> "${config_file_name}"
+    ${collections_info} write_config_file "${config_file_name}" "${drivers_dir}" "${models_dir}" "${simulator_models_dir}" || return 1
   else
     printf "Directory '%s' does not exist.\n" "${dir}"
     return 1

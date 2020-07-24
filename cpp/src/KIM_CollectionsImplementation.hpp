@@ -35,9 +35,14 @@
 #ifndef KIM_COLLECTIONS_IMPLEMENTATION_HPP_
 #define KIM_COLLECTIONS_IMPLEMENTATION_HPP_
 
+#include <map>
 #include <sstream>
 #include <string>
 #include <vector>
+
+#ifndef KIM_FILESYSTEM_Path_HPP_
+#include "KIM_FilesystemPath.hpp"
+#endif
 
 #ifndef KIM_LOG_VERBOSITY_HPP_
 #include "KIM_LogVerbosity.hpp"
@@ -63,6 +68,13 @@ class CollectionsImplementation
   Create(CollectionsImplementation ** const collectionsImplementation);
   static void
   Destroy(CollectionsImplementation ** const collectionsImplementation);
+
+  static bool
+  WriteConfigurationFileAndCreateDirectories(  // for internal use only
+      FILESYSTEM::Path const & fileName,
+      std::map<CollectionItemType,
+               FILESYSTEM::PathList,
+               COLLECTION_ITEM_TYPE::Comparator> const & dirsMap);
 
   int GetItemType(std::string const & itemName,
                   CollectionItemType * const itemType) const;
