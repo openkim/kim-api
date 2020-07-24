@@ -32,8 +32,8 @@
 //
 
 
+#include "KIM_Collection.hpp"
 #include "KIM_CollectionItemType.hpp"
-#include "KIM_Collections.hpp"
 #include "KIM_CollectionsImplementation.hpp"  // using non-public internal API
 #include "KIM_FilesystemPath.hpp"  // using non-public internal API
 #include "KIM_Log.hpp"
@@ -41,6 +41,7 @@
 #include "KIM_Version.hpp"
 #include <cstring>
 #include <iostream>
+#include <map>
 #include <string>
 #include <vector>
 
