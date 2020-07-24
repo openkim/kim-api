@@ -186,15 +186,21 @@ installations on a single machine).  Here "${HOME}" is the user's home
 directory.  (See item D below for build options controlling this default file
 name.)  If the "KIM_API_CONFIGURATION_FILE" environment variable is set, its
 value (interpreted as an absolute file name) will supersede the default
-location and name of the configuration file.  If this file does not exist, the
-KIM API library will create it with a default configuration specifying that the
-user-collection files are stored in
-"${HOME}/.kim-api/<kim-api-uid>/model-drivers/",
+location and name of the configuration file.  For example, the following
+commands will instruct the KIM API library to use a file named "kim-config" in
+the /my-kim-stuff folder
+
+   $ export KIM_API_CONFIGURATION_FILE=/my-kim-stuff/kim-config
+
+If the configuration file does not exist, the KIM API library will create it
+with a default configuration specifying that the user-collection files are
+stored in "${HOME}/.kim-api/<kim-api-uid>/model-drivers/",
 "${HOME}/.kim-api/<kim-api-uid>/portable-models/", and
 "${HOME}/.kim-api/<kim-api-uid>/simulator-models/".  More generally, the values
 in the configuration file may contain colon ':' (on Windows: semi-colon ';')
 separated lists of fully-qualified directory names (starting, strictly, with
-'/', '~/' or a root drive letter like 'C:/').
+'/', '~/' or a root drive letter like 'C:/').  (See item D below for build
+options controlling these defaults.)
 
 C.2.3 THE ENVIRONMENT-VARIABLE-COLLECTION
 
