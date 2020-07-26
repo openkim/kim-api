@@ -38,8 +38,8 @@
 # of pkg-config usage across systems.
 set(PKG_CONFIG_FILE "lib${PROJECT_NAME}.pc")
 
-list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${CMAKE_INSTALL_FULL_LIBDIR}" isSystemDir)
-if("${isSystemDir}" STREQUAL "-1")
+list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${CMAKE_INSTALL_FULL_LIBDIR}" _isSystemDir)
+if("${_isSystemDir}" STREQUAL "-1")
   set(KIM_API_RPATH_FLAG "-Wl,-rpath,${CMAKE_INSTALL_FULL_LIBDIR}")
 endif()
 

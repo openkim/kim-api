@@ -24,6 +24,7 @@
 #
 # Contributors:
 #    Jim Madge
+#    Ryan S. Elliott
 #
 
 #
@@ -34,9 +35,10 @@
 # - CompletionConfig
 #
 # Sets the install paths for completions.
-# If the user defines a location use (and cache) it.
-# If installing to "standard" loc, use system bash-completion settings if available
-# Otherwise, install into sysconfdir.
+#
+# If the user defines a location use (and cache) it.  If installing to
+# "standard" loc, use system bash-completion settings if available Otherwise,
+# install into sysconfdir (but do not cache).
 
 
 # bash completions
