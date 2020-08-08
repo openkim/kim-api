@@ -457,7 +457,7 @@ endfunction(add_kim_api_model_library)
 function(add_kim_api_test)
 
   # Foward the function call and all arguments to the built-in add_test() function.
-  cmake_parse_arguments(PARSE_ARGV 0 KIMAPI_TEST "" "NAME" "")
+  cmake_parse_arguments(KIMAPI_TEST "" "NAME" "" ${ARGN})
   add_test(NAME ${KIMAPI_TEST_NAME} ${KIMAPI_TEST_UNPARSED_ARGUMENTS})
 
   # Determine the value of the PATH environment variable to be used for running the CMake test.
