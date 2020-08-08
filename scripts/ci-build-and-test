@@ -100,6 +100,7 @@ make -j2 install || exit $?
 ccache -s
 
 set +xv
+printf "calling ${PWD}/test-install/bin/kim-api-activate\n"
 source "${PWD}/test-install/bin/kim-api-activate" || exit $?
 set -xv
 kim-api-collections-management install system `find ../examples/model-drivers -mindepth 1 -maxdepth 1 -type d` &&
