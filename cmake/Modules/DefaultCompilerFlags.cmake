@@ -36,9 +36,6 @@
 
 # Set global linker flags
 #
-set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-#
-#
 if(KIM_API_ENABLE_SANITIZE)
   set(KIM_API_EXE_LINKER_FLAGS "${KIM_API_EXE_LINKER_FLAGS} -fsanitize=address")
 endif()
