@@ -57,17 +57,3 @@ set(TEST_NAME "ex_test_Ar_fcc_cluster_cpp")
 
 add_executable(${TEST_NAME} ${TEST_NAME}.cpp)
 target_link_libraries(${TEST_NAME} kim-api)
-
-foreach(TEST_MODEL ${TEST_MODELS})
-  # TODO make a variable for "Testing" directory name
-  set(TEST_DIR ${CMAKE_BINARY_DIR}/Testing/Run_${TEST_NAME}_${TEST_MODEL})
-  FILE(MAKE_DIRECTORY ${TEST_DIR})
-  add_kim_api_test(NAME Run_${TEST_NAME}_${TEST_MODEL}
-           COMMAND sh -c "echo ${TEST_MODEL} | ${CMAKE_CURRENT_BINARY_DIR}/${TEST_NAME} > stdout"
-           WORKING_DIRECTORY ${TEST_DIR})
-  # TODO : the environment variables can be abstracted for generality
-  set_property(TEST Run_${TEST_NAME}_${TEST_MODEL} APPEND PROPERTY ENVIRONMENT "KIM_API_PORTABLE_MODELS_DIR=${CMAKE_BINARY_DIR};KIM_API_MODEL_DRIVERS_DIR=${CMAKE_BINARY_DIR}")
-  if("${TEST_MODEL}" MATCHES "ex_model_Ar_.*_MultiCutoff")
-    set_tests_properties(Run_${TEST_NAME}_${TEST_MODEL} PROPERTIES WILL_FAIL TRUE)
-  endif()
-endforeach()

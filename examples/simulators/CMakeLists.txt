@@ -35,7 +35,7 @@
 
 cmake_minimum_required(VERSION 3.4)
 
-set(TEST_MODELS
+set(_test_models
   LennardJones612_UniversalShifted__MO_959249795837_003
   LennardJones_Ar
   ex_model_Ar_P_LJ
@@ -47,9 +47,62 @@ set(TEST_MODELS
   ex_model_Ar_SLJ_MultiCutoff
   )
 
+set(_testing_dir "${CMAKE_BINARY_DIR}/Testing")
+
+function(_add_simulator_model_tests _simulator_name _test_models _test_models_fail_list)
+  foreach(_model IN LISTS _test_models)
+    set(_test_name "Run_${_simulator_name}_${_model}")
+    set(_test_dir "${_testing_dir}/${_test_name}")
+    file(MAKE_DIRECTORY "${_test_dir}")
+    add_kim_api_test(NAME "${_test_name}"
+      COMMAND sh -c "echo ${_model} | ${CMAKE_CURRENT_BINARY_DIR}/${_simulator_name}/${_simulator_name} > stdout"
+      WORKING_DIRECTORY "${_test_dir}"
+      )
+    set_property(TEST ${_test_name}
+      APPEND PROPERTY ENVIRONMENT
+        "${KIM_API_ENVIRONMENT_MODEL_DRIVER_PLURAL_DIR}=${CMAKE_BINARY_DIR}"
+        "${KIM_API_ENVIRONMENT_PORTABLE_MODEL_PLURAL_DIR}=${CMAKE_BINARY_DIR}"
+        "${KIM_API_ENVIRONMENT_SIMULATOR_MODEL_PLURAL_DIR}=${CMAKE_BINARY_DIR}"
+      )
+    if("${_model}" IN_LIST _test_models_fail_list)
+      set_tests_properties("${_test_name}" PROPERTIES WILL_FAIL TRUE)
+    endif()
+  endforeach()
+endfunction(_add_simulator_model_tests)
+
+function(_add_simulator_tests _simulator_dir _simulator_name)
+  set(_test_name "Run_${_simulator_name}")
+  set(_test_dir "${_testing_dir}/${_test_name}")
+  file(MAKE_DIRECTORY "${_test_dir}")
+  add_kim_api_test(NAME "${_test_name}"
+    COMMAND sh -c "${CMAKE_CURRENT_BINARY_DIR}/${_simulator_dir}/${_simulator_name} > stdout"
+    WORKING_DIRECTORY "${_test_dir}"
+    )
+  set_property(TEST ${_test_name}
+    APPEND PROPERTY ENVIRONMENT
+      "${KIM_API_ENVIRONMENT_MODEL_DRIVER_PLURAL_DIR}=${CMAKE_BINARY_DIR}"
+      "${KIM_API_ENVIRONMENT_PORTABLE_MODEL_PLURAL_DIR}=${CMAKE_BINARY_DIR}"
+      "${KIM_API_ENVIRONMENT_SIMULATOR_MODEL_PLURAL_DIR}=${CMAKE_BINARY_DIR}"
+    )
+endfunction(_add_simulator_tests)
+
 add_subdirectory(collections-example)
+_add_simulator_tests(collections-example collections-example)
+_add_simulator_tests(collections-example collections-example-c)
+_add_simulator_tests(collections-example collections-example-fortran)
+
 add_subdirectory(ex_test_Ar_fcc_cluster)
+_add_simulator_model_tests(ex_test_Ar_fcc_cluster "${_test_models}" "ex_model_Ar_P_Morse_MultiCutoff;ex_model_Ar_SLJ_MultiCutoff")
+
 add_subdirectory(ex_test_Ar_fcc_cluster_cpp)
+_add_simulator_model_tests(ex_test_Ar_fcc_cluster_cpp "${_test_models}" "ex_model_Ar_P_Morse_MultiCutoff;ex_model_Ar_SLJ_MultiCutoff")
+
 add_subdirectory(ex_test_Ar_fcc_cluster_fortran)
-add_subdirectory(simulator-model-example)
+_add_simulator_model_tests(ex_test_Ar_fcc_cluster_fortran "${_test_models}" "ex_model_Ar_P_Morse_MultiCutoff;ex_model_Ar_SLJ_MultiCutoff")
+
+add_subdirectory(simulator-model-example simulator-model-example)
+_add_simulator_tests(simulator-model-example simulator-model-example)
+_add_simulator_tests(simulator-model-example simulator-model-example-c)
+_add_simulator_tests(simulator-model-example simulator-model-example-fortran)
+
 add_subdirectory(utility_forces_numer_deriv)
