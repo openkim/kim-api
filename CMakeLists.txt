@@ -163,6 +163,8 @@ add_subdirectory(utils)
 
 if(${CMAKE_MINOR_VERSION} GREATER 8)
   add_subdirectory(docs)
+else()
+  add_custom_target(docs)
 endif()
 
 
