@@ -653,7 +653,7 @@ bool CollectionsImplementation::
   fl << "\n"
      << "This directory was created by a kim-api installation with "
         "<kim-api-uid>:\n"
-     << "   " << KIM_VERSION_STRING "-" KIM_CONFIGURATION_TIMESTAMP << "\n"
+     << "   " << KIM_UID << "\n"
      << "with path\n"
      << "   " << fileName << "\n\n"
      << "The associated kim-api dynamic library was configured to be "
