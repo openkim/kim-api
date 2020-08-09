@@ -114,6 +114,23 @@ matrix:
              "${DISTRO}"
              "${TRAVIS_REPO_SLUG}:${DISTRO}"
              "${PWD}/ccache"
+    - name: "ubuntu cmake@3.4, Debug"
+      if: branch != coverity_scan
+      os: linux
+      services: docker
+      env: DISTRO=ubuntu_cmake34
+           CMAKE_BUILD_TYPE=Debug
+      before_script:
+        - mkdir "${HOME}/work" &&
+          cd "${HOME}/work" &&
+          cp -r "${HOME}/.ccache" ccache
+        - env
+      script:
+        -  ${TRAVIS_BUILD_DIR}/scripts/ci-docker-build-and-run
+             "${TRAVIS_BUILD_DIR}"
+             "${DISTRO}"
+             "${TRAVIS_REPO_SLUG}:${DISTRO}"
+             "${PWD}/ccache"
     - name: "centos (EPEL), Debug, Sanitize"
       if: branch != coverity_scan
       os: linux
