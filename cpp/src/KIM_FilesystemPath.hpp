@@ -39,12 +39,31 @@
 #include <iostream>
 #include <vector>
 
-// If available on the local platform, use the std::filesystem::path class
-// for cross-platform file path handling introduced with C++17. Otherwise,
+// If available, use the std::filesystem::path class
+// for cross-platform file path handling introduced with C++17.
+// Older versions of the GCC compiler support C++17 but do not include an
+// implementation of the std::filesystem library. Then fall back to the GHC
+// drop-in replacement library. In all other cases, in particular in C++98 mode,
 // fall back to a minimal implementation based on std::string.
-#if __cplusplus >= 201703L && defined(__has_include) && __has_include(<filesystem>)
-#define KIM_API_USE_FILESYSTEM_LIBRARY 1
+#if defined(__cplusplus) && __cplusplus >= 201703L && defined(__has_include)
+// C++17 mode:
+#if __has_include(<filesystem>)
+// Have std::filesystem implementation:
 #include <filesystem>
+#else
+// Fall back to drop-in library:
+#define GHC_WIN_WSTRING_STRING_TYPE
+#include "ghc/filesystem.hpp"
+// We need the alias from ghc::filesystem to std::filesystem
+namespace std
+{
+namespace filesystem = ghc::filesystem;
+}
+#endif
+#define KIM_API_USE_FILESYSTEM_LIBRARY 1
+#endif
+
+#ifdef KIM_API_USE_FILESYSTEM_LIBRARY
 namespace
 {
 typedef std::filesystem::path KIM_Path;
@@ -70,6 +89,10 @@ class Path
   Path() {}
   Path(const char * str) : path_(str) {}
   Path(const std::string & str) : path_(str) {}
+#ifdef KIM_API_USE_FILESYSTEM_LIBRARY
+  Path(const KIM_Path & p) : path_(p) {}
+  Path(KIM_Path && p) : path_(std::move(p)) {}
+#endif
 
   Path & operator=(const std::string & other)
   {
@@ -101,6 +124,11 @@ class Path
   // Turns the path object into a conventional string, which can be passed to
   // I/O functions.
   std::string string() const;
+
+  // Returns the native string representation of the path, using native syntax,
+  // native character type, and native character encoding. This string is
+  // suitable for use with OS APIs.
+  const KIM_Path::value_type * c_str() const { return path_.c_str(); }
 
   // Resets the path to an empty string.
   void clear() { path_.clear(); }
