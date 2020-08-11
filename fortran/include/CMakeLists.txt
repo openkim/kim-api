@@ -33,7 +33,7 @@
 #
 
 
-target_include_directories(kim-api PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(kim-api PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
 
 set(F_MOD_DIR $<TARGET_PROPERTY:kim-api,Fortran_MODULE_DIRECTORY>)
 set(FORTRAN_MODULES

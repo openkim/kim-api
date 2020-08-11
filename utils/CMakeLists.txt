@@ -49,7 +49,7 @@ target_link_libraries(simulator-model kim-loader)
 set_target_properties(simulator-model PROPERTIES OUTPUT_NAME ${SIMULATOR_MODEL})
 
 add_executable(collections-info collections-info.cpp)
-target_include_directories(collections-info PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../cpp/src")
+target_include_directories(collections-info PRIVATE "${CMAKE_SOURCE_DIR}/cpp/src")
 target_link_libraries(collections-info kim-loader)
 set_target_properties(collections-info PROPERTIES OUTPUT_NAME ${COLLECTIONS_INFO})
 
@@ -59,16 +59,15 @@ target_link_libraries(shared-library-test ${CMAKE_DL_LIBS})
 set_target_properties(shared-library-test PROPERTIES OUTPUT_NAME ${SHARED_LIBRARY_TEST})
 
 if(NOT WIN32 OR CYGWIN)
-  install(
-    TARGETS simulator-model collections-info shared-library-test
-    DESTINATION ${CMAKE_INSTALL_LIBEXECDIR}/${PROJECT_NAME}
-    )
+  set(_dir "${CMAKE_INSTALL_LIBEXECDIR}/${PROJECT_NAME}")
 else()
-  install(
-    TARGETS simulator-model collections-info shared-library-test
-    DESTINATION ${CMAKE_INSTALL_BINDIR}
-    )
+  set(_dir "${CMAKE_INSTALL_BINDIR}")
 endif()
+install(
+  TARGETS simulator-model collections-info shared-library-test
+  EXPORT KIM_API_Targets
+  DESTINATION "${_dir}"
+  )
 
 install(
   PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/${COLLECTIONS_MANAGEMENT}

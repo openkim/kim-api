@@ -33,25 +33,17 @@
 #
 
 
-#
-# Required preamble
-#
-
 cmake_minimum_required(VERSION 3.4)
 
 list(APPEND CMAKE_PREFIX_PATH $ENV{KIM_API_CMAKE_PREFIX_DIR})
-find_package(KIM-API 2.0 REQUIRED CONFIG)
-if(NOT TARGET kim-api)
-  enable_testing()
-  project("${KIM_API_PROJECT_NAME}" VERSION "${KIM_API_VERSION}"
-    LANGUAGES CXX C Fortran)
-endif()
+find_package(KIM-API-ITEMS 2.2 REQUIRED CONFIG)
 
-# End preamble
-
+kim_api_items_setup_before_project(ITEM_TYPE "portableModel")
+project(ex_model_Ar_P_Morse)
+kim_api_items_setup_after_project(ITEM_TYPE "portableModel")
 
 add_kim_api_model_library(
-  NAME            "ex_model_Ar_P_Morse"
+  NAME            ${PROJECT_NAME}
   DRIVER_NAME     "ex_model_driver_P_Morse"
   PARAMETER_FILES "ex_model_Ar_P_Morse.params"
   )

@@ -33,5 +33,5 @@
 #
 
 item-type:@ITEM_TYPE@
-item-name:@ITEM_NAME@
-item-driver-name:@ITEM_DRIVER_NAME@
+item-name:@ITEM_NAME_QUOTED@
+item-driver-name:@ITEM_DRIVER_NAME_QUOTED@

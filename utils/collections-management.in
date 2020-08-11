@@ -38,7 +38,7 @@
 collections_info=@CMAKE_INSTALL_FULL_LIBEXECDIR@/@PROJECT_NAME@/@PROJECT_NAME@-collections-info
 major_version=@PROJECT_VERSION_MAJOR@
 kim_version_string="@PROJECT_VERSION_STRING@"
-kim_api_uid_string="@PROJECT_VERSION_STRING@-@KIM_API_CONFIGURATION_TIMESTAMP@"
+kim_api_uid_string="@KIM_API_UID@"
 # It (shell scripting) is easier if no whitespace allowed in kim_user_agent.
 kim_user_agent="kim-api-collections-management-(${kim_version_string}--`uname -mrs | sed -e 's/ /-/g'`)"
 

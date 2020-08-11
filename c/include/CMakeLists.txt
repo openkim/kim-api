@@ -33,7 +33,7 @@
 #
 
 
-target_include_directories(kim-api PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(kim-api PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
 
 configure_file(KIM_Version.h.in ${CMAKE_BINARY_DIR}/KIM_Version.h)
 

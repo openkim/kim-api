@@ -48,7 +48,7 @@ else()
   set(KIM_API_STANDARD_INSTALL_PREFIXES "/" "/usr" "/usr/local" CACHE INTERNAL "Canonical list of standard install prefixes")
 endif()
 #
-set(KIM_API_CMAKE_DIR_IDENTIFIER "cmake" CACHE INTERNAL "Canonical id for the CMake dir")
+set(KIM_API_BUILD_TREE_CONFIG_DIR_IDENTIFIER "build-tree-package-config-files" CACHE INTERNAL "Cononical id for build tree config dir")
 #
 set(KIM_API_PKG_CONFIG_DIR_IDENTIFIER "pkgconfig" CACHE INTERNAL "Canonical id for pkg-config dir")
 #

@@ -35,6 +35,7 @@
 
 
 target_include_directories(kim-api PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(kim-api PRIVATE ${CMAKE_SOURCE_DIR}/cmake)  # for KIM_SharedLibrarySchema.hpp
 
 configure_file(KIM_Configuration.hpp.in ${CMAKE_BINARY_DIR}/KIM_Configuration.hpp)
 
@@ -98,9 +99,9 @@ add_library(kim-loader STATIC
   )
 target_include_directories(kim-loader PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}
-  ../include
-  ../../cmake
-  ../../c/include
+  ${CMAKE_SOURCE_DIR}/cpp/include
+  ${CMAKE_SOURCE_DIR}/c/include
+  ${CMAKE_SOURCE_DIR}/cmake  # for KIM_SharedLibrarySchema.hpp
   ${CMAKE_BINARY_DIR}
   )
 target_link_libraries(kim-loader ${CMAKE_DL_LIBS})

@@ -34,26 +34,11 @@
 #
 
 
-#
-# Required preamble
-#
-
 cmake_minimum_required(VERSION 3.4)
 
-list(APPEND CMAKE_PREFIX_PATH $ENV{KIM_API_CMAKE_PREFIX_DIR})
-find_package(KIM-API 2.0 REQUIRED CONFIG)
-if(NOT TARGET kim-api)
-  enable_testing()
-  project("${KIM_API_PROJECT_NAME}" VERSION "${KIM_API_VERSION}"
-    LANGUAGES CXX C Fortran)
-  add_kim_api_imported_library()
-  add_kim_api_compiler_flags()
-endif()
+project(ex_test_Ar_fcc_cluster VERSION 1.0.0 LANGUAGES C)
 
-# End preamble
+find_package(KIM-API 2.2 REQUIRED CONFIG)
 
-
-set(TEST_NAME "ex_test_Ar_fcc_cluster")
-
-add_executable(${TEST_NAME} ${TEST_NAME}.c)
-target_link_libraries(${TEST_NAME} kim-api m)
+add_executable(${PROJECT_NAME} ${PROJECT_NAME}.c)
+target_link_libraries(${PROJECT_NAME} KIM-API::kim-api m)

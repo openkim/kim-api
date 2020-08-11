@@ -26,6 +26,7 @@
 #    Richard Berger
 #    Christoph Junghans
 #    Ryan S. Elliott
+#    Alexander Stukowski
 #
 
 #
@@ -33,17 +34,4 @@
 #
 
 
-cmake_minimum_required(VERSION 3.4)
-
-list(APPEND CMAKE_PREFIX_PATH $ENV{KIM_API_CMAKE_PREFIX_DIR})
-find_package(KIM-API-ITEMS 2.2 REQUIRED CONFIG)
-
-kim_api_items_setup_before_project(ITEM_TYPE "simulatorModel")
-project(Sim_LAMMPS_LJcut_AkersonElliott_Alchemy_PbAu)
-kim_api_items_setup_after_project(ITEM_TYPE "simulatorModel")
-
-add_kim_api_model_library(
-  NAME            "${PROJECT_NAME}"
-  SM_SPEC_FILE    "smspec.edn"
-  PARAMETER_FILES "Alchemy_PbAu.in"
-  )
+# nothing to be done here...

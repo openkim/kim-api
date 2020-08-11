@@ -132,14 +132,25 @@ add_library(kim-api SHARED "")
 set_target_properties(kim-api
   PROPERTIES
     OUTPUT_NAME "${PROJECT_NAME}"
-    INSTALL_NAME_DIR "${CMAKE_INSTALL_FULL_LIBDIR}"
     VERSION ${PROJECT_VERSION}
     SOVERSION ${PROJECT_VERSION_MAJOR}
     Fortran_MODULE_DIRECTORY "${CMAKE_BINARY_DIR}/Fortran_MODULES"
     )
-target_include_directories(kim-api PUBLIC $<TARGET_PROPERTY:kim-api,Fortran_MODULE_DIRECTORY>)
-target_include_directories(kim-api PUBLIC ${CMAKE_BINARY_DIR})
+target_include_directories(kim-api PUBLIC
+  $<BUILD_INTERFACE:$<TARGET_PROPERTY:kim-api,Fortran_MODULE_DIRECTORY>>
+  $<INSTALL_INTERFACE:${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME}/${KIM_API_Fortran_MODULE_DIR_IDENTIFIER}>)
+target_include_directories(kim-api PUBLIC $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}>)
 target_link_libraries(kim-api ${CMAKE_DL_LIBS})
+
+# Add install rules for kim-api
+#
+install(TARGETS kim-api
+  EXPORT KIM_API_Targets
+  INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}"
+  LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+  ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+  RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
+
 
 # Add include subdirectories
 #
@@ -160,28 +171,19 @@ add_subdirectory(completions)
 add_subdirectory(editors/emacs)
 add_subdirectory(pkg-config)
 add_subdirectory(utils)
-
 if(${CMAKE_MINOR_VERSION} GREATER 8)
   add_subdirectory(docs)
 else()
   add_custom_target(docs)
 endif()
 
-
 # Add Models & Drivers
 #
 if(KIM_API_BUILD_EXAMPLES)
-  list(APPEND CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR}/cmake/Modules)
+  set(KIM-API_DIR "${CMAKE_BINARY_DIR}/cmake/${KIM_API_BUILD_TREE_CONFIG_DIR_IDENTIFIER}")
+  set(KIM-API-ITEMS_DIR "${CMAKE_BINARY_DIR}/cmake/${KIM_API_BUILD_TREE_CONFIG_DIR_IDENTIFIER}-items")
   add_subdirectory(examples/model-drivers)
   add_subdirectory(examples/portable-models)
   add_subdirectory(examples/simulator-models)
   add_subdirectory(examples/simulators)
 endif()
-
-
-# Add install rules for kim-api
-#
-install(TARGETS kim-api
-  LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-  ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-  RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")

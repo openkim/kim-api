@@ -1,0 +1,129 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the Common Development
+# and Distribution License Version 1.0 (the "License").
+#
+# You can obtain a copy of the license at
+# http://www.opensource.org/licenses/CDDL-1.0.  See the License for the
+# specific language governing permissions and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each file and
+# include the License file in a prominent location with the name LICENSE.CDDL.
+# If applicable, add the following below this CDDL HEADER, with the fields
+# enclosed by brackets "[]" replaced with your own identifying information:
+#
+# Portions Copyright (c) [yyyy] [name of copyright owner]. All rights reserved.
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2013--2020, Regents of the University of Minnesota.
+# All rights reserved.
+#
+# Contributors:
+#    Richard Berger
+#    Christoph Junghans
+#    Ryan S. Elliott
+#    Alexander Stukowski
+#
+
+#
+# Release: This file is part of the kim-api.git repository.
+#
+
+
+#
+# - Code for backward compatibility with pre 2.2.0 KIM-API behavior
+#
+#  Set various cmake variables (compilers, etc.) and set various KIM_API
+#  variables.  Also provide the following macros
+#
+
+#  add_kim_api_imported_library()      - add kim-api library target
+#  add_kim_api_compiler_flags()        - set extra compile/link flags
+#
+
+
+# REMOVE THIS FILE FOR 3.0.0 RELEASE!!!
+
+message(WARNING
+  "\n"
+  "Pre 2.2.0 KIM-API package behavior is deprecated and will be "
+  "removed in 3.0.0.  Please update your CMakeLists.txt file to "
+  "use a find_package() signature similar to one of the following:\n"
+  "   find_package(KIM-API 2.2 REQUIRED CONFIG)\n"
+  "   find_package(KIM-API-ITEMS 2.2 REQUIRED CONFIG)\n"
+  "See the examples in the KIM API source package for more details."
+  "\n"
+  )
+
+include(CMakeFindDependencyMacro)
+find_dependency(KIM-API-ITEMS ${KIM-API_FIND_VERSION})
+
+kim_api_items_set_cmake_compiler_standard_variables()
+kim_api_items_set_cmake_rpath_variables()
+kim_api_items_set_cmake_build_type_variable_in_cache()
+kim_api_items_set_cmake_compiler_variables()
+kim_api_items_set_compiler_flag_variables()
+
+set(KIM_API_PROJECT_NAME @KIM_API_PROJECT_NAME@ CACHE STRING "KIM API project name string")
+set(KIM_API_VERSION @PROJECT_VERSION@ CACHE STRING "KIM API version")
+
+
+# wrap add_kim_api_model_library() and add_kim_api_model_driver_library()
+macro(add_kim_api_model_library)
+  if (NOT TARGET kim-api OR NOT TARGET KIM-API::kim-api)
+    kim_api_items_prepend_compiler_flags_to_cmake_variables()
+    add_kim_api_imported_library()
+  endif()
+
+  _add_kim_api_model_library(${ARGN})
+endmacro(add_kim_api_model_library)
+
+macro(add_kim_api_model_driver_library)
+  if (NOT TARGET kim-api OR NOT TARGET KIM-API::kim-api)
+    kim_api_items_prepend_compiler_flags_to_cmake_variables()
+    add_kim_api_imported_library()
+  endif()
+
+  _add_kim_api_model_driver_library(${ARGN})
+endmacro(add_kim_api_model_driver_library)
+
+
+macro(add_kim_api_imported_library)
+  if(_KIM_API_BUILD_TREE_ACTIVE)
+    add_library(KIM-API::kim-api ALIAS kim-api)
+    add_executable(KIM-API::simulator-model ALIAS simulator-model)
+    add_executable(KIM-API::collections-info ALIAS collections-info)
+    add_executable(KIM-API::shared-library-test ALIAS shared-library-test)
+  else()
+    include("${KIM-API_DIR}/kim-api-macros.cmake")
+    include("${KIM-API_DIR}/kim-api-targets.cmake")
+
+    # add shadow kim-api target
+    add_library(kim-api SHARED IMPORTED)
+    get_property(_config TARGET KIM-API::kim-api PROPERTY IMPORTED_CONFIGURATIONS)
+    foreach(_cfg IN LISTS _config)
+      get_property(_loc TARGET KIM-API::kim-api PROPERTY IMPORTED_LOCATION_${_cfg})
+      set_property(TARGET kim-api PROPERTY IMPORTED_LOCATION_${_cfg} ${_loc})
+      get_property(_so TARGET KIM-API::kim-api PROPERTY IMPORTED_SONAME_${_cfg})
+      set_property(TARGET kim-api PROPERTY IMPORTED_SONAME_${_cfg} ${_so})
+    endforeach()
+    get_property(_val TARGET KIM-API::kim-api PROPERTY INTERFACE_INCLUDE_DIRECTORIES)
+    set_property(TARGET kim-api PROPERTY INTERFACE_INCLUDE_DIRECTORIES ${_val})
+
+    # add shadow collections-info target
+    add_executable(collections-info IMPORTED)
+    get_property(_config TARGET KIM-API::collections-info PROPERTY IMPORTED_CONFIGURATIONS)
+    foreach(_cfg IN LISTS _config)
+      get_property(_loc TARGET KIM-API::collections-info PROPERTY IMPORTED_LOCATION_${_cfg})
+      set_property(TARGET collections-info PROPERTY IMPORTED_LOCATION_${_cfg} ${_loc})
+    endforeach()
+  endif()
+endmacro(add_kim_api_imported_library)
+
+macro(add_kim_api_compiler_flags)
+  kim_api_items_prepend_compiler_flags_to_cmake_variables()
+endmacro(add_kim_api_compiler_flags)
