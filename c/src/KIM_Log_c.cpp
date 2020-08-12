@@ -89,7 +89,8 @@ extern "C" {
 int KIM_Log_Create(KIM_Log ** const log)
 {
   KIM::Log * pLog;
-  KIM::Log::Create(&pLog);  // always returns false
+  int error = KIM::Log::Create(&pLog);
+  if (error) return error;
 
   (*log) = new KIM_Log;
   (*log)->p = (void *) pLog;
