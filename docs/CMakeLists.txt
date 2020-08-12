@@ -63,7 +63,7 @@ set(DOXYGEN_RECURSIVE            YES)
 set(DOXYGEN_IMAGE_PATH           "src/asymptote-figures")
 set(DOXYGEN_SOURCE_BROWSER       YES)
 set(DOXYGEN_USE_MATHJAX          YES)
-set(DOXYGEN_MATHJAX_RELPATH      "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.3")
+set(DOXYGEN_MATHJAX_RELPATH      "https://cdn.jsdelivr.net/npm/mathjax@2")
 set(DOXYGEN_EXTRA_PACKAGES       "amsmath")
 set(DOXYGEN_GENERATE_LATEX       YES)
 
@@ -80,6 +80,7 @@ set(SOURCES
   "../cpp/include/"
   "../c/include/"
   "../fortran/include/"
+  "../INSTALL"
   "../NEWS"
   "../examples/model-drivers/"
   "../examples/portable-models/"
