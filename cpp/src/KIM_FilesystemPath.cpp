@@ -195,7 +195,7 @@ Path Path::CreateTemporaryDirectory(char const * const namePrefix)
 {
 #ifdef KIM_API_USE_FILESYSTEM_LIBRARY
   // Get the root directory for temporary files.
-  std::filesystem::path temp_dir = std::filesystem::temp_directory_path();
+  Path temp_dir = std::filesystem::temp_directory_path();
   // Keep generating random subdirectory names until we find one that does not
   // exists yet.
   std::default_random_engine rnd;
