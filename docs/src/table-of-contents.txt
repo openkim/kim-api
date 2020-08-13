@@ -46,19 +46,19 @@ parameters and use a separate Model Driver (MD) library containing the code.
 See [openkim.org](https://openkim.org) to find many PM implementations,
 [openkim.org/projects-using-kim](https://openkim.org/projects-using-kim) to
 learn which simulators support the %KIM API/PMI, and
-[openkim.org/kim-api](https://openkim.org/kim-api) to learn how to use %KIM PMs
-with those simulators.  The %KIM API also defines a standard (the Simulator
-Model Interface (SMI)) that allows for the creation and curation of Simulator
-Models (SMs), which are packages containing the metadata necessary to set up
-and run a model that is implemented as an integrated part of a simulation code
-(simulator).  A %KIM SM includes all of the necessary parameter files,
-simulator input commands, and metadata (supported species, units, etc.)  needed
-to run the model in its native simulator.  See
-[openkim.org](https://openkim.org) to find many SM packages,
+[openkim.org/doc/usage/using-models](https://openkim.org/doc/usage/using-models)
+to learn how to use %KIM PMs with those simulators.  The %KIM API also defines
+a standard (the Simulator Model Interface (SMI)) that allows for the creation
+and curation of Simulator Models (SMs), which are packages containing the
+metadata necessary to set up and run a model that is implemented as an
+integrated part of a simulation code (simulator).  A %KIM SM includes all of
+the necessary parameter files, simulator input commands, and metadata
+(supported species, units, etc.)  needed to run the model in its native
+simulator.  See [openkim.org](https://openkim.org) to find many SM packages,
 [openkim.org/projects-using-kim](https://openkim.org/projects-using-kim) to
 learn which simulators support the %KIM API/SMI, and
-[openkim.org/kim-api](https://openkim.org/kim-api) to learn how to use %KIM SMs
-with those simulators.
+[openkim.org/doc/usage/using-models](https://openkim.org/doc/usage/using-models)
+to learn how to use %KIM SMs with those simulators.
 
 This documentation describes the specifications and official implementation of
 the %KIM API as a system-level software library that gives computer programmers
@@ -70,6 +70,8 @@ Table of Contents:
 -# \ref features
 
 -# \ref theory
+
+-# [**INSTALL the %KIM API package**](_i_n_s_t_a_l_l_source.html)
 
 -# \ref implementation
 

@@ -99,7 +99,11 @@ bool Path::MakeDirectory() const
 
       if (mkdir(_path, S_IRWXU) != 0)
       {
-        if (errno != EEXIST) goto errorLabel;
+        if (errno != EEXIST)
+        {
+          *p = '/';
+          goto errorLabel;
+        }
       }
 
       *p = '/';
@@ -131,7 +135,7 @@ bool Path::RemoveDirectoryRecursive() const
   }
   return false;
 #else
-  int error;
+  int error = false;
   struct dirent * dp = NULL;
   DIR * dir = NULL;
   dir = opendir(path_.c_str());
@@ -141,11 +145,11 @@ bool Path::RemoveDirectoryRecursive() const
     if ((0 != strcmp(dp->d_name, ".")) && (0 != strcmp(dp->d_name, "..")))
     {
       Path filePath = *this / dp->d_name;
-      remove(filePath.path_.c_str());
+      error = error || remove(filePath.path_.c_str());
     }
   }
   closedir(dir);
-  error = remove(path_.c_str());
+  error = error || remove(path_.c_str());
   if (error) { return true; }
   return false;
 #endif
