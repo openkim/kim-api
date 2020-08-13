@@ -107,6 +107,7 @@ docker build -t "${TAG}" -f "docker/Dockerfile.${DISTRO}" .  &&
          --build-arg B_FFLAGS="${FFLAGS}" \
          \
          `# specify additional build tools (optional; bools: "true" or "")` \
+         --build-arg B_CXX17="${CXX17:+true}" \
          --build-arg B_IWYU="${IWYU:+true}" \
          --build-arg B_SANITIZE="${SANITIZE:+true}" \
          --build-arg B_COVERAGE="${COVERAGE:+true}" \

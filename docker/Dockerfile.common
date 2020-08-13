@@ -48,6 +48,8 @@ ARG B_FC
 ENV FC ${B_FC}
 
 # specify compiler settings (optional)
+ARG B_CXX17
+ENV CXX17 ${B_CXX17}
 ARG B_CXXFLAGS
 ENV CXXFLAGS ${B_CXXFLAGS}
 ARG B_CFLAGS

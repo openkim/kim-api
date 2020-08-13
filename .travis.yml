@@ -50,8 +50,9 @@ matrix:
         - brew update &> /dev/null &&
           brew install gcc@6 ccache iwyu &&
           export PATH="/usr/local/opt/ccache/libexec:$PATH" &&
-          export CC=gcc-6 &&
+          export CXX17=true &&
           export CXX=g++-6 &&
+          export CC=gcc-6 &&
           export FC=gfortran-6
         - env
       script:
@@ -63,6 +64,7 @@ matrix:
       env: DISTRO=fedora
            CMAKE_BUILD_TYPE=Debug
            SANITIZE=true
+           CXX17=true
       before_script:
         - mkdir "${HOME}/work" &&
           cd "${HOME}/work" &&
@@ -82,6 +84,7 @@ matrix:
            CMAKE_BUILD_TYPE=Debug
            IWYU=true
            SANITIZE=true
+           CXX17=true
            CXXFLAGS="-flto=auto"
            CFLAGS="-flto=auto"
            FFLAGS="-flto=auto"
@@ -103,6 +106,7 @@ matrix:
       env: DISTRO=ubuntu
            CMAKE_BUILD_TYPE=Debug
            SANITIZE=true
+           CXX17=true
       before_script:
         - mkdir "${HOME}/work" &&
           cd "${HOME}/work" &&
@@ -156,6 +160,7 @@ matrix:
       env: DISTRO=debian
            CMAKE_BUILD_TYPE=Debug
            SANITIZE=true
+           CXX17=true
       before_script:
         - mkdir "${HOME}/work" &&
           cd "${HOME}/work" &&

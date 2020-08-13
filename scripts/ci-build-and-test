@@ -94,6 +94,7 @@ ccache -z
 cmake -DCMAKE_INSTALL_PREFIX="${PWD}/test-install" \
       -DCMAKE_BUILD_TYPE="${CMAKE_BUILD_TYPE}" \
       -DKIM_API_BUILD_EXAMPLES=OFF \
+      ${CXX17:+-DCMAKE_CXX_STANDARD=17}  `#[use std::filesystem spport (assume it is available)]` \
       .. \
   || exit $?
 make -j2 install || exit $?
@@ -109,8 +110,18 @@ kim-api-collections-management install system `find ../examples/model-drivers -m
   kim-api-collections-management list \
     || exit $?
 
+cd ../
+rm -rf "build" || exit $?
+
+# now test the INSTALL file instructions
+mkdir build
+cd build
+ccache -z
 mkdir "${PWD}/WORKSPACE"
 ../scripts/run-cmds-from-install IN_WORKSPACE "${PWD}/WORKSPACE" "${PWD}/.." || exit $?
+
+cd ../
+rm -rf "build" || exit $?
 
 # success
 set +xv
