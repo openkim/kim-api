@@ -34,19 +34,6 @@
 #
 
 
-# Set global linker flags
-#
-if(KIM_API_ENABLE_SANITIZE)
-  set(KIM_API_EXE_LINKER_FLAGS "${KIM_API_EXE_LINKER_FLAGS} -fsanitize=address")
-endif()
-if(KIM_API_ENABLE_COVERAGE)
-  set(KIM_API_EXE_LINKER_FLAGS "${KIM_API_EXE_LINKER_FLAGS} -fprofile-arcs -ftest-coverage")
-endif()
-#
-#
-set(CMAKE_EXE_LINKER_FLAGS "${KIM_API_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS}")
-#
-
 # Set global compiler options
 #
 include(EnableCXXCompilerFlagIfSupported)
@@ -60,7 +47,8 @@ endif()
 if(KIM_API_ENABLE_SANITIZE)
   enable_cxx_compiler_flag_if_supported("-fsanitize=address")
 endif()
-set(KIM_API_CXX_FLAGS "${KIM_API_CXX_FLAGS}" CACHE STRING "KIM API C++ compiler flags")
+string(STRIP "${KIM_API_CXX_FLAGS}" _s)
+set(KIM_API_CXX_FLAGS "${_s}" CACHE STRING "KIM API C++ compiler flags")
 #
 include(EnableCCompilerFlagIfSupported)
 enable_c_compiler_flag_if_supported("-Wall")
@@ -73,7 +61,8 @@ endif()
 if(KIM_API_ENABLE_SANITIZE)
   enable_c_compiler_flag_if_supported("-fsanitize=address")
 endif()
-set(KIM_API_C_FLAGS "${KIM_API_C_FLAGS}" CACHE STRING "KIM API C compiler flags")
+string(STRIP "${KIM_API_C_FLAGS}" _s)
+set(KIM_API_C_FLAGS "${_s}" CACHE STRING "KIM API C compiler flags")
 #
 include(EnableFortranCompilerFlagIfSupported)
 if(NOT CMAKE_Fortran_COMPILER_ID STREQUAL Intel)
@@ -96,10 +85,37 @@ endif()
 if(KIM_API_ENABLE_SANITIZE)
   enable_fortran_compiler_flag_if_supported("-fsanitize=address")
 endif()
-set(KIM_API_Fortran_FLAGS "${KIM_API_Fortran_FLAGS}" CACHE STRING "KIM API Fortran compiler flags")
+string(STRIP "${KIM_API_Fortran_FLAGS}" _s)
+set(KIM_API_Fortran_FLAGS "${_s}" CACHE STRING "KIM API Fortran compiler flags")
 #
 
+
+# Set global linker flags
+#
+if(KIM_API_ENABLE_SANITIZE)
+  set(KIM_API_EXE_LINKER_FLAGS "${KIM_API_EXE_LINKER_FLAGS} -fsanitize=address")
+endif()
+if(KIM_API_ENABLE_COVERAGE)
+  set(KIM_API_EXE_LINKER_FLAGS "${KIM_API_EXE_LINKER_FLAGS} -fprofile-arcs -ftest-coverage")
+endif()
+string(STRIP "${KIM_API_EXE_LINKER_FLAGS}" _s)
+set(KIM_API_EXE_LINKER_FLAGS "${_s}")
+#
+
+
 # Update CMAKE variables
-set(CMAKE_CXX_FLAGS "${KIM_API_CXX_FLAGS} ${CMAKE_CXX_FLAGS}")
-set(CMAKE_C_FLAGS "${KIM_API_C_FLAGS} ${CMAKE_C_FLAGS}")
-set(CMAKE_Fortran_FLAGS "${KIM_API_Fortran_FLAGS} ${CMAKE_Fortran_FLAGS}")
+#
+string(STRIP "${KIM_API_CXX_FLAGS} ${CMAKE_CXX_FLAGS}" _s)
+set(CMAKE_CXX_FLAGS_CACHED_VALUE "${CMAKE_CXX_FLAGS}")  # for cmake's (< 3.13) that don't have $CACHE{} ;; remove once min cmake is > 3.12
+set(CMAKE_CXX_FLAGS "${_s}")
+string(STRIP "${KIM_API_C_FLAGS} ${CMAKE_C_FLAGS}" _s)
+set(CMAKE_C_FLAGS_CACHED_VALUE "${CMAKE_C_FLAGS}")  # for cmake's (< 3.13) that don't have $CACHE{} ;; remove once min cmake is > 3.12
+set(CMAKE_C_FLAGS "${_s}")
+string(STRIP "${KIM_API_Fortran_FLAGS} ${CMAKE_Fortran_FLAGS}" _s)
+set(CMAKE_Fortran_FLAGS_CACHED_VALUE "${CMAKE_Fortran_FLAGS}")  # for cmake's (< 3.13) that don't have $CACHE{} ;; remove once min cmake is > 3.12
+set(CMAKE_Fortran_FLAGS "${_s}")
+#
+string(STRIP "${KIM_API_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS}" _s)
+set(CMAKE_EXE_LINKER_FLAGS_CACHED_VALUE "${CMAKE_EXE_LINKER_FLAGS}")  # for cmake's (< 3.13) that don't have $CACHE{} ;; remove once min cmake is > 3.12
+set(CMAKE_EXE_LINKER_FLAGS "${_s}")
+#

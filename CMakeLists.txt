@@ -187,3 +187,5 @@ if(KIM_API_BUILD_EXAMPLES)
   add_subdirectory(examples/simulator-models)
   add_subdirectory(examples/simulators)
 endif()
+
+include(WriteKIMConfigSummary)
