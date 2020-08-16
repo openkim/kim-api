@@ -55,7 +55,6 @@ if(NOT DEFINED BASH_COMPLETION_COMPLETIONSDIR)
 else()
   set(BASH_COMPLETION_COMPLETIONSDIR "${BASH_COMPLETION_COMPLETIONSDIR}" CACHE PATH "Directory where bash completions are installed")
 endif()
-message(STATUS "Using bash-completion dir ${BASH_COMPLETION_COMPLETIONSDIR}")
 
 # zsh completions
 if(NOT DEFINED ZSH_COMPLETION_COMPLETIONSDIR)
@@ -63,4 +62,3 @@ if(NOT DEFINED ZSH_COMPLETION_COMPLETIONSDIR)
 else()
   set(ZSH_COMPLETION_COMPLETIONSDIR "${ZSH_COMPLETION_COMPLETIONSDIR}" CACHE PATH "Directory where zsh completions are installed")
 endif()
-message(STATUS "Using zsh-completion dir ${ZSH_COMPLETION_COMPLETIONSDIR}")
