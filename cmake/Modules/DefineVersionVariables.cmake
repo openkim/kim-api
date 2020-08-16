@@ -36,44 +36,74 @@
 set(PROJECT_VERSION_PRERELEASE "git" CACHE STRING "Project SemVer prerelease string")  # cache to allow change from command line
 
 find_package(Git)
-if((${GIT_FOUND}) AND (EXISTS "${CMAKE_SOURCE_DIR}/.git"))
-  execute_process(COMMAND ${GIT_EXECUTABLE} update-index -q --refresh
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR} TIMEOUT 5 OUTPUT_QUIET
-    ERROR_VARIABLE EXEC_ERR OUTPUT_STRIP_TRAILING_WHITESPACE
+if(${GIT_FOUND})
+  execute_process(COMMAND ${GIT_EXECUTABLE} -C "${CMAKE_SOURCE_DIR}" rev-parse --show-toplevel
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    OUTPUT_VARIABLE _toplevel
+    RESULT_VARIABLE _isGitRepo
     )
-  if(READTHEDOCS)
-    set(_DIRTY "")
-  else()
-    set(_DIRTY ".dirty")
+
+  if((_isGitRepo EQUAL 0) AND ("${_toplevel}" STREQUAL "${CMAKE_SOURCE_DIR}"))
+    # set configuration to depend on _depend_file; then touch depend with every invocation of make
+    #
+    # There is one flaw in this scheme.  The project will not be reconfigured
+    # during the first execution of 'make', but instead will use the original
+    # configuration results.  However, after the first 'make' is executed,
+    # reconfiguration will occur with every additional 'make' execution.
+    #
+    # cmake ...
+    # make  # no reconfigure; build
+    # make  # reconfigure; build
+    # ...
+    #
+    # This provides the possibility of getting incorrect results if one does:
+    #
+    # cmake ...
+    # <edit files to change results of 'git describe'>
+    # make  # no reconfigure, uses old 'git describe' results; build
+    # make  # reconfigure, now used current 'git describe' results; build
+    #
+    # There seems to be no good way to avoid this problem.
+    #
+    set(_git_describe_sentinel "git-describe-config-sentinel")
+    set(_depend_file "${CMAKE_CURRENT_BINARY_DIR}/${_git_describe_sentinel}-file")
+    execute_process(COMMAND ${CMAKE_COMMAND} -E touch "${_depend_file}")
+    # _depend_file must persist until configuraiton is finalized, or else the
+    # below set_property command will have no effect.
+    set_property(DIRECTORY "${CURRENT_SOURCE_DIR}" APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${_depend_file}")
+    add_custom_target(${_git_describe_sentinel}-target ALL COMMAND ${CMAKE_COMMAND} -E touch "${_depend_file}")
+
+    execute_process(COMMAND ${GIT_EXECUTABLE} update-index -q --refresh
+      WORKING_DIRECTORY ${CMAKE_SOURCE_DIR} TIMEOUT 5 OUTPUT_QUIET
+      ERROR_VARIABLE EXEC_ERR OUTPUT_STRIP_TRAILING_WHITESPACE
+      )
+    if(READTHEDOCS)
+      set(_DIRTY "")
+    else()
+      set(_DIRTY ".dirty")
+    endif()
+    execute_process(COMMAND ${GIT_EXECUTABLE} describe --dirty=${_DIRTY} --broken=.broken --always
+      WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+      OUTPUT_VARIABLE _git_describe
+      )
+    set(_build_metadata "${_git_describe}")
   endif()
-  execute_process(COMMAND ${GIT_EXECUTABLE} describe --dirty=${_DIRTY} --broken=.broken --always
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-    OUTPUT_VARIABLE KIM_API_GIT_DESCRIBE OUTPUT_STRIP_TRAILING_WHITESPACE
-    )
-  set(_BUILD_METADATA "${KIM_API_GIT_DESCRIBE}")
-
-  set(RECONFIGURE_FILE "${CMAKE_BINARY_DIR}/reconfigure")
-  execute_process(COMMAND ${CMAKE_COMMAND} -E touch "${RECONFIGURE_FILE}")
-  add_custom_target(git-commit-describe ALL
-    COMMAND ${CMAKE_COMMAND} -E touch "${RECONFIGURE_FILE}"
-    )
-  include("${RECONFIGURE_FILE}")
 endif()
 
-if(NOT "${_BUILD_METADATA}" STREQUAL "")
-  string(APPEND _BUILD_METADATA ".")
+if(NOT "${_build_metadata}" STREQUAL "")
+  string(APPEND _build_metadata ".")
 endif()
-string(APPEND _BUILD_METADATA "${CMAKE_CXX_COMPILER_ID}.${CMAKE_C_COMPILER_ID}.${CMAKE_Fortran_COMPILER_ID}")
-set(PROJECT_VERSION_BUILD_METADATA "${_BUILD_METADATA}" CACHE STRING "Project SemVer build metadata string")  # cache to allow change from command line
+string(APPEND _build_metadata "${CMAKE_CXX_COMPILER_ID}.${CMAKE_C_COMPILER_ID}.${CMAKE_Fortran_COMPILER_ID}")
+set(PROJECT_VERSION_BUILD_METADATA "${_build_metadata}")  # do not cache
 
 
-set(PROJECT_VERSION_STRING "${PROJECT_VERSION}")
+set(_version_string "${PROJECT_VERSION}")
 if(PROJECT_VERSION_PRERELEASE)
-  set(PROJECT_VERSION_STRING
-    "${PROJECT_VERSION_STRING}-${PROJECT_VERSION_PRERELEASE}")
+  set(_version_string "${_version_string}-${PROJECT_VERSION_PRERELEASE}")
 endif()
-set(PROJECT_VERSION_STRING_WITHOUT_BUILD_METADATA "${PROJECT_VERSION_STRING}")
+set(PROJECT_VERSION_STRING_WITHOUT_BUILD_METADATA "${_version_string}")  # used by pkg-config; do not cache
 if(PROJECT_VERSION_BUILD_METADATA)
-  set(PROJECT_VERSION_STRING
-    "${PROJECT_VERSION_STRING}+${PROJECT_VERSION_BUILD_METADATA}")
+  set(_version_string "${_version_string}+${PROJECT_VERSION_BUILD_METADATA}")
 endif()
+set(PROJECT_VERSION_STRING "${_version_string}")  # do not cache
