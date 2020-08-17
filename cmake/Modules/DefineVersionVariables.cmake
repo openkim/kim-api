@@ -41,6 +41,7 @@ if(${GIT_FOUND})
     OUTPUT_STRIP_TRAILING_WHITESPACE
     OUTPUT_VARIABLE _toplevel
     RESULT_VARIABLE _isGitRepo
+    ERROR_QUIET
     )
 
   if((_isGitRepo EQUAL 0) AND ("${_toplevel}" STREQUAL "${CMAKE_SOURCE_DIR}"))
@@ -73,17 +74,18 @@ if(${GIT_FOUND})
     set_property(DIRECTORY "${CURRENT_SOURCE_DIR}" APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${_depend_file}")
     add_custom_target(${_git_describe_sentinel}-target ALL COMMAND ${CMAKE_COMMAND} -E touch "${_depend_file}")
 
-    execute_process(COMMAND ${GIT_EXECUTABLE} update-index -q --refresh
-      WORKING_DIRECTORY ${CMAKE_SOURCE_DIR} TIMEOUT 5 OUTPUT_QUIET
-      ERROR_VARIABLE EXEC_ERR OUTPUT_STRIP_TRAILING_WHITESPACE
+    execute_process(COMMAND ${GIT_EXECUTABLE} -C "${CMAKE_SOURCE_DIR}" update-index -q --refresh
+      TIMEOUT 5
+      OUTPUT_QUIET
+      ERROR_QUIET
       )
     if(READTHEDOCS)
       set(_DIRTY "")
     else()
       set(_DIRTY ".dirty")
     endif()
-    execute_process(COMMAND ${GIT_EXECUTABLE} describe --dirty=${_DIRTY} --broken=.broken --always
-      WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    execute_process(
+      COMMAND ${GIT_EXECUTABLE} -C "${CMAKE_SOURCE_DIR}" describe --dirty=${_DIRTY} --broken=.broken --always
       OUTPUT_STRIP_TRAILING_WHITESPACE
       OUTPUT_VARIABLE _git_describe
       )
