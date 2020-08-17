@@ -33,6 +33,7 @@
 
 #include <cstdlib>
 #include <iostream>
+#include <sstream>
 
 #ifndef KIM_FILESYSTEM_PATH_HPP_
 #include "KIM_FilesystemPath.hpp"

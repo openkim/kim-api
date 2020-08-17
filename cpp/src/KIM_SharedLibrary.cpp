@@ -33,7 +33,11 @@
 
 #include <cstdio>
 #include <cstring>
+#ifndef _WIN32
 #include <dlfcn.h>
+#else
+#include <libloaderapi.h>
+#endif
 #include <fstream>
 #include <sstream>
 #include <unistd.h>  // IWYU pragma: keep
@@ -121,19 +125,37 @@ int SharedLibrary::Open(FILESYSTEM::Path const & sharedLibraryName)
   }
 
   sharedLibraryName_ = sharedLibraryName;
+#ifndef _WIN32
   sharedLibraryHandle_ = dlopen(sharedLibraryName_.string().c_str(), RTLD_NOW);
+#else
+  FILESYSTEM::Path winPath = sharedLibraryName;
+  sharedLibraryHandle_ = (void *) LoadLibraryExW(
+      winPath.make_preferred().c_str(), NULL, LOAD_WITH_ALTERED_SEARCH_PATH);
+#endif
   if (sharedLibraryHandle_ == NULL)
   {
     LOG_ERROR("Unable to open '" + sharedLibraryName_.string() + "'.");
+#ifndef _WIN32
     LOG_ERROR(dlerror());
+#endif
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
+#ifndef _WIN32
   sharedLibrarySchemaVersion_ = reinterpret_cast<int const *>(
       dlsym(sharedLibraryHandle_, "kim_shared_library_schema_version"));
+#else
+  sharedLibrarySchemaVersion_ = reinterpret_cast<int const *>(::GetProcAddress(
+      (HMODULE) sharedLibraryHandle_, "kim_shared_library_schema_version"));
+#endif
   if (sharedLibrarySchemaVersion_ == NULL)
   {
+    LOG_ERROR(
+        "Failed to look up symbol 'kim_shared_library_schema_version' in '"
+        + sharedLibraryName_.string() + "'.");
+#ifndef _WIN32
     LOG_ERROR(dlerror());
+#endif
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
@@ -142,12 +164,22 @@ int SharedLibrary::Open(FILESYSTEM::Path const & sharedLibraryName)
   if (*sharedLibrarySchemaVersion_ == 2)
   {
     using namespace SHARED_LIBRARY_SCHEMA;
+#ifndef _WIN32
     SharedLibrarySchemaV2 const * const schemaV2
         = reinterpret_cast<SharedLibrarySchemaV2 const *>(
             dlsym(sharedLibraryHandle_, "kim_shared_library_schema"));
+#else
+    SharedLibrarySchemaV2 const * const schemaV2
+        = reinterpret_cast<SharedLibrarySchemaV2 const *>(::GetProcAddress(
+            (HMODULE) sharedLibraryHandle_, "kim_shared_library_schema"));
+#endif
     if (schemaV2 == NULL)
     {
+      LOG_ERROR("Failed to look up symbol 'kim_shared_library_schema' in '"
+                + sharedLibraryName_.string() + "'.");
+#ifndef _WIN32
       LOG_ERROR(dlerror());
+#endif
       LOG_DEBUG("Exit 1=" + callString);
       return true;
     }
@@ -191,12 +223,22 @@ int SharedLibrary::Open(FILESYSTEM::Path const & sharedLibraryName)
   else if (*sharedLibrarySchemaVersion_ == 1)
   {
     using namespace SHARED_LIBRARY_SCHEMA;
+#ifndef _WIN32
     SharedLibrarySchemaV1 const * const schemaV1
         = reinterpret_cast<SharedLibrarySchemaV1 const *>(
             dlsym(sharedLibraryHandle_, "kim_shared_library_schema"));
+#else
+    SharedLibrarySchemaV1 const * const schemaV1
+        = reinterpret_cast<SharedLibrarySchemaV1 const *>(::GetProcAddress(
+            (HMODULE) sharedLibraryHandle_, "kim_shared_library_schema"));
+#endif
     if (schemaV1 == NULL)
     {
+      LOG_ERROR("Failed to look up symbol 'kim_shared_library_schema' in '"
+                + sharedLibraryName_.string() + "'.");
+#ifndef _WIN32
       LOG_ERROR(dlerror());
+#endif
       LOG_DEBUG("Exit 1=" + callString);
       return true;
     }
@@ -293,7 +335,11 @@ int SharedLibrary::Close()
   parameterFiles_.clear();
   numberOfMetadataFiles_ = 0;
   metadataFiles_.clear();
+#ifndef _WIN32
   int error = dlclose(sharedLibraryHandle_);
+#else
+  int error = !::FreeLibrary((HMODULE) sharedLibraryHandle_);
+#endif
   if (error)
   {
     LOG_ERROR("");
