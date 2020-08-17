@@ -633,12 +633,15 @@ function(_determine_collection_install_prefix_and_output_name _item_type)
     message(FATAL_ERROR "Empty item type provided.")
   endif()
   if("${_item_type}" STREQUAL "modelDriver")
+    set(_item_type_upper "MODEL_DRIVER")
     set(_item_arg "model_drivers")
     set(_ITEM_OUTPUT_NAME "@PROJECT_NAME@-@KIM_API_MODEL_DRIVER_IDENTIFIER@")
   elseif("${_item_type}" STREQUAL "portableModel")
+    set(_item_type_upper "PORTABLE_MODEL")
     set(_item_arg "portable_models")
     set(_ITEM_OUTPUT_NAME "@PROJECT_NAME@-@KIM_API_PORTABLE_MODEL_IDENTIFIER@")
   elseif("${_item_type}" STREQUAL "simulatorModel")
+    set(_item_type_upper "SIMULATOR_MODEL")
     set(_item_arg "simulator_models")
     set(_ITEM_OUTPUT_NAME "@PROJECT_NAME@-@KIM_API_SIMULATOR_MODEL_IDENTIFIER@")
   else()
@@ -664,6 +667,17 @@ function(_determine_collection_install_prefix_and_output_name _item_type)
     endif()
     execute_process(COMMAND ${_COLLECTIONS_INFO} ${_col_arg} ${_item_arg} OUTPUT_VARIABLE _ITEM_INSTALL_PREFIX OUTPUT_STRIP_TRAILING_WHITESPACE RESULT_VARIABLE _error)
     string(REGEX REPLACE "^([^\n]+)\n.*" "\\1" _ITEM_INSTALL_PREFIX "${_ITEM_INSTALL_PREFIX}")
+    # check for command line override of install prefix
+    #
+    # UNDOCUMENTED FEATURE (used by homebrew, as of this writing)
+    #
+    # KIM_API_MODEL_DRIVER_INSTALL_PREFIX
+    # KIM_API_PORTABLE_MODEL_INSTALL_PREFIX
+    # KIM_API_SIMULATOR_MODEL_INSTALL_PREFIX
+    #
+    if(DEFINED KIM_API_${_item_type_upper}_INSTALL_PREFIX)
+      set(_ITEM_INSTALL_PREFIX "${KIM_API_${_item_type_upper}_INSTALL_PREFIX}")
+    endif()
   else()  # using build tree config
     if(NOT "${KIM_API_INSTALL_COLLECTION}" STREQUAL "SYSTEM")
       message(FATAL_ERROR "Cannot install into ${KIM_API_INSTALL_COLLECTION} collection during KIM API build")
