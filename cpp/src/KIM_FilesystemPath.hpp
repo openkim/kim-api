@@ -53,7 +53,7 @@
 #else
 // Fall back to drop-in library:
 #define GHC_WIN_WSTRING_STRING_TYPE
-#include "ghc/filesystem.hpp"
+#include "ghc-filesystem/filesystem.hpp"
 // We need the alias from ghc::filesystem to std::filesystem
 namespace std
 {
