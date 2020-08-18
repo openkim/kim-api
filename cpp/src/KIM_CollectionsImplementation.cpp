@@ -651,7 +651,7 @@ bool CollectionsImplementation::
   fl << KIM_SIMULATOR_MODEL_PLURAL_DIR_IDENTIFIER " = "
      << dirsMap.find(simulatorModel)->second << "\n";
   fl << "\n"
-     << "This directory was created by a kim-api installation with "
+     << "This file was created by a kim-api installation with "
         "<kim-api-uid>:\n"
      << "   " << KIM_UID << "\n"
      << "with path\n"
