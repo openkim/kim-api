@@ -107,11 +107,19 @@ target_include_directories(kim-loader PUBLIC
 target_link_libraries(kim-loader ${CMAKE_DL_LIBS})
 
 if(WIN32 AND NOT CYGWIN)
-  # Activate C++17 standard on Windows, because kim-api code uses C++ filesystem library internally.
-  set_property(TARGET kim-api PROPERTY CXX_STANDARD 17)
-  set_property(TARGET kim-api PROPERTY CXX_STANDARD_REQUIRED YES)
-  set_property(TARGET kim-loader PROPERTY CXX_STANDARD 17)
-  set_property(TARGET kim-loader PROPERTY CXX_STANDARD_REQUIRED YES)
+  # Activate C++17 language standard on Win32 platform, because kim-api code uses C++ filesystem library internally.
+  # Note: The 'cxx_std_17' target compile feature was added by CMake version 3.8. 
+  # For older CMake versions, fall back to setting the CXX_STANDARD target property instead.
+  get_property(cxx_features GLOBAL PROPERTY CMAKE_CXX_KNOWN_FEATURES) 
+  if("cxx_std_17" IN_LIST cxx_features)
+    target_compile_features(kim-api PUBLIC cxx_std_17)
+    target_compile_features(kim-loader PUBLIC cxx_std_17)
+  else()
+    set_property(TARGET kim-api PROPERTY CXX_STANDARD 17)
+    set_property(TARGET kim-api PROPERTY CXX_STANDARD_REQUIRED YES)
+    set_property(TARGET kim-loader PROPERTY CXX_STANDARD 17)
+    set_property(TARGET kim-loader PROPERTY CXX_STANDARD_REQUIRED YES)
+  endif()
 endif()
 
 # The KIM API code uses POSIX.1-2008 functions such as strdup() or mkstemp(), which are

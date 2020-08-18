@@ -33,6 +33,7 @@
 
 #include <cstdlib>
 #include <iostream>
+#include <sstream>  // For MinGW/Linux IWYU pragma: keep
 
 #ifndef KIM_FILESYSTEM_PATH_HPP_
 #include "KIM_FilesystemPath.hpp"
