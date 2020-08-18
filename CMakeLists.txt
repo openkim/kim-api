@@ -96,11 +96,12 @@ include(DefineInternalVariables)
 #
 set(KIM_API_USER_CONFIGURATION_FILE ".${PROJECT_NAME}/${KIM_API_UID}/config" CACHE FILEPATH "Default configuration file name. If not absolute, then relative to user home directory")
 mark_as_advanced(KIM_API_USER_CONFIGURATION_FILE)
-set(KIM_API_USER_MODEL_DRIVERS_DIR_DEFAULT "~/.${PROJECT_NAME}/${KIM_API_UID}/${KIM_API_MODEL_DRIVER_PLURAL_DIR_IDENTIFIER}" CACHE PATH "Default user collection model drivers dir")
+# "~/" is expanded by cmake when set(... CACHE PATH ...) is used below; so do not use PATH as type
+set(KIM_API_USER_MODEL_DRIVERS_DIR_DEFAULT "~/.${PROJECT_NAME}/${KIM_API_UID}/${KIM_API_MODEL_DRIVER_PLURAL_DIR_IDENTIFIER}" CACHE STRING "Default user collection model drivers dir")  # do not use PATH type
 mark_as_advanced(KIM_API_USER_MODEL_DRIVERS_DIR_DEFAULT)
-set(KIM_API_USER_PORTABLE_MODELS_DIR_DEFAULT "~/.${PROJECT_NAME}/${KIM_API_UID}/${KIM_API_PORTABLE_MODEL_PLURAL_DIR_IDENTIFIER}" CACHE PATH "Default user collection portable models dir")
+set(KIM_API_USER_PORTABLE_MODELS_DIR_DEFAULT "~/.${PROJECT_NAME}/${KIM_API_UID}/${KIM_API_PORTABLE_MODEL_PLURAL_DIR_IDENTIFIER}" CACHE STRING "Default user collection portable models dir")  # do not use PATH type
 mark_as_advanced(KIM_API_USER_PORTABLE_MODELS_DIR_DEFAULT)
-set(KIM_API_USER_SIMULATOR_MODELS_DIR_DEFAULT "~/.${PROJECT_NAME}/${KIM_API_UID}/${KIM_API_SIMULATOR_MODEL_PLURAL_DIR_IDENTIFIER}" CACHE PATH "Default user collection simulator models dir")
+set(KIM_API_USER_SIMULATOR_MODELS_DIR_DEFAULT "~/.${PROJECT_NAME}/${KIM_API_UID}/${KIM_API_SIMULATOR_MODEL_PLURAL_DIR_IDENTIFIER}" CACHE STRING "Default user collection simulator models dir")  # do not use PATH type
 mark_as_advanced(KIM_API_USER_SIMULATOR_MODELS_DIR_DEFAULT)
 #
 if((NOT KIM_API_SYSTEM_MODEL_DRIVERS_DIR) OR (KIM_API_SYSTEM_MODEL_DRIVERS_DIR MATCHES "^${KIM_API_PATH_SEPARATOR}"))
