@@ -36,9 +36,6 @@
 
 # - Macros and Functions that are part of the KIM-API-ITEMS package
 #
-#  kim_api_items_setup_before_project()  - standard item configure, part 1
-#  kim_api_items_setup_after_project()   - standard item configure, part 2
-#
 #  add_kim_api_model_library()           - create kim-api model target
 #  add_kim_api_model_driver_library()    - creaet kim-api model driver target
 #
@@ -65,56 +62,6 @@ include(CMakeParseArguments)
 
 set(KIM_API_INSTALL_COLLECTION "SYSTEM" CACHE STRING "KIM API Collection in which to install items")
 set_property(CACHE KIM_API_INSTALL_COLLECTION PROPERTY STRINGS SYSTEM USER ENVIRONMENT)
-
-
-#
-# Macro to perform any necessary standard configuration that must be completed
-# BEFORE the user calls the 'project()' command
-#
-macro(kim_api_items_setup_before_project)
-  set(_options "")
-  set(_oneValueArgs ITEM_TYPE)
-  set(_multiValueArgs "")
-  cmake_parse_arguments(_setup "${_options}" "${_oneValueArgs}" "${_multiValueArgs}" ${ARGN})
-  if(_setup_UNPARSED_ARGUMENTS)
-    message(FATAL_ERROR "Unparsed arguments found in 'kim_api_items_setup_before_project'")
-  endif()
-  set(_known_item_types portableModel modelDriver simulatorModel)
-  if(NOT ${_setup_ITEM_TYPE} IN_LIST _known_item_types)
-    message(FATAL_ERROR "Unknown KIM API Item type")
-  endif()
-
-  kim_api_items_set_cmake_compiler_variables()
-  kim_api_items_set_cmake_build_type_variable_in_cache()
-endmacro(kim_api_items_setup_before_project)
-
-#
-# Macro to perform any necessary standard configuration that must be completed
-# AFTER the user calls the 'project()' command
-#
-macro(kim_api_items_setup_after_project)
-  set(_options "")
-  set(_oneValueArgs ITEM_TYPE)
-  set(_multiValueArgs "")
-  cmake_parse_arguments(_before_setup "${_options}" "${_oneValueArgs}" "${_multiValueArgs}" ${ARGN})
-  if(_setup_UNPARSED_ARGUMENTS)
-    message(FATAL_ERROR "Unparsed arguments found in 'kim_api_items_setup_after_project'")
-  endif()
-  set(_known_item_types portableModel modelDriver simulatorModel)
-  if(NOT ${_setup_ITEM_TYPE} IN_LIST _known_item_types)
-    message(FATAL_ERROR "Unknown KIM API Item type")
-  endif()
-
-  enable_language(CXX)
-  enable_language(C)
-  enable_testing()
-
-  kim_api_items_set_cmake_compiler_standard_variables()
-  kim_api_items_set_cmake_rpath_variables()
-  kim_api_items_prepend_compiler_flags_to_cmake_variables()
-
-  find_package(KIM-API 2.2 REQUIRED CONFIG)
-endmacro(kim_api_items_setup_after_project)
 
 
 #

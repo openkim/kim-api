@@ -36,12 +36,57 @@
 
 # - KIM-API-ITEMS package for *build tree*
 #
+#  kim_api_items_setup_before_project()  - standard item configure, part 1
+#  kim_api_items_setup_after_project()   - standard item configure, part 2
 #
 
 
 set(KIM_API_INSTALL_COLLECTION "SYSTEM" CACHE STRING "KIM API Collection in which to install items")
 set_property(CACHE KIM_API_INSTALL_COLLECTION PROPERTY STRINGS SYSTEM)
 mark_as_advanced(KIM_API_INSTALL_COLLECTION)
+
+#
+# Macro to perform any necessary standard configuration that must be completed
+# BEFORE the user calls the 'project()' command
+#
+macro(kim_api_items_setup_before_project)
+  set(_options "")
+  set(_oneValueArgs ITEM_TYPE)
+  set(_multiValueArgs "")
+  cmake_parse_arguments(_setup "${_options}" "${_oneValueArgs}" "${_multiValueArgs}" ${ARGN})
+  if(_setup_UNPARSED_ARGUMENTS)
+    message(FATAL_ERROR "Unparsed arguments found in 'kim_api_items_setup_before_project'")
+  endif()
+  set(_known_item_types portableModel modelDriver simulatorModel)
+  if(NOT ${_setup_ITEM_TYPE} IN_LIST _known_item_types)
+    message(FATAL_ERROR "Unknown KIM API Item type")
+  endif()
+
+  # nothing else to do from the build tree...
+endmacro(kim_api_items_setup_before_project)
+
+#
+# Macro to perform any necessary standard configuration that must be completed
+# AFTER the user calls the 'project()' command
+#
+macro(kim_api_items_setup_after_project)
+  set(_options "")
+  set(_oneValueArgs ITEM_TYPE)
+  set(_multiValueArgs "")
+  cmake_parse_arguments(_before_setup "${_options}" "${_oneValueArgs}" "${_multiValueArgs}" ${ARGN})
+  if(_setup_UNPARSED_ARGUMENTS)
+    message(FATAL_ERROR "Unparsed arguments found in 'kim_api_items_setup_after_project'")
+  endif()
+  set(_known_item_types portableModel modelDriver simulatorModel)
+  if(NOT ${_setup_ITEM_TYPE} IN_LIST _known_item_types)
+    message(FATAL_ERROR "Unknown KIM API Item type")
+  endif()
+
+  # nothing else to do from the build tree...
+
+  find_package(KIM-API 2.2 REQUIRED CONFIG)
+endmacro(kim_api_items_setup_after_project)
+
 
 include("${CMAKE_CURRENT_LIST_DIR}/kim-api-items-macros.cmake")
 
