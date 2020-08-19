@@ -54,8 +54,8 @@ if(${GIT_FOUND})
     # Overall this is a use case only of concern to active developers of the
     # kim-api project.  So, a better solution is not really necessary.
     #
-    set(_git_describe_sentinel "git-describe-config-sentinel")
-    set(_depend_file "${CMAKE_CURRENT_BINARY_DIR}/${_git_describe_sentinel}-file")
+    set(_git_describe_sentinel "git-describe-sentinel")
+    set(_depend_file "${CMAKE_CURRENT_BINARY_DIR}/.${_git_describe_sentinel}-file")
 
     find_program(_touch touch)
     if(${CMAKE_MINOR_VERSION} GREATER 11)  # use file(GLOB <var> CONFIGURE_DEPENDS ...) mechanism

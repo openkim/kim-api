@@ -49,12 +49,11 @@ target_link_libraries(simulator-model kim-loader)
 set_target_properties(simulator-model PROPERTIES OUTPUT_NAME ${SIMULATOR_MODEL})
 
 add_executable(collections-info collections-info.cpp)
-target_include_directories(collections-info PRIVATE "${PROJECT_SOURCE_DIR}/cpp/src")
 target_link_libraries(collections-info kim-loader)
 set_target_properties(collections-info PROPERTIES OUTPUT_NAME ${COLLECTIONS_INFO})
 
 add_executable(shared-library-test shared-library-test.cpp)
-target_include_directories(shared-library-test PRIVATE ${PROJECT_BINARY_DIR})
+target_include_directories(shared-library-test PRIVATE "${PROJECT_BINARY_DIR}/cpp/include")
 target_link_libraries(shared-library-test ${CMAKE_DL_LIBS})
 set_target_properties(shared-library-test PROPERTIES OUTPUT_NAME ${SHARED_LIBRARY_TEST})
 

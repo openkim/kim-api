@@ -128,12 +128,11 @@ set_target_properties(kim-api
     OUTPUT_NAME "${PROJECT_NAME}"
     VERSION ${PROJECT_VERSION}
     SOVERSION ${PROJECT_VERSION_MAJOR}
-    Fortran_MODULE_DIRECTORY "${PROJECT_BINARY_DIR}/Fortran_MODULES"
+    Fortran_MODULE_DIRECTORY "${PROJECT_BINARY_DIR}/fortran/${KIM_API_Fortran_MODULE_DIR_IDENTIFIER}"
     )
 target_include_directories(kim-api PUBLIC
   $<BUILD_INTERFACE:$<TARGET_PROPERTY:kim-api,Fortran_MODULE_DIRECTORY>>
   $<INSTALL_INTERFACE:${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME}/${KIM_API_Fortran_MODULE_DIR_IDENTIFIER}>)
-target_include_directories(kim-api PUBLIC $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>)
 target_link_libraries(kim-api ${CMAKE_DL_LIBS})
 
 # Add install rules for kim-api

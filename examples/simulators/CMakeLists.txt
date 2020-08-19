@@ -60,9 +60,9 @@ function(_add_simulator_model_tests _simulator_name _test_models _test_models_fa
       )
     set_property(TEST ${_test_name}
       APPEND PROPERTY ENVIRONMENT
-        "${KIM_API_ENVIRONMENT_MODEL_DRIVER_PLURAL_DIR}=${PROJECT_BINARY_DIR}"
-        "${KIM_API_ENVIRONMENT_PORTABLE_MODEL_PLURAL_DIR}=${PROJECT_BINARY_DIR}"
-        "${KIM_API_ENVIRONMENT_SIMULATOR_MODEL_PLURAL_DIR}=${PROJECT_BINARY_DIR}"
+        "${KIM_API_ENVIRONMENT_MODEL_DRIVER_PLURAL_DIR}=${PROJECT_BINARY_DIR}/examples/model-drivers"
+        "${KIM_API_ENVIRONMENT_PORTABLE_MODEL_PLURAL_DIR}=${PROJECT_BINARY_DIR}/examples/portable-models"
+        "${KIM_API_ENVIRONMENT_SIMULATOR_MODEL_PLURAL_DIR}=${PROJECT_BINARY_DIR}/examples/simulator-models"
       )
     if("${_model}" IN_LIST _test_models_fail_list)
       set_tests_properties("${_test_name}" PROPERTIES WILL_FAIL TRUE)
@@ -80,9 +80,9 @@ function(_add_simulator_tests _simulator_dir _simulator_name)
     )
   set_property(TEST ${_test_name}
     APPEND PROPERTY ENVIRONMENT
-      "${KIM_API_ENVIRONMENT_MODEL_DRIVER_PLURAL_DIR}=${PROJECT_BINARY_DIR}"
-      "${KIM_API_ENVIRONMENT_PORTABLE_MODEL_PLURAL_DIR}=${PROJECT_BINARY_DIR}"
-      "${KIM_API_ENVIRONMENT_SIMULATOR_MODEL_PLURAL_DIR}=${PROJECT_BINARY_DIR}"
+    "${KIM_API_ENVIRONMENT_MODEL_DRIVER_PLURAL_DIR}=${PROJECT_BINARY_DIR}/examples/model-drivers"
+    "${KIM_API_ENVIRONMENT_PORTABLE_MODEL_PLURAL_DIR}=${PROJECT_BINARY_DIR}/examples/portable-models"
+    "${KIM_API_ENVIRONMENT_SIMULATOR_MODEL_PLURAL_DIR}=${PROJECT_BINARY_DIR}/examples/simulator-models"
     )
 endfunction(_add_simulator_tests)
 
