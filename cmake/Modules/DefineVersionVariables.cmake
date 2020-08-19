@@ -37,14 +37,14 @@ set(PROJECT_VERSION_PRERELEASE "git" CACHE STRING "Project SemVer prerelease str
 
 find_package(Git)
 if(${GIT_FOUND})
-  execute_process(COMMAND ${GIT_EXECUTABLE} -C "${CMAKE_SOURCE_DIR}" rev-parse --show-toplevel
+  execute_process(COMMAND ${GIT_EXECUTABLE} -C "${PROJECT_SOURCE_DIR}" rev-parse --show-toplevel
     OUTPUT_STRIP_TRAILING_WHITESPACE
     OUTPUT_VARIABLE _toplevel
     RESULT_VARIABLE _isGitRepo
     ERROR_QUIET
     )
 
-  if((_isGitRepo EQUAL 0) AND ("${_toplevel}" STREQUAL "${CMAKE_SOURCE_DIR}"))
+  if((_isGitRepo EQUAL 0) AND ("${_toplevel}" STREQUAL "${PROJECT_SOURCE_DIR}"))
     # set configuration to depend on _depend_file
     #
     # For details and discussion on the below approach, see:
@@ -76,7 +76,7 @@ if(${GIT_FOUND})
       set_property(DIRECTORY "${CURRENT_SOURCE_DIR}" APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${_depend_file}")
     endif()
 
-    execute_process(COMMAND ${GIT_EXECUTABLE} -C "${CMAKE_SOURCE_DIR}" update-index -q --refresh
+    execute_process(COMMAND ${GIT_EXECUTABLE} -C "${PROJECT_SOURCE_DIR}" update-index -q --refresh
       TIMEOUT 5
       OUTPUT_QUIET
       ERROR_QUIET
@@ -87,7 +87,7 @@ if(${GIT_FOUND})
       set(_DIRTY ".dirty")
     endif()
     execute_process(
-      COMMAND ${GIT_EXECUTABLE} -C "${CMAKE_SOURCE_DIR}" describe --dirty=${_DIRTY} --broken=.broken --always
+      COMMAND ${GIT_EXECUTABLE} -C "${PROJECT_SOURCE_DIR}" describe --dirty=${_DIRTY} --broken=.broken --always
       OUTPUT_STRIP_TRAILING_WHITESPACE
       OUTPUT_VARIABLE _git_describe
       )

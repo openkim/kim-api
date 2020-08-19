@@ -128,12 +128,12 @@ set_target_properties(kim-api
     OUTPUT_NAME "${PROJECT_NAME}"
     VERSION ${PROJECT_VERSION}
     SOVERSION ${PROJECT_VERSION_MAJOR}
-    Fortran_MODULE_DIRECTORY "${CMAKE_BINARY_DIR}/Fortran_MODULES"
+    Fortran_MODULE_DIRECTORY "${PROJECT_BINARY_DIR}/Fortran_MODULES"
     )
 target_include_directories(kim-api PUBLIC
   $<BUILD_INTERFACE:$<TARGET_PROPERTY:kim-api,Fortran_MODULE_DIRECTORY>>
   $<INSTALL_INTERFACE:${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME}/${KIM_API_Fortran_MODULE_DIR_IDENTIFIER}>)
-target_include_directories(kim-api PUBLIC $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}>)
+target_include_directories(kim-api PUBLIC $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>)
 target_link_libraries(kim-api ${CMAKE_DL_LIBS})
 
 # Add install rules for kim-api
@@ -185,8 +185,8 @@ add_subdirectory(pkg-config)
 #
 if(KIM_API_BUILD_EXAMPLES)
   set(KIM_API_CMAKE_PREFIX_DIR "")  # avoid uninitialized variable warning
-  set(KIM-API_DIR "${CMAKE_BINARY_DIR}/cmake/${KIM_API_BUILD_TREE_CONFIG_DIR_IDENTIFIER}")
-  set(KIM-API-ITEMS_DIR "${CMAKE_BINARY_DIR}/cmake/${KIM_API_BUILD_TREE_CONFIG_DIR_IDENTIFIER}-items")
+  set(KIM-API_DIR "${PROJECT_BINARY_DIR}/cmake/${KIM_API_BUILD_TREE_CONFIG_DIR_IDENTIFIER}")
+  set(KIM-API-ITEMS_DIR "${PROJECT_BINARY_DIR}/cmake/${KIM_API_BUILD_TREE_CONFIG_DIR_IDENTIFIER}-items")
   add_subdirectory(examples/model-drivers)
   add_subdirectory(examples/portable-models)
   add_subdirectory(examples/simulator-models)

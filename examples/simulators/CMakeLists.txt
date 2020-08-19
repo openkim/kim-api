@@ -47,7 +47,7 @@ set(_test_models
   ex_model_Ar_SLJ_MultiCutoff
   )
 
-set(_testing_dir "${CMAKE_BINARY_DIR}/Testing")
+set(_testing_dir "${PROJECT_BINARY_DIR}/Testing")
 
 function(_add_simulator_model_tests _simulator_name _test_models _test_models_fail_list)
   foreach(_model IN LISTS _test_models)
@@ -60,9 +60,9 @@ function(_add_simulator_model_tests _simulator_name _test_models _test_models_fa
       )
     set_property(TEST ${_test_name}
       APPEND PROPERTY ENVIRONMENT
-        "${KIM_API_ENVIRONMENT_MODEL_DRIVER_PLURAL_DIR}=${CMAKE_BINARY_DIR}"
-        "${KIM_API_ENVIRONMENT_PORTABLE_MODEL_PLURAL_DIR}=${CMAKE_BINARY_DIR}"
-        "${KIM_API_ENVIRONMENT_SIMULATOR_MODEL_PLURAL_DIR}=${CMAKE_BINARY_DIR}"
+        "${KIM_API_ENVIRONMENT_MODEL_DRIVER_PLURAL_DIR}=${PROJECT_BINARY_DIR}"
+        "${KIM_API_ENVIRONMENT_PORTABLE_MODEL_PLURAL_DIR}=${PROJECT_BINARY_DIR}"
+        "${KIM_API_ENVIRONMENT_SIMULATOR_MODEL_PLURAL_DIR}=${PROJECT_BINARY_DIR}"
       )
     if("${_model}" IN_LIST _test_models_fail_list)
       set_tests_properties("${_test_name}" PROPERTIES WILL_FAIL TRUE)
@@ -80,9 +80,9 @@ function(_add_simulator_tests _simulator_dir _simulator_name)
     )
   set_property(TEST ${_test_name}
     APPEND PROPERTY ENVIRONMENT
-      "${KIM_API_ENVIRONMENT_MODEL_DRIVER_PLURAL_DIR}=${CMAKE_BINARY_DIR}"
-      "${KIM_API_ENVIRONMENT_PORTABLE_MODEL_PLURAL_DIR}=${CMAKE_BINARY_DIR}"
-      "${KIM_API_ENVIRONMENT_SIMULATOR_MODEL_PLURAL_DIR}=${CMAKE_BINARY_DIR}"
+      "${KIM_API_ENVIRONMENT_MODEL_DRIVER_PLURAL_DIR}=${PROJECT_BINARY_DIR}"
+      "${KIM_API_ENVIRONMENT_PORTABLE_MODEL_PLURAL_DIR}=${PROJECT_BINARY_DIR}"
+      "${KIM_API_ENVIRONMENT_SIMULATOR_MODEL_PLURAL_DIR}=${PROJECT_BINARY_DIR}"
     )
 endfunction(_add_simulator_tests)
 

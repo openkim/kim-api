@@ -35,8 +35,8 @@
 
 target_include_directories(kim-api PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
 
-configure_file(KIM_LOG_DEFINES.inc.in ${CMAKE_BINARY_DIR}/KIM_LOG_DEFINES.inc)
-configure_file(KIM_Version.hpp.in ${CMAKE_BINARY_DIR}/KIM_Version.hpp)
+configure_file(KIM_LOG_DEFINES.inc.in ${PROJECT_BINARY_DIR}/KIM_LOG_DEFINES.inc)
+configure_file(KIM_Version.hpp.in ${PROJECT_BINARY_DIR}/KIM_Version.hpp)
 
 set(CPP_HEADERS
   KIM_ChargeUnit.hpp
@@ -78,8 +78,8 @@ set(CPP_HEADERS
   KIM_TemperatureUnit.hpp
   KIM_TimeUnit.hpp
   KIM_UnitSystem.hpp
-  ${CMAKE_BINARY_DIR}/KIM_LOG_DEFINES.inc
-  ${CMAKE_BINARY_DIR}/KIM_Version.hpp
+  ${PROJECT_BINARY_DIR}/KIM_LOG_DEFINES.inc
+  ${PROJECT_BINARY_DIR}/KIM_Version.hpp
   )
 
 install(FILES ${CPP_HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME})

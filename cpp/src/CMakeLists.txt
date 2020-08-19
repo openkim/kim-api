@@ -35,9 +35,9 @@
 
 
 target_include_directories(kim-api PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
-target_include_directories(kim-api PRIVATE ${CMAKE_SOURCE_DIR}/cmake)  # for KIM_SharedLibrarySchema.hpp
+target_include_directories(kim-api PRIVATE ${PROJECT_SOURCE_DIR}/cmake)  # for KIM_SharedLibrarySchema.hpp
 
-configure_file(KIM_Configuration.hpp.in ${CMAKE_BINARY_DIR}/KIM_Configuration.hpp)
+configure_file(KIM_Configuration.hpp.in ${PROJECT_BINARY_DIR}/KIM_Configuration.hpp)
 
 set(CPP_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ChargeUnit.cpp
@@ -99,18 +99,18 @@ add_library(kim-loader STATIC
   )
 target_include_directories(kim-loader PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_SOURCE_DIR}/cpp/include
-  ${CMAKE_SOURCE_DIR}/c/include
-  ${CMAKE_SOURCE_DIR}/cmake  # for KIM_SharedLibrarySchema.hpp
-  ${CMAKE_BINARY_DIR}
+  ${PROJECT_SOURCE_DIR}/cpp/include
+  ${PROJECT_SOURCE_DIR}/c/include
+  ${PROJECT_SOURCE_DIR}/cmake  # for KIM_SharedLibrarySchema.hpp
+  ${PROJECT_BINARY_DIR}
   )
 target_link_libraries(kim-loader ${CMAKE_DL_LIBS})
 
 if(WIN32 AND NOT CYGWIN)
   # Activate C++17 language standard on Win32 platform, because kim-api code uses C++ filesystem library internally.
-  # Note: The 'cxx_std_17' target compile feature was added by CMake version 3.8. 
+  # Note: The 'cxx_std_17' target compile feature was added by CMake version 3.8.
   # For older CMake versions, fall back to setting the CXX_STANDARD target property instead.
-  get_property(cxx_features GLOBAL PROPERTY CMAKE_CXX_KNOWN_FEATURES) 
+  get_property(cxx_features GLOBAL PROPERTY CMAKE_CXX_KNOWN_FEATURES)
   if("cxx_std_17" IN_LIST cxx_features)
     target_compile_features(kim-api PUBLIC cxx_std_17)
     target_compile_features(kim-loader PUBLIC cxx_std_17)

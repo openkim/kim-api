@@ -31,10 +31,10 @@
 #
 
 set(_log_detailed_in "${CMAKE_CURRENT_LIST_DIR}/kim-api-configuration-detailed.log.in")
-set(_log_detailed "${CMAKE_BINARY_DIR}/kim-api-configuration-detailed.log")
+set(_log_detailed "${PROJECT_BINARY_DIR}/kim-api-configuration-detailed.log")
 
 set(_log_summary_in "${CMAKE_CURRENT_LIST_DIR}/kim-api-configuration-summary.log.in")
-set(_log_summary "${CMAKE_BINARY_DIR}/kim-api-configuration-summary.log")
+set(_log_summary "${PROJECT_BINARY_DIR}/kim-api-configuration-summary.log")
 
 if(EXISTS "${_log_summary}")
   file(SHA1 "${_log_summary}" _log_summary_sha1_before)

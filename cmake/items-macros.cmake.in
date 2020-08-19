@@ -744,7 +744,7 @@ function(_add_kim_api_library)
   target_link_libraries(${ITEM_NAME} PRIVATE KIM-API::kim-api)
 
   _determine_collection_install_prefix_and_output_name("${_ITEM_TYPE}")
-  set_target_properties(${ITEM_NAME} PROPERTIES OUTPUT_NAME "${ITEM_OUTPUT_NAME}" LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${ITEM_NAME})
+  set_target_properties(${ITEM_NAME} PROPERTIES OUTPUT_NAME "${ITEM_OUTPUT_NAME}" LIBRARY_OUTPUT_DIRECTORY ${${CMAKE_PROJECT_NAME}_BINARY_DIR}/${ITEM_NAME})
   install(TARGETS ${ITEM_NAME} LIBRARY DESTINATION "${ITEM_INSTALL_PREFIX}/${ITEM_NAME}")
 
   add_kim_api_test(NAME shared_library_test_${ITEM_NAME}
