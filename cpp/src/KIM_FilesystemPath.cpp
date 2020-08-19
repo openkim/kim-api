@@ -33,7 +33,7 @@
 
 #include <cstdlib>
 #include <iostream>
-#include <sstream>  // For MinGW/Linux IWYU pragma: keep
+#include <sstream>  // IWYU pragma: keep  // For MinGW/Linux
 
 #ifndef KIM_FILESYSTEM_PATH_HPP_
 #include "KIM_FilesystemPath.hpp"
@@ -49,7 +49,7 @@
 #include <sstream>
 #include <stdio.h>
 #include <sys/stat.h>
-#include <unistd.h>  // IWYU pragma: keep
+#include <unistd.h>  // IWYU pragma: keep  // For macOS
 #endif
 
 namespace KIM

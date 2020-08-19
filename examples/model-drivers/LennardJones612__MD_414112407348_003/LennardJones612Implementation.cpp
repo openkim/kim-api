@@ -30,7 +30,7 @@
 
 #include <cmath>
 #include <cstring>
-#include <iostream>  // IWYU pragma: keep  BUG-WORK-AROUND
+#include <iostream>  // IWYU pragma: keep  // BUG WORK-AROUND
 #include <map>
 #include <sstream>
 #include <string>

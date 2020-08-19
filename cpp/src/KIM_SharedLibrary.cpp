@@ -40,7 +40,7 @@
 #endif
 #include <fstream>
 #include <sstream>
-#include <unistd.h>  // IWYU pragma: keep
+#include <unistd.h>  // IWYU pragma: keep  // For macOS
 
 #ifndef KIM_SHARED_LIBRARY_HPP_
 #include "KIM_SharedLibrary.hpp"
