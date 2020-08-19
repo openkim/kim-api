@@ -92,6 +92,9 @@ set(KIM_API_Fortran_FLAGS "${_s}" CACHE STRING "KIM API Fortran compiler flags")
 
 # Set global linker flags
 #
+if(NOT KIM_API_EXE_LINKER_FLAGS)
+  set(KIM_API_EXE_LINKER_FLAGS "")
+endif()
 if(KIM_API_ENABLE_SANITIZE)
   set(KIM_API_EXE_LINKER_FLAGS "${KIM_API_EXE_LINKER_FLAGS} -fsanitize=address")
 endif()

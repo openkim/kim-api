@@ -50,7 +50,8 @@ ccache -z
 # cmake will respect value of the follwoing environment variables:
 #   CXX,      CC,     and FC
 #   CXXFLAGS, CFLAGS, and FFLAGS
-cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX:=/usr/local} \
+cmake --warn-uninitialized \
+      -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX:=/usr/local} \
       -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} \
       ${SANITIZE:+-DKIM_API_ENABLE_SANITIZE=ON} \
       ${COVERAGE:+-DKIM_API_ENABLE_COVERAGE=ON} \

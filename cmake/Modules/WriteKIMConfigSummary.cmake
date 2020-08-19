@@ -38,7 +38,10 @@ set(_log_summary "${CMAKE_BINARY_DIR}/kim-api-configuration-summary.log")
 
 if(EXISTS "${_log_summary}")
   file(SHA1 "${_log_summary}" _log_summary_sha1_before)
+else()
+  set(_log_summary_sha1_before "")
 endif()
+set(UPDATE_WHEN_CMAKE_GREATER_THAN_3.12 "")  # avoid uninitialized variable warning
 # _log_detailed contains "CMAKE_*_CACHED_VALUE" references for cmake's (< 3.13) that don't have $CACHE{} ;; remove/change once min cmake is > 3.12
 configure_file("${_log_detailed_in}" "${_log_detailed}")
 # _log_summary contains "CMAKE_*_CACHED_VALUE" references for cmake's (< 3.13) that don't have $CACHE{} ;; remove/change once min cmake is > 3.12

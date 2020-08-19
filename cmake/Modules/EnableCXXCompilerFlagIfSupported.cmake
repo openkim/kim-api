@@ -36,6 +36,9 @@
 include(CheckCXXCompilerFlag)
 
 function(enable_cxx_compiler_flag_if_supported _flag)
+  if(NOT KIM_API_CXX_FLAGS)
+    set(KIM_API_CXX_FLAGS "")
+  endif()
   string(FIND "${KIM_API_CXX_FLAGS}" "${_flag}" _flag_already_set)
   string(MAKE_C_IDENTIFIER "${_flag}" _cid_flag)
   if(_flag_already_set EQUAL -1)

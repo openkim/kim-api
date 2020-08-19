@@ -38,8 +38,6 @@
 set(BASH_COMPLETIONS ${PROJECT_NAME}-collections-management.bash)
 set(ZSH_COMPLETIONS ${PROJECT_NAME}-collections-management.zsh)
 
-string(MAKE_C_IDENTIFIER "${PROJECT_NAME}" KIM_API_C_ID_PROJECT_NAME)
-
 configure_file(collections-management.bash.in ${BASH_COMPLETIONS} @ONLY)
 configure_file(collections-management.zsh.in ${ZSH_COMPLETIONS} @ONLY)
 

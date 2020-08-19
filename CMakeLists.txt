@@ -75,6 +75,7 @@ mark_as_advanced(KIM_API_CONFIGURATION_TIMESTAMP)
 #
 project(${KIM_API_PROJECT_NAME} VERSION 2.2.0 LANGUAGES CXX C Fortran)  # must remain a single line for create-pacakge script
 set(PROJECT_DESCRIPTION "An Application Programming Interface (API) for the Knowledgebase of Interatomic Models (KIM).")
+#
 include(GNUInstallDirs)  # needs to come after call to project()
 include(CompletionConfig)  # set install dirs for completions
 include(DefaultRPATHSettings)
@@ -157,22 +158,33 @@ add_subdirectory(cpp/src)
 add_subdirectory(c/src)
 add_subdirectory(fortran/src)
 
-# Add other subdirectories
+# Add cmake subdirectory
 #
 add_subdirectory(cmake)
-add_subdirectory(completions)
-add_subdirectory(editors/emacs)
-add_subdirectory(pkg-config)
+
+#
+string(MAKE_C_IDENTIFIER "${PROJECT_NAME}" KIM_API_C_ID_PROJECT_NAME)  # used in ./completions and ./utils
+#
+
+# Add utils subdirectory
+#
 add_subdirectory(utils)
+
+# Add other subdirectories
+#
 if(${CMAKE_MINOR_VERSION} GREATER 8)
   add_subdirectory(docs)
 else()
   add_custom_target(docs)
 endif()
+add_subdirectory(completions)
+add_subdirectory(editors/emacs)
+add_subdirectory(pkg-config)
 
 # Add Models & Drivers
 #
 if(KIM_API_BUILD_EXAMPLES)
+  set(KIM_API_CMAKE_PREFIX_DIR "")  # avoid uninitialized variable warning
   set(KIM-API_DIR "${CMAKE_BINARY_DIR}/cmake/${KIM_API_BUILD_TREE_CONFIG_DIR_IDENTIFIER}")
   set(KIM-API-ITEMS_DIR "${CMAKE_BINARY_DIR}/cmake/${KIM_API_BUILD_TREE_CONFIG_DIR_IDENTIFIER}-items")
   add_subdirectory(examples/model-drivers)
