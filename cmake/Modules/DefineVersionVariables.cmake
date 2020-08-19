@@ -45,34 +45,36 @@ if(${GIT_FOUND})
     )
 
   if((_isGitRepo EQUAL 0) AND ("${_toplevel}" STREQUAL "${CMAKE_SOURCE_DIR}"))
-    # set configuration to depend on _depend_file; then touch depend with every invocation of make
+    # set configuration to depend on _depend_file
     #
-    # There is one flaw in this scheme.  The project will not be reconfigured
-    # during the first execution of 'make', but instead will use the original
-    # configuration results.  However, after the first 'make' is executed,
-    # reconfiguration will occur with every additional 'make' execution.
+    # For details and discussion on the below approach, see:
+    #   https://discourse.cmake.org/t/support-for-git-describe-output-in-a-semver-prerelease-string/1714?u=relliott
+    #   https://github.com/ellio167/cmake-and-git-describe
     #
-    # cmake ...
-    # make  # no reconfigure; build
-    # make  # reconfigure; build
-    # ...
-    #
-    # This provides the possibility of getting incorrect results if one does:
-    #
-    # cmake ...
-    # <edit files to change results of 'git describe'>
-    # make  # no reconfigure, uses old 'git describe' results; build
-    # make  # reconfigure, now used current 'git describe' results; build
-    #
-    # There seems to be no good way to avoid this problem.
+    # Overall this is a use case only of concern to active developers of the
+    # kim-api project.  So, a better solution is not really necessary.
     #
     set(_git_describe_sentinel "git-describe-config-sentinel")
     set(_depend_file "${CMAKE_CURRENT_BINARY_DIR}/${_git_describe_sentinel}-file")
-    execute_process(COMMAND ${CMAKE_COMMAND} -E touch "${_depend_file}")
-    # _depend_file must persist until configuraiton is finalized, or else the
-    # below set_property command will have no effect.
-    set_property(DIRECTORY "${CURRENT_SOURCE_DIR}" APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${_depend_file}")
-    add_custom_target(${_git_describe_sentinel}-target ALL COMMAND ${CMAKE_COMMAND} -E touch "${_depend_file}")
+
+    find_program(_touch touch)
+    if(${CMAKE_MINOR_VERSION} GREATER 11)  # use file(GLOB <var> CONFIGURE_DEPENDS ...) mechanism
+      if(EXISTS "${_depend_file}")
+        file(REMOVE "${_depend_file}")
+      endif()
+      file(GLOB _t CONFIGURE_DEPENDS "${_depend_file}")
+      file(TOUCH "${_depend_file}")
+    elseif(_touch)  # use system 'touch' with future timestamp and CMAKE_CONFIGURE_DEPENDS mechanism
+      string(TIMESTAMP _time "1%m%d%H%M")
+      math(EXPR _time "${_time} + 1")
+      string(REGEX REPLACE "^.(.*)$" "\\1" _time "${_time}")
+      execute_process(COMMAND ${_touch} -t "${_time}" "${_depend_file}")   # set modification/access time 1min in the future
+      set_property(DIRECTORY "${CURRENT_SOURCE_DIR}" APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${_depend_file}")
+    else()  # use CMAKE_CONFIGURE_DEPENDS property mechanism [has a number of corner cases]
+      execute_process(COMMAND ${CMAKE_COMMAND} -E touch "${_depend_file}")
+      add_custom_target(${_git_describe_sentinel}-target ALL COMMAND ${CMAKE_COMMAND} -E touch "${_depend_file}")
+      set_property(DIRECTORY "${CURRENT_SOURCE_DIR}" APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${_depend_file}")
+    endif()
 
     execute_process(COMMAND ${GIT_EXECUTABLE} -C "${CMAKE_SOURCE_DIR}" update-index -q --refresh
       TIMEOUT 5
