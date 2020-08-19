@@ -36,7 +36,7 @@
 include(CMakeParseArguments)
 include(CMakePackageConfigHelpers)
 
-macro(_configure_common_package_components)
+function(_configure_common_package_components)
   set(_options "")
   set(_oneValueArgs
     INSTALL_TREE_DIR BUILD_TREE_DIR
@@ -48,6 +48,10 @@ macro(_configure_common_package_components)
   cmake_parse_arguments(_cpkg "${_options}" "${_oneValueArgs}" "${_multiValueArgs}" ${ARGN})
   if(_cpkg_UNPARSED_ARGUMENTS)
     message(FATAL_ERROR "Unparsed arguments found in '_configure_common_pacakge_components'")
+  endif()
+
+  if(NOT CMAKE_INSTALL_RPATH)
+    set(CMAKE_INSTALL_RPATH "")  # avoid uninitialized variable warning
   endif()
 
   # Create package files
@@ -70,7 +74,7 @@ macro(_configure_common_package_components)
     DESTINATION
     "${_cpkg_INSTALL_TREE_DIR}"
     )
-endmacro(_configure_common_package_components)
+endfunction(_configure_common_package_components)
 
 
 ###############################################################################

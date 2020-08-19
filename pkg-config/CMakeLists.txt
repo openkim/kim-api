@@ -41,6 +41,8 @@ set(PKG_CONFIG_FILE "lib${PROJECT_NAME}.pc")
 list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${CMAKE_INSTALL_FULL_LIBDIR}" _isSystemDir)
 if("${_isSystemDir}" STREQUAL "-1")
   set(KIM_API_RPATH_FLAG "-Wl,-rpath,${CMAKE_INSTALL_FULL_LIBDIR}")
+else()
+  set(KIM_API_RPATH_FLAG "")
 endif()
 
 configure_file(libkim-api.pc.in ${PKG_CONFIG_FILE} @ONLY)

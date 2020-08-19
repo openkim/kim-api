@@ -211,7 +211,7 @@ macro(kim_api_items_set_rpath_variables)
   #
   set(KIM_API_CMAKE_SKIP_BUILD_RPATH @CMAKE_SKIP_BUILD_RPATH@)
   set(KIM_API_CMAKE_BUILD_WITH_INSTALL_RPATH @CMAKE_BUILD_WITH_INSTALL_RPATH@)
-  set(KIM_API_CMAKE_INSTALL_RPATH "@CMAKE_INSTALL_RPATH@")
+  set(KIM_API_CMAKE_INSTALL_RPATH "@CMAKE_INSTALL_RPATH@")  # empty string ("") represents "not set"
   set(KIM_API_CMAKE_INSTALL_RPATH_USE_LINK_PATH @CMAKE_INSTALL_RPATH_USE_LINK_PATH@)
 endmacro(kim_api_items_set_rpath_variables)
 
@@ -220,7 +220,9 @@ macro(kim_api_items_set_cmake_rpath_variables)
 
   set(CMAKE_SKIP_BUILD_RPATH ${KIM_API_CMAKE_SKIP_BUILD_RPATH})
   set(CMAKE_BUILD_WITH_INSTALL_RPATH ${KIM_API_CMAKE_BUILD_WITH_INSTALL_RPATH})
-  set(CMAKE_INSTALL_RPATH "${KIM_API_CMAKE_INSTALL_RPATH}")
+  if(NOT "${KIM_API_CMAKE_INSTALL_RPATH}" STREQUAL "")  # do not set if original value was "not set"
+    set(CMAKE_INSTALL_RPATH "${KIM_API_CMAKE_INSTALL_RPATH}")
+  endif()
   set(CMAKE_INSTALL_RPATH_USE_LINK_PATH ${KIM_API_CMAKE_INSTALL_RPATH_USE_LINK_PATH})
 endmacro(kim_api_items_set_cmake_rpath_variables)
 
