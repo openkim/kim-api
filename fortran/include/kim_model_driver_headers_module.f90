@@ -30,7 +30,6 @@
 ! Release: This file is part of the kim-api.git repository.
 !
 
-
 module kim_model_driver_headers_module
   use, intrinsic :: iso_c_binding
 

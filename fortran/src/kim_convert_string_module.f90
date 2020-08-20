@@ -30,7 +30,6 @@
 ! Release: This file is part of the kim-api.git repository.
 !
 
-
 module kim_convert_string_module
   implicit none
   private
@@ -51,17 +50,17 @@ contains
     integer(c_int) :: null_index
     integer(c_int) :: length
 
-    length = len(string)+1
-    do null_index=1,length
-      if (c_char_array(null_index) .eq. c_null_char) exit
+    length = len(string) + 1
+    do null_index = 1, length
+      if (c_char_array(null_index) == c_null_char) exit
     end do
-    if (null_index .eq. length) then
+    if (null_index == length) then
       null_index = len(string)
     else
       null_index = null_index - 1
     end if
     string = ""
-    do i=1,null_index
+    do i = 1, null_index
       string(i:i) = c_char_array(i)
     end do
   end subroutine kim_convert_c_char_array_to_string

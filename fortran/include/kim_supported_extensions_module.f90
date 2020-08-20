@@ -30,7 +30,6 @@
 ! Release: This file is part of the kim-api.git repository.
 !
 
-
 !> \brief \copybrief KIM::SupportedExtensions
 !!
 !! \sa KIM::SupportedExtensions, KIM_SupportedExtensions
@@ -44,7 +43,6 @@ module kim_supported_extensions_module
   public &
     ! Derived types
     kim_supported_extensions_type, &
-
     ! Constants
     KIM_SUPPORTED_EXTENSIONS_ID, &
     KIM_MAX_EXTENSION_ID_LENGTH, &
@@ -61,12 +59,12 @@ module kim_supported_extensions_module
   !!
   !! \since 2.0
   type, bind(c) :: kim_supported_extensions_type
-     !> \brief \copybrief KIM::SupportedExtensions::numberOfSupportedExtensions
-     !!
-     !! \sa KIM::SupportedExtensions::numberOfSupportedExtensions,
-     !! KIM_SupportedExtensions::numberOfSupportedExtensions
-     !!
-     !! \since 2.0
+    !> \brief \copybrief KIM::SupportedExtensions::numberOfSupportedExtensions
+    !!
+    !! \sa KIM::SupportedExtensions::numberOfSupportedExtensions,
+    !! KIM_SupportedExtensions::numberOfSupportedExtensions
+    !!
+    !! \since 2.0
     integer(c_int) number_of_supported_extensions
 
     !> \brief \copybrief KIM::SupportedExtensions::supportedExtensionID
@@ -76,7 +74,7 @@ module kim_supported_extensions_module
     !!
     !! \since 2.0
     character(c_char) supported_extension_id(KIM_MAX_EXTENSION_ID_LENGTH, &
-      KIM_MAX_NUMBER_OF_EXTENSIONS)
+                                             KIM_MAX_NUMBER_OF_EXTENSIONS)
 
     !> \brief \copybrief KIM::SupportedExtensions::supportedExtensionRequired
     !!

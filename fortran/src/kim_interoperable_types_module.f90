@@ -30,7 +30,6 @@
 ! Release: This file is part of the kim-api.git repository.
 !
 
-
 module kim_interoperable_types_module
   use, intrinsic :: iso_c_binding
   implicit none
@@ -53,7 +52,6 @@ module kim_interoperable_types_module
     kim_model_refresh_type, &
     kim_model_write_parameterized_model_type, &
     kim_simulator_model_type
-
 
   type, bind(c) :: kim_collections_type
     private

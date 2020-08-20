@@ -30,7 +30,6 @@
 ! Release: This file is part of the kim-api.git repository.
 !
 
-
 !> \brief \copybrief KIM::ModelRefresh
 !!
 !! \sa KIM::ModelRefresh, KIM_ModelRefresh
@@ -44,19 +43,16 @@ module kim_model_refresh_module
   public &
     ! Derived types
     kim_model_refresh_handle_type, &
-
     ! Constants
     KIM_MODEL_REFRESH_NULL_HANDLE, &
-
     ! Routines
-    operator (.eq.), &
-    operator (.ne.), &
+    operator(.eq.), &
+    operator(.ne.), &
     kim_set_influence_distance_pointer, &
     kim_set_neighbor_list_pointers, &
     kim_get_model_buffer_pointer, &
     kim_log_entry, &
     kim_to_string
-
 
   !> \brief \copybrief KIM::ModelRefresh
   !!
@@ -76,16 +72,16 @@ module kim_model_refresh_module
   !> \brief Compares kim_model_refresh_handle_type's for equality.
   !!
   !! \since 2.0
-  interface operator (.eq.)
+  interface operator(.eq.)
     module procedure kim_model_refresh_handle_equal
-  end interface operator (.eq.)
+  end interface operator(.eq.)
 
   !> \brief Compares kim_model_refresh_handle_type's for inequality.
   !!
   !! \since 2.0
-  interface operator (.ne.)
+  interface operator(.ne.)
     module procedure kim_model_refresh_handle_not_equal
-  end interface operator (.ne.)
+  end interface operator(.ne.)
 
   !> \brief \copybrief KIM::ModelRefresh::SetInfluenceDistancePointer
   !!
@@ -159,7 +155,7 @@ contains
     type(kim_model_refresh_handle_type), intent(in) :: lhs
     type(kim_model_refresh_handle_type), intent(in) :: rhs
 
-    kim_model_refresh_handle_not_equal = .not. (lhs .eq. rhs)
+    kim_model_refresh_handle_not_equal = .not. (lhs == rhs)
   end function kim_model_refresh_handle_not_equal
 
   !> \brief \copybrief KIM::ModelRefresh::SetInfluenceDistancePointer
@@ -170,14 +166,14 @@ contains
   !! \since 2.0
   recursive subroutine kim_model_refresh_set_influence_distance_pointer( &
     model_refresh_handle, influence_distance)
-    use kim_interoperable_types_module, only : kim_model_refresh_type
+    use kim_interoperable_types_module, only: kim_model_refresh_type
     implicit none
     interface
       recursive subroutine set_influence_distance_pointer(model_refresh, &
-        influence_distance) &
+                                                          influence_distance) &
         bind(c, name="KIM_ModelRefresh_SetInfluenceDistancePointer")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_model_refresh_type
+        use kim_interoperable_types_module, only: kim_model_refresh_type
         implicit none
         type(kim_model_refresh_type), intent(in) :: &
           model_refresh
@@ -190,7 +186,7 @@ contains
 
     call c_f_pointer(model_refresh_handle%p, model_refresh)
     call set_influence_distance_pointer(model_refresh, &
-      c_loc(influence_distance))
+                                        c_loc(influence_distance))
   end subroutine kim_model_refresh_set_influence_distance_pointer
 
   !> \brief \copybrief KIM::ModelRefresh::SetNeighborListPointers
@@ -202,15 +198,15 @@ contains
   recursive subroutine kim_model_refresh_set_neighbor_list_pointers( &
     model_refresh_handle, number_of_neighbor_lists, cutoffs, &
     modelWillNotRequestNeighborsOfNoncontributingParticles)
-    use kim_interoperable_types_module, only : kim_model_refresh_type
+    use kim_interoperable_types_module, only: kim_model_refresh_type
     implicit none
     interface
-      recursive subroutine set_neighbor_list_pointers(model_refresh, &
-        number_of_neighbor_lists, cutoffs_ptr, &
+      recursive subroutine set_neighbor_list_pointers( &
+        model_refresh, number_of_neighbor_lists, cutoffs_ptr, &
         modelWillNotRequestNeighborsOfNoncontributingParticles) &
         bind(c, name="KIM_ModelRefresh_SetNeighborListPointers")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_model_refresh_type
+        use kim_interoperable_types_module, only: kim_model_refresh_type
         implicit none
         type(kim_model_refresh_type), intent(in) :: &
           model_refresh
@@ -229,8 +225,8 @@ contains
     type(kim_model_refresh_type), pointer :: model_refresh
 
     call c_f_pointer(model_refresh_handle%p, model_refresh)
-    call set_neighbor_list_pointers(model_refresh, number_of_neighbor_lists, &
-      c_loc(cutoffs), &
+    call set_neighbor_list_pointers( &
+      model_refresh, number_of_neighbor_lists, c_loc(cutoffs), &
       c_loc(modelWillNotRequestNeighborsOfNoncontributingParticles))
   end subroutine kim_model_refresh_set_neighbor_list_pointers
 
@@ -242,13 +238,13 @@ contains
   !! \since 2.0
   recursive subroutine kim_model_refresh_get_model_buffer_pointer( &
     model_refresh_handle, ptr)
-    use kim_interoperable_types_module, only : kim_model_refresh_type
+    use kim_interoperable_types_module, only: kim_model_refresh_type
     implicit none
     interface
       recursive subroutine get_model_buffer_pointer(model_refresh, ptr) &
         bind(c, name="KIM_ModelRefresh_GetModelBufferPointer")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_model_refresh_type
+        use kim_interoperable_types_module, only: kim_model_refresh_type
         implicit none
         type(kim_model_refresh_type), intent(in) :: &
           model_refresh
@@ -269,16 +265,17 @@ contains
   !!
   !! \since 2.0
   recursive subroutine kim_model_refresh_log_entry(model_refresh_handle, &
-    log_verbosity, message)
-    use kim_log_verbosity_module, only : kim_log_verbosity_type
-    use kim_interoperable_types_module, only : kim_model_refresh_type
+                                                   log_verbosity, message)
+    use kim_log_verbosity_module, only: kim_log_verbosity_type
+    use kim_interoperable_types_module, only: kim_model_refresh_type
     implicit none
     interface
-      recursive subroutine log_entry(model_refresh, log_verbosity, message, &
-        line_number, file_name) bind(c, name="KIM_ModelRefresh_LogEntry")
+      recursive subroutine log_entry( &
+        model_refresh, log_verbosity, message, line_number, file_name) &
+        bind(c, name="KIM_ModelRefresh_LogEntry")
         use, intrinsic :: iso_c_binding
-        use kim_log_verbosity_module, only : kim_log_verbosity_type
-        use kim_interoperable_types_module, only : kim_model_refresh_type
+        use kim_log_verbosity_module, only: kim_log_verbosity_type
+        use kim_interoperable_types_module, only: kim_model_refresh_type
         implicit none
         type(kim_model_refresh_type), intent(in) :: &
           model_refresh
@@ -295,7 +292,7 @@ contains
 
     call c_f_pointer(model_refresh_handle%p, model_refresh)
     call log_entry(model_refresh, log_verbosity, trim(message)//c_null_char, &
-      0, ""//c_null_char)
+                   0, ""//c_null_char)
   end subroutine kim_model_refresh_log_entry
 
   !> \brief \copybrief KIM::ModelRefresh::ToString
@@ -304,14 +301,14 @@ contains
   !!
   !! \since 2.0
   recursive subroutine kim_model_refresh_to_string(model_refresh_handle, string)
-    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
-    use kim_interoperable_types_module, only : kim_model_refresh_type
+    use kim_convert_string_module, only: kim_convert_c_char_ptr_to_string
+    use kim_interoperable_types_module, only: kim_model_refresh_type
     implicit none
     interface
       type(c_ptr) recursive function model_refresh_string(model_refresh) &
         bind(c, name="KIM_ModelRefresh_ToString")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_model_refresh_type
+        use kim_interoperable_types_module, only: kim_model_refresh_type
         implicit none
         type(kim_model_refresh_type), intent(in) :: &
           model_refresh

@@ -30,7 +30,6 @@
 ! Release: This file is part of the kim-api.git repository.
 !
 
-
 !> \brief \copybrief KIM::DataType
 !!
 !! \sa KIM::DataType, KIM_DataType
@@ -44,20 +43,17 @@ module kim_data_type_module
   public &
     ! Derived types
     kim_data_type_type, &
-
     ! Constants
     KIM_DATA_TYPE_INTEGER, &
     KIM_DATA_TYPE_DOUBLE, &
-
     ! Routines
     kim_known, &
-    operator (.eq.), &
-    operator (.ne.), &
+    operator(.eq.), &
+    operator(.ne.), &
     kim_from_string, &
     kim_to_string, &
     kim_get_number_of_data_types, &
     kim_get_data_type
-
 
   !> \brief \copybrief KIM::DataType
   !!
@@ -65,11 +61,11 @@ module kim_data_type_module
   !!
   !! \since 2.0
   type, bind(c) :: kim_data_type_type
-     !> \brief \copybrief KIM::DataType::dataTypeID
-     !!
-     !! \sa KIM::DataType::dataTypeID, KIM_DataType::dataTypeID
-     !!
-     !! \since 2.0
+    !> \brief \copybrief KIM::DataType::dataTypeID
+    !!
+    !! \sa KIM::DataType::dataTypeID, KIM_DataType::dataTypeID
+    !!
+    !! \since 2.0
     integer(c_int) :: data_type_id
   end type kim_data_type_type
 
@@ -105,18 +101,18 @@ module kim_data_type_module
   !! \sa KIM::DataType::operator==(), KIM_DataType_Equal
   !!
   !! \since 2.0
-  interface operator (.eq.)
+  interface operator(.eq.)
     module procedure kim_data_type_equal
-  end interface operator (.eq.)
+  end interface operator(.eq.)
 
   !> \brief \copybrief KIM::DataType::operator!=()
   !!
   !! \sa KIM::DataType::operator!=(), KIM_DataType_NotEqual
   !!
   !! \since 2.0
-  interface operator (.ne.)
+  interface operator(.ne.)
     module procedure kim_data_type_not_equal
-  end interface operator (.ne.)
+  end interface operator(.ne.)
 
   !> \brief \copybrief KIM::DataType::DataType(std::string const &)
   !!
@@ -169,7 +165,7 @@ contains
     type(kim_data_type_type), intent(in) :: rhs
 
     kim_data_type_equal &
-      = (lhs%data_type_id .eq. rhs%data_type_id)
+      = (lhs%data_type_id == rhs%data_type_id)
   end function kim_data_type_equal
 
   !> \brief \copybrief KIM::DataType::operator!=()
@@ -182,7 +178,7 @@ contains
     type(kim_data_type_type), intent(in) :: lhs
     type(kim_data_type_type), intent(in) :: rhs
 
-    kim_data_type_not_equal = .not. (lhs .eq. rhs)
+    kim_data_type_not_equal = .not. (lhs == rhs)
   end function kim_data_type_not_equal
 
   !> \brief \copybrief KIM::DataType::DataType(std::string const &)
@@ -213,7 +209,7 @@ contains
   !!
   !! \since 2.0
   recursive subroutine kim_data_type_to_string(data_type, string)
-    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
+    use kim_convert_string_module, only: kim_convert_c_char_ptr_to_string
     implicit none
     interface
       type(c_ptr) recursive function get_string(data_type) &
@@ -275,6 +271,6 @@ contains
     type(kim_data_type_type), intent(out) :: data_type
     integer(c_int), intent(out) :: ierr
 
-    ierr = get_data_type(index-1, data_type)
+    ierr = get_data_type(index - 1, data_type)
   end subroutine kim_get_data_type
 end module kim_data_type_module

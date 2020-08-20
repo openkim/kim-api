@@ -30,7 +30,6 @@
 ! Release: This file is part of the kim-api.git repository.
 !
 
-
 !> \brief \copybrief KIM::LanguageName
 !!
 !! \sa KIM::LanguageName, KIM_LanguageName
@@ -44,21 +43,18 @@ module kim_language_name_module
   public &
     ! Derived types
     kim_language_name_type, &
-
     ! Constants
     KIM_LANGUAGE_NAME_CPP, &
     KIM_LANGUAGE_NAME_C, &
     KIM_LANGUAGE_NAME_FORTRAN, &
-
     ! Routines
     kim_known, &
-    operator (.eq.), &
-    operator (.ne.), &
+    operator(.eq.), &
+    operator(.ne.), &
     kim_from_string, &
     kim_to_string, &
     kim_get_number_of_language_names, &
     kim_get_language_name
-
 
   !> \brief \copybrief KIM::LanguageName
   !!
@@ -66,11 +62,11 @@ module kim_language_name_module
   !!
   !! \since 2.0
   type, bind(c) :: kim_language_name_type
-     !> \brief \copybrief KIM::LanguageName::languageNameID
-     !!
-     !! \sa KIM::LanguageName::languageNameID, KIM_LanguageName::languageNameID
-     !!
-     !! \since 2.0
+    !> \brief \copybrief KIM::LanguageName::languageNameID
+    !!
+    !! \sa KIM::LanguageName::languageNameID, KIM_LanguageName::languageNameID
+    !!
+    !! \since 2.0
     integer(c_int) :: language_name_id
   end type kim_language_name_type
 
@@ -115,18 +111,18 @@ module kim_language_name_module
   !! \sa KIM::LanguageName::operator==(), KIM_LanguageName_Equal
   !!
   !! \since 2.0
-  interface operator (.eq.)
+  interface operator(.eq.)
     module procedure kim_language_name_equal
-  end interface operator (.eq.)
+  end interface operator(.eq.)
 
   !> \brief \copybrief KIM::LanguageName::operator!=()
   !!
   !! \sa KIM::LanguageName::operator!=(), KIM_LanguageName_NotEqual
   !!
   !! \since 2.0
-  interface operator (.ne.)
+  interface operator(.ne.)
     module procedure kim_language_name_not_equal
-  end interface operator (.ne.)
+  end interface operator(.ne.)
 
   !> \brief \copybrief KIM::LanguageName::LanguageName(std::string const &)
   !!
@@ -180,7 +176,7 @@ contains
     type(kim_language_name_type), intent(in) :: rhs
 
     kim_language_name_equal &
-      = (lhs%language_name_id .eq. rhs%language_name_id)
+      = (lhs%language_name_id == rhs%language_name_id)
   end function kim_language_name_equal
 
   !> \brief \copybrief KIM::LanguageName::operator!=()
@@ -193,7 +189,7 @@ contains
     type(kim_language_name_type), intent(in) :: lhs
     type(kim_language_name_type), intent(in) :: rhs
 
-    kim_language_name_not_equal = .not. (lhs .eq. rhs)
+    kim_language_name_not_equal = .not. (lhs == rhs)
   end function kim_language_name_not_equal
 
   !> \brief \copybrief KIM::LanguageName::LanguageName(std::string const &)
@@ -225,7 +221,7 @@ contains
   !!
   !! \since 2.0
   recursive subroutine kim_language_name_to_string(language_name, string)
-    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
+    use kim_convert_string_module, only: kim_convert_c_char_ptr_to_string
     implicit none
     interface
       type(c_ptr) recursive function get_string(language_name) &
@@ -276,7 +272,8 @@ contains
     implicit none
     interface
       integer(c_int) recursive function get_language_name(index, &
-        language_name) bind(c, name="KIM_LANGUAGE_NAME_GetLanguageName")
+                                                          language_name) &
+        bind(c, name="KIM_LANGUAGE_NAME_GetLanguageName")
         use, intrinsic :: iso_c_binding
         import kim_language_name_type
         integer(c_int), intent(in), value :: index
@@ -287,6 +284,6 @@ contains
     type(kim_language_name_type), intent(out) :: language_name
     integer(c_int), intent(out) :: ierr
 
-    ierr = get_language_name(index-1, language_name)
+    ierr = get_language_name(index - 1, language_name)
   end subroutine kim_get_language_name
 end module kim_language_name_module

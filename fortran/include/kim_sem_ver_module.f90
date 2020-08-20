@@ -30,7 +30,6 @@
 ! Release: This file is part of the kim-api.git repository.
 !
 
-
 !> \brief \copybrief KIM::SEM_VER
 !!
 !! \sa KIM::SEM_VER
@@ -47,7 +46,6 @@ module kim_sem_ver_module
     kim_is_less_than, &
     kim_parse_sem_ver
 
-
 contains
   !> \brief \copybrief KIM::SEM_VER::GetSemVer
   !!
@@ -55,7 +53,7 @@ contains
   !!
   !! \since 2.0
   recursive subroutine kim_get_sem_ver(version)
-    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
+    use kim_convert_string_module, only: kim_convert_c_char_ptr_to_string
     implicit none
     interface
       type(c_ptr) recursive function get_sem_ver() &
@@ -77,12 +75,12 @@ contains
   !! \sa KIM::SEM_VER::IsLessThan, KIM_SEM_VER_IsLessThan
   !!
   !! \since 2.0
-  recursive subroutine kim_is_less_than(lhs, rhs, is_less_than, &
-    ierr)
+  recursive subroutine kim_is_less_than(lhs, rhs, is_less_than, ierr)
     implicit none
     interface
       integer(c_int) recursive function is_less_than_func(lhs, rhs, &
-        is_less_than) bind(c, name="KIM_SEM_VER_IsLessThan")
+                                                          is_less_than) &
+        bind(c, name="KIM_SEM_VER_IsLessThan")
         use, intrinsic :: iso_c_binding
         implicit none
         character(c_char), intent(in) :: lhs(*)
@@ -96,7 +94,7 @@ contains
     integer(c_int), intent(out) :: ierr
 
     ierr = is_less_than_func(trim(lhs)//c_null_char, trim(rhs)//c_null_char, &
-      is_less_than)
+                             is_less_than)
   end subroutine kim_is_less_than
 
   !> \brief \copybrief KIM::SEM_VER::ParseSemVer
@@ -105,13 +103,14 @@ contains
   !!
   !! \since 2.0
   recursive subroutine kim_parse_sem_ver(version, major, minor, patch, &
-    prerelease, build_metadata, ierr)
-    use kim_convert_string_module, only : kim_convert_c_char_array_to_string
+                                         prerelease, build_metadata, ierr)
+    use kim_convert_string_module, only: kim_convert_c_char_array_to_string
     implicit none
     interface
-      integer(c_int) recursive function parse_sem_ver(version, &
-        prerelease_length, build_metadata_length, major, minor, patch, &
-        prerelease, build_metadata) bind(c, name="KIM_SEM_VER_ParseSemVer")
+      integer(c_int) recursive function parse_sem_ver( &
+        version, prerelease_length, build_metadata_length, major, minor, &
+        patch, prerelease, build_metadata) &
+        bind(c, name="KIM_SEM_VER_ParseSemVer")
         use, intrinsic :: iso_c_binding
         implicit none
         character(c_char), intent(in) :: version(*)
@@ -137,10 +136,10 @@ contains
       build_metadata_local(len(build_metadata))
 
     ierr = parse_sem_ver(trim(version)//c_null_char, len(prerelease), &
-      len(build_metadata), major, minor, patch, c_loc(prerelease_local), &
-      c_loc(build_metadata_local))
+                         len(build_metadata), major, minor, patch, &
+                         c_loc(prerelease_local), c_loc(build_metadata_local))
     call kim_convert_c_char_array_to_string(prerelease_local, prerelease)
     call kim_convert_c_char_array_to_string(build_metadata_local, &
-      build_metadata)
+                                            build_metadata)
   end subroutine kim_parse_sem_ver
 end module kim_sem_ver_module

@@ -30,7 +30,6 @@
 ! Release: This file is part of the kim-api.git repository.
 !
 
-
 !> \brief \copybrief KIM::ComputeArguments
 !!
 !! \sa KIM::ComputeArguments, KIM_ComputeArguments
@@ -44,13 +43,11 @@ module kim_compute_arguments_module
   public &
     ! Derived types
     kim_compute_arguments_handle_type, &
-
     ! Constants
     KIM_COMPUTE_ARGUMENTS_NULL_HANDLE, &
-
     ! Routines
-    operator (.eq.), &
-    operator (.ne.), &
+    operator(.eq.), &
+    operator(.ne.), &
     kim_get_argument_support_status, &
     kim_get_callback_support_status, &
     kim_set_argument_pointer, &
@@ -62,7 +59,6 @@ module kim_compute_arguments_module
     kim_set_log_id, &
     kim_push_log_verbosity, &
     kim_pop_log_verbosity
-
 
   !> \brief \copybrief KIM::ComputeArguments
   !!
@@ -82,16 +78,16 @@ module kim_compute_arguments_module
   !> \brief Compares kim_compute_arguments_handle_type's for equality.
   !!
   !! \since 2.0
-  interface operator (.eq.)
+  interface operator(.eq.)
     module procedure kim_compute_arguments_handle_equal
-  end interface operator (.eq.)
+  end interface operator(.eq.)
 
   !> \brief Compares kim_compute_arguments_handle_type's for inequality.
   !!
   !! \since 2.0
-  interface operator (.ne.)
+  interface operator(.ne.)
     module procedure kim_compute_arguments_handle_not_equal
-  end interface operator (.ne.)
+  end interface operator(.ne.)
 
   !> \brief \copybrief KIM::ComputeArguments::GetArgumentSupportStatus
   !!
@@ -232,7 +228,7 @@ contains
     type(kim_compute_arguments_handle_type), intent(in) :: lhs
     type(kim_compute_arguments_handle_type), intent(in) :: rhs
 
-    kim_compute_arguments_handle_not_equal = .not. (lhs .eq. rhs)
+    kim_compute_arguments_handle_not_equal = .not. (lhs == rhs)
   end function kim_compute_arguments_handle_not_equal
 
   !> \brief \copybrief KIM::ComputeArguments::GetArgumentSupportStatus
@@ -244,19 +240,19 @@ contains
   recursive subroutine kim_compute_arguments_get_argument_support_status( &
     compute_arguments_handle, compute_argument_name, &
     support_status, ierr)
-    use kim_compute_argument_name_module, only : kim_compute_argument_name_type
-    use kim_support_status_module, only : kim_support_status_type
-    use kim_interoperable_types_module, only : kim_compute_arguments_type
+    use kim_compute_argument_name_module, only: kim_compute_argument_name_type
+    use kim_support_status_module, only: kim_support_status_type
+    use kim_interoperable_types_module, only: kim_compute_arguments_type
     implicit none
     interface
       integer(c_int) recursive function get_argument_support_status( &
         compute_arguments, compute_argument_name, support_status) &
         bind(c, name="KIM_ComputeArguments_GetArgumentSupportStatus")
         use, intrinsic :: iso_c_binding
-        use kim_compute_argument_name_module, only : &
+        use kim_compute_argument_name_module, only: &
           kim_compute_argument_name_type
-        use kim_support_status_module, only : kim_support_status_type
-        use kim_interoperable_types_module, only : kim_compute_arguments_type
+        use kim_support_status_module, only: kim_support_status_type
+        use kim_interoperable_types_module, only: kim_compute_arguments_type
         implicit none
         type(kim_compute_arguments_type), intent(in) :: compute_arguments
         type(kim_compute_argument_name_type), intent(in), value :: &
@@ -274,7 +270,7 @@ contains
 
     call c_f_pointer(compute_arguments_handle%p, compute_arguments)
     ierr = get_argument_support_status(compute_arguments, &
-      compute_argument_name, support_status)
+                                       compute_argument_name, support_status)
   end subroutine kim_compute_arguments_get_argument_support_status
 
   !> \brief \copybrief KIM::ComputeArguments::GetCallbackSupportStatus
@@ -285,19 +281,19 @@ contains
   !! \since 2.0
   recursive subroutine kim_compute_arguments_get_callback_support_status( &
     compute_arguments_handle, compute_callback_name, support_status, ierr)
-    use kim_compute_callback_name_module, only : kim_compute_callback_name_type
-    use kim_support_status_module, only : kim_support_status_type
-    use kim_interoperable_types_module, only : kim_compute_arguments_type
+    use kim_compute_callback_name_module, only: kim_compute_callback_name_type
+    use kim_support_status_module, only: kim_support_status_type
+    use kim_interoperable_types_module, only: kim_compute_arguments_type
     implicit none
     interface
       integer(c_int) recursive function get_callback_support_status( &
         compute_arguments, compute_callback_name, support_status) &
         bind(c, name="KIM_ComputeArguments_GetCallbackSupportStatus")
         use, intrinsic :: iso_c_binding
-        use kim_compute_callback_name_module, only : &
+        use kim_compute_callback_name_module, only: &
           kim_compute_callback_name_type
-        use kim_support_status_module, only : kim_support_status_type
-        use kim_interoperable_types_module, only : kim_compute_arguments_type
+        use kim_support_status_module, only: kim_support_status_type
+        use kim_interoperable_types_module, only: kim_compute_arguments_type
         implicit none
         type(kim_compute_arguments_type), intent(in) :: compute_arguments
         type(kim_compute_callback_name_type), intent(in), value :: &
@@ -315,7 +311,7 @@ contains
 
     call c_f_pointer(compute_arguments_handle%p, compute_arguments)
     ierr = get_callback_support_status(compute_arguments, &
-      compute_callback_name, support_status)
+                                       compute_callback_name, support_status)
   end subroutine kim_compute_arguments_get_callback_support_status
 
   !> \brief \copybrief KIM::ComputeArguments::SetArgumentPointer
@@ -326,17 +322,17 @@ contains
   !! \since 2.0
   recursive subroutine kim_compute_arguments_set_argument_pointer_int0( &
     compute_arguments_handle, compute_argument_name, int0, ierr)
-    use kim_compute_argument_name_module, only : kim_compute_argument_name_type
-    use kim_interoperable_types_module, only : kim_compute_arguments_type
+    use kim_compute_argument_name_module, only: kim_compute_argument_name_type
+    use kim_interoperable_types_module, only: kim_compute_arguments_type
     implicit none
     interface
       integer(c_int) recursive function set_argument_pointer_integer( &
         compute_arguments, compute_argument_name, ptr) &
         bind(c, name="KIM_ComputeArguments_SetArgumentPointerInteger")
         use, intrinsic :: iso_c_binding
-        use kim_compute_argument_name_module, only : &
+        use kim_compute_argument_name_module, only: &
           kim_compute_argument_name_type
-        use kim_interoperable_types_module, only : kim_compute_arguments_type
+        use kim_interoperable_types_module, only: kim_compute_arguments_type
         implicit none
         type(kim_compute_arguments_type), intent(in) :: compute_arguments
         type(kim_compute_argument_name_type), intent(in), value :: &
@@ -354,7 +350,7 @@ contains
 
     call c_f_pointer(compute_arguments_handle%p, compute_arguments)
     ierr = set_argument_pointer_integer(compute_arguments, &
-      compute_argument_name, c_loc(int0))
+                                        compute_argument_name, c_loc(int0))
   end subroutine kim_compute_arguments_set_argument_pointer_int0
 
   !> \brief \copybrief KIM::ComputeArguments::SetArgumentPointer
@@ -365,8 +361,8 @@ contains
   !! \since 2.0
   recursive subroutine kim_compute_arguments_set_argument_pointer_int1( &
     compute_arguments_handle, compute_argument_name, int1, ierr)
-    use kim_compute_argument_name_module, only : kim_compute_argument_name_type
-    use kim_interoperable_types_module, only : kim_compute_arguments_type
+    use kim_compute_argument_name_module, only: kim_compute_argument_name_type
+    use kim_interoperable_types_module, only: kim_compute_arguments_type
     implicit none
     type(kim_compute_arguments_handle_type), intent(in) :: &
       compute_arguments_handle
@@ -377,25 +373,25 @@ contains
     type(kim_compute_arguments_type), pointer :: compute_arguments
 
     call c_f_pointer(compute_arguments_handle%p, compute_arguments)
-    call set(compute_arguments, compute_argument_name, size(int1,1,c_int), &
-      int1, ierr)
+    call set(compute_arguments, compute_argument_name, size(int1, 1, c_int), &
+             int1, ierr)
     return
 
   contains
     recursive subroutine set(compute_arguments, compute_argument_name, &
-      extent1, int1, ierr)
-      use kim_compute_argument_name_module, only : &
+                             extent1, int1, ierr)
+      use kim_compute_argument_name_module, only: &
         kim_compute_argument_name_type
-      use kim_interoperable_types_module, only : kim_compute_arguments_type
+      use kim_interoperable_types_module, only: kim_compute_arguments_type
       implicit none
       interface
         integer(c_int) recursive function set_argument_pointer_integer( &
           compute_arguments, compute_argument_name, ptr) &
           bind(c, name="KIM_ComputeArguments_SetArgumentPointerInteger")
           use, intrinsic :: iso_c_binding
-          use kim_compute_argument_name_module, only : &
+          use kim_compute_argument_name_module, only: &
             kim_compute_argument_name_type
-          use kim_interoperable_types_module, only : kim_compute_arguments_type
+          use kim_interoperable_types_module, only: kim_compute_arguments_type
           implicit none
           type(kim_compute_arguments_type), intent(in) :: compute_arguments
           type(kim_compute_argument_name_type), intent(in), value :: &
@@ -411,7 +407,7 @@ contains
       integer(c_int), intent(out) :: ierr
 
       ierr = set_argument_pointer_integer(compute_arguments, &
-        compute_argument_name, c_loc(int1))
+                                          compute_argument_name, c_loc(int1))
     end subroutine set
   end subroutine kim_compute_arguments_set_argument_pointer_int1
 
@@ -423,37 +419,37 @@ contains
   !! \since 2.0
   recursive subroutine kim_compute_arguments_set_argument_pointer_int2( &
     compute_arguments_handle, compute_argument_name, int2, ierr)
-    use kim_compute_argument_name_module, only : kim_compute_argument_name_type
-    use kim_interoperable_types_module, only : kim_compute_arguments_type
+    use kim_compute_argument_name_module, only: kim_compute_argument_name_type
+    use kim_interoperable_types_module, only: kim_compute_arguments_type
     implicit none
     type(kim_compute_arguments_handle_type), intent(in) :: &
       compute_arguments_handle
     type(kim_compute_argument_name_type), intent(in) :: &
       compute_argument_name
-    integer(c_int), intent(in), target :: int2(:,:)
+    integer(c_int), intent(in), target :: int2(:, :)
     integer(c_int), intent(out) :: ierr
     type(kim_compute_arguments_type), pointer :: compute_arguments
 
     call c_f_pointer(compute_arguments_handle%p, compute_arguments)
     call set(compute_arguments, compute_argument_name, size(int2, 1, c_int), &
-      size(int2, 2, c_int), int2, ierr)
+             size(int2, 2, c_int), int2, ierr)
     return
 
   contains
     recursive subroutine set(compute_arguments, compute_argument_name, &
-      extent1, extent2, int2, ierr)
-      use kim_compute_argument_name_module, only : &
+                             extent1, extent2, int2, ierr)
+      use kim_compute_argument_name_module, only: &
         kim_compute_argument_name_type
-      use kim_interoperable_types_module, only : kim_compute_arguments_type
+      use kim_interoperable_types_module, only: kim_compute_arguments_type
       implicit none
       interface
         integer(c_int) recursive function set_argument_pointer_integer( &
           compute_arguments, compute_argument_name, ptr) &
           bind(c, name="KIM_ComputeArguments_SetArgumentPointerInteger")
           use, intrinsic :: iso_c_binding
-          use kim_compute_argument_name_module, only : &
+          use kim_compute_argument_name_module, only: &
             kim_compute_argument_name_type
-          use kim_interoperable_types_module, only : kim_compute_arguments_type
+          use kim_interoperable_types_module, only: kim_compute_arguments_type
           implicit none
           type(kim_compute_arguments_type), intent(in) :: compute_arguments
           type(kim_compute_argument_name_type), intent(in), value :: &
@@ -466,11 +462,11 @@ contains
         compute_argument_name
       integer(c_int), intent(in) :: extent1
       integer(c_int), intent(in) :: extent2
-      integer(c_int), intent(in), target :: int2(extent1,extent2)
+      integer(c_int), intent(in), target :: int2(extent1, extent2)
       integer(c_int), intent(out) :: ierr
 
       ierr = set_argument_pointer_integer(compute_arguments, &
-        compute_argument_name, c_loc(int2))
+                                          compute_argument_name, c_loc(int2))
     end subroutine set
   end subroutine kim_compute_arguments_set_argument_pointer_int2
 
@@ -482,17 +478,17 @@ contains
   !! \since 2.0
   recursive subroutine kim_compute_arguments_set_argument_pointer_double0( &
     compute_arguments_handle, compute_argument_name, double0, ierr)
-    use kim_compute_argument_name_module, only : kim_compute_argument_name_type
-    use kim_interoperable_types_module, only : kim_compute_arguments_type
+    use kim_compute_argument_name_module, only: kim_compute_argument_name_type
+    use kim_interoperable_types_module, only: kim_compute_arguments_type
     implicit none
     interface
       integer(c_int) recursive function set_argument_pointer_double( &
         compute_arguments, compute_argument_name, ptr) &
         bind(c, name="KIM_ComputeArguments_SetArgumentPointerDouble")
         use, intrinsic :: iso_c_binding
-        use kim_compute_argument_name_module, only : &
+        use kim_compute_argument_name_module, only: &
           kim_compute_argument_name_type
-        use kim_interoperable_types_module, only : kim_compute_arguments_type
+        use kim_interoperable_types_module, only: kim_compute_arguments_type
         implicit none
         type(kim_compute_arguments_type), intent(in) :: compute_arguments
         type(kim_compute_argument_name_type), intent(in), value :: &
@@ -510,7 +506,7 @@ contains
 
     call c_f_pointer(compute_arguments_handle%p, compute_arguments)
     ierr = set_argument_pointer_double(compute_arguments, &
-      compute_argument_name, c_loc(double0))
+                                       compute_argument_name, c_loc(double0))
   end subroutine kim_compute_arguments_set_argument_pointer_double0
 
   !> \brief \copybrief KIM::ComputeArguments::SetArgumentPointer
@@ -521,8 +517,8 @@ contains
   !! \since 2.0
   recursive subroutine kim_compute_arguments_set_argument_pointer_double1( &
     compute_arguments_handle, compute_argument_name, double1, ierr)
-    use kim_compute_argument_name_module, only : kim_compute_argument_name_type
-    use kim_interoperable_types_module, only : kim_compute_arguments_type
+    use kim_compute_argument_name_module, only: kim_compute_argument_name_type
+    use kim_interoperable_types_module, only: kim_compute_arguments_type
     implicit none
     type(kim_compute_arguments_handle_type), intent(in) :: &
       compute_arguments_handle
@@ -534,24 +530,24 @@ contains
 
     call c_f_pointer(compute_arguments_handle%p, compute_arguments)
     call set(compute_arguments, compute_argument_name, &
-      size(double1, 1, c_int), double1, ierr)
+             size(double1, 1, c_int), double1, ierr)
     return
 
   contains
     recursive subroutine set(compute_arguments, compute_argument_name, &
-      extent1, double1, ierr)
-      use kim_compute_argument_name_module, only : &
+                             extent1, double1, ierr)
+      use kim_compute_argument_name_module, only: &
         kim_compute_argument_name_type
-      use kim_interoperable_types_module, only : kim_compute_arguments_type
+      use kim_interoperable_types_module, only: kim_compute_arguments_type
       implicit none
       interface
         integer(c_int) recursive function set_argument_pointer_double( &
           compute_arguments, compute_argument_name, ptr) &
           bind(c, name="KIM_ComputeArguments_SetArgumentPointerDouble")
           use, intrinsic :: iso_c_binding
-          use kim_compute_argument_name_module, only : &
+          use kim_compute_argument_name_module, only: &
             kim_compute_argument_name_type
-          use kim_interoperable_types_module, only : kim_compute_arguments_type
+          use kim_interoperable_types_module, only: kim_compute_arguments_type
           implicit none
           type(kim_compute_arguments_type), intent(in) :: compute_arguments
           type(kim_compute_argument_name_type), intent(in), value :: &
@@ -567,7 +563,7 @@ contains
       integer(c_int), intent(out) :: ierr
 
       ierr = set_argument_pointer_double(compute_arguments, &
-        compute_argument_name, c_loc(double1))
+                                         compute_argument_name, c_loc(double1))
     end subroutine set
   end subroutine kim_compute_arguments_set_argument_pointer_double1
 
@@ -579,26 +575,26 @@ contains
   !! \since 2.0
   recursive subroutine kim_compute_arguments_set_argument_pointer_double2( &
     compute_arguments_handle, compute_argument_name, double2, ierr)
-    use kim_compute_argument_name_module, only : kim_compute_argument_name_type
-    use kim_interoperable_types_module, only : kim_compute_arguments_type
+    use kim_compute_argument_name_module, only: kim_compute_argument_name_type
+    use kim_interoperable_types_module, only: kim_compute_arguments_type
     implicit none
     type(kim_compute_arguments_handle_type), intent(in) :: &
       compute_arguments_handle
     type(kim_compute_argument_name_type), intent(in) :: &
       compute_argument_name
-    real(c_double), intent(in), target :: double2(:,:)
+    real(c_double), intent(in), target :: double2(:, :)
     integer(c_int), intent(out) :: ierr
     type(kim_compute_arguments_type), pointer :: compute_arguments
 
     call c_f_pointer(compute_arguments_handle%p, compute_arguments)
     call set(compute_arguments, compute_argument_name, &
-      size(double2, 1, c_int), size(double2, 2, c_int), double2, ierr)
+             size(double2, 1, c_int), size(double2, 2, c_int), double2, ierr)
     return
 
   contains
     recursive subroutine set(compute_arguments, compute_argument_name, &
-      extent1, extent2, double2, ierr)
-      use kim_compute_argument_name_module, only : &
+                             extent1, extent2, double2, ierr)
+      use kim_compute_argument_name_module, only: &
         kim_compute_argument_name_type
       implicit none
       interface
@@ -606,9 +602,9 @@ contains
           compute_arguments, compute_argument_name, ptr) &
           bind(c, name="KIM_ComputeArguments_SetArgumentPointerDouble")
           use, intrinsic :: iso_c_binding
-          use kim_compute_argument_name_module, only : &
+          use kim_compute_argument_name_module, only: &
             kim_compute_argument_name_type
-          use kim_interoperable_types_module, only : kim_compute_arguments_type
+          use kim_interoperable_types_module, only: kim_compute_arguments_type
           implicit none
           type(kim_compute_arguments_type), intent(in) :: compute_arguments
           type(kim_compute_argument_name_type), intent(in), value :: &
@@ -621,11 +617,11 @@ contains
         compute_argument_name
       integer(c_int), intent(in) :: extent1
       integer(c_int), intent(in) :: extent2
-      real(c_double), intent(in), target :: double2(extent1,extent2)
+      real(c_double), intent(in), target :: double2(extent1, extent2)
       integer(c_int), intent(out) :: ierr
 
       ierr = set_argument_pointer_double(compute_arguments, &
-        compute_argument_name, c_loc(double2))
+                                         compute_argument_name, c_loc(double2))
     end subroutine set
   end subroutine kim_compute_arguments_set_argument_pointer_double2
 
@@ -638,19 +634,19 @@ contains
   recursive subroutine kim_compute_arguments_set_callback_pointer( &
     compute_arguments_handle, compute_callback_name, language_name, fptr, &
     data_object, ierr)
-    use kim_compute_callback_name_module, only : kim_compute_callback_name_type
-    use kim_language_name_module, only : kim_language_name_type
-    use kim_interoperable_types_module, only : kim_compute_arguments_type
+    use kim_compute_callback_name_module, only: kim_compute_callback_name_type
+    use kim_language_name_module, only: kim_language_name_type
+    use kim_interoperable_types_module, only: kim_compute_arguments_type
     implicit none
     interface
       integer(c_int) recursive function set_callback_pointer( &
         compute_arguments, compute_callback_name, language_name, fptr, &
         data_object) bind(c, name="KIM_ComputeArguments_SetCallbackPointer")
         use, intrinsic :: iso_c_binding
-        use kim_language_name_module, only : kim_language_name_type
-        use kim_compute_callback_name_module, only : &
+        use kim_language_name_module, only: kim_language_name_type
+        use kim_compute_callback_name_module, only: &
           kim_compute_callback_name_type
-        use kim_interoperable_types_module, only : kim_compute_arguments_type
+        use kim_interoperable_types_module, only: kim_compute_arguments_type
         implicit none
         type(kim_compute_arguments_type), intent(in) :: compute_arguments
         type(kim_language_name_type), intent(in), value :: language_name
@@ -672,7 +668,7 @@ contains
 
     call c_f_pointer(compute_arguments_handle%p, compute_arguments)
     ierr = set_callback_pointer(compute_arguments, compute_callback_name, &
-      language_name, fptr, data_object)
+                                language_name, fptr, data_object)
   end subroutine kim_compute_arguments_set_callback_pointer
 
   !> \brief \copybrief KIM::ComputeArguments::<!--
@@ -684,15 +680,17 @@ contains
   !! \since 2.0
   recursive subroutine kim_compute_arguments_are_all_required_present( &
     compute_arguments_handle, result_value, ierr)
-    use kim_interoperable_types_module, only : kim_compute_arguments_type
+    use kim_interoperable_types_module, only: kim_compute_arguments_type
     implicit none
     interface
       integer(c_int) recursive function &
         are_all_required_arguments_and_callbacks_present( &
-        compute_arguments, result_value) bind(c, &
-        name="KIM_ComputeArguments_AreAllRequiredArgumentsAndCallbacksPresent")
+        compute_arguments, result_value) &
+        bind(c, &
+             name= &
+             "KIM_ComputeArguments_AreAllRequiredArgumentsAndCallbacksPresent")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_compute_arguments_type
+        use kim_interoperable_types_module, only: kim_compute_arguments_type
         implicit none
         type(kim_compute_arguments_type), intent(in) :: compute_arguments
         integer(c_int), intent(out) :: result_value
@@ -706,7 +704,7 @@ contains
 
     call c_f_pointer(compute_arguments_handle%p, compute_arguments)
     ierr = are_all_required_arguments_and_callbacks_present( &
-      compute_arguments, result_value)
+           compute_arguments, result_value)
   end subroutine kim_compute_arguments_are_all_required_present
 
   !> \brief \copybrief KIM::ComputeArguments::SetSimulatorBufferPointer
@@ -717,13 +715,14 @@ contains
   !! \since 2.0
   recursive subroutine kim_compute_arguments_set_simulator_buffer_pointer( &
     compute_arguments_handle, ptr)
-    use kim_interoperable_types_module, only : kim_compute_arguments_type
+    use kim_interoperable_types_module, only: kim_compute_arguments_type
     implicit none
     interface
-      recursive subroutine set_simulator_buffer_pointer(compute_arguments, &
-        ptr) bind(c, name="KIM_ComputeArguments_SetSimulatorBufferPointer")
+      recursive subroutine set_simulator_buffer_pointer( &
+        compute_arguments, ptr) &
+        bind(c, name="KIM_ComputeArguments_SetSimulatorBufferPointer")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_compute_arguments_type
+        use kim_interoperable_types_module, only: kim_compute_arguments_type
         implicit none
         type(kim_compute_arguments_type), intent(in) :: compute_arguments
         type(c_ptr), intent(in), value :: ptr
@@ -746,13 +745,14 @@ contains
   !! \since 2.0
   recursive subroutine kim_compute_arguments_get_simulator_buffer_pointer( &
     compute_arguments_handle, ptr)
-    use kim_interoperable_types_module, only : kim_compute_arguments_type
+    use kim_interoperable_types_module, only: kim_compute_arguments_type
     implicit none
     interface
-      recursive subroutine get_simulator_buffer_pointer(compute_arguments, &
-        ptr) bind(c, name="KIM_ComputeArguments_GetSimulatorBufferPointer")
+      recursive subroutine get_simulator_buffer_pointer( &
+        compute_arguments, ptr) &
+        bind(c, name="KIM_ComputeArguments_GetSimulatorBufferPointer")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_compute_arguments_type
+        use kim_interoperable_types_module, only: kim_compute_arguments_type
         implicit none
         type(kim_compute_arguments_type), intent(in) :: compute_arguments
         type(c_ptr), intent(out) :: ptr
@@ -774,14 +774,14 @@ contains
   !! \since 2.0
   recursive subroutine kim_compute_arguments_to_string( &
     compute_arguments_handle, string)
-    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
-    use kim_interoperable_types_module, only : kim_compute_arguments_type
+    use kim_convert_string_module, only: kim_convert_c_char_ptr_to_string
+    use kim_interoperable_types_module, only: kim_compute_arguments_type
     implicit none
     interface
       type(c_ptr) recursive function compute_arguments_string( &
         compute_arguments) bind(c, name="KIM_ComputeArguments_ToString")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_compute_arguments_type
+        use kim_interoperable_types_module, only: kim_compute_arguments_type
         implicit none
         type(kim_compute_arguments_type), intent(in) :: compute_arguments
       end function compute_arguments_string
@@ -805,13 +805,13 @@ contains
   !! \since 2.0
   recursive subroutine kim_compute_arguments_set_log_id( &
     compute_arguments_handle, log_id)
-    use kim_interoperable_types_module, only : kim_compute_arguments_type
+    use kim_interoperable_types_module, only: kim_compute_arguments_type
     implicit none
     interface
       recursive subroutine set_log_id(compute_arguments, log_id) &
         bind(c, name="KIM_ComputeArguments_SetLogID")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_compute_arguments_type
+        use kim_interoperable_types_module, only: kim_compute_arguments_type
         implicit none
         type(kim_compute_arguments_type), intent(in) :: compute_arguments
         character(c_char), intent(in) :: log_id(*)
@@ -834,15 +834,16 @@ contains
   !! \since 2.0
   recursive subroutine kim_compute_arguments_push_log_verbosity( &
     compute_arguments_handle, log_verbosity)
-    use kim_log_verbosity_module, only : kim_log_verbosity_type
-    use kim_interoperable_types_module, only : kim_compute_arguments_type
+    use kim_log_verbosity_module, only: kim_log_verbosity_type
+    use kim_interoperable_types_module, only: kim_compute_arguments_type
     implicit none
     interface
-      recursive subroutine push_log_verbosity(compute_arguments, &
-        log_verbosity) bind(c, name="KIM_ComputeArguments_PushLogVerbosity")
+      recursive subroutine push_log_verbosity( &
+        compute_arguments, log_verbosity) &
+        bind(c, name="KIM_ComputeArguments_PushLogVerbosity")
         use, intrinsic :: iso_c_binding
-        use kim_log_verbosity_module, only : kim_log_verbosity_type
-        use kim_interoperable_types_module, only : kim_compute_arguments_type
+        use kim_log_verbosity_module, only: kim_log_verbosity_type
+        use kim_interoperable_types_module, only: kim_compute_arguments_type
         implicit none
         type(kim_compute_arguments_type), intent(in) :: compute_arguments
         type(kim_log_verbosity_type), intent(in), value :: log_verbosity
@@ -865,15 +866,15 @@ contains
   !! \since 2.0
   recursive subroutine kim_compute_arguments_pop_log_verbosity( &
     compute_arguments_handle)
-    use kim_log_verbosity_module, only : kim_log_verbosity_type
-    use kim_interoperable_types_module, only : kim_compute_arguments_type
+    use kim_log_verbosity_module, only: kim_log_verbosity_type
+    use kim_interoperable_types_module, only: kim_compute_arguments_type
     implicit none
     interface
       recursive subroutine pop_log_verbosity(compute_arguments) &
         bind(c, name="KIM_ComputeArguments_PopLogVerbosity")
         use, intrinsic :: iso_c_binding
-        use kim_log_verbosity_module, only : kim_log_verbosity_type
-        use kim_interoperable_types_module, only : kim_compute_arguments_type
+        use kim_log_verbosity_module, only: kim_log_verbosity_type
+        use kim_interoperable_types_module, only: kim_compute_arguments_type
         implicit none
         type(kim_compute_arguments_type), intent(in) :: compute_arguments
       end subroutine pop_log_verbosity

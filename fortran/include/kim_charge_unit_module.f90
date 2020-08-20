@@ -30,7 +30,6 @@
 ! Release: This file is part of the kim-api.git repository.
 !
 
-
 !> \brief \copybrief KIM::ChargeUnit
 !!
 !! \sa KIM::ChargeUnit, KIM_ChargeUnit
@@ -44,22 +43,19 @@ module kim_charge_unit_module
   public &
     ! Derived types
     kim_charge_unit_type, &
-
     ! Constants
     KIM_CHARGE_UNIT_UNUSED, &
     KIM_CHARGE_UNIT_C, &
     KIM_CHARGE_UNIT_E, &
     KIM_CHARGE_UNIT_STATC, &
-
     ! Routines
     kim_known, &
-    operator (.eq.), &
-    operator (.ne.), &
+    operator(.eq.), &
+    operator(.ne.), &
     kim_from_string, &
     kim_to_string, &
     kim_get_number_of_charge_units, &
     kim_get_charge_unit
-
 
   !> \brief \copybrief KIM::ChargeUnit
   !!
@@ -67,11 +63,11 @@ module kim_charge_unit_module
   !!
   !! \since 2.0
   type, bind(c) :: kim_charge_unit_type
-     !> \brief \copybrief KIM::ChargeUnit::chargeUnitID
-     !!
-     !! \sa KIM::ChargeUnit::chargeUnitID, KIM_ChargeUnit::chargeUnitID
-     !!
-     !! \since 2.0
+    !> \brief \copybrief KIM::ChargeUnit::chargeUnitID
+    !!
+    !! \sa KIM::ChargeUnit::chargeUnitID, KIM_ChargeUnit::chargeUnitID
+    !!
+    !! \since 2.0
     integer(c_int) charge_unit_id
   end type kim_charge_unit_type
 
@@ -125,18 +121,18 @@ module kim_charge_unit_module
   !! \sa KIM::ChargeUnit::operator==(), KIM_ChargeUnit_Equal
   !!
   !! \since 2.0
-  interface operator (.eq.)
+  interface operator(.eq.)
     module procedure kim_charge_unit_equal
-  end interface operator (.eq.)
+  end interface operator(.eq.)
 
   !> \brief \copybrief KIM::ChargeUnit::operator!=()
   !!
   !! \sa KIM::ChargeUnit::operator!=(), KIM_ChargeUnit_NotEqual
   !!
   !! \since 2.0
-  interface operator (.ne.)
+  interface operator(.ne.)
     module procedure kim_charge_unit_not_equal
-  end interface operator (.ne.)
+  end interface operator(.ne.)
 
   !> \brief \copybrief KIM::ChargeUnit::ChargeUnit(std::string const &)
   !!
@@ -190,7 +186,7 @@ contains
     type(kim_charge_unit_type), intent(in) :: rhs
 
     kim_charge_unit_equal &
-      = (lhs%charge_unit_id .eq. rhs%charge_unit_id)
+      = (lhs%charge_unit_id == rhs%charge_unit_id)
   end function kim_charge_unit_equal
 
   !> \brief \copybrief KIM::ChargeUnit::operator!=()
@@ -203,7 +199,7 @@ contains
     type(kim_charge_unit_type), intent(in) :: lhs
     type(kim_charge_unit_type), intent(in) :: rhs
 
-    kim_charge_unit_not_equal = .not. (lhs .eq. rhs)
+    kim_charge_unit_not_equal = .not. (lhs == rhs)
   end function kim_charge_unit_not_equal
 
   !> \brief \copybrief KIM::ChargeUnit::ChargeUnit(std::string const &)
@@ -235,7 +231,7 @@ contains
   !!
   !! \since 2.0
   recursive subroutine kim_charge_unit_to_string(charge_unit, string)
-    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
+    use kim_convert_string_module, only: kim_convert_c_char_ptr_to_string
     implicit none
     interface
       type(c_ptr) recursive function get_string(charge_unit) &
@@ -297,6 +293,6 @@ contains
     type(kim_charge_unit_type), intent(out) :: charge_unit
     integer(c_int), intent(out) :: ierr
 
-    ierr = get_charge_unit(index-1, charge_unit)
+    ierr = get_charge_unit(index - 1, charge_unit)
   end subroutine kim_get_charge_unit
 end module kim_charge_unit_module

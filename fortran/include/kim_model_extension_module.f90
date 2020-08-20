@@ -30,7 +30,6 @@
 ! Release: This file is part of the kim-api.git repository.
 !
 
-
 !> \brief \copybrief KIM::ModelExtension
 !!
 !! \sa KIM::ModelExtension, KIM_ModelExtension
@@ -44,13 +43,11 @@ module kim_model_extension_module
   public &
     ! Derived types
     kim_model_extension_handle_type, &
-
     ! Constants
     KIM_MODEL_EXTENSION_NULL_HANDLE, &
-
     ! Routines
-    operator (.eq.), &
-    operator (.ne.), &
+    operator(.eq.), &
+    operator(.ne.), &
     kim_get_extension_id, &
     kim_to_model, &
     kim_to_model_compute, &
@@ -68,7 +65,6 @@ module kim_model_extension_module
     kim_get_model_buffer_pointer, &
     kim_log_entry, &
     kim_to_string
-
 
   !> \brief \copybrief KIM::ModelExtension
   !!
@@ -88,16 +84,16 @@ module kim_model_extension_module
   !> \brief Compares kim_model_extension_handle_type's for equality.
   !!
   !! \since 2.0
-  interface operator (.eq.)
+  interface operator(.eq.)
     module procedure kim_model_extension_handle_equal
-  end interface operator (.eq.)
+  end interface operator(.eq.)
 
   !> \brief Compares kim_model_extension_handle_type's for inequality.
   !!
   !! \since 2.0
-  interface operator (.ne.)
+  interface operator(.ne.)
     module procedure kim_model_extension_handle_not_equal
-  end interface operator (.ne.)
+  end interface operator(.ne.)
 
   !> \brief \copybrief KIM::ModelExtension::GetExtensionID
   !!
@@ -276,7 +272,7 @@ contains
     type(kim_model_extension_handle_type), intent(in) :: lhs
     type(kim_model_extension_handle_type), intent(in) :: rhs
 
-    kim_model_extension_handle_not_equal = .not. (lhs .eq. rhs)
+    kim_model_extension_handle_not_equal = .not. (lhs == rhs)
   end function kim_model_extension_handle_not_equal
 
   !> \brief \copybrief KIM::ModelExtension::GetExtensionID
@@ -286,14 +282,14 @@ contains
   !! \since 2.0
   recursive subroutine kim_model_extension_get_extension_id( &
     model_extension_handle, extension_id)
-    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
-    use kim_interoperable_types_module, only : kim_model_extension_type
+    use kim_convert_string_module, only: kim_convert_c_char_ptr_to_string
+    use kim_interoperable_types_module, only: kim_model_extension_type
     implicit none
     interface
       recursive subroutine get_extension_id(model_extension, extension_id) &
         bind(c, name="KIM_ModelExtension_GetExtensionID")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_model_extension_type
+        use kim_interoperable_types_module, only: kim_model_extension_type
         implicit none
         type(kim_model_extension_type), intent(in) :: model_extension
         type(c_ptr), intent(out) :: extension_id
@@ -316,7 +312,7 @@ contains
   !!
   !! \since 2.0
   recursive subroutine kim_model_extension_to_model(model_extension_handle, &
-    model_handle)
+                                                    model_handle)
     use kim_model_module
     implicit none
     type(kim_model_extension_handle_type), intent(in) :: model_extension_handle
@@ -436,7 +432,7 @@ contains
       :: model_compute_arguments_handle
 
     ! avoid unused dummy argument warnings
-    if (model_extension_handle .eq. KIM_MODEL_EXTENSION_NULL_HANDLE) continue
+    if (model_extension_handle == KIM_MODEL_EXTENSION_NULL_HANDLE) continue
 
     model_compute_arguments_handle%p = compute_arguments_c_ptr
   end subroutine kim_model_extension_to_model_compute_arguments
@@ -458,7 +454,7 @@ contains
       :: model_compute_arguments_create_handle
 
     ! avoid unused dummy argument warnings
-    if (model_extension_handle .eq. KIM_MODEL_EXTENSION_NULL_HANDLE) continue
+    if (model_extension_handle == KIM_MODEL_EXTENSION_NULL_HANDLE) continue
 
     model_compute_arguments_create_handle%p = compute_arguments_c_ptr
   end subroutine kim_model_extension_to_model_compute_arguments_create
@@ -480,7 +476,7 @@ contains
       :: model_compute_arguments_destroy_handle
 
     ! avoid unused dummy argument warnings
-    if (model_extension_handle .eq. KIM_MODEL_EXTENSION_NULL_HANDLE) continue
+    if (model_extension_handle == KIM_MODEL_EXTENSION_NULL_HANDLE) continue
 
     model_compute_arguments_destroy_handle%p = compute_arguments_c_ptr
   end subroutine kim_model_extension_to_model_compute_arguments_destroy
@@ -490,7 +486,7 @@ contains
   !! \since 2.0
   recursive subroutine kim_model_extension_convert_c_char_array_to_string( &
     c_char_array, string)
-    use kim_convert_string_module, only : kim_convert_c_char_array_to_string
+    use kim_convert_string_module, only: kim_convert_c_char_array_to_string
     implicit none
     character(len=1, kind=c_char), intent(in) :: c_char_array(:)
     character(len=*, kind=c_char), intent(out) :: string
@@ -503,7 +499,7 @@ contains
   !! \since 2.0
   recursive subroutine kim_model_extension_convert_c_char_ptr_to_string( &
     c_char_ptr, string)
-    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
+    use kim_convert_string_module, only: kim_convert_c_char_ptr_to_string
     implicit none
     type(c_ptr), intent(in) :: c_char_ptr
     character(len=*, kind=c_char), intent(out) :: string
@@ -516,7 +512,7 @@ contains
   !! \since 2.0
   recursive subroutine kim_model_extension_convert_string_to_c_char_array( &
     string, c_char_array)
-    use kim_convert_string_module, only : kim_convert_string_to_c_char_array
+    use kim_convert_string_module, only: kim_convert_string_to_c_char_array
     implicit none
     character(len=*, kind=c_char), intent(in) :: string
     character(len=1, kind=c_char), intent(out) :: c_char_array(:)
@@ -532,13 +528,13 @@ contains
   !! \since 2.0
   recursive subroutine kim_model_extension_get_model_buffer_pointer( &
     model_extension_handle, ptr)
-    use kim_interoperable_types_module, only : kim_model_extension_type
+    use kim_interoperable_types_module, only: kim_model_extension_type
     implicit none
     interface
       recursive subroutine get_model_buffer_pointer(model_extension, ptr) &
         bind(c, name="KIM_ModelExtension_GetModelBufferPointer")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_model_extension_type
+        use kim_interoperable_types_module, only: kim_model_extension_type
         implicit none
         type(kim_model_extension_type), intent(in) :: model_extension
         type(c_ptr), intent(out) :: ptr
@@ -558,16 +554,17 @@ contains
   !!
   !! \since 2.0
   recursive subroutine kim_model_extension_log_entry(model_extension_handle, &
-    log_verbosity, message)
-    use kim_log_verbosity_module, only : kim_log_verbosity_type
-    use kim_interoperable_types_module, only : kim_model_extension_type
+                                                     log_verbosity, message)
+    use kim_log_verbosity_module, only: kim_log_verbosity_type
+    use kim_interoperable_types_module, only: kim_model_extension_type
     implicit none
     interface
-      recursive subroutine log_entry(model_extension, log_verbosity, message, &
-        line_number, file_name) bind(c, name="KIM_ModelExtension_LogEntry")
+      recursive subroutine log_entry( &
+        model_extension, log_verbosity, message, line_number, file_name) &
+        bind(c, name="KIM_ModelExtension_LogEntry")
         use, intrinsic :: iso_c_binding
-        use kim_log_verbosity_module, only : kim_log_verbosity_type
-        use kim_interoperable_types_module, only : kim_model_extension_type
+        use kim_log_verbosity_module, only: kim_log_verbosity_type
+        use kim_interoperable_types_module, only: kim_model_extension_type
         implicit none
         type(kim_model_extension_type), intent(in) :: model_extension
         type(kim_log_verbosity_type), intent(in), value :: log_verbosity
@@ -583,7 +580,7 @@ contains
 
     call c_f_pointer(model_extension_handle%p, model_extension)
     call log_entry(model_extension, log_verbosity, trim(message)//c_null_char, &
-      0, ""//c_null_char)
+                   0, ""//c_null_char)
   end subroutine kim_model_extension_log_entry
 
   !> \brief \copybrief KIM::ModelExtension::ToString
@@ -592,15 +589,15 @@ contains
   !!
   !! \since 2.0
   recursive subroutine kim_model_extension_to_string(model_extension_handle, &
-    string)
-    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
-    use kim_interoperable_types_module, only : kim_model_extension_type
+                                                     string)
+    use kim_convert_string_module, only: kim_convert_c_char_ptr_to_string
+    use kim_interoperable_types_module, only: kim_model_extension_type
     implicit none
     interface
       type(c_ptr) recursive function model_extension_string(model_extension) &
         bind(c, name="KIM_ModelExtension_ToString")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_model_extension_type
+        use kim_interoperable_types_module, only: kim_model_extension_type
         implicit none
         type(kim_model_extension_type), intent(in) :: model_extension
       end function model_extension_string

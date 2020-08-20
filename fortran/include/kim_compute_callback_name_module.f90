@@ -30,7 +30,6 @@
 ! Release: This file is part of the kim-api.git repository.
 !
 
-
 !> \brief \copybrief KIM::ComputeCallbackName
 !!
 !! \sa KIM::ComputeCallbackName, KIM_ComputeCallbackName
@@ -44,21 +43,18 @@ module kim_compute_callback_name_module
   public &
     ! Derived types
     kim_compute_callback_name_type, &
-
     ! Constants
     KIM_COMPUTE_CALLBACK_NAME_GET_NEIGHBOR_LIST, &
     KIM_COMPUTE_CALLBACK_NAME_PROCESS_DEDR_TERM, &
     KIM_COMPUTE_CALLBACK_NAME_PROCESS_D2EDR2_TERM, &
-
     ! Routines
     kim_known, &
-    operator (.eq.), &
-    operator (.ne.), &
+    operator(.eq.), &
+    operator(.ne.), &
     kim_from_string, &
     kim_to_string, &
     kim_get_number_of_compute_callback_names, &
     kim_get_compute_callback_name
-
 
   !> \brief \copybrief KIM::ComputeCallbackName
   !!
@@ -66,12 +62,12 @@ module kim_compute_callback_name_module
   !!
   !! \since 2.0
   type, bind(c) :: kim_compute_callback_name_type
-     !> \brief \copybrief KIM::ComputeCallbackName::computeCallbackNameID
-     !!
-     !! \sa KIM::ComputeCallbackName::computeCallbackNameID,
-     !! KIM_ComputeCallbackName::computeCallbackNameID
-     !!
-     !! \since 2.0
+    !> \brief \copybrief KIM::ComputeCallbackName::computeCallbackNameID
+    !!
+    !! \sa KIM::ComputeCallbackName::computeCallbackNameID,
+    !! KIM_ComputeCallbackName::computeCallbackNameID
+    !!
+    !! \since 2.0
     integer(c_int) compute_callback_name_id
   end type kim_compute_callback_name_type
 
@@ -119,9 +115,9 @@ module kim_compute_callback_name_module
   !! \sa KIM::ComputeCallbackName::operator==(), KIM_ComputeCallbackName_Equal
   !!
   !! \since 2.0
-  interface operator (.eq.)
+  interface operator(.eq.)
     module procedure kim_compute_callback_name_equal
-  end interface operator (.eq.)
+  end interface operator(.eq.)
 
   !> \brief \copybrief KIM::ComputeCallbackName::operator!=()
   !!
@@ -129,9 +125,9 @@ module kim_compute_callback_name_module
   !! KIM_ComputeCallbackName_NotEqual
   !!
   !! \since 2.0
-  interface operator (.ne.)
+  interface operator(.ne.)
     module procedure kim_compute_callback_name_not_equal
-  end interface operator (.ne.)
+  end interface operator(.ne.)
 
   !> \brief \copybrief KIM::ComputeCallbackName::<!--
   !! -->ComputeCallbackName(std::string const &)
@@ -188,7 +184,7 @@ contains
     type(kim_compute_callback_name_type), intent(in) :: rhs
 
     kim_compute_callback_name_equal &
-      = (lhs%compute_callback_name_id .eq. rhs%compute_callback_name_id)
+      = (lhs%compute_callback_name_id == rhs%compute_callback_name_id)
   end function kim_compute_callback_name_equal
 
   !> \brief \copybrief KIM::ComputeCallbackName::operator!=()
@@ -202,7 +198,7 @@ contains
     type(kim_compute_callback_name_type), intent(in) :: lhs
     type(kim_compute_callback_name_type), intent(in) :: rhs
 
-    kim_compute_callback_name_not_equal = .not. (lhs .eq. rhs)
+    kim_compute_callback_name_not_equal = .not. (lhs == rhs)
   end function kim_compute_callback_name_not_equal
 
   !> \brief \copybrief KIM::ComputeCallbackName::<!--
@@ -212,8 +208,8 @@ contains
   !! KIM_ComputeCallbackName_FromString
   !!
   !! \since 2.0
-  recursive subroutine kim_compute_callback_name_from_string(string, &
-    compute_callback_name)
+  recursive subroutine kim_compute_callback_name_from_string( &
+    string, compute_callback_name)
     implicit none
     interface
       type(kim_compute_callback_name_type) recursive function from_string( &
@@ -237,7 +233,7 @@ contains
   !! \since 2.0
   recursive subroutine kim_compute_callback_name_to_string( &
     compute_callback_name, string)
-    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
+    use kim_convert_string_module, only: kim_convert_c_char_ptr_to_string
     implicit none
     interface
       type(c_ptr) recursive function get_string(compute_callback_name) &
@@ -273,7 +269,7 @@ contains
       recursive subroutine get_number_of_compute_callback_names( &
         number_of_compute_callback_names) &
         bind(c, &
-        name="KIM_COMPUTE_CALLBACK_NAME_GetNumberOfComputeCallbackNames")
+             name="KIM_COMPUTE_CALLBACK_NAME_GetNumberOfComputeCallbackNames")
         use, intrinsic :: iso_c_binding
         integer(c_int), intent(out) :: number_of_compute_callback_names
       end subroutine get_number_of_compute_callback_names
@@ -290,11 +286,12 @@ contains
   !!
   !! \since 2.0
   recursive subroutine kim_get_compute_callback_name(index, &
-    compute_callback_name, ierr)
+                                                     compute_callback_name, &
+                                                     ierr)
     implicit none
     interface
-      integer(c_int) recursive function get_compute_callback_name(index, &
-        compute_callback_name) &
+      integer(c_int) recursive function get_compute_callback_name( &
+        index, compute_callback_name) &
         bind(c, name="KIM_COMPUTE_CALLBACK_NAME_GetComputeCallbackName")
         use, intrinsic :: iso_c_binding
         import kim_compute_callback_name_type
@@ -308,6 +305,6 @@ contains
     type(kim_compute_callback_name_type), intent(out) :: compute_callback_name
     integer(c_int), intent(out) :: ierr
 
-    ierr = get_compute_callback_name(index-1, compute_callback_name)
+    ierr = get_compute_callback_name(index - 1, compute_callback_name)
   end subroutine kim_get_compute_callback_name
 end module kim_compute_callback_name_module

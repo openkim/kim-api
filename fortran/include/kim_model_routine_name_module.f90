@@ -30,7 +30,6 @@
 ! Release: This file is part of the kim-api.git repository.
 !
 
-
 !> \brief \copybrief KIM::ModelRoutineName
 !!
 !! \sa KIM::ModelRoutineName, KIM_ModelRoutineName
@@ -44,7 +43,6 @@ module kim_model_routine_name_module
   public &
     ! Derived types
     kim_model_routine_name_type, &
-
     ! Constants
     KIM_MODEL_ROUTINE_NAME_CREATE, &
     KIM_MODEL_ROUTINE_NAME_COMPUTE_ARGUMENTS_CREATE, &
@@ -54,16 +52,14 @@ module kim_model_routine_name_module
     KIM_MODEL_ROUTINE_NAME_WRITE_PARAMETERIZED_MODEL, &
     KIM_MODEL_ROUTINE_NAME_COMPUTE_ARGUMENTS_DESTROY, &
     KIM_MODEL_ROUTINE_NAME_DESTROY, &
-
     ! Routines
     kim_known, &
-    operator (.eq.), &
-    operator (.ne.), &
+    operator(.eq.), &
+    operator(.ne.), &
     kim_from_string, &
     kim_to_string, &
     kim_get_number_of_model_routine_names, &
     kim_get_model_routine_name
-
 
   !> \brief \copybrief KIM::ModelRoutineName
   !!
@@ -71,12 +67,12 @@ module kim_model_routine_name_module
   !!
   !! \since 2.0
   type, bind(c) :: kim_model_routine_name_type
-     !> \brief \copybrief KIM::ModelRoutineName::modelRoutineNameID
-     !!
-     !! \sa KIM::ModelRoutineName::modelRoutineNameID,
-     !! KIM_ModelRoutineName::modelRoutineNameID
-     !!
-     !! \since 2.0
+    !> \brief \copybrief KIM::ModelRoutineName::modelRoutineNameID
+    !!
+    !! \sa KIM::ModelRoutineName::modelRoutineNameID,
+    !! KIM_ModelRoutineName::modelRoutineNameID
+    !!
+    !! \since 2.0
     integer(c_int) model_routine_name_id
   end type kim_model_routine_name_type
 
@@ -169,18 +165,18 @@ module kim_model_routine_name_module
   !! \sa KIM::ModelRoutineName::operator==(), KIM_ModelRoutineName_Equal
   !!
   !! \since 2.0
-  interface operator (.eq.)
+  interface operator(.eq.)
     module procedure kim_model_routine_name_equal
-  end interface operator (.eq.)
+  end interface operator(.eq.)
 
   !> \brief \copybrief KIM::ModelRoutineName::operator!=()
   !!
   !! \sa KIM::ModelRoutineName::operator!=(), KIM_ModelRoutineName_NotEqual
   !!
   !! \since 2.0
-  interface operator (.ne.)
+  interface operator(.ne.)
     module procedure kim_model_routine_name_not_equal
-  end interface operator (.ne.)
+  end interface operator(.ne.)
 
   !> \brief \copybrief KIM::ModelRoutineName::<!--
   !! -->ModelRoutineName(std::string const &)
@@ -236,7 +232,7 @@ contains
     type(kim_model_routine_name_type), intent(in) :: rhs
 
     kim_model_routine_name_equal &
-      = (lhs%model_routine_name_id .eq. rhs%model_routine_name_id)
+      = (lhs%model_routine_name_id == rhs%model_routine_name_id)
   end function kim_model_routine_name_equal
 
   !> \brief \copybrief KIM::ModelRoutineName::operator!=()
@@ -249,7 +245,7 @@ contains
     type(kim_model_routine_name_type), intent(in) :: lhs
     type(kim_model_routine_name_type), intent(in) :: rhs
 
-    kim_model_routine_name_not_equal = .not. (lhs .eq. rhs)
+    kim_model_routine_name_not_equal = .not. (lhs == rhs)
   end function kim_model_routine_name_not_equal
 
   !> \brief \copybrief KIM::ModelRoutineName::<!--
@@ -260,7 +256,7 @@ contains
   !!
   !! \since 2.0
   recursive subroutine kim_model_routine_name_from_string(string, &
-    model_routine_name)
+                                                          model_routine_name)
     implicit none
     interface
       type(kim_model_routine_name_type) recursive function from_string(string) &
@@ -283,8 +279,8 @@ contains
   !!
   !! \since 2.0
   recursive subroutine kim_model_routine_name_to_string(model_routine_name, &
-    string)
-    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
+                                                        string)
+    use kim_convert_string_module, only: kim_convert_c_char_ptr_to_string
     implicit none
     interface
       type(c_ptr) recursive function get_string(model_routine_name) &
@@ -318,8 +314,7 @@ contains
     interface
       recursive subroutine get_number_of_model_routine_names( &
         number_of_model_routine_names) &
-        bind(c, &
-        name="KIM_MODEL_ROUTINE_NAME_GetNumberOfModelRoutineNames")
+        bind(c, name="KIM_MODEL_ROUTINE_NAME_GetNumberOfModelRoutineNames")
         use, intrinsic :: iso_c_binding
         integer(c_int), intent(out) :: number_of_model_routine_names
       end subroutine get_number_of_model_routine_names
@@ -336,11 +331,11 @@ contains
   !!
   !! \since 2.0
   recursive subroutine kim_get_model_routine_name(index, &
-    model_routine_name, ierr)
+                                                  model_routine_name, ierr)
     implicit none
     interface
-      integer(c_int) recursive function get_model_routine_name(index, &
-        model_routine_name) &
+      integer(c_int) recursive function get_model_routine_name( &
+        index, model_routine_name) &
         bind(c, name="KIM_MODEL_ROUTINE_NAME_GetModelRoutineName")
         use, intrinsic :: iso_c_binding
         import kim_model_routine_name_type
@@ -354,6 +349,6 @@ contains
     type(kim_model_routine_name_type), intent(out) :: model_routine_name
     integer(c_int), intent(out) :: ierr
 
-    ierr = get_model_routine_name(index-1, model_routine_name)
+    ierr = get_model_routine_name(index - 1, model_routine_name)
   end subroutine kim_get_model_routine_name
 end module kim_model_routine_name_module

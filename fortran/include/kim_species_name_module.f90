@@ -30,7 +30,6 @@
 ! Release: This file is part of the kim-api.git repository.
 !
 
-
 !> \brief \copybrief KIM::SpeciesName
 !!
 !! \sa KIM::SpeciesName, KIM_SpeciesName
@@ -44,7 +43,6 @@ module kim_species_name_module
   public &
     ! Derived types
     kim_species_name_type, &
-
     ! Constants
     KIM_SPECIES_NAME_ELECTRON, &
     KIM_SPECIES_NAME_H, &
@@ -185,16 +183,14 @@ module kim_species_name_module
     KIM_SPECIES_NAME_USER18, &
     KIM_SPECIES_NAME_USER19, &
     KIM_SPECIES_NAME_USER20, &
-
     ! Routines
     kim_known, &
-    operator (.eq.), &
-    operator (.ne.), &
+    operator(.eq.), &
+    operator(.ne.), &
     kim_from_string, &
     kim_to_string, &
     kim_get_number_of_species_names, &
     kim_get_species_name
-
 
   !> \brief \copybrief KIM::SpeciesName
   !!
@@ -1456,7 +1452,6 @@ module kim_species_name_module
     bind(c, name="KIM_SPECIES_NAME_user20") &
     :: KIM_SPECIES_NAME_USER20
 
-
   !> \brief \copybrief KIM::SpeciesName::Known
   !!
   !! \sa KIM::SpeciesName::Known, KIM_SpeciesName_Known
@@ -1471,18 +1466,18 @@ module kim_species_name_module
   !! \sa KIM::SpeciesName::operator==(), KIM_SpeciesName_Equal
   !!
   !! \since 2.0
-  interface operator (.eq.)
+  interface operator(.eq.)
     module procedure kim_species_name_equal
-  end interface operator (.eq.)
+  end interface operator(.eq.)
 
   !> \brief \copybrief KIM::SpeciesName::operator!=()
   !!
   !! \sa KIM::SpeciesName::operator!=, KIM_SpeciesName_NotEqual
   !!
   !! \since 2.0
-  interface operator (.ne.)
+  interface operator(.ne.)
     module procedure kim_species_name_not_equal
-  end interface operator (.ne.)
+  end interface operator(.ne.)
 
   !> \brief \copybrief KIM::SpeciesName::SpeciesName(std::string const &)
   !!
@@ -1536,7 +1531,7 @@ contains
     type(kim_species_name_type), intent(in) :: rhs
 
     kim_species_name_equal &
-      = (lhs%species_name_id .eq. rhs%species_name_id)
+      = (lhs%species_name_id == rhs%species_name_id)
   end function kim_species_name_equal
 
   !> \brief \copybrief KIM::SpeciesName::operator!=()
@@ -1549,7 +1544,7 @@ contains
     type(kim_species_name_type), intent(in) :: lhs
     type(kim_species_name_type), intent(in) :: rhs
 
-    kim_species_name_not_equal = .not. (lhs .eq. rhs)
+    kim_species_name_not_equal = .not. (lhs == rhs)
   end function kim_species_name_not_equal
 
   !> \brief \copybrief KIM::SpeciesName::SpeciesName(std::string const &)
@@ -1581,7 +1576,7 @@ contains
   !!
   !! \since 2.0
   recursive subroutine kim_species_name_to_string(species_name, string)
-    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
+    use kim_convert_string_module, only: kim_convert_c_char_ptr_to_string
     implicit none
     interface
       type(c_ptr) recursive function get_string(species_name) &
@@ -1644,6 +1639,6 @@ contains
     type(kim_species_name_type), intent(out) :: species_name
     integer(c_int), intent(out) :: ierr
 
-    ierr = get_species_name(index-1, species_name)
+    ierr = get_species_name(index - 1, species_name)
   end subroutine kim_get_species_name
 end module kim_species_name_module
