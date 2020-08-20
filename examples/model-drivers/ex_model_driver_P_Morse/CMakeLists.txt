@@ -33,10 +33,6 @@
 #
 
 
-#
-# Required preamble
-#
-
 cmake_minimum_required(VERSION 3.4)
 
 list(APPEND CMAKE_PREFIX_PATH $ENV{KIM_API_CMAKE_PREFIX_DIR})
