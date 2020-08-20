@@ -33,6 +33,37 @@
 #
 
 
+# filter file list  # NOTE: keep in sync with verion in git-hooks/pre-commit
+filter_file_list () {
+  local file_list="$1"
+  local ignore_file="`git rev-parse --show-toplevel`/.clang-format-hook-ignore"
+  files_to_check_format=""
+
+  for file in ${file_list}; do
+    local keep=`printf ${file} | sed -e 's/^.*\.hpp$//'     \
+                                     -e 's/^.*\.hpp\.in$//' \
+                                     -e 's/^.*\.cpp$//'     \
+                                     -e 's/^.*\.cpp\.in$//' \
+                                     -e 's/^.*\.inc$//'     \
+                                     -e 's/^.*\.inc\.in$//' \
+                                     -e 's/^.*\.h$//'       \
+                                     -e 's/^.*\.h\.in$//'   \
+                                     -e 's/^.*\.c$//'       \
+                                     -e 's/^.*\.c\.in$//'`
+    if test -f "${ignore_file}"; then
+      if test `grep -c "^${file}$" "${ignore_file}"` -gt 0; then
+        # ignore
+        printf "In clang-format ignore file: ${file}\n"
+        keep=no
+      fi
+    fi
+
+    if test x"${keep}" = x""; then
+      files_to_check_format="${files_to_check_format} ${file}"
+    fi
+  done
+}
+
 # goto the top level repo directory
 if THE_GIT_DIR="`git rev-parse --show-toplevel 2> /dev/null`"; then
   cd "${THE_GIT_DIR}"
@@ -47,8 +78,12 @@ files=`find .    -name "*.hpp"     \
               -o -name "*.h"       \
               -o -name "*.h.in"    \
               -o -name "*.c"       \
-              -o -name "*.c.in"`
+              -o -name "*.c.in" |  \
+       sed -e 's|^\./||'`
 
 printf "Executing clang-format on all c/c++ files in directory ${PWD}.\n"
 
-clang-format -style=file -i ${files}
+files_to_check_format=""
+filter_file_list "${files}"
+
+clang-format -style=file -i ${files_to_check_format}

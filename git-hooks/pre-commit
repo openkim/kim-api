@@ -39,7 +39,7 @@
 # it wants to stop the commit.
 
 
-# filter file list
+# filter file list  # NOTE: keep in sync with verion in scripts/clang-format-all
 filter_file_list () {
   local file_list="$1"
   local ignore_file="`git rev-parse --show-toplevel`/.clang-format-hook-ignore"
@@ -58,8 +58,8 @@ filter_file_list () {
                                      -e 's/^.*\.c\.in$//'`
     if test -f "${ignore_file}"; then
       if test `grep -c "^${file}$" "${ignore_file}"` -gt 0; then
-        # ignore
-        printf "In ignore\n"
+        # # ignore
+        # printf "In clang-format ignore file: ${file}\n"
         keep=no
       fi
     fi
