@@ -88,7 +88,8 @@ To install and run the KIM API package you need the following:
    corresponding Intel compilers, version 11.1 or higher.  Other compilers may
    also work.
 
-4. The 'xxd' utility (distributed as part of the vim package).
+4. (optional) The 'xxd' utility (distributed as part of the vim package).
+   If available, provides faster builds than without.
 
 5. wget or curl, sed, grep, tar, uname, etc. (used by the
    kim-api-collections-management utility).

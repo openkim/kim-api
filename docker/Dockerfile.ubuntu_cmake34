@@ -48,7 +48,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get -y update && \
         libasan5 \
         make \
         wget \
-        xxd \
+        `# xxd  # skip xxd to do testing of cmake implementation` \
         xz-utils \
     && rm -rf /var/lib/apt/lists/*
 
