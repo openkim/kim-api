@@ -40,16 +40,7 @@ filter_file_list () {
   files_to_check_format=""
 
   for file in ${file_list}; do
-    local keep=`printf ${file} | sed -e 's/^.*\.hpp$//'     \
-                                     -e 's/^.*\.hpp\.in$//' \
-                                     -e 's/^.*\.cpp$//'     \
-                                     -e 's/^.*\.cpp\.in$//' \
-                                     -e 's/^.*\.inc$//'     \
-                                     -e 's/^.*\.inc\.in$//' \
-                                     -e 's/^.*\.h$//'       \
-                                     -e 's/^.*\.h\.in$//'   \
-                                     -e 's/^.*\.c$//'       \
-                                     -e 's/^.*\.c\.in$//'`
+    local keep=`printf ${file} | sed -e 's/^.*\.f90$//'`
     if test -f "${ignore_file}"; then
       if test `grep -c "^${file}$" "${ignore_file}"` -gt 0; then
         # ignore
@@ -72,21 +63,12 @@ else
   exit 1
 fi
 
-files=`find .    -name "*.hpp"     \
-              -o -name "*.hpp.in"  \
-              -o -name "*.cpp"     \
-              -o -name "*.cpp.in"  \
-              -o -name "*.inc"     \
-              -o -name "*.inc.in"  \
-              -o -name "*.h"       \
-              -o -name "*.h.in"    \
-              -o -name "*.c"       \
-              -o -name "*.c.in" |  \
+files=`find .    -name "*.f90" |  \
        sed -e 's|^\./||'`
 
-printf "Executing clang-format on all c/c++ files in directory ${PWD}.\n"
+printf "Executing fprettify on all f90 files in directory ${PWD}.\n"
 
 files_to_check_format=""
 filter_file_list "${files}"
 
-clang-format -style=file -i ${files_to_check_format}
+fprettify ${files_to_check_format}

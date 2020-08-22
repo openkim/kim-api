@@ -33,26 +33,13 @@
 #
 
 
-printf -- "\n"
-printf -- "The git-hooks expect the system to have:\n"
-printf -- "  * clang-format\n"
-printf -- "  * fprettify\n"
-printf -- "installed and on the PATH.\n"
-printf -- "\n"
-printf -- "  To install clang-foramt, use a package manager\n"
-printf -- "  such as homebrew:\n"
-printf -- "\n"
-printf -- "    %% brew install clang-format\n"
-printf -- "\n"
-printf -- "  To create fprettify virtualenv perform the following\n"
-printf -- "  in the directory of your choice.\n"
-printf -- "\n"
-printf -- "    %% virtualenv fprettify\n"
-printf -- "    %% souce fprettify/bin/activate\n"
-printf -- "    %% pip install —upgrade fprettify\n"
-printf -- "\n"
-printf -- "  Then add a shell script, say to \${HOME}/bin, for running fprettify.\n"
-printf -- "\n"
+# goto the top level repo directory
+if THE_GIT_DIR="`git rev-parse --show-toplevel 2> /dev/null`"; then
+  cd "${THE_GIT_DIR}"
+else
+  printf "Not in the git repo.  Exiting...\n"
+  exit 1
+fi
 
-# set hooksPath to repo local hooks directory
-git config --local core.hooksPath git-hooks
+${THE_GIT_DIR}/scripts/clang-format-all
+${THE_GIT_DIR}/scripts/fprettify-all

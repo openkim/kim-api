@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 
 #
@@ -39,27 +39,36 @@
 # it wants to stop the commit.
 
 
+cpp_sed_scripts=\
+"-e s/^.*\.hpp$//    \
+-e s/^.*\.hpp\.in$// \
+-e s/^.*\.cpp$//     \
+-e s/^.*\.cpp\.in$// \
+-e s/^.*\.inc$//     \
+-e s/^.*\.inc\.in$// \
+-e s/^.*\.h$//       \
+-e s/^.*\.h\.in$//   \
+-e s/^.*\.c$//       \
+-e s/^.*\.c\.in$//"
+
+fortran_sed_scripts="-e s/^.*\.f90//"
+
+# relative path to git toplevel
+dir_prefix="./`printf "${GIT_PREFIX}" | sed -e 's|\([^/][^/]*\)|..|g'`"
+
 # filter file list  # NOTE: keep in sync with verion in scripts/clang-format-all
 filter_file_list () {
   local file_list="$1"
-  local ignore_file="`git rev-parse --show-toplevel`/.clang-format-hook-ignore"
+  local sed_scripts="$2"
+  local ignore_file="`git rev-parse --show-toplevel`/.format-ignore"
   files_to_check_format=""
 
   for file in ${file_list}; do
-    local keep=`printf ${file} | sed -e 's/^.*\.hpp$//'     \
-                                     -e 's/^.*\.hpp\.in$//' \
-                                     -e 's/^.*\.cpp$//'     \
-                                     -e 's/^.*\.cpp\.in$//' \
-                                     -e 's/^.*\.inc$//'     \
-                                     -e 's/^.*\.inc\.in$//' \
-                                     -e 's/^.*\.h$//'       \
-                                     -e 's/^.*\.h\.in$//'   \
-                                     -e 's/^.*\.c$//'       \
-                                     -e 's/^.*\.c\.in$//'`
+    local keep=`printf ${file} | sed ${sed_scripts}`
     if test -f "${ignore_file}"; then
       if test `grep -c "^${file}$" "${ignore_file}"` -gt 0; then
         # # ignore
-        # printf "In clang-format ignore file: ${file}\n"
+        # printf "File '${file}' is in format-ignore file: ignoring.\n"
         keep=no
       fi
     fi
@@ -80,66 +89,103 @@ fi
 
 file_list=`git diff-index --cached --name-only --diff-filter=d $against`
 files_to_check_format=""
-filter_file_list "${file_list}"
+filter_file_list "${file_list}" "${cpp_sed_scripts}"
+cpp_files_to_check_format="${files_to_check_format}"
+
+files_to_check_format=""
+filter_file_list "${file_list}" "${fortran_sed_scripts}"
+fortran_files_to_check_format="${files_to_check_format}"
 
 # printf "The files identified as in the commit are:\n\n"
 # for file in ${file_list}; do
 #   printf "\t%s\n" ${file}
 # done
-# printf "\nThe files identified for format checking in the commit are:\n\n"
-# for file in ${files_to_check_format}; do
+# printf "\nThe files identified for c/cpp format checking in the commit are:\n\n"
+# for file in ${cpp_files_to_check_format}; do
+#   printf "\t%s\n" ${file}
+# done
+# printf "\nThe files identified for fortran format checking in the commit are:\n\n"
+# for file in ${fortran_files_to_check_format}; do
 #   printf "\t%s\n" ${file}
 # done
 
-files_needing_formatting=""
-for file in ${files_to_check_format}; do
+cpp_files_needing_formatting=""
+for file in ${cpp_files_to_check_format}; do
   # ":${file}" references file in the git index
   git show :${file} | clang-format -assume-filename=${file} \
                                    -style=file -output-replacements-xml \
     | grep -c "<replacement " > /dev/null
   if test $? -ne 1; then
-    files_needing_formatting="${files_needing_formatting} ${file}"
+    cpp_files_needing_formatting="${cpp_files_needing_formatting} ${file}"
   fi
 done
 
-# printf "\nThe files identified as needing formatting in the commit are:\n\n"
-# for file in ${files_needing_formatting}; do
+fortran_files_needing_formatting=""
+for file in ${fortran_files_to_check_format}; do
+  # ":${file}" references file in the git index
+  fcomp="`{ cd \"${dir_prefix}\" && diff -q <(git show :${file}) <(git show :${file} | fprettify -) ; } 2>&1`"  # will be empty if file doesn't change and there are now warnings from fprettify
+  if test ! x"" = x"${fcomp}"; then
+    fortran_files_needing_formatting="${fortran_files_needing_formatting} ${file}"
+  fi
+done
+
+# printf "\nThe c/cpp files identified as needing formatting in the commit are:\n\n"
+# for file in ${cpp_files_needing_formatting}; do
+#   printf "\t%s\n" ${file}
+# done
+#
+# printf "\nThe fortran files identified as needing formatting in the commit are:\n\n"
+# for file in ${fortran_files_needing_formatting}; do
 #   printf "\t%s\n" ${file}
 # done
 
-if test x"${files_needing_formatting}" != x""; then
+if test x"${cpp_files_needing_formatting}" != x"" -o x"${fortran_files_needing_formatting}" != x""; then
   printf "kim-api pre-commit hook:\n"
-  printf "The following files must be processed with clang-format:\n"
-  printf "\n"
-  for file in ${files_needing_formatting}; do
-    printf "\t${file}\n"
+  if test ! x"" = x"${cpp_files_needing_formatting}"; then
+    printf "The following c/cpp files must be processed with clang-format:\n"
+    printf "\n"
+    for file in ${cpp_files_needing_formatting}; do
+      printf "\t${file}\n"
+    done
+    printf "\n"
+  fi
+  if test ! x"" = x"${fortran_files_needing_formatting}"; then
+    printf "The following fortran files must be processed with fprettify:\n"
+    printf "\n"
+    for file in ${fortran_files_needing_formatting}; do
+      printf "\t${file}\n"
+    done
+    printf "\n"
+  fi
+  printf "The following commands may be used to resolve this issue:\n"
+  printf "  (However, fortran files may require further manual editing.)\n\n"
+  for file in ${cpp_files_needing_formatting}; do
+    printf "  clang-format -style=file -i \"${dir_prefix}${file}\"\n"
   done
   printf "\n"
-  printf "The following commands may be used to resolve this issue:\n\n"
-
-  dir_prefix=`printf "${GIT_PREFIX}" | sed -e 's|\([^/][^/]*\)|..|g'`
-  for file in ${files_needing_formatting}; do
-    printf "  clang-format -style=file -i ${dir_prefix}${file}\n"
+  for file in ${fortran_files_needing_formatting}; do
+    printf "  (cd \"${dir_prefix}\" && fprettify \"${file}\")\n"
   done
+  printf "\n"
 
-  for file in ${files_needing_formatting}; do
-    printf "  git add ${dir_prefix}${file}\n"
+  for file in ${cpp_files_needing_formatting} ${fortran_files_needing_formatting}; do
+    printf "  git add \"${dir_prefix}${file}\"\n"
   done
   printf "\n"
 
   exit 1
-else
-  additional_precommit="`git rev-parse --absolute-git-dir`/hooks/pre-commit"
-  if test -x "${additional_precommit}"; then
-    if ${additional_precommit}; then
-      # everything is OK
-      exit 0
-    else
-      # additional pre-commit failed
-      exit 1
-    fi
-  else
+fi
+
+additional_precommit="`git rev-parse --absolute-git-dir`/hooks/pre-commit"
+if test -x "${additional_precommit}"; then
+  if ${additional_precommit}; then
     # everything is OK
     exit 0
+  else
+    # additional pre-commit failed
+    exit 1
   fi
+else
+  # everything is OK
+  exit 0
 fi
