@@ -68,8 +68,8 @@ kim_api_items_set_cmake_build_type_variable_in_cache()
 kim_api_items_set_cmake_compiler_variables()
 kim_api_items_set_compiler_flag_variables()
 
-set(KIM_API_PROJECT_NAME @KIM_API_PROJECT_NAME@ CACHE STRING "KIM API project name string")
-set(KIM_API_VERSION @PROJECT_VERSION@ CACHE STRING "KIM API version")
+set(KIM_API_PROJECT_NAME @KIM_API_PROJECT_NAME@)
+set(KIM_API_VERSION @PROJECT_VERSION@)
 
 
 # wrap add_kim_api_model_library() and add_kim_api_model_driver_library()

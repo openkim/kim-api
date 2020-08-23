@@ -49,6 +49,6 @@ endif()
 
 # REMOVE THE BELOW FOR 3.0.0 RELEASE!!!
 if("${KIM-API_FIND_VERSION}" VERSION_LESS "2.2.0")
-  set(_KIM_API_BUILD_TREE_ACTIVE TRUE CACHE BOOL "build tree tmep")
+  set(_KIM_API_BUILD_TREE_ACTIVE TRUE CACHE INTERNAL "build tree temp")
   include("${CMAKE_CURRENT_LIST_DIR}/kim-api-pre-2.2-compatibility.cmake")
 endif()
