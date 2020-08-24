@@ -43,7 +43,7 @@
 
 # bash completions
 if((NOT BASH_COMPLETION_COMPLETIONSDIR) AND ("${CMAKE_INSTALL_PREFIX}" IN_LIST KIM_API_STANDARD_INSTALL_PREFIXES))
-  find_package(bash-completion QUIT)  # sets BASH_COMPLETION_COMPLETIONSDIR
+  find_package(bash-completion QUIET)  # sets BASH_COMPLETION_COMPLETIONSDIR
 endif()
 set_cache_with_fallback(BASH_COMPLETION_COMPLETIONSDIR "${CMAKE_INSTALL_SYSCONFDIR}/bash_completion.d" PATH "Directory where bash completions are installed")
 
