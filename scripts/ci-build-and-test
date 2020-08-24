@@ -59,6 +59,7 @@ cmake --warn-uninitialized \
       ${IWYU:+-DCMAKE_C_INCLUDE_WHAT_YOU_USE=include-what-you-use} \
       .. \
   || exit $?
+cat kim-api-configuration-detailed.log
 make -j2 || exit $?
 ccache -s
 
