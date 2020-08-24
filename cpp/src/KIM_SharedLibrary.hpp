@@ -102,6 +102,8 @@ class SharedLibrary
                 int const lineNumber,
                 std::string const & fileName) const;
 
+  static FILESYSTEM::Path GetORIGIN();
+
  private:
   struct EmbeddedFile
   {
@@ -111,6 +113,8 @@ class SharedLibrary
 
     EmbeddedFile();
   };  // struct EmbeddedFile
+
+  static FILESYSTEM::Path const ORIGIN;
 
   FILESYSTEM::Path sharedLibraryName_;
   void * sharedLibraryHandle_;

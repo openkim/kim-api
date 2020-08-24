@@ -58,8 +58,20 @@
 #include "KIM_SharedLibrarySchema.hpp"
 #endif
 
-namespace KIM
+namespace
 {
+KIM::FILESYSTEM::Path PrivateGetORIGIN()
+{
+  Dl_info info;
+  int OK = false;
+#ifndef _WIN32
+  OK = dladdr(reinterpret_cast<void const *>(&KIM::SharedLibrary::GetORIGIN),
+              &info);
+#endif
+  return KIM::FILESYSTEM::Path(OK ? info.dli_fname : "").parent_path();
+}
+}  // namespace
+
 // log helpers
 #define SNUM(x)                                                \
   static_cast<std::ostringstream const &>(std::ostringstream() \
@@ -76,6 +88,8 @@ namespace KIM
 
 #include "KIM_LogMacros.hpp"
 #define KIM_LOGGER_OBJECT_NAME this
+namespace KIM
+{
 SharedLibrary::SharedLibrary::EmbeddedFile::EmbeddedFile() :
     fileName(NULL), fileLength(0), filePointer(NULL)
 {
@@ -744,4 +758,7 @@ void SharedLibrary::LogEntry(LogVerbosity const logVerbosity,
   if (log_ != NULL) log_->LogEntry(logVerbosity, message, lineNumber, fileName);
 }
 
+FILESYSTEM::Path const SharedLibrary::ORIGIN = PrivateGetORIGIN();
+
+FILESYSTEM::Path SharedLibrary::GetORIGIN() { return ORIGIN; }
 }  // namespace KIM
