@@ -19,11 +19,10 @@
 #
 
 #
-# Copyright (c) 2013--2020, Regents of the University of Minnesota.
+# Copyright (c) 2020--2020, Regents of the University of Minnesota.
 # All rights reserved.
 #
 # Contributors:
-#    Jim Madge
 #    Ryan S. Elliott
 #
 
@@ -32,20 +31,10 @@
 #
 
 
-# - CompletionConfig
-#
-# Sets the install paths for completions.
-#
-# If the user defines a location use it.  If installing to "standard" loc, use
-# system bash-completion settings if available Otherwise, install into
-# sysconfdir (but do not cache).
-
-
-# bash completions
-if((NOT BASH_COMPLETION_COMPLETIONSDIR) AND ("${CMAKE_INSTALL_PREFIX}" IN_LIST KIM_API_STANDARD_INSTALL_PREFIXES))
-  find_package(bash-completion QUIT)  # sets BASH_COMPLETION_COMPLETIONSDIR
-endif()
-set_cache_with_fallback(BASH_COMPLETION_COMPLETIONSDIR "${CMAKE_INSTALL_SYSCONFDIR}/bash_completion.d" PATH "Directory where bash completions are installed")
-
-# zsh completions
-set_cache_with_fallback(ZSH_COMPLETION_COMPLETIONSDIR "${CMAKE_INSTALL_SYSCONFDIR}/zsh_completion.d" PATH "Directory where zsh completions are installed")
+# inspired by GNUInstallDirs '_GNUInstallDirs_cache_path_fallback'
+macro(set_cache_with_fallback var default type description)
+  if(NOT ${var})
+    set(${var} "" CACHE ${type} "${description}")
+    set(${var} "${default}")
+  endif()
+endmacro(set_cache_with_fallback)

@@ -40,6 +40,7 @@ enable_testing()
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules)
 list(APPEND CMAKE_PREFIX_PATH ${CMAKE_CURRENT_BINARY_DIR})
 
+include(SetCacheWithFallback)
 include(DefaultCompilerStandards)
 
 # Define options
@@ -49,8 +50,8 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 else()
   set(_LOG_MAX "INFORMATION")
 endif()
-set(KIM_API_LOG_MAXIMUM_LEVEL "${_LOG_MAX}" CACHE STRING "Maximum log verbosity")
-set_property(CACHE KIM_API_LOG_MAXIMUM_LEVEL PROPERTY STRINGS SILENT FATAL ERROR WARNING INFORMATION DEBUG)
+set_cache_with_fallback(KIM_API_LOG_MAXIMUM_LEVEL "${_LOG_MAX}" STRING "Maximum log verbosity")
+set_property(CACHE KIM_API_LOG_MAXIMUM_LEVEL PROPERTY STRINGS "" SILENT FATAL ERROR WARNING INFORMATION DEBUG)
 #
 option(KIM_API_BUILD_EXAMPLES "Build example Drivers, Models, Simulator Models, and Simulators" ON)
 #
@@ -76,13 +77,12 @@ mark_as_advanced(KIM_API_CONFIGURATION_TIMESTAMP)
 project(${KIM_API_PROJECT_NAME} VERSION 2.2.0 LANGUAGES CXX C Fortran)  # must remain a single line for create-pacakge script
 set(PROJECT_DESCRIPTION "An Application Programming Interface (API) for the Knowledgebase of Interatomic Models (KIM).")
 #
-include(GNUInstallDirs)  # needs to come after call to project()
-include(CompletionConfig)  # set install dirs for completions
+include(GNUInstallDirs)  # needs to come after languages are enabled
 include(DefaultRPATHSettings)
 include(DefineVersionVariables)
 
 
-# Define options dependent on PROJECT_NAME
+# Define options dependent on languages being enabled and/or PROJECT_NAME being defined
 #
 set(KIM_API_CMAKE_C_COMPILER "${CMAKE_C_COMPILER}" CACHE FILEPATH "C compiler filepath to be used after installation for item compilation.")
 mark_as_advanced(KIM_API_CMAKE_C_COMPILER)
@@ -95,26 +95,36 @@ include(DefineInternalVariables)
 #
 # Define options dependent on internal variables
 #
-set(KIM_API_USER_CONFIGURATION_FILE ".${PROJECT_NAME}/${KIM_API_UID}/config" CACHE FILEPATH "Default configuration file name. If not absolute, then relative to user home directory")
+include(CompletionConfig)  # set install dirs for completions;  NOTE: depends on Module 'DefineInternalVariables'
+set_cache_with_fallback(KIM_API_USER_CONFIGURATION_FILE ".${PROJECT_NAME}/${KIM_API_UID}/config" FILEPATH "Default configuration file name. If not absolute, then relative to user home directory")
 mark_as_advanced(KIM_API_USER_CONFIGURATION_FILE)
 # "~/" is expanded by cmake when set(... CACHE PATH ...) is used below; so do not use PATH as type
-set(KIM_API_USER_MODEL_DRIVERS_DIR_DEFAULT "~/.${PROJECT_NAME}/${KIM_API_UID}/${KIM_API_MODEL_DRIVER_PLURAL_DIR_IDENTIFIER}" CACHE STRING "Default user collection model drivers dir")  # do not use PATH type
+set_cache_with_fallback(KIM_API_USER_MODEL_DRIVERS_DIR_DEFAULT "~/.${PROJECT_NAME}/${KIM_API_UID}/${KIM_API_MODEL_DRIVER_PLURAL_DIR_IDENTIFIER}" STRING "Default user collection model drivers dir")  # do not use PATH type
 mark_as_advanced(KIM_API_USER_MODEL_DRIVERS_DIR_DEFAULT)
-set(KIM_API_USER_PORTABLE_MODELS_DIR_DEFAULT "~/.${PROJECT_NAME}/${KIM_API_UID}/${KIM_API_PORTABLE_MODEL_PLURAL_DIR_IDENTIFIER}" CACHE STRING "Default user collection portable models dir")  # do not use PATH type
+set_cache_with_fallback(KIM_API_USER_PORTABLE_MODELS_DIR_DEFAULT "~/.${PROJECT_NAME}/${KIM_API_UID}/${KIM_API_PORTABLE_MODEL_PLURAL_DIR_IDENTIFIER}" STRING "Default user collection portable models dir")  # do not use PATH type
 mark_as_advanced(KIM_API_USER_PORTABLE_MODELS_DIR_DEFAULT)
-set(KIM_API_USER_SIMULATOR_MODELS_DIR_DEFAULT "~/.${PROJECT_NAME}/${KIM_API_UID}/${KIM_API_SIMULATOR_MODEL_PLURAL_DIR_IDENTIFIER}" CACHE STRING "Default user collection simulator models dir")  # do not use PATH type
+set_cache_with_fallback(KIM_API_USER_SIMULATOR_MODELS_DIR_DEFAULT "~/.${PROJECT_NAME}/${KIM_API_UID}/${KIM_API_SIMULATOR_MODEL_PLURAL_DIR_IDENTIFIER}" STRING "Default user collection simulator models dir")  # do not use PATH type
 mark_as_advanced(KIM_API_USER_SIMULATOR_MODELS_DIR_DEFAULT)
 #
-if((NOT KIM_API_SYSTEM_MODEL_DRIVERS_DIR) OR (KIM_API_SYSTEM_MODEL_DRIVERS_DIR MATCHES "^${KIM_API_PATH_SEPARATOR}"))
-  set(KIM_API_SYSTEM_MODEL_DRIVERS_DIR "${CMAKE_INSTALL_FULL_LIBDIR}/${PROJECT_NAME}/${KIM_API_MODEL_DRIVER_PLURAL_IDENTIFIER}${KIM_API_SYSTEM_MODEL_DRIVERS_DIR}" CACHE STRING "System collection (${KIM_API_PATH_SEPARATOR}-separated) model drivers directory list" FORCE)
+#
+set(_default_dir "${CMAKE_INSTALL_FULL_LIBDIR}/${PROJECT_NAME}/${KIM_API_MODEL_DRIVER_PLURAL_IDENTIFIER}")
+set_cache_with_fallback(KIM_API_SYSTEM_MODEL_DRIVERS_DIR "${_default_dir}" STRING "System collection (${KIM_API_PATH_SEPARATOR}-separated) model drivers directory list")
+if(KIM_API_SYSTEM_MODEL_DRIVERS_DIR MATCHES "^${KIM_API_PATH_SEPARATOR}")
+  set(KIM_API_SYSTEM_MODEL_DRIVERS_DIR "${_default_dir}${KIM_API_SYSTEM_MODEL_DRIVERS_DIR}")
 endif()
-mark_as_advanced(KIM_API_SYSTEM_PORTABLE_MODEL_DRIVERS_DIR)
-if((NOT KIM_API_SYSTEM_PORTABLE_MODELS_DIR) OR (KIM_API_SYSTEM_PORTABLE_MODELS_DIR MATCHES "^${KIM_API_PATH_SEPARATOR}"))
-  set(KIM_API_SYSTEM_PORTABLE_MODELS_DIR "${CMAKE_INSTALL_FULL_LIBDIR}/${PROJECT_NAME}/${KIM_API_PORTABLE_MODEL_PLURAL_IDENTIFIER}${KIM_API_SYSTEM_PORTABLE_MODELS_DIR}" CACHE STRING "System collection (${KIM_API_PATH_SEPARATOR}-separated) portable models directory list" FORCE)
+mark_as_advanced(KIM_API_SYSTEM_MODEL_DRIVERS_DIR)
+#
+set(_default_dir "${CMAKE_INSTALL_FULL_LIBDIR}/${PROJECT_NAME}/${KIM_API_PORTABLE_MODEL_PLURAL_IDENTIFIER}")
+set_cache_with_fallback(KIM_API_SYSTEM_PORTABLE_MODELS_DIR "${_default_dir}" STRING "System collection (${KIM_API_PATH_SEPARATOR}-separated) portable models directory list")
+if(KIM_API_SYSTEM_PORTABLE_MODELS_DIR MATCHES "^${KIM_API_PATH_SEPARATOR}")
+  set(KIM_API_SYSTEM_PORTABLE_MODELS_DIR "${_default_dir}${KIM_API_SYSTEM_PORTABLE_MODELS_DIR}")
 endif()
-mark_as_advanced(KIM_API_SYSTEM_MODELS_DIR)
-if((NOT KIM_API_SYSTEM_SIMULATOR_MODELS_DIR) OR (KIM_API_SYSTEM_SIMULATOR_MODELS_DIR MATCHES "^${KIM_API_PATH_SEPARATOR}"))
-  set(KIM_API_SYSTEM_SIMULATOR_MODELS_DIR "${CMAKE_INSTALL_FULL_LIBDIR}/${PROJECT_NAME}/${KIM_API_SIMULATOR_MODEL_PLURAL_IDENTIFIER}${KIM_API_SYSTEM_SIMULATOR_MODELS_DIR}" CACHE STRING "System collection (${KIM_API_PATH_SEPARATOR}-separated) simulator models directory list" FORCE)
+mark_as_advanced(KIM_API_SYSTEM_PORTABLE_MODELS_DIR)
+#
+set(_default_dir "${CMAKE_INSTALL_FULL_LIBDIR}/${PROJECT_NAME}/${KIM_API_SIMULATOR_MODEL_PLURAL_IDENTIFIER}")
+set_cache_with_fallback(KIM_API_SYSTEM_SIMULATOR_MODELS_DIR "${_default_dir}" STRING "System collection (${KIM_API_PATH_SEPARATOR}-separated) simulator models directory list")
+if(KIM_API_SYSTEM_SIMULATOR_MODELS_DIR MATCHES "^${KIM_API_PATH_SEPARATOR}")
+  set(KIM_API_SYSTEM_SIMULATOR_MODELS_DIR "${_default_dir}${KIM_API_SYSTEM_SIMULATOR_MODELS_DIR}")
 endif()
 mark_as_advanced(KIM_API_SYSTEM_SIMULATOR_MODELS_DIR)
 
