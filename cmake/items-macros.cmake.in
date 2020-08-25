@@ -57,9 +57,6 @@
 #
 
 
-include(CMakeParseArguments)
-
-
 set(KIM_API_INSTALL_COLLECTION "SYSTEM" CACHE STRING "KIM API Collection in which to install items")
 set_property(CACHE KIM_API_INSTALL_COLLECTION PROPERTY STRINGS SYSTEM USER ENVIRONMENT)
 
