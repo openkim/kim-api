@@ -36,8 +36,10 @@
 set(PROJECT_VERSION_PRERELEASE "git" CACHE STRING "Project SemVer prerelease string")  # cache to allow change from command line
 
 set(_build_metadata "")  # avoid uninitialized variable warning
-find_package(Git)
+find_package(Git QUIET)
 if(${GIT_FOUND})
+  include(FindPackageMessage)
+  find_package_message(Git "Found Git: (${GIT_EXECUTABLE})" "found")
   execute_process(COMMAND ${GIT_EXECUTABLE} -C "${PROJECT_SOURCE_DIR}" rev-parse --show-toplevel
     OUTPUT_STRIP_TRAILING_WHITESPACE
     OUTPUT_VARIABLE _toplevel

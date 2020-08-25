@@ -81,8 +81,7 @@ To install and run the KIM API package you need the following:
 
 1. A Unix/Linux/macOS system.
 
-2. CMake (3.4 or later).  (CMake 3.9 or later is required for building the
-   Doxygen documentation.)
+2. CMake (3.10 or later).
 
 3. GNU compilers (gcc, g++, gfortran) version 4.8.x or higher or the
    corresponding Intel compilers, version 11.1 or higher.  Other compilers may
@@ -259,7 +258,7 @@ system-collection is populated with the example MDs, PMs, and SMs, as well as a
 single PM and its associated MD, both from openkim.org.  Additionally, one of
 the example simulators is copied to the user's home directory and used to test
 the KIM API.  The KIM API package uses the CMake build system.  See the CMake
-documentation (https://cmake.org/cmake/help/v3.4/) for help with CMake
+documentation (https://cmake.org/cmake/help/v3.10/) for help with CMake
 settings.  For some common CMake settings and KIM API specific settings, see
 D.2 below.
 

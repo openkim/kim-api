@@ -33,7 +33,7 @@
 #
 
 
-cmake_minimum_required(VERSION 3.4)
+cmake_minimum_required(VERSION 3.10)
 
 add_subdirectory(ex_model_Ar_P_LJ)
 add_subdirectory(ex_model_Ar_P_MLJ_Fortran)

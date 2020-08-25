@@ -32,12 +32,13 @@
 # Release: This file is part of the kim-api.git repository.
 #
 
-cmake_minimum_required(VERSION 3.9)
+cmake_minimum_required(VERSION 3.10)
 
-cmake_policy(SET CMP0057 NEW)
-cmake_policy(SET CMP0054 NEW)
-
-find_package(Doxygen)
+find_package(Doxygen QUIET)
+if(Doxygen_FOUND)
+  include(FindPackageMessage)
+  find_package_message(Doxygen "Found Doxygen: (${DOXYGEN_EXECUTABLE})" "found")
+endif()
 
 set(DOXYGEN_PROJECT_NAME         "${PROJECT_NAME}")
 set(DOXYGEN_PROJECT_NUMBER       "${PROJECT_VERSION_STRING}")
@@ -106,5 +107,9 @@ if(DOXYGEN_FOUND)
   add_custom_target(pdf DEPENDS docs refman.pdf SOURCES ${SOURCES})
 endif(DOXYGEN_FOUND)
 
-install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/html DESTINATION ${CMAKE_INSTALL_DOCDIR} OPTIONAL)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/refman.pdf DESTINATION ${CMAKE_INSTALL_DOCDIR} OPTIONAL)
+install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/html
+  # use CMAKE_INSTALL_FULL_* to get GNUInstallDir behavior
+  DESTINATION ${CMAKE_INSTALL_FULL_DOCDIR} OPTIONAL)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/refman.pdf
+  # use CMAKE_INSTALL_FULL_* to get GNUInstallDir behavior
+  DESTINATION ${CMAKE_INSTALL_FULL_DOCDIR} OPTIONAL)

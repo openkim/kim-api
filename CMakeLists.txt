@@ -34,7 +34,7 @@
 #
 
 
-cmake_minimum_required(VERSION 3.4)
+cmake_minimum_required(VERSION 3.10)
 enable_testing()
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules)
@@ -149,10 +149,11 @@ target_link_libraries(kim-api ${CMAKE_DL_LIBS})
 #
 install(TARGETS kim-api
   EXPORT KIM_API_Targets
-  INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}"
-  LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-  ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-  RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
+  # use CMAKE_INSTALL_FULL_* to get GNUInstallDir behavior
+  INCLUDES DESTINATION "${CMAKE_INSTALL_FULL_INCLUDEDIR}/${PROJECT_NAME}"
+  LIBRARY DESTINATION "${CMAKE_INSTALL_FULL_LIBDIR}"
+  ARCHIVE DESTINATION "${CMAKE_INSTALL_FULL_LIBDIR}"
+  RUNTIME DESTINATION "${CMAKE_INSTALL_FULL_BINDIR}")
 
 
 # Add include subdirectories
@@ -181,11 +182,7 @@ add_subdirectory(utils)
 
 # Add other subdirectories
 #
-if(${CMAKE_MINOR_VERSION} GREATER 8)
-  add_subdirectory(docs)
-else()
-  add_custom_target(docs)
-endif()
+add_subdirectory(docs)
 add_subdirectory(completions)
 add_subdirectory(editors/emacs)
 add_subdirectory(pkg-config)

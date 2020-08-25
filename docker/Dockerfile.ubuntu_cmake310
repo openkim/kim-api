@@ -52,9 +52,9 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get -y update && \
         xz-utils \
     && rm -rf /var/lib/apt/lists/*
 
-RUN wget http://www.cmake.org/files/v3.4/cmake-3.4.3.tar.gz
-RUN tar -xzf cmake-3.4.3.tar.gz
-WORKDIR cmake-3.4.3/
+RUN wget http://www.cmake.org/files/v3.10/cmake-3.10.3.tar.gz
+RUN tar -xzf cmake-3.10.3.tar.gz
+WORKDIR cmake-3.10.3/
 RUN ./configure
 RUN make
 RUN make install

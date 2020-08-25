@@ -36,5 +36,6 @@
 
 install(
   FILES kim-api-c-style.el
-  DESTINATION ${CMAKE_INSTALL_DATADIR}/emacs/site-lisp/${PROJECT_NAME}
+  # use CMAKE_INSTALL_FULL_* to get GNUInstallDir behavior
+  DESTINATION ${CMAKE_INSTALL_FULL_DATADIR}/emacs/site-lisp/${PROJECT_NAME}
   )

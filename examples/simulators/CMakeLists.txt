@@ -33,7 +33,7 @@
 #
 
 
-cmake_minimum_required(VERSION 3.4)
+cmake_minimum_required(VERSION 3.10)
 
 set(_test_models
   LennardJones612_UniversalShifted__MO_959249795837_003

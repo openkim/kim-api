@@ -33,7 +33,7 @@
 #
 
 
-cmake_minimum_required(VERSION 3.4)
+cmake_minimum_required(VERSION 3.10)
 
 list(APPEND CMAKE_PREFIX_PATH $ENV{KIM_API_CMAKE_PREFIX_DIR})
 find_package(KIM-API-ITEMS 2.2 REQUIRED CONFIG)

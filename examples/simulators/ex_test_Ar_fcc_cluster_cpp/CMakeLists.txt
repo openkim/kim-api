@@ -34,7 +34,7 @@
 #
 
 
-cmake_minimum_required(VERSION 3.4)
+cmake_minimum_required(VERSION 3.10)
 
 project(ex_test_Ar_fcc_cluster_cpp VERSION 1.0.0 LANGUAGES CXX)
 

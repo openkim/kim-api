@@ -57,10 +57,11 @@ target_include_directories(shared-library-test PRIVATE "${PROJECT_BINARY_DIR}/cp
 target_link_libraries(shared-library-test ${CMAKE_DL_LIBS})
 set_target_properties(shared-library-test PROPERTIES OUTPUT_NAME ${SHARED_LIBRARY_TEST})
 
+# use CMAKE_INSTALL_FULL_* to get GNUInstallDir behavior
 if(NOT WIN32 OR CYGWIN)
-  set(_dir "${CMAKE_INSTALL_LIBEXECDIR}/${PROJECT_NAME}")
+  set(_dir "${CMAKE_INSTALL_FULL_LIBEXECDIR}/${PROJECT_NAME}")
 else()
-  set(_dir "${CMAKE_INSTALL_BINDIR}")
+  set(_dir "${CMAKE_INSTALL_FULL_BINDIR}")
 endif()
 install(
   TARGETS simulator-model collections-info shared-library-test
@@ -70,7 +71,8 @@ install(
 
 install(
   PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/${COLLECTIONS_MANAGEMENT}
-  DESTINATION ${CMAKE_INSTALL_BINDIR}
+  # use CMAKE_INSTALL_FULL_* to get GNUInstallDir behavior
+  DESTINATION ${CMAKE_INSTALL_FULL_BINDIR}
   )
 
 if(NOT ("${CMAKE_INSTALL_PREFIX}" IN_LIST KIM_API_STANDARD_INSTALL_PREFIXES))
@@ -79,6 +81,7 @@ if(NOT ("${CMAKE_INSTALL_PREFIX}" IN_LIST KIM_API_STANDARD_INSTALL_PREFIXES))
     ${CMAKE_CURRENT_BINARY_DIR}/${ACTIVATE_SCRIPT}
     ${CMAKE_CURRENT_BINARY_DIR}/${DEACTIVATE_SCRIPT}
     DESTINATION
-    ${CMAKE_INSTALL_BINDIR}
+    # use CMAKE_INSTALL_FULL_* to get GNUInstallDir behavior
+    ${CMAKE_INSTALL_FULL_BINDIR}
     )
 endif()

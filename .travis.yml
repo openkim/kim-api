@@ -118,11 +118,11 @@ matrix:
              "${DISTRO}"
              "${TRAVIS_REPO_SLUG}:${DISTRO}"
              "${PWD}/ccache"
-    - name: "ubuntu cmake@3.4, Debug"
+    - name: "ubuntu cmake@3.10, Debug"
       if: branch != coverity_scan
       os: linux
       services: docker
-      env: DISTRO=ubuntu_cmake34
+      env: DISTRO=ubuntu_cmake310
            CMAKE_BUILD_TYPE=Debug
       before_script:
         - mkdir "${HOME}/work" &&
