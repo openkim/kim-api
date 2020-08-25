@@ -66,18 +66,22 @@ if(${GIT_FOUND})
         file(REMOVE "${_depend_file}")
       endif()
       file(GLOB _t CONFIGURE_DEPENDS "${_depend_file}")
+      unset(_t)
       file(TOUCH "${_depend_file}")
     elseif(_touch)  # use system 'touch' with future timestamp and CMAKE_CONFIGURE_DEPENDS mechanism
       string(TIMESTAMP _time "1%m%d%H%M")
       math(EXPR _time "${_time} + 1")
       string(REGEX REPLACE "^.(.*)$" "\\1" _time "${_time}")
       execute_process(COMMAND ${_touch} -t "${_time}" "${_depend_file}")   # set modification/access time 1min in the future
+      unset(_time)
       set_property(DIRECTORY "${CURRENT_SOURCE_DIR}" APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${_depend_file}")
     else()  # use CMAKE_CONFIGURE_DEPENDS property mechanism [has a number of corner cases]
       execute_process(COMMAND ${CMAKE_COMMAND} -E touch "${_depend_file}")
       add_custom_target(${_git_describe_sentinel}-target ALL COMMAND ${CMAKE_COMMAND} -E touch "${_depend_file}")
       set_property(DIRECTORY "${CURRENT_SOURCE_DIR}" APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${_depend_file}")
     endif()
+    unset(_git_describe_sentinel)
+    unset(_depend_file)
 
     execute_process(COMMAND ${GIT_EXECUTABLE} -C "${PROJECT_SOURCE_DIR}" update-index -q --refresh
       TIMEOUT 5
@@ -94,7 +98,9 @@ if(${GIT_FOUND})
       OUTPUT_STRIP_TRAILING_WHITESPACE
       OUTPUT_VARIABLE _git_describe
       )
+    unset(_DIRTY)
     set(_build_metadata "${_git_describe}")
+    unset(_git_describe)
   endif()
 endif()
 
@@ -103,6 +109,7 @@ if(NOT "${_build_metadata}" STREQUAL "")
 endif()
 string(APPEND _build_metadata "${CMAKE_CXX_COMPILER_ID}.${CMAKE_C_COMPILER_ID}.${CMAKE_Fortran_COMPILER_ID}")
 set(PROJECT_VERSION_BUILD_METADATA "${_build_metadata}")  # do not cache
+unset(_build_metadata)
 
 
 set(_version_string "${PROJECT_VERSION}")
@@ -114,3 +121,4 @@ if(PROJECT_VERSION_BUILD_METADATA)
   set(_version_string "${_version_string}+${PROJECT_VERSION_BUILD_METADATA}")
 endif()
 set(PROJECT_VERSION_STRING "${_version_string}")  # do not cache
+unset(_version_string)

@@ -51,6 +51,7 @@ else()
   set(_LOG_MAX "INFORMATION")
 endif()
 set_cache_with_fallback(KIM_API_LOG_MAXIMUM_LEVEL "${_LOG_MAX}" STRING "Maximum log verbosity")
+unset(_LOG_MAX)
 set_property(CACHE KIM_API_LOG_MAXIMUM_LEVEL PROPERTY STRINGS "" SILENT FATAL ERROR WARNING INFORMATION DEBUG)
 #
 option(KIM_API_BUILD_EXAMPLES "Build example Drivers, Models, Simulator Models, and Simulators" ON)
@@ -66,6 +67,7 @@ mark_as_advanced(KIM_API_ENABLE_COVERAGE)
 #
 string(TIMESTAMP _KIM_API_CONFIGURATION_TIMESTAMP "%Y-%m-%d-%H-%M-%S" UTC)
 set(KIM_API_CONFIGURATION_TIMESTAMP "${_KIM_API_CONFIGURATION_TIMESTAMP}" CACHE STRING "UTC timestamp for configuration of kim-api")
+unset(_KIM_API_CONFIGURATION_TIMESTAMP)
 mark_as_advanced(KIM_API_CONFIGURATION_TIMESTAMP)
 #
 # Additional options (that depend on call to project()) defined below
@@ -112,6 +114,7 @@ set_cache_with_fallback(KIM_API_SYSTEM_MODEL_DRIVERS_DIR "${_default_dir}" STRIN
 if(KIM_API_SYSTEM_MODEL_DRIVERS_DIR MATCHES "^${KIM_API_PATH_SEPARATOR}")
   set(KIM_API_SYSTEM_MODEL_DRIVERS_DIR "${_default_dir}${KIM_API_SYSTEM_MODEL_DRIVERS_DIR}")
 endif()
+unset(_default_dir)
 mark_as_advanced(KIM_API_SYSTEM_MODEL_DRIVERS_DIR)
 #
 set(_default_dir "${CMAKE_INSTALL_FULL_LIBDIR}/${PROJECT_NAME}/${KIM_API_PORTABLE_MODEL_PLURAL_IDENTIFIER}")
@@ -119,6 +122,7 @@ set_cache_with_fallback(KIM_API_SYSTEM_PORTABLE_MODELS_DIR "${_default_dir}" STR
 if(KIM_API_SYSTEM_PORTABLE_MODELS_DIR MATCHES "^${KIM_API_PATH_SEPARATOR}")
   set(KIM_API_SYSTEM_PORTABLE_MODELS_DIR "${_default_dir}${KIM_API_SYSTEM_PORTABLE_MODELS_DIR}")
 endif()
+unset(_default_dir)
 mark_as_advanced(KIM_API_SYSTEM_PORTABLE_MODELS_DIR)
 #
 set(_default_dir "${CMAKE_INSTALL_FULL_LIBDIR}/${PROJECT_NAME}/${KIM_API_SIMULATOR_MODEL_PLURAL_IDENTIFIER}")
@@ -126,6 +130,7 @@ set_cache_with_fallback(KIM_API_SYSTEM_SIMULATOR_MODELS_DIR "${_default_dir}" ST
 if(KIM_API_SYSTEM_SIMULATOR_MODELS_DIR MATCHES "^${KIM_API_PATH_SEPARATOR}")
   set(KIM_API_SYSTEM_SIMULATOR_MODELS_DIR "${_default_dir}${KIM_API_SYSTEM_SIMULATOR_MODELS_DIR}")
 endif()
+unset(_default_dir)
 mark_as_advanced(KIM_API_SYSTEM_SIMULATOR_MODELS_DIR)
 
 include(DefaultCompilerFlags)
@@ -197,6 +202,9 @@ if(KIM_API_BUILD_EXAMPLES)
   add_subdirectory(examples/portable-models)
   add_subdirectory(examples/simulator-models)
   add_subdirectory(examples/simulators)
+  unset(KIM_API_CMAKE_PREFIX_DIR)
+  unset(KIM-API_DIR)
+  unset(KIM-API-ITEMS_DIR)
 endif()
 
 include(WriteKIMConfigSummary)

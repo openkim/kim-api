@@ -68,6 +68,7 @@ install(
   EXPORT KIM_API_Targets
   DESTINATION "${_dir}"
   )
+unset(_dir)
 
 install(
   PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/${COLLECTIONS_MANAGEMENT}

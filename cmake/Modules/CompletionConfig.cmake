@@ -52,8 +52,10 @@ endif()
 set_cache_with_fallback(BASH_COMPLETION_COMPLETIONSDIR "${CMAKE_INSTALL_SYSCONFDIR}/bash_completion.d" PATH "Directory where bash completions are installed")
 set(dir SYSCONFDIR)
 GNUInstallDirs_get_absolute_install_dir(BASH_COMPLETION_FULL_COMPLETIONSDIR BASH_COMPLETION_COMPLETIONSDIR)
+unset(dir)
 
 # zsh completions
 set_cache_with_fallback(ZSH_COMPLETION_COMPLETIONSDIR "${CMAKE_INSTALL_SYSCONFDIR}/zsh_completion.d" PATH "Directory where zsh completions are installed")
 set(dir SYSCONFDIR)
 GNUInstallDirs_get_absolute_install_dir(ZSH_COMPLETION_FULL_COMPLETIONSDIR ZSH_COMPLETION_COMPLETIONSDIR)
+unset(dir)

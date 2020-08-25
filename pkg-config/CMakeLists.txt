@@ -44,6 +44,7 @@ if("${_isSystemDir}" STREQUAL "-1")
 else()
   set(KIM_API_RPATH_FLAG "")
 endif()
+unset(_isSystemDir)
 
 configure_file(libkim-api.pc.in ${PKG_CONFIG_FILE} @ONLY)
 
