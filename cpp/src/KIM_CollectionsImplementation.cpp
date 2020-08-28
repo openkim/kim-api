@@ -343,13 +343,52 @@ int PrivateGetUserDirs(KIM::Log * log, ItemTypeToPathListMap & dirsMap)
   return false;
 }
 
+void PrivateReplaceORIGIN(KIM::FILESYSTEM::PathList & pathList,
+                          KIM::FILESYSTEM::Path const & origin)
+{
+  using namespace KIM::FILESYSTEM;
+
+  std::vector<Path>::iterator path;
+  for (path = pathList.begin(); path != pathList.end(); ++path)
+  {
+    if ((*path).is_relative())  // ORIGIN should not occurr in an absolute path
+    {
+      Path current(*path);
+      Path left(current);
+      Path right;
+
+      // make left contain first directory name in path
+      // make right contain remainder of path
+      {
+        // ensure current has no trailing slash
+        if (current.filename().empty()) current = current.parent_path();
+        while (!current.parent_path().empty())
+        {
+          right = current.filename() / right;
+          current = current.parent_path();
+          left = current;
+        }
+        right = right.parent_path();  // remove trailing slash
+      }
+
+      if (left == "$ORIGIN" || left == "${ORIGIN}") { *path = origin / right; }
+    }
+  }
+}
+
 void PrivateGetSystemDirs(ItemTypeToPathListMap & dirsMap)
 {
   using namespace KIM::COLLECTION_ITEM_TYPE;
+  using namespace KIM::FILESYSTEM;
+
+  Path origin(KIM::SharedLibrary::GetORIGIN());
 
   dirsMap[modelDriver].Parse(KIM_SYSTEM_MODEL_DRIVERS_DIR);
+  PrivateReplaceORIGIN(dirsMap[modelDriver], origin);
   dirsMap[portableModel].Parse(KIM_SYSTEM_PORTABLE_MODELS_DIR);
+  PrivateReplaceORIGIN(dirsMap[portableModel], origin);
   dirsMap[simulatorModel].Parse(KIM_SYSTEM_SIMULATOR_MODELS_DIR);
+  PrivateReplaceORIGIN(dirsMap[simulatorModel], origin);
 }
 
 void PrivateGetListOfItemPathsByCollectionAndType(
