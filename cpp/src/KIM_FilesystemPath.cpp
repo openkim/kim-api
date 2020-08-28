@@ -264,7 +264,11 @@ Path & Path::remove_filename()
 #ifdef KIM_API_USE_FILESYSTEM_LIBRARY
   path_.remove_filename();
 #else
-  path_ = path_.substr(0, path_.find_last_of('/'));
+  size_t loc = path_.find_last_of('/');
+  if (loc != std::string::npos)
+    path_ = path_.substr(0, loc + 1);
+  else
+    path_ = std::string("");
 #endif
   return *this;
 }
@@ -318,6 +322,19 @@ Path & Path::make_preferred()
   return *this;
 }
 
+Path Path::parent_path() const
+{
+#ifdef KIM_API_USE_FILESYSTEM_LIBRARY
+  return Path(path_.parent_path());
+#else
+  Path parent(*this);
+  parent.remove_filename();
+  if (!parent.empty())
+    parent.path_ = std::string(parent.path_.begin(), --(parent.path_.end()));
+  return parent;
+#endif
+}
+
 Path Path::filename() const
 {
 #ifdef KIM_API_USE_FILESYSTEM_LIBRARY
@@ -334,7 +351,11 @@ Path & Path::operator/=(const Path & p)
 #ifdef KIM_API_USE_FILESYSTEM_LIBRARY
   path_ /= p.path_;
 #else
-  if (p.empty()) return *this;
+  if (p.empty())
+  {
+    if (!filename().empty()) { *this += "/"; }
+    return *this;
+  }
   if (!p.is_relative()) { path_ = p.path_; }
   else
   {

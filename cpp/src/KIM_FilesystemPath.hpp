@@ -136,6 +136,9 @@ class Path
   // Returns whether this path is the empty string.
   bool empty() const { return path_.empty(); }
 
+  // Returns the path of the parent path
+  Path parent_path() const;
+
   // Returns the last component of the path.
   Path filename() const;
 
