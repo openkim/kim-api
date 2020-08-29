@@ -86,30 +86,6 @@ set(CPP_SOURCES
 
 target_sources(kim-api PRIVATE ${CPP_SOURCES})
 
-add_library(kim-loader STATIC
-  KIM_Collection.cpp
-  KIM_CollectionItemType.cpp
-  KIM_Collections.cpp
-  KIM_CollectionsImplementation.cpp
-  KIM_FilesystemPath.cpp
-  KIM_LanguageName.cpp
-  KIM_LogVerbosity.cpp
-  KIM_Log.cpp
-  KIM_LogImplementation.cpp
-  KIM_SharedLibrary.cpp
-  KIM_SimulatorModel.cpp
-  KIM_SimulatorModelImplementation.cpp
-  )
-target_include_directories(kim-loader PUBLIC
-  ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_CURRENT_BINARY_DIR}
-  ${PROJECT_SOURCE_DIR}/cpp/include
-  ${PROJECT_BINARY_DIR}/cpp/include
-  ${PROJECT_SOURCE_DIR}/c/include
-  ${PROJECT_SOURCE_DIR}/cmake  # for KIM_SharedLibrarySchema.hpp
-  )
-target_link_libraries(kim-loader ${CMAKE_DL_LIBS})
-
 if(WIN32 AND NOT CYGWIN)
   # Activate C++17 language standard on Win32 platform, because kim-api code uses C++ filesystem library internally.
   # Note: The 'cxx_std_17' target compile feature was added by CMake version 3.8.
@@ -117,12 +93,9 @@ if(WIN32 AND NOT CYGWIN)
   get_property(cxx_features GLOBAL PROPERTY CMAKE_CXX_KNOWN_FEATURES)
   if("cxx_std_17" IN_LIST cxx_features)
     target_compile_features(kim-api PUBLIC cxx_std_17)
-    target_compile_features(kim-loader PUBLIC cxx_std_17)
   else()
     set_property(TARGET kim-api PROPERTY CXX_STANDARD 17)
     set_property(TARGET kim-api PROPERTY CXX_STANDARD_REQUIRED YES)
-    set_property(TARGET kim-loader PROPERTY CXX_STANDARD 17)
-    set_property(TARGET kim-loader PROPERTY CXX_STANDARD_REQUIRED YES)
   endif()
 endif()
 
@@ -133,4 +106,3 @@ endif()
 # POSIX and System V functions available also in strict ANSI C mode.
 # See also: https://www.gnu.org/software/libc/manual/html_node/Feature-Test-Macros.html
 target_compile_definitions(kim-api PRIVATE _DEFAULT_SOURCE)
-target_compile_definitions(kim-loader PRIVATE _DEFAULT_SOURCE)
