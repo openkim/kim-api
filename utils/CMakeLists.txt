@@ -40,6 +40,23 @@ set(SHARED_LIBRARY_TEST    ${PROJECT_NAME}-shared-library-test)
 set(ACTIVATE_SCRIPT        ${PROJECT_NAME}-activate)
 set(DEACTIVATE_SCRIPT      ${PROJECT_NAME}-deactivate)
 
+# Set RPATH to support relocatable behavior for utilities
+if((NOT ("${CMAKE_INSTALL_PREFIX}" IN_LIST KIM_API_STANDARD_INSTALL_PREFIXES))
+    AND (NOT "${CMAKE_SYSTEM_NAME}" STREQUAL "Windows")
+    AND (NOT IS_ABSOLUTE "${CMAKE_INSTALL_LIBDIR}")
+    AND (NOT IS_ABSOLUTE "${CMAKE_INSTALL_LIBEXECDIR}"))
+  # determine location of LIBDIR relative to LIBEXECDIR/PROJECT_NAME
+  string(REGEX REPLACE "[^/]+" ".." _rel_dir "${CMAKE_INSTALL_LIBEXECDIR}/${PROJECT_NAME}")
+  set(_rel_rpath "${_rel_dir}/${CMAKE_INSTALL_LIBDIR}")
+  unset(_rel_dir)
+  if("${CMAKE_SYSTEM_NAME}" STREQUAL "Darwin")
+    list(APPEND CMAKE_INSTALL_RPATH "@loader_path/${_rel_rpath}")
+  else()
+    list(APPEND CMAKE_INSTALL_RPATH "$ORIGIN/${_rel_rpath}")
+  endif()
+  unset(_rel_rpath)
+endif()
+
 configure_file(collections-management.in ${COLLECTIONS_MANAGEMENT} @ONLY)
 configure_file(activate.in ${ACTIVATE_SCRIPT} @ONLY)
 configure_file(deactivate.in ${DEACTIVATE_SCRIPT} @ONLY)
