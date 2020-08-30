@@ -53,13 +53,20 @@ if test x"${BASENAME_SOURCE}" = x"@PROJECT_NAME@-activate"; then
   exit 1
 fi
 
-export PATH="@CMAKE_INSTALL_FULL_BINDIR@:${PATH}"
-if test ! -z "${PKG_CONFIG_PATH+x}"; then export PKG_CONFIG_PATH=":${PKG_CONFIG_PATH}"; fi
-export PKG_CONFIG_PATH=@CMAKE_INSTALL_FULL_LIBDIR@/pkgconfig${PKG_CONFIG_PATH}
-export @KIM_API_ENVIRONMENT_CMAKE_PREFIX_DIR@=@CMAKE_INSTALL_PREFIX@
 
 if test -n "${ZSH_VERSION}"; then
-  source "@ZSH_COMPLETION_FULL_COMPLETIONSDIR@/_@PROJECT_NAME@-collections-management"
+  ORIGIN=$(cd "$(dirname "$0")" && pwd)
 else
-  source "@BASH_COMPLETION_FULL_COMPLETIONSDIR@/@PROJECT_NAME@-collections-management.bash"
+  ORIGIN=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+fi
+
+export PATH="${ORIGIN}:${PATH}"
+if test ! -z "${PKG_CONFIG_PATH+x}"; then export PKG_CONFIG_PATH=":${PKG_CONFIG_PATH}"; fi
+export PKG_CONFIG_PATH=@_libdir_rel@/pkgconfig${PKG_CONFIG_PATH}
+export @KIM_API_ENVIRONMENT_CMAKE_PREFIX_DIR@=@_installdir_rel@
+
+if test -n "${ZSH_VERSION}"; then
+  source "@_zshcompdir_rel@/_@PROJECT_NAME@-collections-management"
+else
+  source "@_bashcompdir_rel@/@PROJECT_NAME@-collections-management.bash"
 fi

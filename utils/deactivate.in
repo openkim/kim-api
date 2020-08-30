@@ -53,22 +53,29 @@ if test x"${BASENAME_SOURCE}" = x"@PROJECT_NAME@-deactivate"; then
   exit 1
 fi
 
-export PATH=`printf "${PATH}" | sed -e "s|:@CMAKE_INSTALL_FULL_BINDIR@|:|g" \
-                                    -e "s|^@CMAKE_INSTALL_FULL_BINDIR@:*||" \
-                                    -e "s|:@CMAKE_INSTALL_FULL_BINDIR@$||"`
+
+if test -n "${ZSH_VERSION}"; then
+  ORIGIN=$(cd "$(dirname "$0")" && pwd)
+else
+  ORIGIN=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+fi
+
+export PATH=`printf "${PATH}" | sed -e "s|:${ORIGIN}|:|g" \
+                                    -e "s|^${ORIGIN}:*||" \
+                                    -e "s|:${ORIGIN}$||"`
 
 export PKG_CONFIG_PATH=`printf "${PKG_CONFIG_PATH}" | \
-                                sed -e "s|:@CMAKE_INSTALL_FULL_LIBDIR@/pkgconfig|:|g" \
-                                    -e "s|^@CMAKE_INSTALL_FULL_LIBDIR@/pkgconfig:*||" \
-                                    -e "s|:@CMAKE_INSTALL_FULL_LIBDIR@/pkgconfig$||"`
+                                sed -e "s|:@_libdir_rel@/pkgconfig|:|g" \
+                                    -e "s|^@_libdir_rel@/pkgconfig:*||" \
+                                    -e "s|:@_libdir_rel@/pkgconfig$||"`
 if test x"" = x"${PKG_CONFIG_PATH}"; then unset PKG_CONFIG_PATH; fi
 
 unset @KIM_API_ENVIRONMENT_CMAKE_PREFIX_DIR@
 
 if test -n "${ZSH_VERSION}"; then
-  _completion_dir="@ZSH_COMPLETION_FULL_COMPLETIONSDIR@"
+  _completion_dir="@_zshcompdir_rel@"
 else
-  _completion_dir="@BASH_COMPLETION_FULL_COMPLETIONSDIR@"
+  _completion_dir="@_bashcompdir_rel@"
 fi
 
 for _func in `grep "_@KIM_API_C_ID_PROJECT_NAME@_.*[[:space:]]*()" \
