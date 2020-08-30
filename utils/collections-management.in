@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 
 #
@@ -35,7 +35,8 @@
 # Release: This file is part of the kim-api.git repository.
 #
 
-collections_info=@CMAKE_INSTALL_FULL_LIBEXECDIR@/@PROJECT_NAME@/@PROJECT_NAME@-collections-info
+ORIGIN=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+collections_info="@_collections_info_path@"
 major_version=@PROJECT_VERSION_MAJOR@
 kim_version_string="@PROJECT_VERSION_STRING@"
 kim_api_uid_string="@KIM_API_UID@"

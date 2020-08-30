@@ -57,7 +57,17 @@ if((NOT ("${CMAKE_INSTALL_PREFIX}" IN_LIST KIM_API_STANDARD_INSTALL_PREFIXES))
   unset(_rel_rpath)
 endif()
 
+if((NOT IS_ABSOLUTE "${CMAKE_INSTALL_BINDIR}")
+    AND (NOT IS_ABSOLUTE "${CMAKE_INSTALL_LIBEXECDIR}"))
+  string(REGEX REPLACE "[^/]+" ".." _rel_dir "${CMAKE_INSTALL_BINDIR}")
+  set(_collections_info_path "\${ORIGIN}/${_rel_dir}/${CMAKE_INSTALL_LIBEXECDIR}/${PROJECT_NAME}/${COLLECTIONS_INFO}")
+  unset(_rel_dir)
+else()
+  set(_collections_info_path "${CMAKE_INSTALL_FULL_LIBEXECDIR}/${PROJECT_NAME}/${COLLECTIONS_INFO}")
+endif()
+#
 configure_file(collections-management.in ${COLLECTIONS_MANAGEMENT} @ONLY)
+unset(_collections_info_path)
 configure_file(activate.in ${ACTIVATE_SCRIPT} @ONLY)
 configure_file(deactivate.in ${DEACTIVATE_SCRIPT} @ONLY)
 
