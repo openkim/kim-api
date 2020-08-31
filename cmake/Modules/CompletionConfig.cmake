@@ -49,14 +49,14 @@ if((NOT BASH_COMPLETION_COMPLETIONSDIR) AND ("${CMAKE_INSTALL_PREFIX}" IN_LIST K
     find_package_message(bash-completion "Found bash-completion: (${BASH_COMPLETION_COMPLETIONSDIR})" "found")
   endif()
 endif()
-set_cache_with_fallback(BASH_COMPLETION_COMPLETIONSDIR "${CMAKE_INSTALL_SYSCONFDIR}/bash_completion.d" PATH "Directory where bash completions are installed")
+set_cache_with_fallback(BASH_COMPLETION_COMPLETIONSDIR "${CMAKE_INSTALL_RELOC_SYSCONFDIR}/bash_completion.d" PATH "Directory where bash completions are installed")
 set(dir SYSCONFDIR)
 GNUInstallDirs_get_absolute_install_dir(BASH_COMPLETION_FULL_COMPLETIONSDIR BASH_COMPLETION_COMPLETIONSDIR)
 unset(dir)
 RelocatableGNUInstallDirs_get_relocatable_dir(BASH_COMPLETION_RELOC_COMPLETIONSDIR BASH_COMPLETION_FULL_COMPLETIONSDIR BASH_COMPLETION_COMPLETIONSDIR)
 
 # zsh completions
-set_cache_with_fallback(ZSH_COMPLETION_COMPLETIONSDIR "${CMAKE_INSTALL_SYSCONFDIR}/zsh_completion.d" PATH "Directory where zsh completions are installed")
+set_cache_with_fallback(ZSH_COMPLETION_COMPLETIONSDIR "${CMAKE_INSTALL_RELOC_SYSCONFDIR}/zsh_completion.d" PATH "Directory where zsh completions are installed")
 set(dir SYSCONFDIR)
 GNUInstallDirs_get_absolute_install_dir(ZSH_COMPLETION_FULL_COMPLETIONSDIR ZSH_COMPLETION_COMPLETIONSDIR)
 unset(dir)
