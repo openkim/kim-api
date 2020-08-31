@@ -54,8 +54,11 @@ if test x"${BASENAME_SOURCE}" = x"@PROJECT_NAME@-deactivate"; then
 fi
 
 
+if test -n "${ORIGIN}"; then
+  OLD_KIM_ORIGIN="${ORIGIN}"
+fi
 if test -n "${ZSH_VERSION}"; then
-  ORIGIN=$(cd "$(dirname "$0")" && pwd)
+  ORIGIN=$(cd "$(dirname "${(%):-%x}")" && pwd)
 else
   ORIGIN=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 fi
@@ -68,7 +71,7 @@ export PKG_CONFIG_PATH=`printf "${PKG_CONFIG_PATH}" | \
                                 sed -e "s|:@_libdir_rel@/pkgconfig|:|g" \
                                     -e "s|^@_libdir_rel@/pkgconfig:*||" \
                                     -e "s|:@_libdir_rel@/pkgconfig$||"`
-if test x"" = x"${PKG_CONFIG_PATH}"; then unset PKG_CONFIG_PATH; fi
+if test -z "${PKG_CONFIG_PATH}"; then unset PKG_CONFIG_PATH; fi
 
 unset @KIM_API_ENVIRONMENT_CMAKE_PREFIX_DIR@
 
@@ -86,3 +89,10 @@ done
 
 unset _func
 unset _completion_dir
+
+if test -n "${OLD_KIM_ORIGIN}"; then
+  ORIGIN="${OLD_KIM_ORIGIN}"
+  unset OLD_KIM_ORIGIN
+else
+  unset ORIGIN
+fi

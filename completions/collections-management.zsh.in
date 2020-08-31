@@ -48,4 +48,5 @@ if test -n "${ZSH_VERSION}"; then
     compinit
   fi
 fi
-source "@ZSH_COMPLETION_FULL_COMPLETIONSDIR@/@PROJECT_NAME@-collections-management.bash"
+ORIGIN=$(cd "$(dirname "${(%):-%x}")" && pwd)
+source "@_bashcomp_rel@"
