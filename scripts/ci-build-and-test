@@ -102,14 +102,18 @@ cmake -DCMAKE_INSTALL_PREFIX="${PWD}/test-install" \
 make -j2 install || exit $?
 ccache -s
 
+# move install tree to test relocatability
+mv test-install test-install-relocated || exit $?
+
 set +xv
-printf "calling ${PWD}/test-install/bin/kim-api-activate\n"
-source "${PWD}/test-install/bin/kim-api-activate" || exit $?
+printf "calling ${PWD}/test-instal-relocatedl/bin/kim-api-activate\n"
+source "${PWD}/test-install-relocated/bin/kim-api-activate" || exit $?
 set -xv
 kim-api-collections-management install system `find ../examples/model-drivers -mindepth 1 -maxdepth 1 -type d` &&
   kim-api-collections-management install system `find ../examples/portable-models -mindepth 1 -maxdepth 1 -type d` &&
   kim-api-collections-management install system `find ../examples/simulator-models -mindepth 1 -maxdepth 1 -type d` &&
-  kim-api-collections-management list \
+  kim-api-collections-management list &&
+  ./test-install-relocated/libexec/kim-api/kim-api-simulator-model Sim_LAMMPS_LJcut_AkersonElliott_Alchemy_PbAu smspec-file data \
     || exit $?
 
 cd ../
