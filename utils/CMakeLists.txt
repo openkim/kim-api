@@ -33,6 +33,8 @@
 #
 
 
+include(RelocatablePath)
+
 set(SIMULATOR_MODEL        ${PROJECT_NAME}-simulator-model)
 set(COLLECTIONS_INFO       ${PROJECT_NAME}-collections-info)
 set(COLLECTIONS_MANAGEMENT ${PROJECT_NAME}-collections-management)
@@ -42,69 +44,59 @@ set(DEACTIVATE_SCRIPT      ${PROJECT_NAME}-deactivate)
 
 # Set RPATH to support relocatable behavior for utilities
 if((NOT ("${CMAKE_INSTALL_PREFIX}" IN_LIST KIM_API_STANDARD_INSTALL_PREFIXES))
-    AND (NOT "${CMAKE_SYSTEM_NAME}" STREQUAL "Windows")
-    AND (NOT IS_ABSOLUTE "${CMAKE_INSTALL_LIBDIR}")
-    AND (NOT IS_ABSOLUTE "${CMAKE_INSTALL_LIBEXECDIR}"))
-  # determine location of LIBDIR relative to LIBEXECDIR/PROJECT_NAME
-  string(REGEX REPLACE "[^/]+" ".." _rel_dir "${CMAKE_INSTALL_LIBEXECDIR}/${PROJECT_NAME}")
-  set(_rel_rpath "${_rel_dir}/${CMAKE_INSTALL_LIBDIR}")
-  unset(_rel_dir)
+    AND (NOT "${CMAKE_SYSTEM_NAME}" STREQUAL "Windows"))
   if("${CMAKE_SYSTEM_NAME}" STREQUAL "Darwin")
-    list(APPEND CMAKE_INSTALL_RPATH "@loader_path/${_rel_rpath}")
+    set(_rpath_prefix "@loader_path")
   else()
-    list(APPEND CMAKE_INSTALL_RPATH "$ORIGIN/${_rel_rpath}")
+    set(_rpath_prefix "$ORIGIN")
+  endif()
+  relocatable_path(
+    FROM "${CMAKE_INSTALL_FULL_LIBEXECDIR}/${PROJECT_NAME}" FROM_REL "${CMAKE_INSTALL_LIBEXECDIR}"
+    TO "${CMAKE_INSTALL_FULL_LIBDIR}" TO_REL "${CMAKE_INSTALL_LIBDIR}"
+    PREFIX "${_rpath_prefix}"
+    RESULT_VARIABLE _rel_rpath
+    )
+  unset(_rpath_prefix)
+  if(NOT IS_ABSOLUTE "${_rel_rpath}")
+    list(APPEND CMAKE_INSTALL_RPATH "${_rel_rpath}")
   endif()
   unset(_rel_rpath)
 endif()
 
-if((NOT IS_ABSOLUTE "${CMAKE_INSTALL_BINDIR}")
-    AND (NOT IS_ABSOLUTE "${CMAKE_INSTALL_LIBEXECDIR}"))
-  string(REGEX REPLACE "[^/]+" ".." _rel_dir "${CMAKE_INSTALL_BINDIR}")
-  set(_collections_info_path "\${ORIGIN}/${_rel_dir}/${CMAKE_INSTALL_LIBEXECDIR}/${PROJECT_NAME}/${COLLECTIONS_INFO}")
-  unset(_rel_dir)
-else()
-  set(_collections_info_path "${CMAKE_INSTALL_FULL_LIBEXECDIR}/${PROJECT_NAME}/${COLLECTIONS_INFO}")
-endif()
-#
+
+relocatable_path(
+  FROM "${CMAKE_INSTALL_FULL_BINDIR}" FROM_REL "${CMAKE_INSTALL_BINDIR}"
+  TO "${CMAKE_INSTALL_FULL_LIBEXECDIR}/${PROJECT_NAME}/${COLLECTIONS_INFO}" TO_REL "${CMAKE_INSTALL_LIBEXECDIR}"
+  PREFIX "\${ORIGIN}"
+  RESULT_VARIABLE _collections_info_path
+  )
 configure_file(collections-management.in ${COLLECTIONS_MANAGEMENT} @ONLY)
 unset(_collections_info_path)
 
-
-if(NOT IS_ABSOLUTE "${CMAKE_INSTALL_BINDIR}")
-  string(REGEX REPLACE "[^/]+" ".." _rel_dir "${CMAKE_INSTALL_BINDIR}")
-  set(_installdir_rel "\${ORIGIN}/${_rel_dir}")
-  unset(_rel_dir)
-else()
-  set(_installdir_rel "${CMAKE_INSTALL_PREFIX}")
-endif()
-#
-if((NOT IS_ABSOLUTE "${CMAKE_INSTALL_BINDIR}")
-    AND (NOT IS_ABSOLUTE "${CMAKE_INSTALL_LIBDIR}"))
-  string(REGEX REPLACE "[^/]+" ".." _rel_dir "${CMAKE_INSTALL_BINDIR}")
-  set(_libdir_rel "\${ORIGIN}/${_rel_dir}/${CMAKE_INSTALL_LIBDIR}")
-  unset(_rel_dir)
-else()
-  set(_libdir_rel "${CMAKE_INSTALL_FULL_LIBDIR}")
-endif()
-#
-if((NOT IS_ABSOLUTE "${CMAKE_INSTALL_BINDIR}")
-    AND (NOT IS_ABSOLUTE "${BASH_COMPLETION_COMPLETIONSDIR}"))
-  string(REGEX REPLACE "[^/]+" ".." _rel_dir "${CMAKE_INSTALL_BINDIR}")
-  set(_bashcompdir_rel "\${ORIGIN}/${_rel_dir}/${BASH_COMPLETION_COMPLETIONSDIR}")
-  unset(_rel_dir)
-else()
-  set(_bashcompdir_rel "${BASH_COMPLETION_FULL_COMPLETIONSDIR}")
-endif()
-#
-if((NOT IS_ABSOLUTE "${CMAKE_INSTALL_BINDIR}")
-    AND (NOT IS_ABSOLUTE "${ZSH_COMPLETION_COMPLETIONSDIR}"))
-  string(REGEX REPLACE "[^/]+" ".." _rel_dir "${CMAKE_INSTALL_BINDIR}")
-  set(_zshcompdir_rel "\${ORIGIN}/${_rel_dir}/${ZSH_COMPLETION_COMPLETIONSDIR}")
-  unset(_rel_dir)
-else()
-  set(_zshcompdir_rel "${ZSH_COMPLETION_FULL_COMPLETIONSDIR}")
-endif()
-#
+relocatable_path(
+  FROM "${CMAKE_INSTALL_FULL_BINDIR}" FROM_REL "${CMAKE_INSTALL_BINDIR}"
+  TO "${CMAKE_INSTALL_PREFIX}" TO_REL "./"
+  PREFIX "\${ORIGIN}"
+  RESULT_VARIABLE _installdir_rel
+  )
+relocatable_path(
+  FROM "${CMAKE_INSTALL_FULL_BINDIR}" FROM_REL "${CMAKE_INSTALL_BINDIR}"
+  TO "${CMAKE_INSTALL_FULL_LIBDIR}" TO_REL "${CMAKE_INSTALL_LIBDIR}"
+  PREFIX "\${ORIGIN}"
+  RESULT_VARIABLE _libdir_rel
+  )
+relocatable_path(
+  FROM "${CMAKE_INSTALL_FULL_BINDIR}" FROM_REL "${CMAKE_INSTALL_BINDIR}"
+  TO "${BASH_COMPLETION_FULL_COMPLETIONSDIR}" TO_REL "${BASH_COMPLETION_COMPLETIONSDIR}"
+  PREFIX "\${ORIGIN}"
+  RESULT_VARIABLE _bashcompdir_rel
+  )
+relocatable_path(
+  FROM "${CMAKE_INSTALL_FULL_BINDIR}" FROM_REL "${CMAKE_INSTALL_BINDIR}"
+  TO "${ZSH_COMPLETION_FULL_COMPLETIONSDIR}" TO_REL "${ZSH_COMPLETION_COMPLETIONSDIR}"
+  PREFIX "\${ORIGIN}"
+  RESULT_VARIABLE _zshcompdir_rel
+  )
 configure_file(activate.in ${ACTIVATE_SCRIPT} @ONLY)
 configure_file(deactivate.in ${DEACTIVATE_SCRIPT} @ONLY)
 unset(_installdir_rel)
