@@ -66,11 +66,12 @@ fi
 export PATH=`printf "${PATH}" | sed -e "s|:${ORIGIN}|:|g" \
                                     -e "s|^${ORIGIN}:*||" \
                                     -e "s|:${ORIGIN}$||"`
-
+_libdir_rel=$(cd "@_libdir_rel@" && pwd)
 export PKG_CONFIG_PATH=`printf "${PKG_CONFIG_PATH}" | \
-                                sed -e "s|:@_libdir_rel@/pkgconfig|:|g" \
-                                    -e "s|^@_libdir_rel@/pkgconfig:*||" \
-                                    -e "s|:@_libdir_rel@/pkgconfig$||"`
+                                sed -e "s|:${_libdir_rel}/pkgconfig|:|g" \
+                                    -e "s|^${_libdir_rel}/pkgconfig:*||" \
+                                    -e "s|:${_libdir_rel}/pkgconfig$||"`
+unset _libdir_rel
 if test -z "${PKG_CONFIG_PATH}"; then unset PKG_CONFIG_PATH; fi
 
 unset @KIM_API_ENVIRONMENT_CMAKE_PREFIX_DIR@
