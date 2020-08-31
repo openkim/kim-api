@@ -695,9 +695,9 @@ bool CollectionsImplementation::
      << "   " << KIM_UID << "\n"
      << "with path\n"
      << "   " << fileName << "\n\n"
-     << "The associated kim-api dynamic library was configured to be "
-        "installed at\n"
-     << "   " << KIM_LIBDIR << "\n";
+     << "The associated kim-api dynamic library was installed in\n"
+     << "   " << SharedLibrary::GetORIGIN() << "\n"
+     << "at the time this file was created.\n";
   fl.close();
 
   return false;
