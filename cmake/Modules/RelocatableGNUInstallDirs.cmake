@@ -19,14 +19,11 @@
 #
 
 #
-# Copyright (c) 2013--2020, Regents of the University of Minnesota.
+# Copyright (c) 2020--2020, Regents of the University of Minnesota.
 # All rights reserved.
 #
 # Contributors:
-#    Richard Berger
-#    Christoph Junghans
 #    Ryan S. Elliott
-#    Jim Madge
 #
 
 #
@@ -34,8 +31,33 @@
 #
 
 
-install(
-  FILES kim-api-c-style.el
-  # use CMAKE_INSTALL_RELOC_* to get relocatable GNUInstallDir behavior
-  DESTINATION ${CMAKE_INSTALL_RELOC_DATADIR}/emacs/site-lisp/${PROJECT_NAME}
-  )
+macro(RelocatableGNUInstallDirs_get_relocatable_dir relocvar absvar var)
+  if("${${absvar}}" STREQUAL "${CMAKE_INSTALL_PREFIX}/${${var}}")
+    set(${relocvar} "${${var}}")
+  else()
+    set(${relocvar} "${${absvar}}")
+  endif()
+endmacro(RelocatableGNUInstallDirs_get_relocatable_dir)
+
+# Result directories
+#
+foreach(dir
+    BINDIR
+    SBINDIR
+    LIBEXECDIR
+    SYSCONFDIR
+    SHAREDSTATEDIR
+    LOCALSTATEDIR
+    RUNSTATEDIR
+    LIBDIR
+    INCLUDEDIR
+    OLDINCLUDEDIR
+    DATAROOTDIR
+    DATADIR
+    INFODIR
+    LOCALEDIR
+    MANDIR
+    DOCDIR
+    )
+  RelocatableGNUInstallDirs_get_relocatable_dir(CMAKE_INSTALL_RELOC_${dir} CMAKE_INSTALL_FULL_${dir} CMAKE_INSTALL_${dir})
+endforeach()

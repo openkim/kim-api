@@ -80,6 +80,7 @@ project(${KIM_API_PROJECT_NAME} VERSION 2.2.0 LANGUAGES CXX C Fortran)  # must r
 set(PROJECT_DESCRIPTION "An Application Programming Interface (API) for the Knowledgebase of Interatomic Models (KIM).")
 #
 include(GNUInstallDirs)  # needs to come after languages are enabled
+include(RelocatableGNUInstallDirs)  # provides CMAKE_INSTALL_RELOC_*DIRS variables
 include(DefaultRPATHSettings)
 include(DefineVersionVariables)
 
@@ -148,18 +149,18 @@ set_target_properties(kim-api
     )
 target_include_directories(kim-api PUBLIC
   $<BUILD_INTERFACE:$<TARGET_PROPERTY:kim-api,Fortran_MODULE_DIRECTORY>>
-  $<INSTALL_INTERFACE:${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME}/${KIM_API_Fortran_MODULE_DIR_IDENTIFIER}>)
+  $<INSTALL_INTERFACE:${CMAKE_INSTALL_RELOC_LIBDIR}/${PROJECT_NAME}/${KIM_API_Fortran_MODULE_DIR_IDENTIFIER}>)
 target_link_libraries(kim-api ${CMAKE_DL_LIBS})
 
 # Add install rules for kim-api
 #
 install(TARGETS kim-api
   EXPORT KIM_API_Targets
-  # use CMAKE_INSTALL_FULL_* to get GNUInstallDir behavior
-  INCLUDES DESTINATION "${CMAKE_INSTALL_FULL_INCLUDEDIR}/${PROJECT_NAME}"
-  LIBRARY DESTINATION "${CMAKE_INSTALL_FULL_LIBDIR}"
-  ARCHIVE DESTINATION "${CMAKE_INSTALL_FULL_LIBDIR}"
-  RUNTIME DESTINATION "${CMAKE_INSTALL_FULL_BINDIR}")
+  # use CMAKE_INSTALL_RELOC_* to get relocatable GNUInstallDir behavior
+  INCLUDES DESTINATION "${CMAKE_INSTALL_RELOC_INCLUDEDIR}/${PROJECT_NAME}"
+  LIBRARY DESTINATION "${CMAKE_INSTALL_RELOC_LIBDIR}"
+  ARCHIVE DESTINATION "${CMAKE_INSTALL_RELOC_LIBDIR}"
+  RUNTIME DESTINATION "${CMAKE_INSTALL_RELOC_BINDIR}")
 
 
 # Add include subdirectories
