@@ -63,7 +63,6 @@ include(CMakeFindDependencyMacro)
 find_dependency(KIM-API-ITEMS ${KIM-API_FIND_VERSION})
 
 kim_api_items_set_cmake_compiler_standard_variables()
-kim_api_items_set_cmake_rpath_variables()
 kim_api_items_set_cmake_build_type_variable_in_cache()
 kim_api_items_set_cmake_compiler_variables()
 kim_api_items_set_compiler_flag_variables()

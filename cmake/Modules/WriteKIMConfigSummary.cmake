@@ -38,10 +38,6 @@ function(_write_kim_config_summary)
   set(_log_summary_in "${CMAKE_CURRENT_LIST_DIR}/kim-api-configuration-summary.log.in")
   set(_log_summary "${PROJECT_BINARY_DIR}/kim-api-configuration-summary.log")
 
-  if(NOT CMAKE_INSTALL_RPATH)
-    set(CMAKE_INSTALL_RPATH "")  # avoid uninitialized variable warning
-  endif()
-
   if(EXISTS "${_log_summary}")
     file(SHA1 "${_log_summary}" _log_summary_sha1_before)
   else()

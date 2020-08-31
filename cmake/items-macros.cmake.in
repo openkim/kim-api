@@ -46,9 +46,6 @@
 #  kim_api_items_set_compiler_standard_variables()
 #  kim_api_items_set_cmake_compiler_standard_variables()
 #
-#  kim_api_items_set_rpath_variables()
-#  kim_api_items_set_cmake_rpath_variables()
-#
 #  kim_api_items_set_compiler_flag_variables()
 #  kim_api_items_prepend_compiler_flags_to_cmake_variables()
 #
@@ -202,26 +199,6 @@ macro(kim_api_items_set_cmake_compiler_standard_variables)
   #
   # NO similar setting exist yet in CMake for Fortran
 endmacro(kim_api_items_set_cmake_compiler_standard_variables)
-
-macro(kim_api_items_set_rpath_variables)
-  # RPATH settings
-  #
-  set(KIM_API_CMAKE_SKIP_BUILD_RPATH @CMAKE_SKIP_BUILD_RPATH@)
-  set(KIM_API_CMAKE_BUILD_WITH_INSTALL_RPATH @CMAKE_BUILD_WITH_INSTALL_RPATH@)
-  set(KIM_API_CMAKE_INSTALL_RPATH "@CMAKE_INSTALL_RPATH@")  # empty string ("") represents "not set"
-  set(KIM_API_CMAKE_INSTALL_RPATH_USE_LINK_PATH @CMAKE_INSTALL_RPATH_USE_LINK_PATH@)
-endmacro(kim_api_items_set_rpath_variables)
-
-macro(kim_api_items_set_cmake_rpath_variables)
-  kim_api_items_set_rpath_variables()
-
-  set(CMAKE_SKIP_BUILD_RPATH ${KIM_API_CMAKE_SKIP_BUILD_RPATH})
-  set(CMAKE_BUILD_WITH_INSTALL_RPATH ${KIM_API_CMAKE_BUILD_WITH_INSTALL_RPATH})
-  if(NOT "${KIM_API_CMAKE_INSTALL_RPATH}" STREQUAL "")  # do not set if original value was "not set"
-    set(CMAKE_INSTALL_RPATH "${KIM_API_CMAKE_INSTALL_RPATH}")
-  endif()
-  set(CMAKE_INSTALL_RPATH_USE_LINK_PATH ${KIM_API_CMAKE_INSTALL_RPATH_USE_LINK_PATH})
-endmacro(kim_api_items_set_cmake_rpath_variables)
 
 macro(kim_api_items_set_compiler_flag_variables)
   set(KIM_API_EXE_LINKER_FLAGS "@KIM_API_EXE_LINKER_FLAGS@")

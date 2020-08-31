@@ -69,12 +69,6 @@
 #
 #    KIM_API_EXE_LINKER_FLAGS:               ${KIM_API_EXE_LINKER_FLAGS}
 #
-#    CMAKE_SKIP_BUILD_RPATH:                 ${CMAKE_SKIP_BUILD_RPATH}
-#    CMAKE_BUILD_WITH_INSTALL_RPATH:         ${CMAKE_BUILD_WITH_INSTALL_RPATH}
-#    CMAKE_INSTALL_RPATH_USE_LINK_PATH:      ${CMAKE_INSTALL_RPATH_USE_LINK_PATH}
-#    CMAKE_INSTALL_RPATH:
-#       ${CMAKE_INSTALL_RPATH}
-#
 #    === Build type value ===================
 #    CMAKE_BUILD_TYPE:                       ${CMAKE_BUILD_TYPE}
 #

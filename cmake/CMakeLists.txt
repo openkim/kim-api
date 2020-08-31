@@ -49,10 +49,6 @@ function(_configure_common_package_components)
     message(FATAL_ERROR "Unparsed arguments found in '_configure_common_pacakge_components'")
   endif()
 
-  if(NOT CMAKE_INSTALL_RPATH)
-    set(CMAKE_INSTALL_RPATH "")  # avoid uninitialized variable warning
-  endif()
-
   # Create package files
   configure_file("${_cpkg_INSTALL_CONFIG_IN}" "${CMAKE_CURRENT_BINARY_DIR}/${_cpkg_CONFIG}" @ONLY)
   configure_file("${_cpkg_MACROS_IN}" "${CMAKE_CURRENT_BINARY_DIR}/${_cpkg_MACROS}" @ONLY)

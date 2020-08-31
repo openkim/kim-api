@@ -81,7 +81,6 @@ set(PROJECT_DESCRIPTION "An Application Programming Interface (API) for the Know
 #
 include(GNUInstallDirs)  # needs to come after languages are enabled
 include(RelocatableGNUInstallDirs)  # provides CMAKE_INSTALL_RELOC_*DIRS variables
-include(DefaultRPATHSettings)
 include(DefineVersionVariables)
 
 

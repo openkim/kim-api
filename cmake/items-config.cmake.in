@@ -99,7 +99,6 @@ macro(kim_api_items_setup_after_project)
   enable_testing()
 
   kim_api_items_set_cmake_compiler_standard_variables()
-  kim_api_items_set_cmake_rpath_variables()
   kim_api_items_prepend_compiler_flags_to_cmake_variables()
 
   find_package(KIM-API 2.2 REQUIRED CONFIG)
