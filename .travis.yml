@@ -43,13 +43,20 @@ matrix:
     - name: "macOS Debug, Sanitize, Coverage"
       if: branch != coverity_scan
       os: osx
+      addons:
+        homebrew:
+          packages:
+          # gcc@6 in order to have coverage work
+          - gcc@6
+          - ccache
+          - iwyu
+          # remove 'update: true' once travis-ci bug fixed: https://travis-ci.community/t/macos-build-fails-because-of-homebrew-bundle-unknown-command/7296/12
+          update: true
       env: CMAKE_BUILD_TYPE=Debug
            SANITIZE=true
            COVERAGE=true
       before_script:
-        - brew update &> /dev/null &&
-          brew install gcc@6 ccache iwyu &&
-          export PATH="/usr/local/opt/ccache/libexec:$PATH" &&
+        - export PATH="/usr/local/opt/ccache/libexec:$PATH" &&
           export CXX17=true &&
           export CXX=g++-6 &&
           export CC=gcc-6 &&
