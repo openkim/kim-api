@@ -44,6 +44,9 @@ set -xv
 # print environment
 env
 
+# set MAKE command variable default
+"${MAKE:=make}"
+
 mkdir build
 cd build
 ccache -z
@@ -60,10 +63,10 @@ cmake --warn-uninitialized \
       .. \
   || exit $?
 cat kim-api-configuration-detailed.log
-make -j2 || exit $?
+${MAKE} -j2 || exit $?
 ccache -s
 
-make test || exit $?
+${MAKE} test || exit $?
 
 if test x"${COVERAGE}" != x""; then
   curl -s https://codecov.io/bash | sed -e's/execdir/exec/g' > ${PWD}/codecov
@@ -71,7 +74,7 @@ if test x"${COVERAGE}" != x""; then
 fi
 
 mkdir ${PWD}/destdir
-make install DESTDIR=${PWD}/destdir || exit $?
+${MAKE} install DESTDIR=${PWD}/destdir || exit $?
 rm -rf "${PWD}/destdir${INSTALL_PREFIX}/"{bin,include,libexec,share} || exit $?
 rm -rf "${PWD}/destdir${LIB_DIR:=${INSTALL_PREFIX}/lib}" || exit $?
 rm -rf "${PWD}/destdir${BASH_COMPLETION_DIR:=${INSTALL_PREFIX}/etc}" || exit $?
@@ -99,7 +102,7 @@ cmake -DCMAKE_INSTALL_PREFIX="${PWD}/test-install" \
       ${CXX17:+-DCMAKE_CXX_STANDARD=17}  `#[use std::filesystem spport (assume it is available)]` \
       .. \
   || exit $?
-make -j2 install || exit $?
+${MAKE} -j2 install || exit $?
 ccache -s
 
 # move install tree to test relocatability
