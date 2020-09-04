@@ -35,6 +35,7 @@
 
 include(RelocatablePath)
 
+set(PORTABLE_MODEL_INFO    ${PROJECT_NAME}-portable-model-info)
 set(SIMULATOR_MODEL        ${PROJECT_NAME}-simulator-model)
 set(COLLECTIONS_INFO       ${PROJECT_NAME}-collections-info)
 set(COLLECTIONS_MANAGEMENT ${PROJECT_NAME}-collections-management)
@@ -104,6 +105,11 @@ unset(_libdir_rel)
 unset(_bashcompdir_rel)
 unset(_zshcompdir_rel)
 
+add_executable(portable-model-info portable-model-info.cpp)
+target_link_libraries(portable-model-info kim-api)
+target_include_directories(portable-model-info PRIVATE "${PROJECT_SOURCE_DIR}/cpp/src")
+set_target_properties(portable-model-info PROPERTIES OUTPUT_NAME ${PORTABLE_MODEL_INFO})
+
 add_executable(simulator-model simulator-model.cpp)
 target_link_libraries(simulator-model kim-api)
 set_target_properties(simulator-model PROPERTIES OUTPUT_NAME ${SIMULATOR_MODEL})
@@ -125,7 +131,7 @@ else()
   set(_dir "${CMAKE_INSTALL_RELOC_BINDIR}")
 endif()
 install(
-  TARGETS simulator-model collections-info shared-library-test
+  TARGETS portable-model-info simulator-model collections-info shared-library-test
   EXPORT KIM_API_Targets
   DESTINATION "${_dir}"
   )
