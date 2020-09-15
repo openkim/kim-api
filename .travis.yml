@@ -86,6 +86,6 @@ matrix:
           export CMAKE_GENERATOR="MSYS Makefiles"
         - env
       script:
-        - ./scripts/ci-build-and-test
+        - $msys2 ./scripts/ci-build-and-test
 cache:
   - ccache
