@@ -40,6 +40,7 @@ if test x"" = x"${CMAKE_BUILD_TYPE}"; then
 fi
 
 
+echo "ci-build-and-test: printing environment"
 set -xv
 # print environment
 env
@@ -49,7 +50,9 @@ env
 
 mkdir build
 cd build
+echo "ci-build-and-test: ccache -z"
 ccache -z
+echo "ci-build-and-test: cmake"
 # cmake will respect value of the follwoing environment variables:
 #   CXX,      CC,     and FC
 #   CXXFLAGS, CFLAGS, and FFLAGS
