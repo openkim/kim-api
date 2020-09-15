@@ -63,12 +63,17 @@ cmake --warn-uninitialized \
       ${COVERAGE:+-DKIM_API_ENABLE_COVERAGE=ON} \
       ${IWYU:+-DCMAKE_CXX_INCLUDE_WHAT_YOU_USE=include-what-you-use} \
       ${IWYU:+-DCMAKE_C_INCLUDE_WHAT_YOU_USE=include-what-you-use} \
-      .. \
-  || exit $?
+      .. 
+echo "ci-build-and-test: cat kim-api-configuration-detailed.log"
 cat kim-api-configuration-detailed.log
+echo "ci-build-and-test: ccache -z"
+ccache -z
+echo "ci-build-and-test: make"
 ${MAKE} -j2 || exit $?
+echo "ci-build-and-test: ccache -s"
 ccache -s
 
+echo "ci-build-and-test: make test"
 ${MAKE} test || exit $?
 
 if test x"${COVERAGE}" != x""; then
