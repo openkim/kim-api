@@ -44,6 +44,7 @@ matrix:
       
       # Travis CI setup instructions for MSYS2 environment: 
       # https://docs.travis-ci.com/user/reference/windows/#how-do-i-use-msys2
+      # Additionaly installing 'mingw-w64-x86_64-doxygen' package.
       before_install:  
         - |-
             case $TRAVIS_OS_NAME in
@@ -82,7 +83,7 @@ matrix:
         - export CXX=g++ &&
           export CC=gcc &&
           export FC=gfortran &&
-          export CMAKE_GENERATOR="MinGW Makefiles" &&
+          export CMAKE_GENERATOR="MSYS Makefiles"
         - env
       script:
         - ./scripts/ci-build-and-test
