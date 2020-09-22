@@ -60,6 +60,7 @@ message(WARNING
   )
 
 include(CMakeFindDependencyMacro)
+set(REMOVE_THIS_FOR_3_0_0_RELEASE "_pre22")
 find_dependency(KIM-API-ITEMS ${KIM-API_FIND_VERSION})
 
 kim_api_items_set_cmake_compiler_standard_variables()
@@ -78,7 +79,7 @@ macro(add_kim_api_model_library)
     add_kim_api_imported_library()
   endif()
 
-  _add_kim_api_model_library(${ARGN})
+  add_kim_api_model_library_pre22(${ARGN})
 endmacro(add_kim_api_model_library)
 
 macro(add_kim_api_model_driver_library)
@@ -87,7 +88,7 @@ macro(add_kim_api_model_driver_library)
     add_kim_api_imported_library()
   endif()
 
-  _add_kim_api_model_driver_library(${ARGN})
+  add_kim_api_model_driver_library_pre22(${ARGN})
 endmacro(add_kim_api_model_driver_library)
 
 

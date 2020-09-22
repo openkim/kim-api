@@ -65,7 +65,7 @@ set_property(CACHE KIM_API_INSTALL_COLLECTION PROPERTY STRINGS SYSTEM USER ENVIR
 #    - Parameterized portable model
 #  * Simulator model
 #
-function(add_kim_api_model_library)
+function(add_kim_api_model_library${REMOVE_THIS_FOR_3_0_0_RELEASE})
   set(_options "")
   set(_oneValueArgs NAME DRIVER_NAME CREATE_ROUTINE_NAME CREATE_ROUTINE_LANGUAGE SM_SPEC_FILE)
   set(_multiValueArgs PARAMETER_FILES METADATA_FILES)
@@ -121,12 +121,12 @@ function(add_kim_api_model_library)
     PARAMETER_FILES "${_MODEL_PARAMETER_FILES}"
     METADATA_FILES "${_MODEL_METADATA_FILES}"
     )
-endfunction(add_kim_api_model_library)
+endfunction(add_kim_api_model_library${REMOVE_THIS_FOR_3_0_0_RELEASE})
 
 #
 # Function to be used by KIM-API-ITEMS package users to add KIM-API model driver items
 #
-function(add_kim_api_model_driver_library)
+function(add_kim_api_model_driver_library${REMOVE_THIS_FOR_3_0_0_RELEASE})
   set(_options "")
   set(_oneValueArgs NAME CREATE_ROUTINE_NAME CREATE_ROUTINE_LANGUAGE)
   set(_multiValueArgs METADATA_FILES)
@@ -155,7 +155,7 @@ function(add_kim_api_model_driver_library)
     PARAMETER_FILES ""
     METADATA_FILES "${_MODEL_DRIVER_METADATA_FILES}"
     )
-endfunction(add_kim_api_model_driver_library)
+endfunction(add_kim_api_model_driver_library${REMOVE_THIS_FOR_3_0_0_RELEASE})
 
 
 macro(kim_api_items_set_compiler_variables)
