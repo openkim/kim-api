@@ -50,7 +50,7 @@ bindir=@_bindir_rel@
 libexecdir=@_libexecdir_rel@
 sysconfdir=@_sysconfdir_rel@
 libdir=@_libdir_rel@
-includedir=@_includedir_rel@
+includedir=@_includedir_rel@/@PROJECT_NAME@
 moddir=@_moddir_rel@
 docdir=@_docdir_rel@
 
