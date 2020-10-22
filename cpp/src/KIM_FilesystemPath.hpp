@@ -87,7 +87,10 @@ class Path
   static const std::string::value_type preferred_separator;
 
   Path() {}
-  Path(const char * str) : path_(str) {}
+  Path(const char * str)
+  {
+    if (str != NULL) path_ = str;
+  }
   Path(const std::string & str) : path_(str) {}
 #ifdef KIM_API_USE_FILESYSTEM_LIBRARY
   Path(const std::filesystem::path & p) : path_(p) {}
