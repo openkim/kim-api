@@ -662,7 +662,11 @@ function(_determine_collection_install_prefix_and_output_name _item_type)
 
   get_property(_IMPORTED TARGET KIM-API::collections-info PROPERTY "IMPORTED")
   if(_IMPORTED)  # using install tree config
-    string(TOUPPER "${CMAKE_BUILD_TYPE}" _BUILD_TYPE)
+    if("${CMAKE_BUILD_TYPE}" STREQUAL "")
+      set(_BUILD_TYPE "NOCONFIG")
+    else()
+      string(TOUPPER "${CMAKE_BUILD_TYPE}" _BUILD_TYPE)
+    endif()
     get_property(_COLLECTIONS_INFO TARGET KIM-API::collections-info PROPERTY "IMPORTED_LOCATION_${_BUILD_TYPE}")
     unset(_BUILD_TYPE)
     if("${_COLLECTIONS_INFO}" STREQUAL "")
