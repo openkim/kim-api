@@ -37,6 +37,7 @@
 #include <dlfcn.h>
 #else
 #include <libloaderapi.h>
+#include <windows.h>
 #endif
 #include <fstream>
 #include <sstream>
@@ -62,13 +63,25 @@ namespace
 {
 KIM::FILESYSTEM::Path PrivateGetORIGIN()
 {
+#if !defined(_WIN32) && !defined(__CYGWIN__)
   Dl_info info;
   int OK = false;
-#ifndef _WIN32
   OK = dladdr(reinterpret_cast<void const *>(&KIM::SharedLibrary::GetORIGIN),
               &info);
-#endif
   return KIM::FILESYSTEM::Path(OK ? info.dli_fname : "").parent_path();
+#else
+  // https://stackoverflow.com/questions/6924195/get-dll-path-at-runtime
+  HMODULE hm = NULL;
+  GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS
+                        | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
+                    (LPCSTR) &KIM::SharedLibrary::GetORIGIN,
+                    &hm);
+  char pathBuf[MAX_PATH];
+  if (!GetModuleFileNameA(hm, pathBuf, sizeof(pathBuf)))
+    return KIM::FILESYSTEM::Path();
+
+  return KIM::FILESYSTEM::Path(pathBuf).parent_path();
+#endif
 }
 }  // namespace
 
