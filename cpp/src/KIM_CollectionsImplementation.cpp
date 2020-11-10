@@ -168,7 +168,9 @@ void PrivateGetConfigurationFileEnvironmentVariable(std::string & name,
                                                     std::string & value)
 {
   name = KIM_ENVIRONMENT_CONFIGURATION_FILE;
-
+  std::cout << " Enter PrivateGetConfigurationFileEnvironmentVariable(): " << std::endl;
+  std::cout << "   name: " << name << std::endl;
+  
   char const * const varVal = getenv(name.c_str());
   if (NULL != varVal)
     value = varVal;
@@ -178,18 +180,27 @@ void PrivateGetConfigurationFileEnvironmentVariable(std::string & name,
 
 void PrivateGetConfigurationFileName(KIM::FILESYSTEM::Path & fileName)
 {
+  std::cout << "Enter  " << "PrivateGetConfigurationFileName" << std::endl;
   fileName = KIM_USER_CONFIGURATION_FILE;
+  std::cout << " fileName: " << fileName << std::endl;
+  std::cout << " fileName.is_relative(): " << fileName.is_relative() << std::endl;
 
   if (fileName.is_relative())
   { fileName = KIM::FILESYSTEM::Path::HomePath() / fileName; }
+  std::cout << " fileName: " << fileName << std::endl;
 
   std::string varName;
   std::string varVal;
+  std::cout << " calling: " << "PrivateGetConfigurationFileEnvironmentVariable()" << std::endl;
   PrivateGetConfigurationFileEnvironmentVariable(varName, varVal);
+  std::cout << " varName: " << varName << std::endl;
+  std::cout << " varVal: " << varVal << std::endl;
   if (!varVal.empty())
   {
     // ensure we have an absolute path
     KIM::FILESYSTEM::Path path(varVal);
+    std::cout << " path: " << path << std::endl;
+    std::cout << " path.is_relative(): " << path.is_relative() << std::endl;
     if (path.is_relative())
     { fileName = KIM::FILESYSTEM::Path::current_path() / path; }
     else
@@ -197,6 +208,7 @@ void PrivateGetConfigurationFileName(KIM::FILESYSTEM::Path & fileName)
       fileName = varVal;
     }
   }
+  std::cout << "Exit  " << "PrivateGetConfigurationFileName" << std::endl;
 }
 
 void PrivateGetEnvironmentVariableName(KIM::CollectionItemType const itemType,

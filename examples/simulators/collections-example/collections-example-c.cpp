@@ -188,9 +188,7 @@ int main()
 
   {
     char const * fileName;
-    std::cout << "CALLING KIM_Collections_GetConfigurationFileName()" << std::endl;
     KIM_Collections_GetConfigurationFileName(col, &fileName);
-    std::cout << "RETURNED FROM CALLING KIM_Collections_GetConfigurationFileName()" << std::endl;
     std::cout << "config file name : " << fileName << std::endl;
     std::cout << std::endl;
   }
