@@ -66,9 +66,6 @@ ccache -z
 cmake --build . || exit $?
 ccache -s
 
-ctest --output-on-failure -R Run_collections-example -VV
-echo "examples/simulators/collections-example/stdout:"
-cat examples/simulators/collections-example/stdout
 ctest --output-on-failure || exit $?
 
 if test x"${COVERAGE}" != x""; then
@@ -86,12 +83,13 @@ printf -- "--- remaining installed files ---\n" &&
   find "${PWD}/destdir" &&
   printf -- "---------------------------------\n"
 set -xv
-dir="${INSTALL_PREFIX}"
-while test x"" != x"${dir}"; do
-  rmdir "${PWD}/destdir${dir}" || exit $?
-  dir=`printf -- "${dir}" | sed -e 's|\(.*\)/.*|\1|'`
-done
-rmdir "${PWD}/destdir" || exit $?
+# Skipping the following statements, because they fail in the mingw64 environment:
+#dir="${INSTALL_PREFIX}"
+#while test x"" != x"${dir}"; do
+#  rmdir "${PWD}/destdir${dir}" || exit $?
+#  dir=`printf -- "${dir}" | sed -e 's|\(.*\)/.*|\1|'`
+#done
+#rmdir "${PWD}/destdir" || exit $?
 cd ../
 rm -rf "build" || exit $?
 
@@ -109,12 +107,14 @@ cmake --build . --install . || exit $?
 ccache -s
 
 # move install tree to test relocatability
+echo "ci-build-and-test: mv test-install test-install-relocated"
 mv test-install test-install-relocated || exit $?
 
 set +xv
 printf "calling ${PWD}/test-instal-relocatedl/bin/kim-api-activate\n"
 source "${PWD}/test-install-relocated/bin/kim-api-activate" || exit $?
 set -xv
+echo "ci-build-and-test: kim-api-collections-management"
 kim-api-collections-management install system `find ../examples/model-drivers -mindepth 1 -maxdepth 1 -type d` &&
   kim-api-collections-management install system `find ../examples/portable-models -mindepth 1 -maxdepth 1 -type d` &&
   kim-api-collections-management install system `find ../examples/simulator-models -mindepth 1 -maxdepth 1 -type d` &&
@@ -130,6 +130,7 @@ mkdir build
 cd build
 ccache -z
 mkdir "${PWD}/WORKSPACE"
+echo "ci-build-and-test: run-cmds-from-install"
 ../scripts/run-cmds-from-install IN_WORKSPACE "${PWD}/WORKSPACE" "${PWD}/.." || exit $?
 
 cd ../
