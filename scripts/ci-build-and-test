@@ -103,7 +103,10 @@ cmake -DCMAKE_INSTALL_PREFIX="${PWD}/test-install" \
       ${CXX17:+-DCMAKE_CXX_STANDARD=17}  `#[use std::filesystem spport (assume it is available)]` \
       .. \
   || exit $?
-cmake --build . --install . || exit $?
+echo "ci-build-and-test: cmake --build ."
+cmake --build . || exit $?
+echo "ci-build-and-test: make install"
+${MAKE} install || exit $?
 ccache -s
 
 # move install tree to test relocatability
