@@ -40,7 +40,6 @@ if test x"" = x"${CMAKE_BUILD_TYPE}"; then
 fi
 
 
-echo "ci-build-and-test: printing environment"
 set -xv
 # print environment
 env
@@ -50,9 +49,7 @@ env
 
 mkdir build
 cd build
-echo "ci-build-and-test: ccache -z"
 ccache -z
-echo "ci-build-and-test: cmake"
 # cmake will respect value of the follwoing environment variables:
 #   CXX,      CC,     and FC
 #   CXXFLAGS, CFLAGS, and FFLAGS
@@ -64,17 +61,12 @@ cmake --warn-uninitialized \
       ${IWYU:+-DCMAKE_CXX_INCLUDE_WHAT_YOU_USE=include-what-you-use} \
       ${IWYU:+-DCMAKE_C_INCLUDE_WHAT_YOU_USE=include-what-you-use} \
       .. 
-echo "ci-build-and-test: cat kim-api-configuration-detailed.log"
 cat kim-api-configuration-detailed.log
-echo "ci-build-and-test: ccache -z"
 ccache -z
-echo "ci-build-and-test: cmake --build ."
 cmake --build . || exit $?
-echo "ci-build-and-test: ccache -s"
 ccache -s
 
-echo "ci-build-and-test: ctest"
-ctest || exit $?
+ctest --output-on-failure || exit $?
 
 if test x"${COVERAGE}" != x""; then
   curl -s https://codecov.io/bash | sed -e's/execdir/exec/g' > ${PWD}/codecov
@@ -82,7 +74,6 @@ if test x"${COVERAGE}" != x""; then
 fi
 
 mkdir ${PWD}/destdir
-cmake --install . --prefix ${PWD}/destdir || exit $?
 ${MAKE} install DESTDIR=${PWD}/destdir || exit $?
 rm -rf "${PWD}/destdir${INSTALL_PREFIX}/"{bin,include,libexec,share} || exit $?
 rm -rf "${PWD}/destdir${LIB_DIR:=${INSTALL_PREFIX}/lib}" || exit $?
