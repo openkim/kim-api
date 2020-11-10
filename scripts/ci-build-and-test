@@ -60,10 +60,10 @@ cmake --warn-uninitialized \
       ${COVERAGE:+-DKIM_API_ENABLE_COVERAGE=ON} \
       ${IWYU:+-DCMAKE_CXX_INCLUDE_WHAT_YOU_USE=include-what-you-use} \
       ${IWYU:+-DCMAKE_C_INCLUDE_WHAT_YOU_USE=include-what-you-use} \
-      .. 
+      .. \
+  || exit $?
 cat kim-api-configuration-detailed.log
-ccache -z
-cmake --build . || exit $?
+${MAKE} -j2 || exit $?
 ccache -s
 
 ctest --output-on-failure || exit $?
@@ -105,8 +105,7 @@ cmake -DCMAKE_INSTALL_PREFIX="${PWD}/test-install" \
       ${CXX17:+-DCMAKE_CXX_STANDARD=17}  `#[use std::filesystem spport (assume it is available)]` \
       .. \
   || exit $?
-cmake --build . || exit $?
-${MAKE} install || exit $?
+${MAKE} -j2 install || exit $?
 ccache -s
 
 # move install tree to test relocatability
@@ -135,7 +134,6 @@ if [ "$TRAVIS_OS_NAME" != "windows" ]; then
   cd build
   ccache -z
   mkdir "${PWD}/WORKSPACE"
-  echo "ci-build-and-test: run-cmds-from-install"
   ../scripts/run-cmds-from-install IN_WORKSPACE "${PWD}/WORKSPACE" "${PWD}/.." || exit $?
 
   cd ../

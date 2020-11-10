@@ -42,7 +42,7 @@ matrix:
       os: windows
       env: CMAKE_BUILD_TYPE=Debug
       
-      # Travis CI setup instructions for MSYS2 environment: 
+      # Travis CI setup instructions for MSYS2/MINGW environment: 
       # https://docs.travis-ci.com/user/reference/windows/#how-do-i-use-msys2
       # Additionaly installing 'mingw-w64-x86_64-doxygen' package.
       before_install:  
