@@ -83,13 +83,15 @@ printf -- "--- remaining installed files ---\n" &&
   find "${PWD}/destdir" &&
   printf -- "---------------------------------\n"
 set -xv
-# Skipping the following statements, because they fail in the mingw64 environment:
-#dir="${INSTALL_PREFIX}"
-#while test x"" != x"${dir}"; do
-#  rmdir "${PWD}/destdir${dir}" || exit $?
-#  dir=`printf -- "${dir}" | sed -e 's|\(.*\)/.*|\1|'`
-#done
-#rmdir "${PWD}/destdir" || exit $?
+# Skipping the following statements on Windows, because they fail in the mingw64 environment:
+if [ "$TRAVIS_OS_NAME" != "windows" ]; then
+  dir="${INSTALL_PREFIX}"
+  while test x"" != x"${dir}"; do
+    rmdir "${PWD}/destdir${dir}" || exit $?
+    dir=`printf -- "${dir}" | sed -e 's|\(.*\)/.*|\1|'`
+  done
+  rmdir "${PWD}/destdir" || exit $?
+fi
 cd ../
 rm -rf "build" || exit $?
 
@@ -103,41 +105,42 @@ cmake -DCMAKE_INSTALL_PREFIX="${PWD}/test-install" \
       ${CXX17:+-DCMAKE_CXX_STANDARD=17}  `#[use std::filesystem spport (assume it is available)]` \
       .. \
   || exit $?
-echo "ci-build-and-test: cmake --build ."
 cmake --build . || exit $?
-echo "ci-build-and-test: make install"
 ${MAKE} install || exit $?
 ccache -s
 
 # move install tree to test relocatability
-echo "ci-build-and-test: mv test-install test-install-relocated"
 mv test-install test-install-relocated || exit $?
 
 set +xv
-printf "calling ${PWD}/test-instal-relocatedl/bin/kim-api-activate\n"
+printf "calling ${PWD}/test-instal-relocated/bin/kim-api-activate\n"
 source "${PWD}/test-install-relocated/bin/kim-api-activate" || exit $?
 set -xv
-echo "ci-build-and-test: kim-api-collections-management"
-kim-api-collections-management install system `find ../examples/model-drivers -mindepth 1 -maxdepth 1 -type d` &&
-  kim-api-collections-management install system `find ../examples/portable-models -mindepth 1 -maxdepth 1 -type d` &&
-  kim-api-collections-management install system `find ../examples/simulator-models -mindepth 1 -maxdepth 1 -type d` &&
-  kim-api-collections-management list &&
-  ./test-install-relocated/libexec/kim-api/kim-api-simulator-model Sim_LAMMPS_LJcut_AkersonElliott_Alchemy_PbAu smspec-file data \
-    || exit $?
-
+if [ "$TRAVIS_OS_NAME" != "windows" ]; then
+  kim-api-collections-management install system `find ../examples/model-drivers -mindepth 1 -maxdepth 1 -type d` &&
+    kim-api-collections-management install system `find ../examples/portable-models -mindepth 1 -maxdepth 1 -type d` &&
+    kim-api-collections-management install system `find ../examples/simulator-models -mindepth 1 -maxdepth 1 -type d` &&
+    kim-api-collections-management list &&
+    ./test-install-relocated/libexec/kim-api/kim-api-simulator-model Sim_LAMMPS_LJcut_AkersonElliott_Alchemy_PbAu smspec-file data \
+      || exit $?
+else
+  kim-api-collections-management list || exit $?
+fi
 cd ../
 rm -rf "build" || exit $?
 
 # now test the INSTALL file instructions
-mkdir build
-cd build
-ccache -z
-mkdir "${PWD}/WORKSPACE"
-echo "ci-build-and-test: run-cmds-from-install"
-../scripts/run-cmds-from-install IN_WORKSPACE "${PWD}/WORKSPACE" "${PWD}/.." || exit $?
+if [ "$TRAVIS_OS_NAME" != "windows" ]; then
+  mkdir build
+  cd build
+  ccache -z
+  mkdir "${PWD}/WORKSPACE"
+  echo "ci-build-and-test: run-cmds-from-install"
+  ../scripts/run-cmds-from-install IN_WORKSPACE "${PWD}/WORKSPACE" "${PWD}/.." || exit $?
 
-cd ../
-rm -rf "build" || exit $?
+  cd ../
+  rm -rf "build" || exit $?
+fi
 
 # success
 set +xv
