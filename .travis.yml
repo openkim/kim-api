@@ -80,12 +80,10 @@ matrix:
           - /C/tools/msys64
       
       before_script:
-        - export CXX=g++ &&
-          export CC=gcc &&
-          export FC=gfortran &&
-          export CMAKE_GENERATOR="MSYS Makefiles"
+          export CMAKE_GENERATOR="MinGW Makefiles"
+          export MAKE=mingw32-make
         - env
       script:
-        - $msys2 ./scripts/ci-build-and-test
+        - $mingw64 ./scripts/ci-build-and-test
 cache:
   - ccache
