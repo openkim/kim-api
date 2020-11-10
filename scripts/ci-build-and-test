@@ -66,6 +66,9 @@ ccache -z
 cmake --build . || exit $?
 ccache -s
 
+ctest --output-on-failure -R Run_collections-example -VV
+echo "examples/simulators/collections-example/stdout:"
+cat examples/simulators/collections-example/stdout
 ctest --output-on-failure || exit $?
 
 if test x"${COVERAGE}" != x""; then

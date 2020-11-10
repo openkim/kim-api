@@ -37,7 +37,6 @@
 #include <dlfcn.h>
 #else
 #include <libloaderapi.h>
-#include <windows.h>
 #endif
 #include <fstream>
 #include <sstream>
@@ -74,10 +73,10 @@ KIM::FILESYSTEM::Path PrivateGetORIGIN()
   HMODULE hm = NULL;
   GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS
                         | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
-                    (LPCSTR) &KIM::SharedLibrary::GetORIGIN,
+                    reinterpret_cast<LPCSTR>(&KIM::SharedLibrary::GetORIGIN),
                     &hm);
-  char pathBuf[MAX_PATH];
-  if (!GetModuleFileNameA(hm, pathBuf, sizeof(pathBuf)))
+  wchar_t pathBuf[MAX_PATH];
+  if (!GetModuleFileNameW(hm, pathBuf, MAX_PATH))
     return KIM::FILESYSTEM::Path();
 
   return KIM::FILESYSTEM::Path(pathBuf).parent_path();
