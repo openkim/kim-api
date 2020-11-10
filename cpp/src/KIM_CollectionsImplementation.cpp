@@ -1224,16 +1224,19 @@ void CollectionsImplementation::GetConfigurationFileName(
   std::string const callString
       = "GetConfigurationFileName(" + SPTR(fileName) + ").";
 #endif
+  std::cout << "Enter  " << callString << std::endl;
   LOG_DEBUG("Enter  " + callString);
 
   FILESYSTEM::Path path;
   PrivateGetConfigurationFileName(path);
+  std::cout << "PrivateGetConfigurationFileName() returned: " << path << std::endl;
 
   // Convert from internal KIM::FILESYSTEM::Path representation to conventional
   // std::string representation.
   getConfigurationFileName_ = path.string();
   *fileName = &getConfigurationFileName_;
 
+  std::cout << "Exit  " << callString << std::endl;
   LOG_DEBUG("Exit   " + callString);
 }
 
