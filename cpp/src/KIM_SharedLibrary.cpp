@@ -70,6 +70,7 @@ KIM::FILESYSTEM::Path PrivateGetORIGIN()
   return KIM::FILESYSTEM::Path(OK ? info.dli_fname : "").parent_path();
 #else
   // https://stackoverflow.com/questions/6924195/get-dll-path-at-runtime
+  std::cout << "-----------PrivateGetORIGIN()" << std::endl;
   HMODULE hm = NULL;
   GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS
                         | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
@@ -79,6 +80,7 @@ KIM::FILESYSTEM::Path PrivateGetORIGIN()
   if (!GetModuleFileNameW(hm, pathBuf, MAX_PATH))
     return KIM::FILESYSTEM::Path();
 
+  std::cout << "-----------PrivateGetORIGIN() result: " << KIM::FILESYSTEM::Path(pathBuf).parent_path() << std::endl;
   return KIM::FILESYSTEM::Path(pathBuf).parent_path();
 #endif
 }

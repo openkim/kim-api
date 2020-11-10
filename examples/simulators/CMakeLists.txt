@@ -55,7 +55,8 @@ function(_add_simulator_model_tests _simulator_name _test_models _test_models_fa
     set(_test_dir "${_testing_dir}/${_test_name}")
     file(MAKE_DIRECTORY "${_test_dir}")
     add_kim_api_test(NAME "${_test_name}"
-      COMMAND sh -c "echo ${_model} | $<TARGET_FILE:${_simulator_name}> > stdout"
+      COMMAND sh -c "echo ${_model} | $<TARGET_FILE:${_simulator_name}>"
+#      COMMAND sh -c "echo ${_model} | $<TARGET_FILE:${_simulator_name}> > stdout"
       WORKING_DIRECTORY "${_test_dir}"
       )
     set_property(TEST ${_test_name}
@@ -75,7 +76,8 @@ function(_add_simulator_tests _simulator_dir _simulator_name)
   set(_test_dir "${_testing_dir}/${_test_name}")
   file(MAKE_DIRECTORY "${_test_dir}")
   add_kim_api_test(NAME "${_test_name}"
-    COMMAND sh -c "$<TARGET_FILE:${_simulator_name}> > stdout"
+  COMMAND sh -c "$<TARGET_FILE:${_simulator_name}>"
+#  COMMAND sh -c "$<TARGET_FILE:${_simulator_name}> > stdout"
     WORKING_DIRECTORY "${_test_dir}"
     )
   set_property(TEST ${_test_name}
