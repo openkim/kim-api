@@ -80,7 +80,7 @@ matrix:
           - /C/tools/msys64
       
       before_script:
-          export CMAKE_GENERATOR="MinGW Makefiles"
+        - export CMAKE_GENERATOR="MinGW Makefiles" &&
           export MAKE=mingw32-make
         - env
       script:
