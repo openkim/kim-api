@@ -75,6 +75,10 @@ fi
 
 mkdir ${PWD}/destdir
 ${MAKE} install DESTDIR=${PWD}/destdir || exit $?
+# Query value of ${CMAKE_INSTALL_PREFIX} from CMake cache (https://stackoverflow.com/questions/8474753/how-to-get-a-cmake-variable-from-the-command-line)
+# Remove drive letter, which might precede the path on Windows (MinGW) platform.
+INSTALL_PREFIX=`cmake -L -N . | grep CMAKE_INSTALL_PREFIX | cut -d "=" -f2 | cut -d ":" -f2`
+echo "CMAKE_INSTALL_PREFIX is: ${INSTALL_PREFIX}"
 rm -rf "${PWD}/destdir${INSTALL_PREFIX}/"{bin,include,libexec,share} || exit $?
 rm -rf "${PWD}/destdir${LIB_DIR:=${INSTALL_PREFIX}/lib}" || exit $?
 rm -rf "${PWD}/destdir${BASH_COMPLETION_DIR:=${INSTALL_PREFIX}/etc}" || exit $?
@@ -83,15 +87,12 @@ printf -- "--- remaining installed files ---\n" &&
   find "${PWD}/destdir" &&
   printf -- "---------------------------------\n"
 set -xv
-# Skipping the following statements on Windows, because they fail in the mingw64 environment:
-if [ "$TRAVIS_OS_NAME" != "windows" ]; then
-  dir="${INSTALL_PREFIX}"
-  while test x"" != x"${dir}"; do
-    rmdir "${PWD}/destdir${dir}" || exit $?
-    dir=`printf -- "${dir}" | sed -e 's|\(.*\)/.*|\1|'`
-  done
-  rmdir "${PWD}/destdir" || exit $?
-fi
+dir="${INSTALL_PREFIX}"
+while test x"" != x"${dir}"; do
+  rmdir "${PWD}/destdir${dir}" || exit $?
+  dir=`printf -- "${dir}" | sed -e 's|\(.*\)/.*|\1|'`
+done
+rmdir "${PWD}/destdir" || exit $?
 cd ../
 rm -rf "build" || exit $?
 
@@ -112,24 +113,20 @@ ccache -s
 mv test-install test-install-relocated || exit $?
 
 set +xv
-printf "calling ${PWD}/test-instal-relocated/bin/kim-api-activate\n"
+printf "calling ${PWD}/test-install-relocated/bin/kim-api-activate\n"
 source "${PWD}/test-install-relocated/bin/kim-api-activate" || exit $?
 set -xv
-if [ "$TRAVIS_OS_NAME" != "windows" ]; then
-  kim-api-collections-management install system `find ../examples/model-drivers -mindepth 1 -maxdepth 1 -type d` &&
-    kim-api-collections-management install system `find ../examples/portable-models -mindepth 1 -maxdepth 1 -type d` &&
-    kim-api-collections-management install system `find ../examples/simulator-models -mindepth 1 -maxdepth 1 -type d` &&
-    kim-api-collections-management list &&
-    ./test-install-relocated/libexec/kim-api/kim-api-simulator-model Sim_LAMMPS_LJcut_AkersonElliott_Alchemy_PbAu smspec-file data \
-      || exit $?
-else
-  kim-api-collections-management list || exit $?
-fi
+kim-api-collections-management install system `find ../examples/model-drivers -mindepth 1 -maxdepth 1 -type d` &&
+  kim-api-collections-management install system `find ../examples/portable-models -mindepth 1 -maxdepth 1 -type d` &&
+  kim-api-collections-management install system `find ../examples/simulator-models -mindepth 1 -maxdepth 1 -type d` &&
+  kim-api-collections-management list &&
+  kim-api-simulator-model Sim_LAMMPS_LJcut_AkersonElliott_Alchemy_PbAu smspec-file data \
+    || exit $?
 cd ../
 rm -rf "build" || exit $?
 
 # now test the INSTALL file instructions
-if [ "$TRAVIS_OS_NAME" != "windows" ]; then
+#if [ "$TRAVIS_OS_NAME" != "windows" ]; then
   mkdir build
   cd build
   ccache -z
@@ -138,7 +135,7 @@ if [ "$TRAVIS_OS_NAME" != "windows" ]; then
 
   cd ../
   rm -rf "build" || exit $?
-fi
+#fi
 
 # success
 set +xv

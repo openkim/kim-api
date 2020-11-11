@@ -35,7 +35,7 @@
 
 cmake_minimum_required(VERSION 3.10)
 
-project(utility_forces_numer_deriv VERSION 1.0.0 LANGUAGES Fortran)
+project(utility_forces_numer_deriv VERSION 1.0.0 LANGUAGES Fortran CXX)
 
 find_package(KIM-API 2.2 REQUIRED CONFIG)
 

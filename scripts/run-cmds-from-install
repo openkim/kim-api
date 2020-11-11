@@ -39,6 +39,7 @@ if test x"YES" = x"${EXTRA_CMDS}"; then
                -e '/ldconfig/d' \
                -e 's|--sudo *||g' \
                -e 's|sudo *||g' \
+               -e 's/^make /${MAKE:=make} /' \
       )
 fi
 
