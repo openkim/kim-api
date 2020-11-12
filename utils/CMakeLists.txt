@@ -121,7 +121,6 @@ target_include_directories(portable-model-info PRIVATE "${PROJECT_SOURCE_DIR}/cp
 set_target_properties(portable-model-info PROPERTIES OUTPUT_NAME ${PORTABLE_MODEL_INFO})
 
 add_executable(simulator-model simulator-model.cpp)
-target_include_directories(simulator-model PRIVATE "${PROJECT_SOURCE_DIR}/cpp/src")
 target_link_libraries(simulator-model kim-api)
 set_target_properties(simulator-model PROPERTIES OUTPUT_NAME ${SIMULATOR_MODEL})
 
