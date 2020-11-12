@@ -26,6 +26,7 @@
 #
 # Contributors:
 #    Ryan S. Elliott
+#    Alexander Stukowski
 #
 
 #
@@ -76,7 +77,7 @@ fi
 mkdir ${PWD}/destdir
 ${MAKE} install DESTDIR=${PWD}/destdir || exit $?
 # Query value of ${CMAKE_INSTALL_PREFIX} from CMake cache (https://stackoverflow.com/questions/8474753/how-to-get-a-cmake-variable-from-the-command-line)
-# Remove drive letter, which might precede the path on Windows (MinGW) platform.
+# Remove drive letter (C:), which precedes the path on Windows (MinGW) platform.
 INSTALL_PREFIX=`cmake -L -N . | grep CMAKE_INSTALL_PREFIX | cut -d "=" -f2 | cut -d ":" -f2`
 echo "CMAKE_INSTALL_PREFIX is: ${INSTALL_PREFIX}"
 rm -rf "${PWD}/destdir${INSTALL_PREFIX}/"{bin,include,libexec,share} || exit $?
@@ -131,16 +132,14 @@ cd ../
 rm -rf "build" || exit $?
 
 # now test the INSTALL file instructions
-#if [ "$TRAVIS_OS_NAME" != "windows" ]; then
-  mkdir build
-  cd build
-  ccache -z
-  mkdir "${PWD}/WORKSPACE"
-  ../scripts/run-cmds-from-install IN_WORKSPACE "${PWD}/WORKSPACE" "${PWD}/.." || exit $?
+mkdir build
+cd build
+ccache -z
+mkdir "${PWD}/WORKSPACE"
+../scripts/run-cmds-from-install IN_WORKSPACE "${PWD}/WORKSPACE" "${PWD}/.." || exit $?
 
-  cd ../
-  rm -rf "build" || exit $?
-#fi
+cd ../
+rm -rf "build" || exit $?
 
 # success
 set +xv
