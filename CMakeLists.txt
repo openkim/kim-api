@@ -161,6 +161,16 @@ install(TARGETS kim-api
   ARCHIVE DESTINATION "${CMAKE_INSTALL_RELOC_LIBDIR}"
   RUNTIME DESTINATION "${CMAKE_INSTALL_RELOC_BINDIR}")
 
+# Add install rules for various metadata files
+#
+install(
+  FILES
+    "${PROJECT_SOURCE_DIR}/README.md"
+    "${PROJECT_SOURCE_DIR}/NEWS"
+    "${PROJECT_SOURCE_DIR}/LICENSE.CDDL"
+  DESTINATION
+    "${CMAKE_INSTALL_RELOC_DOCDIR}"
+  )
 
 # Add include subdirectories
 #

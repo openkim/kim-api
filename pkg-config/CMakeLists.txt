@@ -88,7 +88,7 @@ relocatable_path(
   )
 list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${CMAKE_INSTALL_FULL_LIBDIR}" _isSystemDir)
 if("${_isSystemDir}" STREQUAL "-1")
-  set(KIM_API_RPATH_FLAG "-Wl,-rpath,${_libdir_rel}")
+  set(KIM_API_RPATH_FLAG [=[-Wl,-rpath,${libdir}]=])
 else()
   set(KIM_API_RPATH_FLAG "")
 endif()
