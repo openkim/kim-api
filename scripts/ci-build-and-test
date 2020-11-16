@@ -45,8 +45,8 @@ set -xv
 # print environment
 env
 
-# set MAKE command variable default
-"${MAKE:=make}"
+# set MAKE command variable to default if necessary
+MAKE=${MAKE:-make}
 
 mkdir build
 cd build
