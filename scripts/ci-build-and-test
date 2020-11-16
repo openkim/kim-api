@@ -26,6 +26,7 @@
 #
 # Contributors:
 #    Ryan S. Elliott
+#    Alexander Stukowski
 #
 
 #
@@ -66,7 +67,7 @@ cat kim-api-configuration-detailed.log
 ${MAKE} -j2 || exit $?
 ccache -s
 
-${MAKE} test || exit $?
+ctest --output-on-failure || exit $?
 
 if test x"${COVERAGE}" != x""; then
   curl -s https://codecov.io/bash | sed -e's/execdir/exec/g' > ${PWD}/codecov
@@ -75,6 +76,10 @@ fi
 
 mkdir ${PWD}/destdir
 ${MAKE} install DESTDIR=${PWD}/destdir || exit $?
+# Query value of ${CMAKE_INSTALL_PREFIX} from CMake cache (https://stackoverflow.com/questions/8474753/how-to-get-a-cmake-variable-from-the-command-line)
+# Remove drive letter (C:), which precedes the path on Windows (MinGW) platform.
+INSTALL_PREFIX=`cmake -L -N . | grep CMAKE_INSTALL_PREFIX | cut -d "=" -f2 | cut -d ":" -f2`
+echo "CMAKE_INSTALL_PREFIX is: ${INSTALL_PREFIX}"
 rm -rf "${PWD}/destdir${INSTALL_PREFIX}/"{bin,include,libexec,share} || exit $?
 rm -rf "${PWD}/destdir${LIB_DIR:=${INSTALL_PREFIX}/lib}" || exit $?
 rm -rf "${PWD}/destdir${BASH_COMPLETION_DIR:=${INSTALL_PREFIX}/etc}" || exit $?
@@ -109,16 +114,20 @@ ccache -s
 mv test-install test-install-relocated || exit $?
 
 set +xv
-printf "calling ${PWD}/test-instal-relocatedl/bin/kim-api-activate\n"
+printf "calling ${PWD}/test-install-relocated/bin/kim-api-activate\n"
 source "${PWD}/test-install-relocated/bin/kim-api-activate" || exit $?
 set -xv
+if [ "$TRAVIS_OS_NAME" != "windows" ]; then
+  KIM_SIMULATOR_MODEL_EXE="./test-install-relocated/libexec/kim-api/kim-api-simulator-model"
+else
+  KIM_SIMULATOR_MODEL_EXE="./test-install-relocated/bin/kim-api-simulator-model"
+fi
 kim-api-collections-management install system `find ../examples/model-drivers -mindepth 1 -maxdepth 1 -type d` &&
   kim-api-collections-management install system `find ../examples/portable-models -mindepth 1 -maxdepth 1 -type d` &&
   kim-api-collections-management install system `find ../examples/simulator-models -mindepth 1 -maxdepth 1 -type d` &&
   kim-api-collections-management list &&
-  ./test-install-relocated/libexec/kim-api/kim-api-simulator-model Sim_LAMMPS_LJcut_AkersonElliott_Alchemy_PbAu smspec-file data \
+  ${KIM_SIMULATOR_MODEL_EXE} Sim_LAMMPS_LJcut_AkersonElliott_Alchemy_PbAu smspec-file data \
     || exit $?
-
 cd ../
 rm -rf "build" || exit $?
 

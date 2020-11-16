@@ -26,6 +26,7 @@
 #    Richard Berger
 #    Christoph Junghans
 #    Ryan S. Elliott
+#    Alexander Stukowski
 #
 
 #
@@ -40,14 +41,49 @@ matrix:
       if: branch != coverity_scan
       os: windows
       env: CMAKE_BUILD_TYPE=Debug
+      
+      # Travis CI setup instructions for MSYS2/MINGW environment: 
+      # https://docs.travis-ci.com/user/reference/windows/#how-do-i-use-msys2
+      # Additionaly installing 'mingw-w64-x86_64-doxygen' package.
+      before_install:  
+        - |-
+            case $TRAVIS_OS_NAME in
+              windows)
+                [[ ! -f C:/tools/msys64/msys2_shell.cmd ]] && rm -rf C:/tools/msys64
+                choco uninstall -y mingw
+                choco upgrade --no-progress -y msys2
+                export msys2='cmd //C RefreshEnv.cmd '
+                export msys2+='& set MSYS=winsymlinks:nativestrict '
+                export msys2+='& C:\\tools\\msys64\\msys2_shell.cmd -defterm -no-start'
+                export mingw64="$msys2 -mingw64 -full-path -here -c "\"\$@"\" --"
+                export msys2+=" -msys2 -c "\"\$@"\" --"
+                $msys2 pacman --sync --noconfirm --needed mingw-w64-x86_64-toolchain mingw-w64-x86_64-doxygen 
+                ## Install more MSYS2 packages from https://packages.msys2.org/base here
+                taskkill //IM gpg-agent.exe //F  # https://travis-ci.community/t/4967
+                export PATH=/C/tools/msys64/mingw64/bin:$PATH
+                export MAKE=mingw32-make  # so that Autotools can find it
+                ;;
+            esac
+        
+      before_cache:
+      - |-
+          case $TRAVIS_OS_NAME in
+            windows)
+              # https://unix.stackexchange.com/a/137322/107554
+              $msys2 pacman --sync --clean --noconfirm
+              ;;
+          esac
+      
+      cache:
+          directories:
+          - $HOME/AppData/Local/Temp/chocolatey
+          - /C/tools/msys64
+      
       before_script:
-        - export CXX=g++ &&
-          export CC=gcc &&
-          export FC=gfortran &&
-          export CMAKE_GENERATOR="MinGW Makefiles" &&
+        - export CMAKE_GENERATOR="MinGW Makefiles" &&
           export MAKE=mingw32-make
         - env
       script:
-        - ./scripts/ci-build-and-test
+        - $mingw64 ./scripts/ci-build-and-test
 cache:
   - ccache

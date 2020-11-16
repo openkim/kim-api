@@ -251,9 +251,30 @@ Path Path::current_path()
 Path Path::HomePath()
 {
 #if defined(KIM_API_USE_FILESYSTEM_LIBRARY) && defined(_WIN32)
-  std::filesystem::path homeDrive = _wgetenv(L"HOMEDRIVE");
-  std::filesystem::path homePath = _wgetenv(L"HOMEPATH");
-  return Path(homeDrive / homePath);
+  // Detects the user's home directory on Win32.
+  // Prefer environment variables %HOMEDRIVE% / %HOMEPATH%.
+  if (wchar_t * envHomeDrive = _wgetenv(L"HOMEDRIVE"))
+  {
+    if (wchar_t * envHomePath = _wgetenv(L"HOMEPATH"))
+    {
+      std::filesystem::path homeDrive = envHomeDrive;
+      std::filesystem::path homePath = envHomePath;
+      return Path(homeDrive / homePath);
+    }
+  }
+  // Fall back to environment variable %USERPROFILE%:
+  if (wchar_t * envUserProfile = _wgetenv(L"USERPROFILE"))
+  {
+    std::filesystem::path profilePath = envUserProfile;
+    return Path(profilePath);
+  }
+  // Fall back to environment variable %HOME%:
+  if (wchar_t * envHome = _wgetenv(L"HOME"))
+  {
+    std::filesystem::path homePath = envHome;
+    return Path(homePath);
+  }
+  return Path();
 #else
   return Path(getenv("HOME"));
 #endif

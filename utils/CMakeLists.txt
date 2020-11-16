@@ -65,12 +65,22 @@ if((NOT ("${CMAKE_INSTALL_PREFIX}" IN_LIST KIM_API_STANDARD_INSTALL_PREFIXES))
 endif()
 
 
-relocatable_path(
-  FROM "${CMAKE_INSTALL_FULL_BINDIR}" FROM_REL "${CMAKE_INSTALL_RELOC_BINDIR}"
-  TO "${CMAKE_INSTALL_FULL_LIBEXECDIR}/${PROJECT_NAME}/${COLLECTIONS_INFO}" TO_REL "${CMAKE_INSTALL_RELOC_LIBEXECDIR}"
-  PREFIX "\${ORIGIN}"
-  RESULT_VARIABLE _collections_info_path
-  )
+if(NOT WIN32 OR CYGWIN)
+  relocatable_path(
+    FROM "${CMAKE_INSTALL_FULL_BINDIR}" FROM_REL "${CMAKE_INSTALL_RELOC_BINDIR}"
+    TO "${CMAKE_INSTALL_FULL_LIBEXECDIR}/${PROJECT_NAME}/${COLLECTIONS_INFO}" TO_REL "${CMAKE_INSTALL_RELOC_LIBEXECDIR}"
+    PREFIX "\${ORIGIN}"
+    RESULT_VARIABLE _collections_info_path
+    )
+else()
+  # Note: On WIN32, 'collections-info.exe' and other utilities get installed under ${CMAKE_INSTALL_PREFIX}/bin/.
+  relocatable_path(
+    FROM "${CMAKE_INSTALL_FULL_BINDIR}" FROM_REL "${CMAKE_INSTALL_RELOC_BINDIR}"
+    TO "${CMAKE_INSTALL_FULL_BINDIR}/${COLLECTIONS_INFO}" TO_REL "${CMAKE_INSTALL_RELOC_BINDIR}"
+    PREFIX "\${ORIGIN}"
+    RESULT_VARIABLE _collections_info_path
+    )
+endif()
 configure_file(collections-management.in ${COLLECTIONS_MANAGEMENT} @ONLY)
 unset(_collections_info_path)
 
