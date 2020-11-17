@@ -61,6 +61,7 @@ set(DOXYGEN_FILE_PATTERNS ${DOXYGEN_FILE_PATTERNS}
 set(DOXYGEN_EXTENSION_MAPPING    "in=C++")
 
 set(DOXYGEN_RECURSIVE            YES)
+set(DOXYGEN_EXAMPLE_PATH         "../examples")
 set(DOXYGEN_IMAGE_PATH           "src/asymptote-figures")
 set(DOXYGEN_SOURCE_BROWSER       YES)
 set(DOXYGEN_USE_MATHJAX          YES)
@@ -73,6 +74,7 @@ if(READTHEDOCS)
 endif(READTHEDOCS)
 
 set(SOURCES
+  "src/cmake-files.txt"
   "src/table-of-contents.txt"
   "src/features.txt"
   "src/theory.txt"

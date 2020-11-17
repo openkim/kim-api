@@ -75,33 +75,62 @@ Table of Contents:
 
 -# \ref implementation
 
--# Example Portable Models (PMs) written in C++ (\ref LennardJones_Ar.cpp), C
-   (\ref ex_model_Ar_P_Morse_07C.c, ex_model_Ar_P_Morse_MultiCutoff.c,
-   ex_model_Ar_P_Morse_07C_w_Extensions.c) and Fortran (\ref
-   ex_model_Ar_P_MLJ_Fortran.f90, ex_model_Ar_SLJ_MultiCutoff.f90)
+-# Example Portable Models (PMs) written in C++ (\link
+   ../examples/portable-models/LennardJones_Ar LennardJones_Ar\endlink), C
+   (\link ../examples/portable-models/ex_model_Ar_P_Morse_07C
+   ex_model_Ar_P_Morse_07C\endlink, \link
+   ../examples/portable-models/ex_model_Ar_P_Morse_MultiCutoff
+   ex_model_Ar_P_Morse_MultiCutoff\endlink, \link
+   ../examples/portable-models/ex_model_Ar_P_Morse_07C_w_Extensions
+   ex_model_Ar_P_Morse_07C_w_Extensions\endlink) and Fortran (\link
+   ../examples/portable-models/ex_model_Ar_P_MLJ_Fortran
+   ex_model_Ar_P_MLJ_Fortran\endlink, \link
+   ../examples/portable-models/ex_model_Ar_SLJ_MultiCutoff
+   ex_model_Ar_SLJ_MultiCutoff\endlink)
 
--# Example Model Drivers (MDs) written in C++
-   (LennardJones612Implementation.hpp), C (ex_model_driver_P_Morse.c), and
-   Fortran (ex_model_driver_P_LJ.f90).
+-# Example Model Drivers (MDs) written in C++ (\link
+   ../examples/model-drivers/LennardJones612__MD_414112407348_003
+   LennardJones612__MD_414112407348_003\endlink), C (\link
+   ../examples/model-drivers/ex_model_driver_P_Morse
+   ex_model_driver_P_Morse\endlink), and Fortran (\link
+   ../examples/model-drivers/ex_model_driver_P_LJ
+   ex_model_driver_P_LJ\endlink).
 
--# Example PMs using MDs (ex_model_Ar_P_LJ.params, ex_model_Ar_P_Morse.params,
-   LennardJones612_UniversalShifted.params)
+-# Example PMs using MDs (\link ../examples/portable-models/ex_model_Ar_P_LJ
+   ex_model_Ar_P_LJ\endlink, \link
+   ../examples/portable-models/ex_model_Ar_P_Morse ex_model_Ar_P_Morse\endlink,
+   \link
+   ../examples/portable-models/LennardJones612_UniversalShifted__MO_959249795837_003
+   LennardJones612_UniversalShifted__MO_959249795837_003\endlink).
 
--# An Example SM (<em>Sim_LAMMPS_LJcut_AkersonElliott_Alchemy_PbAu</em>, with
-   specification file [smspec.edn](smspec_8edn_source.html) and parameter file
-   [Alchemy_PbAu.in](_alchemy___pb_au_8in_source.html)).
+-# An Example SM (\link
+   ../examples/simulator-models/Sim_LAMMPS_LJcut_AkersonElliott_Alchemy_PbAu
+   Sim_LAMMPS_LJcut_AkersonElliott_Alchemy_PbAu\endlink).
 
--# Example Simulators written in C++ (ex_test_Ar_fcc_cluster_cpp.cpp,
-   collections-example.cpp, simulator-model-example.cpp), C
-   (ex_test_Ar_fcc_cluster.c, collections-example-c.cpp,
-   simulator-model-example-c.cpp), and Fortran (
-   ex_test_Ar_fcc_cluster_fortran.f90, collections-example-fortran.f90,
-   simulator-model-example-fortran.f90).
+-# Example Simulators written in C++ ( \link
+   ../examples/simulators/ex_test_Ar_fcc_cluster_cpp
+   ex_test_Ar_fcc_cluster_cpp\endlink, \link
+   ../examples/simulators/collections-example collections-example\endlink,
+   \link ../examples/simulators/simulator-model-example
+   simulator-model-example\endlink), C (\link
+   ../examples/simulators/ex_test_Ar_fcc_cluster
+   ex_test_Ar_fcc_cluster\endlink, \link
+   ../examples/simulators/collections-example collections-example\endlink,
+   \link ../examples/simulators/simulator-model-example
+   simulator-model-example\endlink), and Fortran ( \link
+   ../examples/simulators/ex_test_Ar_fcc_cluster_fortran
+   ex_test_Ar_fcc_cluster_fortran\endlink, \link
+   ../examples/simulators/collections-example collections-example\endlink,
+   \link ../examples/simulators/simulator-model-example
+   simulator-model-example\endlink).
 
 -# A utility for checking the consistency between a PM's energy function and
-   its forces function (utility_forces_numer_deriv.f90).  This performs a
-   numerical differentiation of the PM's energy, using Ridder's method, and
-   compares the result with the PM's forces.
+   its forces function (\link ../examples/simulators/utility_forces_numer_deriv
+   utility_forces_numer_deriv\endlink).  This performs a numerical
+   differentiation of the PM's energy, using Ridder's method, and compares the
+   result with the PM's forces.
+
+-# \ref cmake_files
 
 -# \ref version2_differences
 
