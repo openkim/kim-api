@@ -156,7 +156,9 @@ int main(int argc, char * argv[])
       << " "
       << "[ ";
   for (int i = 0; i < numberOfNeighborLists; ++i)
-  { edn << nonContrib[i] << " "; }
+  {
+    edn << nonContrib[i] << " ";
+  }
   edn << "] "
       << "} ";
 
@@ -242,12 +244,15 @@ int main(int argc, char * argv[])
     KIM::MODEL_ROUTINE_NAME::GetModelRoutineName(i, &routineName);
     error = mdl->IsRoutinePresent(routineName, &present, &required);
 
-    if ((routineName == KIM::MODEL_ROUTINE_NAME::Extension) && present)
-      extensionPresent = true;
+    if (!error)
+    {
+      if ((routineName == KIM::MODEL_ROUTINE_NAME::Extension) && present)
+        extensionPresent = true;
 
-    if (present)
-      edn << "\"" << routineName.ToString() << "\""
-          << " " << ((required) ? "required" : "optional") << " ";
+      if (present)
+        edn << "\"" << routineName.ToString() << "\""
+            << " " << ((required) ? "required" : "optional") << " ";
+    }
   }
   edn << "} ";
 
