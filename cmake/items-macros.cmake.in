@@ -730,11 +730,11 @@ function(add_kim_api_test)
   # path when running the test executables. We prepend the CMake build directory to the existing PATH variable.
   if(CYGWIN)
     # CMake under Cygwin expects ':' separated path list with '/' directory separators (Unix style).
-    set_property(TEST ${KIMAPI_TEST_NAME} APPEND PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:kim-api>:$ENV{PATH}")
+    set_property(TEST ${KIMAPI_TEST_NAME} APPEND PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:KIM-API::kim-api>:$ENV{PATH}")
   elseif(MINGW)
     # CMake under MinGW expects ';' separated path list with '\' directory separators (Windows style).
     string(REPLACE ";" "\\;" PATH_VALUE "$ENV{PATH}")
-    set_property(TEST ${KIMAPI_TEST_NAME} APPEND PROPERTY ENVIRONMENT "PATH=$<SHELL_PATH:$<TARGET_FILE_DIR:kim-api>>\;${PATH_VALUE}")
+    set_property(TEST ${KIMAPI_TEST_NAME} APPEND PROPERTY ENVIRONMENT "PATH=$<SHELL_PATH:$<TARGET_FILE_DIR:KIM-API::kim-api>>\;${PATH_VALUE}")
   else()
     # No PATH needed on Unix/Linux platforms, where shared libraries are located using the rpath mechanism.
   endif()

@@ -37,6 +37,8 @@ cmake_minimum_required(VERSION 3.10)
 
 project(utility_forces_numer_deriv VERSION 1.0.0 LANGUAGES Fortran)
 
+# Enable C++ to workaround https://gitlab.kitware.com/cmake/cmake/-/issues/20438
+enable_language(CXX)
 find_package(KIM-API 2.2 REQUIRED CONFIG)
 
 add_executable(${PROJECT_NAME} ${PROJECT_NAME}.f90)

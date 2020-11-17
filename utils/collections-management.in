@@ -44,7 +44,7 @@ kim_api_uid_string="@KIM_API_UID@"
 kim_user_agent="kim-api-collections-management-(${kim_version_string}--`uname -mrs | sed -e 's/ /-/g'`)"
 
 
-make_command="make -j2"
+make_command="${MAKE:=make} -j2"
 cmake_command="cmake"
 # determine web tool to use
 if command -v wget > /dev/null 2>&1; then
@@ -369,7 +369,9 @@ get_build_install_item () {
       ${web_tool_download} "https://s3.openkim.org/archives/collection/${archive_basename}.txz"
       local error_code=$?
       if test ${error_code} -eq 0; then
-        tar Jxf "${archive_basename}.txz" && rm -f "${archive_basename}.txz"
+        #tar Jxf "${archive_basename}.txz" && rm -f "${archive_basename}.txz"
+        # Workaround for https://github.com/msys2/MSYS2-packages/issues/1548
+        xz --decompress --stdout "${archive_basename}.txz" | tar xf - && rm -f "${archive_basename}.txz"
       else
         printf "                Unable to download ${archive_basename}.txz from https://s3.openkim.org.\n"
         printf "                '${web_tool}' returned error code ${error_code}.\n"
@@ -399,7 +401,9 @@ get_build_install_item () {
           ${web_tool_download} "https://openkim.org/download/${item_name}.txz"
           local error_code=$?
           if test ${error_code} -eq 0; then
-            tar Jxf "${item_name}.txz" && rm -f "${item_name}.txz"
+            #tar Jxfv "${item_name}.txz" && rm -f "${item_name}.txz"
+            # Workaround for https://github.com/msys2/MSYS2-packages/issues/1548
+            xz --decompress --stdout "${item_name}.txz" | tar xf - && rm -f "${item_name}.txz"
           else
             printf "                Unable to download ${item_name} from https://openkim.org.  Check the KIM Item ID for errors.\n"
             printf "                '${web_tool}' returned error code ${error_code}.\n"

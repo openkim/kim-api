@@ -118,7 +118,7 @@ int main(int argc, char * argv[])
     {
       simulatorModel->GetSpecificationFileName(&name);
       std::string const filePath = *dirName + "/" + *name;
-      FILE * file = fopen(filePath.c_str(), "r");
+      FILE * file = fopen(filePath.c_str(), "rb");
       if (file == NULL)
       {
         std::cout << "* Error: unable to open smspec file." << std::endl;
@@ -128,7 +128,7 @@ int main(int argc, char * argv[])
       fseek(file, 0, SEEK_END);
       long int size = ftell(file);
       fclose(file);
-      file = fopen(filePath.c_str(), "r");
+      file = fopen(filePath.c_str(), "rb");
       unsigned char * fileData = new unsigned char[size];
       size_t numberReadObjects;
       numberReadObjects = fread(fileData, sizeof(unsigned char), size, file);
