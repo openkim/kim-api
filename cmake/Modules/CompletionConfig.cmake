@@ -19,35 +19,45 @@
 #
 
 #
-# Copyright (c) 2013--2019, Regents of the University of Minnesota.
+# Copyright (c) 2013--2020, Regents of the University of Minnesota.
 # All rights reserved.
 #
 # Contributors:
 #    Jim Madge
+#    Ryan S. Elliott
 #
 
 #
-# Release: This file is part of the kim-api-2.1.3 package.
+# Release: This file is part of the kim-api-2.2.0 package.
 #
 
 
 # - CompletionConfig
 #
-# Sets the install paths for completions
+# Sets the install paths for completions.
+#
+# If the user defines a location use it.  If installing to "standard" loc, use
+# system bash-completion settings if available Otherwise, install into
+# sysconfdir (but do not cache).
+
 
 # bash completions
-find_package(bash-completion QUIET)
-if(NOT
-    ((BASH_COMPLETION_FOUND)
-      AND
-      ("${CMAKE_INSTALL_PREFIX}" IN_LIST KIM_API_STANDARD_INSTALL_PREFIXES)
-      )
-    )
-  set(BASH_COMPLETION_COMPLETIONSDIR "${CMAKE_INSTALL_FULL_SYSCONFDIR}/bash_completion.d")
+if((NOT BASH_COMPLETION_COMPLETIONSDIR) AND ("${CMAKE_INSTALL_PREFIX}" IN_LIST KIM_API_STANDARD_INSTALL_PREFIXES))
+  find_package(bash-completion QUIET)  # sets BASH_COMPLETION_COMPLETIONSDIR
+  if(bash-completion_FOUND)
+    include(FindPackageMessage)
+    find_package_message(bash-completion "Found bash-completion: (${BASH_COMPLETION_COMPLETIONSDIR})" "found")
+  endif()
 endif()
-set(BASH_COMPLETION_COMPLETIONSDIR "${BASH_COMPLETION_COMPLETIONSDIR}" CACHE PATH "Default directory where bash completions are installed")
-message(STATUS "Using bash-completion dir ${BASH_COMPLETION_COMPLETIONSDIR}")
+set_cache_with_fallback(BASH_COMPLETION_COMPLETIONSDIR "${CMAKE_INSTALL_RELOC_SYSCONFDIR}/bash_completion.d" PATH "Directory where bash completions are installed")
+set(dir SYSCONFDIR)
+GNUInstallDirs_get_absolute_install_dir(BASH_COMPLETION_FULL_COMPLETIONSDIR BASH_COMPLETION_COMPLETIONSDIR)
+unset(dir)
+RelocatableGNUInstallDirs_get_relocatable_dir(BASH_COMPLETION_RELOC_COMPLETIONSDIR BASH_COMPLETION_FULL_COMPLETIONSDIR BASH_COMPLETION_COMPLETIONSDIR)
 
 # zsh completions
-set(ZSH_COMPLETION_COMPLETIONSDIR "${CMAKE_INSTALL_FULL_SYSCONFDIR}/zsh_completion.d" CACHE PATH "Default directory where zsh completions are installed")
-message(STATUS "Using zsh-completion dir ${ZSH_COMPLETION_COMPLETIONSDIR}")
+set_cache_with_fallback(ZSH_COMPLETION_COMPLETIONSDIR "${CMAKE_INSTALL_RELOC_SYSCONFDIR}/zsh_completion.d" PATH "Directory where zsh completions are installed")
+set(dir SYSCONFDIR)
+GNUInstallDirs_get_absolute_install_dir(ZSH_COMPLETION_FULL_COMPLETIONSDIR ZSH_COMPLETION_COMPLETIONSDIR)
+unset(dir)
+RelocatableGNUInstallDirs_get_relocatable_dir(ZSH_COMPLETION_RELOC_COMPLETIONSDIR ZSH_COMPLETION_FULL_COMPLETIONSDIR ZSH_COMPLETION_COMPLETIONSDIR)

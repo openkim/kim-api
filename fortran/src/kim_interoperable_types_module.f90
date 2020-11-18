@@ -19,7 +19,7 @@
 !
 
 !
-! Copyright (c) 2016--2019, Regents of the University of Minnesota.
+! Copyright (c) 2016--2020, Regents of the University of Minnesota.
 ! All rights reserved.
 !
 ! Contributors:
@@ -27,9 +27,8 @@
 !
 
 !
-! Release: This file is part of the kim-api-2.1.3 package.
+! Release: This file is part of the kim-api-2.2.0 package.
 !
-
 
 module kim_interoperable_types_module
   use, intrinsic :: iso_c_binding
@@ -53,7 +52,6 @@ module kim_interoperable_types_module
     kim_model_refresh_type, &
     kim_model_write_parameterized_model_type, &
     kim_simulator_model_type
-
 
   type, bind(c) :: kim_collections_type
     private

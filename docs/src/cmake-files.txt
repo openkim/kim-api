@@ -1,0 +1,295 @@
+/*                                                                            */
+/* CDDL HEADER START                                                          */
+/*                                                                            */
+/* The contents of this file are subject to the terms of the Common           */
+/* Development and Distribution License Version 1.0 (the "License").          */
+/*                                                                            */
+/* You can obtain a copy of the license at                                    */
+/* http://www.opensource.org/licenses/CDDL-1.0.  See the License for the      */
+/* specific language governing permissions and limitations under the License. */
+/*                                                                            */
+/* When distributing Covered Code, include this CDDL HEADER in each file and  */
+/* include the License file in a prominent location with the name             */
+/* LICENSE.CDDL.                                                              */
+/* If applicable, add the following below this CDDL HEADER, with the fields   */
+/* enclosed by brackets "[]" replaced with your own identifying information:  */
+/*                                                                            */
+/* Portions Copyright (c) [yyyy] [name of copyright owner].                   */
+/* All rights reserved.                                                       */
+/*                                                                            */
+/* CDDL HEADER END                                                            */
+/*                                                                            */
+
+/*                                                                            */
+/* Copyright (c) 2020--2020, Regents of the University of Minnesota.          */
+/* All rights reserved.                                                       */
+/*                                                                            */
+/* Contributors:                                                              */
+/*    Ryan S. Elliott                                                         */
+/*                                                                            */
+
+/*                                                                            */
+/* Release: This file is part of the kim-api-2.2.0 package.                   */
+/*                                                                            */
+
+/**
+\page cmake_files Explaination of CMake Files for %KIM API Items and Simulators
+
+Previous Section: \ref implementation.
+
+This section describes the content of [CMake](https://cmake.org) files
+necessary for the configuration and build of %KIM API items (Model Drivers,
+Portable Models, and Simulator Models) as well as for Simulators.  Details are
+also provided for Simulators that do not use the CMake build system.
+
+- \link cmake_files_model_drivers Model Driver CMakeLists.txt files\endlink
+
+- \link cmake_files_portable_model_using Portable Model Using a Driver
+  CMakeLists.txt files\endlink
+
+- \link cmake_files_portable_model_standalone Portable Model (not using a
+  Driver) CMakeLists.txt files\endlink
+
+- \link cmake_files_simulator_model Simulator Model CmakeLists.txt files\endlink
+
+- \link cmake_files_simulators_with_cmake Simulators using CMake CmakeLists.txt
+  files\endlink
+
+- \link make_files_simulators Simulators not using CMake\endlink
+
+
+
+\anchor cmake_files_model_drivers
+## Model Driver CMakeLists.txt files
+
+Here is the `CMakeLists.txt` file for the example Model Driver \link
+../examples/model-drivers/ex_model_driver_P_LJ ex_model_driver_P_LJ\endlink.
+
+\dontinclude ex_model_driver_P_LJ/CMakeLists.txt
+\skip cmake_minimum
+\until target_sources
+
+Let us go through this line by line to explain.
+
+\dontinclude ex_model_driver_P_LJ/CMakeLists.txt
+\skipline cmake_minimum
+
+This line ensures that an appropriate version of CMake is being used.
+
+\skip list
+\until find_package
+
+These lines tell CMake to find the settings for building %KIM API items with
+the %KIM API library installed on the system.
+
+\skipline kim_api_items_setup_before
+
+This line performs various setup necessary to configure and build a Model
+Driver item.  (These settings must be performed before the `project` command on
+the next line.)
+
+\skipline project
+
+This line tells CMake to create a "project" with name equal to the item's name
+`ex_model_driver_P_LJ` and that the item will require a `Fortran` compiler to
+be built.
+
+\skipline kim_api_items_setup_after
+
+This line performs various setup necessary to configure and build a Model
+Driver item.  (These settings must be performed after the `project` command on
+the previous line.)
+
+\skip add_kim_api
+\until )
+
+These lines register the item with the %KIM API CMake build system and provide
+necessary metadata.  The `NAME` argument is required and here the CMake
+variable `PROJECT_NAME`, which was set as a result of the `project` command
+(above), is used to provide the name of the Model Driver item.
+
+The `CREATE_ROUTINE_NAME` argument specifies the identifier used to define the
+KIM::ModelDriverCreate routine for the item.  This argument is required.
+
+The `CREATE_ROUTINE_LANGUAGE` argument specifies the programming language in
+which the create routine is written (valid values are: `cpp`, `c`, and
+`fortran`).
+
+There is also an additional (optional) argument `METADATA_FILES`.  This can be
+set to a space separated list of file names that should be included with the
+Model Driver item as metadata files.  These metadata files will not be directly
+used by the %KIM API in any way, but they may be accessed through the
+KIM::Collections interface.
+
+\skipline target_sources
+
+This line associates the item's source code files with its CMake "target",
+which is set to the value given for the `NAME` argument in the call to
+`add_kim_api_model_driver_library`.  After the `PRIVATE` keyword a space
+separated list of source code file names can be given.  This list of files
+should contain all source code (not header) files that are necessary to compile
+and build the Model Driver item.  In this example there is just a single
+Fortran soruce file with the same name as the item.
+
+
+\anchor cmake_files_portable_model_using
+## Portable Model using a Model Driver CMakeLists.txt files
+
+Here is the `CMakeLists.txt` file for the example Portable Model \link
+../examples/portable-models/ex_model_Ar_P_Morse ex_model_Ar_P_Morse\endlink.
+
+\dontinclude ex_model_Ar_P_Morse/CMakeLists.txt
+\skip cmake_minimum
+\until PARAMETER
+\skipline )
+
+Let us go through this line by line to explain.
+
+\dontinclude ex_model_Ar_P_Morse/CMakeLists.txt
+\skipline cmake_minimum
+
+This line ensures that an appropriate version of CMake is being used.
+
+\skip list
+\until find_package
+
+These lines tell CMake to find the settings for building %KIM API items with
+the %KIM API library installed on the system.
+
+\skipline kim_api_items_setup_before
+
+This line performs various setup necessary to configure and build a Portable
+Model item.  (These settings must be performed before the `project` command on
+the next line.)
+
+\skipline project
+
+This line tells CMake to create a "project" with name equal to the item's name
+`ex_model_Ar_P_Morse` and that the item does not explicitly require compiler to
+be built.
+
+\skipline kim_api_items_setup_after
+
+This line performs various setup necessary to configure and build a Portable
+Model item.  (These settings must be performed after the `project` command on
+the previous line.)
+
+\skip add_kim_api
+\until )
+
+These lines register the item with the %KIM API CMake build system and provide
+necessary metadata.  The `NAME` argument is required and here the CMake
+variable `PROJECT_NAME`, which was set as a result of the `project` command
+(above), is used to provide the name of the Portable Model item.
+
+The `DRIVER_NAME` argument specifies the Model Driver used used by Portable
+Model item.  This argument is required.
+
+The `PARAMETER_FILES` argument specifies an ordered, space separated list of
+parameter files required for use by the Model Driver.  In this case there is
+just a single parameter file, but in general a Model Driver may require any
+number of such files.  In addition to the number of parameter files, the Model
+Driver also specifies the order in which they must be listed and the file
+format(s) for their content.
+
+There is also an additional (optional) argument `METADATA_FILES`.  This can be
+set to a space separated list of file names that should be included with the
+Portable Model item as metadata files.  These metadata files will not be
+directly used by the %KIM API in any way, but they may be accessed through the
+KIM::Collections interface.
+
+
+\anchor cmake_files_simulator_model
+## Simulator Model CMakeLists.txt files
+
+Here is the `CMakeLists.txt` file for the example Simulator Model \link
+../examples/simulator-models/Sim_LAMMPS_LJcut_AkersonElliott_Alchemy_PbAu
+Sim_LAMMPS_LJcut_AkersonElliott_Alchemy_PbAu\endlink.
+
+\dontinclude Sim_LAMMPS_LJcut_AkersonElliott_Alchemy_PbAu/CMakeLists.txt
+\skip cmake_minimum
+\until PARAMETER
+\skipline )
+
+Let us go through this line by line to explain.
+
+\dontinclude Sim_LAMMPS_LJcut_AkersonElliott_Alchemy_PbAu/CMakeLists.txt
+\skipline cmake_minimum
+
+This line ensures that an appropriate version of CMake is being used.
+
+\skip list
+\until find_package
+
+These lines tell CMake to find the settings for building %KIM API items with
+the %KIM API library installed on the system.
+
+\skipline kim_api_items_setup_before
+
+This line performs various setup necessary to configure and build a Simulator
+Model item.  (These settings must be performed before the `project` command on
+the next line.)
+
+\skipline project
+
+This line tells CMake to create a "project" with name equal to the item's name
+`Sim_LAMMPS_LJcut_AkersonElliott_Alchemy_PbAu` and that the item will not
+explicitly require a compiler to be built.
+
+\skipline kim_api_items_setup_after
+
+This line performs various setup necessary to configure and build a Simulator
+Model item.  (These settings must be performed after the `project` command on
+the previous line.)
+
+\skip add_kim_api
+\until )
+
+These lines register the item with the %KIM API CMake build system and provide
+necessary metadata.  The `NAME` argument is required and here the CMake
+variable `PROJECT_NAME`, which was set as a result of the `project` command
+(above), is used to provide the name of the Simulator Model item.
+
+The `SM_SPEC_FILE` argument specifies the name of the \ref
+kim_api_sm_schema_version_1 "KIM API/SMI Specification File" for the Simulator
+Model.
+
+The `PARAMETER_FILES` argument specifies an ordered, space separated list of
+parameter files required for use by the Simulator Model.  In this case there is
+just a single parameter file, but in general a Simulator Model may require any
+number of such files.  In addition to the number of parameter files, the
+Simulator Model also specifies the order in which they must be listed and the
+file format(s) for their content.
+
+There is also an additional (optional) argument `METADATA_FILES`.  This can be
+set to a space separated list of file names that should be included with the
+Simulator Model item as metadata files.  These metadata files will not be
+directly used by the %KIM API in any way, but they may be accessed through the
+KIM::Collections interface.
+
+
+\anchor cmake_files_simulators_with_cmake
+## Simulators using CMake CMakeLists.txt files
+
+\todo Add description of CMakeLists.txt files for simulators/projects that use
+the %KIM-API library and use CMake.
+
+For now, see \link ../examples/simulators/utility_forces_numer_deriv
+utility_forces_numer_deriv\endlink and its CMakeLists.txt file given here.
+
+\dontinclude utility_forces_numer_deriv/CMakeLists.txt
+\skip cmake_minimum
+\until target_link
+\skipline )
+
+
+\anchor make_files_simulators
+## Simulators not using CMake
+
+\todo Add description of getting build details via `pkg-config` for
+simulators/projects that use the %KIM-API library but do not use CMake.
+
+
+Next Section: \ref version2_differences.
+
+*/

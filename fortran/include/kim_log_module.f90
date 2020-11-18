@@ -19,7 +19,7 @@
 !
 
 !
-! Copyright (c) 2016--2019, Regents of the University of Minnesota.
+! Copyright (c) 2016--2020, Regents of the University of Minnesota.
 ! All rights reserved.
 !
 ! Contributors:
@@ -27,9 +27,8 @@
 !
 
 !
-! Release: This file is part of the kim-api-2.1.3 package.
+! Release: This file is part of the kim-api-2.2.0 package.
 !
-
 
 !> \brief \copybrief KIM::Log
 !!
@@ -44,23 +43,23 @@ module kim_log_module
   public &
     ! Derived types
     kim_log_handle_type, &
-
     ! Constants
     KIM_LOG_NULL_HANDLE, &
-
     ! Routines
-    operator (.eq.), &
-    operator (.ne.), &
+    operator(.eq.), &
+    operator(.ne.), &
     kim_log_create, &
     kim_log_destroy, &
     kim_push_default_verbosity, &
     kim_pop_default_verbosity, &
+    kim_push_default_print_function, &
+    kim_pop_default_print_function, &
+    kim_convert_c_string, &
     kim_get_id, &
     kim_set_id, &
     kim_push_verbosity, &
     kim_pop_verbosity, &
     kim_log_entry
-
 
   !> \brief \copybrief KIM::Log
   !!
@@ -80,16 +79,16 @@ module kim_log_module
   !> \brief Compares kim_log_handle_type's for equality.
   !!
   !! \since 2.0
-  interface operator (.eq.)
+  interface operator(.eq.)
     module procedure kim_log_handle_equal
-  end interface operator (.eq.)
+  end interface operator(.eq.)
 
   !> \brief Compares kim_log_handle_type's for inequality.
   !!
   !! \since 2.0
-  interface operator (.ne.)
+  interface operator(.ne.)
     module procedure kim_log_handle_not_equal
-  end interface operator (.ne.)
+  end interface operator(.ne.)
 
   !> \brief \copybrief KIM::Log::PushDefaultVerbosity
   !!
@@ -108,6 +107,31 @@ module kim_log_module
   interface kim_pop_default_verbosity
     module procedure kim_log_pop_default_verbosity
   end interface kim_pop_default_verbosity
+
+  !> \brief \copybrief KIM::Log::PushDefaultPrintFunction
+  !!
+  !! \sa KIM::Log::PushDefaultPrintFunction, KIM_Log_PushDefaultPrintFunction
+  !!
+  !! \since 2.2
+  interface kim_push_default_print_function
+    module procedure kim_log_push_default_print_function
+  end interface kim_push_default_print_function
+
+  !> \brief \copybrief KIM::Log::PopDefaultPrintFunction
+  !!
+  !! \sa KIM::Log::PopDefaultPrintFunction, KIM_Log_PopDefaultPrintFunction
+  !!
+  !! \since 2.2
+  interface kim_pop_default_print_function
+    module procedure kim_log_pop_default_print_function
+  end interface kim_pop_default_print_function
+
+  !> \brief \copybrief kim_log_module::kim_log_convert_c_string
+  !!
+  !! \since 2.2
+  interface kim_convert_c_string
+    module procedure kim_log_convert_c_string
+  end interface kim_convert_c_string
 
   !> \brief \copybrief KIM::Log::GetID
   !!
@@ -178,7 +202,7 @@ contains
     type(kim_log_handle_type), intent(in) :: lhs
     type(kim_log_handle_type), intent(in) :: rhs
 
-    kim_log_handle_not_equal = .not. (lhs .eq. rhs)
+    kim_log_handle_not_equal = .not. (lhs == rhs)
   end function kim_log_handle_not_equal
 
   !> \brief \copybrief KIM::Log::Create
@@ -233,13 +257,13 @@ contains
   !!
   !! \since 2.0
   recursive subroutine kim_log_push_default_verbosity(log_verbosity)
-    use kim_log_verbosity_module, only : kim_log_verbosity_type
+    use kim_log_verbosity_module, only: kim_log_verbosity_type
     implicit none
     interface
       recursive subroutine push_default_verbosity(log_verbosity) &
         bind(c, name="KIM_Log_PushDefaultVerbosity")
         use, intrinsic :: iso_c_binding
-        use kim_log_verbosity_module, only : kim_log_verbosity_type
+        use kim_log_verbosity_module, only: kim_log_verbosity_type
         implicit none
         type(kim_log_verbosity_type), intent(in), value :: log_verbosity
       end subroutine push_default_verbosity
@@ -267,19 +291,117 @@ contains
     call pop_default_verbosity()
   end subroutine kim_log_pop_default_verbosity
 
+  !> \brief \copybrief KIM::Log::PushDefaultPrintFunction
+  !!
+  !! A Fortran routine may provide a KIM::Log::PrintFunction routine.  The
+  !! interface for this is given here (see also KIM::LogPrintFunction, \ref
+  !! KIM_LogPrintFunction).
+  !!
+  !! \code{.f90}
+  !! interface
+  !!   recursive subroutine log_print_function(entry_string, ierr) bind(c)
+  !!     use, intrinsic :: iso_c_binding
+  !!     type(c_ptr), intent(in), value :: entry_string
+  !!     integer(c_int), intent(out) :: ierr
+  !!   end subroutine log_print_function
+  !! end interface
+  !! \endcode
+  !!
+  !! The routine must take a c_ptr pointing to a null terminated c string
+  !! representing the log message.  To work with this, the kim_log_module
+  !! provides a conversion routine: kim_log_module::kim_convert_c_string.
+  !!
+  !! An example log print function, which simply writes log messages to stdout,
+  !! is given here:
+  !!
+  !! \code{.f90}
+  !! recursive subroutine log_print_function(entry_string, ierr) bind(c)
+  !!   use, intrinsic :: iso_c_binding
+  !!   use kim_log_module, only : kim_convert_c_string
+  !!   type(c_ptr), intent(in), value :: entry_string
+  !!   integer(c_int), intent(out) :: ierr
+  !!
+  !!   character(len=2048, kind=c_char) :: message
+  !!
+  !!   call kim_convert_c_string(entry_string, message)
+  !!   print *, trim(message)
+  !!
+  !!   ierr = 0
+  !!   return
+  !! end subroutine log_print_function
+  !! \endcode
+  !!
+  !! \sa KIM::Log::PushDefaultPrintFunction, KIM_Log_PushDefaultPrintFunction
+  !!
+  !! \since 2.2
+  recursive subroutine kim_log_push_default_print_function(language_name, fptr)
+    use kim_language_name_module, only: kim_language_name_type
+    implicit none
+    interface
+      recursive subroutine push_default_print_function(language_name, fptr) &
+        bind(c, name="KIM_Log_PushDefaultPrintFunction")
+        use, intrinsic :: iso_c_binding
+        use kim_language_name_module, only: kim_language_name_type
+        implicit none
+        type(kim_language_name_type), intent(in), value :: language_name
+        type(c_funptr), intent(in), value :: fptr
+      end subroutine push_default_print_function
+    end interface
+    type(kim_language_name_type), intent(in) :: language_name
+    type(c_funptr), intent(in), value :: fptr  ! must be left as "value"!?!
+
+    call push_default_print_function(language_name, fptr)
+  end subroutine kim_log_push_default_print_function
+
+  !> \brief \copybrief KIM::Log::PopDefaultPrintFunction
+  !!
+  !! \sa KIM::Log::PopDefaultPrintFunction, KIM_Log_PopDefaultPrintFunction
+  !!
+  !! \since 2.2
+  recursive subroutine kim_log_pop_default_print_function()
+    implicit none
+    interface
+      recursive subroutine pop_default_print_function() &
+        bind(c, name="KIM_Log_PopDefaultPrintFunction")
+        use, intrinsic :: iso_c_binding
+        implicit none
+      end subroutine pop_default_print_function
+    end interface
+
+    call pop_default_print_function()
+  end subroutine kim_log_pop_default_print_function
+
+  !> \brief Convert a c sting to a Fortran string
+  !!
+  !! Convert a c string, given in terms of a char pointer to a Fortran string
+  !! variable.
+  !!
+  !! \param[in]  c_char_ptr A pointer to a null terminated c string
+  !! \param[out] string A Fortran string variable
+  !!
+  !! \since 2.2
+  recursive subroutine kim_log_convert_c_string(c_char_ptr, string)
+    use kim_convert_string_module, only: kim_convert_c_char_ptr_to_string
+    implicit none
+    type(c_ptr), intent(in), value :: c_char_ptr
+    character(len=*, kind=c_char), intent(out) :: string
+
+    call kim_convert_c_char_ptr_to_string(c_char_ptr, string)
+  end subroutine kim_log_convert_c_string
+
   !> \brief \copybrief KIM::Log::GetID
   !!
   !! \sa KIM::Log::GetID, KIM_Log_GetID
   !!
   !! \since 2.0
   recursive subroutine kim_log_get_id(log_handle, id_string)
-    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
-    use kim_interoperable_types_module, only : kim_log_type
+    use kim_convert_string_module, only: kim_convert_c_char_ptr_to_string
+    use kim_interoperable_types_module, only: kim_log_type
     implicit none
     interface
       type(c_ptr) recursive function get_id(log) bind(c, name="KIM_Log_GetID")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_log_type
+        use kim_interoperable_types_module, only: kim_log_type
         implicit none
         type(kim_log_type), intent(in) :: log
       end function get_id
@@ -301,12 +423,12 @@ contains
   !!
   !! \since 2.0
   recursive subroutine kim_log_set_id(log_handle, id_string)
-    use kim_interoperable_types_module, only : kim_log_type
+    use kim_interoperable_types_module, only: kim_log_type
     implicit none
     interface
       recursive subroutine set_id(log, id_string) bind(c, name="KIM_Log_SetID")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_log_type
+        use kim_interoperable_types_module, only: kim_log_type
         implicit none
         type(kim_log_type), intent(in) :: log
         character(c_char), intent(in) :: id_string(*)
@@ -326,15 +448,15 @@ contains
   !!
   !! \since 2.0
   recursive subroutine kim_log_push_verbosity(log_handle, log_verbosity)
-    use kim_log_verbosity_module, only : kim_log_verbosity_type
-    use kim_interoperable_types_module, only : kim_log_type
+    use kim_log_verbosity_module, only: kim_log_verbosity_type
+    use kim_interoperable_types_module, only: kim_log_type
     implicit none
     interface
       recursive subroutine push_verbosity(log, log_verbosity) &
         bind(c, name="KIM_Log_PushVerbosity")
         use, intrinsic :: iso_c_binding
-        use kim_log_verbosity_module, only : kim_log_verbosity_type
-        use kim_interoperable_types_module, only : kim_log_type
+        use kim_log_verbosity_module, only: kim_log_verbosity_type
+        use kim_interoperable_types_module, only: kim_log_type
         implicit none
         type(kim_log_type), intent(in) :: log
         type(kim_log_verbosity_type), intent(in), value :: log_verbosity
@@ -354,13 +476,13 @@ contains
   !!
   !! \since 2.0
   recursive subroutine kim_log_pop_verbosity(log_handle)
-    use kim_interoperable_types_module, only : kim_log_type
+    use kim_interoperable_types_module, only: kim_log_type
     implicit none
     interface
       recursive subroutine pop_verbosity(log) &
         bind(c, name="KIM_Log_PopVerbosity")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_log_type
+        use kim_interoperable_types_module, only: kim_log_type
         implicit none
         type(kim_log_type), intent(in) :: log
       end subroutine pop_verbosity
@@ -378,15 +500,15 @@ contains
   !!
   !! \since 2.0
   recursive subroutine kim_log_log_entry(log_handle, log_verbosity, message)
-    use kim_log_verbosity_module, only : kim_log_verbosity_type
-    use kim_interoperable_types_module, only : kim_log_type
+    use kim_log_verbosity_module, only: kim_log_verbosity_type
+    use kim_interoperable_types_module, only: kim_log_type
     implicit none
     interface
       recursive subroutine log_entry(log, log_verbosity, message, line_number, &
-        file_name) bind(c, name="KIM_Log_LogEntry")
+                                     file_name) bind(c, name="KIM_Log_LogEntry")
         use, intrinsic :: iso_c_binding
-        use kim_log_verbosity_module, only : kim_log_verbosity_type
-        use kim_interoperable_types_module, only : kim_log_type
+        use kim_log_verbosity_module, only: kim_log_verbosity_type
+        use kim_interoperable_types_module, only: kim_log_type
         implicit none
         type(kim_log_type), intent(in) :: log
         type(kim_log_verbosity_type), intent(in), value :: log_verbosity
@@ -402,6 +524,6 @@ contains
 
     call c_f_pointer(log_handle%p, log)
     call log_entry(log, log_verbosity, trim(message)//c_null_char, &
-      0, ""//c_null_char)
+                   0, ""//c_null_char)
   end subroutine kim_log_log_entry
 end module kim_log_module

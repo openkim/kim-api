@@ -19,20 +19,28 @@
 //
 
 //
-// Copyright (c) 2016--2019, Regents of the University of Minnesota.
+// Copyright (c) 2016--2020, Regents of the University of Minnesota.
 // All rights reserved.
 //
 // Contributors:
 //    Ryan S. Elliott
+//    Alexander Stukowski
 //
 
 //
-// Release: This file is part of the kim-api-2.1.3 package.
+// Release: This file is part of the kim-api-2.2.0 package.
 //
 
+#include <cstdio>
 #include <cstring>
+#ifndef _WIN32
 #include <dlfcn.h>
+#else
+#include <libloaderapi.h>
+#endif
+#include <fstream>
 #include <sstream>
+#include <unistd.h>  // IWYU pragma: keep  // For macOS
 
 #ifndef KIM_SHARED_LIBRARY_HPP_
 #include "KIM_SharedLibrary.hpp"
@@ -42,16 +50,40 @@
 #include "KIM_LogVerbosity.hpp"
 #endif
 
-#ifndef KIM_LANGUAGE_NAME_HPP_
-#include "KIM_LanguageName.hpp"
+#ifndef KIM_LOG_HPP_
+#include "KIM_Log.hpp"
 #endif
 
 #ifndef KIM_SHARED_LIBRARY_SCHEMA_HPP_
 #include "KIM_SharedLibrarySchema.hpp"
 #endif
 
-namespace KIM
+namespace
 {
+KIM::FILESYSTEM::Path PrivateGetORIGIN()
+{
+#if !defined(_WIN32) && !defined(__CYGWIN__)
+  Dl_info info;
+  int OK = false;
+  OK = dladdr(reinterpret_cast<void const *>(&KIM::SharedLibrary::GetORIGIN),
+              &info);
+  return KIM::FILESYSTEM::Path(OK ? info.dli_fname : "").parent_path();
+#else
+  // https://stackoverflow.com/questions/6924195/get-dll-path-at-runtime
+  HMODULE hm = NULL;
+  GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS
+                        | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
+                    reinterpret_cast<LPCSTR>(&KIM::SharedLibrary::GetORIGIN),
+                    &hm);
+  wchar_t pathBuf[MAX_PATH];
+  if (!GetModuleFileNameW(hm, pathBuf, MAX_PATH))
+    return KIM::FILESYSTEM::Path();
+
+  return KIM::FILESYSTEM::Path(pathBuf).parent_path();
+#endif
+}
+}  // namespace
+
 // log helpers
 #define SNUM(x)                                                \
   static_cast<std::ostringstream const &>(std::ostringstream() \
@@ -68,13 +100,20 @@ namespace KIM
 
 #include "KIM_LogMacros.hpp"
 #define KIM_LOGGER_OBJECT_NAME this
+namespace KIM
+{
+SharedLibrary::SharedLibrary::EmbeddedFile::EmbeddedFile() :
+    fileName(NULL), fileLength(0), filePointer(NULL)
+{
+}
+
 SharedLibrary::SharedLibrary(Log * const log) :
     sharedLibraryHandle_(NULL),
     sharedLibrarySchemaVersion_(NULL),
-    itemName_(""),
     createRoutine_(NULL),
     numberOfParameterFiles_(0),
     numberOfMetadataFiles_(0),
+    parameterFileDirectoryName_(""),
     log_(log)
 {
 #if DEBUG_VERBOSITY
@@ -97,10 +136,10 @@ SharedLibrary::~SharedLibrary()
   LOG_DEBUG("Exit   " + callString);
 }
 
-int SharedLibrary::Open(std::string const & sharedLibraryName)
+int SharedLibrary::Open(FILESYSTEM::Path const & sharedLibraryName)
 {
 #if DEBUG_VERBOSITY
-  std::string const callString = "Open('" + sharedLibraryName + "').";
+  std::string const callString = "Open('" + sharedLibraryName.string() + "').";
 #endif
   LOG_DEBUG("Enter  " + callString);
 
@@ -112,19 +151,37 @@ int SharedLibrary::Open(std::string const & sharedLibraryName)
   }
 
   sharedLibraryName_ = sharedLibraryName;
-  sharedLibraryHandle_ = dlopen(sharedLibraryName_.c_str(), RTLD_NOW);
+#ifndef _WIN32
+  sharedLibraryHandle_ = dlopen(sharedLibraryName_.string().c_str(), RTLD_NOW);
+#else
+  FILESYSTEM::Path winPath = sharedLibraryName;
+  sharedLibraryHandle_ = (void *) LoadLibraryExW(
+      winPath.make_preferred().c_str(), NULL, LOAD_WITH_ALTERED_SEARCH_PATH);
+#endif
   if (sharedLibraryHandle_ == NULL)
   {
-    LOG_ERROR("Unable to open '" + sharedLibraryName_ + "'.");
+    LOG_ERROR("Unable to open '" + sharedLibraryName_.string() + "'.");
+#ifndef _WIN32
     LOG_ERROR(dlerror());
+#endif
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
+#ifndef _WIN32
   sharedLibrarySchemaVersion_ = reinterpret_cast<int const *>(
       dlsym(sharedLibraryHandle_, "kim_shared_library_schema_version"));
+#else
+  sharedLibrarySchemaVersion_ = reinterpret_cast<int const *>(::GetProcAddress(
+      (HMODULE) sharedLibraryHandle_, "kim_shared_library_schema_version"));
+#endif
   if (sharedLibrarySchemaVersion_ == NULL)
   {
+    LOG_ERROR(
+        "Failed to look up symbol 'kim_shared_library_schema_version' in '"
+        + sharedLibraryName_.string() + "'.");
+#ifndef _WIN32
     LOG_ERROR(dlerror());
+#endif
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
@@ -133,12 +190,22 @@ int SharedLibrary::Open(std::string const & sharedLibraryName)
   if (*sharedLibrarySchemaVersion_ == 2)
   {
     using namespace SHARED_LIBRARY_SCHEMA;
+#ifndef _WIN32
     SharedLibrarySchemaV2 const * const schemaV2
         = reinterpret_cast<SharedLibrarySchemaV2 const *>(
             dlsym(sharedLibraryHandle_, "kim_shared_library_schema"));
+#else
+    SharedLibrarySchemaV2 const * const schemaV2
+        = reinterpret_cast<SharedLibrarySchemaV2 const *>(::GetProcAddress(
+            (HMODULE) sharedLibraryHandle_, "kim_shared_library_schema"));
+#endif
     if (schemaV2 == NULL)
     {
+      LOG_ERROR("Failed to look up symbol 'kim_shared_library_schema' in '"
+                + sharedLibraryName_.string() + "'.");
+#ifndef _WIN32
       LOG_ERROR(dlerror());
+#endif
       LOG_DEBUG("Exit 1=" + callString);
       return true;
     }
@@ -148,7 +215,7 @@ int SharedLibrary::Open(std::string const & sharedLibraryName)
     createRoutine_ = schemaV2->createRoutine;
     driverName_ = ((schemaV2->driverName) ? schemaV2->driverName : "");
 
-    if (schemaV2->simulatorModelSpecificationFile)
+    if (schemaV2->simulatorModelSpecificationFile != NULL)
     {
       simulatorModelSpecificationFile_.fileName
           = schemaV2->simulatorModelSpecificationFile->fileName;
@@ -182,18 +249,30 @@ int SharedLibrary::Open(std::string const & sharedLibraryName)
   else if (*sharedLibrarySchemaVersion_ == 1)
   {
     using namespace SHARED_LIBRARY_SCHEMA;
+#ifndef _WIN32
     SharedLibrarySchemaV1 const * const schemaV1
         = reinterpret_cast<SharedLibrarySchemaV1 const *>(
             dlsym(sharedLibraryHandle_, "kim_shared_library_schema"));
+#else
+    SharedLibrarySchemaV1 const * const schemaV1
+        = reinterpret_cast<SharedLibrarySchemaV1 const *>(::GetProcAddress(
+            (HMODULE) sharedLibraryHandle_, "kim_shared_library_schema"));
+#endif
     if (schemaV1 == NULL)
     {
+      LOG_ERROR("Failed to look up symbol 'kim_shared_library_schema' in '"
+                + sharedLibraryName_.string() + "'.");
+#ifndef _WIN32
       LOG_ERROR(dlerror());
+#endif
       LOG_DEBUG("Exit 1=" + callString);
       return true;
     }
 
     if (schemaV1->itemType == SharedLibrarySchemaV1::STAND_ALONE_MODEL)
-    { itemType_ = COLLECTION_ITEM_TYPE::portableModel; }
+    {
+      itemType_ = COLLECTION_ITEM_TYPE::portableModel;
+    }
     else if (schemaV1->itemType == SharedLibrarySchemaV1::PARAMETERIZED_MODEL)
     {
       itemType_ = COLLECTION_ITEM_TYPE::portableModel;
@@ -218,7 +297,7 @@ int SharedLibrary::Open(std::string const & sharedLibraryName)
     createRoutine_ = schemaV1->createRoutine;
     driverName_ = ((schemaV1->driverName) ? schemaV1->driverName : "");
 
-    if (schemaV1->metadataFile)
+    if (schemaV1->metadataFile != NULL)
     {
       simulatorModelSpecificationFile_.fileName
           = schemaV1->metadataFile->fileName;
@@ -271,9 +350,10 @@ int SharedLibrary::Close()
     return true;  // not open
   }
 
-  sharedLibraryName_ = "";
+  RemoveParameterFileDirectory();
+
+  sharedLibraryName_.clear();
   sharedLibrarySchemaVersion_ = 0;
-  itemName_ = "";
   createRoutine_ = NULL;
   driverName_ = "";
   simulatorModelSpecificationFile_.fileName = NULL;
@@ -283,7 +363,11 @@ int SharedLibrary::Close()
   parameterFiles_.clear();
   numberOfMetadataFiles_ = 0;
   metadataFiles_.clear();
+#ifndef _WIN32
   int error = dlclose(sharedLibraryHandle_);
+#else
+  int error = !::FreeLibrary((HMODULE) sharedLibraryHandle_);
+#endif
   if (error)
   {
     LOG_ERROR("");
@@ -294,19 +378,6 @@ int SharedLibrary::Close()
   {
     sharedLibraryHandle_ = NULL;
   }
-
-  LOG_DEBUG("Exit 0=" + callString);
-  return false;
-}
-
-int SharedLibrary::GetName(std::string * const name) const
-{
-#if DEBUG_VERBOSITY
-  std::string const callString = "GetName(" + SPTR(name) + ").";
-#endif
-  LOG_DEBUG("Enter  " + callString);
-
-  *name = itemName_;
 
   LOG_DEBUG("Exit 0=" + callString);
   return false;
@@ -349,8 +420,8 @@ int SharedLibrary::GetCreateFunctionPointer(
     return true;  // not open
   }
 
-  if (languageName) *languageName = createLanguageName_;
-  if (functionPointer) *functionPointer = createRoutine_;
+  if (languageName != NULL) *languageName = createLanguageName_;
+  if (functionPointer != NULL) *functionPointer = createRoutine_;
 
   LOG_DEBUG("Exit 0=" + callString);
   return false;
@@ -415,10 +486,11 @@ int SharedLibrary::GetParameterFile(
     return true;
   }
 
-  if (parameterFileName) *parameterFileName = (parameterFiles_[index]).fileName;
-  if (parameterFileLength)
+  if (parameterFileName != NULL)
+    *parameterFileName = (parameterFiles_[index]).fileName;
+  if (parameterFileLength != NULL)
     *parameterFileLength = (parameterFiles_[index]).fileLength;
-  if (parameterFileData)
+  if (parameterFileData != NULL)
     *parameterFileData = (parameterFiles_[index]).filePointer;
 
   LOG_DEBUG("Exit 0=" + callString);
@@ -474,10 +546,12 @@ int SharedLibrary::GetMetadataFile(
     return true;
   }
 
-  if (metadataFileName) *metadataFileName = (metadataFiles_[index]).fileName;
-  if (metadataFileLength)
+  if (metadataFileName != NULL)
+    *metadataFileName = (metadataFiles_[index]).fileName;
+  if (metadataFileLength != NULL)
     *metadataFileLength = (metadataFiles_[index]).fileLength;
-  if (metadataFileData) *metadataFileData = (metadataFiles_[index]).filePointer;
+  if (metadataFileData != NULL)
+    *metadataFileData = (metadataFiles_[index]).filePointer;
 
   LOG_DEBUG("Exit 0=" + callString);
   return false;
@@ -510,11 +584,154 @@ int SharedLibrary::GetSimulatorModelSpecificationFile(
     return true;
   }
 
-  if (specFileName) *specFileName = (simulatorModelSpecificationFile_).fileName;
-  if (specFileLength)
+  if (specFileName != NULL)
+    *specFileName = (simulatorModelSpecificationFile_).fileName;
+  if (specFileLength != NULL)
     *specFileLength = (simulatorModelSpecificationFile_).fileLength;
-  if (specFileData)
+  if (specFileData != NULL)
     *specFileData = (simulatorModelSpecificationFile_).filePointer;
+
+  LOG_DEBUG("Exit 0=" + callString);
+  return false;
+}
+
+int SharedLibrary::WriteParameterFileDirectory()
+{
+#if DEBUG_VERBOSITY
+  std::string const callString = "WriteParameterFileDirectory().";
+#endif
+  LOG_DEBUG("Enter  " + callString);
+
+  int error;
+
+  if (sharedLibraryHandle_ == NULL)
+  {
+    LOG_ERROR("Library not open.");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;  // not open
+  }
+
+  parameterFileDirectoryName_ = FILESYSTEM::Path::CreateTemporaryDirectory(
+      "kim-shared-library-parameter-file-directory-");
+  if (parameterFileDirectoryName_.empty())
+  {
+    LOG_ERROR("Could not create a secure temporary directory.");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
+
+  if (itemType_ == KIM::COLLECTION_ITEM_TYPE::simulatorModel)
+  {
+    unsigned int len;
+    unsigned char const * specificationData;
+    std::string specFileName;
+    error = GetSimulatorModelSpecificationFile(
+        &specFileName, &len, &specificationData);
+    if (error)
+    {
+      LOG_ERROR("Unable to get specification file.");
+      RemoveParameterFileDirectory();
+      LOG_DEBUG("Exit 1=" + callString);
+      return true;
+    }
+    FILESYSTEM::Path const specificationFilePathName
+        = parameterFileDirectoryName_ / specFileName;
+    std::ofstream fl;
+    fl.open(specificationFilePathName.string().c_str(),
+            std::ifstream::out | std::ifstream::binary);
+    fl.write(reinterpret_cast<const char *>(specificationData), len);
+    if (!fl)
+    {
+      LOG_ERROR("Unable to get write parameter file.");
+      fl.close();
+      RemoveParameterFileDirectory();
+      LOG_DEBUG("Exit 1=" + callString);
+      return true;
+    }
+  }
+
+  int noParamFiles;
+  GetNumberOfParameterFiles(&noParamFiles);
+  for (int i = 0; i < noParamFiles; ++i)
+  {
+    std::string parameterFileName;
+    unsigned char const * strPtr;
+    unsigned int length;
+    error = GetParameterFile(i, &parameterFileName, &length, &strPtr);
+    if (error)
+    {
+      LOG_ERROR("Could not get parameter file data.");
+      LOG_DEBUG("Exit 1=" + callString);
+      return true;
+    }
+
+    FILESYSTEM::Path const parameterFilePathName
+        = parameterFileDirectoryName_ / parameterFileName;
+    std::ofstream fl;
+    fl.open(parameterFilePathName.string().c_str(),
+            std::ifstream::out | std::ifstream::binary);
+    fl.write(reinterpret_cast<const char *>(strPtr), length);
+    if (!fl)
+    {
+      LOG_ERROR("Unable to get write parameter file.");
+      fl.close();
+      RemoveParameterFileDirectory();
+      LOG_DEBUG("Exit 1=" + callString);
+      return true;
+    }
+  }
+
+  LOG_DEBUG("Exit 0=" + callString);
+  return false;
+}
+
+int SharedLibrary::GetParameterFileDirectoryName(
+    FILESYSTEM::Path * const directoryName) const
+{
+#if DEBUG_VERBOSITY
+  std::string const callString
+      = "GetParameterFileDirectoryName(" + SPTR(directoryName) + ").";
+#endif
+  LOG_DEBUG("Enter  " + callString);
+
+  if (sharedLibraryHandle_ == NULL)
+  {
+    LOG_ERROR("Library not open.");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;  // not open
+  }
+
+  *directoryName = parameterFileDirectoryName_;
+
+  LOG_DEBUG("Exit 0=" + callString);
+  return false;
+}
+
+int SharedLibrary::RemoveParameterFileDirectory()
+{
+#if DEBUG_VERBOSITY
+  std::string const callString = "RemoveParameterFileDirectory().";
+#endif
+  LOG_DEBUG("Enter  " + callString);
+
+  if (sharedLibraryHandle_ == NULL)
+  {
+    LOG_ERROR("Library not open.");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;  // not open
+  }
+
+  if (!parameterFileDirectoryName_.empty())
+  {
+    if (parameterFileDirectoryName_.RemoveDirectoryRecursive())
+    {
+      LOG_ERROR("Unable to remove simulator model parameter file directory '"
+                + parameterFileDirectoryName_.string() + "'.");
+    }
+
+    // clear out directory name variable
+    parameterFileDirectoryName_.clear();
+  }
 
   LOG_DEBUG("Exit 0=" + callString);
   return false;
@@ -552,7 +769,10 @@ void SharedLibrary::LogEntry(LogVerbosity const logVerbosity,
                              int const lineNumber,
                              std::string const & fileName) const
 {
-  if (log_) log_->LogEntry(logVerbosity, message, lineNumber, fileName);
+  if (log_ != NULL) log_->LogEntry(logVerbosity, message, lineNumber, fileName);
 }
 
+FILESYSTEM::Path const SharedLibrary::ORIGIN = PrivateGetORIGIN();
+
+FILESYSTEM::Path SharedLibrary::GetORIGIN() { return ORIGIN; }
 }  // namespace KIM

@@ -19,7 +19,7 @@
 //
 
 //
-// Copyright (c) 2016--2019, Regents of the University of Minnesota.
+// Copyright (c) 2016--2020, Regents of the University of Minnesota.
 // All rights reserved.
 //
 // Contributors:
@@ -27,9 +27,31 @@
 //
 
 //
-// Release: This file is part of the kim-api-2.1.3 package.
+// Release: This file is part of the kim-api-2.2.0 package.
 //
 
+
+#include <cstddef>
+
+#ifndef KIM_LOG_VERBOSITY_HPP_
+#include "KIM_LogVerbosity.hpp"
+#endif
+
+#ifndef KIM_MODEL_ROUTINE_NAME_HPP_
+#include "KIM_ModelRoutineName.hpp"
+#endif
+
+#ifndef KIM_NUMBERING_HPP_
+#include "KIM_Numbering.hpp"
+#endif
+
+#ifndef KIM_SPECIES_NAME_HPP_
+#include "KIM_SpeciesName.hpp"
+#endif
+
+#ifndef KIM_UNIT_SYSTEM_HPP_
+#include "KIM_UnitSystem.hpp"
+#endif
 
 #ifndef KIM_MODEL_HPP_
 #include "KIM_Model.hpp"
@@ -76,7 +98,7 @@ int Model::Create(Numbering const numbering,
 
 void Model::Destroy(Model ** const model)
 {
-  ModelImplementation::Destroy(&((*model)->pimpl));
+  if (*model != NULL) { ModelImplementation::Destroy(&((*model)->pimpl)); }
   delete *model;
   *model = NULL;
 }

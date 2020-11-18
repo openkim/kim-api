@@ -19,7 +19,7 @@
 !
 
 !
-! Copyright (c) 2016--2019, Regents of the University of Minnesota.
+! Copyright (c) 2016--2020, Regents of the University of Minnesota.
 ! All rights reserved.
 !
 ! Contributors:
@@ -27,9 +27,8 @@
 !
 
 !
-! Release: This file is part of the kim-api-2.1.3 package.
+! Release: This file is part of the kim-api-2.2.0 package.
 !
-
 
 !> \brief \copybrief KIM::CollectionItemType
 !!
@@ -44,21 +43,18 @@ module kim_collection_item_type_module
   public &
     ! Derived types
     kim_collection_item_type_type, &
-
     ! Constants
     KIM_COLLECTION_ITEM_TYPE_MODEL_DRIVER, &
     KIM_COLLECTION_ITEM_TYPE_PORTABLE_MODEL, &
     KIM_COLLECTION_ITEM_TYPE_SIMULATOR_MODEL, &
-
     ! Routines
     kim_known, &
-    operator (.eq.), &
-    operator (.ne.), &
+    operator(.eq.), &
+    operator(.ne.), &
     kim_from_string, &
     kim_to_string, &
     kim_get_number_of_collection_item_types, &
     kim_get_collection_item_type
-
 
   !> \brief \copybrief KIM::CollectionItemType
   !!
@@ -66,12 +62,12 @@ module kim_collection_item_type_module
   !!
   !! \since 2.1
   type, bind(c) :: kim_collection_item_type_type
-     !> \brief \copybrief KIM::CollectionItemType::collectionItemTypeID
-     !!
-     !! \sa KIM::CollectionItemType::collectionItemTypeID,
-     !! KIM_CollectionItemType::collectionItemTypeID
-     !!
-     !! \since 2.1
+    !> \brief \copybrief KIM::CollectionItemType::collectionItemTypeID
+    !!
+    !! \sa KIM::CollectionItemType::collectionItemTypeID,
+    !! KIM_CollectionItemType::collectionItemTypeID
+    !!
+    !! \since 2.1
     integer(c_int) collection_item_type_id
   end type kim_collection_item_type_type
 
@@ -119,18 +115,18 @@ module kim_collection_item_type_module
   !! \sa KIM::CollectionItemType::operator==(), KIM_CollectionItemType_Equal
   !!
   !! \since 2.1
-  interface operator (.eq.)
+  interface operator(.eq.)
     module procedure kim_collection_item_type_equal
-  end interface operator (.eq.)
+  end interface operator(.eq.)
 
   !> \brief \copybrief KIM::CollectionItemType::operator!=()
   !!
   !! \sa KIM::CollectionItemType::operator!=(), KIM_CollectionItemType_NotEqual
   !!
   !! \since 2.1
-  interface operator (.ne.)
+  interface operator(.ne.)
     module procedure kim_collection_item_type_not_equal
-  end interface operator (.ne.)
+  end interface operator(.ne.)
 
   !> \brief \copybrief <!--
   !! -->KIM::CollectionItemType::CollectionItemType(std::string const &)
@@ -187,7 +183,7 @@ contains
     type(kim_collection_item_type_type), intent(in) :: rhs
 
     kim_collection_item_type_equal &
-      = (lhs%collection_item_type_id .eq. rhs%collection_item_type_id)
+      = (lhs%collection_item_type_id == rhs%collection_item_type_id)
   end function kim_collection_item_type_equal
 
   !> \brief \copybrief KIM::CollectionItemType::operator!=()
@@ -200,7 +196,7 @@ contains
     type(kim_collection_item_type_type), intent(in) :: lhs
     type(kim_collection_item_type_type), intent(in) :: rhs
 
-    kim_collection_item_type_not_equal = .not. (lhs .eq. rhs)
+    kim_collection_item_type_not_equal = .not. (lhs == rhs)
   end function kim_collection_item_type_not_equal
 
   !> \brief \copybrief <!--
@@ -210,8 +206,8 @@ contains
   !! KIM_CollectionItemType_FromString
   !!
   !! \since 2.1
-  recursive subroutine kim_collection_item_type_from_string(string, &
-    collection_item_type)
+  recursive subroutine kim_collection_item_type_from_string( &
+    string, collection_item_type)
     implicit none
     interface
       type(kim_collection_item_type_type) recursive function &
@@ -235,7 +231,7 @@ contains
   !! \since 2.1
   recursive subroutine kim_collection_item_type_to_string( &
     collection_item_type, string)
-    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
+    use kim_convert_string_module, only: kim_convert_c_char_ptr_to_string
     implicit none
     interface
       type(c_ptr) recursive function get_string(collection_item_type) &
@@ -286,11 +282,11 @@ contains
   !!
   !! \since 2.1
   recursive subroutine kim_get_collection_item_type(index, &
-    collection_item_type, ierr)
+                                                    collection_item_type, ierr)
     implicit none
     interface
-      integer(c_int) recursive function get_collection_item_type(index, &
-        collection_item_type) &
+      integer(c_int) recursive function get_collection_item_type( &
+        index, collection_item_type) &
         bind(c, name="KIM_COLLECTION_ITEM_TYPE_GetCollectionItemType")
         use, intrinsic :: iso_c_binding
         import kim_collection_item_type_type
@@ -303,6 +299,6 @@ contains
     type(kim_collection_item_type_type), intent(out) :: collection_item_type
     integer(c_int), intent(out) :: ierr
 
-    ierr = get_collection_item_type(index-1, collection_item_type)
+    ierr = get_collection_item_type(index - 1, collection_item_type)
   end subroutine kim_get_collection_item_type
 end module kim_collection_item_type_module

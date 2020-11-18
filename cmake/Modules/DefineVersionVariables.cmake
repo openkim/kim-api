@@ -19,7 +19,7 @@
 #
 
 #
-# Copyright (c) 2013--2019, Regents of the University of Minnesota.
+# Copyright (c) 2013--2020, Regents of the University of Minnesota.
 # All rights reserved.
 #
 # Contributors:
@@ -29,51 +29,96 @@
 #
 
 #
-# Release: This file is part of the kim-api-2.1.3 package.
+# Release: This file is part of the kim-api-2.2.0 package.
 #
 
 
-set(PROJECT_VERSION_PRERELEASE "" CACHE STRING "Version prerelease value")
+set(PROJECT_VERSION_PRERELEASE "" CACHE STRING "Project SemVer prerelease string")  # cache to allow change from command line
 
-find_package(Git)
-if((${GIT_FOUND}) AND (EXISTS "${CMAKE_SOURCE_DIR}/.git"))
-  execute_process(COMMAND ${GIT_EXECUTABLE} update-index -q --refresh
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR} TIMEOUT 5 OUTPUT_QUIET
-    ERROR_VARIABLE EXEC_ERR OUTPUT_STRIP_TRAILING_WHITESPACE
+set(_build_metadata "")  # avoid uninitialized variable warning
+find_package(Git QUIET)
+if(${GIT_FOUND})
+  include(FindPackageMessage)
+  find_package_message(Git "Found Git: (${GIT_EXECUTABLE})" "found")
+  execute_process(COMMAND ${GIT_EXECUTABLE} -C "${PROJECT_SOURCE_DIR}" rev-parse --show-toplevel
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    OUTPUT_VARIABLE _toplevel
+    RESULT_VARIABLE _isGitRepo
+    ERROR_QUIET
     )
-  if(READTHEDOCS)
-    set(_DIRTY "")
-  else()
-    set(_DIRTY ".dirty")
+
+  if((_isGitRepo EQUAL 0) AND ("${_toplevel}" STREQUAL "${PROJECT_SOURCE_DIR}"))
+    # set configuration to depend on _depend_file
+    #
+    # For details and discussion on the below approach, see:
+    #   https://discourse.cmake.org/t/support-for-git-describe-output-in-a-semver-prerelease-string/1714?u=relliott
+    #   https://github.com/ellio167/cmake-and-git-describe
+    #
+    # Overall this is a use case only of concern to active developers of the
+    # kim-api project.  So, a better solution is not really necessary.
+    #
+    set(_git_describe_sentinel "git-describe-sentinel")
+    set(_depend_file "${CMAKE_CURRENT_BINARY_DIR}/.${_git_describe_sentinel}-file")
+
+    find_program(_touch touch)
+    if(${CMAKE_MINOR_VERSION} GREATER 11)  # use file(GLOB <var> CONFIGURE_DEPENDS ...) mechanism
+      if(EXISTS "${_depend_file}")
+        file(REMOVE "${_depend_file}")
+      endif()
+      file(GLOB _t CONFIGURE_DEPENDS "${_depend_file}")
+      unset(_t)
+      file(TOUCH "${_depend_file}")
+    elseif(_touch)  # use system 'touch' with future timestamp and CMAKE_CONFIGURE_DEPENDS mechanism
+      string(TIMESTAMP _time "1%m%d%H%M")
+      math(EXPR _time "${_time} + 1")
+      string(REGEX REPLACE "^.(.*)$" "\\1" _time "${_time}")
+      execute_process(COMMAND ${_touch} -t "${_time}" "${_depend_file}")   # set modification/access time 1min in the future
+      unset(_time)
+      set_property(DIRECTORY "${CURRENT_SOURCE_DIR}" APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${_depend_file}")
+    else()  # use CMAKE_CONFIGURE_DEPENDS property mechanism [has a number of corner cases]
+      execute_process(COMMAND ${CMAKE_COMMAND} -E touch "${_depend_file}")
+      add_custom_target(${_git_describe_sentinel}-target ALL COMMAND ${CMAKE_COMMAND} -E touch "${_depend_file}")
+      set_property(DIRECTORY "${CURRENT_SOURCE_DIR}" APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${_depend_file}")
+    endif()
+    unset(_git_describe_sentinel)
+    unset(_depend_file)
+
+    execute_process(COMMAND ${GIT_EXECUTABLE} -C "${PROJECT_SOURCE_DIR}" update-index -q --refresh
+      TIMEOUT 5
+      OUTPUT_QUIET
+      ERROR_QUIET
+      )
+    if(READTHEDOCS)
+      set(_DIRTY "")
+    else()
+      set(_DIRTY ".dirty")
+    endif()
+    execute_process(
+      COMMAND ${GIT_EXECUTABLE} -C "${PROJECT_SOURCE_DIR}" describe --dirty=${_DIRTY} --broken=.broken --always
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+      OUTPUT_VARIABLE _git_describe
+      )
+    unset(_DIRTY)
+    set(_build_metadata "${_git_describe}")
+    unset(_git_describe)
   endif()
-  execute_process(COMMAND ${GIT_EXECUTABLE} describe --dirty=${_DIRTY} --broken=.broken --always
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-    OUTPUT_VARIABLE KIM_API_GIT_DESCRIBE OUTPUT_STRIP_TRAILING_WHITESPACE
-    )
-  set(KIM_API_BUILD_METADATA "${KIM_API_GIT_DESCRIBE}")
-
-  set(RECONFIGURE_FILE "${CMAKE_BINARY_DIR}/reconfigure")
-  execute_process(COMMAND ${CMAKE_COMMAND} -E touch "${RECONFIGURE_FILE}")
-  add_custom_target(git-commit-describe ALL
-    COMMAND ${CMAKE_COMMAND} -E touch "${RECONFIGURE_FILE}"
-    )
-  include("${RECONFIGURE_FILE}")
 endif()
 
-if(NOT "${KIM_API_BUILD_METADATA}" STREQUAL "")
-  string(APPEND KIM_API_BUILD_METADATA ".")
+if(NOT "${_build_metadata}" STREQUAL "")
+  string(APPEND _build_metadata ".")
 endif()
-string(APPEND KIM_API_BUILD_METADATA "${CMAKE_CXX_COMPILER_ID}")
-set(PROJECT_VERSION_BUILD_METADATA "${KIM_API_BUILD_METADATA}" CACHE STRING "Version metadata value" FORCE)
+string(APPEND _build_metadata "${CMAKE_CXX_COMPILER_ID}.${CMAKE_C_COMPILER_ID}.${CMAKE_Fortran_COMPILER_ID}")
+set(PROJECT_VERSION_BUILD_METADATA "${_build_metadata}")  # do not cache
+unset(_build_metadata)
 
 
-set(PROJECT_VERSION_STRING "${PROJECT_VERSION}")
+set(_version_string "${PROJECT_VERSION}")
 if(PROJECT_VERSION_PRERELEASE)
-  set(PROJECT_VERSION_STRING
-    "${PROJECT_VERSION_STRING}-${PROJECT_VERSION_PRERELEASE}")
+  set(_version_string "${_version_string}-${PROJECT_VERSION_PRERELEASE}")
 endif()
-set(PROJECT_VERSION_STRING_WITHOUT_BUILD_METADATA "${PROJECT_VERSION_STRING}")
+set(PROJECT_VERSION_STRING_WITHOUT_BUILD_METADATA "${_version_string}")  # used by pkg-config; do not cache
 if(PROJECT_VERSION_BUILD_METADATA)
-  set(PROJECT_VERSION_STRING
-    "${PROJECT_VERSION_STRING}+${PROJECT_VERSION_BUILD_METADATA}")
+  set(_version_string "${_version_string}+${PROJECT_VERSION_BUILD_METADATA}")
 endif()
+set(PROJECT_VERSION_STRING "${_version_string}")  # do not cache
+unset(_version_string)

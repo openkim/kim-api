@@ -27,7 +27,7 @@
 #
 
 #
-# Release: This file is part of the kim-api-2.1.3 package.
+# Release: This file is part of the kim-api-2.2.0 package.
 #
 
 /.gitattributes                       export-ignore
@@ -37,6 +37,8 @@
 /README_GIT                           export-ignore
 /docker                               export-ignore
 /git-hooks                            export-ignore
+/scripts/ci-build-and-test            export-ignore
+/scripts/ci-docker-build-and-run      export-ignore
 /scripts/configure-git-repo-hooks-etc export-ignore
 /scripts/create-package               export-ignore
 /scripts/run-cmds-from-install        export-ignore

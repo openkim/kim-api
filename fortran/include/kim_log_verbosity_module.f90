@@ -19,7 +19,7 @@
 !
 
 !
-! Copyright (c) 2016--2019, Regents of the University of Minnesota.
+! Copyright (c) 2016--2020, Regents of the University of Minnesota.
 ! All rights reserved.
 !
 ! Contributors:
@@ -27,9 +27,8 @@
 !
 
 !
-! Release: This file is part of the kim-api-2.1.3 package.
+! Release: This file is part of the kim-api-2.2.0 package.
 !
-
 
 !> \brief \copybrief KIM::LogVerbosity
 !!
@@ -44,7 +43,6 @@ module kim_log_verbosity_module
   public &
     ! Derived types
     kim_log_verbosity_type, &
-
     ! Constants
     KIM_LOG_VERBOSITY_SILENT, &
     KIM_LOG_VERBOSITY_FATAL, &
@@ -52,20 +50,18 @@ module kim_log_verbosity_module
     KIM_LOG_VERBOSITY_WARNING, &
     KIM_LOG_VERBOSITY_INFORMATION, &
     KIM_LOG_VERBOSITY_DEBUG, &
-
     ! Routines
     kim_known, &
-    operator (.lt.), &
-    operator (.gt.), &
-    operator (.le.), &
-    operator (.ge.), &
-    operator (.eq.), &
-    operator (.ne.), &
+    operator(.lt.), &
+    operator(.gt.), &
+    operator(.le.), &
+    operator(.ge.), &
+    operator(.eq.), &
+    operator(.ne.), &
     kim_from_string, &
     kim_to_string, &
     kim_get_number_of_log_verbosities, &
     kim_get_log_verbosity
-
 
   !> \brief \copybrief KIM::LogVerbosity
   !!
@@ -73,11 +69,11 @@ module kim_log_verbosity_module
   !!
   !! \since 2.0
   type, bind(c) :: kim_log_verbosity_type
-     !> \brief \copybrief KIM::LogVerbosity::logVerbosityID
-     !!
-     !! \sa KIM::LogVerbosity::logVerbosityID, KIM_LogVerbosity::logVerbosityID
-     !!
-     !! \since 2.0
+    !> \brief \copybrief KIM::LogVerbosity::logVerbosityID
+    !!
+    !! \sa KIM::LogVerbosity::logVerbosityID, KIM_LogVerbosity::logVerbosityID
+    !!
+    !! \since 2.0
     integer(c_int) :: log_verbosity_id
   end type kim_log_verbosity_type
 
@@ -149,54 +145,54 @@ module kim_log_verbosity_module
   !! \sa KIM::LogVerbosity::operator<(), KIM_LogVerbosity_LessThan
   !!
   !! \since 2.0
-  interface operator (.lt.)
+  interface operator(.lt.)
     module procedure kim_log_verbosity_less_than
-  end interface operator (.lt.)
+  end interface operator(.lt.)
 
   !> \brief \copybrief KIM::LogVerbosity::operator>()
   !!
   !! \sa KIM::LogVerbosity::operator>(), KIM_LogVerbosity_GreaterThan
   !!
   !! \since 2.0
-  interface operator (.gt.)
+  interface operator(.gt.)
     module procedure kim_log_verbosity_greater_than
-  end interface operator (.gt.)
+  end interface operator(.gt.)
 
   !> \brief \copybrief KIM::LogVerbosity::operator<=()
   !!
   !! \sa KIM::LogVerbosity::operator<=(), KIM_LogVerbosity_LessThanEqual
   !!
   !! \since 2.0
-  interface operator (.le.)
+  interface operator(.le.)
     module procedure kim_log_verbosity_less_than_equal
-  end interface operator (.le.)
+  end interface operator(.le.)
 
   !> \brief \copybrief KIM::LogVerbosity::operator>=()
   !!
   !! \sa KIM::LogVerbosity::operator>=(), KIM_LogVerbosity_GreaterThanEqual
   !!
   !! \since 2.0
-  interface operator (.ge.)
+  interface operator(.ge.)
     module procedure kim_log_verbosity_greater_than_equal
-  end interface operator (.ge.)
+  end interface operator(.ge.)
 
   !> \brief \copybrief KIM::LogVerbosity::operator==()
   !!
   !! \sa KIM::LogVerbosity::operator==(), KIM_LogVerbosity_Equal
   !!
   !! \since 2.0
-  interface operator (.eq.)
+  interface operator(.eq.)
     module procedure kim_log_verbosity_equal
-  end interface operator (.eq.)
+  end interface operator(.eq.)
 
   !> \brief \copybrief KIM::LogVerbosity::operator!=()
   !!
   !! \sa KIM::LogVerbosity::operator!=(), KIM_LogVerbosity_NotEqual
   !!
   !! \since 2.0
-  interface operator (.ne.)
+  interface operator(.ne.)
     module procedure kim_log_verbosity_not_equal
-  end interface operator (.ne.)
+  end interface operator(.ne.)
 
   !> \brief \copybrief KIM::LogVerbosity::LogVerbosity(std::string const &)
   !!
@@ -250,7 +246,7 @@ contains
     type(kim_log_verbosity_type), intent(in) :: rhs
 
     kim_log_verbosity_less_than &
-      = (lhs%log_verbosity_id .lt. rhs%log_verbosity_id)
+      = (lhs%log_verbosity_id < rhs%log_verbosity_id)
   end function kim_log_verbosity_less_than
 
   !> \brief \copybrief KIM::LogVerbosity::operator>()
@@ -264,7 +260,7 @@ contains
     type(kim_log_verbosity_type), intent(in) :: rhs
 
     kim_log_verbosity_greater_than &
-      = (lhs%log_verbosity_id .ge. rhs%log_verbosity_id)
+      = (lhs%log_verbosity_id >= rhs%log_verbosity_id)
   end function kim_log_verbosity_greater_than
 
   !> \brief \copybrief KIM::LogVerbosity::operator<=()
@@ -278,7 +274,7 @@ contains
     type(kim_log_verbosity_type), intent(in) :: rhs
 
     kim_log_verbosity_less_than_equal &
-      = (lhs%log_verbosity_id .le. rhs%log_verbosity_id)
+      = (lhs%log_verbosity_id <= rhs%log_verbosity_id)
   end function kim_log_verbosity_less_than_equal
 
   !> \brief \copybrief KIM::LogVerbosity::operator>=()
@@ -292,7 +288,7 @@ contains
     type(kim_log_verbosity_type), intent(in) :: rhs
 
     kim_log_verbosity_greater_than_equal &
-      = (lhs%log_verbosity_id .ge. rhs%log_verbosity_id)
+      = (lhs%log_verbosity_id >= rhs%log_verbosity_id)
   end function kim_log_verbosity_greater_than_equal
 
   !> \brief \copybrief KIM::LogVerbosity::operator==()
@@ -306,7 +302,7 @@ contains
     type(kim_log_verbosity_type), intent(in) :: rhs
 
     kim_log_verbosity_equal &
-      = (lhs%log_verbosity_id .eq. rhs%log_verbosity_id)
+      = (lhs%log_verbosity_id == rhs%log_verbosity_id)
   end function kim_log_verbosity_equal
 
   !> \brief \copybrief KIM::LogVerbosity::operator!=()
@@ -319,7 +315,7 @@ contains
     type(kim_log_verbosity_type), intent(in) :: lhs
     type(kim_log_verbosity_type), intent(in) :: rhs
 
-    kim_log_verbosity_not_equal = .not. (lhs .eq. rhs)
+    kim_log_verbosity_not_equal = .not. (lhs == rhs)
   end function kim_log_verbosity_not_equal
 
   !> \brief \copybrief KIM::LogVerbosity::LogVerbosity(std::string const &)
@@ -351,7 +347,7 @@ contains
   !!
   !! \since 2.0
   recursive subroutine kim_log_verbosity_to_string(log_verbosity, string)
-    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
+    use kim_convert_string_module, only: kim_convert_c_char_ptr_to_string
     implicit none
     interface
       type(c_ptr) recursive function get_string(log_verbosity) &
@@ -402,8 +398,8 @@ contains
   recursive subroutine kim_get_log_verbosity(index, log_verbosity, ierr)
     implicit none
     interface
-      integer(c_int) recursive function get_log_verbosity(index, &
-        log_verbosity) bind(c, name="KIM_LOG_VERBOSITY_GetLogVerbosity")
+      integer(c_int) recursive function get_log_verbosity( &
+        index, log_verbosity) bind(c, name="KIM_LOG_VERBOSITY_GetLogVerbosity")
         use, intrinsic :: iso_c_binding
         import kim_log_verbosity_type
         implicit none
@@ -415,6 +411,6 @@ contains
     type(kim_log_verbosity_type), intent(out) :: log_verbosity
     integer(c_int), intent(out) :: ierr
 
-    ierr = get_log_verbosity(index-1, log_verbosity)
+    ierr = get_log_verbosity(index - 1, log_verbosity)
   end subroutine kim_get_log_verbosity
 end module kim_log_verbosity_module

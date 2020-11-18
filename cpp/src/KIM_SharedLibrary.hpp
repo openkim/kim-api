@@ -19,15 +19,16 @@
 //
 
 //
-// Copyright (c) 2016--2019, Regents of the University of Minnesota.
+// Copyright (c) 2016--2020, Regents of the University of Minnesota.
 // All rights reserved.
 //
 // Contributors:
 //    Ryan S. Elliott
+//    Alexander Stukowski
 //
 
 //
-// Release: This file is part of the kim-api-2.1.3 package.
+// Release: This file is part of the kim-api-2.2.0 package.
 //
 
 
@@ -41,8 +42,8 @@
 #include "KIM_FunctionTypes.hpp"
 #endif
 
-#ifndef KIM_LOG_HPP_
-#include "KIM_Log.hpp"
+#ifndef KIM_LOG_VERBOSITY_HPP_
+#include "KIM_LogVerbosity.hpp"
 #endif
 
 #ifndef KIM_LANGUAGE_NAME_HPP_
@@ -53,14 +54,14 @@
 #include "KIM_CollectionItemType.hpp"
 #endif
 
+#ifndef KIM_FILESYSTEM_PATH_HPP_
+#include "KIM_FilesystemPath.hpp"
+#endif
+
 namespace KIM
 {
 // Forward declarations
-class LanguageName;
-namespace SHARED_LIBRARY_SCHEMA
-{
-struct SharedLibrarySchemaV1;
-}  // namespace SHARED_LIBRARY_SCHEMA
+class Log;
 
 
 class SharedLibrary
@@ -69,9 +70,8 @@ class SharedLibrary
   SharedLibrary(Log * const log);
   ~SharedLibrary();
 
-  int Open(std::string const & sharedLibraryName);
+  int Open(FILESYSTEM::Path const & sharedLibraryName);
   int Close();
-  int GetName(std::string * const name) const;
   int GetType(CollectionItemType * const type) const;
   int GetCreateFunctionPointer(LanguageName * const languageName,
                                Function ** const functionPointer) const;
@@ -84,6 +84,12 @@ class SharedLibrary
       std::string * const specFileName,
       unsigned int * const specFileLength,
       unsigned char const ** const specFileData) const;
+
+  int WriteParameterFileDirectory();
+  int GetParameterFileDirectoryName(
+      FILESYSTEM::Path * const directoryName) const;
+  int RemoveParameterFileDirectory();
+
   int GetDriverName(std::string * const driverName) const;
   int GetNumberOfMetadataFiles(int * const numberOfMetadataFiles) const;
   int GetMetadataFile(int const index,
@@ -96,20 +102,25 @@ class SharedLibrary
                 int const lineNumber,
                 std::string const & fileName) const;
 
+  static FILESYSTEM::Path GetORIGIN();
+
  private:
   struct EmbeddedFile
   {
     char const * fileName;
     unsigned int fileLength;
     unsigned char const * filePointer;
+
+    EmbeddedFile();
   };  // struct EmbeddedFile
 
-  std::string sharedLibraryName_;
+  static FILESYSTEM::Path const ORIGIN;
+
+  FILESYSTEM::Path sharedLibraryName_;
   void * sharedLibraryHandle_;
   int const * sharedLibrarySchemaVersion_;
 
   CollectionItemType itemType_;
-  std::string itemName_;
   LanguageName createLanguageName_;
   Function * createRoutine_;
   std::string driverName_;
@@ -118,6 +129,8 @@ class SharedLibrary
   std::vector<EmbeddedFile> parameterFiles_;
   int numberOfMetadataFiles_;
   std::vector<EmbeddedFile> metadataFiles_;
+
+  FILESYSTEM::Path parameterFileDirectoryName_;
 
   Log * log_;
 };  // class SharedLibrary

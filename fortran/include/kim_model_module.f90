@@ -19,7 +19,7 @@
 !
 
 !
-! Copyright (c) 2016--2019, Regents of the University of Minnesota.
+! Copyright (c) 2016--2020, Regents of the University of Minnesota.
 ! All rights reserved.
 !
 ! Contributors:
@@ -27,9 +27,8 @@
 !
 
 !
-! Release: This file is part of the kim-api-2.1.3 package.
+! Release: This file is part of the kim-api-2.2.0 package.
 !
-
 
 !> \brief \copybrief KIM::Model
 !!
@@ -44,13 +43,11 @@ module kim_model_module
   public &
     ! Derived types
     kim_model_handle_type, &
-
     ! Constants
     KIM_MODEL_NULL_HANDLE, &
-
     ! Routines
-    operator (.eq.), &
-    operator (.ne.), &
+    operator(.eq.), &
+    operator(.ne.), &
     kim_model_create, &
     kim_model_destroy, &
     kim_is_routine_present, &
@@ -76,7 +73,6 @@ module kim_model_module
     kim_push_log_verbosity, &
     kim_pop_log_verbosity
 
-
   !> \brief \copybrief KIM::Model
   !!
   !! \sa KIM::Model, KIM_Model
@@ -95,16 +91,16 @@ module kim_model_module
   !> \brief Compares kim_model_handle_type's for equality.
   !!
   !! \since 2.0
-  interface operator (.eq.)
+  interface operator(.eq.)
     module procedure kim_model_handle_equal
-  end interface operator (.eq.)
+  end interface operator(.eq.)
 
   !> \brief Compares kim_model_handle_type's for inequality.
   !!
   !! \since 2.0
-  interface operator (.ne.)
+  interface operator(.ne.)
     module procedure kim_model_handle_not_equal
-  end interface operator (.ne.)
+  end interface operator(.ne.)
 
   !> \brief \copybrief KIM::Model::IsRoutinePresent
   !!
@@ -335,7 +331,7 @@ contains
     type(kim_model_handle_type), intent(in) :: lhs
     type(kim_model_handle_type), intent(in) :: rhs
 
-    kim_model_handle_not_equal = .not. (lhs .eq. rhs)
+    kim_model_handle_not_equal = .not. (lhs == rhs)
   end function kim_model_handle_not_equal
 
   !> \brief \copybrief KIM::Model::Create
@@ -348,9 +344,10 @@ contains
   !!
   !! \code{.f90}
   !! interface
-  !!   recursive subroutine create(model_create_handle, requested_length_unit, &
-  !!     requested_energy_unit, requested_charge_unit, &
-  !!     requested_temperature_unit, requested_time_unit, ierr) bind(c)
+  !!   recursive subroutine create( &
+  !!     model_create_handle, requested_length_unit, requested_energy_unit, &
+  !!     requested_charge_unit, requested_temperature_unit, &
+  !!     requested_time_unit, ierr) bind(c)
   !!     use, intrinsic :: iso_c_binding
   !!     use kim_model_headers_module
   !!     implicit none
@@ -371,8 +368,9 @@ contains
   !!
   !! \code{.f90}
   !! interface
-  !!   recursive subroutine create(model_driver_create_handle, &
-  !!     requested_length_unit, requested_energy_unit, requested_charge_unit, &
+  !!   recursive subroutine create( &
+  !!     model_driver_create_handle, requested_length_unit, &
+  !!     requested_energy_unit, requested_charge_unit, &
   !!     requested_temperature_unit, requested_time_unit, ierr) bind(c)
   !!     use, intrinsic :: iso_c_binding
   !!     use kim_model_driver_headers_module
@@ -393,25 +391,30 @@ contains
   !! \sa KIM::Model::Create, KIM_Model_Create
   !!
   !! \since 2.0
-  recursive subroutine kim_model_create(numbering, requested_length_unit, &
-    requested_energy_unit, requested_charge_unit, &
-    requested_temperature_unit, requested_time_unit, model_name, &
-    requested_units_accepted, model_handle, ierr)
-    use kim_numbering_module, only : kim_numbering_type
-    use kim_unit_system_module, only : kim_length_unit_type, &
-      kim_energy_unit_type, kim_charge_unit_type, kim_temperature_unit_type, &
-      kim_time_unit_type
+  recursive subroutine kim_model_create( &
+    numbering, requested_length_unit, requested_energy_unit, &
+    requested_charge_unit, requested_temperature_unit, requested_time_unit, &
+    model_name, requested_units_accepted, model_handle, ierr)
+    use kim_numbering_module, only: kim_numbering_type
+    use kim_unit_system_module, only: kim_length_unit_type, &
+                                      kim_energy_unit_type, &
+                                      kim_charge_unit_type, &
+                                      kim_temperature_unit_type, &
+                                      kim_time_unit_type
     implicit none
     interface
-      integer(c_int) recursive function create(numbering, &
-        requested_length_unit, requested_energy_unit, requested_charge_unit, &
-        requested_temperature_unit, requested_time_unit, model_name, &
-        requested_units_accepted, model) bind(c, name="KIM_Model_Create")
+      integer(c_int) recursive function create( &
+        numbering, requested_length_unit, requested_energy_unit, &
+        requested_charge_unit, requested_temperature_unit, &
+        requested_time_unit, model_name, requested_units_accepted, model) &
+        bind(c, name="KIM_Model_Create")
         use, intrinsic :: iso_c_binding
-        use kim_numbering_module, only : kim_numbering_type
-        use kim_unit_system_module, only : kim_length_unit_type, &
-          kim_energy_unit_type, kim_charge_unit_type, &
-          kim_temperature_unit_type, kim_time_unit_type
+        use kim_numbering_module, only: kim_numbering_type
+        use kim_unit_system_module, only: kim_length_unit_type, &
+                                          kim_energy_unit_type, &
+                                          kim_charge_unit_type, &
+                                          kim_temperature_unit_type, &
+                                          kim_time_unit_type
         implicit none
         type(kim_numbering_type), intent(in), value :: numbering
         type(kim_length_unit_type), intent(in), value :: requested_length_unit
@@ -440,8 +443,9 @@ contains
     type(c_ptr) :: pmodel
 
     ierr = create(numbering, requested_length_unit, requested_energy_unit, &
-      requested_charge_unit, requested_temperature_unit, requested_time_unit, &
-      trim(model_name)//c_null_char, requested_units_accepted, pmodel)
+                  requested_charge_unit, requested_temperature_unit, &
+                  requested_time_unit, trim(model_name)//c_null_char, &
+                  requested_units_accepted, pmodel)
     model_handle%p = pmodel
   end subroutine kim_model_create
 
@@ -488,18 +492,18 @@ contains
   !! \sa KIM::Model::IsRoutinePresent, KIM_Model_IsRoutinePresent
   !!
   !! \since 2.0
-  recursive subroutine kim_model_is_routine_present(model_handle, &
-    model_routine_name, present, required, ierr)
-    use kim_interoperable_types_module, only : kim_model_type
-    use kim_model_routine_name_module, only : kim_model_routine_name_type
+  recursive subroutine kim_model_is_routine_present( &
+    model_handle, model_routine_name, present, required, ierr)
+    use kim_interoperable_types_module, only: kim_model_type
+    use kim_model_routine_name_module, only: kim_model_routine_name_type
     implicit none
     interface
-      integer(c_int) recursive function is_routine_present(model, &
-        model_routine_name, present, required) &
+      integer(c_int) recursive function is_routine_present( &
+        model, model_routine_name, present, required) &
         bind(c, name="KIM_Model_IsRoutinePresent")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_model_type
-        use kim_model_routine_name_module, only : kim_model_routine_name_type
+        use kim_interoperable_types_module, only: kim_model_type
+        use kim_model_routine_name_module, only: kim_model_routine_name_type
         implicit none
         type(kim_model_type), intent(in) :: model
         type(kim_model_routine_name_type), intent(in), value &
@@ -524,15 +528,15 @@ contains
   !! \sa KIM::Model::GetInfluenceDistance, KIM_Model_GetInfluenceDistance
   !!
   !! \since 2.0
-  recursive subroutine kim_model_get_influence_distance(model_handle, &
-    influence_distance)
-    use kim_interoperable_types_module, only : kim_model_type
+  recursive subroutine kim_model_get_influence_distance( &
+    model_handle, influence_distance)
+    use kim_interoperable_types_module, only: kim_model_type
     implicit none
     interface
       recursive subroutine get_influence_distance(model, influence_distance) &
         bind(c, name="KIM_Model_GetInfluenceDistance")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_model_type
+        use kim_interoperable_types_module, only: kim_model_type
         implicit none
         type(kim_model_type), intent(in) :: model
         real(c_double), intent(out) :: influence_distance
@@ -551,17 +555,17 @@ contains
   !! \sa KIM::Model::GetNeighborListPointers, KIM_Model_GetNeighborListPointers
   !!
   !! \since 2.0
-  recursive subroutine kim_model_get_number_of_neighbor_lists(model_handle, &
-    number_of_neighbor_lists)
-    use kim_interoperable_types_module, only : kim_model_type
+  recursive subroutine kim_model_get_number_of_neighbor_lists( &
+    model_handle, number_of_neighbor_lists)
+    use kim_interoperable_types_module, only: kim_model_type
     implicit none
     interface
-      recursive subroutine get_neighbor_list_pointers(model, &
-        number_of_neighbor_lists, cutoffs_ptr, &
+      recursive subroutine get_neighbor_list_pointers( &
+        model, number_of_neighbor_lists, cutoffs_ptr, &
         model_will_not_request_neighbors_of_noncontributing__ptr) &
         bind(c, name="KIM_Model_GetNeighborListPointers")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_model_type
+        use kim_interoperable_types_module, only: kim_model_type
         implicit none
         type(kim_model_type), intent(in) :: model
         integer(c_int), intent(out) :: number_of_neighbor_lists
@@ -578,7 +582,7 @@ contains
 
     call c_f_pointer(model_handle%p, model)
     call get_neighbor_list_pointers(model, number_of_neighbor_lists, &
-      cutoffs_ptr, hint_ptr)
+                                    cutoffs_ptr, hint_ptr)
   end subroutine kim_model_get_number_of_neighbor_lists
 
   !> \brief Get Model's neighbor list values
@@ -586,18 +590,18 @@ contains
   !! \sa KIM::Model::GetNeighborListPointers, KIM_Model_GetNeighborListPointers
   !!
   !! \since 2.0
-  recursive subroutine kim_model_get_neighbor_list_values(model_handle, &
-    cutoffs, model_will_not_request_neighbors_of_noncontributing_particles, &
-    ierr)
-    use kim_interoperable_types_module, only : kim_model_type
+  recursive subroutine kim_model_get_neighbor_list_values( &
+    model_handle, cutoffs, &
+    model_will_not_request_neighbors_of_noncontributing_particles, ierr)
+    use kim_interoperable_types_module, only: kim_model_type
     implicit none
     interface
-      recursive subroutine get_neighbor_list_pointers(model, &
-        number_of_neighbor_lists, cutoffs_ptr, &
+      recursive subroutine get_neighbor_list_pointers( &
+        model, number_of_neighbor_lists, cutoffs_ptr, &
         model_will_not_request_neighbors_of_noncontributing__ptr) &
         bind(c, name="KIM_Model_GetNeighborListPointers")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_model_type
+        use kim_interoperable_types_module, only: kim_model_type
         implicit none
         type(kim_model_type), intent(in) :: model
         integer(c_int), intent(out) :: number_of_neighbor_lists
@@ -621,14 +625,14 @@ contains
     type(c_ptr) model_will_not_request_neighbors_of_noncontributing__ptr
 
     call c_f_pointer(model_handle%p, model)
-    call get_neighbor_list_pointers(model, number_of_neighbor_lists, &
-      cutoffs_ptr, &
+    call get_neighbor_list_pointers( &
+      model, number_of_neighbor_lists, cutoffs_ptr, &
       model_will_not_request_neighbors_of_noncontributing__ptr)
     if (c_associated(cutoffs_ptr)) then
       call c_f_pointer(cutoffs_ptr, cutoffs_fpointer, &
-        [number_of_neighbor_lists])
+                       [number_of_neighbor_lists])
     else
-      nullify(cutoffs_fpointer)
+      nullify (cutoffs_fpointer)
     end if
     if (size(cutoffs) < number_of_neighbor_lists) then
       ierr = 1
@@ -638,18 +642,18 @@ contains
     end if
 
     if (c_associated( &
-      model_will_not_request_neighbors_of_noncontributing__ptr)) then
+        model_will_not_request_neighbors_of_noncontributing__ptr)) then
       call c_f_pointer( &
         model_will_not_request_neighbors_of_noncontributing__ptr, &
         model_will_not_request_neighbors_of_noncontributing__fpointer, &
         [number_of_neighbor_lists])
     else
-      nullify( &
+      nullify ( &
         model_will_not_request_neighbors_of_noncontributing__fpointer)
     end if
     if (size( &
-      model_will_not_request_neighbors_of_noncontributing_particles) &
-      < number_of_neighbor_lists) then
+        model_will_not_request_neighbors_of_noncontributing_particles) &
+        < number_of_neighbor_lists) then
       ierr = 1
     else
       ierr = 0
@@ -664,22 +668,28 @@ contains
   !! \sa KIM::Model::GetUnits, KIM_Model_GetUnits
   !!
   !! \since 2.0
-  recursive subroutine kim_model_get_units(model_handle, length_unit, &
-    energy_unit, charge_unit, temperature_unit, time_unit)
-    use kim_unit_system_module, only : kim_length_unit_type, &
-      kim_energy_unit_type, kim_charge_unit_type, kim_temperature_unit_type, &
-      kim_time_unit_type
-    use kim_interoperable_types_module, only : kim_model_type
+  recursive subroutine kim_model_get_units( &
+    model_handle, length_unit, energy_unit, charge_unit, temperature_unit, &
+    time_unit)
+    use kim_unit_system_module, only: kim_length_unit_type, &
+                                      kim_energy_unit_type, &
+                                      kim_charge_unit_type, &
+                                      kim_temperature_unit_type, &
+                                      kim_time_unit_type
+    use kim_interoperable_types_module, only: kim_model_type
     implicit none
     interface
-      recursive subroutine get_units(model, length_unit, energy_unit, &
-        charge_unit, temperature_unit, time_unit) &
+      recursive subroutine get_units( &
+        model, length_unit, energy_unit, charge_unit, temperature_unit, &
+        time_unit) &
         bind(c, name="KIM_Model_GetUnits")
         use, intrinsic :: iso_c_binding
-        use kim_unit_system_module, only : kim_length_unit_type, &
-          kim_energy_unit_type, kim_charge_unit_type, &
-          kim_temperature_unit_type, kim_time_unit_type
-        use kim_interoperable_types_module, only : kim_model_type
+        use kim_unit_system_module, only: kim_length_unit_type, &
+                                          kim_energy_unit_type, &
+                                          kim_charge_unit_type, &
+                                          kim_temperature_unit_type, &
+                                          kim_time_unit_type
+        use kim_interoperable_types_module, only: kim_model_type
         type(kim_model_type), intent(in) :: model
         type(kim_length_unit_type), intent(out) :: length_unit
         type(kim_energy_unit_type), intent(out) :: energy_unit
@@ -698,7 +708,7 @@ contains
 
     call c_f_pointer(model_handle%p, model)
     call get_units(model, length_unit, energy_unit, charge_unit, &
-      temperature_unit, time_unit)
+                   temperature_unit, time_unit)
   end subroutine kim_model_get_units
 
   !> \brief \copybrief KIM::Model::ComputeArgumentsCreate
@@ -710,8 +720,9 @@ contains
   !!
   !! \code{.f90}
   !! interface
-  !!   recursive subroutine compute_arguments_create(model_compute_handle, &
-  !!     model_compute_arguments_create_handle, ierr) bind(c)
+  !!   recursive subroutine compute_arguments_create( &
+  !!     model_compute_handle, model_compute_arguments_create_handle, ierr) &
+  !!     bind(c)
   !!     use, intrinsic :: iso_c_binding
   !!     use kim_model_headers_module
   !!     implicit none
@@ -726,17 +737,18 @@ contains
   !! \sa KIM::Model::ComputeArgumentsCreate, KIM_Model_ComputeArgumentsCreate
   !!
   !! \since 2.0
-  recursive subroutine kim_model_compute_arguments_create(model_handle, &
-    compute_arguments_handle, ierr)
-    use kim_compute_arguments_module, only : &
+  recursive subroutine kim_model_compute_arguments_create( &
+    model_handle, compute_arguments_handle, ierr)
+    use kim_compute_arguments_module, only: &
       kim_compute_arguments_handle_type
-    use kim_interoperable_types_module, only : kim_model_type
+    use kim_interoperable_types_module, only: kim_model_type
     implicit none
     interface
-      integer(c_int) recursive function compute_arguments_create(model, &
-        compute_arguments) bind(c, name="KIM_Model_ComputeArgumentsCreate")
+      integer(c_int) recursive function compute_arguments_create( &
+        model, compute_arguments) &
+        bind(c, name="KIM_Model_ComputeArgumentsCreate")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_model_type
+        use kim_interoperable_types_module, only: kim_model_type
         implicit none
         type(kim_model_type), intent(in) :: model
         type(c_ptr), intent(out) :: compute_arguments
@@ -767,8 +779,9 @@ contains
   !!
   !! \code{.f90}
   !! interface
-  !!   recursive subroutine compute_arguments_destroy(model_compute_handle, &
-  !!     model_compute_arguments_destroy_handle, ierr) bind(c)
+  !!   recursive subroutine compute_arguments_destroy( &
+  !!     model_compute_handle, model_compute_arguments_destroy_handle, ierr) &
+  !!     bind(c)
   !!     use, intrinsic :: iso_c_binding
   !!     use kim_model_headers_module
   !!     implicit none
@@ -783,17 +796,17 @@ contains
   !! \sa KIM::Model::ComputeArgumentsDestroy, KIM_Model_ComputeArgumentsDestroy
   !!
   !! \since 2.0
-  recursive subroutine kim_model_compute_arguments_destroy(model_handle, &
-    compute_arguments_handle, ierr)
-    use kim_compute_arguments_module, only : &
-      kim_compute_arguments_handle_type
-    use kim_interoperable_types_module, only : kim_model_type
+  recursive subroutine kim_model_compute_arguments_destroy( &
+    model_handle, compute_arguments_handle, ierr)
+    use kim_compute_arguments_module, only: kim_compute_arguments_handle_type
+    use kim_interoperable_types_module, only: kim_model_type
     implicit none
     interface
-      integer(c_int) recursive function compute_arguments_destroy(model, &
-        compute_arguments) bind(c, name="KIM_Model_ComputeArgumentsDestroy")
+      integer(c_int) recursive function compute_arguments_destroy( &
+        model, compute_arguments) &
+        bind(c, name="KIM_Model_ComputeArgumentsDestroy")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_model_type
+        use kim_interoperable_types_module, only: kim_model_type
         implicit none
         type(kim_model_type), intent(in) :: model
         type(c_ptr), intent(inout) :: compute_arguments
@@ -822,8 +835,9 @@ contains
   !!
   !! \code{.f90}
   !! interface
-  !!   recursive subroutine compute(model_compute_handle, &
-  !!     model_compute_arguments_handle, ierr) bind(c)
+  !!   recursive subroutine compute( &
+  !!     model_compute_handle, model_compute_arguments_handle, ierr) &
+  !!     bind(c)
   !!     use, intrinsic :: iso_c_binding
   !!     use kim_model_headers_module
   !!     implicit none
@@ -838,18 +852,18 @@ contains
   !! \sa KIM::Model::Compute, KIM_Model_Compute
   !!
   !! \since 2.0
-  recursive subroutine kim_model_compute(model_handle, &
-    compute_arguments_handle, ierr)
-    use kim_compute_arguments_module, only : kim_compute_arguments_handle_type
-    use kim_interoperable_types_module, only : kim_compute_arguments_type, &
-      kim_model_type
+  recursive subroutine kim_model_compute( &
+    model_handle, compute_arguments_handle, ierr)
+    use kim_compute_arguments_module, only: kim_compute_arguments_handle_type
+    use kim_interoperable_types_module, only: kim_compute_arguments_type, &
+                                              kim_model_type
     implicit none
     interface
       integer(c_int) recursive function compute(model, compute_arguments) &
         bind(c, name="KIM_Model_Compute")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_compute_arguments_type
-        use kim_interoperable_types_module, only : kim_model_type
+        use kim_interoperable_types_module, only: kim_compute_arguments_type
+        use kim_interoperable_types_module, only: kim_model_type
         implicit none
         type(kim_model_type), intent(in) :: model
         type(kim_compute_arguments_type), intent(in) :: compute_arguments
@@ -875,8 +889,9 @@ contains
   !!
   !! \code{.f90}
   !! interface
-  !!   recursive subroutine extension(model_extension_handle, &
-  !!     extension_structure, ierr) bind(c)
+  !!   recursive subroutine extension( &
+  !!     model_extension_handle, extension_structure, ierr) &
+  !!     bind(c)
   !!     use, intrinsic :: iso_c_binding
   !!     use kim_model_headers_module
   !!     implicit none
@@ -891,15 +906,16 @@ contains
   !! \sa KIM::Model::Extension, KIM_Model_Extension
   !!
   !! \since 2.0
-  recursive subroutine kim_model_extension(model_handle, extension_id, &
-    extension_structure, ierr)
-    use kim_interoperable_types_module, only : kim_model_type
+  recursive subroutine kim_model_extension( &
+    model_handle, extension_id, extension_structure, ierr)
+    use kim_interoperable_types_module, only: kim_model_type
     implicit none
     interface
-      integer(c_int) recursive function extension(model, extension_id, &
-        extension_structure) bind(c, name="KIM_Model_Extension")
+      integer(c_int) recursive function extension( &
+        model, extension_id, extension_structure) &
+        bind(c, name="KIM_Model_Extension")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_model_type
+        use kim_interoperable_types_module, only: kim_model_type
         implicit none
         type(kim_model_type), intent(in) :: model
         character(c_char), intent(in) :: extension_id(*)
@@ -914,7 +930,7 @@ contains
 
     call c_f_pointer(model_handle%p, model)
     ierr = extension(model, trim(extension_id)//c_null_char, &
-      extension_structure)
+                     extension_structure)
   end subroutine kim_model_extension
 
   !> \brief \copybrief KIM::Model::ClearThenRefresh
@@ -939,13 +955,13 @@ contains
   !!
   !! \since 2.0
   recursive subroutine kim_model_clear_then_refresh(model_handle, ierr)
-    use kim_interoperable_types_module, only : kim_model_type
+    use kim_interoperable_types_module, only: kim_model_type
     implicit none
     interface
       integer(c_int) recursive function clear_then_refresh(model) &
         bind(c, name="KIM_Model_ClearThenRefresh")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_model_type
+        use kim_interoperable_types_module, only: kim_model_type
         implicit none
         type(kim_model_type), intent(in) :: model
       end function clear_then_refresh
@@ -983,15 +999,16 @@ contains
   !! \sa KIM::Model::WriteParameterizedModel, KIM_Model_WriteParameterizedModel
   !!
   !! \since 2.0
-  recursive subroutine kim_model_write_parameterized_model(model_handle, &
-    path, model_name, ierr)
-    use kim_interoperable_types_module, only : kim_model_type
+  recursive subroutine kim_model_write_parameterized_model( &
+    model_handle, path, model_name, ierr)
+    use kim_interoperable_types_module, only: kim_model_type
     implicit none
     interface
-      integer(c_int) recursive function write_parameterized_model(model, &
-        path, model_name) bind(c, name="KIM_Model_WriteParameterizedModel")
+      integer(c_int) recursive function write_parameterized_model( &
+        model, path, model_name) &
+        bind(c, name="KIM_Model_WriteParameterizedModel")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_model_type
+        use kim_interoperable_types_module, only: kim_model_type
         implicit none
         type(kim_model_type), intent(in) :: model
         character(c_char), intent(in) :: path(*)
@@ -1006,7 +1023,7 @@ contains
 
     call c_f_pointer(model_handle%p, model)
     ierr = write_parameterized_model(model, trim(path)//c_null_char, &
-      trim(model_name)//c_null_char)
+                                     trim(model_name)//c_null_char)
   end subroutine kim_model_write_parameterized_model
 
   !> \brief \copybrief KIM::Model::GetSpeciesSupportAndCode
@@ -1015,18 +1032,18 @@ contains
   !! KIM_Model_GetSpeciesSupportAndCode
   !!
   !! \since 2.0
-  recursive subroutine kim_model_get_species_support_and_code(model_handle, &
-    species_name, species_is_supported, code, ierr)
-    use kim_species_name_module, only : kim_species_name_type
-    use kim_interoperable_types_module, only : kim_model_type
+  recursive subroutine kim_model_get_species_support_and_code( &
+    model_handle, species_name, species_is_supported, code, ierr)
+    use kim_species_name_module, only: kim_species_name_type
+    use kim_interoperable_types_module, only: kim_model_type
     implicit none
     interface
-      integer(c_int) recursive function get_species_support_and_code(model, &
-        species_name, species_is_supported, code) &
+      integer(c_int) recursive function get_species_support_and_code( &
+        model, species_name, species_is_supported, code) &
         bind(c, name="KIM_Model_GetSpeciesSupportAndCode")
         use, intrinsic :: iso_c_binding
-        use kim_species_name_module, only : kim_species_name_type
-        use kim_interoperable_types_module, only : kim_model_type
+        use kim_species_name_module, only: kim_species_name_type
+        use kim_interoperable_types_module, only: kim_model_type
         implicit none
         type(kim_model_type), intent(in) :: model
         type(kim_species_name_type), intent(in), value :: species_name
@@ -1043,7 +1060,7 @@ contains
 
     call c_f_pointer(model_handle%p, model)
     ierr = get_species_support_and_code(model, species_name, &
-      species_is_supported, code)
+                                        species_is_supported, code)
   end subroutine kim_model_get_species_support_and_code
 
   !> \brief \copybrief KIM::Model::GetNumberOfParameters
@@ -1051,15 +1068,16 @@ contains
   !! \sa KIM::Model::GetNumberOfParameters, KIM_Model_GetNumberOfParameters
   !!
   !! \since 2.0
-  recursive subroutine kim_model_get_number_of_parameters(model_handle, &
-    number_of_parameters)
-    use kim_interoperable_types_module, only : kim_model_type
+  recursive subroutine kim_model_get_number_of_parameters( &
+    model_handle, number_of_parameters)
+    use kim_interoperable_types_module, only: kim_model_type
     implicit none
     interface
-      recursive subroutine get_number_of_parameters(model, &
-        number_of_parameters) bind(c, name="KIM_Model_GetNumberOfParameters")
+      recursive subroutine get_number_of_parameters( &
+        model, number_of_parameters) &
+        bind(c, name="KIM_Model_GetNumberOfParameters")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_model_type
+        use kim_interoperable_types_module, only: kim_model_type
         implicit none
         type(kim_model_type), intent(in) :: model
         integer(c_int), intent(out) :: number_of_parameters
@@ -1078,19 +1096,19 @@ contains
   !! \sa KIM::Model::GetParameterMetadata, KIM_Model_GetParameterMetadata
   !!
   !! \since 2.0
-  recursive subroutine kim_model_get_parameter_metadata(model_handle, &
-    parameter_index, data_type, extent, name, description, ierr)
-    use kim_data_type_module, only : kim_data_type_type
-    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
-    use kim_interoperable_types_module, only : kim_model_type
+  recursive subroutine kim_model_get_parameter_metadata( &
+    model_handle, parameter_index, data_type, extent, name, description, ierr)
+    use kim_data_type_module, only: kim_data_type_type
+    use kim_convert_string_module, only: kim_convert_c_char_ptr_to_string
+    use kim_interoperable_types_module, only: kim_model_type
     implicit none
     interface
-      integer(c_int) recursive function get_parameter_metadata(model, &
-        parameter_index, data_type, extent, name, description) &
+      integer(c_int) recursive function get_parameter_metadata( &
+        model, parameter_index, data_type, extent, name, description) &
         bind(c, name="KIM_Model_GetParameterMetadata")
         use, intrinsic :: iso_c_binding
-        use kim_data_type_module, only : kim_data_type_type
-        use kim_interoperable_types_module, only : kim_model_type
+        use kim_data_type_module, only: kim_data_type_type
+        use kim_interoperable_types_module, only: kim_model_type
         implicit none
         type(kim_model_type), intent(in) :: model
         integer(c_int), intent(in), value :: parameter_index
@@ -1112,8 +1130,8 @@ contains
     type(c_ptr) :: pname, pdesc
 
     call c_f_pointer(model_handle%p, model)
-    ierr = get_parameter_metadata(model, parameter_index-1, data_type, extent, &
-      pname, pdesc)
+    ierr = get_parameter_metadata(model, parameter_index - 1, data_type, &
+                                  extent, pname, pdesc)
     call kim_convert_c_char_ptr_to_string(pname, name)
     call kim_convert_c_char_ptr_to_string(pdesc, description)
   end subroutine kim_model_get_parameter_metadata
@@ -1123,16 +1141,16 @@ contains
   !! \sa KIM::Model::GetParameter, KIM_Model_GetParameterInteger
   !!
   !! \since 2.0
-  recursive subroutine kim_model_get_parameter_integer(model_handle, &
-    parameter_index, array_index, parameter_value, ierr)
-    use kim_interoperable_types_module, only : kim_model_type
+  recursive subroutine kim_model_get_parameter_integer( &
+    model_handle, parameter_index, array_index, parameter_value, ierr)
+    use kim_interoperable_types_module, only: kim_model_type
     implicit none
     interface
-      integer(c_int) recursive function get_parameter_integer(model, &
-        parameter_index, array_index, parameter_value) &
+      integer(c_int) recursive function get_parameter_integer( &
+        model, parameter_index, array_index, parameter_value) &
         bind(c, name="KIM_Model_GetParameterInteger")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_model_type
+        use kim_interoperable_types_module, only: kim_model_type
         implicit none
         type(kim_model_type), intent(in) :: model
         integer(c_int), intent(in), value :: parameter_index
@@ -1148,8 +1166,8 @@ contains
     type(kim_model_type), pointer :: model
 
     call c_f_pointer(model_handle%p, model)
-    ierr = get_parameter_integer(model, parameter_index-1, array_index-1, &
-      parameter_value)
+    ierr = get_parameter_integer(model, parameter_index - 1, array_index - 1, &
+                                 parameter_value)
   end subroutine kim_model_get_parameter_integer
 
   !> \brief \copybrief KIM::Model::GetParameter
@@ -1157,16 +1175,16 @@ contains
   !! \sa KIM::Model::GetParameter, KIM_Model_GetParameterDouble
   !!
   !! \since 2.0
-  recursive subroutine kim_model_get_parameter_double(model_handle, &
-    parameter_index, array_index, parameter_value, ierr)
-    use kim_interoperable_types_module, only : kim_model_type
+  recursive subroutine kim_model_get_parameter_double( &
+    model_handle, parameter_index, array_index, parameter_value, ierr)
+    use kim_interoperable_types_module, only: kim_model_type
     implicit none
     interface
-      integer(c_int) recursive function get_parameter_double(model, &
-        parameter_index, array_index, parameter_value) &
+      integer(c_int) recursive function get_parameter_double( &
+        model, parameter_index, array_index, parameter_value) &
         bind(c, name="KIM_Model_GetParameterDouble")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_model_type
+        use kim_interoperable_types_module, only: kim_model_type
         implicit none
         type(kim_model_type), intent(in) :: model
         integer(c_int), intent(in), value :: parameter_index
@@ -1182,8 +1200,8 @@ contains
     type(kim_model_type), pointer :: model
 
     call c_f_pointer(model_handle%p, model)
-    ierr = get_parameter_double(model, parameter_index-1, array_index-1, &
-      parameter_value)
+    ierr = get_parameter_double(model, parameter_index - 1, array_index - 1, &
+                                parameter_value)
   end subroutine kim_model_get_parameter_double
 
   !> \brief \copybrief KIM::Model::SetParameter
@@ -1191,16 +1209,16 @@ contains
   !! \sa KIM::Model::SetParameter, KIM_Model_SetParameterInteger
   !!
   !! \since 2.0
-  recursive subroutine kim_model_set_parameter_integer(model_handle, &
-    parameter_index, array_index, parameter_value, ierr)
-    use kim_interoperable_types_module, only : kim_model_type
+  recursive subroutine kim_model_set_parameter_integer( &
+    model_handle, parameter_index, array_index, parameter_value, ierr)
+    use kim_interoperable_types_module, only: kim_model_type
     implicit none
     interface
-      integer(c_int) recursive function set_parameter_integer(model, &
-        parameter_index, array_index, parameter_value) &
+      integer(c_int) recursive function set_parameter_integer( &
+        model, parameter_index, array_index, parameter_value) &
         bind(c, name="KIM_Model_SetParameterInteger")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_model_type
+        use kim_interoperable_types_module, only: kim_model_type
         implicit none
         type(kim_model_type), intent(in) :: model
         integer(c_int), intent(in), value :: parameter_index
@@ -1216,8 +1234,8 @@ contains
     type(kim_model_type), pointer :: model
 
     call c_f_pointer(model_handle%p, model)
-    ierr = set_parameter_integer(model, parameter_index-1, array_index-1, &
-      parameter_value)
+    ierr = set_parameter_integer(model, parameter_index - 1, array_index - 1, &
+                                 parameter_value)
   end subroutine kim_model_set_parameter_integer
 
   !> \brief \copybrief KIM::Model::SetParameter
@@ -1225,16 +1243,16 @@ contains
   !! \sa KIM::Model::SetParameter, KIM_Model_SetParameterDouble
   !!
   !! \since 2.0
-  recursive subroutine kim_model_set_parameter_double(model_handle, &
-    parameter_index, array_index, parameter_value, ierr)
-    use kim_interoperable_types_module, only : kim_model_type
+  recursive subroutine kim_model_set_parameter_double( &
+    model_handle, parameter_index, array_index, parameter_value, ierr)
+    use kim_interoperable_types_module, only: kim_model_type
     implicit none
     interface
-      integer(c_int) recursive function set_parameter_double(model, &
-        parameter_index, array_index, parameter_value) &
+      integer(c_int) recursive function set_parameter_double( &
+        model, parameter_index, array_index, parameter_value) &
         bind(c, name="KIM_Model_SetParameterDouble")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_model_type
+        use kim_interoperable_types_module, only: kim_model_type
         implicit none
         type(kim_model_type), intent(in) :: model
         integer(c_int), intent(in), value :: parameter_index
@@ -1250,8 +1268,8 @@ contains
     type(kim_model_type), pointer :: model
 
     call c_f_pointer(model_handle%p, model)
-    ierr = set_parameter_double(model, parameter_index-1, array_index-1, &
-      parameter_value)
+    ierr = set_parameter_double(model, parameter_index - 1, array_index - 1, &
+                                parameter_value)
   end subroutine kim_model_set_parameter_double
 
   !> \brief \copybrief KIM::Model::SetSimulatorBufferPointer
@@ -1261,13 +1279,13 @@ contains
   !!
   !! \since 2.0
   recursive subroutine kim_model_set_simulator_buffer_pointer(model_handle, ptr)
-    use kim_interoperable_types_module, only : kim_model_type
+    use kim_interoperable_types_module, only: kim_model_type
     implicit none
     interface
       recursive subroutine set_simulator_buffer_pointer(model, ptr) &
         bind(c, name="KIM_Model_SetSimulatorBufferPointer")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_model_type
+        use kim_interoperable_types_module, only: kim_model_type
         implicit none
         type(kim_model_type), intent(in) :: model
         type(c_ptr), intent(in), value :: ptr
@@ -1288,13 +1306,13 @@ contains
   !!
   !! \since 2.0
   recursive subroutine kim_model_get_simulator_buffer_pointer(model_handle, ptr)
-    use kim_interoperable_types_module, only : kim_model_type
+    use kim_interoperable_types_module, only: kim_model_type
     implicit none
     interface
       recursive subroutine get_simulator_buffer_pointer(model, ptr) &
         bind(c, name="KIM_Model_GetSimulatorBufferPointer")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_model_type
+        use kim_interoperable_types_module, only: kim_model_type
         implicit none
         type(kim_model_type), intent(in) :: model
         type(c_ptr), intent(out) :: ptr
@@ -1314,14 +1332,14 @@ contains
   !!
   !! \since 2.0
   recursive subroutine kim_model_to_string(model_handle, string)
-    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
-    use kim_interoperable_types_module, only : kim_model_type
+    use kim_convert_string_module, only: kim_convert_c_char_ptr_to_string
+    use kim_interoperable_types_module, only: kim_model_type
     implicit none
     interface
       type(c_ptr) recursive function model_string(model) &
         bind(c, name="KIM_Model_ToString")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_model_type
+        use kim_interoperable_types_module, only: kim_model_type
         implicit none
         type(kim_model_type), intent(in) :: model
       end function model_string
@@ -1343,13 +1361,13 @@ contains
   !!
   !! \since 2.0
   recursive subroutine kim_model_set_log_id(model_handle, log_id)
-    use kim_interoperable_types_module, only : kim_model_type
+    use kim_interoperable_types_module, only: kim_model_type
     implicit none
     interface
       recursive subroutine set_log_id(model, log_id) &
         bind(c, name="KIM_Model_SetLogID")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_model_type
+        use kim_interoperable_types_module, only: kim_model_type
         implicit none
         type(kim_model_type), intent(in) :: model
         character(c_char), intent(in) :: log_id(*)
@@ -1369,15 +1387,15 @@ contains
   !!
   !! \since 2.0
   recursive subroutine kim_model_push_log_verbosity(model_handle, log_verbosity)
-    use kim_log_verbosity_module, only : kim_log_verbosity_type
-    use kim_interoperable_types_module, only : kim_model_type
+    use kim_log_verbosity_module, only: kim_log_verbosity_type
+    use kim_interoperable_types_module, only: kim_model_type
     implicit none
     interface
       recursive subroutine push_log_verbosity(model, log_verbosity) &
         bind(c, name="KIM_Model_PushLogVerbosity")
         use, intrinsic :: iso_c_binding
-        use kim_log_verbosity_module, only : kim_log_verbosity_type
-        use kim_interoperable_types_module, only : kim_model_type
+        use kim_log_verbosity_module, only: kim_log_verbosity_type
+        use kim_interoperable_types_module, only: kim_model_type
         implicit none
         type(kim_model_type), intent(in) :: model
         type(kim_log_verbosity_type), intent(in), value :: log_verbosity
@@ -1397,15 +1415,15 @@ contains
   !!
   !! \since 2.0
   recursive subroutine kim_model_pop_log_verbosity(model_handle)
-    use kim_log_verbosity_module, only : kim_log_verbosity_type
-    use kim_interoperable_types_module, only : kim_model_type
+    use kim_log_verbosity_module, only: kim_log_verbosity_type
+    use kim_interoperable_types_module, only: kim_model_type
     implicit none
     interface
       recursive subroutine pop_log_verbosity(model) &
         bind(c, name="KIM_Model_PopLogVerbosity")
         use, intrinsic :: iso_c_binding
-        use kim_log_verbosity_module, only : kim_log_verbosity_type
-        use kim_interoperable_types_module, only : kim_model_type
+        use kim_log_verbosity_module, only: kim_log_verbosity_type
+        use kim_interoperable_types_module, only: kim_model_type
         implicit none
         type(kim_model_type), intent(in) :: model
       end subroutine pop_log_verbosity

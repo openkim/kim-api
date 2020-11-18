@@ -19,7 +19,7 @@
 #
 
 #
-# Copyright (c) 2013--2019, Regents of the University of Minnesota.
+# Copyright (c) 2013--2020, Regents of the University of Minnesota.
 # All rights reserved.
 #
 # Contributors:
@@ -29,11 +29,11 @@
 #
 
 #
-# Release: This file is part of the kim-api-2.1.3 package.
+# Release: This file is part of the kim-api-2.2.0 package.
 #
 
 
-target_include_directories(kim-api PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(kim-api PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
 
 set(F_MOD_DIR $<TARGET_PROPERTY:kim-api,Fortran_MODULE_DIRECTORY>)
 set(FORTRAN_MODULES
@@ -76,7 +76,9 @@ set(FORTRAN_MODULES
   ${F_MOD_DIR}/kim_unit_system_module.mod
   )
 
-install(FILES ${FORTRAN_MODULES} DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME}/${KIM_API_Fortran_MODULE_DIR_IDENTIFIER})
+install(FILES ${FORTRAN_MODULES}
+  # use CMAKE_INSTALL_RELOC_* to get relocatable GNUInstallDir behavior
+  DESTINATION ${CMAKE_INSTALL_RELOC_LIBDIR}/${PROJECT_NAME}/${KIM_API_Fortran_MODULE_DIR_IDENTIFIER})
 
 set(F_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/kim_charge_unit_module.f90

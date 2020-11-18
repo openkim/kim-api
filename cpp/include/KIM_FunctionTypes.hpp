@@ -19,7 +19,7 @@
 //
 
 //
-// Copyright (c) 2016--2019, Regents of the University of Minnesota.
+// Copyright (c) 2016--2020, Regents of the University of Minnesota.
 // All rights reserved.
 //
 // Contributors:
@@ -27,12 +27,14 @@
 //
 
 //
-// Release: This file is part of the kim-api-2.1.3 package.
+// Release: This file is part of the kim-api-2.2.0 package.
 //
 
 
 #ifndef KIM_FUNCTION_TYPES_HPP_
 #define KIM_FUNCTION_TYPES_HPP_
+
+#include <string>
 
 namespace KIM
 {
@@ -190,6 +192,14 @@ typedef int ModelComputeArgumentsDestroyFunction(
 ///
 /// \since 2.0
 typedef int ModelDestroyFunction(ModelDestroy * const modelDestroy);
+
+/// \brief Prototype for Log PrintFunction routine.
+///
+/// \sa KIM_LogPrintFunction,
+/// kim_log_module::kim_log_push_default_print_function
+///
+/// \since 2.2
+typedef int LogPrintFunction(std::string const & entryString);
 }  // namespace KIM
 
 #endif  // KIM_FUNCTION_TYPES_HPP_

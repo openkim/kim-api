@@ -19,7 +19,7 @@
 #
 
 #
-# Copyright (c) 2013--2019, Regents of the University of Minnesota.
+# Copyright (c) 2013--2020, Regents of the University of Minnesota.
 # All rights reserved.
 #
 # Contributors:
@@ -30,11 +30,12 @@
 #
 
 #
-# Release: This file is part of the kim-api-2.1.3 package.
+# Release: This file is part of the kim-api-2.2.0 package.
 #
 
 
 install(
   FILES kim-api-c-style.el
-  DESTINATION ${CMAKE_INSTALL_DATADIR}/emacs/site-lisp/${PROJECT_NAME}
+  # use CMAKE_INSTALL_RELOC_* to get relocatable GNUInstallDir behavior
+  DESTINATION ${CMAKE_INSTALL_RELOC_DATADIR}/emacs/site-lisp/${PROJECT_NAME}
   )

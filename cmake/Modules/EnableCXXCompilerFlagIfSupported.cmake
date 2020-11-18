@@ -19,7 +19,7 @@
 #
 
 #
-# Copyright (c) 2013--2019, Regents of the University of Minnesota.
+# Copyright (c) 2013--2020, Regents of the University of Minnesota.
 # All rights reserved.
 #
 # Contributors:
@@ -29,21 +29,23 @@
 #
 
 #
-# Release: This file is part of the kim-api-2.1.3 package.
+# Release: This file is part of the kim-api-2.2.0 package.
 #
 
 
 include(CheckCXXCompilerFlag)
 
 function(enable_cxx_compiler_flag_if_supported _flag)
-  string(FIND "${KIM_API_CXX_FLAGS}" "${_flag}" _flag_already_set)
+  if(NOT KIM_API_CXX_FLAGS)
+    set(KIM_API_CXX_FLAGS "")
+  endif()
   string(MAKE_C_IDENTIFIER "${_flag}" _cid_flag)
+  string(FIND "${KIM_API_CXX_FLAGS}" "${_flag}" _flag_already_set)
   if(_flag_already_set EQUAL -1)
     check_cxx_compiler_flag("${_flag}" cxx_support_for_${_cid_flag})
     if(cxx_support_for_${_cid_flag})
-
       set(KIM_API_CXX_FLAGS "${KIM_API_CXX_FLAGS} ${_flag}" PARENT_SCOPE)
     endif()
-        unset(cxx_support_for_${_cid_flag} CACHE)
-    endif()
-endfunction()
+    unset(cxx_support_for_${_cid_flag} CACHE)
+  endif()
+endfunction(enable_cxx_compiler_flag_if_supported)

@@ -32,8 +32,9 @@
 #define LENNARD_JONES_612_IMPLEMENTATION_HPP_
 
 #include "KIM_LogMacros.hpp"
-#include "LennardJones612.hpp"
+#include "KIM_ModelDriverHeaders.hpp"
 #include <cmath>
+#include <cstdio>
 #include <vector>
 
 #define DIMENSION 3
@@ -432,7 +433,9 @@ int LennardJones612Implementation::Compute(
             if ((isComputeEnergy == true) || (isComputeParticleEnergy == true))
             {  // Compute phi
               if (isShift == true)
-              { LENNARD_JONES_PHI(-constShifts2D[iSpecies][jSpecies]); }
+              {
+                LENNARD_JONES_PHI(-constShifts2D[iSpecies][jSpecies]);
+              }
               else
               {
                 LENNARD_JONES_PHI(;);
@@ -487,7 +490,9 @@ int LennardJones612Implementation::Compute(
               }
 
               if (isComputeVirial == true)
-              { ProcessVirialTerm(dEidr, rij, r_ij_const, i, j, virial); }
+              {
+                ProcessVirialTerm(dEidr, rij, r_ij_const, i, j, virial);
+              }
 
               if (isComputeParticleVirial == true)
               {

@@ -1,0 +1,820 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the Common Development
+# and Distribution License Version 1.0 (the "License").
+#
+# You can obtain a copy of the license at
+# http://www.opensource.org/licenses/CDDL-1.0.  See the License for the
+# specific language governing permissions and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each file and
+# include the License file in a prominent location with the name LICENSE.CDDL.
+# If applicable, add the following below this CDDL HEADER, with the fields
+# enclosed by brackets "[]" replaced with your own identifying information:
+#
+# Portions Copyright (c) [yyyy] [name of copyright owner]. All rights reserved.
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2013--2020, Regents of the University of Minnesota.
+# All rights reserved.
+#
+# Contributors:
+#    Richard Berger
+#    Christoph Junghans
+#    Ryan S. Elliott
+#    Alexander Stukowski
+#
+
+#
+# Release: This file is part of the kim-api-2.2.0 package.
+#
+
+
+# - Macros and Functions that are part of the KIM-API-ITEMS package
+#
+#  add_kim_api_model_library()           - create kim-api model target
+#  add_kim_api_model_driver_library()    - creaet kim-api model driver target
+#
+#
+#  kim_api_items_set_compiler_variables()
+#  kim_api_items_set_cmake_compiler_variables()
+#
+#  kim_api_items_set_compiler_standard_variables()
+#  kim_api_items_set_cmake_compiler_standard_variables()
+#
+#  kim_api_items_set_compiler_flag_variables()
+#  kim_api_items_prepend_compiler_flags_to_cmake_variables()
+#
+#  kim_api_items_set_build_type_variable()
+#  kim_api_items_set_cmake_build_type_variable_in_cache()
+#
+
+
+set(KIM_API_INSTALL_COLLECTION "SYSTEM" CACHE STRING "KIM API Collection in which to install items")
+set_property(CACHE KIM_API_INSTALL_COLLECTION PROPERTY STRINGS SYSTEM USER ENVIRONMENT)
+
+
+#
+# Function to be used by KIM-API-ITEMS package users to add KIM-API items of type:
+#  * Portable models
+#    - Stand alone portable model
+#    - Parameterized portable model
+#  * Simulator model
+#
+function(add_kim_api_model_library${REMOVE_THIS_FOR_3_0_0_RELEASE})
+  set(_options "")
+  set(_oneValueArgs NAME DRIVER_NAME CREATE_ROUTINE_NAME CREATE_ROUTINE_LANGUAGE SM_SPEC_FILE)
+  set(_multiValueArgs PARAMETER_FILES METADATA_FILES)
+  cmake_parse_arguments(_MODEL "${_options}" "${_oneValueArgs}" "${_multiValueArgs}" ${ARGN})
+  if(_MODEL_UNPARSED_ARGUMENTS)
+    message(FATAL_ERROR "Unparsed arguments found in 'add_kim_api_model_library'")
+  endif()
+
+  # Determine item type
+  if(NOT "${_MODEL_SM_SPEC_FILE}" STREQUAL "")
+    set(_MODEL_TYPE "simulatorModel")
+    if(NOT "${_MODEL_DRIVER_NAME}" STREQUAL "")
+      message(FATAL_ERROR "Cannot specify SM_SPEC_FILE and DRIVER_NAME together")
+    endif()
+    if(NOT "${_MODEL_CREATE_ROUTINE_NAME}" STREQUAL "")
+      message(FATAL_ERROR "Cannot specify SM_SPEC_FILE and CREATE_ROUTINE_NAME together")
+    endif()
+    if(NOT "${_MODEL_CREATE_ROUTINE_LANGUAGE}" STREQUAL "")
+      message(FATAL_ERROR "Cannot specify SM_SPEC_FILE and CREATE_ROUTINE_LANGUAGE together")
+    endif()
+  else()
+    set(_MODEL_TYPE "portableModel")
+    if("${_MODEL_DRIVER_NAME}" STREQUAL "")  # stand-alone
+      if("${_MODEL_CREATE_ROUTINE_NAME}" STREQUAL "")
+        message(FATAL_ERROR "Must specify CREATE_ROUTINE_NAME for stand-alone portable model")
+      endif()
+      if("${_MODEL_CREATE_ROUTINE_LANGUAGE}" STREQUAL "")
+        message(FATAL_ERROR "Must specify CREATE_ROUTINE_LANGUAGE for stand-alone portable model")
+      endif()
+      if(NOT "${_MODEL_PARAMETER_FILES}" STREQUAL "")
+        message(FATAL_ERROR "Cannot specify PARAMETER_FILES for stand-alone portable model")
+      endif()
+    else()  # parameterized
+      if(NOT "${_MODEL_CREATE_ROUTINE_NAME}" STREQUAL "")
+        message(FATAL_ERROR "Cannot specify CREATE_ROUTINE_NAME for parameterized portable model")
+      endif()
+      if(NOT "${_MODEL_CREATE_ROUTINE_LANGUAGE}" STREQUAL "")
+        message(FATAL_ERROR "Cannot specify CREATE_ROUTINE_LANGUAGE for parameterized portable model")
+      endif()
+      if("${_MODEL_PARAMETER_FILES}" STREQUAL "")
+        message(FATAL_ERROR "Must specify PARAMETER_FILES for parameterized portable model")
+      endif()
+    endif()
+  endif()
+
+  _add_kim_api_library(
+    TYPE "${_MODEL_TYPE}"
+    NAME "${_MODEL_NAME}"
+    DRIVER_NAME "${_MODEL_DRIVER_NAME}"
+    CREATE_ROUTINE_LANGUAGE "${_MODEL_CREATE_ROUTINE_LANGUAGE}"
+    CREATE_ROUTINE_NAME "${_MODEL_CREATE_ROUTINE_NAME}"
+    SM_SPEC_FILE "${_MODEL_SM_SPEC_FILE}"
+    PARAMETER_FILES "${_MODEL_PARAMETER_FILES}"
+    METADATA_FILES "${_MODEL_METADATA_FILES}"
+    )
+endfunction(add_kim_api_model_library${REMOVE_THIS_FOR_3_0_0_RELEASE})
+
+#
+# Function to be used by KIM-API-ITEMS package users to add KIM-API model driver items
+#
+function(add_kim_api_model_driver_library${REMOVE_THIS_FOR_3_0_0_RELEASE})
+  set(_options "")
+  set(_oneValueArgs NAME CREATE_ROUTINE_NAME CREATE_ROUTINE_LANGUAGE)
+  set(_multiValueArgs METADATA_FILES)
+  cmake_parse_arguments(_MODEL_DRIVER "${_options}" "${_oneValueArgs}" "${_multiValueArgs}" ${ARGN})
+  if(_MODEL_DRIVER_UNPARSED_ARGUMENTS)
+    message(FATAL_ERROR "Unparsed arguments found in 'add_kim_api_model_driver_library'")
+  endif()
+
+  if("${_MODEL_DRIVER_NAME}" STREQUAL "")
+    message(FATAL_ERROR "No Model Driver name provided")
+  endif()
+  if("${_MODEL_DRIVER_CREATE_ROUTINE_NAME}" STREQUAL "")
+    message(FATAL_ERROR "No Model Driver create routine name provided")
+  endif()
+  if("${_MODEL_DRIVER_CREATE_ROUTINE_LANGUAGE}" STREQUAL "")
+    message(FATAL_ERROR "No Model Driver create routine language provided")
+  endif()
+
+  _add_kim_api_library(
+    TYPE "modelDriver"
+    NAME "${_MODEL_DRIVER_NAME}"
+    DRIVER_NAME ""
+    CREATE_ROUTINE_LANGUAGE "${_MODEL_DRIVER_CREATE_ROUTINE_LANGUAGE}"
+    CREATE_ROUTINE_NAME "${_MODEL_DRIVER_CREATE_ROUTINE_NAME}"
+    SM_SPEC_FILE ""
+    PARAMETER_FILES ""
+    METADATA_FILES "${_MODEL_DRIVER_METADATA_FILES}"
+    )
+endfunction(add_kim_api_model_driver_library${REMOVE_THIS_FOR_3_0_0_RELEASE})
+
+
+macro(kim_api_items_set_compiler_variables)
+  set(KIM_API_CMAKE_CXX_COMPILER "@KIM_API_CMAKE_CXX_COMPILER@")
+  set(KIM_API_CMAKE_C_COMPILER "@KIM_API_CMAKE_C_COMPILER@")
+  set(KIM_API_CMAKE_Fortran_COMPILER "@KIM_API_CMAKE_Fortran_COMPILER@")
+endmacro(kim_api_items_set_compiler_variables)
+
+macro(kim_api_items_set_cmake_compiler_variables)
+  kim_api_items_set_compiler_variables()
+
+  set(CMAKE_CXX_COMPILER "${KIM_API_CMAKE_CXX_COMPILER}")
+  set(CMAKE_C_COMPILER "${KIM_API_CMAKE_C_COMPILER}")
+  set(CMAKE_Fortran_COMPILER "${KIM_API_CMAKE_Fortran_COMPILER}")
+endmacro(kim_api_items_set_cmake_compiler_variables)
+
+macro(kim_api_items_set_compiler_standard_variables)
+  # Language standards
+  #
+  set(KIM_API_CMAKE_CXX_STANDARD @CMAKE_CXX_STANDARD@)
+  set(KIM_API_CMAKE_CXX_STANDARD_REQUIRED @CMAKE_CXX_STANDARD_REQUIRED@)
+  set(KIM_API_CMAKE_CXX_EXTENSIONS @CMAKE_CXX_EXTENSIONS@)
+  #
+  set(KIM_API_CMAKE_C_STANDARD @CMAKE_C_STANDARD@)
+  set(KIM_API_CMAKE_C_STANDARD_REQUIRED @CMAKE_C_STANDARD_REQUIRED@)
+  set(KIM_API_CMAKE_C_EXTENSIONS @CMAKE_C_EXTENSIONS@)
+  #
+  # NO similar setting exist yet in CMake for Fortran
+endmacro(kim_api_items_set_compiler_standard_variables)
+
+macro(kim_api_items_set_cmake_compiler_standard_variables)
+  kim_api_items_set_compiler_standard_variables()
+
+  set(CMAKE_CXX_STANDARD ${KIM_API_CMAKE_CXX_STANDARD})
+  set(CMAKE_CXX_STANDARD_REQUIRED ${KIM_API_CMAKE_CXX_STANDARD_REQUIRED})
+  set(CMAKE_CXX_EXTENSIONS ${KIM_API_CMAKE_CXX_EXTENSIONS})
+  #
+  set(CMAKE_C_STANDARD ${KIM_API_CMAKE_C_STANDARD})
+  set(CMAKE_C_STANDARD_REQUIRED ${KIM_API_CMAKE_C_STANDARD_REQUIRED})
+  set(CMAKE_C_EXTENSIONS ${KIM_API_CMAKE_C_EXTENSIONS})
+  #
+  # NO similar setting exist yet in CMake for Fortran
+endmacro(kim_api_items_set_cmake_compiler_standard_variables)
+
+macro(kim_api_items_set_compiler_flag_variables)
+  set(KIM_API_EXE_LINKER_FLAGS "@KIM_API_EXE_LINKER_FLAGS@")
+  set(KIM_API_CXX_FLAGS "@KIM_API_CXX_FLAGS@")
+  set(KIM_API_C_FLAGS "@KIM_API_C_FLAGS@")
+  set(KIM_API_Fortran_FLAGS "@KIM_API_Fortran_FLAGS@")
+endmacro(kim_api_items_set_compiler_flag_variables)
+
+macro(kim_api_items_prepend_compiler_flags_to_cmake_variables)
+  kim_api_items_set_compiler_flag_variables()
+
+  set(CMAKE_EXE_LINKER_FLAGS "${KIM_API_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS}")
+  set(CMAKE_CXX_FLAGS "${KIM_API_CXX_FLAGS} ${CMAKE_CXX_FLAGS}")
+  set(CMAKE_C_FLAGS "${KIM_API_C_FLAGS} ${CMAKE_C_FLAGS}")
+  set(CMAKE_Fortran_FLAGS "${KIM_API_Fortran_FLAGS} ${CMAKE_Fortran_FLAGS}")
+endmacro(kim_api_items_prepend_compiler_flags_to_cmake_variables)
+
+macro(kim_api_items_set_build_type_variable)
+  set(KIM_API_CMAKE_BUILD_TYPE "@CMAKE_BUILD_TYPE@")
+endmacro(kim_api_items_set_build_type_variable)
+
+macro(kim_api_items_set_cmake_build_type_variable_in_cache)
+  kim_api_items_set_build_type_variable()
+
+  # enable_language() will cache a default value unless CMAKE_BUILD_TYPE has
+  # previously been cached elsewhere.  So, typically this macro must be used
+  # before a call to project().
+  set(CMAKE_BUILD_TYPE "${KIM_API_CMAKE_BUILD_TYPE}" CACHE STRING "Build Type")
+endmacro(kim_api_items_set_cmake_build_type_variable_in_cache)
+
+
+#
+# Function to set ITEM_* variables in parent scope for use in configuring
+# item-wrapper.cpp.in
+#
+# This function does error checking only for each variable individaully,
+# it does not attempt to validate values across variables.
+#
+function(_set_item_template_variables)
+  set(_options "")
+  set(_oneValueArgs
+    TYPE NAME DRIVER_NAME CREATE_ROUTINE_LANGUAGE CREATE_ROUTINE_NAME SM_SPEC_FILE)
+  set(_multiValueArgs PARAMETER_FILES METADATA_FILES)
+  cmake_parse_arguments(_ITEM "${_options}" "${_oneValueArgs}" "${_multiValueArgs}" ${ARGN})
+  if(_ITEM_UNPARSED_ARGUMENTS)
+    message(FATAL_ERROR "Unparsed arguments found in '_set_item_template_variables'")
+  endif()
+
+  # ITEM_TYPE
+  set(_KNOWN_TYPES portableModel modelDriver simulatorModel)
+  if(NOT ${_ITEM_TYPE} IN_LIST _KNOWN_TYPES)
+    message(FATAL_ERROR "Unknown KIM item type")
+  endif()
+  unset(_KNOWN_TYPES)
+  set(ITEM_TYPE "${_ITEM_TYPE}" PARENT_SCOPE)
+
+  # ITEM_NAME and ITEM_NAME_QUOTED
+  if("${_ITEM_NAME}" STREQUAL "")
+    message(FATAL_ERROR "KIM items must be given names")
+  endif()
+  string(MAKE_C_IDENTIFIER "${_ITEM_NAME}" _ITEM_C_NAME)
+  if(NOT "${_ITEM_C_NAME}" STREQUAL "${_ITEM_NAME}")
+    message(FATAL_ERROR "KIM item names must be valid C identifiers")
+  endif()
+  set(ITEM_NAME "${_ITEM_NAME}" PARENT_SCOPE)
+  set(ITEM_NAME_QUOTED "\"${_ITEM_NAME}\"" PARENT_SCOPE)
+
+  # ITEM_DRIVER_NAME and ITEM_DRIVER_NAME_QUOTED
+  if("${_ITEM_DRIVER_NAME}" STREQUAL "")
+    set(ITEM_DRIVER_NAME "" PARENT_SCOPE)
+    set(ITEM_DRIVER_NAME_QUOTED "NULL" PARENT_SCOPE)
+  else()
+    set(ITEM_DRIVER_NAME "${_ITEM_DRIVER_NAME}" PARENT_SCOPE)
+    set(ITEM_DRIVER_NAME_QUOTED "\"${_ITEM_DRIVER_NAME}\"" PARENT_SCOPE)
+  endif()
+
+  # ITEM_CREATE_ROUTINE_LANGUAGE
+  set(_KNOWN_LANGUAGES cpp c fortran)
+  if(NOT "${_ITEM_CREATE_ROUTINE_LANGUAGE}" IN_LIST _KNOWN_LANGUAGES)
+    message(FATAL_ERROR "Unknown KIM item create routine language")
+  endif()
+  unset(_KNOWN_LANGUAGES)
+  set(ITEM_CREATE_ROUTINE_LANGUAGE "${_ITEM_CREATE_ROUTINE_LANGUAGE}" PARENT_SCOPE)
+
+  # ITEM_CREATE_ROUTINE_NAME
+  if("${_ITEM_CREATE_ROUTINE_NAME}" STREQUAL "")
+    set(ITEM_CREATE_ROUTINE_NAME "NULL" PARENT_SCOPE)
+  else()
+    set(ITEM_CREATE_ROUTINE_NAME "${_ITEM_CREATE_ROUTINE_NAME}" PARENT_SCOPE)
+  endif()
+
+  # ITEM_CREATE_ROUTINE_DECLARATION
+  if("${_ITEM_CREATE_ROUTINE_NAME}" STREQUAL "")
+    set(ITEM_CREATE_ROUTINE_DECLARATION "" PARENT_SCOPE)
+  else()
+    if("${_ITEM_TYPE}" STREQUAL "modelDriver")
+      set(_create_typedef "ModelDriverCreateFunction")
+    else()
+      set(_create_typedef "ModelCreateFunction")
+    endif()
+    if("${_ITEM_CREATE_ROUTINE_LANGUAGE}" STREQUAL "cpp")
+      set(ITEM_CREATE_ROUTINE_DECLARATION "KIM::${_create_typedef} ${_ITEM_CREATE_ROUTINE_NAME};" PARENT_SCOPE)
+    elseif("${_ITEM_CREATE_ROUTINE_LANGUAGE}" STREQUAL "c")
+      set(ITEM_CREATE_ROUTINE_DECLARATION "KIM_${_create_typedef} ${_ITEM_CREATE_ROUTINE_NAME};" PARENT_SCOPE)
+    elseif("${_ITEM_CREATE_ROUTINE_LANGUAGE}" STREQUAL "fortran")
+      set(ITEM_CREATE_ROUTINE_DECLARATION
+        "void ${_ITEM_CREATE_ROUTINE_NAME}(KIM_${_create_typedef} *, KIM_LengthUnit, KIM_EnergyUnit, KIM_ChargeUnit, KIM_TemperatureUnit, KIM_TimeUnit, int *);" PARENT_SCOPE)
+    else()
+      message(FATAL_ERROR "Unknown KIM item create routine language")
+    endif()
+    unset(_create_typedef)
+  endif()
+
+  # ITEM_SM_SPEC_FILE
+  set(ITEM_SM_SPEC_FILE "${_ITEM_SM_SPEC_FILE}" PARENT_SCOPE)
+
+  # ITEM_NUMBER_OF_SM_SPEC_FILES
+  list(LENGTH _ITEM_SM_SPEC_FILE _LIST_LEN)
+  set(ITEM_NUMBER_OF_SM_SPEC_FILES ${_LIST_LEN} PARENT_SCOPE)
+  unset(_LIST_LEN)
+  if(ITEM_NUMBER_OF_SM_SPEC_FILES GREATER 1)
+    message(FATAL_ERROR "There can only be one smspec file")
+  endif()
+
+  # ITEM_PARAMETER_FILES
+  set(ITEM_PARAMETER_FILES "${_ITEM_PARAMETER_FILES}" PARENT_SCOPE)
+
+  # ITEM_NUMBER_OF_PARAMETER_FILES
+  list(LENGTH _ITEM_PARAMETER_FILES _LIST_LEN)
+  set(ITEM_NUMBER_OF_PARAMETER_FILES ${_LIST_LEN} PARENT_SCOPE)
+
+  # ITEM_METADATA_FILES
+  set(_METADATA_LOCAL_FILES "item-compiled-with-version.txt")
+  list(INSERT _ITEM_METADATA_FILES 0 "${_METADATA_LOCAL_FILES}")
+  unset(_METADATA_LOCAL_FILES)
+  file(GLOB _OPENKIM_STANDARD_METADATA_FILES
+    LIST_DIRECTORIES false
+    RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}"
+    "kimspec.edn" "kimprovenance.edn" "kimcite-*.bib")
+  if(_OPENKIM_STANDARD_METADATA_FILES)
+    foreach(_FL IN LISTS _OPENKIM_STANDARD_METADATA_FILES)
+      file(SHA1 "${CMAKE_CURRENT_SOURCE_DIR}/${_FL}" _FL_SHA1)
+      if (NOT "${_FL_SHA1}" STREQUAL "da39a3ee5e6b4b0d3255bfef95601890afd80709")  # SHA1 hash of empty file
+        list(APPEND _ITEM_METADATA_FILES "${_FL}")
+      endif()
+    endforeach()
+    unset(_FL)
+  endif()
+  unset(_OPENKIM_STANDARD_METADATA_FILES)
+  set(ITEM_METADATA_FILES "${_ITEM_METADATA_FILES}" PARENT_SCOPE)
+
+  # ITEM_NUMBER_OF_METADATA_FILES
+  list(LENGTH _ITEM_METADATA_FILES _LIST_LEN)
+  set(ITEM_NUMBER_OF_METADATA_FILES ${_LIST_LEN} PARENT_SCOPE)
+  unset(_LIST_LEN)
+endfunction(_set_item_template_variables)
+
+macro(_set_model_driver_template_variables)
+  set(_options "")
+  set(_oneValueArgs NAME CREATE_ROUTINE_LANGUAGE CREATE_ROUTINE_NAME)
+  set(_multiValueArgs METADATA_FILES)
+  cmake_parse_arguments(_ITEM "${_options}" "${_oneValueArgs}" "${_multiValueArgs}" ${ARGN})
+  if(_ITEM_UNPARSED_ARGUMENTS)
+    message(FATAL_ERROR "Unparsed arguments found in '_set_model_driver_template_variables'")
+  endif()
+  unset(_options)
+  unset(_oneValueArgs)
+  unset(_multiValueArgs)
+
+  if("${_ITEM_CREATE_ROUTINE_NAME}" STREQUAL "")
+    message(FATAL_ERROR "Create routine name must be provided")
+  endif()
+
+  _set_item_template_variables(
+    TYPE "modelDriver"
+    NAME "${_ITEM_NAME}"
+    DRIVER_NAME ""
+    CREATE_ROUTINE_LANGUAGE "${_ITEM_CREATE_ROUTINE_LANGUAGE}"
+    CREATE_ROUTINE_NAME "${_ITEM_CREATE_ROUTINE_NAME}"
+    SM_SPEC_FILE ""
+    PARAMETER_FILES ""
+    METADATA_FILES "${_ITEM_METADATA_FILES}"
+    )
+endmacro(_set_model_driver_template_variables)
+
+
+#
+# Macro to set ITEM_* variables for a STAND ALONE PORTABLE MODEL in current
+# scope for use in configuring item-wrapper.cpp.in
+#
+# This function does error checking to validate all necessary values are
+# provided.
+#
+macro(_set_stand_alone_portable_model_template_variables)
+  set(_options "")
+  set(_oneValueArgs NAME CREATE_ROUTINE_LANGUAGE CREATE_ROUTINE_NAME)
+  set(_multiValueArgs METADATA_FILES)
+  cmake_parse_arguments(_ITEM "${_options}" "${_oneValueArgs}" "${_multiValueArgs}" ${ARGN})
+  if(_ITEM_UNPARSED_ARGUMENTS)
+    message(FATAL_ERROR "Unparsed arguments found in '_set_stand_alone_portable_model_template_variables'")
+  endif()
+  unset(_options)
+  unset(_oneValueArgs)
+  unset(_multiValueArgs)
+
+  if("${_ITEM_CREATE_ROUTINE_NAME}" STREQUAL "")
+    message(FATAL_ERROR "Create routine name must be provided")
+  endif()
+
+  _set_item_template_variables(
+    TYPE "portableModel"
+    NAME "${_ITEM_NAME}"
+    DRIVER_NAME ""
+    CREATE_ROUTINE_LANGUAGE "${_ITEM_CREATE_ROUTINE_LANGUAGE}"
+    CREATE_ROUTINE_NAME "${_ITEM_CREATE_ROUTINE_NAME}"
+    SM_SPEC_FILE ""
+    PARAMETER_FILES ""
+    METADATA_FILES "${_ITEM_METADATA_FILES}"
+    )
+endmacro()
+
+#
+# Macro to set ITEM_* variables for a PARAMETERIZED PORTABLE MODEL in current
+# scope for use in configuring item-wrapper.cpp.in
+#
+# This function does error checking to validate all necessary values are
+# provided.
+#
+macro(_set_parameterized_portable_model_template_variables)
+  set(_options "")
+  set(_oneValueArgs NAME DRIVER_NAME)
+  set(_multiValueArgs PARAMETER_FILES METADATA_FILES)
+  cmake_parse_arguments(_ITEM "${_options}" "${_oneValueArgs}" "${_multiValueArgs}" ${ARGN})
+  if(_ITEM_UNPARSED_ARGUMENTS)
+    message(FATAL_ERROR "Unparsed arguments found in '_set_parameterized_portable_model_template_variables'")
+  endif()
+  unset(_options)
+  unset(_oneValueArgs)
+  unset(_multiValueArgs)
+
+  if("${_ITEM_DRIVER_NAME}" STREQUAL "")
+    message(FATAL_ERROR "Driver name must be provided")
+  endif()
+
+  if("${_ITEM_PARAMETER_FILES}" STREQUAL "")
+    message(FATAL_ERROR "Parameter files must be provided")
+  endif()
+
+  _set_item_template_variables(
+    TYPE "portableModel"
+    NAME "${_ITEM_NAME}"
+    DRIVER_NAME "${_ITEM_DRIVER_NAME}"
+    CREATE_ROUTINE_LANGUAGE "cpp"
+    CREATE_ROUTINE_NAME ""
+    SM_SPEC_FILE ""
+    PARAMETER_FILES "${_ITEM_PARAMETER_FILES}"
+    METADATA_FILES "${_ITEM_METADATA_FILES}"
+    )
+endmacro()
+
+#
+# Macro to set ITEM_* variables for a SIMULATOR MODEL in current scope for use
+# in configuring item-wrapper.cpp.in
+#
+# This function does error checking to validate all necessary values are
+# provided.
+#
+macro(_set_simulator_model_template_variables)
+  set(_options "")
+  set(_oneValueArgs NAME SM_SPEC_FILE)
+  set(_multiValueArgs PARAMETER_FILES METADATA_FILES)
+  cmake_parse_arguments(_ITEM "${_options}" "${_oneValueArgs}" "${_multiValueArgs}" ${ARGN})
+  if(_ITEM_UNPARSED_ARGUMENTS)
+    message(FATAL_ERROR "Unparsed arguments found in '_set_simulator_model_template_variables'")
+  endif()
+  unset(_options)
+  unset(_oneValueArgs)
+  unset(_multiValueArgs)
+
+  if("${_ITEM_SM_SPEC_FILE}" STREQUAL "")
+    message(FATAL_ERROR "smspec file must be provided")
+  endif()
+
+  # OK for there to be no parameter files
+
+  _set_item_template_variables(
+    TYPE "simulatorModel"
+    NAME "${_ITEM_NAME}"
+    DRIVER_NAME ""
+    CREATE_ROUTINE_LANGUAGE "cpp"
+    CREATE_ROUTINE_NAME ""
+    SM_SPEC_FILE "${_ITEM_SM_SPEC_FILE}"
+    PARAMETER_FILES "${_ITEM_PARAMETER_FILES}"
+    METADATA_FILES "${_ITEM_METADATA_FILES}"
+    )
+endmacro()
+
+#
+# Function to create a custom command to convert a file (blob) to a c source.
+#
+# Convert _filein to hex then format as c source file and write to _fileout.
+# Assumes _filein is a relative file name in the _dirin directory.
+#
+# Sets _blob_to_c_command to string for use with add_custom_command()
+#
+function(_add_custom_command_blob_to_c _dirin _filein _fileout)
+  include(FindPackageMessage)
+  find_program(XXD_EXECUTABLE "xxd")
+  if(XXD_EXECUTABLE)
+    find_package_message(xxd "Found xxd: (${XXD_EXECUTABLE})" "found")
+
+    string(MAKE_C_IDENTIFIER ${_filein} _cfilein)
+    set(_edit_xxd_output "${CMAKE_CURRENT_BINARY_DIR}/EditXXDOutput.cmake")
+    if(NOT EXISTS "${_edit_xxd_output}")
+      file(WRITE "${_edit_xxd_output}"  # use a bracket argument to avoid ugly escaping
+        [=[
+        # This file was automatically generated by CMake; do not edit.
+        file(READ "${fileout}" _content)
+        string(REGEX REPLACE "unsigned char.*[[][]]" "unsigned char const ${varname}[]" _content "${_content}")
+        string(REGEX REPLACE "unsigned int.*=" "unsigned int const ${varname}_len =" _content "${_content}")
+        file(WRITE  "${fileout}" "${_content}")
+        unset(_content)
+        ]=]
+        )
+    endif()
+    add_custom_command(OUTPUT ${_fileout}
+      COMMAND ${XXD_EXECUTABLE} -i "${_filein}" "${_fileout}"
+      COMMAND ${CMAKE_COMMAND} "-Dvarname=${_cfilein}" "-Dfilein=${_filein}" "-Dfileout=${_fileout}" -P "${_edit_xxd_output}"
+      DEPENDS "${_dirin}/${_filein}" "${_edit_xxd_output}"
+      WORKING_DIRECTORY "${_dirin}"
+      )
+    unset(_cfilein)
+    unset(_edit_xxd_output)
+  else()
+    find_package_message(xxd "Missing xxd: Falling back to less efficient cmake implementation." "missing")
+
+    string(MAKE_C_IDENTIFIER ${_filein} _cfilein)
+    set(_blob_to_source "${CMAKE_CURRENT_BINARY_DIR}/BlobToCSource.cmake")
+    if(NOT EXISTS "${_blob_to_source}")
+      file(WRITE "${_blob_to_source}"  # use a bracket argument to avoid ugly escaping
+        [=[
+        # This file was automatically generated by CMake; do not edit.
+        file(READ "${filein}" _content HEX)
+        string(REGEX REPLACE "([0-9a-f][0-9a-f])" "0x\\1," _content "${_content}")
+        string(REGEX REPLACE ",$" "" _content "${_content}")
+        file(WRITE  "${fileout}" "unsigned char const ${varname}[] = { ${_content} };\n")
+        file(APPEND "${fileout}" "unsigned int const ${varname}_len = sizeof( ${varname} );\n")
+        unset(_content)
+        ]=]
+        )
+    endif()
+    add_custom_command(OUTPUT ${_fileout}
+      COMMAND ${CMAKE_COMMAND} "-Dvarname=${_cfilein}" "-Dfilein=${_filein}" "-Dfileout=${_fileout}" -P "${_blob_to_source}"
+      DEPENDS "${_dirin}/${_filein}" "${_blob_to_source}"
+      WORKING_DIRECTORY "${_dirin}"
+      )
+    unset(_cfilein)
+    unset(_blob_to_source)
+  endif()
+endfunction(_add_custom_command_blob_to_c)
+
+#
+# Function to create and define targets for c source files from provided data
+# files.  Assumes files are in either current source or current binary dir.
+#
+# Sets ITEM_*_SOURCES, ITEM_*_DECLARATIONS, ITEM_*_EMBEDDED_FILE_IDENTIFIER,
+# and ITEM_*_EMBEDDED_FILE_INITIALIZER_LIST variables in parent scope.
+#
+function(_xxd_process_files)
+  set(_options "")
+  set(_oneValueArgs FILE_TYPE)
+  set(_multiValueArgs FILE_NAMES)
+  cmake_parse_arguments(_ITEM "${_options}" "${_oneValueArgs}" "${_multiValueArgs}" ${ARGN})
+  if(_ITEM_UNPARSED_ARGUMENTS)
+    message(FATAL_ERROR "Unparsed arguments found in macro '_xxd_process_files'")
+  endif()
+  unset(_options)
+  unset(_oneValueArgs)
+  unset(_multiValueArgs)
+
+  if("${_ITEM_FILE_TYPE}" STREQUAL "")
+    message(FATAL_ERROR "FILE_TYPE must be provided")
+  endif()
+
+  set(_ITEM_SOURCES "")
+  set(_ITEM_DECLARATIONS "")
+  set(_ITEM_EMBEDDED_FILE_INITIALIZER_LIST "")
+  set(_ITEM_EMBEDDED_FILE_IDENTIFIER "NULL")
+
+  if (_ITEM_FILE_NAMES)
+    foreach(_FNAME ${_ITEM_FILE_NAMES})
+      string(MAKE_C_IDENTIFIER ${_FNAME} _CFNAME)
+      if("${_ITEM_DECLARATIONS}" STREQUAL "")
+        set(_ITEM_DECLARATIONS "extern unsigned int const ${_CFNAME}_len;\n")
+        set(_ITEM_DECLARATIONS "${_ITEM_DECLARATIONS}extern unsigned char const ${_CFNAME}[];")
+        set(_ITEM_EMBEDDED_FILE_IDENTIFIER "${_ITEM_FILE_TYPE}_Files")
+        set(_ITEM_EMBEDDED_FILE_INITIALIZER_LIST "static SharedLibrarySchemaV2::EmbeddedFile const ${_ITEM_FILE_TYPE}_Files[] = {\n")
+        set(_ITEM_EMBEDDED_FILE_INITIALIZER_LIST "${_ITEM_EMBEDDED_FILE_INITIALIZER_LIST}  {\"${_FNAME}\", ${_CFNAME}_len, ${_CFNAME}}")
+      else()
+        set(_ITEM_DECLARATIONS "${_ITEM_DECLARATIONS}\nextern unsigned int const ${_CFNAME}_len;\n")
+        set(_ITEM_DECLARATIONS "${_ITEM_DECLARATIONS}extern unsigned char const ${_CFNAME}[];")
+        set(_ITEM_EMBEDDED_FILE_INITIALIZER_LIST "${_ITEM_EMBEDDED_FILE_INITIALIZER_LIST},\n  {\"${_FNAME}\", ${_CFNAME}_len, ${_CFNAME}}")
+      endif()
+      unset(_CFNAME)
+      if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${_FNAME}")
+        set(_DIR_IN "${CMAKE_CURRENT_SOURCE_DIR}")
+      elseif(EXISTS "${CMAKE_CURRENT_BINARY_DIR}/${_FNAME}")
+        set(_DIR_IN "${CMAKE_CURRENT_BINARY_DIR}")
+      else()
+        message(FATAL_ERROR "Cannot find metadata file '${_FNAME}'")
+      endif()
+      set(_FILE "${CMAKE_CURRENT_BINARY_DIR}/${_FNAME}.c")
+      list(APPEND _ITEM_SOURCES ${_FILE})
+      _add_custom_command_blob_to_c("${_DIR_IN}" "${_FNAME}" "${_FILE}")
+      unset(_DIR_IN)
+    endforeach()
+    unset(_FNAME)
+    set(_ITEM_EMBEDDED_FILE_INITIALIZER_LIST "${_ITEM_EMBEDDED_FILE_INITIALIZER_LIST}\n};")
+  endif()
+
+  set(ITEM_${_ITEM_FILE_TYPE}_SOURCES "${_ITEM_SOURCES}" PARENT_SCOPE)
+  set(ITEM_${_ITEM_FILE_TYPE}_DECLARATIONS "${_ITEM_DECLARATIONS}" PARENT_SCOPE)
+  set(ITEM_${_ITEM_FILE_TYPE}_EMBEDDED_FILE_IDENTIFIER "${_ITEM_EMBEDDED_FILE_IDENTIFIER}" PARENT_SCOPE)
+  set(ITEM_${_ITEM_FILE_TYPE}_EMBEDDED_FILE_INITIALIZER_LIST "${_ITEM_EMBEDDED_FILE_INITIALIZER_LIST}" PARENT_SCOPE)
+endfunction(_xxd_process_files)
+
+#
+# Function to set collection install prefix and item library file name.
+#
+# Sets ITEM_INSTALL_PREFIX and ITEM_OUTPUT_NAME variables in parent scope.
+#
+function(_determine_collection_install_prefix_and_output_name _item_type)
+  if("${_item_type}" STREQUAL "")
+    message(FATAL_ERROR "Empty item type provided.")
+  endif()
+  if("${_item_type}" STREQUAL "modelDriver")
+    set(_item_type_upper "MODEL_DRIVER")
+    set(_item_arg "model_drivers")
+    set(_ITEM_OUTPUT_NAME "@PROJECT_NAME@-@KIM_API_MODEL_DRIVER_IDENTIFIER@")
+  elseif("${_item_type}" STREQUAL "portableModel")
+    set(_item_type_upper "PORTABLE_MODEL")
+    set(_item_arg "portable_models")
+    set(_ITEM_OUTPUT_NAME "@PROJECT_NAME@-@KIM_API_PORTABLE_MODEL_IDENTIFIER@")
+  elseif("${_item_type}" STREQUAL "simulatorModel")
+    set(_item_type_upper "SIMULATOR_MODEL")
+    set(_item_arg "simulator_models")
+    set(_ITEM_OUTPUT_NAME "@PROJECT_NAME@-@KIM_API_SIMULATOR_MODEL_IDENTIFIER@")
+  else()
+    message(FATAL_ERROR "Unknown item type.")
+  endif()
+  #
+  if("${KIM_API_INSTALL_COLLECTION}" STREQUAL "SYSTEM")
+    set(_col_arg "system")
+  elseif(KIM_API_INSTALL_COLLECTION STREQUAL "USER")
+    set(_col_arg "config_file")
+  elseif(KIM_API_INSTALL_COLLECTION STREQUAL "ENVIRONMENT")
+    set(_col_arg "env")
+  else()
+    message(FATAL_ERROR "Unknown value of KIM_API_INSTALL_COLLECTION : ${KIM_API_INSTALL_COLLECTION}.")
+  endif()
+
+  get_property(_IMPORTED TARGET KIM-API::collections-info PROPERTY "IMPORTED")
+  if(_IMPORTED)  # using install tree config
+    if("${CMAKE_BUILD_TYPE}" STREQUAL "")
+      set(_BUILD_TYPE "NOCONFIG")
+    else()
+      string(TOUPPER "${CMAKE_BUILD_TYPE}" _BUILD_TYPE)
+    endif()
+    get_property(_COLLECTIONS_INFO TARGET KIM-API::collections-info PROPERTY "IMPORTED_LOCATION_${_BUILD_TYPE}")
+    unset(_BUILD_TYPE)
+    if("${_COLLECTIONS_INFO}" STREQUAL "")
+      message(FATAL_ERROR "Unable to locate 'collections-info' utility")
+    endif()
+    execute_process(COMMAND ${_COLLECTIONS_INFO} ${_col_arg} ${_item_arg} OUTPUT_VARIABLE _ITEM_INSTALL_PREFIX OUTPUT_STRIP_TRAILING_WHITESPACE RESULT_VARIABLE _error)
+    unset(_COLLECTIONS_INFO)
+    unset(_col_arg)
+    unset(_item_arg)
+    string(REGEX REPLACE "^([^\n]+)\n.*" "\\1" _ITEM_INSTALL_PREFIX "${_ITEM_INSTALL_PREFIX}")
+    # check for command line override of install prefix
+    #
+    # UNDOCUMENTED FEATURE (used by homebrew, as of this writing)
+    #
+    # KIM_API_MODEL_DRIVER_INSTALL_PREFIX
+    # KIM_API_PORTABLE_MODEL_INSTALL_PREFIX
+    # KIM_API_SIMULATOR_MODEL_INSTALL_PREFIX
+    #
+    if(DEFINED KIM_API_${_item_type_upper}_INSTALL_PREFIX)
+      set(_ITEM_INSTALL_PREFIX "${KIM_API_${_item_type_upper}_INSTALL_PREFIX}")
+    endif()
+    unset(_item_type_upper)
+  else()  # using build tree config
+    if(NOT "${KIM_API_INSTALL_COLLECTION}" STREQUAL "SYSTEM")
+      message(FATAL_ERROR "Cannot install into ${KIM_API_INSTALL_COLLECTION} collection during KIM API build")
+    else()
+      _determine_default_system_collection_install_prefix(${_item_type})
+    endif()
+  endif()
+  unset(_IMPORTED)
+  if("${_ITEM_INSTALL_PREFIX}" STREQUAL "")
+    message(FATAL_ERROR "Unable to determine KIM API item install prefix.")
+  endif()
+  #
+  set(ITEM_INSTALL_PREFIX "${_ITEM_INSTALL_PREFIX}" PARENT_SCOPE)
+  set(ITEM_OUTPUT_NAME "${_ITEM_OUTPUT_NAME}" PARENT_SCOPE)
+endfunction(_determine_collection_install_prefix_and_output_name)
+
+#
+# Wrapper function for CMake's standard add_test() function, which takes care of setting up the DLL search path on Windows.
+# The function signature is the same as for the built-in add_test() function:
+#
+# add_kim_api_test(NAME <name> COMMAND <command> [<arg>...]
+#                  [CONFIGURATIONS <config>...]
+#                  [WORKING_DIRECTORY] <dir>
+#                  [COMMAND_EXPAND_LISTS])
+#
+# The wrapper function sets up the ENVIRONMENT property of the test case to extend the DLL search path.
+# Make sure you do not overwrite that property's value when setting up a custom environment
+# for the test case. Use set_property(TEST ... APPEND PROPERTY ENVIRONMENT ...) to add further
+# environment variables.
+#
+function(add_kim_api_test)
+
+  # Foward the function call and all arguments to the built-in add_test() function.
+  cmake_parse_arguments(KIMAPI_TEST "" "NAME" "" ${ARGN})
+  add_test(NAME ${KIMAPI_TEST_NAME} ${KIMAPI_TEST_UNPARSED_ARGUMENTS})
+
+  # Determine the value of the PATH environment variable to be used for running the CMake test.
+  # It is required on Windows, because kim-api.dll needs to be in the search
+  # path when running the test executables. We prepend the CMake build directory to the existing PATH variable.
+  if(CYGWIN)
+    # CMake under Cygwin expects ':' separated path list with '/' directory separators (Unix style).
+    set_property(TEST ${KIMAPI_TEST_NAME} APPEND PROPERTY ENVIRONMENT "PATH=$<TARGET_FILE_DIR:KIM-API::kim-api>:$ENV{PATH}")
+  elseif(MINGW)
+    # CMake under MinGW expects ';' separated path list with '\' directory separators (Windows style).
+    string(REPLACE ";" "\\;" PATH_VALUE "$ENV{PATH}")
+    set_property(TEST ${KIMAPI_TEST_NAME} APPEND PROPERTY ENVIRONMENT "PATH=$<SHELL_PATH:$<TARGET_FILE_DIR:KIM-API::kim-api>>\;${PATH_VALUE}")
+  else()
+    # No PATH needed on Unix/Linux platforms, where shared libraries are located using the rpath mechanism.
+  endif()
+
+endfunction(add_kim_api_test)
+
+#
+# Function to create a library target of any item type.  Uniformly processes
+# various data files and creates shared-library cmake test which ensures that
+# there are no undefined symbols in the shared library.
+#
+function(_add_kim_api_library)
+  set(_options "")
+  set(_oneValueArgs
+    TYPE NAME DRIVER_NAME CREATE_ROUTINE_LANGUAGE CREATE_ROUTINE_NAME SM_SPEC_FILE)
+  set(_multiValueArgs PARAMETER_FILES METADATA_FILES)
+  cmake_parse_arguments(_ITEM "${_options}" "${_oneValueArgs}" "${_multiValueArgs}" ${ARGN})
+  if(_ITEM_UNPARSED_ARGUMENTS)
+    message(FATAL_ERROR "Unparsed arguments found in '_add_kim_api_library'")
+  endif()
+  unset(_options)
+  unset(_oneValueArgs)
+  unset(_multiValueArgs)
+
+  file(COPY ${KIM-API-ITEMS_DIR}/item-compiled-with-version.txt DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+
+  if("${_ITEM_TYPE}" STREQUAL "modelDriver")
+    _set_model_driver_template_variables(
+      NAME "${_ITEM_NAME}"
+      CREATE_ROUTINE_NAME "${_ITEM_CREATE_ROUTINE_NAME}"
+      CREATE_ROUTINE_LANGUAGE "${_ITEM_CREATE_ROUTINE_LANGUAGE}"
+      METADATA_FILES "${_ITEM_METADATA_FILES}"
+      )
+  elseif("${_ITEM_TYPE}" STREQUAL "portableModel")
+    if("${_ITEM_CREATE_ROUTINE_NAME}" STREQUAL "")
+      _set_parameterized_portable_model_template_variables(
+        NAME "${_ITEM_NAME}"
+        DRIVER_NAME "${_ITEM_DRIVER_NAME}"
+        PARAMETER_FILES "${_ITEM_PARAMETER_FILES}"
+        METADATA_FILES "${_ITEM_METADATA_FILES}"
+        )
+    else()
+      _set_stand_alone_portable_model_template_variables(
+        NAME "${_ITEM_NAME}"
+        CREATE_ROUTINE_LANGUAGE "${_ITEM_CREATE_ROUTINE_LANGUAGE}"
+        CREATE_ROUTINE_NAME "${_ITEM_CREATE_ROUTINE_NAME}"
+        METADATA_FILES "${_ITEM_METADATA_FILES}"
+        )
+    endif()
+  elseif("${_ITEM_TYPE}" STREQUAL "simulatorModel")
+    _set_simulator_model_template_variables(
+      NAME "${_ITEM_NAME}"
+      SM_SPEC_FILE "${_ITEM_SM_SPEC_FILE}"
+      PARAMETER_FILES "${_ITEM_PARAMETER_FILES}"
+      METADATA_FILES "${_ITEM_METADATA_FILES}"
+      )
+  else()
+    message(FATAL_ERROR "Unknown item type")
+  endif()
+
+  set(_ITEM_SOURCES "")
+  _xxd_process_files(FILE_TYPE SM_SPEC_FILE FILE_NAMES "${ITEM_SM_SPEC_FILE}")
+  list(APPEND _ITEM_SOURCES ${ITEM_SM_SPEC_FILE_SOURCES})
+  _xxd_process_files(FILE_TYPE PARAMETER_FILE FILE_NAMES "${ITEM_PARAMETER_FILES}")
+  list(APPEND _ITEM_SOURCES ${ITEM_PARAMETER_FILE_SOURCES})
+  _xxd_process_files(FILE_TYPE METADATA_FILE FILE_NAMES "${ITEM_METADATA_FILES}")
+  list(APPEND _ITEM_SOURCES ${ITEM_METADATA_FILE_SOURCES})
+
+  configure_file(${KIM-API-ITEMS_DIR}/item-info.txt.in ${CMAKE_CURRENT_BINARY_DIR}/item-info.txt @ONLY)
+  configure_file(${KIM-API-ITEMS_DIR}/item-wrapper.cpp.in ${CMAKE_CURRENT_BINARY_DIR}/item-wrapper.cpp @ONLY)
+  list(APPEND _ITEM_SOURCES ${CMAKE_CURRENT_BINARY_DIR}/item-wrapper.cpp)
+
+  add_library(${ITEM_NAME} MODULE ${_ITEM_SOURCES})
+  target_include_directories(${ITEM_NAME} PRIVATE ${KIM-API-ITEMS_DIR})
+  target_link_libraries(${ITEM_NAME} PRIVATE KIM-API::kim-api)
+
+  _determine_collection_install_prefix_and_output_name("${_ITEM_TYPE}")
+  set_target_properties(${ITEM_NAME} PROPERTIES OUTPUT_NAME "${ITEM_OUTPUT_NAME}")
+  install(TARGETS ${ITEM_NAME} LIBRARY DESTINATION "${ITEM_INSTALL_PREFIX}/${ITEM_NAME}")
+
+  add_kim_api_test(NAME shared_library_test_${ITEM_NAME}
+    COMMAND KIM-API::shared-library-test $<TARGET_FILE:${ITEM_NAME}>)
+endfunction(_add_kim_api_library)

@@ -19,15 +19,16 @@
 //
 
 //
-// Copyright (c) 2016--2019, Regents of the University of Minnesota.
+// Copyright (c) 2016--2020, Regents of the University of Minnesota.
 // All rights reserved.
 //
 // Contributors:
 //    Ryan S. Elliott
+//    Alexander Stukowski
 //
 
 //
-// Release: This file is part of the kim-api-2.1.3 package.
+// Release: This file is part of the kim-api-2.2.0 package.
 //
 
 
@@ -71,24 +72,17 @@
 #include "KIM_SpeciesName.hpp"
 #endif
 
-#ifndef KIM_SUPPORT_STATUS_HPP_
-#include "KIM_SupportStatus.hpp"
+#ifndef KIM_FILESYSTEM_PATH_HPP_
+#include "KIM_FilesystemPath.hpp"
 #endif
-
-#ifndef KIM_COMPUTE_ARGUMENTS_HPP_
-#include "KIM_ComputeArguments.hpp"
-#endif
-
-#ifndef KIM_SHARED_LIBRARY_HPP_
-#include "KIM_SharedLibrary.hpp"
-#endif
-
 
 namespace KIM
 {
 // Forward declaration
 class Log;
 class Collections;
+class ComputeArguments;
+class SharedLibrary;
 
 class ModelImplementation
 {
@@ -156,9 +150,13 @@ class ModelImplementation
                 TimeUnit * const timeUnit) const;
 
 
+  void
+  GetParameterFileDirectoryName(std::string const ** const directoryName) const;
   int GetNumberOfParameterFiles(int * const numberOfParameterFiles) const;
   int GetParameterFileName(int const index,
                            std::string const ** const parameterFileName) const;
+  int GetParameterFileBasename(
+      int const index, std::string const ** const parameterFileBasename) const;
 
   void SetParameterFileName(std::string const & filename) const;
 
@@ -271,14 +269,15 @@ class ModelImplementation
 
   int IsCIdentifier(std::string const & id) const;
 
-  Collections * collections_;
-  CollectionItemType itemType_;
   std::string modelName_;
   std::string modelDriverName_;
 
   SharedLibrary * sharedLibrary_;
+  FILESYSTEM::Path parameterFileDirectoryName_;
+  std::string parameterFileDirectoryNameString_;
   int numberOfParameterFiles_;
   std::vector<std::string> parameterFileNames_;
+  std::vector<std::string> parameterFileBasenames_;
 
   Log * log_;
 
@@ -293,9 +292,8 @@ class ModelImplementation
       EnergyUnit const requestedEnergyUnit,
       ChargeUnit const requestedChargeUnit,
       TemperatureUnit const requestedTemperatureUnit,
-      TimeUnit const requestedTimeUnit);
-
-  int WriteParameterFiles();
+      TimeUnit const requestedTimeUnit,
+      Collections * collections);
 
   bool numberingHasBeenSet_;
   Numbering modelNumbering_;

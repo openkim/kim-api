@@ -19,7 +19,7 @@
 //
 
 //
-// Copyright (c) 2016--2019, Regents of the University of Minnesota.
+// Copyright (c) 2016--2020, Regents of the University of Minnesota.
 // All rights reserved.
 //
 // Contributors:
@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-2.1.3 package.
+// Release: This file is part of the kim-api-2.2.0 package.
 //
 
 
@@ -67,6 +67,19 @@ class ModelDriverCreateImplementation;
 class ModelDriverCreate
 {
  public:
+  /// \brief Get absolute path name of the temporary directory where parameter
+  /// files provided by the model are written.
+  ///
+  /// \param[out] directoryName The absolute path name of the Model's
+  ///             temporary parameter file directory.
+  ///
+  /// \sa KIM_ModelDriverCreate_GetParameterFileDirectoryName,
+  /// kim_model_driver_create_module::kim_get_parameter_file_directory_name
+  ///
+  /// \since 2.2
+  void
+  GetParameterFileDirectoryName(std::string const ** const directoryName) const;
+
   /// \brief Get the number of parameter files provided by the parameterized
   /// model.
   ///
@@ -93,8 +106,30 @@ class ModelDriverCreate
   /// kim_model_driver_create_module::kim_get_parameter_file_name
   ///
   /// \since 2.0
+  ///
+  /// \deprecated As of 2.2.  Please use GetParameterFileDirectoryName() and
+  /// GetParameterFileBasename() instead.
   int GetParameterFileName(int const index,
                            std::string const ** const parameterFileName) const;
+
+  /// \brief Get a particular parameter file basename.  The file is located in
+  /// the Model's parameter file directory.
+  ///
+  /// \param[in] index Zero-based index for the parameter file of interest.
+  /// \param[out] parameterFileBasename The basename (file name without path)
+  ///             for the parameter file of interest.
+  ///
+  /// \return \c true if the Model object is not a parameterized model
+  /// \return \c true if \c index is invalid.
+  /// \return \c true if `parameterFileBasename == NULL`.
+  /// \return \c false otherwise.
+  ///
+  /// \sa KIM_ModelDriverCreate_GetParameterFileBasename,
+  /// kim_model_driver_create_module::kim_get_parameter_file_basename
+  ///
+  /// \since 2.2
+  int GetParameterFileBasename(
+      int const index, std::string const ** const parameterFileBasename) const;
 
   /// \brief Set the Model's particle Numbering.
   ///

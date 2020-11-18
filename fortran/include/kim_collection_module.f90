@@ -19,7 +19,7 @@
 !
 
 !
-! Copyright (c) 2016--2019, Regents of the University of Minnesota.
+! Copyright (c) 2016--2020, Regents of the University of Minnesota.
 ! All rights reserved.
 !
 ! Contributors:
@@ -27,9 +27,8 @@
 !
 
 !
-! Release: This file is part of the kim-api-2.1.3 package.
+! Release: This file is part of the kim-api-2.2.0 package.
 !
-
 
 !> \brief \copybrief KIM::Collection
 !!
@@ -44,22 +43,19 @@ module kim_collection_module
   public &
     ! Derived types
     kim_collection_type, &
-
     ! Constants
     KIM_COLLECTION_SYSTEM, &
     KIM_COLLECTION_USER, &
     KIM_COLLECTION_ENVIRONMENT_VARIABLE, &
     KIM_COLLECTION_CURRENT_WORKING_DIRECTORY, &
-
     ! Routines
     kim_known, &
-    operator (.eq.), &
-    operator (.ne.), &
+    operator(.eq.), &
+    operator(.ne.), &
     kim_from_string, &
     kim_to_string, &
     kim_get_number_of_collections, &
     kim_get_collection
-
 
   !> \brief \copybrief KIM::Collection
   !!
@@ -67,11 +63,11 @@ module kim_collection_module
   !!
   !! \since 2.1
   type, bind(c) :: kim_collection_type
-     !> \brief \copybrief KIM::Collection::collectionID
-     !!
-     !! \sa KIM::Collection::collectionID, KIM_Collection::collectionID
-     !!
-     !! \since 2.1
+    !> \brief \copybrief KIM::Collection::collectionID
+    !!
+    !! \sa KIM::Collection::collectionID, KIM_Collection::collectionID
+    !!
+    !! \since 2.1
     integer(c_int) collection_id
   end type kim_collection_type
 
@@ -127,18 +123,18 @@ module kim_collection_module
   !! \sa KIM::Collection::operator==(), KIM_Collection_Equal
   !!
   !! \since 2.1
-  interface operator (.eq.)
+  interface operator(.eq.)
     module procedure kim_collection_equal
-  end interface operator (.eq.)
+  end interface operator(.eq.)
 
   !> \brief \copybrief KIM::Collection::operator!=()
   !!
   !! \sa KIM::Collection::operator!=(), KIM_Collection_NotEqual
   !!
   !! \since 2.1
-  interface operator (.ne.)
+  interface operator(.ne.)
     module procedure kim_collection_not_equal
-  end interface operator (.ne.)
+  end interface operator(.ne.)
 
   !> \brief \copybrief KIM::Collection::Collection(std::string const &)
   !!
@@ -192,7 +188,7 @@ contains
     type(kim_collection_type), intent(in) :: rhs
 
     kim_collection_equal &
-      = (lhs%collection_id .eq. rhs%collection_id)
+      = (lhs%collection_id == rhs%collection_id)
   end function kim_collection_equal
 
   !> \brief \copybrief KIM::Collection::operator!=()
@@ -205,7 +201,7 @@ contains
     type(kim_collection_type), intent(in) :: lhs
     type(kim_collection_type), intent(in) :: rhs
 
-    kim_collection_not_equal = .not. (lhs .eq. rhs)
+    kim_collection_not_equal = .not. (lhs == rhs)
   end function kim_collection_not_equal
 
   !> \brief \copybrief KIM::Collection::Collection(std::string const &)
@@ -237,7 +233,7 @@ contains
   !!
   !! \since 2.1
   recursive subroutine kim_collection_to_string(collection, string)
-    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
+    use kim_convert_string_module, only: kim_convert_c_char_ptr_to_string
     implicit none
     interface
       type(c_ptr) recursive function get_string(collection) &
@@ -299,6 +295,6 @@ contains
     type(kim_collection_type), intent(out) :: collection
     integer(c_int), intent(out) :: ierr
 
-    ierr = get_collection(index-1, collection)
+    ierr = get_collection(index - 1, collection)
   end subroutine kim_get_collection
 end module kim_collection_module

@@ -19,7 +19,7 @@
 #
 
 #
-# Copyright (c) 2013--2019, Regents of the University of Minnesota.
+# Copyright (c) 2013--2020, Regents of the University of Minnesota.
 # All rights reserved.
 #
 # Contributors:
@@ -29,18 +29,24 @@
 #
 
 #
-# Release: This file is part of the kim-api-2.1.3 package.
+# Release: This file is part of the kim-api-2.2.0 package.
 #
 
 
 # Language standards (also enforced with FLAGS below)
 #
-set(CMAKE_CXX_STANDARD 98)
-set(CMAKE_CXX_STANDARD_REQUIRED YES)
-set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_CXX_STANDARD 98 CACHE STRING "CXX language standard")  # cache to allow command line override
+mark_as_advanced(CMAKE_CXX_STANDARD)
+set(CMAKE_CXX_STANDARD_REQUIRED ON CACHE BOOL "CXX language standard required")  # cache to allow command line override
+mark_as_advanced(CMAKE_CXX_STANDARD_REQUIRED)
+set(CMAKE_CXX_EXTENSIONS OFF CACHE BOOL "CXX extensions")  # cache to allow command line override
+mark_as_advanced(CMAKE_CXX_EXTENSIONS)
 #
-set(CMAKE_C_STANDARD 90)
-set(CMAKE_C_STANDARD_REQUIRED YES)
-set(CMAKE_C_EXTENSIONS OFF)
+set(CMAKE_C_STANDARD 90 CACHE STRING "C language standard")  # cache to allow command line override
+mark_as_advanced(CMAKE_C_STANDARD)
+set(CMAKE_C_STANDARD_REQUIRED ON CACHE BOOL "C language standard required")  # cache to allow command line override
+mark_as_advanced(CMAKE_C_STANDARD_REQUIRED)
+set(CMAKE_C_EXTENSIONS OFF "C extensions")  # cache to allow command line override
+mark_as_advanced(CMAKE_C_EXTENSIONS)
 #
 # NO similar setting exist yet in CMake for Fortran

@@ -19,7 +19,7 @@
 //
 
 //
-// Copyright (c) 2016--2019, Regents of the University of Minnesota.
+// Copyright (c) 2016--2020, Regents of the University of Minnesota.
 // All rights reserved.
 //
 // Contributors:
@@ -27,9 +27,27 @@
 //
 
 //
-// Release: This file is part of the kim-api-2.1.3 package.
+// Release: This file is part of the kim-api-2.2.0 package.
 //
 
+
+#include <cstddef>
+
+#ifndef KIM_LOG_VERBOSITY_HPP_
+#include "KIM_LogVerbosity.hpp"
+#endif
+
+#ifndef KIM_COMPUTE_ARGUMENT_NAME_HPP_
+#include "KIM_ComputeArgumentName.hpp"
+#endif
+
+#ifndef KIM_COMPUTE_CALLBACK_NAME_HPP_
+#include "KIM_ComputeCallbackName.hpp"
+#endif
+
+#ifndef KIM_SUPPORT_STATUS_HPP_
+#include "KIM_SupportStatus.hpp"
+#endif
 
 #ifndef KIM_MODEL_COMPUTE_ARGUMENTS_CREATE_HPP_
 #include "KIM_ModelComputeArgumentsCreate.hpp"

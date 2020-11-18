@@ -19,7 +19,7 @@
 //
 
 //
-// Copyright (c) 2016--2019, Regents of the University of Minnesota.
+// Copyright (c) 2016--2020, Regents of the University of Minnesota.
 // All rights reserved.
 //
 // Contributors:
@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-2.1.3 package.
+// Release: This file is part of the kim-api-2.2.0 package.
 //
 
 
@@ -41,7 +41,7 @@ namespace KIM
 /// \brief An \ref extensible_enumeration "Extensible Enumeration" for the
 /// CollectionItemType's supported by the %KIM API.
 ///
-/// The enumeration constants are contained in the COLLECTION_ITEM_TUPE
+/// The enumeration constants are contained in the COLLECTION_ITEM_TYPE
 /// namespace.
 ///
 /// \sa KIM_CollectionItemType,

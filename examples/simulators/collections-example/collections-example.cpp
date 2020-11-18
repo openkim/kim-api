@@ -19,7 +19,7 @@
 //
 
 //
-// Copyright (c) 2016--2019, Regents of the University of Minnesota.
+// Copyright (c) 2016--2020, Regents of the University of Minnesota.
 // All rights reserved.
 //
 // Contributors:
@@ -30,7 +30,6 @@
 #include "KIM_Collection.hpp"
 #include "KIM_CollectionItemType.hpp"
 #include "KIM_Collections.hpp"
-#include <iomanip>
 #include <iostream>
 #include <string>
 

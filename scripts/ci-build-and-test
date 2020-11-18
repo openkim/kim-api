@@ -1,0 +1,146 @@
+#!/bin/bash
+
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the Common Development
+# and Distribution License Version 1.0 (the "License").
+#
+# You can obtain a copy of the license at
+# http://www.opensource.org/licenses/CDDL-1.0.  See the License for the
+# specific language governing permissions and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each file and
+# include the License file in a prominent location with the name LICENSE.CDDL.
+# If applicable, add the following below this CDDL HEADER, with the fields
+# enclosed by brackets "[]" replaced with your own identifying information:
+#
+# Portions Copyright (c) [yyyy] [name of copyright owner]. All rights reserved.
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2013--2020, Regents of the University of Minnesota.
+# All rights reserved.
+#
+# Contributors:
+#    Ryan S. Elliott
+#    Alexander Stukowski
+#
+
+#
+# Release: This file is part of the kim-api-2.2.0 package.
+#
+
+
+# check for required env
+if test x"" = x"${CMAKE_BUILD_TYPE}"; then
+  printf "error: must define CMAKE_BUILD_TYPE.\n"
+  exit 1
+fi
+
+
+set -xv
+# print environment
+env
+
+# set MAKE command variable to default if necessary
+MAKE=${MAKE:-make}
+
+mkdir build
+cd build
+ccache -z
+# cmake will respect value of the follwoing environment variables:
+#   CXX,      CC,     and FC
+#   CXXFLAGS, CFLAGS, and FFLAGS
+cmake --warn-uninitialized \
+      -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX:=/usr/local} \
+      -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} \
+      ${SANITIZE:+-DKIM_API_ENABLE_SANITIZE=ON} \
+      ${COVERAGE:+-DKIM_API_ENABLE_COVERAGE=ON} \
+      ${IWYU:+-DCMAKE_CXX_INCLUDE_WHAT_YOU_USE=include-what-you-use} \
+      ${IWYU:+-DCMAKE_C_INCLUDE_WHAT_YOU_USE=include-what-you-use} \
+      .. \
+  || exit $?
+cat kim-api-configuration-detailed.log
+${MAKE} -j2 || exit $?
+ccache -s
+
+ctest --output-on-failure || exit $?
+
+if test x"${COVERAGE}" != x""; then
+  curl -s https://codecov.io/bash | sed -e's/execdir/exec/g' > ${PWD}/codecov
+  bash ${PWD}/codecov -x gcov-6 || exit $?
+fi
+
+mkdir ${PWD}/destdir
+${MAKE} install DESTDIR=${PWD}/destdir || exit $?
+# Query value of ${CMAKE_INSTALL_PREFIX} from CMake cache (https://stackoverflow.com/questions/8474753/how-to-get-a-cmake-variable-from-the-command-line)
+# Remove drive letter (C:), which precedes the path on Windows (MinGW) platform.
+INSTALL_PREFIX=`cmake -L -N . | grep CMAKE_INSTALL_PREFIX | cut -d "=" -f2 | cut -d ":" -f2`
+echo "CMAKE_INSTALL_PREFIX is: ${INSTALL_PREFIX}"
+rm -rf "${PWD}/destdir${INSTALL_PREFIX}/"{bin,include,libexec,share} || exit $?
+rm -rf "${PWD}/destdir${LIB_DIR:=${INSTALL_PREFIX}/lib}" || exit $?
+rm -rf "${PWD}/destdir${BASH_COMPLETION_DIR:=${INSTALL_PREFIX}/etc}" || exit $?
+set +xv
+printf -- "--- remaining installed files ---\n" &&
+  find "${PWD}/destdir" &&
+  printf -- "---------------------------------\n"
+set -xv
+dir="${INSTALL_PREFIX}"
+while test x"" != x"${dir}"; do
+  rmdir "${PWD}/destdir${dir}" || exit $?
+  dir=`printf -- "${dir}" | sed -e 's|\(.*\)/.*|\1|'`
+done
+rmdir "${PWD}/destdir" || exit $?
+cd ../
+rm -rf "build" || exit $?
+
+# now test collections-management and install
+mkdir build
+cd build
+ccache -z
+cmake -DCMAKE_INSTALL_PREFIX="${PWD}/test-install" \
+      -DCMAKE_BUILD_TYPE="${CMAKE_BUILD_TYPE}" \
+      -DKIM_API_BUILD_EXAMPLES=OFF \
+      ${CXX17:+-DCMAKE_CXX_STANDARD=17}  `#[use std::filesystem spport (assume it is available)]` \
+      .. \
+  || exit $?
+${MAKE} -j2 install || exit $?
+ccache -s
+
+# move install tree to test relocatability
+mv test-install test-install-relocated || exit $?
+
+set +xv
+printf "calling ${PWD}/test-install-relocated/bin/kim-api-activate\n"
+source "${PWD}/test-install-relocated/bin/kim-api-activate" || exit $?
+set -xv
+if [ "$TRAVIS_OS_NAME" != "windows" ]; then
+  KIM_SIMULATOR_MODEL_EXE="./test-install-relocated/libexec/kim-api/kim-api-simulator-model"
+else
+  KIM_SIMULATOR_MODEL_EXE="./test-install-relocated/bin/kim-api-simulator-model"
+fi
+kim-api-collections-management install system `find ../examples/model-drivers -mindepth 1 -maxdepth 1 -type d` &&
+  kim-api-collections-management install system `find ../examples/portable-models -mindepth 1 -maxdepth 1 -type d` &&
+  kim-api-collections-management install system `find ../examples/simulator-models -mindepth 1 -maxdepth 1 -type d` &&
+  kim-api-collections-management list &&
+  ${KIM_SIMULATOR_MODEL_EXE} Sim_LAMMPS_LJcut_AkersonElliott_Alchemy_PbAu smspec-file data \
+    || exit $?
+cd ../
+rm -rf "build" || exit $?
+
+# now test the INSTALL file instructions
+mkdir build
+cd build
+ccache -z
+mkdir "${PWD}/WORKSPACE"
+../scripts/run-cmds-from-install IN_WORKSPACE "${PWD}/WORKSPACE" "${PWD}/.." || exit $?
+
+cd ../
+rm -rf "build" || exit $?
+
+# success
+set +xv
+exit 0

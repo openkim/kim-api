@@ -19,25 +19,32 @@
 //
 
 //
-// Copyright (c) 2013--2019, Regents of the University of Minnesota.
+// Copyright (c) 2013--2020, Regents of the University of Minnesota.
 // All rights reserved.
 //
 // Contributors:
 //    Ryan S. Elliott
+//    Alexander Stukowski
 //
 
 //
-// Release: This file is part of the kim-api-2.1.3 package.
+// Release: This file is part of the kim-api-2.2.0 package.
 //
+
 
 #include "KIM_Version.hpp"
+#include <cstddef>
+#ifndef _WIN32
 #include <dlfcn.h>
+#else
+#include <libloaderapi.h>
+#endif
 #include <iostream>
 #include <string>
 
 void usage(std::string name)
 {
-  size_t beg = name.find_last_of("/");
+  size_t beg = name.find_last_of("/\\");
   if (beg != std::string::npos) name = name.substr(beg + 1, std::string::npos);
 
   // Follows docopt.org format
@@ -75,16 +82,29 @@ int main(int argc, char * argv[])
       return 2;
     }
 
+#ifndef _WIN32
     void * sharedLibraryHandle = dlopen(libFilePath.c_str(), RTLD_NOW);
+#else
+    HMODULE sharedLibraryHandle = LoadLibraryExA(
+        libFilePath.c_str(), NULL, LOAD_WITH_ALTERED_SEARCH_PATH);
+#endif
     if (sharedLibraryHandle == NULL)
     {
+#ifndef _WIN32
       std::cout << "Unable to open shared library.\n" << dlerror() << std::endl;
+#else
+      std::cout << "Unable to open shared library." << std::endl;
+#endif
       return 3;
     }
     else
     {
       std::cout << "Successfully opened shared library." << std::endl;
+#ifndef _WIN32
       dlclose(sharedLibraryHandle);
+#else
+      FreeLibrary(sharedLibraryHandle);
+#endif
       return 0;
     }
   }

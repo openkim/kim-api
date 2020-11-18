@@ -19,7 +19,7 @@
 !
 
 !
-! Copyright (c) 2016--2019, Regents of the University of Minnesota.
+! Copyright (c) 2016--2020, Regents of the University of Minnesota.
 ! All rights reserved.
 !
 ! Contributors:
@@ -27,9 +27,8 @@
 !
 
 !
-! Release: This file is part of the kim-api-2.1.3 package.
+! Release: This file is part of the kim-api-2.2.0 package.
 !
-
 
 !> \brief \copybrief KIM::SimulatorModel
 !!
@@ -44,13 +43,11 @@ module kim_simulator_model_module
   public &
     ! Derived types
     kim_simulator_model_handle_type, &
-
     ! Constants
     KIM_SIMULATOR_MODEL_NULL_HANDLE, &
-
     ! Routines
-    operator (.eq.), &
-    operator (.ne.), &
+    operator(.eq.), &
+    operator(.ne.), &
     kim_simulator_model_create, &
     kim_simulator_model_destroy, &
     kim_get_simulator_name_and_version, &
@@ -67,13 +64,13 @@ module kim_simulator_model_module
     kim_get_specification_file_name, &
     kim_get_number_of_parameter_files, &
     kim_get_parameter_file_name, &
+    kim_get_parameter_file_basename, &
     kim_set_simulator_buffer_pointer, &
     kim_get_simulator_buffer_pointer, &
     kim_to_string, &
     kim_set_log_id, &
     kim_push_log_verbosity, &
     kim_pop_log_verbosity
-
 
   !> \brief \copybrief KIM::SimulatorModel
   !!
@@ -93,16 +90,16 @@ module kim_simulator_model_module
   !> \brief Compares kim_simulator_model_handle_type's for equality.
   !!
   !! \since 2.1
-  interface operator (.eq.)
+  interface operator(.eq.)
     module procedure kim_simulator_model_handle_equal
-  end interface operator (.eq.)
+  end interface operator(.eq.)
 
   !> \brief Compares kim_simulator_model_handle_type's for inequality.
   !!
   !! \since 2.1
-  interface operator (.ne.)
+  interface operator(.ne.)
     module procedure kim_simulator_model_handle_not_equal
-  end interface operator (.ne.)
+  end interface operator(.ne.)
 
   !> \brief \copybrief KIM::SimulatorModel::GetSimulatorNameAndVersion
   !!
@@ -239,9 +236,22 @@ module kim_simulator_model_module
   !! KIM_SimulatorModel_GetParameterFileName
   !!
   !! \since 2.1
+  !!
+  !! \deprecated As of 2.2.  Please use
+  !! kim_simulator_model_module::kim_get_parameter_file_basename() instead.
   interface kim_get_parameter_file_name
     module procedure kim_simulator_model_get_parameter_file_name
   end interface kim_get_parameter_file_name
+
+  !> \brief \copybrief KIM::SimulatorModel::GetParameterFileBasename
+  !!
+  !! \sa KIM::SimulatorModel::GetParameterFileBasename,
+  !! KIM_SimulatorModel_GetParameterFileBasename
+  !!
+  !! \since 2.2
+  interface kim_get_parameter_file_basename
+    module procedure kim_simulator_model_get_parameter_file_basename
+  end interface kim_get_parameter_file_basename
 
   !> \brief \copybrief KIM::SimulatorModel::SetSimulatorBufferPointer
   !!
@@ -324,7 +334,7 @@ contains
     type(kim_simulator_model_handle_type), intent(in) :: lhs
     type(kim_simulator_model_handle_type), intent(in) :: rhs
 
-    kim_simulator_model_handle_not_equal = .not. (lhs .eq. rhs)
+    kim_simulator_model_handle_not_equal = .not. (lhs == rhs)
   end function kim_simulator_model_handle_not_equal
 
   !> \brief \copybrief KIM::SimulatorModel::Create
@@ -333,11 +343,12 @@ contains
   !!
   !! \since 2.1
   recursive subroutine kim_simulator_model_create(simulator_model_name, &
-    simulator_model_handle, ierr)
+                                                  simulator_model_handle, ierr)
     implicit none
     interface
-      integer(c_int) recursive function create(simulator_model_name, &
-        simulator_model) bind(c, name="KIM_SimulatorModel_Create")
+      integer(c_int) recursive function create( &
+        simulator_model_name, simulator_model) &
+        bind(c, name="KIM_SimulatorModel_Create")
         use, intrinsic :: iso_c_binding
         implicit none
         character(c_char), intent(in) :: simulator_model_name(*)
@@ -386,15 +397,15 @@ contains
   !! \since 2.1
   recursive subroutine kim_simulator_model_get_simulator_name_and_version( &
     simulator_model_handle, simulator_name, simulator_version)
-    use kim_interoperable_types_module, only : kim_simulator_model_type
-    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
+    use kim_interoperable_types_module, only: kim_simulator_model_type
+    use kim_convert_string_module, only: kim_convert_c_char_ptr_to_string
     implicit none
     interface
-      recursive subroutine get_simulator_name_and_version(simulator_model, &
-        simulator_name, simulator_version) &
+      recursive subroutine get_simulator_name_and_version( &
+        simulator_model, simulator_name, simulator_version) &
         bind(c, name="KIM_SimulatorModel_GetSimulatorNameAndVersion")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_simulator_model_type
+        use kim_interoperable_types_module, only: kim_simulator_model_type
         implicit none
         type(kim_simulator_model_type), intent(in) :: simulator_model
         type(c_ptr), intent(out) :: simulator_name
@@ -410,7 +421,7 @@ contains
 
     call c_f_pointer(simulator_model_handle%p, simulator_model)
     call get_simulator_name_and_version(simulator_model, psimulator_name, &
-      psimulator_version)
+                                        psimulator_version)
     call kim_convert_c_char_ptr_to_string(psimulator_name, simulator_name)
     call kim_convert_c_char_ptr_to_string(psimulator_version, simulator_version)
   end subroutine kim_simulator_model_get_simulator_name_and_version
@@ -423,14 +434,14 @@ contains
   !! \since 2.1
   recursive subroutine kim_simulator_model_get_number_of_supported_species( &
     simulator_model_handle, number_of_supported_species)
-    use kim_interoperable_types_module, only : kim_simulator_model_type
+    use kim_interoperable_types_module, only: kim_simulator_model_type
     implicit none
     interface
-      recursive subroutine get_number_of_supported_species(simulator_model, &
-        number_of_supported_species) &
+      recursive subroutine get_number_of_supported_species( &
+        simulator_model, number_of_supported_species) &
         bind(c, name="KIM_SimulatorModel_GetNumberOfSupportedSpecies")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_simulator_model_type
+        use kim_interoperable_types_module, only: kim_simulator_model_type
         implicit none
         type(kim_simulator_model_type), intent(in) :: simulator_model
         integer(c_int), intent(out) :: number_of_supported_species
@@ -442,7 +453,7 @@ contains
 
     call c_f_pointer(simulator_model_handle%p, simulator_model)
     call get_number_of_supported_species(simulator_model, &
-      number_of_supported_species)
+                                         number_of_supported_species)
   end subroutine kim_simulator_model_get_number_of_supported_species
 
   !> \brief \copybrief KIM::SimulatorModel::GetSupportedSpecies
@@ -453,15 +464,15 @@ contains
   !! \since 2.1
   recursive subroutine kim_simulator_model_get_supported_species( &
     simulator_model_handle, index, species_name, ierr)
-    use kim_interoperable_types_module, only : kim_simulator_model_type
-    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
+    use kim_interoperable_types_module, only: kim_simulator_model_type
+    use kim_convert_string_module, only: kim_convert_c_char_ptr_to_string
     implicit none
     interface
-      integer(c_int) recursive function get_supported_species(simulator_model, &
-        index, species_name) &
+      integer(c_int) recursive function get_supported_species( &
+        simulator_model, index, species_name) &
         bind(c, name="KIM_SimulatorModel_GetSupportedSpecies")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_simulator_model_type
+        use kim_interoperable_types_module, only: kim_simulator_model_type
         implicit none
         type(kim_simulator_model_type), intent(in) :: simulator_model
         integer(c_int), intent(in), value :: index
@@ -477,7 +488,7 @@ contains
     type(c_ptr) pspecies_name
 
     call c_f_pointer(simulator_model_handle%p, simulator_model)
-    ierr = get_supported_species(simulator_model, index-1, pspecies_name)
+    ierr = get_supported_species(simulator_model, index - 1, pspecies_name)
     call kim_convert_c_char_ptr_to_string(pspecies_name, species_name)
   end subroutine kim_simulator_model_get_supported_species
 
@@ -489,13 +500,13 @@ contains
   !! \since 2.1
   recursive subroutine kim_simulator_model_open_and_initialize_template_map( &
     simulator_model_handle)
-    use kim_interoperable_types_module, only : kim_simulator_model_type
+    use kim_interoperable_types_module, only: kim_simulator_model_type
     implicit none
     interface
-        recursive subroutine open_and_initialize_template_map(simulator_model) &
+      recursive subroutine open_and_initialize_template_map(simulator_model) &
         bind(c, name="KIM_SimulatorModel_OpenAndInitializeTemplateMap")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_simulator_model_type
+        use kim_interoperable_types_module, only: kim_simulator_model_type
         implicit none
         type(kim_simulator_model_type), intent(in) :: simulator_model
       end subroutine open_and_initialize_template_map
@@ -515,13 +526,13 @@ contains
   !! \since 2.1
   integer(c_int) recursive function kim_simulator_model_template_map_is_open( &
     simulator_model_handle)
-    use kim_interoperable_types_module, only : kim_simulator_model_type
+    use kim_interoperable_types_module, only: kim_simulator_model_type
     implicit none
     interface
       integer(c_int) recursive function template_map_is_open(simulator_model) &
         bind(c, name="KIM_SimulatorModel_TemplateMapIsOpen")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_simulator_model_type
+        use kim_interoperable_types_module, only: kim_simulator_model_type
         implicit none
         type(kim_simulator_model_type), intent(in) :: simulator_model
       end function template_map_is_open
@@ -531,7 +542,7 @@ contains
 
     call c_f_pointer(simulator_model_handle%p, simulator_model)
     kim_simulator_model_template_map_is_open = template_map_is_open( &
-      simulator_model)
+                                               simulator_model)
   end function kim_simulator_model_template_map_is_open
 
   !> \brief \copybrief KIM::SimulatorModel::AddTemplateMap
@@ -541,14 +552,15 @@ contains
   !! \since 2.1
   recursive subroutine kim_simulator_model_add_template_map( &
     simulator_model_handle, key, value, ierr)
-    use kim_interoperable_types_module, only : kim_simulator_model_type
-    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
+    use kim_interoperable_types_module, only: kim_simulator_model_type
+    use kim_convert_string_module, only: kim_convert_c_char_ptr_to_string
     implicit none
     interface
-      integer(c_int) recursive function add_template_map(simulator_model, key, &
-        value) bind(c, name="KIM_SimulatorModel_AddTemplateMap")
+      integer(c_int) recursive function add_template_map( &
+        simulator_model, key, value) &
+        bind(c, name="KIM_SimulatorModel_AddTemplateMap")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_simulator_model_type
+        use kim_interoperable_types_module, only: kim_simulator_model_type
         implicit none
         type(kim_simulator_model_type), intent(in) :: simulator_model
         character(c_char), intent(in) :: key(*)
@@ -563,7 +575,7 @@ contains
 
     call c_f_pointer(simulator_model_handle%p, simulator_model)
     ierr = add_template_map(simulator_model, trim(key)//c_null_char, &
-      trim(value)//c_null_char)
+                            trim(value)//c_null_char)
   end subroutine kim_simulator_model_add_template_map
 
   !> \brief \copybrief KIM::SimulatorModel::CloseTemplateMap
@@ -574,13 +586,13 @@ contains
   !! \since 2.1
   recursive subroutine kim_simulator_model_close_template_map( &
     simulator_model_handle)
-    use kim_interoperable_types_module, only : kim_simulator_model_type
+    use kim_interoperable_types_module, only: kim_simulator_model_type
     implicit none
     interface
-        recursive subroutine close_template_map(simulator_model) &
+      recursive subroutine close_template_map(simulator_model) &
         bind(c, name="KIM_SimulatorModel_CloseTemplateMap")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_simulator_model_type
+        use kim_interoperable_types_module, only: kim_simulator_model_type
         implicit none
         type(kim_simulator_model_type), intent(in) :: simulator_model
       end subroutine close_template_map
@@ -600,14 +612,14 @@ contains
   !! \since 2.1
   recursive subroutine kim_simulator_model_get_number_of_simulator_fields( &
     simulator_model_handle, number_of_simulator_fields)
-    use kim_interoperable_types_module, only : kim_simulator_model_type
+    use kim_interoperable_types_module, only: kim_simulator_model_type
     implicit none
     interface
-      recursive subroutine get_number_of_simulator_fields(simulator_model, &
-        number_of_simulator_fields) &
+      recursive subroutine get_number_of_simulator_fields( &
+        simulator_model, number_of_simulator_fields) &
         bind(c, name="KIM_SimulatorModel_GetNumberOfSimulatorFields")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_simulator_model_type
+        use kim_interoperable_types_module, only: kim_simulator_model_type
         implicit none
         type(kim_simulator_model_type), intent(in) :: simulator_model
         integer(c_int), intent(out) :: number_of_simulator_fields
@@ -619,7 +631,7 @@ contains
 
     call c_f_pointer(simulator_model_handle%p, simulator_model)
     call get_number_of_simulator_fields(simulator_model, &
-      number_of_simulator_fields)
+                                        number_of_simulator_fields)
   end subroutine kim_simulator_model_get_number_of_simulator_fields
 
   !> \brief \copybrief KIM::SimulatorModel::GetSimulatorFieldMetadata
@@ -630,15 +642,15 @@ contains
   !! \since 2.1
   recursive subroutine kim_simulator_model_get_simulator_field_metadata( &
     simulator_model_handle, field_index, extent, field_name, ierr)
-    use kim_interoperable_types_module, only : kim_simulator_model_type
-    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
+    use kim_interoperable_types_module, only: kim_simulator_model_type
+    use kim_convert_string_module, only: kim_convert_c_char_ptr_to_string
     implicit none
     interface
       integer(c_int) recursive function get_simulator_field_metadata( &
         simulator_model, field_index, extent, field_name) &
         bind(c, name="KIM_SimulatorModel_GetSimulatorFieldMetadata")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_simulator_model_type
+        use kim_interoperable_types_module, only: kim_simulator_model_type
         implicit none
         type(kim_simulator_model_type), intent(in) :: simulator_model
         integer(c_int), intent(in), value :: field_index
@@ -656,8 +668,8 @@ contains
     type(c_ptr) pfield_name
 
     call c_f_pointer(simulator_model_handle%p, simulator_model)
-    ierr = get_simulator_field_metadata(simulator_model, field_index-1, &
-      extent, pfield_name)
+    ierr = get_simulator_field_metadata(simulator_model, field_index - 1, &
+                                        extent, pfield_name)
     call kim_convert_c_char_ptr_to_string(pfield_name, field_name)
   end subroutine kim_simulator_model_get_simulator_field_metadata
 
@@ -669,15 +681,15 @@ contains
   !! \since 2.1
   recursive subroutine kim_simulator_model_get_simulator_field_line( &
     simulator_model_handle, field_index, line_index, line_value, ierr)
-    use kim_interoperable_types_module, only : kim_simulator_model_type
-    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
+    use kim_interoperable_types_module, only: kim_simulator_model_type
+    use kim_convert_string_module, only: kim_convert_c_char_ptr_to_string
     implicit none
     interface
       integer(c_int) recursive function get_simulator_field_line( &
         simulator_model, field_index, line_index, line_value) &
         bind(c, name="KIM_SimulatorModel_GetSimulatorFieldLine")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_simulator_model_type
+        use kim_interoperable_types_module, only: kim_simulator_model_type
         implicit none
         type(kim_simulator_model_type), intent(in) :: simulator_model
         integer(c_int), intent(in), value :: field_index
@@ -695,8 +707,8 @@ contains
     type(c_ptr) pline_value
 
     call c_f_pointer(simulator_model_handle%p, simulator_model)
-    ierr = get_simulator_field_line(simulator_model, field_index-1, &
-      line_index-1, pline_value)
+    ierr = get_simulator_field_line(simulator_model, field_index - 1, &
+                                    line_index - 1, pline_value)
     call kim_convert_c_char_ptr_to_string(pline_value, line_value)
   end subroutine kim_simulator_model_get_simulator_field_line
 
@@ -708,15 +720,15 @@ contains
   !! \since 2.1
   recursive subroutine kim_simulator_model_get_parameter_file_directory_name( &
     simulator_model_handle, directory_name)
-    use kim_interoperable_types_module, only : kim_simulator_model_type
-    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
+    use kim_interoperable_types_module, only: kim_simulator_model_type
+    use kim_convert_string_module, only: kim_convert_c_char_ptr_to_string
     implicit none
     interface
       recursive subroutine get_parameter_file_directory_name(simulator_model, &
-        directory_name) &
+                                                             directory_name) &
         bind(c, name="KIM_SimulatorModel_GetParameterFileDirectoryName")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_simulator_model_type
+        use kim_interoperable_types_module, only: kim_simulator_model_type
         implicit none
         type(kim_simulator_model_type), intent(in) :: simulator_model
         type(c_ptr), intent(out) :: directory_name
@@ -741,15 +753,15 @@ contains
   !! \since 2.1
   recursive subroutine kim_simulator_model_get_specification_file_name( &
     simulator_model_handle, specification_file_name)
-    use kim_interoperable_types_module, only : kim_simulator_model_type
-    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
+    use kim_interoperable_types_module, only: kim_simulator_model_type
+    use kim_convert_string_module, only: kim_convert_c_char_ptr_to_string
     implicit none
     interface
-      recursive subroutine get_specification_file_name(simulator_model, &
-        specification_file_name) &
+      recursive subroutine get_specification_file_name( &
+        simulator_model, specification_file_name) &
         bind(c, name="KIM_SimulatorModel_GetSpecificationFileName")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_simulator_model_type
+        use kim_interoperable_types_module, only: kim_simulator_model_type
         implicit none
         type(kim_simulator_model_type), intent(in) :: simulator_model
         type(c_ptr), intent(out) :: specification_file_name
@@ -764,7 +776,7 @@ contains
     call c_f_pointer(simulator_model_handle%p, simulator_model)
     call get_specification_file_name(simulator_model, pspecification_file_name)
     call kim_convert_c_char_ptr_to_string(pspecification_file_name, &
-      specification_file_name)
+                                          specification_file_name)
   end subroutine kim_simulator_model_get_specification_file_name
 
   !> \brief \copybrief KIM::SimulatorModel::GetNumberOfParameterFiles
@@ -775,14 +787,14 @@ contains
   !! \since 2.1
   recursive subroutine kim_simulator_model_get_number_of_parameter_files( &
     simulator_model_handle, number_of_parameter_files)
-    use kim_interoperable_types_module, only : kim_simulator_model_type
+    use kim_interoperable_types_module, only: kim_simulator_model_type
     implicit none
     interface
-      recursive subroutine get_number_of_parameter_files(simulator_model, &
-        number_of_parameter_files) &
+      recursive subroutine get_number_of_parameter_files( &
+        simulator_model, number_of_parameter_files) &
         bind(c, name="KIM_SimulatorModel_GetNumberOfParameterFiles")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_simulator_model_type
+        use kim_interoperable_types_module, only: kim_simulator_model_type
         implicit none
         type(kim_simulator_model_type), intent(in) :: simulator_model
         integer(c_int), intent(out) :: number_of_parameter_files
@@ -794,7 +806,7 @@ contains
 
     call c_f_pointer(simulator_model_handle%p, simulator_model)
     call get_number_of_parameter_files(simulator_model, &
-      number_of_parameter_files)
+                                       number_of_parameter_files)
   end subroutine kim_simulator_model_get_number_of_parameter_files
 
   !> \brief \copybrief KIM::SimulatorModel::GetParameterFileName
@@ -803,17 +815,20 @@ contains
   !! KIM_SimulatorModel_GetParameterFileName
   !!
   !! \since 2.1
+  !!
+  !! \deprecated As of 2.2.  Please use
+  !! kim_simulator_model_module::kim_get_parameter_file_basename() instead.
   recursive subroutine kim_simulator_model_get_parameter_file_name( &
     simulator_model_handle, index, parameter_file_name, ierr)
-    use kim_interoperable_types_module, only : kim_simulator_model_type
-    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
+    use kim_interoperable_types_module, only: kim_simulator_model_type
+    use kim_convert_string_module, only: kim_convert_c_char_ptr_to_string
     implicit none
     interface
       integer(c_int) recursive function get_parameter_file_name( &
         simulator_model, index, parameter_file_name) &
         bind(c, name="KIM_SimulatorModel_GetParameterFileName")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_simulator_model_type
+        use kim_interoperable_types_module, only: kim_simulator_model_type
         implicit none
         type(kim_simulator_model_type), intent(in) :: simulator_model
         integer(c_int), intent(in), value :: index
@@ -829,11 +844,49 @@ contains
     type(c_ptr) pparameter_file_name
 
     call c_f_pointer(simulator_model_handle%p, simulator_model)
-    ierr = get_parameter_file_name(simulator_model, index-1, &
-      pparameter_file_name)
+    ierr = get_parameter_file_name(simulator_model, index - 1, &
+                                   pparameter_file_name)
     call kim_convert_c_char_ptr_to_string(pparameter_file_name, &
-      parameter_file_name)
+                                          parameter_file_name)
   end subroutine kim_simulator_model_get_parameter_file_name
+
+  !> \brief \copybrief KIM::SimulatorModel::GetParameterFileBasename
+  !!
+  !! \sa KIM::SimulatorModel::GetParameterFileBasename,
+  !! KIM_SimulatorModel_GetParameterFileBasename
+  !!
+  !! \since 2.2
+  recursive subroutine kim_simulator_model_get_parameter_file_basename( &
+    simulator_model_handle, index, parameter_file_basename, ierr)
+    use kim_interoperable_types_module, only: kim_simulator_model_type
+    use kim_convert_string_module, only: kim_convert_c_char_ptr_to_string
+    implicit none
+    interface
+      integer(c_int) recursive function get_parameter_file_basename( &
+        simulator_model, index, parameter_file_basename) &
+        bind(c, name="KIM_SimulatorModel_GetParameterFileBasename")
+        use, intrinsic :: iso_c_binding
+        use kim_interoperable_types_module, only: kim_simulator_model_type
+        implicit none
+        type(kim_simulator_model_type), intent(in) :: simulator_model
+        integer(c_int), intent(in), value :: index
+        type(c_ptr), intent(out) :: parameter_file_basename
+      end function get_parameter_file_basename
+    end interface
+    type(kim_simulator_model_handle_type), intent(in) :: simulator_model_handle
+    integer(c_int), intent(in) :: index
+    character(len=*, kind=c_char), intent(out) :: parameter_file_basename
+    integer(c_int), intent(out) :: ierr
+    type(kim_simulator_model_type), pointer :: simulator_model
+
+    type(c_ptr) pparameter_file_basename
+
+    call c_f_pointer(simulator_model_handle%p, simulator_model)
+    ierr = get_parameter_file_basename(simulator_model, index - 1, &
+                                       pparameter_file_basename)
+    call kim_convert_c_char_ptr_to_string(pparameter_file_basename, &
+                                          parameter_file_basename)
+  end subroutine kim_simulator_model_get_parameter_file_basename
 
   !> \brief \copybrief KIM::SimulatorModel::SetSimulatorBufferPointer
   !!
@@ -843,13 +896,13 @@ contains
   !! \since 2.1
   recursive subroutine kim_simulator_model_set_simulator_buffer_pointer( &
     simulator_model_handle, ptr)
-    use kim_interoperable_types_module, only : kim_simulator_model_type
+    use kim_interoperable_types_module, only: kim_simulator_model_type
     implicit none
     interface
       recursive subroutine set_simulator_buffer_pointer(simulator_model, ptr) &
         bind(c, name="KIM_SimulatorModel_SetSimulatorBufferPointer")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_simulator_model_type
+        use kim_interoperable_types_module, only: kim_simulator_model_type
         implicit none
         type(kim_simulator_model_type), intent(in) :: simulator_model
         type(c_ptr), intent(in), value :: ptr
@@ -871,13 +924,13 @@ contains
   !! \since 2.1
   recursive subroutine kim_simulator_model_get_simulator_buffer_pointer( &
     simulator_model_handle, ptr)
-    use kim_interoperable_types_module, only : kim_simulator_model_type
+    use kim_interoperable_types_module, only: kim_simulator_model_type
     implicit none
     interface
       recursive subroutine get_simulator_buffer_pointer(simulator_model, ptr) &
         bind(c, name="KIM_SimulatorModel_GetSimulatorBufferPointer")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_simulator_model_type
+        use kim_interoperable_types_module, only: kim_simulator_model_type
         implicit none
         type(kim_simulator_model_type), intent(in) :: simulator_model
         type(c_ptr), intent(out) :: ptr
@@ -897,15 +950,15 @@ contains
   !!
   !! \since 2.1
   recursive subroutine kim_simulator_model_to_string(simulator_model_handle, &
-    string)
-    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
-    use kim_interoperable_types_module, only : kim_simulator_model_type
+                                                     string)
+    use kim_convert_string_module, only: kim_convert_c_char_ptr_to_string
+    use kim_interoperable_types_module, only: kim_simulator_model_type
     implicit none
     interface
       type(c_ptr) recursive function model_string(simulator_model) &
         bind(c, name="KIM_SimulatorModel_ToString")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_simulator_model_type
+        use kim_interoperable_types_module, only: kim_simulator_model_type
         implicit none
         type(kim_simulator_model_type), intent(in) :: simulator_model
       end function model_string
@@ -927,14 +980,14 @@ contains
   !!
   !! \since 2.1
   recursive subroutine kim_simulator_model_set_log_id(simulator_model_handle, &
-    log_id)
-    use kim_interoperable_types_module, only : kim_simulator_model_type
+                                                      log_id)
+    use kim_interoperable_types_module, only: kim_simulator_model_type
     implicit none
     interface
       recursive subroutine set_log_id(simulator_model, log_id) &
         bind(c, name="KIM_SimulatorModel_SetLogID")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_simulator_model_type
+        use kim_interoperable_types_module, only: kim_simulator_model_type
         implicit none
         type(kim_simulator_model_type), intent(in) :: simulator_model
         character(c_char), intent(in) :: log_id(*)
@@ -956,15 +1009,15 @@ contains
   !! \since 2.1
   recursive subroutine kim_simulator_model_push_log_verbosity( &
     simulator_model_handle, log_verbosity)
-    use kim_log_verbosity_module, only : kim_log_verbosity_type
-    use kim_interoperable_types_module, only : kim_simulator_model_type
+    use kim_log_verbosity_module, only: kim_log_verbosity_type
+    use kim_interoperable_types_module, only: kim_simulator_model_type
     implicit none
     interface
       recursive subroutine push_log_verbosity(simulator_model, log_verbosity) &
         bind(c, name="KIM_SimulatorModel_PushLogVerbosity")
         use, intrinsic :: iso_c_binding
-        use kim_log_verbosity_module, only : kim_log_verbosity_type
-        use kim_interoperable_types_module, only : kim_simulator_model_type
+        use kim_log_verbosity_module, only: kim_log_verbosity_type
+        use kim_interoperable_types_module, only: kim_simulator_model_type
         implicit none
         type(kim_simulator_model_type), intent(in) :: simulator_model
         type(kim_log_verbosity_type), intent(in), value :: log_verbosity
@@ -985,15 +1038,15 @@ contains
   !! \since 2.1
   recursive subroutine kim_simulator_model_pop_log_verbosity( &
     simulator_model_handle)
-    use kim_log_verbosity_module, only : kim_log_verbosity_type
-    use kim_interoperable_types_module, only : kim_simulator_model_type
+    use kim_log_verbosity_module, only: kim_log_verbosity_type
+    use kim_interoperable_types_module, only: kim_simulator_model_type
     implicit none
     interface
       recursive subroutine pop_log_verbosity(simulator_model) &
         bind(c, name="KIM_SimulatorModel_PopLogVerbosity")
         use, intrinsic :: iso_c_binding
-        use kim_log_verbosity_module, only : kim_log_verbosity_type
-        use kim_interoperable_types_module, only : kim_simulator_model_type
+        use kim_log_verbosity_module, only: kim_log_verbosity_type
+        use kim_interoperable_types_module, only: kim_simulator_model_type
         implicit none
         type(kim_simulator_model_type), intent(in) :: simulator_model
       end subroutine pop_log_verbosity

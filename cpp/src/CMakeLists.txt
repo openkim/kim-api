@@ -19,23 +19,28 @@
 #
 
 #
-# Copyright (c) 2013--2019, Regents of the University of Minnesota.
+# Copyright (c) 2013--2020, Regents of the University of Minnesota.
 # All rights reserved.
 #
 # Contributors:
 #    Richard Berger
 #    Christoph Junghans
 #    Ryan S. Elliott
+#    Alexander Stukowski
 #
 
 #
-# Release: This file is part of the kim-api-2.1.3 package.
+# Release: This file is part of the kim-api-2.2.0 package.
 #
 
 
-target_include_directories(kim-api PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(kim-api PRIVATE
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_BINARY_DIR}
+  ${PROJECT_SOURCE_DIR}/cmake  # for KIM_SharedLibrarySchema.hpp
+  )
 
-configure_file(KIM_Configuration.hpp.in ${CMAKE_BINARY_DIR}/KIM_Configuration.hpp)
+configure_file(KIM_Configuration.hpp.in ${CMAKE_CURRENT_BINARY_DIR}/KIM_Configuration.hpp)
 
 set(CPP_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ChargeUnit.cpp
@@ -48,6 +53,7 @@ set(CPP_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ComputeCallbackName.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_DataType.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_EnergyUnit.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/KIM_FilesystemPath.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_LanguageName.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_LengthUnit.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_Log.cpp
@@ -80,23 +86,23 @@ set(CPP_SOURCES
 
 target_sources(kim-api PRIVATE ${CPP_SOURCES})
 
-add_library(kim-loader STATIC
-  KIM_Collection.cpp
-  KIM_CollectionItemType.cpp
-  KIM_Collections.cpp
-  KIM_CollectionsImplementation.cpp
-  KIM_LanguageName.cpp
-  KIM_LogVerbosity.cpp
-  KIM_Log.cpp
-  KIM_LogImplementation.cpp
-  KIM_SharedLibrary.cpp
-  KIM_SimulatorModel.cpp
-  KIM_SimulatorModelImplementation.cpp
-  )
-target_include_directories(kim-loader PUBLIC
-  ${CMAKE_CURRENT_SOURCE_DIR}
-  ../include
-  ../../cmake
-  ${CMAKE_BINARY_DIR}
-  )
-target_link_libraries(kim-loader ${CMAKE_DL_LIBS})
+if(WIN32 AND NOT CYGWIN)
+  # Activate C++17 language standard on Win32 platform, because kim-api code uses C++ filesystem library internally.
+  # Note: The 'cxx_std_17' target compile feature was added by CMake version 3.8.
+  # For older CMake versions, fall back to setting the CXX_STANDARD target property instead.
+  get_property(cxx_features GLOBAL PROPERTY CMAKE_CXX_KNOWN_FEATURES)
+  if("cxx_std_17" IN_LIST cxx_features)
+    target_compile_features(kim-api PUBLIC cxx_std_17)
+  else()
+    set_property(TARGET kim-api PROPERTY CXX_STANDARD 17)
+    set_property(TARGET kim-api PROPERTY CXX_STANDARD_REQUIRED YES)
+  endif()
+endif()
+
+# The KIM API code uses POSIX.1-2008 functions such as strdup() or mkstemp(), which are
+# not part of the ISO C standard. Thus, when compiling with -std=c++98 instead of -std=gnu98,
+# these function would be unavailable.
+# Defining _DEFAULT_SOURCE during compilation tells the GNU C Library headers to make the
+# POSIX and System V functions available also in strict ANSI C mode.
+# See also: https://www.gnu.org/software/libc/manual/html_node/Feature-Test-Macros.html
+target_compile_definitions(kim-api PRIVATE _DEFAULT_SOURCE)

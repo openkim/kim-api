@@ -283,7 +283,7 @@ namespace edn {
     else if (validSymbol(token.value))
       node.type = EdnSymbol;
     else
-      throw "Could not parse atom";
+      throw string("Could not parse atom");
 
     return node;
   }
@@ -316,7 +316,7 @@ namespace edn {
       //special case where we return early as # { is a set - thus tagname is empty
       node.type = EdnSet;
       if (value.type != EdnMap) {
-        throw "Was expection a { } after hash to build set";
+        throw string("Was expection a { } after hash to build set");
       }
       node.values = value.values;
       return node;
@@ -325,7 +325,7 @@ namespace edn {
     }
   
     if (!validSymbol(tagName)) {
-      throw "Invalid tag name"; 
+      throw string("Invalid tag name");
     }
 
     EdnToken symToken;
@@ -358,7 +358,7 @@ namespace edn {
       if (token.value == "{") closeParen = "}"; 
 
       while (true) {
-        if (tokens.empty()) throw "unexpected end of list";
+        if (tokens.empty()) throw string("unexpected end of list");
 
         nextToken = shiftToken(tokens);
 
@@ -369,7 +369,7 @@ namespace edn {
         }
       }
     } else if (token.value == ")" || token.value == "]" || token.value == "}") {
-      throw "Unexpected " + token.value;
+      throw string("Unexpected " + token.value);
     } else {
       if (token.value.size() && token.value.at(0) == '#') {
         return handleTagged(token, readAhead(shiftToken(tokens), tokens));
@@ -443,7 +443,7 @@ namespace edn {
     list<EdnToken> tokens = lex(edn);
     
     if (tokens.size() == 0) {
-      throw "No parsable tokens found in string";
+      throw string("No parsable tokens found in string");
     }
 
     return readAhead(shiftToken(tokens), tokens);

@@ -19,7 +19,7 @@
 #
 
 #
-# Copyright (c) 2013--2019, Regents of the University of Minnesota.
+# Copyright (c) 2013--2020, Regents of the University of Minnesota.
 # All rights reserved.
 #
 # Contributors:
@@ -29,14 +29,8 @@
 #
 
 #
-# Release: This file is part of the kim-api-2.1.3 package.
+# Release: This file is part of the kim-api-2.2.0 package.
 #
 
 
-set(FIND_FILE_IN FindKIM-API.cmake.in)  # should _not_ use PROJECT_NAME here
-set(FIND_FILE FindKIM-API.cmake)  # should _not_ use PROJECT_NAME here
-configure_file("${FIND_FILE_IN}" "${CMAKE_CURRENT_BINARY_DIR}/${FIND_FILE}" @ONLY)
-install(
-  FILES "${CMAKE_CURRENT_BINARY_DIR}/${FIND_FILE}"
-  DESTINATION ${CMAKE_INSTALL_DATADIR}/cmake/Modules
-  )
+# nothing to be done here...

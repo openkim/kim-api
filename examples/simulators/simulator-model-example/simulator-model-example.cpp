@@ -19,7 +19,7 @@
 //
 
 //
-// Copyright (c) 2016--2019, Regents of the University of Minnesota.
+// Copyright (c) 2016--2020, Regents of the University of Minnesota.
 // All rights reserved.
 //
 // Contributors:
@@ -42,7 +42,7 @@ int main()
   if (error)
   {
     std::cout << "Can't create SM." << std::endl;
-    goto fail;
+    return 1;
   }
 
   {
@@ -133,27 +133,28 @@ int main()
               << " parameter files:" << std::endl;
     for (int i = 0; i < numberParamFiles; ++i)
     {
-      std::string const * pParamFileName;
-      error = SM->GetParameterFileName(i, &pParamFileName);
+      std::string const * pParamFileBasename;
+      error = SM->GetParameterFileBasename(i, &pParamFileBasename);
       if (error)
       {
-        std::cout << "Unable to get parameter file name." << std::endl;
+        std::cout << "Unable to get parameter file basename." << std::endl;
         goto fail;
       }
       else
       {
         std::cout << "Parameter file " << std::setw(2) << i
-                  << " has name : " << *pParamFileName << std::endl;
+                  << " has basename : " << *pParamFileBasename << std::endl;
         error = system(
-            (std::string("cat ") + *pDirName + "/" + *pParamFileName).c_str());
+            (std::string("cat ") + *pDirName + "/" + *pParamFileBasename)
+                .c_str());
         std::cout << std::endl;
       }
     }
   }
 
   KIM::SimulatorModel::Destroy(&SM);
-  return false;
+  return 0;  // false
 fail:
   KIM::SimulatorModel::Destroy(&SM);
-  return true;
+  return 1;  // true
 }

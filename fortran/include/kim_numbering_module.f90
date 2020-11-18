@@ -19,7 +19,7 @@
 !
 
 !
-! Copyright (c) 2016--2019, Regents of the University of Minnesota.
+! Copyright (c) 2016--2020, Regents of the University of Minnesota.
 ! All rights reserved.
 !
 ! Contributors:
@@ -27,9 +27,8 @@
 !
 
 !
-! Release: This file is part of the kim-api-2.1.3 package.
+! Release: This file is part of the kim-api-2.2.0 package.
 !
-
 
 !> \brief \copybrief KIM::Numbering
 !!
@@ -44,20 +43,17 @@ module kim_numbering_module
   public &
     ! Derived types
     kim_numbering_type, &
-
     ! Constants
     KIM_NUMBERING_ZERO_BASED, &
     KIM_NUMBERING_ONE_BASED, &
-
     ! Routines
     kim_known, &
-    operator (.eq.), &
-    operator (.ne.), &
+    operator(.eq.), &
+    operator(.ne.), &
     kim_from_string, &
     kim_to_string, &
     kim_get_number_of_numberings, &
     kim_get_numbering
-
 
   !> \brief \copybrief KIM::Numbering
   !!
@@ -100,18 +96,18 @@ module kim_numbering_module
   !! \sa KIM::Numbering::operator==(), KIM_Numbering_Equal
   !!
   !! \since 2.0
-  interface operator (.eq.)
+  interface operator(.eq.)
     module procedure kim_numbering_equal
-  end interface operator (.eq.)
+  end interface operator(.eq.)
 
   !> \brief \copybrief KIM::Numbering::operator!=()
   !!
   !! \sa KIM::Numbering::operator!=(), KIM_Numbering_NotEqual
   !!
   !! \since 2.0
-  interface operator (.ne.)
+  interface operator(.ne.)
     module procedure kim_numbering_not_equal
-  end interface operator (.ne.)
+  end interface operator(.ne.)
 
   !> \brief \copybrief KIM::Numbering::Numbering(std::string const &)
   !!
@@ -164,8 +160,7 @@ contains
     type(kim_numbering_type), intent(in) :: lhs
     type(kim_numbering_type), intent(in) :: rhs
 
-    kim_numbering_equal &
-      = (lhs%numbering_id .eq. rhs%numbering_id)
+    kim_numbering_equal = (lhs%numbering_id == rhs%numbering_id)
   end function kim_numbering_equal
 
   !> \brief \copybrief KIM::Numbering::operator!=()
@@ -178,7 +173,7 @@ contains
     type(kim_numbering_type), intent(in) :: lhs
     type(kim_numbering_type), intent(in) :: rhs
 
-    kim_numbering_not_equal = .not. (lhs .eq. rhs)
+    kim_numbering_not_equal = .not. (lhs == rhs)
   end function kim_numbering_not_equal
 
   !> \brief \copybrief KIM::Numbering::Numbering(std::string const &)
@@ -210,7 +205,7 @@ contains
   !!
   !! \since 2.0
   recursive subroutine kim_numbering_to_string(numbering, string)
-    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
+    use kim_convert_string_module, only: kim_convert_c_char_ptr_to_string
     implicit none
     interface
       type(c_ptr) recursive function get_string(numbering) &
@@ -272,6 +267,6 @@ contains
     type(kim_numbering_type), intent(out) :: numbering
     integer(c_int), intent(out) :: ierr
 
-    ierr = get_numbering(index-1, numbering)
+    ierr = get_numbering(index - 1, numbering)
   end subroutine kim_get_numbering
 end module kim_numbering_module

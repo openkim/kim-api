@@ -21,7 +21,7 @@
 /*                                                                            */
 
 /*                                                                            */
-/* Copyright (c) 2016--2019, Regents of the University of Minnesota.          */
+/* Copyright (c) 2016--2020, Regents of the University of Minnesota.          */
 /* All rights reserved.                                                       */
 /*                                                                            */
 /* Contributors:                                                              */
@@ -29,7 +29,7 @@
 /*                                                                            */
 
 /*                                                                            */
-/* Release: This file is part of the kim-api-2.1.3 package.                   */
+/* Release: This file is part of the kim-api-2.2.0 package.                   */
 /*                                                                            */
 
 
@@ -352,5 +352,15 @@ typedef int KIM_ModelComputeArgumentsDestroyFunction(
  ** \since 2.0
  **/
 typedef int KIM_ModelDestroyFunction(KIM_ModelDestroy * const modelDestroy);
+
+/**
+ ** \brief \copybrief KIM::LogPrintFunction
+ **
+ ** \sa KIM::LogPrintFunction,
+ ** kim_log_module::kim_log_push_default_print_function
+ **
+ ** \since 2.2
+ **/
+typedef int KIM_LogPrintFunction(char const * const entryString);
 
 #endif /* KIM_FUNCTION_TYPES_H_ */

@@ -19,7 +19,7 @@
 //
 
 //
-// Copyright (c) 2016--2019, Regents of the University of Minnesota.
+// Copyright (c) 2016--2020, Regents of the University of Minnesota.
 // All rights reserved.
 //
 // Contributors:
@@ -27,9 +27,21 @@
 //
 
 //
-// Release: This file is part of the kim-api-2.1.3 package.
+// Release: This file is part of the kim-api-2.2.0 package.
 //
 
+
+#include <cstddef>
+
+#ifndef KIM_FUNCTION_TYPES_HPP_
+#include "KIM_FunctionTypes.hpp"
+#endif
+
+extern "C" {
+#ifndef KIM_FUNCTION_TYPES_H_
+#include "KIM_FunctionTypes.h"  // IWYU pragma: keep
+#endif
+}
 
 #ifndef KIM_LANGUAGE_NAME_HPP_
 #include "KIM_LanguageName.hpp"
@@ -43,33 +55,6 @@
 #include "KIM_SharedLibrarySchema.hpp"
 #endif
 
-#ifndef KIM_FUNCTION_TYPES_HPP_
-#include "KIM_FunctionTypes.hpp"
-#endif
-
-extern "C" {
-#ifndef KIM_FUNCTION_TYPES_H_
-#include "KIM_FunctionTypes.h"
-#endif
-}
-
-extern "C" {
-#ifndef KIM_UNIT_SYSTEM_H_
-#include "KIM_UnitSystem.h"
-#endif
-}
-
-extern "C" {
-#ifndef KIM_MODEL_DRIVER_CREATE_H_
-#include "KIM_ModelDriverCreate.h"
-#endif
-}
-
-extern "C" {
-#ifndef KIM_MODEL_CREATE_H_
-#include "KIM_ModelCreate.h"
-#endif
-}
 
 using namespace KIM::SHARED_LIBRARY_SCHEMA;
 
@@ -77,24 +62,27 @@ extern "C" {
 // clang-format off
 int kim_shared_library_schema_version = 2;
 
-@CREATE_ROUTINE_DECLARATION@
-@EMBEDDED_SM_SPEC_FILE@
-@PARAMETER_FILE_DECLARATIONS@
-@EMBEDDED_PARAMETER_FILES@
-@METADATA_FILE_DECLARATIONS@
-@EMBEDDED_METADATA_FILES@
+@ITEM_CREATE_ROUTINE_DECLARATION@
+
+@ITEM_SM_SPEC_FILE_DECLARATIONS@
+@ITEM_PARAMETER_FILE_DECLARATIONS@
+@ITEM_METADATA_FILE_DECLARATIONS@
+
+@ITEM_SM_SPEC_FILE_EMBEDDED_FILE_INITIALIZER_LIST@
+@ITEM_PARAMETER_FILE_EMBEDDED_FILE_INITIALIZER_LIST@
+@ITEM_METADATA_FILE_EMBEDDED_FILE_INITIALIZER_LIST@
 
 SharedLibrarySchemaV2 kim_shared_library_schema = {
     KIM::COLLECTION_ITEM_TYPE::@ITEM_TYPE@,  // Item Type
-    @ITEM_NAME@,  // Item Name
-    KIM::LANGUAGE_NAME::@CREATE_ROUTINE_LANGUAGE@,  // Create Routine Language
-    reinterpret_cast<KIM::Function *>(@CREATE_ROUTINE_NAME@),  // Create Routine Name
-    @ITEM_DRIVER_NAME@,  // Item Driver Name
-    @EMBEDDED_SM_SPEC_FILE_IDENTIFIER@,  // smspec File
-    @NUMBER_OF_PARAMETER_FILES@,  // Number of Parameter Files
-    @EMBEDDED_PARAMETER_FILES_IDENTIFIER@,  // Embedded Parameter Files
-    @NUMBER_OF_METADATA_FILES@,  // Number of Metadata Files
-    @EMBEDDED_METADATA_FILES_IDENTIFIER@  // Embedded Metadata Files
+    @ITEM_NAME_QUOTED@,  // Item Name
+    KIM::LANGUAGE_NAME::@ITEM_CREATE_ROUTINE_LANGUAGE@,  // Create Routine Language
+    reinterpret_cast<KIM::Function *>(@ITEM_CREATE_ROUTINE_NAME@),  // Create Routine Name
+    @ITEM_DRIVER_NAME_QUOTED@,  // Item Driver Name
+    @ITEM_SM_SPEC_FILE_EMBEDDED_FILE_IDENTIFIER@,  // smspec File
+    @ITEM_NUMBER_OF_PARAMETER_FILES@,  // Number of Parameter Files
+    @ITEM_PARAMETER_FILE_EMBEDDED_FILE_IDENTIFIER@,  // Embedded Parameter Files
+    @ITEM_NUMBER_OF_METADATA_FILES@,  // Number of Metadata Files
+    @ITEM_METADATA_FILE_EMBEDDED_FILE_IDENTIFIER@  // Embedded Metadata Files
 };
 }
 // clang-format on

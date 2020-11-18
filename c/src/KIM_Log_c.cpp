@@ -21,7 +21,7 @@
 //
 
 //
-// Copyright (c) 2016--2019, Regents of the University of Minnesota.
+// Copyright (c) 2016--2020, Regents of the University of Minnesota.
 // All rights reserved.
 //
 // Contributors:
@@ -29,8 +29,12 @@
 //
 
 //
-// Release: This file is part of the kim-api-2.1.3 package.
+// Release: This file is part of the kim-api-2.2.0 package.
 //
+
+
+#include <cstddef>
+#include <string>
 
 #ifndef KIM_LOG_VERBOSITY_HPP_
 #include "KIM_LogVerbosity.hpp"
@@ -38,6 +42,15 @@
 extern "C" {
 #ifndef KIM_LOG_VERBOSITY_H_
 #include "KIM_LogVerbosity.h"
+#endif
+}  // extern "C"
+
+#ifndef KIM_LANGUAGE_NAME_HPP_
+#include "KIM_LanguageName.hpp"
+#endif
+extern "C" {
+#ifndef KIM_LANGUAGE_NAME_H_
+#include "KIM_LanguageName.h"
 #endif
 }  // extern "C"
 
@@ -64,6 +77,11 @@ KIM::LogVerbosity makeLogVerbosityCpp(KIM_LogVerbosity const logVerbosity)
 {
   return KIM::LogVerbosity(logVerbosity.logVerbosityID);
 }
+
+KIM::LanguageName makeLanguageNameCpp(KIM_LanguageName const languageName)
+{
+  return KIM::LanguageName(languageName.languageNameID);
+}
 }  // namespace
 
 
@@ -72,20 +90,21 @@ int KIM_Log_Create(KIM_Log ** const log)
 {
   KIM::Log * pLog;
   int error = KIM::Log::Create(&pLog);
-  if (error) { return true; }
-  else
-  {
-    (*log) = new KIM_Log;
-    (*log)->p = (void *) pLog;
-    return false;
-  }
+  if (error) return error;
+
+  (*log) = new KIM_Log;
+  (*log)->p = (void *) pLog;
+  return false;
 }
 
 void KIM_Log_Destroy(KIM_Log ** const log)
 {
-  KIM::Log * pLog = reinterpret_cast<KIM::Log *>((*log)->p);
+  if (*log != NULL)
+  {
+    KIM::Log * pLog = reinterpret_cast<KIM::Log *>((*log)->p);
 
-  KIM::Log::Destroy(&pLog);
+    KIM::Log::Destroy(&pLog);
+  }
   delete (*log);
   *log = NULL;
 }
@@ -96,6 +115,14 @@ void KIM_Log_PushDefaultVerbosity(KIM_LogVerbosity const logVerbosity)
 }
 
 void KIM_Log_PopDefaultVerbosity() { KIM::Log::PopDefaultVerbosity(); }
+
+void KIM_Log_PushDefaultPrintFunction(KIM_LanguageName const languageName,
+                                      KIM_Function * const fptr)
+{
+  KIM::Log::PushDefaultPrintFunction(makeLanguageNameCpp(languageName), fptr);
+}
+
+void KIM_Log_PopDefaultPrintFunction() { KIM::Log::PopDefaultPrintFunction(); }
 
 char const * KIM_Log_GetID(KIM_Log const * const log)
 {

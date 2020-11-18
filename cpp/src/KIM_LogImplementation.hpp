@@ -19,7 +19,7 @@
 //
 
 //
-// Copyright (c) 2016--2019, Regents of the University of Minnesota.
+// Copyright (c) 2016--2020, Regents of the University of Minnesota.
 // All rights reserved.
 //
 // Contributors:
@@ -27,19 +27,26 @@
 //
 
 //
-// Release: This file is part of the kim-api-2.1.3 package.
+// Release: This file is part of the kim-api-2.2.0 package.
 //
 
 
 #ifndef KIM_LOG_IMPLEMENTATION_HPP_
 #define KIM_LOG_IMPLEMENTATION_HPP_
 
-#include <fstream>
 #include <stack>
 #include <string>
 
+#ifndef KIM_FUNCTION_TYPES_HPP_
+#include "KIM_FunctionTypes.hpp"  // IWYU pragma: export
+#endif
+
 #ifndef KIM_LOG_VERBOSITY_HPP_
 #include "KIM_LogVerbosity.hpp"
+#endif
+
+#ifndef KIM_LANGUAGE_NAME_HPP_
+#include "KIM_LanguageName.hpp"
 #endif
 
 namespace KIM
@@ -54,6 +61,10 @@ class LogImplementation
 
   static void PushDefaultVerbosity(LogVerbosity const logVerbosity);
   static void PopDefaultVerbosity();
+
+  static void PushDefaultPrintFunction(LanguageName const languageName,
+                                       Function * const fptr);
+  static void PopDefaultPrintFunction();
 
   std::string const & GetID() const;
   void SetID(std::string const & id);
@@ -86,6 +97,9 @@ class LogImplementation
 
   std::string idString_;
   std::stack<LogVerbosity> verbosity_;
+
+  LanguageName printFunctionLanguageName_;
+  Function * printFunctionPointer_;
 
   mutable std::string latestTimeStamp_;
   mutable unsigned sequence_;

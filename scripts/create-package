@@ -21,7 +21,7 @@
 #
 
 #
-# Copyright (c) 2013--2019, Regents of the University of Minnesota.
+# Copyright (c) 2013--2020, Regents of the University of Minnesota.
 # All rights reserved.
 #
 # Contributors:
@@ -29,7 +29,7 @@
 #
 
 #
-# Release: This file is part of the kim-api-2.1.3 package.
+# Release: This file is part of the kim-api-2.2.0 package.
 #
 
 
@@ -110,7 +110,7 @@ EOF
 
 # Change kim-api.git to release version string
 # replace c /* */ comments
-orig_string="kim-api-2.1.3 package.  "  # include trailing space to keep this from catching non /* */ comments
+orig_string="kim-api-2.2.0 package.  "  # include trailing space to keep this from catching non /* */ comments
 new_string="${fullpackagename} package."
 num_spaces=`expr ${#new_string} - ${#orig_string}`
 if test ${num_spaces} -le 0; then
@@ -175,9 +175,11 @@ printf "  git checkout '${devel_branch}'\n"
 printf "  emacs CMakeLists.txt  # Bump version number to next patch value.\n"
 printf "  git add CMakeLists.txt\n"
 printf "  git commit  # message: Bump version to vX.Y.Z\n"
+printf "  git push origin\n"
+printf "  git push github\n"
 
 printf "\n"
-internal_notes="/Users/relliott/unison-sync/KIM/kim-release-process-notes/kim-api-internal-release-process-notes"
+internal_notes="/Users/relliott/unison-sync/KIM/kim-api-release-process-notes/kim-api-internal-release-process-notes"
 if test -f "${internal_notes}"; then
   source "${internal_notes}"
 fi

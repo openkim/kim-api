@@ -19,7 +19,7 @@
 !
 
 !
-! Copyright (c) 2016--2019, Regents of the University of Minnesota.
+! Copyright (c) 2016--2020, Regents of the University of Minnesota.
 ! All rights reserved.
 !
 ! Contributors:
@@ -27,9 +27,8 @@
 !
 
 !
-! Release: This file is part of the kim-api-2.1.3 package.
+! Release: This file is part of the kim-api-2.2.0 package.
 !
-
 
 module kim_convert_string_module
   implicit none
@@ -51,17 +50,17 @@ contains
     integer(c_int) :: null_index
     integer(c_int) :: length
 
-    length = len(string)+1
-    do null_index=1,length
-      if (c_char_array(null_index) .eq. c_null_char) exit
+    length = len(string) + 1
+    do null_index = 1, length
+      if (c_char_array(null_index) == c_null_char) exit
     end do
-    if (null_index .eq. length) then
+    if (null_index == length) then
       null_index = len(string)
     else
       null_index = null_index - 1
     end if
     string = ""
-    do i=1,null_index
+    do i = 1, null_index
       string(i:i) = c_char_array(i)
     end do
   end subroutine kim_convert_c_char_array_to_string

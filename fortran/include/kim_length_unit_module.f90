@@ -19,7 +19,7 @@
 !
 
 !
-! Copyright (c) 2016--2019, Regents of the University of Minnesota.
+! Copyright (c) 2016--2020, Regents of the University of Minnesota.
 ! All rights reserved.
 !
 ! Contributors:
@@ -27,9 +27,8 @@
 !
 
 !
-! Release: This file is part of the kim-api-2.1.3 package.
+! Release: This file is part of the kim-api-2.2.0 package.
 !
-
 
 !> \brief \copybrief KIM::LengthUnit
 !!
@@ -44,7 +43,6 @@ module kim_length_unit_module
   public &
     ! Derive types
     kim_length_unit_type, &
-
     ! Constants
     KIM_LENGTH_UNIT_UNUSED, &
     KIM_LENGTH_UNIT_A, &
@@ -52,16 +50,14 @@ module kim_length_unit_module
     KIM_LENGTH_UNIT_CM, &
     KIM_LENGTH_UNIT_M, &
     KIM_LENGTH_UNIT_NM, &
-
     ! Routines
     kim_known, &
-    operator (.eq.), &
-    operator (.ne.), &
+    operator(.eq.), &
+    operator(.ne.), &
     kim_from_string, &
     kim_to_string, &
     kim_get_number_of_length_units, &
     kim_get_length_unit
-
 
   !> \brief \copybrief KIM::LengthUnit
   !!
@@ -69,11 +65,11 @@ module kim_length_unit_module
   !!
   !! \since 2.0
   type, bind(c) :: kim_length_unit_type
-     !> \brief \copybrief KIM::LengthUnit::lengthUnitID
-     !!
-     !! \sa KIM::LengthUnit::lengthUnitID, KIM_LengthUnit::lengthUnitID
-     !!
-     !! \since 2.0
+    !> \brief \copybrief KIM::LengthUnit::lengthUnitID
+    !!
+    !! \sa KIM::LengthUnit::lengthUnitID, KIM_LengthUnit::lengthUnitID
+    !!
+    !! \since 2.0
     integer(c_int) length_unit_id
   end type kim_length_unit_type
 
@@ -145,18 +141,18 @@ module kim_length_unit_module
   !! \sa KIM::LengthUnit::operator==(), KIM_LengthUnit_Equal
   !!
   !! \since 2.0
-  interface operator (.eq.)
+  interface operator(.eq.)
     module procedure kim_length_unit_equal
-  end interface operator (.eq.)
+  end interface operator(.eq.)
 
   !> \brief \copybrief KIM::LengthUnit::operator!=()
   !!
   !! \sa KIM::LengthUnit::operator!=(), KIM_LengthUnit_NotEqual
   !!
   !! \since 2.0
-  interface operator (.ne.)
+  interface operator(.ne.)
     module procedure kim_length_unit_not_equal
-  end interface operator (.ne.)
+  end interface operator(.ne.)
 
   !> \brief \copybrief KIM::LengthUnit::LengthUnit(std::string const &)
   !!
@@ -210,7 +206,7 @@ contains
     type(kim_length_unit_type), intent(in) :: rhs
 
     kim_length_unit_equal &
-      = (lhs%length_unit_id .eq. rhs%length_unit_id)
+      = (lhs%length_unit_id == rhs%length_unit_id)
   end function kim_length_unit_equal
 
   !> \brief \copybrief KIM::LengthUnit::operator!=()
@@ -223,7 +219,7 @@ contains
     type(kim_length_unit_type), intent(in) :: lhs
     type(kim_length_unit_type), intent(in) :: rhs
 
-    kim_length_unit_not_equal = .not. (lhs .eq. rhs)
+    kim_length_unit_not_equal = .not. (lhs == rhs)
   end function kim_length_unit_not_equal
 
   !> \brief \copybrief KIM::LengthUnit::LengthUnit(std::string const &)
@@ -255,7 +251,7 @@ contains
   !!
   !! \since 2.0
   recursive subroutine kim_length_unit_to_string(length_unit, string)
-    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
+    use kim_convert_string_module, only: kim_convert_c_char_ptr_to_string
     implicit none
     interface
       type(c_ptr) recursive function get_string(length_unit) &
@@ -316,6 +312,6 @@ contains
     type(kim_length_unit_type), intent(out) :: length_unit
     integer(c_int), intent(out) :: ierr
 
-    ierr = get_length_unit(index-1, length_unit)
+    ierr = get_length_unit(index - 1, length_unit)
   end subroutine kim_get_length_unit
 end module kim_length_unit_module

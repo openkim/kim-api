@@ -19,7 +19,7 @@
 #
 
 #
-# Copyright (c) 2013--2019, Regents of the University of Minnesota.
+# Copyright (c) 2013--2020, Regents of the University of Minnesota.
 # All rights reserved.
 #
 # Contributors:
@@ -29,15 +29,16 @@
 #
 
 #
-# Release: This file is part of the kim-api-2.1.3 package.
+# Release: This file is part of the kim-api-2.2.0 package.
 #
 
-cmake_minimum_required(VERSION 3.9)
+cmake_minimum_required(VERSION 3.10)
 
-cmake_policy(SET CMP0057 NEW)
-cmake_policy(SET CMP0054 NEW)
-
-find_package(Doxygen)
+find_package(Doxygen QUIET)
+if(Doxygen_FOUND)
+  include(FindPackageMessage)
+  find_package_message(Doxygen "Found Doxygen: (${DOXYGEN_EXECUTABLE})" "found")
+endif()
 
 set(DOXYGEN_PROJECT_NAME         "${PROJECT_NAME}")
 set(DOXYGEN_PROJECT_NUMBER       "${PROJECT_VERSION_STRING}")
@@ -60,10 +61,11 @@ set(DOXYGEN_FILE_PATTERNS ${DOXYGEN_FILE_PATTERNS}
 set(DOXYGEN_EXTENSION_MAPPING    "in=C++")
 
 set(DOXYGEN_RECURSIVE            YES)
+set(DOXYGEN_EXAMPLE_PATH         "../examples")
 set(DOXYGEN_IMAGE_PATH           "src/asymptote-figures")
 set(DOXYGEN_SOURCE_BROWSER       YES)
 set(DOXYGEN_USE_MATHJAX          YES)
-set(DOXYGEN_MATHJAX_RELPATH      "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.3")
+set(DOXYGEN_MATHJAX_RELPATH      "https://cdn.jsdelivr.net/npm/mathjax@2")
 set(DOXYGEN_EXTRA_PACKAGES       "amsmath")
 set(DOXYGEN_GENERATE_LATEX       YES)
 
@@ -72,6 +74,7 @@ if(READTHEDOCS)
 endif(READTHEDOCS)
 
 set(SOURCES
+  "src/cmake-files.txt"
   "src/table-of-contents.txt"
   "src/features.txt"
   "src/theory.txt"
@@ -80,6 +83,7 @@ set(SOURCES
   "../cpp/include/"
   "../c/include/"
   "../fortran/include/"
+  "../INSTALL"
   "../NEWS"
   "../examples/model-drivers/"
   "../examples/portable-models/"
@@ -105,5 +109,9 @@ if(DOXYGEN_FOUND)
   add_custom_target(pdf DEPENDS docs refman.pdf SOURCES ${SOURCES})
 endif(DOXYGEN_FOUND)
 
-install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/html DESTINATION ${CMAKE_INSTALL_DOCDIR} OPTIONAL)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/refman.pdf DESTINATION ${CMAKE_INSTALL_DOCDIR} OPTIONAL)
+install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/html
+  # use CMAKE_INSTALL_RELOC_* to get relocatable GNUInstallDir behavior
+  DESTINATION ${CMAKE_INSTALL_RELOC_DOCDIR} OPTIONAL)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/refman.pdf
+  # use CMAKE_INSTALL_RELOC_* to get relocatable GNUInstallDir behavior
+  DESTINATION ${CMAKE_INSTALL_RELOC_DOCDIR} OPTIONAL)

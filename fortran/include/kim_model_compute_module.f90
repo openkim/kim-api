@@ -19,7 +19,7 @@
 !
 
 !
-! Copyright (c) 2016--2019, Regents of the University of Minnesota.
+! Copyright (c) 2016--2020, Regents of the University of Minnesota.
 ! All rights reserved.
 !
 ! Contributors:
@@ -27,9 +27,8 @@
 !
 
 !
-! Release: This file is part of the kim-api-2.1.3 package.
+! Release: This file is part of the kim-api-2.2.0 package.
 !
-
 
 !> \brief \copybrief KIM::ModelCompute
 !!
@@ -44,17 +43,14 @@ module kim_model_compute_module
   public &
     ! Derived types
     kim_model_compute_handle_type, &
-
     ! Constants
     KIM_MODEL_COMPUTE_NULL_HANDLE, &
-
     ! Routines
-    operator (.eq.), &
-    operator (.ne.), &
+    operator(.eq.), &
+    operator(.ne.), &
     kim_get_model_buffer_pointer, &
     kim_log_entry, &
     kim_to_string
-
 
   !> \brief \copybrief KIM::ModelCompute
   !!
@@ -74,16 +70,16 @@ module kim_model_compute_module
   !> \brief Compares kim_model_compute_handle_type's for equality.
   !!
   !! \since 2.0
-  interface operator (.eq.)
+  interface operator(.eq.)
     module procedure kim_model_compute_handle_equal
-  end interface operator (.eq.)
+  end interface operator(.eq.)
 
   !> \brief Compares kim_model_compute_handle_type's for inequality.
   !!
   !! \since 2.0
-  interface operator (.ne.)
+  interface operator(.ne.)
     module procedure kim_model_compute_handle_not_equal
-  end interface operator (.ne.)
+  end interface operator(.ne.)
 
   !> \brief \copybrief KIM::ModelCompute::GetModelBufferPointer
   !!
@@ -137,7 +133,7 @@ contains
     type(kim_model_compute_handle_type), intent(in) :: lhs
     type(kim_model_compute_handle_type), intent(in) :: rhs
 
-    kim_model_compute_handle_not_equal = .not. (lhs .eq. rhs)
+    kim_model_compute_handle_not_equal = .not. (lhs == rhs)
   end function kim_model_compute_handle_not_equal
 
   !> \brief \copybrief KIM::ModelCompute::GetModelBufferPointer
@@ -148,13 +144,13 @@ contains
   !! \since 2.0
   recursive subroutine kim_model_compute_get_model_buffer_pointer( &
     model_compute_handle, ptr)
-    use kim_interoperable_types_module, only : kim_model_compute_type
+    use kim_interoperable_types_module, only: kim_model_compute_type
     implicit none
     interface
       recursive subroutine get_model_buffer_pointer(model_compute, ptr) &
         bind(c, name="KIM_ModelCompute_GetModelBufferPointer")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_model_compute_type
+        use kim_interoperable_types_module, only: kim_model_compute_type
         implicit none
         type(kim_model_compute_type), intent(in) :: model_compute
         type(c_ptr), intent(out) :: ptr
@@ -174,16 +170,17 @@ contains
   !!
   !! \since 2.0
   recursive subroutine kim_model_compute_log_entry(model_compute_handle, &
-    log_verbosity, message)
-    use kim_log_verbosity_module, only : kim_log_verbosity_type
-    use kim_interoperable_types_module, only : kim_model_compute_type
+                                                   log_verbosity, message)
+    use kim_log_verbosity_module, only: kim_log_verbosity_type
+    use kim_interoperable_types_module, only: kim_model_compute_type
     implicit none
     interface
-      recursive subroutine log_entry(model_compute, log_verbosity, message, &
-        line_number, file_name) bind(c, name="KIM_ModelCompute_LogEntry")
+      recursive subroutine log_entry( &
+        model_compute, log_verbosity, message, line_number, file_name) &
+        bind(c, name="KIM_ModelCompute_LogEntry")
         use, intrinsic :: iso_c_binding
-        use kim_log_verbosity_module, only : kim_log_verbosity_type
-        use kim_interoperable_types_module, only : kim_model_compute_type
+        use kim_log_verbosity_module, only: kim_log_verbosity_type
+        use kim_interoperable_types_module, only: kim_model_compute_type
         implicit none
         type(kim_model_compute_type), intent(in) :: model_compute
         type(kim_log_verbosity_type), intent(in), value :: log_verbosity
@@ -199,7 +196,7 @@ contains
 
     call c_f_pointer(model_compute_handle%p, model_compute)
     call log_entry(model_compute, log_verbosity, trim(message)//c_null_char, &
-      0, ""//c_null_char)
+                   0, ""//c_null_char)
   end subroutine kim_model_compute_log_entry
 
   !> \brief \copybrief KIM::ModelCompute::ToString
@@ -208,14 +205,14 @@ contains
   !!
   !! \since 2.0
   recursive subroutine kim_model_compute_to_string(model_compute_handle, string)
-    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
-    use kim_interoperable_types_module, only : kim_model_compute_type
+    use kim_convert_string_module, only: kim_convert_c_char_ptr_to_string
+    use kim_interoperable_types_module, only: kim_model_compute_type
     implicit none
     interface
       type(c_ptr) recursive function model_compute_string(model_compute) &
         bind(c, name="KIM_ModelCompute_ToString")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_model_compute_type
+        use kim_interoperable_types_module, only: kim_model_compute_type
         implicit none
         type(kim_model_compute_type), intent(in) :: model_compute
       end function model_compute_string

@@ -19,7 +19,7 @@
 !
 
 !
-! Copyright (c) 2016--2019, Regents of the University of Minnesota.
+! Copyright (c) 2016--2020, Regents of the University of Minnesota.
 ! All rights reserved.
 !
 ! Contributors:
@@ -27,9 +27,8 @@
 !
 
 !
-! Release: This file is part of the kim-api-2.1.3 package.
+! Release: This file is part of the kim-api-2.2.0 package.
 !
-
 
 !> \brief \copybrief KIM::TimeUnit
 !!
@@ -44,23 +43,20 @@ module kim_time_unit_module
   public &
     ! Derived types
     kim_time_unit_type, &
-
     ! Constants
     KIM_TIME_UNIT_UNUSED, &
     KIM_TIME_UNIT_FS, &
     KIM_TIME_UNIT_PS, &
     KIM_TIME_UNIT_NS, &
     KIM_TIME_UNIT_S, &
-
     ! Routines
     kim_known, &
-    operator (.eq.), &
-    operator (.ne.), &
+    operator(.eq.), &
+    operator(.ne.), &
     kim_from_string, &
     kim_to_string, &
     kim_get_number_of_time_units, &
     kim_get_time_unit
-
 
   !> \brief \copybrief KIM::TimeUnit
   !!
@@ -135,18 +131,18 @@ module kim_time_unit_module
   !! \sa KIM::TimeUnit::operator==(), KIM_TimeUnit_Equal
   !!
   !! \since 2.0
-  interface operator (.eq.)
+  interface operator(.eq.)
     module procedure kim_time_unit_equal
-  end interface operator (.eq.)
+  end interface operator(.eq.)
 
   !> \brief \copybrief KIM::TimeUnit::operator!=()
   !!
   !! \sa KIM::TimeUnit::operator!=(), KIM_TimeUnit_NotEqual
   !!
   !! \since 2.0
-  interface operator (.ne.)
+  interface operator(.ne.)
     module procedure kim_time_unit_not_equal
-  end interface operator (.ne.)
+  end interface operator(.ne.)
 
   !> \brief \copybrief KIM::TimeUnit::TimeUnit(std::string const &)
   !!
@@ -198,8 +194,7 @@ contains
     type(kim_time_unit_type), intent(in) :: lhs
     type(kim_time_unit_type), intent(in) :: rhs
 
-    kim_time_unit_equal &
-      = (lhs%time_unit_id .eq. rhs%time_unit_id)
+    kim_time_unit_equal = (lhs%time_unit_id == rhs%time_unit_id)
   end function kim_time_unit_equal
 
   !> \brief \copybrief KIM::TimeUnit::operator!=()
@@ -212,7 +207,7 @@ contains
     type(kim_time_unit_type), intent(in) :: lhs
     type(kim_time_unit_type), intent(in) :: rhs
 
-    kim_time_unit_not_equal = .not. (lhs .eq. rhs)
+    kim_time_unit_not_equal = .not. (lhs == rhs)
   end function kim_time_unit_not_equal
 
   !> \brief \copybrief KIM::TimeUnit::TimeUnit(std::string const &)
@@ -243,7 +238,7 @@ contains
   !!
   !! \since 2.0
   recursive subroutine kim_time_unit_to_string(time_unit, string)
-    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
+    use kim_convert_string_module, only: kim_convert_c_char_ptr_to_string
     implicit none
     interface
       type(c_ptr) recursive function get_string(time_unit) &
@@ -305,6 +300,6 @@ contains
     type(kim_time_unit_type), intent(out) :: time_unit
     integer(c_int), intent(out) :: ierr
 
-    ierr = get_time_unit(index-1, time_unit)
+    ierr = get_time_unit(index - 1, time_unit)
   end subroutine kim_get_time_unit
 end module kim_time_unit_module

@@ -22,7 +22,7 @@
 #
 
 #
-# Copyright (c) 2018--2019, Regents of the University of Minnesota.
+# Copyright (c) 2018--2020, Regents of the University of Minnesota.
 # All rights reserved.
 #
 # Contributors:
@@ -31,7 +31,7 @@
 #
 
 #
-# Release: This file is part of the kim-api-2.1.3 package.
+# Release: This file is part of the kim-api-2.2.0 package.
 #
 
 
@@ -53,22 +53,33 @@ if test x"${BASENAME_SOURCE}" = x"@PROJECT_NAME@-deactivate"; then
   exit 1
 fi
 
-export PATH=`printf "${PATH}" | sed -e "s|:@CMAKE_INSTALL_FULL_BINDIR@|:|g" \
-                                    -e "s|^@CMAKE_INSTALL_FULL_BINDIR@:*||" \
-                                    -e "s|:@CMAKE_INSTALL_FULL_BINDIR@$||"`
 
+if test -n "${ORIGIN}"; then
+  OLD_KIM_ORIGIN="${ORIGIN}"
+fi
+if test -n "${ZSH_VERSION}"; then
+  ORIGIN=$(cd "$(dirname "${(%):-%x}")" && pwd)
+else
+  ORIGIN=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+fi
+
+export PATH=`printf "${PATH}" | sed -e "s|:${ORIGIN}|:|g" \
+                                    -e "s|^${ORIGIN}:*||" \
+                                    -e "s|:${ORIGIN}$||"`
+_libdir_rel=$(cd "@_libdir_rel@" && pwd)
 export PKG_CONFIG_PATH=`printf "${PKG_CONFIG_PATH}" | \
-                                sed -e "s|:@CMAKE_INSTALL_FULL_LIBDIR@/pkgconfig|:|g" \
-                                    -e "s|^@CMAKE_INSTALL_FULL_LIBDIR@/pkgconfig:*||" \
-                                    -e "s|:@CMAKE_INSTALL_FULL_LIBDIR@/pkgconfig$||"`
-if test x"" = x"${PKG_CONFIG_PATH}"; then unset PKG_CONFIG_PATH; fi
+                                sed -e "s|:${_libdir_rel}/pkgconfig|:|g" \
+                                    -e "s|^${_libdir_rel}/pkgconfig:*||" \
+                                    -e "s|:${_libdir_rel}/pkgconfig$||"`
+unset _libdir_rel
+if test -z "${PKG_CONFIG_PATH}"; then unset PKG_CONFIG_PATH; fi
 
 unset @KIM_API_ENVIRONMENT_CMAKE_PREFIX_DIR@
 
 if test -n "${ZSH_VERSION}"; then
-  _completion_dir="@ZSH_COMPLETION_COMPLETIONSDIR@"
+  _completion_dir="@_zshcompdir_rel@"
 else
-  _completion_dir="@BASH_COMPLETION_COMPLETIONSDIR@"
+  _completion_dir="@_bashcompdir_rel@"
 fi
 
 for _func in `grep "_@KIM_API_C_ID_PROJECT_NAME@_.*[[:space:]]*()" \
@@ -79,3 +90,10 @@ done
 
 unset _func
 unset _completion_dir
+
+if test -n "${OLD_KIM_ORIGIN}"; then
+  ORIGIN="${OLD_KIM_ORIGIN}"
+  unset OLD_KIM_ORIGIN
+else
+  unset ORIGIN
+fi

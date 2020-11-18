@@ -19,7 +19,7 @@
 //
 
 //
-// Copyright (c) 2016--2019, Regents of the University of Minnesota.
+// Copyright (c) 2016--2020, Regents of the University of Minnesota.
 // All rights reserved.
 //
 // Contributors:
@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-2.1.3 package.
+// Release: This file is part of the kim-api-2.2.0 package.
 //
 
 
@@ -226,7 +226,7 @@ class Collections
   ///             block of memory of length \c fileLength.
   /// \param[out] availableAsString An integer that is set to \c true if the
   ///             metadata file has no embedded \c NULL characters, and set to
-  ///             \c fales otherwise.
+  ///             \c false otherwise.
   /// \param[out] fileString The contents of the metadata file as a string, if
   ///             `availableAsString == true`, \c NULL otherwise.
   ///
@@ -412,7 +412,7 @@ class Collections
   ///             block of memory of length \c fileLength.
   /// \param[out] availableAsString An integer that is set to \c true if the
   ///             metadata file has no embedded \c NULL characters, and set to
-  ///             \c fales otherwise.
+  ///             \c false otherwise.
   /// \param[out] fileString The contents of the metadata file as a string, if
   ///             `availableAsString == true`, \c NULL otherwise.
   ///

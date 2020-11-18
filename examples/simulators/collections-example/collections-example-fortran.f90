@@ -19,7 +19,7 @@
 !
 
 !
-! Copyright (c) 2013--2019, Regents of the University of Minnesota.
+! Copyright (c) 2013--2020, Regents of the University of Minnesota.
 ! All rights reserved.
 !
 ! Contributors:
@@ -37,7 +37,7 @@ contains
     implicit none
     character(len=*, kind=c_char), intent(in) :: message
 
-    print *,"* Error : ", trim(message)
+    print *, "* Error : ", trim(message)
     stop 1
   end subroutine my_error
 end module error
@@ -64,36 +64,35 @@ contains
     character(len=2048, kind=c_char) item_type_str
     character(len=2048, kind=c_char) dir_str
 
-
-    call kim_cache_list_of_directory_names(col, collection, &
-      KIM_COLLECTION_ITEM_TYPE_MODEL_DRIVER, extent, ierr)
+    call kim_cache_list_of_directory_names( &
+      col, collection, KIM_COLLECTION_ITEM_TYPE_MODEL_DRIVER, extent, ierr)
     call kim_to_string(collection, coll_str)
     call kim_to_string(KIM_COLLECTION_ITEM_TYPE_MODEL_DRIVER, item_type_str)
     print '(A,":",A," :")', trim(coll_str), trim(item_type_str)
 
-    do i=1,extent
+    do i = 1, extent
       call kim_get_directory_name(col, i, dir_str, ierr)
       print '(A,A)', achar(9), trim(dir_str)
     end do
 
-    call kim_cache_list_of_directory_names(col, collection, &
-      KIM_COLLECTION_ITEM_TYPE_PORTABLE_MODEL, extent, ierr)
+    call kim_cache_list_of_directory_names( &
+      col, collection, KIM_COLLECTION_ITEM_TYPE_PORTABLE_MODEL, extent, ierr)
     call kim_to_string(collection, coll_str)
     call kim_to_string(KIM_COLLECTION_ITEM_TYPE_PORTABLE_MODEL, item_type_str)
     print '(A,":",A," :")', trim(coll_str), trim(item_type_str)
 
-    do i=1,extent
+    do i = 1, extent
       call kim_get_directory_name(col, i, dir_str, ierr)
       print '(A,A)', achar(9), trim(dir_str)
     end do
 
-    call kim_cache_list_of_directory_names(col, collection, &
-      KIM_COLLECTION_ITEM_TYPE_SIMULATOR_MODEL, extent, ierr)
+    call kim_cache_list_of_directory_names( &
+      col, collection, KIM_COLLECTION_ITEM_TYPE_SIMULATOR_MODEL, extent, ierr)
     call kim_to_string(collection, coll_str)
     call kim_to_string(KIM_COLLECTION_ITEM_TYPE_SIMULATOR_MODEL, item_type_str)
     print '(A,":",A," :")', trim(coll_str), trim(item_type_str)
 
-    do i=1,extent
+    do i = 1, extent
       call kim_get_directory_name(col, i, dir_str, ierr)
       print '(A,A)', achar(9), trim(dir_str)
     end do
@@ -115,35 +114,35 @@ contains
     character(len=2048, kind=c_char) item_type_str
     character(len=2048, kind=c_char) name_str
 
-    call kim_cache_list_of_item_names_by_collection_and_type(col, kc, &
-      KIM_COLLECTION_ITEM_TYPE_MODEL_DRIVER, extent, ierr)
+    call kim_cache_list_of_item_names_by_collection_and_type( &
+      col, kc, KIM_COLLECTION_ITEM_TYPE_MODEL_DRIVER, extent, ierr)
     call kim_to_string(kc, coll_str)
     call kim_to_string(KIM_COLLECTION_ITEM_TYPE_MODEL_DRIVER, item_type_str)
     print '(A,":",A," :")', trim(coll_str), trim(item_type_str)
 
-    do i=1,extent
+    do i = 1, extent
       call kim_get_item_name_by_collection_and_type(col, i, name_str, ierr)
       print '(A,A)', achar(9), trim(name_str)
     end do
 
-    call kim_cache_list_of_item_names_by_collection_and_type(col, kc, &
-      KIM_COLLECTION_ITEM_TYPE_PORTABLE_MODEL, extent, ierr)
+    call kim_cache_list_of_item_names_by_collection_and_type( &
+      col, kc, KIM_COLLECTION_ITEM_TYPE_PORTABLE_MODEL, extent, ierr)
     call kim_to_string(kc, coll_str)
     call kim_to_string(KIM_COLLECTION_ITEM_TYPE_PORTABLE_MODEL, item_type_str)
     print '(A,":",A," :")', trim(coll_str), trim(item_type_str)
 
-    do i=1,extent
+    do i = 1, extent
       call kim_get_item_name_by_collection_and_type(col, i, name_str, ierr)
       print '(A,A)', achar(9), trim(name_str)
     end do
 
-    call kim_cache_list_of_item_names_by_collection_and_type(col, kc, &
-      KIM_COLLECTION_ITEM_TYPE_SIMULATOR_MODEL, extent, ierr)
+    call kim_cache_list_of_item_names_by_collection_and_type( &
+      col, kc, KIM_COLLECTION_ITEM_TYPE_SIMULATOR_MODEL, extent, ierr)
     call kim_to_string(kc, coll_str)
     call kim_to_string(KIM_COLLECTION_ITEM_TYPE_SIMULATOR_MODEL, item_type_str)
     print '(A,":",A," :")', trim(coll_str), trim(item_type_str)
 
-    do i=1,extent
+    do i = 1, extent
       call kim_get_item_name_by_collection_and_type(col, i, name_str, ierr)
       print '(A,A)', achar(9), trim(name_str)
     end do
@@ -192,8 +191,6 @@ program collections_example_fortran
   print *, "semVer  : ", trim(sem_ver)
   print *, ""
 
-
-
   it = KIM_COLLECTION_ITEM_TYPE_MODEL_DRIVER
   call kim_get_environment_variable_name(col, it, name, ierr)
   call kim_to_string(it, item_type_str)
@@ -237,7 +234,7 @@ program collections_example_fortran
   call kim_cache_list_of_item_names_by_type(col, it, extent, ierr)
   call kim_to_string(it, item_type_str)
   print '(A," :")', trim(item_type_str)
-  do i=1,extent
+  do i = 1, extent
     call kim_get_item_name_by_type(col, i, name, ierr)
     print '(A,A)', achar(9), trim(name)
   end do
@@ -246,7 +243,7 @@ program collections_example_fortran
   call kim_cache_list_of_item_names_by_type(col, it, extent, ierr)
   call kim_to_string(it, item_type_str)
   print '(A," :")', trim(item_type_str)
-  do i=1,extent
+  do i = 1, extent
     call kim_get_item_name_by_type(col, i, name, ierr)
     print '(A,A)', achar(9), trim(name)
   end do
@@ -255,32 +252,34 @@ program collections_example_fortran
   call kim_cache_list_of_item_names_by_type(col, it, extent, ierr)
   call kim_to_string(it, item_type_str)
   print '(A," :")', trim(item_type_str)
-  do i=1,extent
+  do i = 1, extent
     call kim_get_item_name_by_type(col, i, name, ierr)
     print '(A,A)', achar(9), trim(name)
   end do
 
-  call kim_get_item_library_file_name_and_collection(col, it, &
-    trim("Sim_LAMMPS_LJcut_AkersonElliott_Alchemy_PbAu"), name, col_t, ierr)
+  call kim_get_item_library_file_name_and_collection( &
+    col, it, trim("Sim_LAMMPS_LJcut_AkersonElliott_Alchemy_PbAu"), name, &
+    col_t, ierr)
   if (ierr /= 0) then
     print '(A)', "Error from GetItemLibraryFileNameAndCollection"
   else
     call kim_to_string(col_t, value)
-    print '(A,A,A,A,A)', &
-      "Simulator Model Sim_LAMMPS_LJcut_AkersonElliott_Alchemy_PbAu has library name '", &
-      trim(name), "' and is part of the '", trim(value), "' collection."
+    print '(A,A,A,A,A,A)', &
+      "Simulator Model Sim_LAMMPS_LJcut_AkersonElliott_Alchemy_PbAu ", &
+      "has library name '", trim(name), "' and is part of the '", &
+      trim(value), "' collection."
   end if
 
-  call kim_cache_list_of_item_metadata_files(col, it, &
-    trim("Sim_LAMMPS_LJcut_AkersonElliott_Alchemy_PbAu"), extent, ierr)
+  call kim_cache_list_of_item_metadata_files( &
+    col, it, trim("Sim_LAMMPS_LJcut_AkersonElliott_Alchemy_PbAu"), extent, ierr)
   if (ierr /= 0) then
     print '(A)', "Error from CacheListOfItemMetadataFiles"
   else
-    do i=1,extent
+    do i = 1, extent
       call kim_get_item_metadata_file_length(col, i, file_length, &
-        available_as_string, ierr)
+                                             available_as_string, ierr)
       call kim_get_item_metadata_file_values(col, i, file_name, &
-        file_raw_data, file_string, ierr)
+                                             file_raw_data, file_string, ierr)
       print '(A,I2,A,A,A,I6)', "Metadata File ", i, ", ", trim(file_name), &
         ", is of length", file_length
       print '(A)', trim(file_string)

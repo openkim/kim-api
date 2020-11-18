@@ -19,7 +19,7 @@
 //
 
 //
-// Copyright (c) 2016--2019, Regents of the University of Minnesota.
+// Copyright (c) 2016--2020, Regents of the University of Minnesota.
 // All rights reserved.
 //
 // Contributors:
@@ -27,9 +27,12 @@
 //
 
 //
-// Release: This file is part of the kim-api-2.1.3 package.
+// Release: This file is part of the kim-api-2.2.0 package.
 //
 
+
+#include <cstddef>
+#include <string>
 
 #ifndef KIM_LOG_VERBOSITY_HPP_
 #include "KIM_LogVerbosity.hpp"
@@ -160,6 +163,17 @@ KIM::SpeciesName makeSpeciesNameCpp(KIM_SpeciesName const speciesName)
 }  // namespace
 
 extern "C" {
+void KIM_ModelDriverCreate_GetParameterFileDirectoryName(
+    KIM_ModelDriverCreate const * const modelDriverCreate,
+    char const ** const directoryName)
+{
+  CONVERT_POINTER;
+
+  std::string const * pStr = NULL;
+  pModelDriverCreate->GetParameterFileDirectoryName(&pStr);
+  *directoryName = pStr->c_str();
+}
+
 void KIM_ModelDriverCreate_GetNumberOfParameterFiles(
     KIM_ModelDriverCreate const * const modelDriverCreate,
     int * const numberOfParameterFiles)
@@ -190,6 +204,31 @@ int KIM_ModelDriverCreate_GetParameterFileName(
   else
   {
     if (parameterFileName != NULL) *parameterFileName = pStr->c_str();
+    return false;
+  }
+}
+
+int KIM_ModelDriverCreate_GetParameterFileBasename(
+    KIM_ModelDriverCreate const * const modelDriverCreate,
+    int const index,
+    char const ** const parameterFileBasename)
+{
+  CONVERT_POINTER;
+
+  std::string const * pStr;
+  std::string const ** ppStr;
+  if (parameterFileBasename == NULL)
+    ppStr = NULL;
+  else
+    ppStr = &pStr;
+
+  int error = pModelDriverCreate->GetParameterFileBasename(index, ppStr);
+
+  if (error)
+    return true;
+  else
+  {
+    if (parameterFileBasename != NULL) *parameterFileBasename = pStr->c_str();
     return false;
   }
 }

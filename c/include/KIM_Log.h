@@ -21,7 +21,7 @@
 /*                                                                            */
 
 /*                                                                            */
-/* Copyright (c) 2016--2019, Regents of the University of Minnesota.          */
+/* Copyright (c) 2016--2020, Regents of the University of Minnesota.          */
 /* All rights reserved.                                                       */
 /*                                                                            */
 /* Contributors:                                                              */
@@ -29,12 +29,16 @@
 /*                                                                            */
 
 /*                                                                            */
-/* Release: This file is part of the kim-api-2.1.3 package.                   */
+/* Release: This file is part of the kim-api-2.2.0 package.                   */
 /*                                                                            */
 
 
 #ifndef KIM_LOG_H_
 #define KIM_LOG_H_
+
+#ifndef KIM_FUNCTION_TYPES_H_
+#include "KIM_FunctionTypes.h" /* IWYU pragma: export */
+#endif
 
 /* Forward declarations */
 #ifndef KIM_LOG_VERBOSITY_DEFINED_
@@ -45,6 +49,16 @@
  ** \since 2.0
  **/
 typedef struct KIM_LogVerbosity KIM_LogVerbosity;
+#endif
+
+#ifndef KIM_LANGUAGE_NAME_DEFINED_
+#define KIM_LANGUAGE_NAME_DEFINED_
+/**
+ ** \brief Forward declaration.
+ **
+ ** \since 2.2
+ **/
+typedef struct KIM_LanguageName KIM_LanguageName;
 #endif
 
 
@@ -97,6 +111,27 @@ void KIM_Log_PushDefaultVerbosity(KIM_LogVerbosity const logVerbosity);
  ** \since 2.0
  **/
 void KIM_Log_PopDefaultVerbosity();
+
+/**
+ ** \brief \copybrief KIM::Log::PushDefaultPrintFunction
+ **
+ ** \sa KIM::Log::PushDefaultPrintFunction,
+ ** kim_log_module::kim_push_default_print_function
+ **
+ ** \since 2.2
+ **/
+void KIM_Log_PushDefaultPrintFunction(KIM_LanguageName const languageName,
+                                      KIM_Function * const fptr);
+
+/**
+ ** \brief \copybrief KIM::Log::PopDefaultPrintFunction
+ **
+ ** \sa KIM::Log::PopDefaultPrintFunction,
+ ** kim_log_module::kim_pop_default_print_function
+ **
+ ** \since 2.2
+ **/
+void KIM_Log_PopDefaultPrintFunction();
 
 /**
  ** \brief \copybrief KIM::Log::GetID

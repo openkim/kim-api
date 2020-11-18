@@ -20,7 +20,7 @@
  *
 
  *
- * Copyright (c) 2013--2019, Regents of the University of Minnesota.
+ * Copyright (c) 2013--2020, Regents of the University of Minnesota.
  * All rights reserved.
  *
  * Contributors:
@@ -177,7 +177,9 @@ int main()
                 KIM_MODEL_ROUTINE_NAME_ComputeArgumentsDestroy)
             || KIM_ModelRoutineName_Equal(modelRoutineName,
                                           KIM_MODEL_ROUTINE_NAME_Destroy)))
-      { MY_ERROR("Unknown required ModelRoutineName found."); }
+      {
+        MY_ERROR("Unknown required ModelRoutineName found.");
+      }
     }
   }
 
@@ -185,7 +187,9 @@ int main()
   error = KIM_Model_GetSpeciesSupportAndCode(
       model, KIM_SPECIES_NAME_Ar, &speciesIsSupported, &modelArCode);
   if ((error) || (!speciesIsSupported))
-  { MY_ERROR("Species Ar not supported"); }
+  {
+    MY_ERROR("Species Ar not supported");
+  }
 
   error = KIM_Model_ComputeArgumentsCreate(model, &computeArguments);
   if (error) { MY_ERROR("KIM_Model_ComputeArgumentsCreate"); }
@@ -209,7 +213,9 @@ int main()
               computeArgumentName, KIM_COMPUTE_ARGUMENT_NAME_partialEnergy))
           && (KIM_ComputeArgumentName_NotEqual(
               computeArgumentName, KIM_COMPUTE_ARGUMENT_NAME_partialForces)))
-      { MY_ERROR("unsupported required argument"); }
+      {
+        MY_ERROR("unsupported required argument");
+      }
     }
 
     /* must have energy and forces */
@@ -222,7 +228,9 @@ int main()
                                      KIM_SUPPORT_STATUS_required))
             || (KIM_SupportStatus_Equal(supportStatus,
                                         KIM_SUPPORT_STATUS_optional))))
-      { MY_ERROR("energy or forces not available"); }
+      {
+        MY_ERROR("energy or forces not available");
+      }
     }
   }
 
@@ -240,7 +248,9 @@ int main()
 
     /* cannot handle any "required" call backs */
     if (KIM_SupportStatus_Equal(supportStatus, KIM_SUPPORT_STATUS_required))
-    { MY_ERROR("unsupported required call back"); }
+    {
+      MY_ERROR("unsupported required call back");
+    }
   }
 
   /* We're compatible with the model.  Let's do it. */
@@ -337,7 +347,9 @@ int main()
     /* compute force norm */
     force_norm = 0.0;
     for (i = 0; i < DIM * numberOfParticles_cluster; ++i)
-    { force_norm += forces_cluster[i] * forces_cluster[i]; }
+    {
+      force_norm += forces_cluster[i] * forces_cluster[i];
+    }
     force_norm = sqrt(force_norm);
 
     /* print the results */
@@ -400,7 +412,9 @@ void create_FCC_cluster(double FCCspacing, int nCellsPerSide, double * coords)
         for (m = 0; m < 4; ++m)
         {
           for (n = 0; n < DIM; ++n)
-          { coords[a * DIM + n] = latVec[n] + FCCshifts[m][n]; }
+          {
+            coords[a * DIM + n] = latVec[n] + FCCshifts[m][n];
+          }
           a++;
         }
       }
@@ -412,7 +426,9 @@ void create_FCC_cluster(double FCCspacing, int nCellsPerSide, double * coords)
       for (n = 0; n < DIM; ++n) { coords[a * DIM + n] = latVec[n]; }
       a++;
       for (n = 0; n < DIM; ++n)
-      { coords[a * DIM + n] = latVec[n] + FCCshifts[3][n]; }
+      {
+        coords[a * DIM + n] = latVec[n] + FCCshifts[3][n];
+      }
       a++;
       /* pos-y face */
       latVec[0] = ((double) i) * FCCspacing;
@@ -421,7 +437,9 @@ void create_FCC_cluster(double FCCspacing, int nCellsPerSide, double * coords)
       for (n = 0; n < DIM; ++n) { coords[a * DIM + n] = latVec[n]; }
       a++;
       for (n = 0; n < DIM; ++n)
-      { coords[a * DIM + n] = latVec[n] + FCCshifts[2][n]; }
+      {
+        coords[a * DIM + n] = latVec[n] + FCCshifts[2][n];
+      }
       a++;
       /* pos-z face */
       latVec[0] = ((double) i) * FCCspacing;
@@ -430,7 +448,9 @@ void create_FCC_cluster(double FCCspacing, int nCellsPerSide, double * coords)
       for (n = 0; n < DIM; ++n) { coords[a * DIM + n] = latVec[n]; }
       a++;
       for (n = 0; n < DIM; ++n)
-      { coords[a * DIM + n] = latVec[n] + FCCshifts[1][n]; }
+      {
+        coords[a * DIM + n] = latVec[n] + FCCshifts[1][n];
+      }
       a++;
     }
     /* add in the remaining three edges */
@@ -452,7 +472,9 @@ void create_FCC_cluster(double FCCspacing, int nCellsPerSide, double * coords)
   }
   /* add in the remaining corner */
   for (n = 0; n < DIM; ++n)
-  { coords[a * DIM + n] = NCELLSPERSIDE * FCCspacing; }
+  {
+    coords[a * DIM + n] = NCELLSPERSIDE * FCCspacing;
+  }
   a++;
 
   return;

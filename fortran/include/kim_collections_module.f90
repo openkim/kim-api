@@ -19,7 +19,7 @@
 !
 
 !
-! Copyright (c) 2016--2019, Regents of the University of Minnesota.
+! Copyright (c) 2016--2020, Regents of the University of Minnesota.
 ! All rights reserved.
 !
 ! Contributors:
@@ -27,9 +27,8 @@
 !
 
 !
-! Release: This file is part of the kim-api-2.1.3 package.
+! Release: This file is part of the kim-api-2.2.0 package.
 !
-
 
 !> \brief \copybrief KIM::Collections
 !!
@@ -44,13 +43,11 @@ module kim_collections_module
   public &
     ! Derived types
     kim_collections_handle_type, &
-
     ! Constants
     KIM_COLLECTIONS_NULL_HANDLE, &
-
     ! Routines
-    operator (.eq.), &
-    operator (.ne.), &
+    operator(.eq.), &
+    operator(.ne.), &
     kim_collections_create, &
     kim_collections_destroy, &
     kim_get_item_type, &
@@ -76,7 +73,6 @@ module kim_collections_module
     kim_push_log_verbosity, &
     kim_pop_log_verbosity
 
-
   !> \brief \copybrief KIM::Collections
   !!
   !! \sa KIM::Collections, KIM_Collections
@@ -95,16 +91,16 @@ module kim_collections_module
   !> \brief Compares kim_collections_handle_type's for equality.
   !!
   !! \since 2.1
-  interface operator (.eq.)
+  interface operator(.eq.)
     module procedure kim_collections_handle_equal
-  end interface operator (.eq.)
+  end interface operator(.eq.)
 
   !> \brief Compares kim_collections_handle_type's for inequality.
   !!
   !! \since 2.1
-  interface operator (.ne.)
+  interface operator(.ne.)
     module procedure kim_collections_handle_not_equal
-  end interface operator (.ne.)
+  end interface operator(.ne.)
 
   !> \brief \copybrief KIM::Collections::GetItemType
   !!
@@ -217,7 +213,7 @@ module kim_collections_module
   !! \since 2.1
   interface kim_cache_list_of_item_metadata_files_by_collection_and_type
     module procedure &
-    kim_colls_cache_list_of_item_metadata_files_by_coll_and_type
+      kim_colls_cache_list_of_item_metadata_files_by_coll_and_type
   end interface kim_cache_list_of_item_metadata_files_by_collection_and_type
 
   !> \brief Get item metadata file length and determine if the file is
@@ -353,7 +349,7 @@ contains
     type(kim_collections_handle_type), intent(in) :: lhs
     type(kim_collections_handle_type), intent(in) :: rhs
 
-    kim_collections_handle_not_equal = .not. (lhs .eq. rhs)
+    kim_collections_handle_not_equal = .not. (lhs == rhs)
   end function kim_collections_handle_not_equal
 
   !> \brief \copybrief KIM::Collections::Create
@@ -409,16 +405,17 @@ contains
   !!
   !! \since 2.1
   recursive subroutine kim_collections_get_item_type(collections_handle, &
-    item_name, item_type, ierr)
-    use kim_interoperable_types_module, only : kim_collections_type
-    use kim_collection_item_type_module, only : kim_collection_item_type_type
+                                                     item_name, item_type, ierr)
+    use kim_interoperable_types_module, only: kim_collections_type
+    use kim_collection_item_type_module, only: kim_collection_item_type_type
     implicit none
     interface
-      integer(c_int) recursive function get_item_type(collections, &
-        item_name, item_type) bind(c, name="KIM_Collections_GetItemType")
+      integer(c_int) recursive function get_item_type( &
+        collections, item_name, item_type) &
+        bind(c, name="KIM_Collections_GetItemType")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_collections_type
-        use kim_collection_item_type_module, only : &
+        use kim_interoperable_types_module, only: kim_collections_type
+        use kim_collection_item_type_module, only: &
           kim_collection_item_type_type
         implicit none
         type(kim_collections_type), intent(in) :: collections
@@ -445,20 +442,20 @@ contains
   recursive subroutine &
     kim_collections_get_item_library_file_name_and_collection( &
     collections_handle, item_type, item_name, file_name, collection, ierr)
-    use kim_interoperable_types_module, only : kim_collections_type
-    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
-    use kim_collection_module, only : kim_collection_type
-    use kim_collection_item_type_module, only : kim_collection_item_type_type
+    use kim_interoperable_types_module, only: kim_collections_type
+    use kim_convert_string_module, only: kim_convert_c_char_ptr_to_string
+    use kim_collection_module, only: kim_collection_type
+    use kim_collection_item_type_module, only: kim_collection_item_type_type
     implicit none
     interface
       integer(c_int) recursive function &
-        get_item_library_file_name_and_collection(collections, item_type, &
-        item_name, file_name, collection) &
+        get_item_library_file_name_and_collection( &
+        collections, item_type, item_name, file_name, collection) &
         bind(c, name="KIM_Collections_GetItemLibraryFileNameAndCollection")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_collections_type
-        use kim_collection_module, only : kim_collection_type
-        use kim_collection_item_type_module, only : &
+        use kim_interoperable_types_module, only: kim_collections_type
+        use kim_collection_module, only: kim_collection_type
+        use kim_collection_item_type_module, only: &
           kim_collection_item_type_type
         implicit none
         type(kim_collections_type), intent(in) :: collections
@@ -479,8 +476,12 @@ contains
     type(c_ptr) :: pfile_name
 
     call c_f_pointer(collections_handle%p, collections)
-    ierr = get_item_library_file_name_and_collection(collections, item_type, &
-      trim(item_name)//c_null_char, pfile_name, collection)
+    ierr = get_item_library_file_name_and_collection( &
+           collections, &
+           item_type, &
+           trim(item_name)//c_null_char, &
+           pfile_name, &
+           collection)
     call kim_convert_c_char_ptr_to_string(pfile_name, file_name)
   end subroutine kim_collections_get_item_library_file_name_and_collection
 
@@ -492,16 +493,16 @@ contains
   !! \since 2.1
   recursive subroutine kim_collections_cache_list_of_item_metadata_files( &
     collections_handle, item_type, item_name, extent, ierr)
-    use kim_interoperable_types_module, only : kim_collections_type
-    use kim_collection_item_type_module, only : kim_collection_item_type_type
+    use kim_interoperable_types_module, only: kim_collections_type
+    use kim_collection_item_type_module, only: kim_collection_item_type_type
     implicit none
     interface
       integer(c_int) recursive function cache_list_of_item_metadata_files( &
         collections, item_type, item_name, extent) &
         bind(c, name="KIM_Collections_CacheListOfItemMetadataFiles")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_collections_type
-        use kim_collection_item_type_module, only : &
+        use kim_interoperable_types_module, only: kim_collections_type
+        use kim_collection_item_type_module, only: &
           kim_collection_item_type_type
         implicit none
         type(kim_collections_type), intent(in) :: collections
@@ -519,7 +520,8 @@ contains
 
     call c_f_pointer(collections_handle%p, collections)
     ierr = cache_list_of_item_metadata_files(collections, item_type, &
-      trim(item_name)//c_null_char, extent)
+                                             trim(item_name)//c_null_char, &
+                                             extent)
   end subroutine kim_collections_cache_list_of_item_metadata_files
 
   !> \brief Get item metadata file length and determine if the file is
@@ -531,7 +533,7 @@ contains
   !! \since 2.1
   recursive subroutine kim_collections_get_item_metadata_file_length( &
     collections_handle, index, file_length, available_as_string, ierr)
-    use kim_interoperable_types_module, only : kim_collections_type
+    use kim_interoperable_types_module, only: kim_collections_type
     implicit none
     interface
       integer(c_int) recursive function get_item_metadata_file( &
@@ -539,7 +541,7 @@ contains
         available_as_string, file_string) &
         bind(c, name="KIM_Collections_GetItemMetadataFile_fortran")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_collections_type
+        use kim_interoperable_types_module, only: kim_collections_type
         implicit none
         type(kim_collections_type), intent(in) :: collections
         integer(c_int), intent(in), value :: index
@@ -560,8 +562,13 @@ contains
     type(c_ptr) pfile_name, pfile_raw_data, pfile_string
 
     call c_f_pointer(collections_handle%p, collections)
-    ierr = get_item_metadata_file(collections, index-1, pfile_name, &
-      file_length, pfile_raw_data, available_as_string, pfile_string)
+    ierr = get_item_metadata_file(collections, &
+                                  index - 1, &
+                                  pfile_name, &
+                                  file_length, &
+                                  pfile_raw_data, &
+                                  available_as_string, &
+                                  pfile_string)
   end subroutine kim_collections_get_item_metadata_file_length
 
   !> \brief Get the item's metadata file values.
@@ -572,8 +579,8 @@ contains
   !! \since 2.1
   recursive subroutine kim_collections_get_item_metadata_file_values( &
     collections_handle, index, file_name, file_raw_data, file_string, ierr)
-    use kim_interoperable_types_module, only : kim_collections_type
-    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
+    use kim_interoperable_types_module, only: kim_collections_type
+    use kim_convert_string_module, only: kim_convert_c_char_ptr_to_string
     implicit none
     interface
       integer(c_int) recursive function get_item_metadata_file( &
@@ -581,7 +588,7 @@ contains
         available_as_string, file_string) &
         bind(c, name="KIM_Collections_GetItemMetadataFile_fortran")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_collections_type
+        use kim_interoperable_types_module, only: kim_collections_type
         implicit none
         type(kim_collections_type), intent(in) :: collections
         integer(c_int), intent(in), value :: index
@@ -606,14 +613,19 @@ contains
     integer(c_signed_char), pointer :: file_raw_data_fpointer(:)
 
     call c_f_pointer(collections_handle%p, collections)
-    ierr = get_item_metadata_file(collections, index-1, pfile_name, &
-      file_length, pfile_raw_data, available_as_string, pfile_string)
-    if (ierr .eq. 0) then
+    ierr = get_item_metadata_file(collections, &
+                                  index - 1, &
+                                  pfile_name, &
+                                  file_length, &
+                                  pfile_raw_data, &
+                                  available_as_string, &
+                                  pfile_string)
+    if (ierr == 0) then
       if (size(file_raw_data) < file_length) then
         ierr = 1
         return
       end if
-      if (available_as_string .eq. 1) then
+      if (available_as_string == 1) then
         if (len(file_string) < file_length) then
           ierr = 1
           return
@@ -624,11 +636,11 @@ contains
       if (c_associated(pfile_raw_data)) then
         call c_f_pointer(pfile_raw_data, file_raw_data_fpointer, [file_length])
       else
-        nullify(file_raw_data_fpointer)
+        nullify (file_raw_data_fpointer)
       end if
       file_raw_data = file_raw_data_fpointer(1:file_length)
 
-      if (available_as_string .eq. 1) then
+      if (available_as_string == 1) then
         call kim_convert_c_char_ptr_to_string(pfile_string, file_string)
       end if
     end if
@@ -642,16 +654,16 @@ contains
   !! \since 2.1
   recursive subroutine kim_collections_cache_list_of_item_names_by_type( &
     collections_handle, item_type, extent, ierr)
-    use kim_interoperable_types_module, only : kim_collections_type
-    use kim_collection_item_type_module, only : kim_collection_item_type_type
+    use kim_interoperable_types_module, only: kim_collections_type
+    use kim_collection_item_type_module, only: kim_collection_item_type_type
     implicit none
     interface
       integer(c_int) recursive function cache_list_of_item_names_by_type( &
         collections, item_type, extent) &
         bind(c, name="KIM_Collections_CacheListOfItemNamesByType")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_collections_type
-        use kim_collection_item_type_module, only : &
+        use kim_interoperable_types_module, only: kim_collections_type
+        use kim_collection_item_type_module, only: &
           kim_collection_item_type_type
         implicit none
         type(kim_collections_type), intent(in) :: collections
@@ -676,14 +688,15 @@ contains
   !! \since 2.1
   recursive subroutine kim_collections_get_item_name_by_type( &
     collections_handle, index, item_name, ierr)
-    use kim_interoperable_types_module, only : kim_collections_type
-    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
+    use kim_interoperable_types_module, only: kim_collections_type
+    use kim_convert_string_module, only: kim_convert_c_char_ptr_to_string
     implicit none
     interface
-      integer(c_int) recursive function get_item_name_by_type(collections, &
-        index, item_name) bind(c, name="KIM_Collections_GetItemNameByType")
+      integer(c_int) recursive function get_item_name_by_type( &
+        collections, index, item_name) &
+        bind(c, name="KIM_Collections_GetItemNameByType")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_collections_type
+        use kim_interoperable_types_module, only: kim_collections_type
         implicit none
         type(kim_collections_type), intent(in) :: collections
         integer(c_int), intent(in), value :: index
@@ -699,7 +712,7 @@ contains
     type(c_ptr) pitem_name
 
     call c_f_pointer(collections_handle%p, collections)
-    ierr = get_item_name_by_type(collections, index-1, pitem_name)
+    ierr = get_item_name_by_type(collections, index - 1, pitem_name)
     call kim_convert_c_char_ptr_to_string(pitem_name, item_name)
   end subroutine kim_collections_get_item_name_by_type
 
@@ -712,19 +725,19 @@ contains
   recursive subroutine &
     kim_collections_cache_list_of_item_names_by_collection_and_type( &
     collections_handle, collection, item_type, extent, ierr)
-    use kim_interoperable_types_module, only : kim_collections_type
-    use kim_collection_module, only : kim_collection_type
-    use kim_collection_item_type_module, only : kim_collection_item_type_type
+    use kim_interoperable_types_module, only: kim_collections_type
+    use kim_collection_module, only: kim_collection_type
+    use kim_collection_item_type_module, only: kim_collection_item_type_type
     implicit none
     interface
       integer(c_int) recursive function &
-        cache_list_of_item_names_by_collection_and_type(collections, &
-        collection, item_type, extent) &
+        cache_list_of_item_names_by_collection_and_type( &
+        collections, collection, item_type, extent) &
         bind(c, name="KIM_Collections_CacheListOfItemNamesByCollectionAndType")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_collections_type
-        use kim_collection_module, only : kim_collection_type
-        use kim_collection_item_type_module, only : &
+        use kim_interoperable_types_module, only: kim_collections_type
+        use kim_collection_module, only: kim_collection_type
+        use kim_collection_item_type_module, only: &
           kim_collection_item_type_type
         implicit none
         type(kim_collections_type), intent(in) :: collections
@@ -742,7 +755,9 @@ contains
 
     call c_f_pointer(collections_handle%p, collections)
     ierr = cache_list_of_item_names_by_collection_and_type(collections, &
-      collection, item_type, extent)
+                                                           collection, &
+                                                           item_type, &
+                                                           extent)
   end subroutine kim_collections_cache_list_of_item_names_by_collection_and_type
 
   !> \brief \copybrief KIM::Collections::GetItemNameByCollectionAndType
@@ -753,15 +768,15 @@ contains
   !! \since 2.1
   recursive subroutine kim_collections_get_item_name_by_collection_and_type( &
     collections_handle, index, item_name, ierr)
-    use kim_interoperable_types_module, only : kim_collections_type
-    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
+    use kim_interoperable_types_module, only: kim_collections_type
+    use kim_convert_string_module, only: kim_convert_c_char_ptr_to_string
     implicit none
     interface
       integer(c_int) recursive function get_item_name_by_collection_and_type( &
         collections, index, item_name) &
         bind(c, name="KIM_Collections_GetItemNameByCollectionAndType")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_collections_type
+        use kim_interoperable_types_module, only: kim_collections_type
         implicit none
         type(kim_collections_type), intent(in) :: collections
         integer(c_int), intent(in), value :: index
@@ -777,8 +792,8 @@ contains
     type(c_ptr) pitem_name
 
     call c_f_pointer(collections_handle%p, collections)
-    ierr = get_item_name_by_collection_and_type(collections, index-1, &
-      pitem_name)
+    ierr = get_item_name_by_collection_and_type(collections, index - 1, &
+                                                pitem_name)
     call kim_convert_c_char_ptr_to_string(pitem_name, item_name)
   end subroutine kim_collections_get_item_name_by_collection_and_type
 
@@ -792,20 +807,21 @@ contains
   recursive subroutine &
     kim_collections_get_item_library_file_name_by_coll_and_type( &
     collections_handle, collection, item_type, item_name, file_name, ierr)
-    use kim_interoperable_types_module, only : kim_collections_type
-    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
-    use kim_collection_module, only : kim_collection_type
-    use kim_collection_item_type_module, only : kim_collection_item_type_type
+    use kim_interoperable_types_module, only: kim_collections_type
+    use kim_convert_string_module, only: kim_convert_c_char_ptr_to_string
+    use kim_collection_module, only: kim_collection_type
+    use kim_collection_item_type_module, only: kim_collection_item_type_type
     implicit none
     interface
       integer(c_int) recursive function &
-        get_item_library_file_name_by_coll_and_type(collections, collection, &
-        item_type, item_name, file_name) bind(c, &
-        name="KIM_Collections_GetItemLibraryFileNameByCollectionAndType")
+        get_item_library_file_name_by_coll_and_type( &
+        collections, collection, item_type, item_name, file_name) &
+        bind(c, &
+             name="KIM_Collections_GetItemLibraryFileNameByCollectionAndType")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_collections_type
-        use kim_collection_module, only : kim_collection_type
-        use kim_collection_item_type_module, only : &
+        use kim_interoperable_types_module, only: kim_collections_type
+        use kim_collection_module, only: kim_collection_type
+        use kim_collection_item_type_module, only: &
           kim_collection_item_type_type
         implicit none
         type(kim_collections_type), intent(in) :: collections
@@ -826,8 +842,12 @@ contains
     type(c_ptr) pfile_name
 
     call c_f_pointer(collections_handle%p, collections)
-    ierr = get_item_library_file_name_by_coll_and_type(collections, &
-      collection, item_type, trim(item_name)//c_null_char, pfile_name)
+    ierr = get_item_library_file_name_by_coll_and_type( &
+           collections, &
+           collection, &
+           item_type, &
+           trim(item_name)//c_null_char, &
+           pfile_name)
     call kim_convert_c_char_ptr_to_string(pfile_name, file_name)
   end subroutine kim_collections_get_item_library_file_name_by_coll_and_type
 
@@ -841,19 +861,21 @@ contains
   recursive subroutine &
     kim_colls_cache_list_of_item_metadata_files_by_coll_and_type( &
     collections_handle, collection, item_type, item_name, extent, ierr)
-    use kim_interoperable_types_module, only : kim_collections_type
-    use kim_collection_module, only : kim_collection_type
-    use kim_collection_item_type_module, only : kim_collection_item_type_type
+    use kim_interoperable_types_module, only: kim_collections_type
+    use kim_collection_module, only: kim_collection_type
+    use kim_collection_item_type_module, only: kim_collection_item_type_type
     implicit none
     interface
       integer(c_int) recursive function &
-        cache_list_of_item_metadata_files_by_coll_and_type(collections, &
-        collection, item_type, item_name, extent) bind(c, &
-        name="KIM_Collections_CacheListOfItemMetadataFilesByCollectionAndType")
+        cache_list_of_item_metadata_files_by_coll_and_type( &
+        collections, collection, item_type, item_name, extent) &
+        bind(c, &
+             name= &
+             "KIM_Collections_CacheListOfItemMetadataFilesByCollectionAndType")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_collections_type
-        use kim_collection_module, only : kim_collection_type
-        use kim_collection_item_type_module, only : &
+        use kim_interoperable_types_module, only: kim_collections_type
+        use kim_collection_module, only: kim_collection_type
+        use kim_collection_item_type_module, only: &
           kim_collection_item_type_type
         implicit none
         type(kim_collections_type), intent(in) :: collections
@@ -872,8 +894,12 @@ contains
     type(kim_collections_type), pointer :: collections
 
     call c_f_pointer(collections_handle%p, collections)
-    ierr = cache_list_of_item_metadata_files_by_coll_and_type(collections, &
-      collection, item_type, trim(item_name)//c_null_char, extent)
+    ierr = cache_list_of_item_metadata_files_by_coll_and_type( &
+           collections, &
+           collection, &
+           item_type, &
+           trim(item_name)//c_null_char, &
+           extent)
   end subroutine kim_colls_cache_list_of_item_metadata_files_by_coll_and_type
 
   !> \brief \copybrief KIM::Collections::GetItemMetadataFileByCollectionAndType
@@ -885,17 +911,22 @@ contains
   recursive subroutine &
     kim_collections_get_item_metadata_file_length_by_coll_and_type( &
     collections_handle, index, file_length, available_as_string, ierr)
-    use kim_interoperable_types_module, only : kim_collections_type
+    use kim_interoperable_types_module, only: kim_collections_type
     implicit none
     interface
       integer(c_int) recursive function &
-        get_item_metadata_file_by_coll_and_type(collections, index, &
-        file_name, file_length, file_raw_data, available_as_string, &
+        get_item_metadata_file_by_coll_and_type( &
+        collections, index, &
+        file_name, &
+        file_length, &
+        file_raw_data, &
+        available_as_string, &
         file_string) &
         bind(c, &
-        name="KIM_Collections_GetItemMetadataFileByCollectionAndType_fortran")
+             name= &
+             "KIM_Collections_GetItemMetadataFileByCollectionAndType_fortran")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_collections_type
+        use kim_interoperable_types_module, only: kim_collections_type
         implicit none
         type(kim_collections_type), intent(in) :: collections
         integer(c_int), intent(in), value :: index
@@ -917,8 +948,12 @@ contains
 
     call c_f_pointer(collections_handle%p, collections)
     ierr = get_item_metadata_file_by_coll_and_type(collections, &
-      index-1, pfile_name, file_length, pfile_raw_data, available_as_string, &
-      pfile_string)
+                                                   index - 1, &
+                                                   pfile_name, &
+                                                   file_length, &
+                                                   pfile_raw_data, &
+                                                   available_as_string, &
+                                                   pfile_string)
   end subroutine kim_collections_get_item_metadata_file_length_by_coll_and_type
 
   !> \brief Get the item's metadata file values.
@@ -930,18 +965,23 @@ contains
   recursive subroutine &
     kim_collections_get_item_metadata_file_values_by_coll_and_type( &
     collections_handle, index, file_name, file_raw_data, file_string, ierr)
-    use kim_interoperable_types_module, only : kim_collections_type
-    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
+    use kim_interoperable_types_module, only: kim_collections_type
+    use kim_convert_string_module, only: kim_convert_c_char_ptr_to_string
     implicit none
     interface
       integer(c_int) recursive function &
-        get_item_metadata_file_by_coll_and_type(collections, index, &
-        file_name, file_length, file_raw_data, available_as_string, &
-        file_string) &
+        get_item_metadata_file_by_coll_and_type(collections, &
+                                                index, &
+                                                file_name, &
+                                                file_length, &
+                                                file_raw_data, &
+                                                available_as_string, &
+                                                file_string) &
         bind(c, &
-        name="KIM_Collections_GetItemMetadataFileByCollectionAndType_fortran")
+             name= &
+             "KIM_Collections_GetItemMetadataFileByCollectionAndType_fortran")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_collections_type
+        use kim_interoperable_types_module, only: kim_collections_type
         implicit none
         type(kim_collections_type), intent(in) :: collections
         integer(c_int), intent(in), value :: index
@@ -967,14 +1007,18 @@ contains
 
     call c_f_pointer(collections_handle%p, collections)
     ierr = get_item_metadata_file_by_coll_and_type(collections, &
-      index-1, pfile_name, file_length, pfile_raw_data, available_as_string, &
-      pfile_string)
-    if (ierr .eq. 0) then
+                                                   index - 1, &
+                                                   pfile_name, &
+                                                   file_length, &
+                                                   pfile_raw_data, &
+                                                   available_as_string, &
+                                                   pfile_string)
+    if (ierr == 0) then
       if (size(file_raw_data) < file_length) then
         ierr = 1
         return
       end if
-      if (available_as_string .eq. 1) then
+      if (available_as_string == 1) then
         if (len(file_string) < file_length) then
           ierr = 1
           return
@@ -985,11 +1029,11 @@ contains
       if (c_associated(pfile_raw_data)) then
         call c_f_pointer(pfile_raw_data, file_raw_data_fpointer, [file_length])
       else
-        nullify(file_raw_data_fpointer)
+        nullify (file_raw_data_fpointer)
       end if
       file_raw_data = file_raw_data_fpointer(1:file_length)
 
-      if (available_as_string .eq. 1) then
+      if (available_as_string == 1) then
         call kim_convert_c_char_ptr_to_string(pfile_string, file_string)
       end if
     end if
@@ -1003,15 +1047,15 @@ contains
   !! \since 2.1
   recursive subroutine kim_collections_get_project_name_and_sem_ver( &
     collections_handle, project_name, sem_ver)
-    use kim_interoperable_types_module, only : kim_collections_type
-    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
+    use kim_interoperable_types_module, only: kim_collections_type
+    use kim_convert_string_module, only: kim_convert_c_char_ptr_to_string
     implicit none
     interface
       recursive subroutine get_project_name_and_sem_ver(collections, &
-        project_name, sem_ver) &
+                                                        project_name, sem_ver) &
         bind(c, name="KIM_Collections_GetProjectNameAndSemVer")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_collections_type
+        use kim_interoperable_types_module, only: kim_collections_type
         implicit none
         type(kim_collections_type), intent(in) :: collections
         type(c_ptr), intent(out) :: project_name
@@ -1039,17 +1083,17 @@ contains
   !! \since 2.1
   recursive subroutine kim_collections_get_environment_variable_name( &
     collections_handle, item_type, name, ierr)
-    use kim_interoperable_types_module, only : kim_collections_type
-    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
-    use kim_collection_item_type_module, only : kim_collection_item_type_type
+    use kim_interoperable_types_module, only: kim_collections_type
+    use kim_convert_string_module, only: kim_convert_c_char_ptr_to_string
+    use kim_collection_item_type_module, only: kim_collection_item_type_type
     implicit none
     interface
       integer(c_int) recursive function get_environment_variable_name( &
         collections, item_type, name) &
         bind(c, name="KIM_Collections_GetEnvironmentVariableName")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_collections_type
-        use kim_collection_item_type_module, only : &
+        use kim_interoperable_types_module, only: kim_collections_type
+        use kim_collection_item_type_module, only: &
           kim_collection_item_type_type
         implicit none
         type(kim_collections_type), intent(in) :: collections
@@ -1079,15 +1123,15 @@ contains
   recursive subroutine &
     kim_collections_get_configuration_file_environment_variable( &
     collections_handle, name, value)
-    use kim_interoperable_types_module, only : kim_collections_type
-    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
+    use kim_interoperable_types_module, only: kim_collections_type
+    use kim_convert_string_module, only: kim_convert_c_char_ptr_to_string
     implicit none
     interface
       recursive subroutine get_configuration_file_environment_variable( &
         collections, name, value) &
         bind(c, name="KIM_Collections_GetConfigurationFileEnvironmentVariable")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_collections_type
+        use kim_interoperable_types_module, only: kim_collections_type
         implicit none
         type(kim_collections_type), intent(in) :: collections
         type(c_ptr), intent(out) :: name
@@ -1115,14 +1159,14 @@ contains
   !! \since 2.1
   recursive subroutine kim_collections_get_configuration_file_name( &
     collections_handle, file_name)
-    use kim_interoperable_types_module, only : kim_collections_type
-    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
+    use kim_interoperable_types_module, only: kim_collections_type
+    use kim_convert_string_module, only: kim_convert_c_char_ptr_to_string
     implicit none
     interface
       recursive subroutine get_configuration_file_name(collections, file_name) &
         bind(c, name="KIM_Collections_GetConfigurationFileName")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_collections_type
+        use kim_interoperable_types_module, only: kim_collections_type
         implicit none
         type(kim_collections_type), intent(in) :: collections
         type(c_ptr), intent(out) :: file_name
@@ -1147,18 +1191,18 @@ contains
   !! \since 2.1
   recursive subroutine kim_collections_cache_list_of_directory_names( &
     collections_handle, collection, item_type, extent, ierr)
-    use kim_interoperable_types_module, only : kim_collections_type
-    use kim_collection_module, only : kim_collection_type
-    use kim_collection_item_type_module, only : kim_collection_item_type_type
+    use kim_interoperable_types_module, only: kim_collections_type
+    use kim_collection_module, only: kim_collection_type
+    use kim_collection_item_type_module, only: kim_collection_item_type_type
     implicit none
     interface
       integer(c_int) recursive function cache_list_of_directory_names( &
         collections, collection, item_type, extent) &
         bind(c, name="KIM_Collections_CacheListOfDirectoryNames")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_collections_type
-        use kim_collection_module, only : kim_collection_type
-        use kim_collection_item_type_module, only : &
+        use kim_interoperable_types_module, only: kim_collections_type
+        use kim_collection_module, only: kim_collection_type
+        use kim_collection_item_type_module, only: &
           kim_collection_item_type_type
         implicit none
         type(kim_collections_type), intent(in) :: collections
@@ -1176,7 +1220,7 @@ contains
 
     call c_f_pointer(collections_handle%p, collections)
     ierr = cache_list_of_directory_names(collections, collection, item_type, &
-      extent)
+                                         extent)
   end subroutine kim_collections_cache_list_of_directory_names
 
   !> \brief \copybrief KIM::Collections::GetDirectoryName
@@ -1185,16 +1229,18 @@ contains
   !!
   !! \since 2.1
   recursive subroutine kim_collections_get_directory_name(collections_handle, &
-    index, directory_name, ierr)
-    use kim_interoperable_types_module, only : kim_collections_type
-    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
+                                                          index, &
+                                                          directory_name, &
+                                                          ierr)
+    use kim_interoperable_types_module, only: kim_collections_type
+    use kim_convert_string_module, only: kim_convert_c_char_ptr_to_string
     implicit none
     interface
       integer(c_int) recursive function get_directory_name(collections, index, &
-        directory_name) &
+                                                           directory_name) &
         bind(c, name="KIM_Collections_GetDirectoryName")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_collections_type
+        use kim_interoperable_types_module, only: kim_collections_type
         implicit none
         type(kim_collections_type), intent(in) :: collections
         integer(c_int), intent(in), value :: index
@@ -1210,7 +1256,7 @@ contains
     type(c_ptr) pdirectory_name
 
     call c_f_pointer(collections_handle%p, collections)
-    ierr = get_directory_name(collections, index-1, pdirectory_name)
+    ierr = get_directory_name(collections, index - 1, pdirectory_name)
     call kim_convert_c_char_ptr_to_string(pdirectory_name, directory_name)
   end subroutine kim_collections_get_directory_name
 
@@ -1220,13 +1266,13 @@ contains
   !!
   !! \since 2.1
   recursive subroutine kim_collections_set_log_id(collections_handle, log_id)
-    use kim_interoperable_types_module, only : kim_collections_type
+    use kim_interoperable_types_module, only: kim_collections_type
     implicit none
     interface
       recursive subroutine set_log_id(collections, log_id) &
         bind(c, name="KIM_Collections_SetLogID")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_collections_type
+        use kim_interoperable_types_module, only: kim_collections_type
         implicit none
         type(kim_collections_type), intent(in) :: collections
         character(c_char), intent(in) :: log_id(*)
@@ -1246,16 +1292,16 @@ contains
   !!
   !! \since 2.1
   recursive subroutine kim_collections_push_log_verbosity(collections_handle, &
-    log_verbosity)
-    use kim_log_verbosity_module, only : kim_log_verbosity_type
-    use kim_interoperable_types_module, only : kim_collections_type
+                                                          log_verbosity)
+    use kim_log_verbosity_module, only: kim_log_verbosity_type
+    use kim_interoperable_types_module, only: kim_collections_type
     implicit none
     interface
       recursive subroutine push_log_verbosity(collections, log_verbosity) &
         bind(c, name="KIM_Collections_PushLogVerbosity")
         use, intrinsic :: iso_c_binding
-        use kim_log_verbosity_module, only : kim_log_verbosity_type
-        use kim_interoperable_types_module, only : kim_collections_type
+        use kim_log_verbosity_module, only: kim_log_verbosity_type
+        use kim_interoperable_types_module, only: kim_collections_type
         implicit none
         type(kim_collections_type), intent(in) :: collections
         type(kim_log_verbosity_type), intent(in), value :: log_verbosity
@@ -1275,15 +1321,15 @@ contains
   !!
   !! \since 2.1
   recursive subroutine kim_collections_pop_log_verbosity(collections_handle)
-    use kim_log_verbosity_module, only : kim_log_verbosity_type
-    use kim_interoperable_types_module, only : kim_collections_type
+    use kim_log_verbosity_module, only: kim_log_verbosity_type
+    use kim_interoperable_types_module, only: kim_collections_type
     implicit none
     interface
       recursive subroutine pop_log_verbosity(collections) &
         bind(c, name="KIM_Collections_PopLogVerbosity")
         use, intrinsic :: iso_c_binding
-        use kim_log_verbosity_module, only : kim_log_verbosity_type
-        use kim_interoperable_types_module, only : kim_collections_type
+        use kim_log_verbosity_module, only: kim_log_verbosity_type
+        use kim_interoperable_types_module, only: kim_collections_type
         implicit none
         type(kim_collections_type), intent(in) :: collections
       end subroutine pop_log_verbosity

@@ -19,7 +19,7 @@
 //
 
 //
-// Copyright (c) 2016--2019, Regents of the University of Minnesota.
+// Copyright (c) 2016--2020, Regents of the University of Minnesota.
 // All rights reserved.
 //
 // Contributors:
@@ -27,14 +27,14 @@
 //
 
 //
-// Release: This file is part of the kim-api-2.1.3 package.
+// Release: This file is part of the kim-api-2.2.0 package.
 //
 
 
 #ifndef KIM_MODEL_DRIVER_HEADERS_HPP_
 #define KIM_MODEL_DRIVER_HEADERS_HPP_
 
-// IWYU pragma: begin_export
+// IWYU pragma: begin_exports
 #ifndef KIM_MODEL_DRIVER_CREATE_HPP_
 #include "KIM_ModelDriverCreate.hpp"
 #endif
@@ -118,6 +118,6 @@
 #ifndef KIM_MODEL_DESTROY_HPP_
 #include "KIM_ModelDestroy.hpp"
 #endif
-// IWYU pragma: end_export
+// IWYU pragma: end_exports
 
 #endif  // KIM_MODEL_DRIVER_HEADERS_HPP_

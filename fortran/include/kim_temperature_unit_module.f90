@@ -19,7 +19,7 @@
 !
 
 !
-! Copyright (c) 2016--2019, Regents of the University of Minnesota.
+! Copyright (c) 2016--2020, Regents of the University of Minnesota.
 ! All rights reserved.
 !
 ! Contributors:
@@ -27,9 +27,8 @@
 !
 
 !
-! Release: This file is part of the kim-api-2.1.3 package.
+! Release: This file is part of the kim-api-2.2.0 package.
 !
-
 
 !> \brief \copybrief KIM::TemperatureUnit
 !!
@@ -44,20 +43,17 @@ module kim_temperature_unit_module
   public &
     ! Derived type
     kim_temperature_unit_type, &
-
     ! Constants
     KIM_TEMPERATURE_UNIT_UNUSED, &
     KIM_TEMPERATURE_UNIT_K, &
-
     ! Routines
     kim_known, &
-    operator (.eq.), &
-    operator (.ne.), &
+    operator(.eq.), &
+    operator(.ne.), &
     kim_from_string, &
     kim_to_string, &
     kim_get_number_of_temperature_units, &
     kim_get_temperature_unit
-
 
   !> \brief \copybrief KIM::TemperatureUnit
   !!
@@ -65,12 +61,12 @@ module kim_temperature_unit_module
   !!
   !! \since 2.0
   type, bind(c) :: kim_temperature_unit_type
-     !> \brief \copybrief KIM::TemperatureUnit::temperatureUnitID
-     !!
-     !! \sa KIM::TemperatureUnit::temperatureUnitID,
-     !! KIM_TemperatureUnit::temperatureUnitID
-     !!
-     !! \since 2.0
+    !> \brief \copybrief KIM::TemperatureUnit::temperatureUnitID
+    !!
+    !! \sa KIM::TemperatureUnit::temperatureUnitID,
+    !! KIM_TemperatureUnit::temperatureUnitID
+    !!
+    !! \since 2.0
     integer(c_int) temperature_unit_id
   end type kim_temperature_unit_type
 
@@ -106,18 +102,18 @@ module kim_temperature_unit_module
   !! \sa KIM::TemperatureUnit::operator==(), KIM_TemperatureUnit_Equal
   !!
   !! \since 2.0
-  interface operator (.eq.)
+  interface operator(.eq.)
     module procedure kim_temperature_unit_equal
-  end interface operator (.eq.)
+  end interface operator(.eq.)
 
   !> \brief \copybrief KIM::TemperatureUnit::operator!=()
   !!
   !! \sa KIM::TemperatureUnit::operator!=(), KIM_TemperatureUnit_NotEqual
   !!
   !! \since 2.0
-  interface operator (.ne.)
+  interface operator(.ne.)
     module procedure kim_temperature_unit_not_equal
-  end interface operator (.ne.)
+  end interface operator(.ne.)
 
   !> \brief \copybrief KIM::TemperatureUnit::<!--
   !! -->TemperatureUnit(std::string const &)
@@ -172,7 +168,7 @@ contains
     type(kim_temperature_unit_type), intent(in) :: rhs
 
     kim_temperature_unit_equal &
-      = (lhs%temperature_unit_id .eq. rhs%temperature_unit_id)
+      = (lhs%temperature_unit_id == rhs%temperature_unit_id)
   end function kim_temperature_unit_equal
 
   !> \brief \copybrief KIM::TemperatureUnit::operator!=()
@@ -185,7 +181,7 @@ contains
     type(kim_temperature_unit_type), intent(in) :: lhs
     type(kim_temperature_unit_type), intent(in) :: rhs
 
-    kim_temperature_unit_not_equal = .not. (lhs .eq. rhs)
+    kim_temperature_unit_not_equal = .not. (lhs == rhs)
   end function kim_temperature_unit_not_equal
 
   !> \brief \copybrief KIM::TemperatureUnit::<!--
@@ -196,7 +192,7 @@ contains
   !!
   !! \since 2.0
   recursive subroutine kim_temperature_unit_from_string(string, &
-    temperature_unit)
+                                                        temperature_unit)
     implicit none
     interface
       type(kim_temperature_unit_type) recursive function from_string(string) &
@@ -219,7 +215,7 @@ contains
   !!
   !! \since 2.0
   recursive subroutine kim_temperature_unit_to_string(temperature_unit, string)
-    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
+    use kim_convert_string_module, only: kim_convert_c_char_ptr_to_string
     implicit none
     interface
       type(c_ptr) recursive function get_string(temperature_unit) &
@@ -269,11 +265,11 @@ contains
   !!
   !! \since 2.0
   recursive subroutine kim_get_temperature_unit(index, &
-    temperature_unit, ierr)
+                                                temperature_unit, ierr)
     implicit none
     interface
       integer(c_int) recursive function get_temperature_unit(index, &
-        temperature_unit) &
+                                                             temperature_unit) &
         bind(c, name="KIM_TEMPERATURE_UNIT_GetTemperatureUnit")
         use, intrinsic :: iso_c_binding
         import kim_temperature_unit_type
@@ -286,6 +282,6 @@ contains
     type(kim_temperature_unit_type), intent(out) :: temperature_unit
     integer(c_int), intent(out) :: ierr
 
-    ierr = get_temperature_unit(index-1, temperature_unit)
+    ierr = get_temperature_unit(index - 1, temperature_unit)
   end subroutine kim_get_temperature_unit
 end module kim_temperature_unit_module

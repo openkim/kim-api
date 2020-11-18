@@ -19,7 +19,7 @@
 !
 
 !
-! Copyright (c) 2013--2019, Regents of the University of Minnesota.
+! Copyright (c) 2013--2020, Regents of the University of Minnesota.
 ! All rights reserved.
 !
 ! Contributors:
@@ -37,7 +37,7 @@ contains
     implicit none
     character(len=*, kind=c_char), intent(in) :: message
 
-    print *,"* Error : ", trim(message)
+    print *, "* Error : ", trim(message)
     stop 1
   end subroutine my_error
 
@@ -45,7 +45,7 @@ contains
     implicit none
     character(len=*, kind=c_char), intent(in) :: message
 
-    print *,"* Warning : ", trim(message)
+    print *, "* Warning : ", trim(message)
   end subroutine my_warning
 end module error
 
@@ -60,7 +60,7 @@ program collections_example_fortran
   use kim_simulator_headers_module
   implicit none
   interface
-    integer(c_int) function c_system(cmd) bind(c,name="system")
+    integer(c_int) function c_system(cmd) bind(c, name="system")
       use, intrinsic :: iso_c_binding
       character(c_char), intent(in) :: cmd(*)
     end function c_system
@@ -80,8 +80,7 @@ program collections_example_fortran
   character(len=2048, kind=c_char) line
   character(len=2048, kind=c_char) dir_name
   character(len=2048, kind=c_char) spec_name
-  character(len=2048, kind=c_char) param_name
-
+  character(len=2048, kind=c_char) param_basename
 
   call kim_simulator_model_create( &
     "Sim_LAMMPS_LJcut_AkersonElliott_Alchemy_PbAu", sm, ierr)
@@ -97,7 +96,7 @@ program collections_example_fortran
 
   call kim_get_number_of_supported_species(sm, extent)
   print *, "SM supports", extent, " species:"
-  do i=1,extent
+  do i = 1, extent
     call kim_get_supported_species(sm, i, species, ierr)
     if (ierr /= 0) then
       call my_error("Unable to get species.")
@@ -114,12 +113,12 @@ program collections_example_fortran
   call kim_close_template_map(sm)
   call kim_get_number_of_simulator_fields(sm, no_fields)
   print '("SM has ",I2," fields :")', no_fields
-  do i=1,no_fields
+  do i = 1, no_fields
     call kim_get_simulator_field_metadata(sm, i, extent, field_name, ierr)
     print '("  Field",I2," is ",A," and has ",I2," lines:")', &
       i, trim(field_name), extent
 
-    do j=1,extent
+    do j = 1, extent
       call kim_get_simulator_field_line(sm, i, j, line, ierr)
       if (ierr /= 0) then
         call my_error("Unable to get field line.")
@@ -128,7 +127,7 @@ program collections_example_fortran
       end if
     end do
   end do
-  print *,""
+  print *, ""
 
   call kim_get_parameter_file_directory_name(sm, dir_name)
   print '("SM param dir name is ",A)', trim(dir_name)
@@ -139,15 +138,15 @@ program collections_example_fortran
 
   call kim_get_number_of_parameter_files(sm, extent)
   print '("SM has ",I1," parameter files:")', extent
-  do i=1,extent
-    call kim_get_parameter_file_name(sm, i, param_name, ierr)
+  do i = 1, extent
+    call kim_get_parameter_file_basename(sm, i, param_basename, ierr)
     if (ierr /= 0) then
-      call my_error("Unable to get parameter file name.")
+      call my_error("Unable to get parameter file basename.")
     else
-      print '("Parameter file ",I2," has name ",A)', i, trim(param_name)
+      print '("Parameter file ",I2," has basename ",A)', i, trim(param_basename)
       ierr = c_system( &
-        "cat "//trim(dir_name)//"/"//trim(param_name)//c_null_char)
-      print *,""
+             "cat "//trim(dir_name)//"/"//trim(param_basename)//c_null_char)
+      print *, ""
     end if
   end do
 

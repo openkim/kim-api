@@ -19,7 +19,7 @@
 //
 
 //
-// Copyright (c) 2016--2019, Regents of the University of Minnesota.
+// Copyright (c) 2016--2020, Regents of the University of Minnesota.
 // All rights reserved.
 //
 // Contributors:
@@ -27,9 +27,11 @@
 //
 
 //
-// Release: This file is part of the kim-api-2.1.3 package.
+// Release: This file is part of the kim-api-2.2.0 package.
 //
 
+
+#include <cstddef>
 #include <iomanip>
 #include <sstream>
 
@@ -1247,7 +1249,9 @@ std::string const & ComputeArgumentsImplementation::ToString() const
                COMPUTE_ARGUMENT_NAME::Comparator>::const_iterator ptr
           = computeArgumentPointer_.find(argName->first);
       if (ptr != computeArgumentPointer_.end())
-      { ss << std::setw(argW) << SPTR(ptr->second); }
+      {
+        ss << std::setw(argW) << SPTR(ptr->second);
+      }
       else
       {
         ss << std::setw(argW) << "Not Set";

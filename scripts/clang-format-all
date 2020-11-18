@@ -21,7 +21,7 @@
 #
 
 #
-# Copyright (c) 2013--2019, Regents of the University of Minnesota.
+# Copyright (c) 2013--2020, Regents of the University of Minnesota.
 # All rights reserved.
 #
 # Contributors:
@@ -29,13 +29,47 @@
 #
 
 #
-# Release: This file is part of the kim-api-2.1.3 package.
+# Release: This file is part of the kim-api-2.2.0 package.
 #
 
+
+# filter file list  # NOTE: keep in sync with verion in git-hooks/pre-commit
+filter_file_list () {
+  local file_list="$1"
+  local ignore_file="`git rev-parse --show-toplevel`/.format-ignore"
+  files_to_check_format=""
+
+  for file in ${file_list}; do
+    local keep=`printf ${file} | sed -e 's/^.*\.hpp$//'     \
+                                     -e 's/^.*\.hpp\.in$//' \
+                                     -e 's/^.*\.cpp$//'     \
+                                     -e 's/^.*\.cpp\.in$//' \
+                                     -e 's/^.*\.inc$//'     \
+                                     -e 's/^.*\.inc\.in$//' \
+                                     -e 's/^.*\.h$//'       \
+                                     -e 's/^.*\.h\.in$//'   \
+                                     -e 's/^.*\.c$//'       \
+                                     -e 's/^.*\.c\.in$//'`
+    if test -f "${ignore_file}"; then
+      if test `grep -c "^${file}$" "${ignore_file}"` -gt 0; then
+        # ignore
+        printf "File '${file}' is in format-ignore file: ignoring.\n"
+        keep=no
+      fi
+    fi
+
+    if test x"${keep}" = x""; then
+      files_to_check_format="${files_to_check_format} ${file}"
+    fi
+  done
+}
 
 # goto the top level repo directory
 if THE_GIT_DIR="`git rev-parse --show-toplevel 2> /dev/null`"; then
   cd "${THE_GIT_DIR}"
+else
+  printf "Not in the git repo.  Exiting...\n"
+  exit 1
 fi
 
 files=`find .    -name "*.hpp"     \
@@ -47,8 +81,12 @@ files=`find .    -name "*.hpp"     \
               -o -name "*.h"       \
               -o -name "*.h.in"    \
               -o -name "*.c"       \
-              -o -name "*.c.in"`
+              -o -name "*.c.in" |  \
+       sed -e 's|^\./||'`
 
 printf "Executing clang-format on all c/c++ files in directory ${PWD}.\n"
 
-clang-format -style=file -i ${files}
+files_to_check_format=""
+filter_file_list "${files}"
+
+clang-format -style=file -i ${files_to_check_format}

@@ -19,40 +19,42 @@
 //
 
 //
-// Copyright (c) 2016--2019, Regents of the University of Minnesota.
+// Copyright (c) 2016--2020, Regents of the University of Minnesota.
 // All rights reserved.
 //
 // Contributors:
 //    Ryan S. Elliott
+//    Alexander Stukowski
 //
 
 //
-// Release: This file is part of the kim-api-2.1.3 package.
+// Release: This file is part of the kim-api-2.2.0 package.
 //
 
 
 #ifndef KIM_COLLECTIONS_IMPLEMENTATION_HPP_
 #define KIM_COLLECTIONS_IMPLEMENTATION_HPP_
 
-#include <list>
+#include <map>
+#include <sstream>
+#include <string>
 #include <vector>
+
+#ifndef KIM_FILESYSTEM_Path_HPP_
+#include "KIM_FilesystemPath.hpp"
+#endif
 
 #ifndef KIM_LOG_VERBOSITY_HPP_
 #include "KIM_LogVerbosity.hpp"
-#endif
-
-#ifndef KIM_COLLECTION_HPP_
-#include "KIM_Collection.hpp"
 #endif
 
 #ifndef KIM_COLLECTION_ITEM_TYPE_HPP_
 #include "KIM_CollectionItemType.hpp"
 #endif
 
-#ifndef KIM_SHARED_LIBRARY_HPP_
-#include "KIM_SharedLibrary.hpp"
+#ifndef KIM_COLLECTION_HPP_
+#include "KIM_Collection.hpp"
 #endif
-
 
 namespace KIM
 {
@@ -66,6 +68,13 @@ class CollectionsImplementation
   Create(CollectionsImplementation ** const collectionsImplementation);
   static void
   Destroy(CollectionsImplementation ** const collectionsImplementation);
+
+  static bool
+  WriteConfigurationFileAndCreateDirectories(  // for internal use only
+      FILESYSTEM::Path const & fileName,
+      std::map<CollectionItemType,
+               FILESYSTEM::PathList,
+               COLLECTION_ITEM_TYPE::Comparator> const & dirsMap);
 
   int GetItemType(std::string const & itemName,
                   CollectionItemType * const itemType) const;

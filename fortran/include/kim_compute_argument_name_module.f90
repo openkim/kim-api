@@ -19,7 +19,7 @@
 !
 
 !
-! Copyright (c) 2016--2019, Regents of the University of Minnesota.
+! Copyright (c) 2016--2020, Regents of the University of Minnesota.
 ! All rights reserved.
 !
 ! Contributors:
@@ -27,9 +27,8 @@
 !
 
 !
-! Release: This file is part of the kim-api-2.1.3 package.
+! Release: This file is part of the kim-api-2.2.0 package.
 !
-
 
 !> \brief \copybrief KIM::ComputeArgumentName
 !!
@@ -44,7 +43,6 @@ module kim_compute_argument_name_module
   public &
     ! Derived types
     kim_compute_argument_name_type, &
-
     ! Constants
     KIM_COMPUTE_ARGUMENT_NAME_NUMBER_OF_PARTICLES, &
     KIM_COMPUTE_ARGUMENT_NAME_PARTICLE_SPECIES_CODES, &
@@ -55,17 +53,15 @@ module kim_compute_argument_name_module
     KIM_COMPUTE_ARGUMENT_NAME_PARTIAL_PARTICLE_ENERGY, &
     KIM_COMPUTE_ARGUMENT_NAME_PARTIAL_VIRIAL, &
     KIM_COMPUTE_ARGUMENT_NAME_PARTIAL_PARTICLE_VIRIAL, &
-
     ! Routines
     kim_known, &
-    operator (.eq.), &
-    operator (.ne.), &
+    operator(.eq.), &
+    operator(.ne.), &
     kim_from_string, &
     kim_to_string, &
     kim_get_number_of_compute_argument_names, &
     kim_get_compute_argument_name, &
     kim_get_compute_argument_data_type
-
 
   !> \brief \copybrief KIM::ComputeArgumentName
   !!
@@ -73,12 +69,12 @@ module kim_compute_argument_name_module
   !!
   !! \since 2.0
   type, bind(c) :: kim_compute_argument_name_type
-     !> \brief \copybrief KIM::ComputeArgumentName::computeArgumentNameID
-     !!
-     !! \sa KIM::ComputeArgumentName::computeArgumentNameID,
-     !! KIM_ComputeArgumentName::computeArgumentNameID
-     !!
-     !! \since 2.0
+    !> \brief \copybrief KIM::ComputeArgumentName::computeArgumentNameID
+    !!
+    !! \sa KIM::ComputeArgumentName::computeArgumentNameID,
+    !! KIM_ComputeArgumentName::computeArgumentNameID
+    !!
+    !! \since 2.0
     integer(c_int) compute_argument_name_id
   end type kim_compute_argument_name_type
 
@@ -186,9 +182,9 @@ module kim_compute_argument_name_module
   !! \sa KIM::ComputeArgumentName::operator==(), KIM_ComputeArgumentName_Equal
   !!
   !! \since 2.0
-  interface operator (.eq.)
+  interface operator(.eq.)
     module procedure kim_compute_argument_name_equal
-  end interface operator (.eq.)
+  end interface operator(.eq.)
 
   !> \brief \copybrief KIM::ComputeArgumentName::operator!=()
   !!
@@ -196,9 +192,9 @@ module kim_compute_argument_name_module
   !! KIM_ComputeArgumentName_NotEqual
   !!
   !! \since 2.0
-  interface operator (.ne.)
+  interface operator(.ne.)
     module procedure kim_compute_argument_name_not_equal
-  end interface operator (.ne.)
+  end interface operator(.ne.)
 
   !> \brief \copybrief KIM::ComputeArgumentName::<!--
   !! -->ComputeArgumentName(std::string const &)
@@ -255,7 +251,7 @@ contains
     type(kim_compute_argument_name_type), intent(in) :: rhs
 
     kim_compute_argument_name_equal &
-      = (lhs%compute_argument_name_id .eq. rhs%compute_argument_name_id)
+      = (lhs%compute_argument_name_id == rhs%compute_argument_name_id)
   end function kim_compute_argument_name_equal
 
   !> \brief \copybrief KIM::ComputeArgumentName::operator!=()
@@ -269,7 +265,7 @@ contains
     type(kim_compute_argument_name_type), intent(in) :: lhs
     type(kim_compute_argument_name_type), intent(in) :: rhs
 
-    kim_compute_argument_name_not_equal = .not. (lhs .eq. rhs)
+    kim_compute_argument_name_not_equal = .not. (lhs == rhs)
   end function kim_compute_argument_name_not_equal
 
   !> \brief \copybrief KIM::ComputeArgumentName::<!--
@@ -279,8 +275,8 @@ contains
   !! KIM_ComputeArgumentName_FromString
   !!
   !! \since 2.0
-  recursive subroutine kim_compute_argument_name_from_string(string, &
-    compute_argument_name)
+  recursive subroutine kim_compute_argument_name_from_string( &
+    string, compute_argument_name)
     implicit none
     interface
       type(kim_compute_argument_name_type) recursive function from_string( &
@@ -304,7 +300,7 @@ contains
   !! \since 2.0
   recursive subroutine kim_compute_argument_name_to_string( &
     compute_argument_name, string)
-    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
+    use kim_convert_string_module, only: kim_convert_c_char_ptr_to_string
     implicit none
     interface
       type(c_ptr) recursive function get_string(compute_argument_name) &
@@ -340,7 +336,7 @@ contains
       recursive subroutine get_number_of_compute_argument_names( &
         number_of_compute_argument_names) &
         bind(c, &
-        name="KIM_COMPUTE_ARGUMENT_NAME_GetNumberOfComputeArgumentNames")
+             name="KIM_COMPUTE_ARGUMENT_NAME_GetNumberOfComputeArgumentNames")
         use, intrinsic :: iso_c_binding
         integer(c_int), intent(out) :: number_of_compute_argument_names
       end subroutine get_number_of_compute_argument_names
@@ -350,7 +346,6 @@ contains
     call get_number_of_compute_argument_names(number_of_compute_argument_names)
   end subroutine kim_get_number_of_compute_argument_names
 
-
   !> \brief \copybrief KIM::COMPUTE_ARGUMENT_NAME::<!--
   !! -->GetComputeArgumentName
   !!
@@ -358,12 +353,12 @@ contains
   !! KIM_COMPUTE_ARGUMENT_NAME_GetComputeArgumentName
   !!
   !! \since 2.0
-  recursive subroutine kim_get_compute_argument_name(index, &
-    compute_argument_name, ierr)
+  recursive subroutine kim_get_compute_argument_name( &
+    index, compute_argument_name, ierr)
     implicit none
     interface
-      integer(c_int) recursive function get_compute_argument_name(index, &
-        compute_argument_name) &
+      integer(c_int) recursive function get_compute_argument_name( &
+        index, compute_argument_name) &
         bind(c, name="KIM_COMPUTE_ARGUMENT_NAME_GetComputeArgumentName")
         use, intrinsic :: iso_c_binding
         import kim_compute_argument_name_type
@@ -377,7 +372,7 @@ contains
     type(kim_compute_argument_name_type), intent(out) :: compute_argument_name
     integer(c_int), intent(out) :: ierr
 
-    ierr = get_compute_argument_name(index-1, compute_argument_name)
+    ierr = get_compute_argument_name(index - 1, compute_argument_name)
   end subroutine kim_get_compute_argument_name
 
   !> \brief \copybrief KIM::COMPUTE_ARGUMENT_NAME::<!--
@@ -390,14 +385,14 @@ contains
   recursive subroutine kim_get_compute_argument_data_type( &
     compute_argument_name, &
     data_type, ierr)
-    use kim_data_type_module, only : kim_data_type_type
+    use kim_data_type_module, only: kim_data_type_type
     implicit none
     interface
       integer(c_int) recursive function get_compute_argument_data_type( &
         compute_argument_name, data_type) &
         bind(c, name="KIM_COMPUTE_ARGUMENT_NAME_GetComputeArgumentDataType")
         use, intrinsic :: iso_c_binding
-        use kim_data_type_module, only : kim_data_type_type
+        use kim_data_type_module, only: kim_data_type_type
         import kim_compute_argument_name_type
         implicit none
         type(kim_compute_argument_name_type), intent(in), value :: &

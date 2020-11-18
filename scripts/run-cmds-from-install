@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 if test $# != 3; then
   printf "usage: run-cmds-from-install (IN_WORKSPACE|GLOBAL) <WORKSPACE> <KIM_API_SOURCE>\n"
@@ -39,6 +39,7 @@ if test x"YES" = x"${EXTRA_CMDS}"; then
                -e '/ldconfig/d' \
                -e 's|--sudo *||g' \
                -e 's|sudo *||g' \
+               -e 's/^make /${MAKE:=make} /' \
       )
 fi
 

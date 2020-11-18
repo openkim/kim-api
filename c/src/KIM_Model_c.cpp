@@ -19,7 +19,7 @@
 //
 
 //
-// Copyright (c) 2016--2019, Regents of the University of Minnesota.
+// Copyright (c) 2016--2020, Regents of the University of Minnesota.
 // All rights reserved.
 //
 // Contributors:
@@ -27,8 +27,12 @@
 //
 
 //
-// Release: This file is part of the kim-api-2.1.3 package.
+// Release: This file is part of the kim-api-2.2.0 package.
 //
+
+
+#include <cstddef>
+#include <string>
 
 #ifndef KIM_LOG_VERBOSITY_HPP_
 #include "KIM_LogVerbosity.hpp"
@@ -84,15 +88,6 @@ extern "C" {
 #endif
 }  // extern "C"
 
-#ifndef KIM_COMPUTE_ARGUMENTS_HPP_
-#include "KIM_ComputeArguments.hpp"
-#endif
-extern "C" {
-#ifndef KIM_COMPUTE_ARGUMENTS_H_
-#include "KIM_ComputeArguments.h"
-#endif
-}  // extern "C"
-
 #ifndef KIM_MODEL_HPP_
 #include "KIM_Model.hpp"
 #endif
@@ -101,6 +96,13 @@ extern "C" {
 #include "KIM_Model.h"
 #endif
 }  // extern "C"
+
+
+namespace KIM
+{
+// Forward declarations
+class ComputeArguments;
+}  // namespace KIM
 
 
 struct KIM_ComputeArguments
@@ -187,16 +189,21 @@ int KIM_Model_Create(KIM_Numbering const numbering,
 {
   std::string modelNameC(modelName);
   KIM::Model * pModel;
-  int err = KIM::Model::Create(makeNumberingCpp(numbering),
-                               makeLengthUnitCpp(requestedLengthUnit),
-                               makeEnergyUnitCpp(requestedEnergyUnit),
-                               makeChargeUnitCpp(requestedChargeUnit),
-                               makeTemperatureUnitCpp(requestedTemperatureUnit),
-                               makeTimeUnitCpp(requestedTimeUnit),
-                               modelNameC,
-                               requestedUnitsAccepted,
-                               &pModel);
-  if (err) { return true; }
+  int error
+      = KIM::Model::Create(makeNumberingCpp(numbering),
+                           makeLengthUnitCpp(requestedLengthUnit),
+                           makeEnergyUnitCpp(requestedEnergyUnit),
+                           makeChargeUnitCpp(requestedChargeUnit),
+                           makeTemperatureUnitCpp(requestedTemperatureUnit),
+                           makeTimeUnitCpp(requestedTimeUnit),
+                           modelNameC,
+                           requestedUnitsAccepted,
+                           &pModel);
+  if (error)
+  {
+    *model = NULL;
+    return true;
+  }
   else
   {
     (*model) = new KIM_Model;
@@ -207,9 +214,12 @@ int KIM_Model_Create(KIM_Numbering const numbering,
 
 void KIM_Model_Destroy(KIM_Model ** const model)
 {
-  KIM::Model * pModel = reinterpret_cast<KIM::Model *>((*model)->p);
+  if (*model != NULL)
+  {
+    KIM::Model * pModel = reinterpret_cast<KIM::Model *>((*model)->p);
 
-  KIM::Model::Destroy(&pModel);
+    KIM::Model::Destroy(&pModel);
+  }
   delete (*model);
   *model = NULL;
 }
@@ -271,8 +281,12 @@ int KIM_Model_ComputeArgumentsCreate(
 
   KIM::ComputeArguments * pComputeArguments;
 
-  int err = pModel->ComputeArgumentsCreate(&pComputeArguments);
-  if (err) { return true; }
+  int error = pModel->ComputeArgumentsCreate(&pComputeArguments);
+  if (error)
+  {
+    *computeArguments = NULL;
+    return true;
+  }
   else
   {
     (*computeArguments) = new KIM_ComputeArguments;
@@ -287,17 +301,17 @@ int KIM_Model_ComputeArgumentsDestroy(
 {
   CONVERT_POINTER;
 
-  KIM::ComputeArguments * pComputeArguments
-      = reinterpret_cast<KIM::ComputeArguments *>((*computeArguments)->p);
-
-  int err = pModel->ComputeArgumentsDestroy(&pComputeArguments);
-  if (err) { return true; }
-  else
+  int error = false;
+  if (*computeArguments != NULL)
   {
-    delete (*computeArguments);
-    *computeArguments = NULL;
-    return false;
+    KIM::ComputeArguments * pComputeArguments
+        = reinterpret_cast<KIM::ComputeArguments *>((*computeArguments)->p);
+
+    error = pModel->ComputeArgumentsDestroy(&pComputeArguments);
   }
+  delete (*computeArguments);
+  *computeArguments = NULL;
+  return error;
 }
 
 int KIM_Model_Compute(KIM_Model const * const model,

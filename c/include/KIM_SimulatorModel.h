@@ -21,7 +21,7 @@
 /*                                                                            */
 
 /*                                                                            */
-/* Copyright (c) 2016--2019, Regents of the University of Minnesota.          */
+/* Copyright (c) 2016--2020, Regents of the University of Minnesota.          */
 /* All rights reserved.                                                       */
 /*                                                                            */
 /* Contributors:                                                              */
@@ -29,7 +29,7 @@
 /*                                                                            */
 
 /*                                                                            */
-/* Release: This file is part of the kim-api-2.1.3 package.                   */
+/* Release: This file is part of the kim-api-2.2.0 package.                   */
 /*                                                                            */
 
 
@@ -247,11 +247,27 @@ void KIM_SimulatorModel_GetNumberOfParameterFiles(
  ** kim_simulator_model_module::kim_get_parameter_file_name
  **
  ** \since 2.1
+ **
+ ** \deprecated As of 2.2.  Please use
+ ** KIM_SimulatorModel_GetParameterFileBasename() instead.
  **/
 int KIM_SimulatorModel_GetParameterFileName(
     KIM_SimulatorModel const * const simulatorModel,
     int const index,
     char const ** const parameterFileName);
+
+/**
+ ** \brief \copybrief KIM::SimulatorModel::GetParameterFileBasename
+ **
+ ** \sa KIM::SimulatorModel::GetParameterFileBasename,
+ ** kim_simulator_model_module::kim_get_parameter_file_basename
+ **
+ ** \since 2.2
+ **/
+int KIM_SimulatorModel_GetParameterFileBasename(
+    KIM_SimulatorModel const * const simulatorModel,
+    int const index,
+    char const ** const parameterFileBasename);
 
 /**
  ** \brief \copybrief KIM::SimulatorModel::SetSimulatorBufferPointer

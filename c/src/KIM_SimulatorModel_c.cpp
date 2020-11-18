@@ -19,7 +19,7 @@
 //
 
 //
-// Copyright (c) 2016--2019, Regents of the University of Minnesota.
+// Copyright (c) 2016--2020, Regents of the University of Minnesota.
 // All rights reserved.
 //
 // Contributors:
@@ -27,8 +27,12 @@
 //
 
 //
-// Release: This file is part of the kim-api-2.1.3 package.
+// Release: This file is part of the kim-api-2.2.0 package.
 //
+
+
+#include <cstddef>
+#include <string>
 
 #ifndef KIM_LOG_VERBOSITY_HPP_
 #include "KIM_LogVerbosity.hpp"
@@ -75,7 +79,11 @@ int KIM_SimulatorModel_Create(char const * const simulatorModelName,
   KIM::SimulatorModel * pSimulatorModel;
   int error
       = KIM::SimulatorModel::Create(simulatorModelNameC, &pSimulatorModel);
-  if (error) { return true; }
+  if (error)
+  {
+    *simulatorModel = NULL;
+    return true;
+  }
   else
   {
     (*simulatorModel) = new KIM_SimulatorModel;
@@ -86,10 +94,13 @@ int KIM_SimulatorModel_Create(char const * const simulatorModelName,
 
 void KIM_SimulatorModel_Destroy(KIM_SimulatorModel ** const simulatorModel)
 {
-  KIM::SimulatorModel * pSimulatorModel
-      = reinterpret_cast<KIM::SimulatorModel *>((*simulatorModel)->p);
+  if (*simulatorModel != NULL)
+  {
+    KIM::SimulatorModel * pSimulatorModel
+        = reinterpret_cast<KIM::SimulatorModel *>((*simulatorModel)->p);
 
-  KIM::SimulatorModel::Destroy(&pSimulatorModel);
+    KIM::SimulatorModel::Destroy(&pSimulatorModel);
+  }
   delete (*simulatorModel);
   *simulatorModel = NULL;
 }
@@ -214,7 +225,7 @@ int KIM_SimulatorModel_GetSimulatorFieldMetadata(
   else
   {
     if (fieldName != NULL) *fieldName = pStrFieldName->c_str();
-    return true;
+    return false;
   }
 }
 
@@ -284,6 +295,25 @@ int KIM_SimulatorModel_GetParameterFileName(
   else
   {
     *parameterFileName = pStrParameterFileName->c_str();
+    return false;
+  }
+}
+
+int KIM_SimulatorModel_GetParameterFileBasename(
+    KIM_SimulatorModel const * const simulatorModel,
+    int const index,
+    char const ** const parameterFileBasename)
+{
+  CONVERT_POINTER;
+
+  std::string const * pStrParameterFileBasename;
+  int error = pSimulatorModel->GetParameterFileBasename(
+      index, &pStrParameterFileBasename);
+  if (error)
+    return true;
+  else
+  {
+    *parameterFileBasename = pStrParameterFileBasename->c_str();
     return false;
   }
 }

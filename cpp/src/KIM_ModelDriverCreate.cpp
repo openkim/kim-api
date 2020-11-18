@@ -19,7 +19,7 @@
 //
 
 //
-// Copyright (c) 2016--2019, Regents of the University of Minnesota.
+// Copyright (c) 2016--2020, Regents of the University of Minnesota.
 // All rights reserved.
 //
 // Contributors:
@@ -27,9 +27,35 @@
 //
 
 //
-// Release: This file is part of the kim-api-2.1.3 package.
+// Release: This file is part of the kim-api-2.2.0 package.
 //
 
+
+#include <cstddef>
+
+#ifndef KIM_LOG_VERBOSITY_HPP_
+#include "KIM_LogVerbosity.hpp"
+#endif
+
+#ifndef KIM_LANGUAGE_NAME_HPP_
+#include "KIM_LanguageName.hpp"
+#endif
+
+#ifndef KIM_MODEL_ROUTINE_NAME_HPP_
+#include "KIM_ModelRoutineName.hpp"
+#endif
+
+#ifndef KIM_NUMBERING_HPP_
+#include "KIM_Numbering.hpp"
+#endif
+
+#ifndef KIM_SPECIES_NAME_HPP_
+#include "KIM_SpeciesName.hpp"
+#endif
+
+#ifndef KIM_UNIT_SYSTEM
+#include "KIM_UnitSystem.hpp"
+#endif
 
 #ifndef KIM_MODEL_DRIVER_CREATE_HPP_
 #include "KIM_ModelDriverCreate.hpp"
@@ -45,6 +71,14 @@
 
 namespace KIM
 {
+void ModelDriverCreate::GetParameterFileDirectoryName(
+    std::string const ** const directoryName) const
+{
+  CONVERT_POINTER;
+
+  pImpl->GetParameterFileDirectoryName(directoryName);
+}
+
 void ModelDriverCreate::GetNumberOfParameterFiles(
     int * const numberOfParameterFiles) const
 {
@@ -59,6 +93,13 @@ int ModelDriverCreate::GetParameterFileName(
   CONVERT_POINTER;
 
   return pImpl->GetParameterFileName(index, parameterFileName);
+}
+int ModelDriverCreate::GetParameterFileBasename(
+    int const index, std::string const ** const parameterFileBasename) const
+{
+  CONVERT_POINTER;
+
+  return pImpl->GetParameterFileBasename(index, parameterFileBasename);
 }
 
 

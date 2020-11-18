@@ -19,28 +19,36 @@
 //
 
 //
-// Copyright (c) 2016--2019, Regents of the University of Minnesota.
+// Copyright (c) 2016--2020, Regents of the University of Minnesota.
 // All rights reserved.
 //
 // Contributors:
 //    Ryan S. Elliott
+//    Alexander Stukowski
 //
 
 //
-// Release: This file is part of the kim-api-2.1.3 package.
+// Release: This file is part of the kim-api-2.2.0 package.
 //
 
 
 #include "edn-cpp/edn.hpp"
-#include <cstdlib>
-#include <cstring>
-#include <dirent.h>
+#include <algorithm>
+#include <cstdio>
 #include <fstream>
 #include <iomanip>
+#include <iterator>
+#include <list>
 #include <sstream>
-#include <streambuf>
-#include <unistd.h>
 
+
+#ifndef KIM_SIMULATOR_MODEL_IMPLEMENTATION_HPP_
+#include "KIM_SimulatorModelImplementation.hpp"
+#endif
+
+#ifndef KIM_LOG_VERBOSITY_HPP_
+#include "KIM_LogVerbosity.hpp"
+#endif
 
 #ifndef KIM_LOG_HPP_
 #include "KIM_Log.hpp"
@@ -54,8 +62,8 @@
 #include "KIM_Collections.hpp"
 #endif
 
-#ifndef KIM_SIMULATOR_MODEL_IMPLEMENTATION_HPP_
-#include "KIM_SimulatorModelImplementation.hpp"
+#ifndef KIM_SHARED_LIBRARY_HPP_
+#include "KIM_SharedLibrary.hpp"
 #endif
 
 
@@ -86,7 +94,11 @@ int SimulatorModelImplementation::Create(
 
   Log * pLog;
   int error = Log::Create(&pLog);
-  if (error) { return true; }
+  if (error)
+  {
+    *simulatorModelImplementation = NULL;
+    return true;
+  }
 
   SimulatorModelImplementation * pSimulatorModelImplementation;
   pSimulatorModelImplementation
@@ -102,25 +114,6 @@ int SimulatorModelImplementation::Create(
       __FILE__);
 #endif
 
-  Collections * col;
-  error = Collections::Create(&col);
-  if (error)
-  {
-#if DEBUG_VERBOSITY
-    pSimulatorModelImplementation->LogEntry(
-        LOG_VERBOSITY::debug,
-        "Destroying SimulatorModelImplementation object and exit " + callString,
-        __LINE__,
-        __FILE__);
-#endif
-    delete pSimulatorModelImplementation;  // also deletes pLog
-
-    return true;
-  }
-  col->SetLogID(pLog->GetID() + "_Collections");
-
-  pSimulatorModelImplementation->collections_ = col;
-
   error = pSimulatorModelImplementation->Initialize(simulatorModelName);
   if (error)
   {
@@ -131,9 +124,8 @@ int SimulatorModelImplementation::Create(
         __LINE__,
         __FILE__);
 #endif
-    delete pSimulatorModelImplementation;  // also deletes Log object and
-                                           // collections object
-
+    delete pSimulatorModelImplementation;  // also deletes Log object
+    *simulatorModelImplementation = NULL;
     return true;
   }
 
@@ -165,8 +157,7 @@ void SimulatorModelImplementation::Destroy(
                  __LINE__,
                  __FILE__);
 #endif
-  delete *simulatorModelImplementation;  // also deletes Log object and
-                                         // collections object
+  delete *simulatorModelImplementation;  // also deletes Log object
   *simulatorModelImplementation = NULL;
 }
 
@@ -181,8 +172,8 @@ void SimulatorModelImplementation::GetSimulatorNameAndVersion(
 #endif
   LOG_DEBUG("Enter  " + callString);
 
-  if (simulatorName) *simulatorName = &simulatorName_;
-  if (simulatorVersion) *simulatorVersion = &simulatorVersion_;
+  if (simulatorName != NULL) *simulatorName = &simulatorName_;
+  if (simulatorVersion != NULL) *simulatorVersion = &simulatorVersion_;
 
   LOG_DEBUG("Exit 0=" + callString);
 }
@@ -267,7 +258,9 @@ int SimulatorModelImplementation::AddTemplateMap(std::string const & key,
   char allowedCharacters[] = "abcdefghijklmnopqrstuvwxyz"
                              "-0123456789";
   if (key.find_first_not_of(allowedCharacters) == std::string::npos)
-  { templateMap_[key] = value; }
+  {
+    templateMap_[key] = value;
+  }
   else
   {
     LOG_ERROR("Invalid template key, '" + key + "'.");
@@ -299,15 +292,16 @@ void SimulatorModelImplementation::AddStandardTemplatesToMap()
 #endif
   LOG_DEBUG("Enter  " + callString);
 
-  AddTemplateMap("parameter-file-dir", parameterFileDirectoryName_);
+  AddTemplateMap("parameter-file-dir", parameterFileDirectoryName_.string());
 
-  for (size_t i = 0; i < parameterFileNames_.size(); ++i)
+  for (size_t i = 0; i < parameterFileBasenames_.size(); ++i)
   {
     AddTemplateMap("parameter-file-basename-" + SNUM(i + 1),
-                   parameterFileNames_[i]);
+                   parameterFileBasenames_[i]);
 
-    AddTemplateMap("parameter-file-" + SNUM(i + 1),
-                   parameterFileDirectoryName_ + "/" + parameterFileNames_[i]);
+    AddTemplateMap(
+        "parameter-file-" + SNUM(i + 1),
+        (parameterFileDirectoryName_ / parameterFileBasenames_[i]).string());
   }
 
   LOG_DEBUG("Exit 0=" + callString);
@@ -392,8 +386,8 @@ int SimulatorModelImplementation::GetSimulatorFieldMetadata(
   }
 #endif
 
-  if (extent) *extent = originalSimulatorFields_[fieldIndex].size();
-  if (fieldName) *fieldName = &simulatorFieldNames_[fieldIndex];
+  if (extent != NULL) *extent = originalSimulatorFields_[fieldIndex].size();
+  if (fieldName != NULL) *fieldName = &simulatorFieldNames_[fieldIndex];
 
   LOG_DEBUG("Exit 0=" + callString);
   return false;
@@ -451,7 +445,7 @@ void SimulatorModelImplementation::GetParameterFileDirectoryName(
 #endif
   LOG_DEBUG("Enter  " + callString);
 
-  *directoryName = &parameterFileDirectoryName_;
+  *directoryName = &parameterFileDirectoryNameString_;
 
   LOG_DEBUG("Exit 0=" + callString);
 }
@@ -492,6 +486,9 @@ int SimulatorModelImplementation::GetParameterFileName(
                                  + SPTR(parameterFileName) + ").";
 #endif
   LOG_DEBUG("Enter  " + callString);
+  LOG_WARNING("Use of the " + callString
+              + " function is deprecated. "
+                "Please use GetParameterFileBasename() instead.");
 
 #if ERROR_VERBOSITY
   if ((index < 0) || (index >= numberOfParameterFiles_))
@@ -502,7 +499,31 @@ int SimulatorModelImplementation::GetParameterFileName(
   }
 #endif
 
-  *parameterFileName = &parameterFileNames_[index];
+  *parameterFileName = &parameterFileBasenames_[index];
+
+  LOG_DEBUG("Exit 0=" + callString);
+  return false;
+}
+
+int SimulatorModelImplementation::GetParameterFileBasename(
+    int const index, std::string const ** const parameterFileBasename) const
+{
+#if DEBUG_VERBOSITY
+  std::string const callString = "GetParameterFileBasename(" + SNUM(index)
+                                 + ", " + SPTR(parameterFileBasename) + ").";
+#endif
+  LOG_DEBUG("Enter  " + callString);
+
+#if ERROR_VERBOSITY
+  if ((index < 0) || (index >= numberOfParameterFiles_))
+  {
+    LOG_ERROR("Invalid parameter file index, " + SNUM(index) + ".");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
+#endif
+
+  *parameterFileBasename = &parameterFileBasenames_[index];
 
   LOG_DEBUG("Exit 0=" + callString);
   return false;
@@ -609,7 +630,8 @@ std::string const & SimulatorModelImplementation::ToString() const
   ss << "Log ID : " << log_->GetID() << "\n";
   ss << "\n";
 
-  ss << "Parameter file directory : " << parameterFileDirectoryName_ << "\n";
+  ss << "Parameter file directory : " << parameterFileDirectoryName_.string()
+     << "\n";
 
   ss << "Specification file name : " << specificationFileName_ << "\n\n";
 
@@ -630,7 +652,7 @@ std::string const & SimulatorModelImplementation::ToString() const
     ss << "\t"
        << "index : " << i << "\n"
        << "\t  "
-       << "name : " << parameterFileNames_[i] << "\n\n";
+       << "name : " << parameterFileBasenames_[i] << "\n\n";
   }
 
   ss << "Original simulator fields :\n";
@@ -638,7 +660,9 @@ std::string const & SimulatorModelImplementation::ToString() const
   {
     ss << "\t" << simulatorFieldNames_[i] << " :\n";
     for (size_t j = 0; j < originalSimulatorFields_[i].size(); ++j)
-    { ss << "\t  * '" << originalSimulatorFields_[i][j] << "'\n"; }
+    {
+      ss << "\t  * '" << originalSimulatorFields_[i][j] << "'\n";
+    }
   }
   ss << "\n";
 
@@ -660,7 +684,9 @@ std::string const & SimulatorModelImplementation::ToString() const
   {
     ss << "\t" << simulatorFieldNames_[i] << " :\n";
     for (size_t j = 0; j < simulatorFields_[i].size(); ++j)
-    { ss << "\t  * '" << simulatorFields_[i][j] << "'\n"; }
+    {
+      ss << "\t  * '" << simulatorFields_[i][j] << "'\n";
+    }
   }
   ss << "\n";
 
@@ -678,12 +704,9 @@ std::string const & SimulatorModelImplementation::ToString() const
 
 SimulatorModelImplementation::SimulatorModelImplementation(
     SharedLibrary * const sharedLibrary, Log * const log) :
-    collections_(NULL),
     simulatorModelName_(""),
     sharedLibrary_(sharedLibrary),
     log_(log),
-    parameterFileDirectoryName_(""),
-    specificationFileName_(""),
     schemaVersion_(0),
     modelName_(""),
     simulatorName_(""),
@@ -710,11 +733,8 @@ SimulatorModelImplementation::~SimulatorModelImplementation()
 #endif
   LOG_DEBUG("Enter  " + callString);
 
-  RemoveParameterFileDirectory();
-
+  sharedLibrary_->RemoveParameterFileDirectory();
   delete sharedLibrary_;
-
-  if (collections_) Collections::Destroy(&collections_);
 
   LOG_DEBUG("Destroying Log object and exit " + callString);
   Log::Destroy(&log_);
@@ -731,7 +751,16 @@ int SimulatorModelImplementation::Initialize(
   simulatorModelName_ = simulatorModelName;
 
   std::string const * itemFilePath;
-  int error = collections_->GetItemLibraryFileNameAndCollection(
+  Collections * collections = NULL;
+  int error = Collections::Create(&collections);
+  if (error)
+  {
+    LOG_ERROR("Could not create Collections object.");
+    LOG_DEBUG("Exit 1=" + callString);
+    return true;
+  }
+  collections->SetLogID(log_->GetID() + "_Collections");
+  error = collections->GetItemLibraryFileNameAndCollection(
       COLLECTION_ITEM_TYPE::simulatorModel,
       simulatorModelName,
       &itemFilePath,
@@ -750,6 +779,7 @@ int SimulatorModelImplementation::Initialize(
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
+  Collections::Destroy(&collections);
 
   CollectionItemType itemType;
   error = sharedLibrary_->GetType(&itemType);
@@ -764,7 +794,9 @@ int SimulatorModelImplementation::Initialize(
     using namespace COLLECTION_ITEM_TYPE;
 
     if (itemType == simulatorModel)
-    { LOG_DEBUG("Initializing a simulator model."); }
+    {
+      LOG_DEBUG("Initializing a simulator model.");
+    }
     else if (itemType == portableModel)
     {
       LOG_ERROR("Creation of a portable model is not allowed.");
@@ -785,13 +817,31 @@ int SimulatorModelImplementation::Initialize(
     }
   }
 
-  error = WriteParameterFileDirectory();
+  // create parameter files on disk and set associated variables
+  error
+      = sharedLibrary_->WriteParameterFileDirectory()
+        || sharedLibrary_->GetSimulatorModelSpecificationFile(
+            &specificationFileName_, NULL, NULL)
+        || sharedLibrary_->GetParameterFileDirectoryName(
+            &parameterFileDirectoryName_)
+        || sharedLibrary_->GetNumberOfParameterFiles(&numberOfParameterFiles_);
+  for (int i = 0; i < numberOfParameterFiles_; ++i)
+  {
+    std::string parameterFileBasename;
+    error = error
+            || sharedLibrary_->GetParameterFile(
+                i, &parameterFileBasename, NULL, NULL);
+    if (!error) { parameterFileBasenames_.push_back(parameterFileBasename); }
+  }
   if (error)
   {
+    sharedLibrary_->RemoveParameterFileDirectory();
     LOG_ERROR("Could not write parameter file directory to scratch space.");
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
+  // Convert path to string representation.
+  parameterFileDirectoryNameString_ = parameterFileDirectoryName_.string();
 
   if (GetSchemaVersion())
   {
@@ -861,10 +911,10 @@ int SimulatorModelImplementation::ParseEdn(edn::EdnNode & node) const
 #endif
   LOG_DEBUG("Enter  " + callString);
 
-  std::string const filePath
-      = parameterFileDirectoryName_ + "/" + specificationFileName_;
+  FILESYSTEM::Path const filePath
+      = parameterFileDirectoryName_ / specificationFileName_;
   std::ifstream ifs;
-  ifs.open(filePath.c_str(), std::ifstream::in);
+  ifs.open(filePath.string().c_str());
   if (!ifs.is_open())
   {
     LOG_ERROR("Unable to open simulator model metatdata file.");
@@ -879,9 +929,9 @@ int SimulatorModelImplementation::ParseEdn(edn::EdnNode & node) const
   {
     node = edn::read(ednString);
   }
-  catch (char const * e)
+  catch (std::string e)
   {
-    LOG_ERROR("Unable to parse EDN file: " + std::string(e) + ".");
+    LOG_ERROR("Unable to parse EDN file: " + e + ".");
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
@@ -925,7 +975,9 @@ int SimulatorModelImplementation::GetSchemaVersion()
         if (key == "kim-api-sm-schema-version")
         {
           if (itr->type == edn::EdnInt)
-          { std::istringstream(itr->value) >> schemaVersion_; }
+          {
+            std::istringstream(itr->value) >> schemaVersion_;
+          }
           else
           {
             LOG_ERROR("Expecting 'EdnInt'.");
@@ -989,7 +1041,9 @@ int SimulatorModelImplementation::ReadEdnSchemaV1()
         if (key == "kim-api-sm-schema-version")
         {
           if (itr->type == edn::EdnInt)
-          { std::istringstream(itr->value) >> schemaVersion_; }
+          {
+            std::istringstream(itr->value) >> schemaVersion_;
+          }
           else
           {
             LOG_ERROR("Expecting 'EdnInt'.");
@@ -1092,134 +1146,5 @@ int SimulatorModelImplementation::ReadEdnSchemaV1()
 
   LOG_DEBUG("Exit 0=" + callString);
   return false;
-}
-
-int SimulatorModelImplementation::WriteParameterFileDirectory()
-{
-#if DEBUG_VERBOSITY
-  std::string const callString = "WriteParameterFileDirectory().";
-#endif
-  LOG_DEBUG("Enter  " + callString);
-
-  int error;
-
-  static char const parameterFileDirectoryNameString[]
-      = "kim-simulator-model-parameter-file-directory-XXXXXXXXXXXX";
-  std::stringstream templateString;
-  templateString << P_tmpdir
-                 << ((*(--(std::string(P_tmpdir).end())) == '/') ? "" : "/")
-                 << parameterFileDirectoryNameString;
-  char * cstr = strdup(templateString.str().c_str());
-  char * tmpdir = mkdtemp(cstr);
-  if (NULL == tmpdir)
-  {
-    free(cstr);
-    LOG_ERROR("Could not create a secure temporary directory.");
-    LOG_DEBUG("Exit 1=" + callString);
-    return true;
-  }
-  parameterFileDirectoryName_ = tmpdir;
-  free(cstr);
-
-  {
-    unsigned int len;
-    unsigned char const * specificationData;
-    error = sharedLibrary_->GetSimulatorModelSpecificationFile(
-        &specificationFileName_, &len, &specificationData);
-    if (error)
-    {
-      LOG_ERROR("Unable to get specification file.");
-      RemoveParameterFileDirectory();
-      LOG_DEBUG("Exit 1=" + callString);
-      return true;
-    }
-    std::string const specificationFilePathName
-        = parameterFileDirectoryName_ + "/" + specificationFileName_;
-    FILE * fl = fopen(specificationFilePathName.c_str(), "w");
-    if (NULL == fl)
-    {
-      LOG_ERROR("Unable to get write parameter file.");
-      RemoveParameterFileDirectory();
-      LOG_DEBUG("Exit 1=" + callString);
-      return true;
-    }
-    fwrite(specificationData, sizeof(unsigned char), len, fl);
-    fclose(fl);
-    fl = NULL;
-  }
-
-  sharedLibrary_->GetNumberOfParameterFiles(&numberOfParameterFiles_);
-  std::vector<unsigned char const *> parameterFileStrings;
-  std::vector<unsigned int> parameterFileStringLengths;
-  for (int i = 0; i < numberOfParameterFiles_; ++i)
-  {
-    std::string parameterFileName;
-    unsigned char const * strPtr;
-    unsigned int length;
-    error = sharedLibrary_->GetParameterFile(
-        i, &parameterFileName, &length, &strPtr);
-    if (error)
-    {
-      LOG_ERROR("Could not get parameter file data.");
-      LOG_DEBUG("Exit 1=" + callString);
-      return true;
-    }
-    parameterFileNames_.push_back(parameterFileName);
-
-    std::string const parameterFilePathName
-        = parameterFileDirectoryName_ + "/" + parameterFileName;
-    FILE * fl = fopen(parameterFilePathName.c_str(), "w");
-    if (NULL == fl)
-    {
-      LOG_ERROR("Unable to get write parameter file.");
-      RemoveParameterFileDirectory();
-      LOG_DEBUG("Exit 1=" + callString);
-      return true;
-    }
-    fwrite(strPtr, sizeof(unsigned char), length, fl);
-    fclose(fl);
-    fl = NULL;
-  }
-
-  LOG_DEBUG("Exit 0=" + callString);
-  return false;
-}
-
-void SimulatorModelImplementation::RemoveParameterFileDirectory()
-{
-  if (parameterFileDirectoryName_ != "")
-  {
-    int error;
-    struct dirent * dp = NULL;
-    DIR * dir = NULL;
-    dir = opendir(parameterFileDirectoryName_.c_str());
-    while ((dp = readdir(dir)))
-    {
-      // assuming no subdirectories, just files
-      if ((0 != strcmp(dp->d_name, ".")) && (0 != strcmp(dp->d_name, "..")))
-      {
-        std::string filePath = parameterFileDirectoryName_ + "/" + dp->d_name;
-        error = remove(filePath.c_str());
-        if (error)
-        {
-          LOG_ERROR("Unable to remove simulator model file '" + filePath
-                    + "'.");
-        }
-      }
-    }
-    error = remove(parameterFileDirectoryName_.c_str());
-    if (error)
-    {
-      LOG_ERROR("Unable to remove simulator model parameter file directory '"
-                + parameterFileDirectoryName_ + "'.");
-    }
-    closedir(dir);
-
-    // clear out directory and file stuff
-    parameterFileDirectoryName_ = "";
-    specificationFileName_ = "";
-    numberOfParameterFiles_ = -1;
-    parameterFileNames_.clear();
-  }
 }
 }  // namespace KIM

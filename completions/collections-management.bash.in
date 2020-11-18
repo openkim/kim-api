@@ -19,7 +19,7 @@
 #
 
 #
-# Copyright (c) 2018--2019, Regents of the University of Minnesota.
+# Copyright (c) 2018--2020, Regents of the University of Minnesota.
 # All rights reserved.
 #
 # Contributors:
@@ -27,13 +27,19 @@
 #
 
 #
-# Release: This file is part of the kim-api-2.1.3 package.
+# Release: This file is part of the kim-api-2.2.0 package.
 #
 
 _@KIM_API_C_ID_PROJECT_NAME@_collections_management()
 {
+  local ORIGIN
+  if test -n "${ZSH_VERSION}"; then
+    ORIGIN=$(cd "$(dirname "${(%):-%x}")" && pwd)
+  else
+    ORIGIN=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+  fi
   local collections_info
-  collections_info=@CMAKE_INSTALL_FULL_LIBEXECDIR@/@PROJECT_NAME@/@PROJECT_NAME@-collections-info
+  collections_info=@_collections_info_rel@
 
   local cd_type
   if test -n "${ZSH_VERSION}"; then
@@ -109,7 +115,7 @@ _@KIM_API_C_ID_PROJECT_NAME@_collections_management()
                     -e 's/{"kimcode": "\([^"]*\)"},*/\1/g'`
         opts="${opts} ${list}"
 
-        if test x"function" = x"cd_type"; then  # check if bash_completion has been loaded & _cd defined
+        if test x"function" = x"${cd_type}"; then  # check if bash_completion has been loaded & _cd defined
           _cd
         fi
         COMPREPLY=( "${COMPREPLY[@]}" $(compgen -W "${opts}" -- "${cur}") )

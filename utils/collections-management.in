@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 
 #
@@ -22,7 +22,7 @@
 #
 
 #
-# Copyright (c) 2017--2019, Regents of the University of Minnesota.
+# Copyright (c) 2017--2020, Regents of the University of Minnesota.
 # All rights reserved.
 #
 # Contributors:
@@ -32,15 +32,37 @@
 #
 
 #
-# Release: This file is part of the kim-api-2.1.3 package.
+# Release: This file is part of the kim-api-2.2.0 package.
 #
 
-collections_info=@CMAKE_INSTALL_FULL_LIBEXECDIR@/@PROJECT_NAME@/@PROJECT_NAME@-collections-info
+ORIGIN=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+collections_info="@_collections_info_path@"
 major_version=@PROJECT_VERSION_MAJOR@
 kim_version_string="@PROJECT_VERSION_STRING@"
+kim_api_uid_string="@KIM_API_UID@"
+# It (shell scripting) is easier if no whitespace allowed in kim_user_agent.
+kim_user_agent="kim-api-collections-management-(${kim_version_string}--`uname -mrs | sed -e 's/ /-/g'`)"
 
-make_command="make -j2"
+
+make_command="${MAKE:=make} -j2"
 cmake_command="cmake"
+# determine web tool to use
+if command -v wget > /dev/null 2>&1; then
+  web_tool="wget"
+  web_tool_q="${web_tool} --user-agent ${kim_user_agent} -q"
+  web_tool_query="${web_tool_q} -O - --post-data"
+  web_tool_url_stdin="${web_tool_q} -O -"
+  web_tool_download="${web_tool_q} --content-disposition"
+elif command -v curl > /dev/null 2>&1; then
+  web_tool="curl"
+  web_tool_q="${web_tool} --user-agent ${kim_user_agent} -s"
+  web_tool_query="${web_tool_q} -o - --data"
+  web_tool_url_stdin="${web_tool_q} -O -"
+  web_tool_download="${web_tool_q} --remote-name"
+else
+  printf "*** ERROR *** Unable to find a web tool: please install 'wget' or 'curl'.\n";
+  return 1
+fi
 
 
 # define usage function
@@ -101,6 +123,14 @@ usage () {
   printf "  Remove all items from all collections.\n"
   printf "  WARNING: This will remove the entire directory of files associated\n"
   printf "           with all items.\n"
+  printf "\n"
+  printf "\n"
+  printf "NOTE: To obtain output from the CMake configure and make steps\n"
+  printf "      set the CM_VERBOSE environment variable.\n"
+  printf "\n"
+  printf "      For script debugging, execute with the shell 'x' and/or 'v'\n"
+  printf "      options to obtain verbose output.  For example:\n"
+  printf "      'sh -xv ${command} ...'.\n"
 }
 
 check_version_compatibility () {
@@ -120,9 +150,11 @@ check_item_compatibility () {
   query="${query}"'&fields={"kim-api-version":1}'
   query="${query}"'&database=obj&history=on'
   local version
-  version="`wget -q -O - --post-data="${query}" https://query.openkim.org/api`"
-  if test $? -ne 0; then
+  version="`${web_tool_query} "${query}" https://query.openkim.org/api`"
+  local error_code=$?
+  if test ${error_code} -ne 0; then
     printf "*** ERROR *** Unable to successfully contact openkim.org to check ${item_name} compatibility.\n"
+    printf "              '${web_tool}' returned error code ${error_code}.\n"
     return 1
   fi
   version="`printf -- "%s" "${version}" | \
@@ -175,6 +207,8 @@ get_local_build_item_name () {
     if ! (${cmake_command} ../ > ./cmake-log.txt 2>&1); then
       cat ./cmake-log.txt
       return 1
+    elif test ! -z "${CM_VERBOSE}"; then
+      cat ./cmake-log.txt
     fi
 
     local item_type="`grep -- "item-type:" item-info.txt | sed -e 's/^item-type://'`"
@@ -239,9 +273,7 @@ rewrite_config_file_item_type_dir () {
       return 1
     fi
 
-    printf "@KIM_API_MODEL_DRIVER_PLURAL_DIR_IDENTIFIER@ = %s\n" "${drivers_dir}"             >  "${config_file_name}" || return 1
-    printf "@KIM_API_PORTABLE_MODEL_PLURAL_DIR_IDENTIFIER@ = %s\n" "${models_dir}"            >> "${config_file_name}"
-    printf "@KIM_API_SIMULATOR_MODEL_PLURAL_DIR_IDENTIFIER@ = %s\n" "${simulator_models_dir}" >> "${config_file_name}"
+    ${collections_info} write_config_file "${config_file_name}" "${drivers_dir}" "${models_dir}" "${simulator_models_dir}" || return 1
   else
     printf "Directory '%s' does not exist.\n" "${dir}"
     return 1
@@ -329,15 +361,20 @@ get_build_install_item () {
     # download item (and possibly its driver)
     if test x"OpenKIM" = x"${item_type}"; then
       # find most recent release archive name
-      local archive_basename=`wget -q -O - https://s3.openkim.org/archives/collection | \
+      local archive_basename=`${web_tool_url_stdin} https://s3.openkim.org/archives/collection | \
         sed -e '/openkim-models-[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9].txz/!d' | sed -e '$!d' | \
         sed -e 's/^.*\(openkim-models-.*\)\.txz.*$/\1/'`
       # download archive
       printf "Downloading..............#%s\n" "${archive_basename}" | sed -e 's/ /./g' -e 's/#/ /g'
-      if wget -q --content-disposition "https://s3.openkim.org/archives/collection/${archive_basename}.txz"; then
-        tar Jxf "${archive_basename}.txz" && rm -f "${archive_basename}.txz"
+      ${web_tool_download} "https://s3.openkim.org/archives/collection/${archive_basename}.txz"
+      local error_code=$?
+      if test ${error_code} -eq 0; then
+        #tar Jxf "${archive_basename}.txz" && rm -f "${archive_basename}.txz"
+        # Workaround for https://github.com/msys2/MSYS2-packages/issues/1548
+        xz --decompress --stdout "${archive_basename}.txz" | tar xf - && rm -f "${archive_basename}.txz"
       else
         printf "                Unable to download ${archive_basename}.txz from https://s3.openkim.org.\n"
+        printf "                '${web_tool}' returned error code ${error_code}.\n"
         return 1
       fi
       # configure archive
@@ -345,6 +382,8 @@ get_build_install_item () {
       if ! ${cmake_command} ../ -DKIM_API_INSTALL_COLLECTION="`printf ${install_collection} | tr "[:lower:]" "[:upper:]"`" > ./cmake-log.txt 2>&1; then
         cat ./cmake-log.txt
         return 1
+      elif test ! -z "${CM_VERBOSE}"; then
+        cat ./cmake-log.txt
       fi
       # build and install archive
       if ! ((${make_command} clean && ${make_command} && ${make_command} CTEST_OUTPUT_ON_FAILURE=1 test) && \
@@ -359,10 +398,15 @@ get_build_install_item () {
       if test x"" = x"${local_build_path}"; then
         if check_item_compatibility "${item_name}"; then
           printf "Downloading..............#%s\n" "${item_name}" | sed -e 's/ /./g' -e 's/#/ /g'
-          if wget -q --content-disposition "https://openkim.org/download/${item_name}.txz"; then
-            tar Jxf "${item_name}.txz" && rm -f "${item_name}.txz"
+          ${web_tool_download} "https://openkim.org/download/${item_name}.txz"
+          local error_code=$?
+          if test ${error_code} -eq 0; then
+            #tar Jxfv "${item_name}.txz" && rm -f "${item_name}.txz"
+            # Workaround for https://github.com/msys2/MSYS2-packages/issues/1548
+            xz --decompress --stdout "${item_name}.txz" | tar xf - && rm -f "${item_name}.txz"
           else
             printf "                Unable to download ${item_name} from https://openkim.org.  Check the KIM Item ID for errors.\n"
+            printf "                '${web_tool}' returned error code ${error_code}.\n"
             return 1
           fi
         else
@@ -375,6 +419,8 @@ get_build_install_item () {
       if ! ${cmake_command} ../ -DKIM_API_INSTALL_COLLECTION="`printf ${install_collection} | tr "[:lower:]" "[:upper:]"`" > ./cmake-log.txt 2>&1; then
         cat ./cmake-log.txt
         return 1
+      elif test ! -z "${CM_VERBOSE}"; then
+        cat ./cmake-log.txt
       fi
       item_type="`grep "item-type:" item-info.txt | sed -e 's/item-type://'`"
       item_driver_name="`grep "item-driver-name:" item-info.txt | sed -e 's/item-driver-name:"\(.*\)"/\1/'`"
@@ -390,26 +436,30 @@ get_build_install_item () {
             printf "*** WARNING *** Model Driver for this item not currently installed in any of the KIM API collections.\n%s\n\n" \
                    "                Continuing with installation of the item anyway."
         fi
-        if ! ((${make_command} clean && ${make_command} && ${make_command} CTEST_OUTPUT_ON_FAILURE=1 test) > ./make-log.txt 2>&1 && \
-                if test x"sudo-yes" = x"${use_sudo}"; then
-                  printf -- "%s\n" "${PASSWORD}" | sudo -k -S ${make_command} install 2> /dev/null
-                else
-                  ${make_command} install
-                fi); then
+        if ! (${make_command} clean && ${make_command} && ${make_command} CTEST_OUTPUT_ON_FAILURE=1 test) > ./make-log.txt 2>&1; then
           cat ./make-log.txt
           return 1
+        elif test ! -z "${CM_VERBOSE}"; then
+          cat ./make-log.txt
+        fi
+        if test x"sudo-yes" = x"${use_sudo}"; then
+          printf -- "%s\n" "${PASSWORD}" | sudo -k -S ${make_command} install 2> /dev/null
+        else
+          ${make_command} install
         fi
       elif test x"portableModel"    = x"${item_type}" -o \
                 x"modelDriver"      = x"${item_type}" -o \
                 x"simulatorModel"   = x"${item_type}"; then
-        if ! ((${make_command} clean && ${make_command} && ${make_command} CTEST_OUTPUT_ON_FAILURE=1 test) > ./make-log.txt 2>&1 && \
-                if test x"sudo-yes" = x"${use_sudo}"; then
-                  printf -- "%s\n" "${PASSWORD}" | sudo -k -S ${make_command} install 2> /dev/null
-                else
-                  ${make_command} install
-                fi); then
+        if ! (${make_command} clean && ${make_command} && ${make_command} CTEST_OUTPUT_ON_FAILURE=1 test) > ./make-log.txt 2>&1; then
           cat ./make-log.txt
           return 1
+        elif test ! -z "${CM_VERBOSE}"; then
+          cat ./make-log.txt
+        fi
+        if test x"sudo-yes" = x"${use_sudo}"; then
+          printf -- "%s\n" "${PASSWORD}" | sudo -k -S ${make_command} install 2> /dev/null
+        else
+          ${make_command} install
         fi
       else
         printf "Item '${item_name}' of unknown type '${item_type}'.\n"
@@ -586,6 +636,7 @@ print_list_of_items () {
   print_separator_line "="
   printf "\n"
   printf "kim-api : \n\t%s\n" "`${collections_info} system project`"
+  printf "kim-api-uid : \n\t%s\n" "${kim_api_uid_string}"
   printf "\n"
   printf "kim-api configuration file:\n\t%s\n" \
          "`${collections_info} config_file name`"
@@ -770,7 +821,7 @@ case $command in
     done
     print_list_of_items "${list_with_log}"
     ;;
-  set-user-drivers-dir)
+  set-user-model-drivers-dir)
     if test $# -lt 2; then
       usage
       exit 1

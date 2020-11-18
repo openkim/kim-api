@@ -19,7 +19,7 @@
 #
 
 #
-# Copyright (c) 2013--2019, Regents of the University of Minnesota.
+# Copyright (c) 2013--2020, Regents of the University of Minnesota.
 # All rights reserved.
 #
 # Contributors:
@@ -28,8 +28,104 @@
 #
 
 #
-# Release: This file is part of the kim-api-2.1.3 package.
+# Release: This file is part of the kim-api-2.2.0 package.
 #
+
+
+=== kim-api-2.2.0 =============== 18Dec2020 ====================================
+
+* The kim-api now supports Windows.  Significant additions have been made to
+  the code and CMakeLists.txt files to support building kim-api and items on
+  Windows via Cygwin and MinGW; Build on Windows requires C++17.
+  (Thanks to Alex Stukowski)
+
+* kim-api is now "relocatable" after install.  When installed to a non-standard
+  PREFIX (with the CMAKE_INSTALL_PREFIX CMake option) the entire install tree
+  may be moved, after install, to a new location in the file system and
+  everything should still work.  This uses the RPATH, ${ORIGIN}, and similar
+  mechanisms and is functioning on Linux, macOS, and Windows.  (This is tested
+  in the CI.)
+
+* Added 'portable-model' utility which prints out an edn dictionary containing
+  information about the features and properties of a portable model.  This
+  includes the list of supported compute arguments and callbacks, the
+  parameters that the model makes available at runtime, etc.  The utility can
+  be found in the LIBEXEC install directory.
+
+* Added Push/PopDefaultPrintFunction to KIM::Log interface to support Simulator
+  specific logging behavior such as the need for MPI communication to the head
+  node for I/O operations
+
+* Portable Model parameter files are now guaranteed to all be found in a single
+  subdirectory.  This provides uniform handling of parameter files for both
+  Portable Models and Simulator Models.  New GetParameterFileDirectoryName()
+  and GetParameterFileBasename() routines have been added and
+  GetParameterFileName() has been deprecated in the KIM::ModelDriverCreate
+  interface.  A new GetParameterFileBaseName() routine has been added and
+  GetParameterFileName() has been deprecated in the KIM::SimulatorModel
+  interface.
+
+* Update documentation to point to new https://matsci.org discourse OpenKIM
+  forum
+
+* Switch to minimum version 3.10 for CMake
+
+* Complete refactor of CMake build details to improve exported target support.
+  This required an update to how kim-api items define their CMakeLists.txt
+  files.  This version remains backward compatible with item CMakeLists.txt
+  files from older versions, but support for these is deprecated and will be
+  removed in v3.
+
+* Added human readable CMake configuration summary log (also a detailed
+  version) which is printed at the end of the cmake configuration step
+
+* Added new documentation page describing CMakeLists.txt files for the various
+  kim-api item types
+
+* Added native CMake implementation of xxd processing which allows the package
+  to be build on systems without the xxd executable
+
+* The collections-management utility will now use curl if wget is not available
+  on the system
+
+* Added a user-agent string to wget/curl commands so downloads and queries may
+  be identified as coming from the collections-management utility
+
+* Improve debugging of collections-management behavior with new CM_VERBOSITY
+  environment variable and added better error messages
+
+* Full refactoring of travis-ci, docker, and testing implementation
+
+* Added support for openSUSE, ubuntu, centos, and debian to testing via docker
+
+* Added ubuntu_cmake310 to explicitly test build with CMake version 3.10
+
+* Added MinGW travis-ci testing (Thanks to Alex Stukowski)
+
+* Added unique build identifier to default name for config and user collection
+  files
+
+* Refactor and improve handling of deprecated identifiers in configuration file
+
+* Check for and ignore empty kim standard metadata files
+
+* Adopted the `fprettify` Fortran code formatter and reformat all Fortran code
+  to conform to the kim-api settings (now in .fprettify.rc).  Added scripts to
+  support git-commit hook
+
+* Refactor #includes to satisfy include-what-you-use linter
+
+* Refactor initialization of pointers as best practice
+
+* Fix a bug in C language binding for SimulatorModel Interface
+
+* Fix a bug associated with the edn-cpp use of exceptions
+
+* Fix issues identified by Coverity Scan
+
+* Various fixes and improvements
+
+* Various documentation updates
 
 
 === kim-api-2.1.3 =============== 16Aug2019 ====================================

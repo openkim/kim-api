@@ -19,15 +19,16 @@
 //
 
 //
-// Copyright (c) 2016--2019, Regents of the University of Minnesota.
+// Copyright (c) 2016--2020, Regents of the University of Minnesota.
 // All rights reserved.
 //
 // Contributors:
 //    Ryan S. Elliott
+//    Alexander Stukowski
 //
 
 //
-// Release: This file is part of the kim-api-2.1.3 package.
+// Release: This file is part of the kim-api-2.2.0 package.
 //
 
 
@@ -35,6 +36,7 @@
 #define KIM_SIMULATOR_MODEL_IMPLEMENTATION_HPP_
 
 #include <map>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -42,10 +44,9 @@
 #include "KIM_LogVerbosity.hpp"
 #endif
 
-#ifndef KIM_SHARED_LIBRARY_HPP_
-#include "KIM_SharedLibrary.hpp"
+#ifndef KIM_FILESYSTEM_PATH_HPP_
+#include "KIM_FilesystemPath.hpp"
 #endif
-
 
 namespace edn
 {
@@ -57,7 +58,7 @@ namespace KIM
 {
 // Forward declarations
 class Log;
-class Collections;
+class SharedLibrary;
 
 class SimulatorModelImplementation
 {
@@ -102,6 +103,8 @@ class SimulatorModelImplementation
 
   int GetParameterFileName(int const index,
                            std::string const ** const parameterFileName) const;
+  int GetParameterFileBasename(
+      int const index, std::string const ** const parameterFileBasename) const;
 
   void SetSimulatorBufferPointer(void * const ptr);
 
@@ -134,7 +137,6 @@ class SimulatorModelImplementation
                                Log * const log);
   ~SimulatorModelImplementation();
 
-  Collections * collections_;
   std::string simulatorModelName_;
 
   SharedLibrary * sharedLibrary_;
@@ -145,10 +147,9 @@ class SimulatorModelImplementation
   int GetSchemaVersion();
   int ReadEdnSchemaV1();
   int Initialize(std::string const & simulatorModelName);
-  int WriteParameterFileDirectory();
-  void RemoveParameterFileDirectory();
 
-  std::string parameterFileDirectoryName_;
+  FILESYSTEM::Path parameterFileDirectoryName_;
+  std::string parameterFileDirectoryNameString_;
   std::string specificationFileName_;
   int schemaVersion_;
   std::string modelName_;
@@ -162,7 +163,7 @@ class SimulatorModelImplementation
   std::vector<std::vector<std::string> > simulatorFields_;
 
   int numberOfParameterFiles_;
-  std::vector<std::string> parameterFileNames_;
+  std::vector<std::string> parameterFileBasenames_;
 
   bool templateMapOpen_;
   std::map<std::string, std::string> templateMap_;

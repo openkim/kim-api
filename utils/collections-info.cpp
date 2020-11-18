@@ -19,33 +19,35 @@
 //
 
 //
-// Copyright (c) 2013--2019, Regents of the University of Minnesota.
+// Copyright (c) 2013--2020, Regents of the University of Minnesota.
 // All rights reserved.
 //
 // Contributors:
 //    Ryan S. Elliott
+//    Alexander Stukowski
 //
 
 //
-// Release: This file is part of the kim-api-2.1.3 package.
+// Release: This file is part of the kim-api-2.2.0 package.
 //
+
 
 #include "KIM_Collection.hpp"
 #include "KIM_CollectionItemType.hpp"
-#include "KIM_Collections.hpp"
+#include "KIM_CollectionsImplementation.hpp"  // using non-public internal API
+#include "KIM_FilesystemPath.hpp"  // using non-public internal API
 #include "KIM_Log.hpp"
 #include "KIM_LogVerbosity.hpp"
 #include "KIM_Version.hpp"
 #include <cstring>
 #include <iostream>
-#include <list>
-#include <sstream>
+#include <map>
 #include <string>
 #include <vector>
 
 void usage(std::string name)
 {
-  size_t beg = name.find_last_of("/");
+  size_t beg = name.find_last_of("/\\");
   if (beg != std::string::npos) name = name.substr(beg + 1, std::string::npos);
 
   // Follows docopt.org format
@@ -56,6 +58,9 @@ void usage(std::string name)
       << "  " << name
       << " config_file (env | name | model_drivers | portable_models | "
          "simulator_models)\n"
+      << "  " << name
+      << " write_config_file <file-name> <model-drivers-dirs> "
+         "<portable-models-dirs> <simulator-models-dir>\n"
       << "  " << name << " type <item-name>\n"
       << "  " << name << " metadata <item-name>\n"
       << "  " << name
@@ -72,7 +77,8 @@ void usage(std::string name)
 
 namespace CI
 {
-void printDirs(int const extent, KIM::Collections const * const col)
+void printDirs(int const extent,
+               KIM::CollectionsImplementation const * const col)
 {
   for (int i = 0; i < extent; ++i)
   {
@@ -91,13 +97,12 @@ enum ENV_OPTIONS {
 void env(ENV_OPTIONS const opt)
 {
   KIM::Log::PushDefaultVerbosity(KIM::LOG_VERBOSITY::silent);
-  KIM::Collections * col;
-  KIM::Collections::Create(&col);
+  KIM::CollectionsImplementation * col;
+  KIM::CollectionsImplementation::Create(&col);
 
   switch (opt)
   {
-    case E_ENV:
-    {
+    case E_ENV: {
       using namespace KIM::COLLECTION_ITEM_TYPE;
       std::string const * envName;
       col->GetEnvironmentVariableName(modelDriver, &envName);
@@ -112,8 +117,7 @@ void env(ENV_OPTIONS const opt)
       std::cout << std::endl;
       break;
     }
-    case E_MODEL_DRIVERS:
-    {
+    case E_MODEL_DRIVERS: {
       int extent;
       col->CacheListOfDirectoryNames(KIM::COLLECTION::environmentVariable,
                                      KIM::COLLECTION_ITEM_TYPE::modelDriver,
@@ -121,8 +125,7 @@ void env(ENV_OPTIONS const opt)
       printDirs(extent, col);
       break;
     }
-    case E_PORTABLE_MODELS:
-    {
+    case E_PORTABLE_MODELS: {
       int extent;
       col->CacheListOfDirectoryNames(KIM::COLLECTION::environmentVariable,
                                      KIM::COLLECTION_ITEM_TYPE::portableModel,
@@ -130,8 +133,7 @@ void env(ENV_OPTIONS const opt)
       printDirs(extent, col);
       break;
     }
-    case E_SIMULATOR_MODELS:
-    {
+    case E_SIMULATOR_MODELS: {
       int extent;
       col->CacheListOfDirectoryNames(KIM::COLLECTION::environmentVariable,
                                      KIM::COLLECTION_ITEM_TYPE::simulatorModel,
@@ -141,7 +143,7 @@ void env(ENV_OPTIONS const opt)
     }
   }
 
-  KIM::Collections::Destroy(&col);
+  KIM::CollectionsImplementation::Destroy(&col);
   KIM::Log::PopDefaultVerbosity();
 }
 
@@ -155,28 +157,25 @@ enum CONFIG_FILE_OPTIONS {
 void configFile(CONFIG_FILE_OPTIONS const opt)
 {
   KIM::Log::PushDefaultVerbosity(KIM::LOG_VERBOSITY::silent);
-  KIM::Collections * col;
-  KIM::Collections::Create(&col);
+  KIM::CollectionsImplementation * col;
+  KIM::CollectionsImplementation::Create(&col);
 
   switch (opt)
   {
-    case CF_ENV:
-    {
+    case CF_ENV: {
       std::string const * fl;
       std::string const * val;
       col->GetConfigurationFileEnvironmentVariable(&fl, &val);
       std::cout << *fl << " " << *val << std::endl;
       break;
     }
-    case CF_NAME:
-    {
+    case CF_NAME: {
       std::string const * dir;
       col->GetConfigurationFileName(&dir);
       std::cout << *dir << std::endl;
       break;
     }
-    case CF_MODEL_DRIVERS:
-    {
+    case CF_MODEL_DRIVERS: {
       int extent;
       col->CacheListOfDirectoryNames(KIM::COLLECTION::user,
                                      KIM::COLLECTION_ITEM_TYPE::modelDriver,
@@ -184,8 +183,7 @@ void configFile(CONFIG_FILE_OPTIONS const opt)
       printDirs(extent, col);
       break;
     }
-    case CF_PORTABLE_MODELS:
-    {
+    case CF_PORTABLE_MODELS: {
       int extent;
       col->CacheListOfDirectoryNames(KIM::COLLECTION::user,
                                      KIM::COLLECTION_ITEM_TYPE::portableModel,
@@ -193,8 +191,7 @@ void configFile(CONFIG_FILE_OPTIONS const opt)
       printDirs(extent, col);
       break;
     }
-    case CF_SIMULATOR_MODELS:
-    {
+    case CF_SIMULATOR_MODELS: {
       int extent;
       col->CacheListOfDirectoryNames(KIM::COLLECTION::user,
                                      KIM::COLLECTION_ITEM_TYPE::simulatorModel,
@@ -204,15 +201,15 @@ void configFile(CONFIG_FILE_OPTIONS const opt)
     }
   }
 
-  KIM::Collections::Destroy(&col);
+  KIM::CollectionsImplementation::Destroy(&col);
   KIM::Log::PopDefaultVerbosity();
 }
 
 void project()
 {
   KIM::Log::PushDefaultVerbosity(KIM::LOG_VERBOSITY::silent);
-  KIM::Collections * col;
-  KIM::Collections::Create(&col);
+  KIM::CollectionsImplementation * col;
+  KIM::CollectionsImplementation::Create(&col);
 
   std::string const * project;
   std::string const * version;
@@ -220,7 +217,7 @@ void project()
 
   std::cout << *project << " " << *version << std::endl;
 
-  KIM::Collections::Destroy(&col);
+  KIM::CollectionsImplementation::Destroy(&col);
   KIM::Log::PopDefaultVerbosity();
 }
 
@@ -228,13 +225,12 @@ enum SYS_OPTIONS { S_MODEL_DRIVERS, S_PORTABLE_MODELS, S_SIMULATOR_MODELS };
 void sys(SYS_OPTIONS const opt)
 {
   KIM::Log::PushDefaultVerbosity(KIM::LOG_VERBOSITY::silent);
-  KIM::Collections * col;
-  KIM::Collections::Create(&col);
+  KIM::CollectionsImplementation * col;
+  KIM::CollectionsImplementation::Create(&col);
 
   switch (opt)
   {
-    case S_MODEL_DRIVERS:
-    {
+    case S_MODEL_DRIVERS: {
       int extent;
       col->CacheListOfDirectoryNames(KIM::COLLECTION::system,
                                      KIM::COLLECTION_ITEM_TYPE::modelDriver,
@@ -242,8 +238,7 @@ void sys(SYS_OPTIONS const opt)
       printDirs(extent, col);
       break;
     }
-    case S_PORTABLE_MODELS:
-    {
+    case S_PORTABLE_MODELS: {
       int extent;
       col->CacheListOfDirectoryNames(KIM::COLLECTION::system,
                                      KIM::COLLECTION_ITEM_TYPE::portableModel,
@@ -251,8 +246,7 @@ void sys(SYS_OPTIONS const opt)
       printDirs(extent, col);
       break;
     }
-    case S_SIMULATOR_MODELS:
-    {
+    case S_SIMULATOR_MODELS: {
       int extent;
       col->CacheListOfDirectoryNames(KIM::COLLECTION::system,
                                      KIM::COLLECTION_ITEM_TYPE::simulatorModel,
@@ -262,7 +256,7 @@ void sys(SYS_OPTIONS const opt)
     }
   }
 
-  KIM::Collections::Destroy(&col);
+  KIM::CollectionsImplementation::Destroy(&col);
   KIM::Log::PopDefaultVerbosity();
 }
 
@@ -275,8 +269,8 @@ void listItems(KIM::CollectionItemType const type,
     KIM::Log::PushDefaultVerbosity(KIM::LOG_VERBOSITY::debug);
   else
     KIM::Log::PushDefaultVerbosity(KIM::LOG_VERBOSITY::silent);
-  KIM::Collections * col;
-  int error = KIM::Collections::Create(&col);
+  KIM::CollectionsImplementation * col;
+  int error = KIM::CollectionsImplementation::Create(&col);
 
   if (!error)
   {
@@ -306,9 +300,9 @@ void listItems(KIM::CollectionItemType const type,
 
           if (!error)
           {
-            std::size_t found = itemLibraryFileName->find_last_of("/");
+            std::size_t found = itemLibraryFileName->find_last_of("/\\");
             std::string dir = itemLibraryFileName->substr(0, found);
-            found = dir.find_last_of("/");
+            found = dir.find_last_of("/\\");
             dir = dir.substr(0, found);
             std::cout << colList[i].ToString() << " " << *itemName << " " << dir
                       << std::endl;
@@ -325,16 +319,16 @@ void listItems(KIM::CollectionItemType const type,
 
       if (!error)
       {
-        std::size_t found = itemFileName->find_last_of("/");
+        std::size_t found = itemFileName->find_last_of("/\\");
         std::string dir = itemFileName->substr(0, found);
-        found = dir.find_last_of("/");
+        found = dir.find_last_of("/\\");
         dir = dir.substr(0, found);
         std::cout << collection.ToString() << " " << name << " " << dir
                   << std::endl;
       }
     }
 
-    KIM::Collections::Destroy(&col);
+    KIM::CollectionsImplementation::Destroy(&col);
   }
 
   KIM::Log::PopDefaultVerbosity();
@@ -344,6 +338,7 @@ void listItems(KIM::CollectionItemType const type,
 
 int processEnv(int argc, char * argv[]);
 int processConfigFile(int argc, char * argv[]);
+int writeConfigFile(int argc, char * argv[]);
 int getItemType(int argc, char * argv[]);
 int getItemMetadata(int argc, char * argv[]);
 int processSystem(int argc, char * argv[]);
@@ -360,6 +355,10 @@ int main(int argc, char * argv[])
     else if (0 == strcmp("config_file", argv[1]))
     {
       returnVal = processConfigFile(argc, argv);
+    }
+    else if (0 == strcmp("write_config_file", argv[1]))
+    {
+      returnVal = writeConfigFile(argc, argv);
     }
     else if (0 == strcmp("type", argv[1]))
     {
@@ -461,6 +460,29 @@ int processConfigFile(int argc, char * argv[])
   return returnVal;
 }
 
+int writeConfigFile(int argc, char * argv[])
+{
+  int returnVal = 0;
+  if (argc != 6) { returnVal = 1; }
+  else
+  {
+    using namespace KIM::COLLECTION_ITEM_TYPE;
+    KIM::FILESYSTEM::Path fileName(argv[2]);
+    std::map<KIM::CollectionItemType,
+             KIM::FILESYSTEM::PathList,
+             KIM::COLLECTION_ITEM_TYPE::Comparator>
+        dirsMap;
+    if (!dirsMap[modelDriver].Parse(argv[3])) return 1;
+    if (!dirsMap[portableModel].Parse(argv[4])) return 1;
+    if (!dirsMap[simulatorModel].Parse(argv[5])) return 1;
+
+    returnVal = KIM::CollectionsImplementation::
+        WriteConfigurationFileAndCreateDirectories(fileName, dirsMap);
+  }
+
+  return returnVal;
+}
+
 int getItemType(int argc, char * argv[])
 {
   int returnVal = 0;
@@ -468,8 +490,8 @@ int getItemType(int argc, char * argv[])
   else
   {
     KIM::Log::PushDefaultVerbosity(KIM::LOG_VERBOSITY::silent);
-    KIM::Collections * col;
-    int error = KIM::Collections::Create(&col);
+    KIM::CollectionsImplementation * col;
+    int error = KIM::CollectionsImplementation::Create(&col);
     if (!error)
     {
       KIM::CollectionItemType itemType;
@@ -481,7 +503,7 @@ int getItemType(int argc, char * argv[])
         std::cout << itemType.ToString() << std::endl;
       }
 
-      KIM::Collections::Destroy(&col);
+      KIM::CollectionsImplementation::Destroy(&col);
     }
 
     KIM::Log::PopDefaultVerbosity();
@@ -497,8 +519,8 @@ int getItemMetadata(int argc, char * argv[])
   else
   {
     KIM::Log::PushDefaultVerbosity(KIM::LOG_VERBOSITY::silent);
-    KIM::Collections * col;
-    int error = KIM::Collections::Create(&col);
+    KIM::CollectionsImplementation * col;
+    int error = KIM::CollectionsImplementation::Create(&col);
 
     if (!error)
     {
@@ -549,7 +571,7 @@ int getItemMetadata(int argc, char * argv[])
         }
       }
 
-      KIM::Collections::Destroy(&col);
+      KIM::CollectionsImplementation::Destroy(&col);
     }
 
     KIM::Log::PopDefaultVerbosity();
@@ -625,7 +647,9 @@ int processItems(int argc, char * argv[])
     using namespace KIM::COLLECTION_ITEM_TYPE;
 
     if (0 == strcmp("model_drivers", argv[1]))
-    { CI::listItems(modelDriver, list_all, name, log); }
+    {
+      CI::listItems(modelDriver, list_all, name, log);
+    }
     else if (0 == strcmp("portable_models", argv[1]))
     {
       CI::listItems(portableModel, list_all, name, log);

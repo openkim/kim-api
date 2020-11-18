@@ -19,52 +19,26 @@
 #
 
 #
-# Copyright (c) 2013--2019, Regents of the University of Minnesota.
+# Copyright (c) 2013--2020, Regents of the University of Minnesota.
 # All rights reserved.
 #
 # Contributors:
 #    Richard Berger
 #    Christoph Junghans
 #    Ryan S. Elliott
+#    Alexander Stukowski
 #
 
 #
-# Release: This file is part of the kim-api-2.1.3 package.
+# Release: This file is part of the kim-api-2.2.0 package.
 #
 
 
-#
-# Required preamble
-#
+cmake_minimum_required(VERSION 3.10)
 
-cmake_minimum_required(VERSION 3.4)
+project(ex_test_Ar_fcc_cluster VERSION 1.0.0 LANGUAGES C)
 
-list(APPEND CMAKE_PREFIX_PATH $ENV{KIM_API_CMAKE_PREFIX_DIR})
-find_package(KIM-API 2.0 REQUIRED CONFIG)
-if(NOT TARGET kim-api)
-  enable_testing()
-  project("${KIM_API_PROJECT_NAME}" VERSION "${KIM_API_VERSION}"
-    LANGUAGES CXX C Fortran)
-  add_kim_api_imported_library()
-  add_kim_api_compiler_flags()
-endif()
+find_package(KIM-API 2.2 REQUIRED CONFIG)
 
-# End preamble
-
-
-set(TEST_NAME "ex_test_Ar_fcc_cluster")
-
-add_executable(${TEST_NAME} ${TEST_NAME}.c)
-target_link_libraries(${TEST_NAME} kim-api m)
-
-foreach(TEST_MODEL ${TEST_MODELS})
-  # TODO make a variable for "Testing" directory name
-  set(TEST_DIR ${CMAKE_BINARY_DIR}/Testing/Run_${TEST_NAME}_${TEST_MODEL})
-  FILE(MAKE_DIRECTORY ${TEST_DIR})
-  add_test(NAME Run_${TEST_NAME}_${TEST_MODEL} COMMAND sh -c "echo ${TEST_MODEL} | ${CMAKE_CURRENT_BINARY_DIR}/${TEST_NAME} > stdout" WORKING_DIRECTORY ${TEST_DIR})
-  # TODO : the environment variables can be abstracted for generality
-  set_tests_properties(Run_${TEST_NAME}_${TEST_MODEL} PROPERTIES ENVIRONMENT "KIM_API_PORTABLE_MODELS_DIR=${CMAKE_BINARY_DIR};KIM_API_MODEL_DRIVERS_DIR=${CMAKE_BINARY_DIR}")
-  if("${TEST_MODEL}" MATCHES "ex_model_Ar_.*_MultiCutoff")
-    set_tests_properties(Run_${TEST_NAME}_${TEST_MODEL} PROPERTIES WILL_FAIL TRUE)
-  endif()
-endforeach()
+add_executable(${PROJECT_NAME} ${PROJECT_NAME}.c)
+target_link_libraries(${PROJECT_NAME} KIM-API::kim-api m)

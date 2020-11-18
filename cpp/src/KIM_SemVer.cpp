@@ -19,7 +19,7 @@
 //
 
 //
-// Copyright (c) 2016--2019, Regents of the University of Minnesota.
+// Copyright (c) 2016--2020, Regents of the University of Minnesota.
 // All rights reserved.
 //
 // Contributors:
@@ -27,12 +27,13 @@
 //
 
 //
-// Release: This file is part of the kim-api-2.1.3 package.
+// Release: This file is part of the kim-api-2.2.0 package.
 //
 
 
-#include "stdlib.h"
-#include "vector"
+#include <algorithm>
+#include <cstdlib>
+#include <vector>
 
 #ifndef KIM_VERSION_HPP_
 #include "KIM_Version.hpp"
@@ -231,7 +232,9 @@ int IsLessThan(std::string const & lhs,
            lhs, &majorA, &minorA, &patchA, &prereleaseA, &buildMetadataA)
        || ParseSemVer(
            rhs, &majorB, &minorB, &patchB, &prereleaseB, &buildMetadataB)))
-  { return true; }
+  {
+    return true;
+  }
 
   if (majorA > majorB)
   {

@@ -19,7 +19,7 @@
 //
 
 //
-// Copyright (c) 2016--2019, Regents of the University of Minnesota.
+// Copyright (c) 2016--2020, Regents of the University of Minnesota.
 // All rights reserved.
 //
 // Contributors:
@@ -136,19 +136,21 @@ int main()
               << " parameter files:" << std::endl;
     for (int i = 0; i < numberParamFiles; ++i)
     {
-      char const * pParamFileName;
-      error = KIM_SimulatorModel_GetParameterFileName(SM, i, &pParamFileName);
+      char const * pParamFileBasename;
+      error = KIM_SimulatorModel_GetParameterFileBasename(
+          SM, i, &pParamFileBasename);
       if (error)
       {
-        std::cout << "Unable to get parameter file name." << std::endl;
+        std::cout << "Unable to get parameter file basename." << std::endl;
         goto fail;
       }
       else
       {
         std::cout << "Parameter file " << std::setw(2) << i
-                  << " has name : " << pParamFileName << std::endl;
-        error = system(
-            (std::string("cat ") + pDirName + "/" + pParamFileName).c_str());
+                  << " has basename : " << pParamFileBasename << std::endl;
+        error
+            = system((std::string("cat ") + pDirName + "/" + pParamFileBasename)
+                         .c_str());
         std::cout << std::endl;
       }
     }

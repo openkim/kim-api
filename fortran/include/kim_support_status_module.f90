@@ -19,7 +19,7 @@
 !
 
 !
-! Copyright (c) 2016--2019, Regents of the University of Minnesota.
+! Copyright (c) 2016--2020, Regents of the University of Minnesota.
 ! All rights reserved.
 !
 ! Contributors:
@@ -27,9 +27,8 @@
 !
 
 !
-! Release: This file is part of the kim-api-2.1.3 package.
+! Release: This file is part of the kim-api-2.2.0 package.
 !
-
 
 !> \brief \copybrief KIM::SupportStatus
 !!
@@ -44,22 +43,19 @@ module kim_support_status_module
   public &
     ! Derived types
     kim_support_status_type, &
-
     ! Constants
     KIM_SUPPORT_STATUS_REQUIRED_BY_API, &
     KIM_SUPPORT_STATUS_NOT_SUPPORTED, &
     KIM_SUPPORT_STATUS_REQUIRED, &
     KIM_SUPPORT_STATUS_OPTIONAL, &
-
     ! Routines
     kim_known, &
-    operator (.eq.), &
-    operator (.ne.), &
+    operator(.eq.), &
+    operator(.ne.), &
     kim_from_string, &
     kim_to_string, &
     kim_get_number_of_support_statuses, &
     kim_get_support_status
-
 
   !> \brief \copybrief KIM::SupportStatus
   !!
@@ -67,12 +63,12 @@ module kim_support_status_module
   !!
   !! \since 2.0
   type, bind(c) :: kim_support_status_type
-     !> \brief \copybrief KIM::SupportStatus::supportStatusID
-     !!
-     !! \sa KIM::SupportStatus::supportStatusID,
-     !! KIM_SupportStatus::supportStatusID
-     !!
-     !! \since 2.0
+    !> \brief \copybrief KIM::SupportStatus::supportStatusID
+    !!
+    !! \sa KIM::SupportStatus::supportStatusID,
+    !! KIM_SupportStatus::supportStatusID
+    !!
+    !! \since 2.0
     integer(c_int) :: support_status_id
   end type kim_support_status_type
 
@@ -126,18 +122,18 @@ module kim_support_status_module
   !! \sa KIM::SupportStatus::operator==(), KIM_SupportStatus_Equal
   !!
   !! \since 2.0
-  interface operator (.eq.)
+  interface operator(.eq.)
     module procedure kim_support_status_equal
-  end interface operator (.eq.)
+  end interface operator(.eq.)
 
   !> \brief \copybrief KIM::SupportStatus::operator!=()
   !!
   !! \sa KIM::SupportStatus::operator!=(), KIM_SupportStatus_NotEqual
   !!
   !! \since 2.0
-  interface operator (.ne.)
+  interface operator(.ne.)
     module procedure kim_support_status_not_equal
-  end interface operator (.ne.)
+  end interface operator(.ne.)
 
   !> \brief \copybrief KIM::SupportStatus::SupportStatus(std::string const &)
   !!
@@ -191,7 +187,7 @@ contains
     type(kim_support_status_type), intent(in) :: rhs
 
     kim_support_status_equal &
-      = (lhs%support_status_id .eq. rhs%support_status_id)
+      = (lhs%support_status_id == rhs%support_status_id)
   end function kim_support_status_equal
 
   !> \brief \copybrief KIM::SupportStatus::operator!=()
@@ -204,7 +200,7 @@ contains
     type(kim_support_status_type), intent(in) :: lhs
     type(kim_support_status_type), intent(in) :: rhs
 
-    kim_support_status_not_equal = .not. (lhs .eq. rhs)
+    kim_support_status_not_equal = .not. (lhs == rhs)
   end function kim_support_status_not_equal
 
   !> \brief \copybrief KIM::SupportStatus::SupportStatus(std::string const &)
@@ -236,7 +232,7 @@ contains
   !!
   !! \since 2.0
   recursive subroutine kim_support_status_to_string(support_status, string)
-    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
+    use kim_convert_string_module, only: kim_convert_c_char_ptr_to_string
     implicit none
     interface
       type(c_ptr) recursive function get_string(support_status) &
@@ -289,7 +285,8 @@ contains
     implicit none
     interface
       integer(c_int) recursive function get_support_status(index, &
-        support_status) bind(c, name="KIM_SUPPORT_STATUS_GetSupportStatus")
+                                                           support_status) &
+        bind(c, name="KIM_SUPPORT_STATUS_GetSupportStatus")
         use, intrinsic :: iso_c_binding
         import kim_support_status_type
         implicit none
@@ -301,6 +298,6 @@ contains
     type(kim_support_status_type), intent(out) :: support_status
     integer(c_int), intent(out) :: ierr
 
-    ierr = get_support_status(index-1, support_status)
+    ierr = get_support_status(index - 1, support_status)
   end subroutine kim_get_support_status
 end module kim_support_status_module

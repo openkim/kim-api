@@ -19,7 +19,7 @@
 !
 
 !
-! Copyright (c) 2016--2019, Regents of the University of Minnesota.
+! Copyright (c) 2016--2020, Regents of the University of Minnesota.
 ! All rights reserved.
 !
 ! Contributors:
@@ -27,9 +27,8 @@
 !
 
 !
-! Release: This file is part of the kim-api-2.1.3 package.
+! Release: This file is part of the kim-api-2.2.0 package.
 !
-
 
 !> \brief \copybrief KIM::EnergyUnit
 !!
@@ -44,7 +43,6 @@ module kim_energy_unit_module
   public &
     ! Derived types
     kim_energy_unit_type, &
-
     ! Constants
     KIM_ENERGY_UNIT_UNUSED, &
     KIM_ENERGY_UNIT_AMU_A2_PER_PS2, &
@@ -53,16 +51,14 @@ module kim_energy_unit_module
     KIM_ENERGY_UNIT_HARTREE, &
     KIM_ENERGY_UNIT_J, &
     KIM_ENERGY_UNIT_KCAL_MOL, &
-
     ! Routines
     kim_known, &
-    operator (.eq.), &
-    operator (.ne.), &
+    operator(.eq.), &
+    operator(.ne.), &
     kim_from_string, &
     kim_to_string, &
     kim_get_number_of_energy_units, &
     kim_get_energy_unit
-
 
   !> \brief \copybrief KIM::EnergyUnit
   !!
@@ -70,11 +66,11 @@ module kim_energy_unit_module
   !!
   !! \since 2.0
   type, bind(c) :: kim_energy_unit_type
-     !> \brief \copybrief KIM::EnergyUnit::energyUnitID
-     !!
-     !! \sa KIM::EnergyUnit::energyUnitID, KIM_EnergyUnit::energyUnitID
-     !!
-     !! \since 2.0
+    !> \brief \copybrief KIM::EnergyUnit::energyUnitID
+    !!
+    !! \sa KIM::EnergyUnit::energyUnitID, KIM_EnergyUnit::energyUnitID
+    !!
+    !! \since 2.0
     integer(c_int) energy_unit_id
   end type kim_energy_unit_type
 
@@ -155,18 +151,18 @@ module kim_energy_unit_module
   !! \sa KIM::EnergyUnit::operator==(), KIM_EnergyUnit_Equal
   !!
   !! \since 2.0
-  interface operator (.eq.)
+  interface operator(.eq.)
     module procedure kim_energy_unit_equal
-  end interface operator (.eq.)
+  end interface operator(.eq.)
 
   !> \brief \copybrief KIM::EnergyUnit::operator!=()
   !!
   !! \sa KIM::EnergyUnit::operator!=(), KIM_EnergyUnit_NotEqual
   !!
   !! \since 2.0
-  interface operator (.ne.)
+  interface operator(.ne.)
     module procedure kim_energy_unit_not_equal
-  end interface operator (.ne.)
+  end interface operator(.ne.)
 
   !> \brief \copybrief KIM::EnergyUnit::EnergyUnit(std::string const &)
   !!
@@ -220,7 +216,7 @@ contains
     type(kim_energy_unit_type), intent(in) :: rhs
 
     kim_energy_unit_equal &
-      = (lhs%energy_unit_id .eq. rhs%energy_unit_id)
+      = (lhs%energy_unit_id == rhs%energy_unit_id)
   end function kim_energy_unit_equal
 
   !> \brief \copybrief KIM::EnergyUnit::operator!=()
@@ -233,7 +229,7 @@ contains
     type(kim_energy_unit_type), intent(in) :: lhs
     type(kim_energy_unit_type), intent(in) :: rhs
 
-    kim_energy_unit_not_equal = .not. (lhs .eq. rhs)
+    kim_energy_unit_not_equal = .not. (lhs == rhs)
   end function kim_energy_unit_not_equal
 
   !> \brief \copybrief KIM::EnergyUnit::EnergyUnit(std::string const &)
@@ -265,7 +261,7 @@ contains
   !!
   !! \since 2.0
   recursive subroutine kim_energy_unit_to_string(energy_unit, string)
-    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
+    use kim_convert_string_module, only: kim_convert_c_char_ptr_to_string
     implicit none
     interface
       type(c_ptr) recursive function get_string(energy_unit) &
@@ -326,6 +322,6 @@ contains
     type(kim_energy_unit_type), intent(out) :: energy_unit
     integer(c_int), intent(out) :: ierr
 
-    ierr = get_energy_unit(index-1, energy_unit)
+    ierr = get_energy_unit(index - 1, energy_unit)
   end subroutine kim_get_energy_unit
 end module kim_energy_unit_module

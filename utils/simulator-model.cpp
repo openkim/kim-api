@@ -19,26 +19,29 @@
 //
 
 //
-// Copyright (c) 2013--2019, Regents of the University of Minnesota.
+// Copyright (c) 2013--2020, Regents of the University of Minnesota.
 // All rights reserved.
 //
 // Contributors:
 //    Ryan S. Elliott
+//    Alexander Stukowski
 //
 
 //
-// Release: This file is part of the kim-api-2.1.3 package.
+// Release: This file is part of the kim-api-2.2.0 package.
 //
+
 
 #include "KIM_SimulatorModel.hpp"
 #include "KIM_Version.hpp"
 #include <cstdio>
+#include <cstdlib>
 #include <iostream>
-#include <stdlib.h>
+#include <string>
 
 void usage(std::string name)
 {
-  size_t beg = name.find_last_of("/");
+  size_t beg = name.find_last_of("/\\");
   if (beg != std::string::npos) name = name.substr(beg + 1, std::string::npos);
 
   // Follows docopt.org format
@@ -115,7 +118,7 @@ int main(int argc, char * argv[])
     {
       simulatorModel->GetSpecificationFileName(&name);
       std::string const filePath = *dirName + "/" + *name;
-      FILE * file = fopen(filePath.c_str(), "r");
+      FILE * file = fopen(filePath.c_str(), "rb");
       if (file == NULL)
       {
         std::cout << "* Error: unable to open smspec file." << std::endl;
@@ -125,7 +128,7 @@ int main(int argc, char * argv[])
       fseek(file, 0, SEEK_END);
       long int size = ftell(file);
       fclose(file);
-      file = fopen(filePath.c_str(), "r");
+      file = fopen(filePath.c_str(), "rb");
       unsigned char * fileData = new unsigned char[size];
       size_t numberReadObjects;
       numberReadObjects = fread(fileData, sizeof(unsigned char), size, file);

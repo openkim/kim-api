@@ -19,7 +19,7 @@
 !
 
 !
-! Copyright (c) 2016--2019, Regents of the University of Minnesota.
+! Copyright (c) 2016--2020, Regents of the University of Minnesota.
 ! All rights reserved.
 !
 ! Contributors:
@@ -27,9 +27,8 @@
 !
 
 !
-! Release: This file is part of the kim-api-2.1.3 package.
+! Release: This file is part of the kim-api-2.2.0 package.
 !
-
 
 !> \brief \copybrief KIM::ModelDriverCreate
 !!
@@ -44,15 +43,15 @@ module kim_model_driver_create_module
   public &
     ! Derived types
     kim_model_driver_create_handle_type, &
-
     ! Constants
     KIM_MODEL_DRIVER_CREATE_NULL_HANDLE, &
-
     ! Routines
-    operator (.eq.), &
-    operator (.ne.), &
+    operator(.eq.), &
+    operator(.ne.), &
+    kim_get_parameter_file_directory_name, &
     kim_get_number_of_parameter_files, &
     kim_get_parameter_file_name, &
+    kim_get_parameter_file_basename, &
     kim_set_model_numbering, &
     kim_set_influence_distance_pointer, &
     kim_set_neighbor_list_pointers, &
@@ -64,7 +63,6 @@ module kim_model_driver_create_module
     kim_convert_unit, &
     kim_log_entry, &
     kim_to_string
-
 
   !> \brief \copybrief KIM::ModelDriverCreate
   !!
@@ -84,16 +82,26 @@ module kim_model_driver_create_module
   !> \brief Compares kim_model_driver_create_handle_type's for equality.
   !!
   !! \since 2.0
-  interface operator (.eq.)
+  interface operator(.eq.)
     module procedure kim_model_driver_create_handle_equal
-  end interface operator (.eq.)
+  end interface operator(.eq.)
 
   !> \brief Compares kim_model_driver_create_handle_type's for inequality.
   !!
   !! \since 2.0
-  interface operator (.ne.)
+  interface operator(.ne.)
     module procedure kim_model_driver_create_handle_not_equal
-  end interface operator (.ne.)
+  end interface operator(.ne.)
+
+  !> \brief \copybrief KIM::ModelDriverCreate::GetParameterFileDirectoryName
+  !!
+  !! \sa KIM::ModelDriverCreate::GetParameterFileDirectoryName,
+  !! KIM_ModelDriverCreate_GetParameterFileDirectoryName
+  !!
+  !! \since 2.2
+  interface kim_get_parameter_file_directory_name
+    module procedure kim_model_driver_create_get_parameter_file_directory_name
+  end interface kim_get_parameter_file_directory_name
 
   !> \brief \copybrief KIM::ModelDriverCreate::GetNumberOfParameterFiles
   !!
@@ -111,9 +119,22 @@ module kim_model_driver_create_module
   !! KIM_ModelDriverCreate_GetParameterFileName
   !!
   !! \since 2.0
+  !!
+  !! \deprecated As of 2.2.  Please use
+  !! kim_model_driver_create_module::kim_get_parameter_file_basename() instead.
   interface kim_get_parameter_file_name
     module procedure kim_model_driver_create_get_parameter_file_name
   end interface kim_get_parameter_file_name
+
+  !> \brief \copybrief KIM::ModelDriverCreate::GetParameterFileBasename
+  !!
+  !! \sa KIM::ModelDriverCreate::GetParameterFileBasename,
+  !! KIM_ModelDriverCreate_GetParameterFileBasename
+  !!
+  !! \since 2.2
+  interface kim_get_parameter_file_basename
+    module procedure kim_model_driver_create_get_parameter_file_basename
+  end interface kim_get_parameter_file_basename
 
   !> \brief \copybrief KIM::ModelDriverCreate::SetModelNumbering
   !!
@@ -247,8 +268,43 @@ contains
     type(kim_model_driver_create_handle_type), intent(in) :: lhs
     type(kim_model_driver_create_handle_type), intent(in) :: rhs
 
-    kim_model_driver_create_handle_not_equal = .not. (lhs .eq. rhs)
+    kim_model_driver_create_handle_not_equal = .not. (lhs == rhs)
   end function kim_model_driver_create_handle_not_equal
+
+  !> \brief \copybrief KIM::ModelDriverCreate::GetParameterFileDirectoryName
+  !!
+  !! \sa KIM::ModelDriverCreate::GetParameterFileDirectoryName,
+  !! KIM_ModelDriverCreate_GetParameterFileDirectoryName
+  !!
+  !! \since 2.2
+  recursive subroutine &
+    kim_model_driver_create_get_parameter_file_directory_name( &
+    model_driver_create_handle, directory_name)
+    use kim_interoperable_types_module, only: kim_model_driver_create_type
+    use kim_convert_string_module, only: kim_convert_c_char_ptr_to_string
+    implicit none
+    interface
+      recursive subroutine get_parameter_file_directory_name( &
+        model_driver_create, directory_name) &
+        bind(c, name="KIM_ModelDriverCreate_GetParameterFileDirectoryName")
+        use, intrinsic :: iso_c_binding
+        use kim_interoperable_types_module, only: kim_model_driver_create_type
+        implicit none
+        type(kim_model_driver_create_type), intent(in) :: model_driver_create
+        type(c_ptr), intent(out) :: directory_name
+      end subroutine get_parameter_file_directory_name
+    end interface
+    type(kim_model_driver_create_handle_type), intent(in) :: &
+      model_driver_create_handle
+    character(len=*, kind=c_char), intent(out) :: directory_name
+    type(kim_model_driver_create_type), pointer :: model_driver_create
+
+    type(c_ptr) pdirectory_name
+
+    call c_f_pointer(model_driver_create_handle%p, model_driver_create)
+    call get_parameter_file_directory_name(model_driver_create, pdirectory_name)
+    call kim_convert_c_char_ptr_to_string(pdirectory_name, directory_name)
+  end subroutine kim_model_driver_create_get_parameter_file_directory_name
 
   !> \brief \copybrief KIM::ModelDriverCreate::GetNumberOfParameterFiles
   !!
@@ -258,14 +314,14 @@ contains
   !! \since 2.0
   recursive subroutine kim_model_driver_create_get_number_of_parameter_files( &
     model_driver_create_handle, number_of_parameter_files)
-    use kim_interoperable_types_module, only : kim_model_driver_create_type
+    use kim_interoperable_types_module, only: kim_model_driver_create_type
     implicit none
     interface
-      recursive subroutine get_number_of_parameter_files(model_driver_create, &
-        number_of_parameter_files) bind(c, &
-        name="KIM_ModelDriverCreate_GetNumberOfParameterFiles")
+      recursive subroutine get_number_of_parameter_files( &
+        model_driver_create, number_of_parameter_files) &
+        bind(c, name="KIM_ModelDriverCreate_GetNumberOfParameterFiles")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_model_driver_create_type
+        use kim_interoperable_types_module, only: kim_model_driver_create_type
         implicit none
         type(kim_model_driver_create_type), intent(in) &
           :: model_driver_create
@@ -279,7 +335,7 @@ contains
 
     call c_f_pointer(model_driver_create_handle%p, model_driver_create)
     call get_number_of_parameter_files(model_driver_create, &
-      number_of_parameter_files)
+                                       number_of_parameter_files)
   end subroutine kim_model_driver_create_get_number_of_parameter_files
 
   !> \brief \copybrief KIM::ModelDriverCreate::GetParameterFileName
@@ -288,17 +344,20 @@ contains
   !! KIM_ModelDriverCreate_GetParameterFileName
   !!
   !! \since 2.0
+  !!
+  !! \deprecated As of 2.2.  Please use
+  !! kim_model_driver_create_module::kim_get_parameter_file_basename() instead.
   recursive subroutine kim_model_driver_create_get_parameter_file_name( &
     model_driver_create_handle, index, parameter_file_name, ierr)
-    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
-    use kim_interoperable_types_module, only : kim_model_driver_create_type
+    use kim_convert_string_module, only: kim_convert_c_char_ptr_to_string
+    use kim_interoperable_types_module, only: kim_model_driver_create_type
     implicit none
     interface
       integer(c_int) recursive function get_parameter_file_name( &
         model_driver_create, index, parameter_file_name) &
         bind(c, name="KIM_ModelDriverCreate_GetParameterFileName")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_model_driver_create_type
+        use kim_interoperable_types_module, only: kim_model_driver_create_type
         implicit none
         type(kim_model_driver_create_type), intent(in) &
           :: model_driver_create
@@ -317,9 +376,48 @@ contains
 
     call c_f_pointer(model_driver_create_handle%p, model_driver_create)
     ierr = get_parameter_file_name(model_driver_create, &
-      index-1, p)
+                                   index - 1, p)
     call kim_convert_c_char_ptr_to_string(p, parameter_file_name)
   end subroutine kim_model_driver_create_get_parameter_file_name
+
+  !> \brief \copybrief KIM::ModelDriverCreate::GetParameterFileBasename
+  !!
+  !! \sa KIM::ModelDriverCreate::GetParameterFileBasename,
+  !! KIM_ModelDriverCreate_GetParameterFileBasename
+  !!
+  !! \since 2.2
+  recursive subroutine kim_model_driver_create_get_parameter_file_basename( &
+    model_driver_create_handle, index, parameter_file_basename, ierr)
+    use kim_convert_string_module, only: kim_convert_c_char_ptr_to_string
+    use kim_interoperable_types_module, only: kim_model_driver_create_type
+    implicit none
+    interface
+      integer(c_int) recursive function get_parameter_file_basename( &
+        model_driver_create, index, parameter_file_basename) &
+        bind(c, name="KIM_ModelDriverCreate_GetParameterFileBasename")
+        use, intrinsic :: iso_c_binding
+        use kim_interoperable_types_module, only: kim_model_driver_create_type
+        implicit none
+        type(kim_model_driver_create_type), intent(in) &
+          :: model_driver_create
+        integer(c_int), intent(in), value :: index
+        type(c_ptr), intent(out) :: parameter_file_basename
+      end function get_parameter_file_basename
+    end interface
+    type(kim_model_driver_create_handle_type), intent(in) &
+      :: model_driver_create_handle
+    integer(c_int), intent(in) :: index
+    character(len=*, kind=c_char), intent(out) :: parameter_file_basename
+    integer(c_int), intent(out) :: ierr
+    type(kim_model_driver_create_type), pointer :: model_driver_create
+
+    type(c_ptr) :: p
+
+    call c_f_pointer(model_driver_create_handle%p, model_driver_create)
+    ierr = get_parameter_file_basename(model_driver_create, &
+                                       index - 1, p)
+    call kim_convert_c_char_ptr_to_string(p, parameter_file_basename)
+  end subroutine kim_model_driver_create_get_parameter_file_basename
 
   !> \brief \copybrief KIM::ModelDriverCreate::SetModelNumbering
   !!
@@ -329,16 +427,16 @@ contains
   !! \since 2.0
   recursive subroutine kim_model_driver_create_set_model_numbering( &
     model_driver_create_handle, numbering, ierr)
-    use kim_numbering_module, only : kim_numbering_type
-    use kim_interoperable_types_module, only : kim_model_driver_create_type
+    use kim_numbering_module, only: kim_numbering_type
+    use kim_interoperable_types_module, only: kim_model_driver_create_type
     implicit none
     interface
       integer(c_int) recursive function set_model_numbering( &
         model_driver_create, numbering) &
         bind(c, name="KIM_ModelDriverCreate_SetModelNumbering")
         use, intrinsic :: iso_c_binding
-        use kim_numbering_module, only : kim_numbering_type
-        use kim_interoperable_types_module, only : kim_model_driver_create_type
+        use kim_numbering_module, only: kim_numbering_type
+        use kim_interoperable_types_module, only: kim_model_driver_create_type
         implicit none
         type(kim_model_driver_create_type), intent(in) &
           :: model_driver_create
@@ -363,14 +461,14 @@ contains
   !! \since 2.0
   recursive subroutine kim_model_driver_create_set_influence_distance_pointer( &
     model_driver_create_handle, influence_distance)
-    use kim_interoperable_types_module, only : kim_model_driver_create_type
+    use kim_interoperable_types_module, only: kim_model_driver_create_type
     implicit none
     interface
       recursive subroutine set_influence_distance_pointer(model_driver_create, &
-        influence_distance) &
+                                                          influence_distance) &
         bind(c, name="KIM_ModelDriverCreate_SetInfluenceDistancePointer")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_model_driver_create_type
+        use kim_interoperable_types_module, only: kim_model_driver_create_type
         implicit none
         type(kim_model_driver_create_type), intent(in) &
           :: model_driver_create
@@ -384,7 +482,7 @@ contains
 
     call c_f_pointer(model_driver_create_handle%p, model_driver_create)
     call set_influence_distance_pointer(model_driver_create, &
-      c_loc(influence_distance))
+                                        c_loc(influence_distance))
   end subroutine kim_model_driver_create_set_influence_distance_pointer
 
   !> \brief \copybrief KIM::ModelDriverCreate::SetNeighborListPointers
@@ -396,15 +494,15 @@ contains
   recursive subroutine kim_model_driver_create_set_neighbor_list_pointers( &
     model_driver_create_handle, number_of_neighbor_lists, cutoffs, &
     model_will_not_request_neighbors_of_noncontributing_particles)
-    use kim_interoperable_types_module, only : kim_model_driver_create_type
+    use kim_interoperable_types_module, only: kim_model_driver_create_type
     implicit none
     interface
-      recursive subroutine set_neighbor_list_pointers(model_driver_create, &
-        number_of_neighbor_lists, cutoffs_ptr, &
+      recursive subroutine set_neighbor_list_pointers( &
+        model_driver_create, number_of_neighbor_lists, cutoffs_ptr, &
         model_will_not_request_neighbors_of_noncontributing_particles) &
         bind(c, name="KIM_ModelDriverCreate_SetNeighborListPointers")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_model_driver_create_type
+        use kim_interoperable_types_module, only: kim_model_driver_create_type
         implicit none
         type(kim_model_driver_create_type), intent(in) &
           :: model_driver_create
@@ -425,8 +523,8 @@ contains
     type(kim_model_driver_create_type), pointer :: model_driver_create
 
     call c_f_pointer(model_driver_create_handle%p, model_driver_create)
-    call set_neighbor_list_pointers(model_driver_create, &
-      number_of_neighbor_lists, c_loc(cutoffs), &
+    call set_neighbor_list_pointers( &
+      model_driver_create, number_of_neighbor_lists, c_loc(cutoffs), &
       c_loc(model_will_not_request_neighbors_of_noncontributing_particles))
   end subroutine kim_model_driver_create_set_neighbor_list_pointers
 
@@ -439,18 +537,18 @@ contains
   recursive subroutine kim_model_driver_create_set_routine_pointer( &
     model_driver_create_handle, model_routine_name, language_name, required, &
     fptr, ierr)
-    use kim_model_routine_name_module, only : kim_model_routine_name_type
-    use kim_language_name_module, only : kim_language_name_type
-    use kim_interoperable_types_module, only : kim_model_driver_create_type
+    use kim_model_routine_name_module, only: kim_model_routine_name_type
+    use kim_language_name_module, only: kim_language_name_type
+    use kim_interoperable_types_module, only: kim_model_driver_create_type
     implicit none
     interface
       integer(c_int) recursive function set_routine_pointer( &
         model_driver_create, model_routine_name, language_name, required, &
         fptr) bind(c, name="KIM_ModelDriverCreate_SetRoutinePointer")
         use, intrinsic :: iso_c_binding
-        use kim_model_routine_name_module, only : kim_model_routine_name_type
-        use kim_language_name_module, only : kim_language_name_type
-        use kim_interoperable_types_module, only : kim_model_driver_create_type
+        use kim_model_routine_name_module, only: kim_model_routine_name_type
+        use kim_language_name_module, only: kim_language_name_type
+        use kim_interoperable_types_module, only: kim_model_driver_create_type
         implicit none
         type(kim_model_driver_create_type), intent(in) &
           :: model_driver_create
@@ -472,7 +570,7 @@ contains
 
     call c_f_pointer(model_driver_create_handle%p, model_driver_create)
     ierr = set_routine_pointer(model_driver_create, model_routine_name, &
-      language_name, required, fptr)
+                               language_name, required, fptr)
   end subroutine kim_model_driver_create_set_routine_pointer
 
   !> \brief \copybrief KIM::ModelDriverCreate::SetSpeciesCode
@@ -483,16 +581,16 @@ contains
   !! \since 2.0
   recursive subroutine kim_model_driver_create_set_species_code( &
     model_driver_create_handle, species_name, code, ierr)
-    use kim_species_name_module, only : kim_species_name_type
-    use kim_interoperable_types_module, only : kim_model_driver_create_type
+    use kim_species_name_module, only: kim_species_name_type
+    use kim_interoperable_types_module, only: kim_model_driver_create_type
     implicit none
     interface
       integer(c_int) recursive function set_species_code(model_driver_create, &
-        species_name, code) &
+                                                         species_name, code) &
         bind(c, name="KIM_ModelDriverCreate_SetSpeciesCode")
         use, intrinsic :: iso_c_binding
-        use kim_species_name_module, only : kim_species_name_type
-        use kim_interoperable_types_module, only : kim_model_driver_create_type
+        use kim_species_name_module, only: kim_species_name_type
+        use kim_interoperable_types_module, only: kim_model_driver_create_type
         implicit none
         type(kim_model_driver_create_type), intent(in) &
           :: model_driver_create
@@ -519,7 +617,7 @@ contains
   !! \since 2.0
   recursive subroutine kim_model_driver_create_set_parameter_pointer_integer( &
     model_driver_create_handle, int1, name, description, ierr)
-    use kim_interoperable_types_module, only : kim_model_driver_create_type
+    use kim_interoperable_types_module, only: kim_model_driver_create_type
     implicit none
     type(kim_model_driver_create_handle_type), intent(in) &
       :: model_driver_create_handle
@@ -531,20 +629,20 @@ contains
 
     call c_f_pointer(model_driver_create_handle%p, model_driver_create)
     call set_parameter(model_driver_create, size(int1, 1, c_int), int1, &
-      name, description, ierr)
+                       name, description, ierr)
     return
 
   contains
     recursive subroutine set_parameter(model_driver_create, extent, int1, &
-      name, description, ierr)
-      use kim_interoperable_types_module, only : kim_model_driver_create_type
+                                       name, description, ierr)
+      use kim_interoperable_types_module, only: kim_model_driver_create_type
       implicit none
       interface
         integer(c_int) recursive function set_parameter_pointer_integer( &
           model_driver_create, extent, ptr, name, description) &
           bind(c, name="KIM_ModelDriverCreate_SetParameterPointerInteger")
           use, intrinsic :: iso_c_binding
-          use kim_interoperable_types_module, only : &
+          use kim_interoperable_types_module, only: &
             kim_model_driver_create_type
           implicit none
           type(kim_model_driver_create_type), intent(in) &
@@ -563,9 +661,11 @@ contains
       character(len=*, kind=c_char), intent(in) :: description
       integer(c_int), intent(out) :: ierr
 
-      ierr = set_parameter_pointer_integer(model_driver_create, extent, &
-        c_loc(int1), trim(name)//c_null_char, &
-        trim(description)//c_null_char)
+      ierr = set_parameter_pointer_integer(model_driver_create, &
+                                           extent, &
+                                           c_loc(int1), &
+                                           trim(name)//c_null_char, &
+                                           trim(description)//c_null_char)
     end subroutine set_parameter
   end subroutine kim_model_driver_create_set_parameter_pointer_integer
 
@@ -577,7 +677,7 @@ contains
   !! \since 2.0
   recursive subroutine kim_model_driver_create_set_parameter_pointer_double( &
     model_driver_create_handle, double1, name, description, ierr)
-    use kim_interoperable_types_module, only : kim_model_driver_create_type
+    use kim_interoperable_types_module, only: kim_model_driver_create_type
     implicit none
     type(kim_model_driver_create_handle_type), intent(in) &
       :: model_driver_create_handle
@@ -589,20 +689,20 @@ contains
 
     call c_f_pointer(model_driver_create_handle%p, model_driver_create)
     call set_parameter(model_driver_create, size(double1, 1, c_int), &
-      double1, name, description, ierr)
+                       double1, name, description, ierr)
     return
 
   contains
     recursive subroutine set_parameter(model_driver_create, extent, double1, &
-      name, description, ierr)
-      use kim_interoperable_types_module, only : kim_model_driver_create_type
+                                       name, description, ierr)
+      use kim_interoperable_types_module, only: kim_model_driver_create_type
       implicit none
       interface
         integer(c_int) recursive function set_parameter_pointer_double( &
           model_driver_create, extent, ptr, name, description) &
           bind(c, name="KIM_ModelDriverCreate_SetParameterPointerDouble")
           use, intrinsic :: iso_c_binding
-          use kim_interoperable_types_module, only : &
+          use kim_interoperable_types_module, only: &
             kim_model_driver_create_type
           implicit none
           type(kim_model_driver_create_type), intent(in) &
@@ -621,9 +721,11 @@ contains
       character(len=*, kind=c_char), intent(in) :: description
       integer(c_int), intent(out) :: ierr
 
-      ierr = set_parameter_pointer_double(model_driver_create, extent, &
-        c_loc(double1), trim(name)//c_null_char, &
-        trim(description)//c_null_char)
+      ierr = set_parameter_pointer_double(model_driver_create, &
+                                          extent, &
+                                          c_loc(double1), &
+                                          trim(name)//c_null_char, &
+                                          trim(description)//c_null_char)
     end subroutine set_parameter
   end subroutine kim_model_driver_create_set_parameter_pointer_double
 
@@ -635,13 +737,13 @@ contains
   !! \since 2.0
   recursive subroutine kim_model_driver_create_set_model_buffer_pointer( &
     model_driver_create_handle, ptr)
-    use kim_interoperable_types_module, only : kim_model_driver_create_type
+    use kim_interoperable_types_module, only: kim_model_driver_create_type
     implicit none
     interface
       recursive subroutine set_model_buffer_pointer(model_driver_create, ptr) &
         bind(c, name="KIM_ModelDriverCreate_SetModelBufferPointer")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_model_driver_create_type
+        use kim_interoperable_types_module, only: kim_model_driver_create_type
         implicit none
         type(kim_model_driver_create_type), intent(in) &
           :: model_driver_create
@@ -665,26 +767,25 @@ contains
   recursive subroutine kim_model_driver_create_set_units( &
     model_driver_create_handle, length_unit, energy_unit, charge_unit, &
     temperature_unit, time_unit, ierr)
-    use kim_unit_system_module, only : &
-      kim_length_unit_type, &
-      kim_energy_unit_type, &
-      kim_charge_unit_type, &
-      kim_temperature_unit_type, &
-      kim_time_unit_type
-    use kim_interoperable_types_module, only : kim_model_driver_create_type
+    use kim_unit_system_module, only: kim_length_unit_type, &
+                                      kim_energy_unit_type, &
+                                      kim_charge_unit_type, &
+                                      kim_temperature_unit_type, &
+                                      kim_time_unit_type
+    use kim_interoperable_types_module, only: kim_model_driver_create_type
     implicit none
     interface
-      integer(c_int) recursive function set_units(model_driver_create, &
-        length_unit, energy_unit, charge_unit, temperature_unit, time_unit) &
+      integer(c_int) recursive function set_units( &
+        model_driver_create, length_unit, energy_unit, charge_unit, &
+        temperature_unit, time_unit) &
         bind(c, name="KIM_ModelDriverCreate_SetUnits")
         use, intrinsic :: iso_c_binding
-        use kim_unit_system_module, only : &
-          kim_length_unit_type, &
-          kim_energy_unit_type, &
-          kim_charge_unit_type, &
-          kim_temperature_unit_type, &
-          kim_time_unit_type
-        use kim_interoperable_types_module, only : kim_model_driver_create_type
+        use kim_unit_system_module, only: kim_length_unit_type, &
+                                          kim_energy_unit_type, &
+                                          kim_charge_unit_type, &
+                                          kim_temperature_unit_type, &
+                                          kim_time_unit_type
+        use kim_interoperable_types_module, only: kim_model_driver_create_type
         implicit none
         type(kim_model_driver_create_type), intent(in) &
           :: model_driver_create
@@ -707,7 +808,7 @@ contains
 
     call c_f_pointer(model_driver_create_handle%p, model_driver_create)
     ierr = set_units(model_driver_create, length_unit, energy_unit, &
-      charge_unit, temperature_unit, time_unit)
+                     charge_unit, temperature_unit, time_unit)
   end subroutine kim_model_driver_create_set_units
 
   !> \brief \copybrief KIM::ModelDriverCreate::ConvertUnit
@@ -721,11 +822,11 @@ contains
     to_length_unit, to_energy_unit, to_charge_unit, to_temperature_unit, &
     to_time_unit, length_exponent, energy_exponent, charge_exponent, &
     temperature_exponent, time_exponent, conversion_factor, ierr)
-    use kim_unit_system_module, only : kim_length_unit_type
-    use kim_unit_system_module, only : kim_energy_unit_type
-    use kim_unit_system_module, only : kim_charge_unit_type
-    use kim_unit_system_module, only : kim_temperature_unit_type
-    use kim_unit_system_module, only : kim_time_unit_type
+    use kim_unit_system_module, only: kim_length_unit_type
+    use kim_unit_system_module, only: kim_energy_unit_type
+    use kim_unit_system_module, only: kim_charge_unit_type
+    use kim_unit_system_module, only: kim_temperature_unit_type
+    use kim_unit_system_module, only: kim_time_unit_type
     implicit none
     interface
       integer(c_int) recursive function convert_unit( &
@@ -736,11 +837,11 @@ contains
         temperature_exponent, time_exponent, conversion_factor) &
         bind(c, name="KIM_ModelDriverCreate_ConvertUnit")
         use, intrinsic :: iso_c_binding
-        use kim_unit_system_module, only : kim_length_unit_type
-        use kim_unit_system_module, only : kim_energy_unit_type
-        use kim_unit_system_module, only : kim_charge_unit_type
-        use kim_unit_system_module, only : kim_temperature_unit_type
-        use kim_unit_system_module, only : kim_time_unit_type
+        use kim_unit_system_module, only: kim_length_unit_type
+        use kim_unit_system_module, only: kim_energy_unit_type
+        use kim_unit_system_module, only: kim_charge_unit_type
+        use kim_unit_system_module, only: kim_temperature_unit_type
+        use kim_unit_system_module, only: kim_time_unit_type
         implicit none
         type(kim_length_unit_type), intent(in), value :: from_length_unit
         type(kim_energy_unit_type), intent(in), value :: from_energy_unit
@@ -780,11 +881,12 @@ contains
     real(c_double), intent(out) :: conversion_factor
     integer(c_int), intent(out) :: ierr
 
-    ierr = convert_unit(from_length_unit, &
-      from_energy_unit, from_charge_unit, from_temperature_unit, &
-      from_time_unit, to_length_unit, to_energy_unit, to_charge_unit, &
-      to_temperature_unit, to_time_unit, length_exponent, energy_exponent, &
-      charge_exponent, temperature_exponent, time_exponent, conversion_factor)
+    ierr = convert_unit(from_length_unit, from_energy_unit, from_charge_unit, &
+                        from_temperature_unit, from_time_unit, to_length_unit, &
+                        to_energy_unit, to_charge_unit, to_temperature_unit, &
+                        to_time_unit, length_exponent, energy_exponent, &
+                        charge_exponent, temperature_exponent, time_exponent, &
+                        conversion_factor)
   end subroutine kim_model_driver_create_convert_unit
 
   !> \brief \copybrief KIM::ModelDriverCreate::LogEntry
@@ -794,16 +896,16 @@ contains
   !! \since 2.0
   recursive subroutine kim_model_driver_create_log_entry( &
     model_driver_create_handle, log_verbosity, message)
-    use kim_log_verbosity_module, only : kim_log_verbosity_type
-    use kim_interoperable_types_module, only : kim_model_driver_create_type
+    use kim_log_verbosity_module, only: kim_log_verbosity_type
+    use kim_interoperable_types_module, only: kim_model_driver_create_type
     implicit none
     interface
       recursive subroutine log_entry(model_driver_create, log_verbosity, &
-        message, line_number, file_name) &
+                                     message, line_number, file_name) &
         bind(c, name="KIM_ModelDriverCreate_LogEntry")
         use, intrinsic :: iso_c_binding
-        use kim_log_verbosity_module, only : kim_log_verbosity_type
-        use kim_interoperable_types_module, only : kim_model_driver_create_type
+        use kim_log_verbosity_module, only: kim_log_verbosity_type
+        use kim_interoperable_types_module, only: kim_model_driver_create_type
         implicit none
         type(kim_model_driver_create_type), intent(in) &
           :: model_driver_create
@@ -821,7 +923,7 @@ contains
 
     call c_f_pointer(model_driver_create_handle%p, model_driver_create)
     call log_entry(model_driver_create, log_verbosity, &
-      trim(message)//c_null_char, 0, ""//c_null_char)
+                   trim(message)//c_null_char, 0, ""//c_null_char)
   end subroutine kim_model_driver_create_log_entry
 
   !> \brief \copybrief KIM::ModelDriverCreate::ToString
@@ -831,15 +933,15 @@ contains
   !! \since 2.0
   recursive subroutine kim_model_driver_create_to_string( &
     model_driver_create_handle, string)
-    use kim_convert_string_module, only : kim_convert_c_char_ptr_to_string
-    use kim_interoperable_types_module, only : kim_model_driver_create_type
+    use kim_convert_string_module, only: kim_convert_c_char_ptr_to_string
+    use kim_interoperable_types_module, only: kim_model_driver_create_type
     implicit none
     interface
       type(c_ptr) recursive function model_driver_create_string( &
         model_driver_create) &
         bind(c, name="KIM_ModelDriverCreate_ToString")
         use, intrinsic :: iso_c_binding
-        use kim_interoperable_types_module, only : kim_model_driver_create_type
+        use kim_interoperable_types_module, only: kim_model_driver_create_type
         implicit none
         type(kim_model_driver_create_type), intent(in) &
           :: model_driver_create

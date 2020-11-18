@@ -19,7 +19,7 @@
 #
 
 #
-# Copyright (c) 2013--2019, Regents of the University of Minnesota.
+# Copyright (c) 2013--2020, Regents of the University of Minnesota.
 # All rights reserved.
 #
 # Contributors:
@@ -31,31 +31,44 @@
 #
 
 #
-# Release: This file is part of the kim-api-2.1.3 package.
+# Release: This file is part of the kim-api-2.2.0 package.
 #
 
+
+include(RelocatablePath)
 
 set(BASH_COMPLETIONS ${PROJECT_NAME}-collections-management.bash)
 set(ZSH_COMPLETIONS ${PROJECT_NAME}-collections-management.zsh)
 
-string(MAKE_C_IDENTIFIER "${PROJECT_NAME}" KIM_API_C_ID_PROJECT_NAME)
-
+relocatable_path(
+  FROM "${BASH_COMPLETION_FULL_COMPLETIONSDIR}" FROM_REL "${CMAKE_INSTALL_RELOC_SYSCONFDIR}"
+  TO "${CMAKE_INSTALL_FULL_LIBEXECDIR}/${PROJECT_NAME}/${PROJECT_NAME}-collections-info" TO_REL "${CMAKE_INSTALL_RELOC_LIBEXECDIR}"
+  PREFIX "\${ORIGIN}"
+  RESULT_VARIABLE _collections_info_rel
+  )
 configure_file(collections-management.bash.in ${BASH_COMPLETIONS} @ONLY)
+unset(_collections_info_rel)
+
+relocatable_path(
+  FROM "${ZSH_COMPLETION_FULL_COMPLETIONSDIR}" FROM_REL "${CMAKE_INSTALL_RELOC_SYSCONFDIR}"
+  TO "${BASH_COMPLETION_FULL_COMPLETIONSDIR}/${BASH_COMPLETIONS}" TO_REL "${CMAKE_INSTALL_RELOC_SYSCONFDIR}"
+  PREFIX "\${ORIGIN}"
+  RESULT_VARIABLE _bashcomp_rel
+  )
 configure_file(collections-management.zsh.in ${ZSH_COMPLETIONS} @ONLY)
+unset(_bashcomp_rel)
+
 
 install(
   FILES ${CMAKE_CURRENT_BINARY_DIR}/${BASH_COMPLETIONS}
-  DESTINATION ${BASH_COMPLETION_COMPLETIONSDIR}
+  # use CMAKE_INSTALL_RELOC_* to get relocatable GNUInstallDir behavior
+  DESTINATION ${BASH_COMPLETION_RELOC_COMPLETIONSDIR}
   )
 
 install(
   FILES
   ${CMAKE_CURRENT_BINARY_DIR}/${ZSH_COMPLETIONS}
-  DESTINATION ${ZSH_COMPLETION_COMPLETIONSDIR}
+  # use CMAKE_INSTALL_RELOC_* to get relocatable GNUInstallDir behavior
+  DESTINATION ${ZSH_COMPLETION_RELOC_COMPLETIONSDIR}
   RENAME "_${PROJECT_NAME}-collections-management"
-  )
-install(
-  FILES
-  ${CMAKE_CURRENT_BINARY_DIR}/${BASH_COMPLETIONS}
-  DESTINATION ${ZSH_COMPLETION_COMPLETIONSDIR}
   )

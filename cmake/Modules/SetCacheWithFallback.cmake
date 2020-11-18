@@ -19,29 +19,22 @@
 #
 
 #
-# Copyright (c) 2013--2019, Regents of the University of Minnesota.
+# Copyright (c) 2020--2020, Regents of the University of Minnesota.
 # All rights reserved.
 #
 # Contributors:
-#    Richard Berger
-#    Christoph Junghans
 #    Ryan S. Elliott
 #
 
 #
-# Release: This file is part of the kim-api-2.1.3 package.
+# Release: This file is part of the kim-api-2.2.0 package.
 #
 
 
-set(PACKAGE_VERSION "@PROJECT_VERSION@")
-set(PACKAGE_VERSION_UNSUTABLE FALSE)
-
-if("${PACKAGE_FIND_VERSION}" STREQUAL "@PROJECT_VERSION@")
-  set(PACKAGE_VERSION_EXACT TRUE)
-else()
-  set(PACKAGE_VERSION_EXACT FALSE)
-endif()
-#
-if(${PACKAGE_FIND_VERSION_MAJOR} EQUAL @PROJECT_VERSION_MAJOR@)
-  set(PACKAGE_VERSION_COMPATIBLE TRUE)
-endif()
+# inspired by GNUInstallDirs '_GNUInstallDirs_cache_path_fallback'
+macro(set_cache_with_fallback var default type description)
+  if(NOT ${var})
+    set(${var} "" CACHE ${type} "${description}")
+    set(${var} "${default}")
+  endif()
+endmacro(set_cache_with_fallback)

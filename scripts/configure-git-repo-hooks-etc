@@ -21,7 +21,7 @@
 #
 
 #
-# Copyright (c) 2013--2019, Regents of the University of Minnesota.
+# Copyright (c) 2013--2020, Regents of the University of Minnesota.
 # All rights reserved.
 #
 # Contributors:
@@ -29,9 +29,30 @@
 #
 
 #
-# Release: This file is part of the kim-api-2.1.3 package.
+# Release: This file is part of the kim-api-2.2.0 package.
 #
 
 
+printf -- "\n"
+printf -- "The git-hooks expect the system to have:\n"
+printf -- "  * clang-format\n"
+printf -- "  * fprettify\n"
+printf -- "installed and on the PATH.\n"
+printf -- "\n"
+printf -- "  To install clang-foramt, use a package manager\n"
+printf -- "  such as homebrew:\n"
+printf -- "\n"
+printf -- "    %% brew install clang-format\n"
+printf -- "\n"
+printf -- "  To create fprettify virtualenv perform the following\n"
+printf -- "  in the directory of your choice.\n"
+printf -- "\n"
+printf -- "    %% virtualenv fprettify\n"
+printf -- "    %% souce fprettify/bin/activate\n"
+printf -- "    %% pip install —upgrade fprettify\n"
+printf -- "\n"
+printf -- "  Then add a shell script, say to \${HOME}/bin, for running fprettify.\n"
+printf -- "\n"
+
 # set hooksPath to repo local hooks directory
-git config core.hooksPath git-hooks
+git config --local core.hooksPath git-hooks

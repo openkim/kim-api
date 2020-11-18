@@ -19,7 +19,7 @@
 #
 
 #
-# Copyright (c) 2013--2019, Regents of the University of Minnesota.
+# Copyright (c) 2013--2020, Regents of the University of Minnesota.
 # All rights reserved.
 #
 # Contributors:
@@ -28,7 +28,7 @@
 #
 
 #
-# Release: This file is part of the kim-api-2.1.3 package.
+# Release: This file is part of the kim-api-2.2.0 package.
 #
 
 
@@ -81,17 +81,17 @@ To install and run the KIM API package you need the following:
 
 1. A Unix/Linux/macOS system.
 
-2. CMake (3.4 or later).  (CMake 3.9 or later is required for building the
-   Doxygen documentation.)
+2. CMake (3.10 or later).
 
 3. GNU compilers (gcc, g++, gfortran) version 4.8.x or higher or the
    corresponding Intel compilers, version 11.1 or higher.  Other compilers may
    also work.
 
-4. The 'xxd' utility (distributed as part of the vim package).
+4. (optional) The 'xxd' utility (distributed as part of the vim package).
+   If available, provides faster builds than without.
 
-5. wget, sed, grep, tar, etc. (used by the kim-api-collections-management
-   utility).
+5. wget or curl, sed, grep, tar, uname, etc. (used by the
+   kim-api-collections-management utility).
 
 6. Doxygen and Graphviz (for generating the documentation).
 
@@ -179,17 +179,28 @@ library.  This collection is located in subdirectories that are specified by a
 configuration file.  The user-collection may be populated with MDs, PMs, and
 SMs after the KIM API has been built and installed.
 
-The configuration file is named "${HOME}/.kim-api/config" by default.  Here
-"${HOME}" is the user's home directory.  (See item D below for build options
-controlling this default file name.)  If the "KIM_API_CONFIGURATION_FILE"
-environment variable is set, its value (interpreted as an absolute file name)
-will supersede the default location and name of the configuration file.  If
-this file does not exist, the KIM API library will create it with a default
-configuration specifying that the user-collection files are stored in
-"${HOME}/.kim-api/model-drivers/", "${HOME}/.kim-api/portable-models/", and
-"${HOME}/.kim-api/simulator-models/".  More generally, the values in the
-configuration file may contain colon ':' separated lists of directory names
-(starting, strictly, with '/' or '~/').
+The configuration file is named "${HOME}/.kim-api/<kim-api-uid>/config" by
+default, where <kim-api-uid> is a unique identifier for the particular
+installation of the kim-api being used (this allows multiple, independent,
+installations on a single machine).  Here "${HOME}" is the user's home
+directory.  (See item D below for build options controlling this default file
+name.)  If the "KIM_API_CONFIGURATION_FILE" environment variable is set, its
+value (interpreted as an absolute file name) will supersede the default
+location and name of the configuration file.  For example, the following
+commands will instruct the KIM API library to use a file named "kim-config" in
+the /my-kim-stuff folder
+
+   $ export KIM_API_CONFIGURATION_FILE=/my-kim-stuff/kim-config
+
+If the configuration file does not exist, the KIM API library will create it
+with a default configuration specifying that the user-collection files are
+stored in "${HOME}/.kim-api/<kim-api-uid>/model-drivers/",
+"${HOME}/.kim-api/<kim-api-uid>/portable-models/", and
+"${HOME}/.kim-api/<kim-api-uid>/simulator-models/".  More generally, the values
+in the configuration file may contain colon ':' (on Windows: semi-colon ';')
+separated lists of fully-qualified directory names (starting, strictly, with
+'/', '~/' or a root drive letter like 'C:/').  (See item D below for build
+options controlling these defaults.)
 
 C.2.3 THE ENVIRONMENT-VARIABLE-COLLECTION
 
@@ -198,9 +209,9 @@ are specified by the run-time environment of the process for the simulator that
 uses the KIM API library.  The locations of this collection are specified by
 the environment variables "KIM_API_MODEL_DRIVERS_DIR",
 "KIM_API_PORTABLE_MODELS_DIR", and "KIM_API_SIMULATOR_MODELS_DIR".  These
-variables should contain colon ':' separated lists of absolute directory names
-where the collection MDs, PMs, and SMs, respectively, are located.  (For
-example, in bash you could execute the command
+variables should contain colon ':' (on Windows: semi-colon ';') separated lists
+of absolute directory names where the collection MDs, PMs, and SMs, respectively,
+are located.  (For example, in bash you could execute the command
 
    $ export KIM_API_PORTABLE_MODELS_DIR=/my-kim-stuff/models-i-am-developing:/my-kim-stuff/misc-portable-models
 
@@ -247,7 +258,7 @@ system-collection is populated with the example MDs, PMs, and SMs, as well as a
 single PM and its associated MD, both from openkim.org.  Additionally, one of
 the example simulators is copied to the user's home directory and used to test
 the KIM API.  The KIM API package uses the CMake build system.  See the CMake
-documentation (https://cmake.org/cmake/help/v3.4/) for help with CMake
+documentation (https://cmake.org/cmake/help/v3.10/) for help with CMake
 settings.  For some common CMake settings and KIM API specific settings, see
 D.2 below.
 
@@ -324,6 +335,11 @@ Congratulations, you have now successfully installed the KIM API.  If you would
 like to learn more about the KIM API, read the documentation in the docs
 directory (/usr/local/share/doc/kim-api).
 
+If you would like to install the latest release of all models from
+https://openkim.org, you can do:
+
+   $ kim-api-collections-management install system --sudo OpenKIM
+
 D.2 CMAKE BUILD OPTIONS
 
 The KIM API defines a number of specific build options which are detailed in
@@ -397,38 +413,18 @@ advanced options.
 
 Additionally, the KIM API defines the following advanced build options.
 
-* KIM_API_ENABLE_SANITIZE (=OFF) When ON this enables the AddressSanitizer
-  library for detecting memory corruption bugs.
-
-* KIM_API_ENABLE_COVERAGE (=OFF) When ON this enables gcov code coverage.
-
 * KIM_API_PROJECT_NAME (="kim-api") This value controls the naming of many
   aspects of the package build.  Generally this should not be changed.  It can
   be used to build and install, on the same machine, two different copies
   (typically different versions) of the package.
 
-* KIM_API_USER_CONFIGURATION_FILE (=".${PROJECT_NAME}/config") This value
-  determines the default name of the KIM API user configuration file.  If the
-  value corresponds to a relative path (does not start with "/"), then it is
-  interpreted as relative to the user's home directory "${HOME}".
+* KIM_API_ENABLE_SANITIZE (=OFF) When ON this enables the AddressSanitizer
+  library for detecting memory corruption bugs.
 
-* KIM_API_SYSTEM_MODEL_DRIVERS_DIR
-  (="${CMAKE_INSTALL_FULL_LIBDIR}/${PROJECT_NAME}/model-drivers") This value
-  specifies a colon ':' separated list of the MD directory locations in the
-  system collection.  If the value starts with a colon, cmake will update it by
-  prepending the default value.
+* KIM_API_ENABLE_COVERAGE (=OFF) When ON this enables gcov code coverage.
 
-* KIM_API_SYSTEM_PORTABLE_MODELS_DIR
-  (="${CMAKE_INSTALL_FULL_LIBDIR}/${PROJECT_NAME}/portable-models") This value
-  specifies a colon ':' separated list of the PM directory locations in the
-  system collection.  If the value starts with a colon, cmake will update it by
-  prepending the default value.
-
-* KIM_API_SYSTEM_SIMULATOR_MODELS_DIR
-  (="${CMAKE_INSTALL_FULL_LIBDIR}/${PROJECT_NAME}/simulator-models") This value
-  specifies a colon ':' separated list of the SM directory locations in the
-  system collection.  If the value starts with a colon, cmake will update it by
-  prepending the default value.
+* KIM_API_CONFIGURATION_TIMESTAMP (=<utc-time-of-cmake-configuration>) This is
+  used as part of the <kim-api-uid> universal ID for the kim-api installation.
 
 * KIM_API_CMAKE_C_COMPILER (="${CMAKE_C_COMPILER}") This value is recorded and
   used after installation for compilation of items (MDs, PMs, SMs, etc.) to
@@ -441,6 +437,47 @@ Additionally, the KIM API defines the following advanced build options.
 * KIM_API_CMAKE_Fortran_COMPILER (="${CMAKE_Fortran_COMPILER}") This value is
   recorded and used after installation for compilation of items (MDs, PMs, SMs,
   etc.) to ensure binary compatibility with the installed KIM API.
+
+* KIM_API_USER_CONFIGURATION_FILE (=".${PROJECT_NAME}/config") This value
+  determines the default name of the KIM API user configuration file.  If the
+  value corresponds to a relative path (does not start with "/"), then it is
+  interpreted as relative to the user's home directory "${HOME}".
+
+* KIM_API_USER_MODEL_DRIVERS_DIR_DEFAULT
+  (="~/.${PROJECT_NAME}/<kim-api-uid>/model-drivers") This value specifies the
+  default colon ':' (semicolon ';' on windows) separated list of the MD
+  directory locations for the user collection.
+
+* KIM_API_USER_PORTABLE_MODELS_DIR_DEFAULT
+  (="~/.${PROJECT_NAME}/<kim-api-uid>/portable-drivers") This value specifies
+  the default colon ':' (semicolon ';' on windows) separated list of the PM
+  directory locations for the user collection.
+
+* KIM_API_USER_SIMULATOR_MODELS_DIR_DEFAULT
+  (="~/.${PROJECT_NAME}/<kim-api-uid>/simulator-models") This value specifies
+  the default colon ':' (semicolon ';' on windows) separated list of the SM
+  directory locations for the user collection.
+
+* KIM_API_SYSTEM_MODEL_DRIVERS_DIR
+  (="${CMAKE_INSTALL_FULL_LIBDIR}/${PROJECT_NAME}/model-drivers") This value
+  specifies a colon ':' (semicolon ';' on windows) separated list of the MD
+  directory locations in the system collection.  If the value starts with a
+  colon (semicolon on windows), cmake will update it by prepending the default
+  value.
+
+* KIM_API_SYSTEM_PORTABLE_MODELS_DIR
+  (="${CMAKE_INSTALL_FULL_LIBDIR}/${PROJECT_NAME}/portable-models") This value
+  specifies a colon ':' (semicolon ';' on windows) separated list of the PM
+  directory locations in the system collection.  If the value starts with a
+  colon (semicolon on windows), cmake will update it by prepending the default
+  value.
+
+* KIM_API_SYSTEM_SIMULATOR_MODELS_DIR
+  (="${CMAKE_INSTALL_FULL_LIBDIR}/${PROJECT_NAME}/simulator-models") This value
+  specifies a colon ':' (semicolon ';' on windows) separated list of the SM
+  directory locations in the system collection.  If the value starts with a
+  colon (semicolon on windows), cmake will update it by prepending the default
+  value.
 
 D.3 Installing multiple versions
 
@@ -596,12 +633,12 @@ ENVIRONMENT.
 
 SUPPORT
 
-If you have problems or questions, send an email with your question and all
-relevant information to
+Support is always available by posting questions with all relevant information
+to
 
-openkim@googlegroups.com
+<https://matsci.org/openkim>
 
-The members of the OpenKIM development team actively monitor this email list
-and will do their best to help you with your question in a timely fashion.
+Members of the OpenKIM development team actively monitor this forum and
+will do their best to respond to questions in a timely fashion.
 
 *******************************************************************************
