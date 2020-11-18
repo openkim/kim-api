@@ -174,8 +174,7 @@ std::vector<Path> Path::Subdirectories() const
 
   if (NULL != (dirp = opendir(path_.c_str())))
   {
-    do
-    {
+    do {
       struct stat statBuf;
       if ((NULL != (dp = readdir(dirp))) && (0 != strcmp(dp->d_name, "."))
           && (0 != strcmp(dp->d_name, "..")))
@@ -183,7 +182,9 @@ std::vector<Path> Path::Subdirectories() const
         Path fullPath = *this / dp->d_name;
         if ((0 == stat(fullPath.path_.c_str(), &statBuf))
             && (S_ISDIR(statBuf.st_mode)))
-        { resultList.push_back(fullPath); }
+        {
+          resultList.push_back(fullPath);
+        }
       }
     } while (NULL != dp);
     closedir(dirp);
@@ -201,8 +202,7 @@ Path Path::CreateTemporaryDirectory(char const * const namePrefix)
   // exists yet.
   std::default_random_engine rnd;
   Path temp_subdir;
-  do
-  {
+  do {
     int random_number = std::uniform_int_distribution<int>(0)(rnd);
     std::string subdir_name = namePrefix + std::to_string(random_number);
     temp_subdir = temp_dir / subdir_name;
@@ -445,7 +445,9 @@ size_t PathList::Parse(std::string::value_type const * const paths)
   {
     // Resolve references to home directory (~).
     if (token[0] == HomeDirectoryShortcut)
-    { push_back(Path::HomePath().concat(token.substr(1))); }
+    {
+      push_back(Path::HomePath().concat(token.substr(1)));
+    }
     else
     {
       push_back(token);

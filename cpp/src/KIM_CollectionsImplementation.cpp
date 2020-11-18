@@ -181,7 +181,9 @@ void PrivateGetConfigurationFileName(KIM::FILESYSTEM::Path & fileName)
   fileName = KIM_USER_CONFIGURATION_FILE;
 
   if (fileName.is_relative())
-  { fileName = KIM::FILESYSTEM::Path::HomePath() / fileName; }
+  {
+    fileName = KIM::FILESYSTEM::Path::HomePath() / fileName;
+  }
 
   std::string varName;
   std::string varVal;
@@ -191,7 +193,9 @@ void PrivateGetConfigurationFileName(KIM::FILESYSTEM::Path & fileName)
     // ensure we have an absolute path
     KIM::FILESYSTEM::Path path(varVal);
     if (path.is_relative())
-    { fileName = KIM::FILESYSTEM::Path::current_path() / path; }
+    {
+      fileName = KIM::FILESYSTEM::Path::current_path() / path;
+    }
     else
     {
       fileName = varVal;
@@ -205,7 +209,9 @@ void PrivateGetEnvironmentVariableName(KIM::CollectionItemType const itemType,
   using namespace KIM::COLLECTION_ITEM_TYPE;
 
   if (itemType == modelDriver)
-  { name = KIM_ENVIRONMENT_MODEL_DRIVER_PLURAL_DIR; }
+  {
+    name = KIM_ENVIRONMENT_MODEL_DRIVER_PLURAL_DIR;
+  }
   else if (itemType == portableModel)
   {
     name = KIM_ENVIRONMENT_PORTABLE_MODEL_PLURAL_DIR;
@@ -474,7 +480,9 @@ int PrivateGetListOfItemMetadataFilesByCollectionAndType(
   KIM::FILESYSTEM::Path path;
   if (PrivateGetItemLibraryFileNameByCollectionAndType(
           collection, itemType, itemName, log, &path))
-  { return true; }
+  {
+    return true;
+  }
 
   KIM::SharedLibrary lib(log);
   int error = lib.Open(path);
@@ -514,7 +522,9 @@ int PrivateGetItemLibraryFileNameAndCollection(
   KIM::Collection col;
   if (!PrivateGetItemLibraryFileNameByCollectionAndType(
           KC::currentWorkingDirectory, itemType, itemName, log, &itemPath))
-  { col = KC::currentWorkingDirectory; }
+  {
+    col = KC::currentWorkingDirectory;
+  }
   else if (!PrivateGetItemLibraryFileNameByCollectionAndType(
                KC::environmentVariable, itemType, itemName, log, &itemPath))
   {
@@ -577,7 +587,9 @@ int PrivateGetItemType(std::string const & itemName,
   KIM::CollectionItemType it;
   if (!PrivateGetItemLibraryFileNameAndCollection(
           portableModel, itemName, log, NULL, NULL))
-  { it = portableModel; }
+  {
+    it = portableModel;
+  }
   else if (!PrivateGetItemLibraryFileNameAndCollection(
                simulatorModel, itemName, log, NULL, NULL))
   {
@@ -909,7 +921,9 @@ int CollectionsImplementation::CacheListOfItemNamesByType(
   cacheListOfItemNamesByType_.reserve(listOfPaths.size());
   std::vector<FILESYSTEM::Path>::const_iterator path;
   for (path = listOfPaths.begin(); path != listOfPaths.end(); ++path)
-  { cacheListOfItemNamesByType_.push_back(path->filename().string()); }
+  {
+    cacheListOfItemNamesByType_.push_back(path->filename().string());
+  }
 
   *extent = cacheListOfItemNamesByType_.size();
 
@@ -1288,7 +1302,9 @@ int CollectionsImplementation::CacheListOfDirectoryNames(
   cacheListOfDirectoryNames_.reserve(pathList.size());
   FILESYSTEM::PathList::const_iterator path;
   for (path = pathList.begin(); path != pathList.end(); ++path)
-  { cacheListOfDirectoryNames_.push_back(path->string()); }
+  {
+    cacheListOfDirectoryNames_.push_back(path->string());
+  }
 
   *extent = cacheListOfDirectoryNames_.size();
 

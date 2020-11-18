@@ -647,7 +647,9 @@ int processItems(int argc, char * argv[])
     using namespace KIM::COLLECTION_ITEM_TYPE;
 
     if (0 == strcmp("model_drivers", argv[1]))
-    { CI::listItems(modelDriver, list_all, name, log); }
+    {
+      CI::listItems(modelDriver, list_all, name, log);
+    }
     else if (0 == strcmp("portable_models", argv[1]))
     {
       CI::listItems(portableModel, list_all, name, log);

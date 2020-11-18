@@ -135,7 +135,9 @@ void LogImplementation::PopDefaultVerbosity()
 {
   defaultLogVerbosity.pop();
   if (defaultLogVerbosity.empty())
-  { defaultLogVerbosity.push(KIM_LOG_MAXIMUM_LEVEL); }
+  {
+    defaultLogVerbosity.push(KIM_LOG_MAXIMUM_LEVEL);
+  }
 }
 
 namespace

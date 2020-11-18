@@ -258,7 +258,9 @@ int SimulatorModelImplementation::AddTemplateMap(std::string const & key,
   char allowedCharacters[] = "abcdefghijklmnopqrstuvwxyz"
                              "-0123456789";
   if (key.find_first_not_of(allowedCharacters) == std::string::npos)
-  { templateMap_[key] = value; }
+  {
+    templateMap_[key] = value;
+  }
   else
   {
     LOG_ERROR("Invalid template key, '" + key + "'.");
@@ -658,7 +660,9 @@ std::string const & SimulatorModelImplementation::ToString() const
   {
     ss << "\t" << simulatorFieldNames_[i] << " :\n";
     for (size_t j = 0; j < originalSimulatorFields_[i].size(); ++j)
-    { ss << "\t  * '" << originalSimulatorFields_[i][j] << "'\n"; }
+    {
+      ss << "\t  * '" << originalSimulatorFields_[i][j] << "'\n";
+    }
   }
   ss << "\n";
 
@@ -680,7 +684,9 @@ std::string const & SimulatorModelImplementation::ToString() const
   {
     ss << "\t" << simulatorFieldNames_[i] << " :\n";
     for (size_t j = 0; j < simulatorFields_[i].size(); ++j)
-    { ss << "\t  * '" << simulatorFields_[i][j] << "'\n"; }
+    {
+      ss << "\t  * '" << simulatorFields_[i][j] << "'\n";
+    }
   }
   ss << "\n";
 
@@ -788,7 +794,9 @@ int SimulatorModelImplementation::Initialize(
     using namespace COLLECTION_ITEM_TYPE;
 
     if (itemType == simulatorModel)
-    { LOG_DEBUG("Initializing a simulator model."); }
+    {
+      LOG_DEBUG("Initializing a simulator model.");
+    }
     else if (itemType == portableModel)
     {
       LOG_ERROR("Creation of a portable model is not allowed.");
@@ -967,7 +975,9 @@ int SimulatorModelImplementation::GetSchemaVersion()
         if (key == "kim-api-sm-schema-version")
         {
           if (itr->type == edn::EdnInt)
-          { std::istringstream(itr->value) >> schemaVersion_; }
+          {
+            std::istringstream(itr->value) >> schemaVersion_;
+          }
           else
           {
             LOG_ERROR("Expecting 'EdnInt'.");
@@ -1031,7 +1041,9 @@ int SimulatorModelImplementation::ReadEdnSchemaV1()
         if (key == "kim-api-sm-schema-version")
         {
           if (itr->type == edn::EdnInt)
-          { std::istringstream(itr->value) >> schemaVersion_; }
+          {
+            std::istringstream(itr->value) >> schemaVersion_;
+          }
           else
           {
             LOG_ERROR("Expecting 'EdnInt'.");

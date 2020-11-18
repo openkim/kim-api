@@ -1882,7 +1882,9 @@ std::string const & ModelImplementation::ToString() const
      << "------------\n\n";
   ss << "Model Name : " << modelName_ << "\n";
   if (modelDriverName_ != "")
-  { ss << "Model Driver Name : " << modelDriverName_ << "\n"; }
+  {
+    ss << "Model Driver Name : " << modelDriverName_ << "\n";
+  }
   ss << "Log ID : " << log_->GetID() << "\n";
   ss << "\n";
 
@@ -2387,7 +2389,9 @@ int ModelImplementation::ModelDestroy()
   Mdl M;
   M.p = this;
   if (langResult->second == LANGUAGE_NAME::cpp)
-  { error = CppDestroy(reinterpret_cast<KIM::ModelDestroy *>(&M)); }
+  {
+    error = CppDestroy(reinterpret_cast<KIM::ModelDestroy *>(&M));
+  }
   else if (langResult->second == LANGUAGE_NAME::c)
   {
     KIM_ModelDestroy cM;
@@ -2781,7 +2785,9 @@ int ModelImplementation::ModelRefresh()
   Mdl M;
   M.p = this;
   if (langResult->second == LANGUAGE_NAME::cpp)
-  { error = CppRefresh(reinterpret_cast<KIM::ModelRefresh *>(&M)); }
+  {
+    error = CppRefresh(reinterpret_cast<KIM::ModelRefresh *>(&M));
+  }
   else if (langResult->second == LANGUAGE_NAME::c)
   {
     KIM_ModelRefresh cM;

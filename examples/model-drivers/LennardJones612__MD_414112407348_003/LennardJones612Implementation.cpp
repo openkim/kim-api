@@ -441,7 +441,9 @@ int LennardJones612Implementation::ProcessParameterFiles(
     }
 
     if (iIndex >= jIndex)
-    { indx = jIndex * N + iIndex - (jIndex * jIndex + jIndex) / 2; }
+    {
+      indx = jIndex * N + iIndex - (jIndex * jIndex + jIndex) / 2;
+    }
     else
     {
       indx = iIndex * N + jIndex - (iIndex * iIndex + iIndex) / 2;
@@ -500,8 +502,7 @@ void LennardJones612Implementation::getNextDataLine(FILE * const filePtr,
                                                     int const maxSize,
                                                     int * endOfFileFlag)
 {
-  do
-  {
+  do {
     if (fgets(nextLinePtr, maxSize, filePtr) == NULL)
     {
       *endOfFileFlag = 1;
@@ -509,7 +510,9 @@ void LennardJones612Implementation::getNextDataLine(FILE * const filePtr,
     }
     while ((nextLinePtr[0] == ' ' || nextLinePtr[0] == '\t')
            || (nextLinePtr[0] == '\n' || nextLinePtr[0] == '\r'))
-    { nextLinePtr = (nextLinePtr + 1); }
+    {
+      nextLinePtr = (nextLinePtr + 1);
+    }
   } while ((strncmp("#", nextLinePtr, 1) == 0) || (strlen(nextLinePtr) == 0));
 }
 
@@ -845,7 +848,9 @@ int LennardJones612Implementation::SetRefreshMutableValues(
       int indexJ = modelSpeciesCodeList_[j];
 
       if (influenceDistance_ < cutoffsSq2D_[indexI][indexJ])
-      { influenceDistance_ = cutoffsSq2D_[indexI][indexJ]; }
+      {
+        influenceDistance_ = cutoffsSq2D_[indexI][indexJ];
+      }
     }
   }
 
@@ -1101,7 +1106,9 @@ void AllocateAndInitialize2DArray(double **& arrayPtr,
   arrayPtr = new double *[extentZero];
   arrayPtr[0] = new double[extentZero * extentOne];
   for (int i = 1; i < extentZero; ++i)
-  { arrayPtr[i] = arrayPtr[i - 1] + extentOne; }
+  {
+    arrayPtr[i] = arrayPtr[i - 1] + extentOne;
+  }
 
   // initialize
   for (int i = 0; i < extentZero; ++i)

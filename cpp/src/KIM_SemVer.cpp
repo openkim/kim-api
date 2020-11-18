@@ -232,7 +232,9 @@ int IsLessThan(std::string const & lhs,
            lhs, &majorA, &minorA, &patchA, &prereleaseA, &buildMetadataA)
        || ParseSemVer(
            rhs, &majorB, &minorB, &patchB, &prereleaseB, &buildMetadataB)))
-  { return true; }
+  {
+    return true;
+  }
 
   if (majorA > majorB)
   {

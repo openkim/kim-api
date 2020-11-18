@@ -1249,7 +1249,9 @@ std::string const & ComputeArgumentsImplementation::ToString() const
                COMPUTE_ARGUMENT_NAME::Comparator>::const_iterator ptr
           = computeArgumentPointer_.find(argName->first);
       if (ptr != computeArgumentPointer_.end())
-      { ss << std::setw(argW) << SPTR(ptr->second); }
+      {
+        ss << std::setw(argW) << SPTR(ptr->second);
+      }
       else
       {
         ss << std::setw(argW) << "Not Set";

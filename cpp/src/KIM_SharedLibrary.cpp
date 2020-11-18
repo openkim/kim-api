@@ -270,7 +270,9 @@ int SharedLibrary::Open(FILESYSTEM::Path const & sharedLibraryName)
     }
 
     if (schemaV1->itemType == SharedLibrarySchemaV1::STAND_ALONE_MODEL)
-    { itemType_ = COLLECTION_ITEM_TYPE::portableModel; }
+    {
+      itemType_ = COLLECTION_ITEM_TYPE::portableModel;
+    }
     else if (schemaV1->itemType == SharedLibrarySchemaV1::PARAMETERIZED_MODEL)
     {
       itemType_ = COLLECTION_ITEM_TYPE::portableModel;

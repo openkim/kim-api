@@ -69,7 +69,9 @@ int SimulatorModel::Create(std::string const & simulatorModelName,
 void SimulatorModel::Destroy(SimulatorModel ** const simulatorModel)
 {
   if (*simulatorModel != NULL)
-  { SimulatorModelImplementation::Destroy(&((*simulatorModel)->pimpl)); }
+  {
+    SimulatorModelImplementation::Destroy(&((*simulatorModel)->pimpl));
+  }
   delete *simulatorModel;
   *simulatorModel = NULL;
 }

@@ -207,7 +207,9 @@ int main()
   error = kim_cluster_model->GetSpeciesSupportAndCode(
       KIM::SPECIES_NAME::Ar, &speciesIsSupported, &modelArCode);
   if ((error) || (!speciesIsSupported))
-  { MY_ERROR("Species Ar not supported"); }
+  {
+    MY_ERROR("Species Ar not supported");
+  }
 
   KIM::ComputeArguments * computeArguments;
   error = kim_cluster_model->ComputeArgumentsCreate(&computeArguments);
@@ -240,7 +242,9 @@ int main()
     {
       if ((computeArgumentName != KIM::COMPUTE_ARGUMENT_NAME::partialEnergy)
           && (computeArgumentName != KIM::COMPUTE_ARGUMENT_NAME::partialForces))
-      { MY_ERROR("unsupported required ComputeArgument"); }
+      {
+        MY_ERROR("unsupported required ComputeArgument");
+      }
     }
 
     // must have energy and forces
@@ -249,7 +253,9 @@ int main()
     {
       if (!((supportStatus == KIM::SUPPORT_STATUS::required)
             || (supportStatus == KIM::SUPPORT_STATUS::optional)))
-      { MY_ERROR("energy or forces not available"); }
+      {
+        MY_ERROR("energy or forces not available");
+      }
     }
   }
 
@@ -272,7 +278,9 @@ int main()
 
     // cannot handle any "required" callbacks
     if (supportStatus == KIM::SUPPORT_STATUS::required)
-    { MY_ERROR("unsupported required ComputeCallback"); }
+    {
+      MY_ERROR("unsupported required ComputeCallback");
+    }
   }
 
   int numberOfParameters;
@@ -419,7 +427,9 @@ int main()
         index, &dataType, NULL, &name, NULL);
     if (error) { MY_ERROR("Cannot get parameter metadata."); }
     if (dataType != KIM::DATA_TYPE::Double)
-    { MY_WARNING("Can't change an integer."); }
+    {
+      MY_WARNING("Can't change an integer.");
+    }
     else
     {
       error = kim_cluster_model->GetParameter(index, 0, &value);
@@ -513,7 +523,9 @@ void compute_loop(double const MinSpacing,
     /* compute force norm */
     double force_norm = 0.0;
     for (int i = 0; i < DIM * numberOfParticles_cluster; ++i)
-    { force_norm += forces_cluster[i] * forces_cluster[i]; }
+    {
+      force_norm += forces_cluster[i] * forces_cluster[i];
+    }
     force_norm = sqrt(force_norm);
 
     /* print the results */
@@ -561,7 +573,9 @@ void create_FCC_cluster(double FCCspacing, int nCellsPerSide, double * coords)
         for (m = 0; m < 4; ++m)
         {
           for (n = 0; n < DIM; ++n)
-          { coords[a * DIM + n] = latVec[n] + FCCshifts[m][n]; }
+          {
+            coords[a * DIM + n] = latVec[n] + FCCshifts[m][n];
+          }
           a++;
         }
       }
@@ -573,7 +587,9 @@ void create_FCC_cluster(double FCCspacing, int nCellsPerSide, double * coords)
       for (n = 0; n < DIM; ++n) { coords[a * DIM + n] = latVec[n]; }
       a++;
       for (n = 0; n < DIM; ++n)
-      { coords[a * DIM + n] = latVec[n] + FCCshifts[3][n]; }
+      {
+        coords[a * DIM + n] = latVec[n] + FCCshifts[3][n];
+      }
       a++;
       /* pos-y face */
       latVec[0] = ((double) i) * FCCspacing;
@@ -582,7 +598,9 @@ void create_FCC_cluster(double FCCspacing, int nCellsPerSide, double * coords)
       for (n = 0; n < DIM; ++n) { coords[a * DIM + n] = latVec[n]; }
       a++;
       for (n = 0; n < DIM; ++n)
-      { coords[a * DIM + n] = latVec[n] + FCCshifts[2][n]; }
+      {
+        coords[a * DIM + n] = latVec[n] + FCCshifts[2][n];
+      }
       a++;
       /* pos-z face */
       latVec[0] = ((double) i) * FCCspacing;
@@ -591,7 +609,9 @@ void create_FCC_cluster(double FCCspacing, int nCellsPerSide, double * coords)
       for (n = 0; n < DIM; ++n) { coords[a * DIM + n] = latVec[n]; }
       a++;
       for (n = 0; n < DIM; ++n)
-      { coords[a * DIM + n] = latVec[n] + FCCshifts[1][n]; }
+      {
+        coords[a * DIM + n] = latVec[n] + FCCshifts[1][n];
+      }
       a++;
     }
     /* add in the remaining three edges */
@@ -613,7 +633,9 @@ void create_FCC_cluster(double FCCspacing, int nCellsPerSide, double * coords)
   }
   /* add in the remaining corner */
   for (n = 0; n < DIM; ++n)
-  { coords[a * DIM + n] = NCELLSPERSIDE * FCCspacing; }
+  {
+    coords[a * DIM + n] = NCELLSPERSIDE * FCCspacing;
+  }
   a++;
 
   return;
