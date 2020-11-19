@@ -32,7 +32,7 @@
 #
 
 
-=== kim-api-2.2.0 =============== 18Dec2020 ====================================
+=== kim-api-2.2.0 =============== 18Nov2020 ====================================
 
 * The kim-api now supports Windows.  Significant additions have been made to
   the code and CMakeLists.txt files to support building kim-api and items on
