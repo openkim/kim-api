@@ -104,9 +104,15 @@ ccache -z
 cmake -DCMAKE_INSTALL_PREFIX="${PWD}/test-install" \
       -DCMAKE_BUILD_TYPE="${CMAKE_BUILD_TYPE}" \
       -DKIM_API_BUILD_EXAMPLES=OFF \
+      -DKIM_API_SYSTEM_MODEL_DRIVERS_DIR=":${PWD}/test-install/my-collection" \
+      -DKIM_API_SYSTEM_PORTABLE_MODELS_DIR=":${PWD}/test-install/my-collection" \
+      -DKIM_API_SYSTEM_SIMULATOR_MODELS_DIR=":${PWD}/test-install/my-collection" \
       ${CXX17:+-DCMAKE_CXX_STANDARD=17}  `#[use std::filesystem spport (assume it is available)]` \
       .. \
   || exit $?
+# check that default system collections are added to front of path lists when ":/..." form is used, as above
+grep -A1 "KIM_API_SYSTEM_MODEL_DRIVERS_DIR" kim-api-configuration-detailed.log | grep "model-drivers:${PWD}/test-install/my-collection" || exit $?
+
 ${MAKE} -j2 install || exit $?
 ccache -s
 
