@@ -127,7 +127,7 @@ contains
       phi = 0.0_cd
     else
       phi = 4.0_cd * lj_epsilon * (sor12 - sor6) + lj_A * rsq + lj_B * r + lj_C
-    endif
+    end if
 
   end subroutine calc_phi
 
@@ -159,7 +159,7 @@ contains
       phi = 4.0_cd * lj_epsilon * (sor12 - sor6) + lj_A * rsq + lj_B * r + lj_C
       dphi = 24.0_cd * lj_epsilon * (-2.0_cd * sor12 + sor6) / r &
              + 2.0_cd * lj_A * r + lj_B
-    endif
+    end if
 
   end subroutine calc_phi_dphi
 
@@ -238,7 +238,7 @@ contains
                          KIM_LOG_VERBOSITY_ERROR, "get data")
       ierr = 1
       return
-    endif
+    end if
 
     ! Check to see if we have been asked to compute the forces, energyperpart,
     ! energy and virial
@@ -274,8 +274,8 @@ contains
           "Unexpected species code detected")
         ierr = 1
         return
-      endif
-    enddo
+      end if
+    end do
     ierr = 0 ! everything is ok
 
     ! Initialize potential energies, forces, virial term
@@ -303,7 +303,7 @@ contains
             "GetNeighborList failed")
           ierr = 1
           return
-        endif
+        end if
 
         ! Loop over the neighbors of particle i
         !
@@ -327,16 +327,16 @@ contains
               dEidr = 0.5_cd * dphi
             else
               call calc_phi(r, phi)                 ! compute just pair potential
-            endif
+            end if
 
             ! contribution to energy
             !
             if (comp_enepot == 1) then
               enepot(i) = enepot(i) + 0.5_cd * phi   ! accumulate energy
-            endif
+            end if
             if (comp_energy == 1) then
               energy = energy + 0.5_cd * phi
-            endif
+            end if
 
             ! contribution to virial tensor, virial(i,j)=r(i)*r(j)*(dV/dr)/r
             !
@@ -347,22 +347,22 @@ contains
               virial(4) = virial(4) + Rij(2) * Rij(3) * dEidr / r
               virial(5) = virial(5) + Rij(1) * Rij(3) * dEidr / r
               virial(6) = virial(6) + Rij(1) * Rij(2) * dEidr / r
-            endif
+            end if
 
             ! contribution to forces
             !
             if (comp_force == 1) then
               force(:, i) = force(:, i) + dEidr * Rij / r ! accumulate force on i
               force(:, j) = force(:, j) - dEidr * Rij / r ! accumulate force on j
-            endif
+            end if
 
-          endif
+          end if
 
-        enddo  ! loop on jj
+        end do  ! loop on jj
 
-      endif  ! if particleContributing
+      end if  ! if particleContributing
 
-    enddo  ! do i
+    end do  ! do i
 
     ! Everything is great
     !
@@ -448,7 +448,7 @@ contains
       call kim_log_entry( &
         model_compute_arguments_create_handle, KIM_LOG_VERBOSITY_ERROR, &
         "Unable to successfully create compute_arguments object")
-    endif
+    end if
 
     ierr = 0
     return
@@ -587,7 +587,7 @@ recursive subroutine model_create_routine( &
     deallocate (buf)
     call kim_log_entry(model_create_handle, KIM_LOG_VERBOSITY_ERROR, &
                        "Unable to successfully initialize model")
-  endif
+  end if
 
   ierr = 0
   return

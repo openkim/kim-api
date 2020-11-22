@@ -110,7 +110,7 @@ contains
       call my_warning("Model requires too many neighbor lists")
       ierr = 1
       return
-    endif
+    end if
 
     call c_f_pointer(data_object, neighObject)
     numberOfParticles = neighObject%number_of_particles
@@ -121,14 +121,14 @@ contains
       call my_warning("neighbor list cutoff too small for model cutoff")
       ierr = 1
       return
-    endif
+    end if
 
     if ((request > numberOfParticles) .or. (request < 1)) then
       print *, request
       call my_warning("Invalid part ID in get_neigh")
       ierr = 1
       return
-    endif
+    end if
 
     ! set the returned number of neighbors for the returned part
     numnei = neighborList(1, request)
@@ -356,11 +356,11 @@ contains
           disp1 = disp                !  and put this one into current 1st
         else if (disp >= disp2) then   !  2nd position taken
           disp2 = disp
-        endif
-      enddo
+        end if
+      end do
       do_update_list = (disp1 + disp2 > cutpad)
 
-    endif
+    end if
 
     if (do_update_list) then
 
@@ -374,7 +374,7 @@ contains
 
       ! neighbor list uptodate, no need to compute again for now
       do_update_list = .false.
-    endif
+    end if
 
     return
 
@@ -423,12 +423,12 @@ contains
           if ((j > i) .OR. ((.not. half) .AND. (i /= j))) then
             a = a + 1
             neighborList(a, i) = j
-          endif
-        endif
-      enddo
+          end if
+        end if
+      end do
       ! part i has a-1 neighbors
       neighborList(1, i) = a - 1
-    enddo
+    end do
 
     return
 
@@ -504,9 +504,9 @@ contains
               ! put middle particle as #1
               coords(:, 1) = latVec + FCCshifts(:, m)
               a = a - 1
-            endif
-          enddo
-        enddo
+            end if
+          end do
+        end do
         if (.not. periodic) then
           ! Add in the remaining three faces
           ! pos-x face
@@ -527,8 +527,8 @@ contains
           latVec(3) = nCellsPerSide * FCCspacing
           a = a + 1; coords(:, a) = latVec
           a = a + 1; coords(:, a) = latVec + FCCshifts(:, 2)
-        endif
-      enddo
+        end if
+      end do
       if (.not. periodic) then
         ! Add in the remaining three edges
         latVec(1) = (i - 1) * FCCspacing
@@ -543,12 +543,12 @@ contains
         latVec(2) = nCellsPerSide * FCCspacing
         latVec(3) = (i - 1) * FCCspacing
         a = a + 1; coords(:, a) = latVec
-      endif
-    enddo
+      end if
+    end do
     if (.not. periodic) then
       ! Add in the remaining corner
       a = a + 1; coords(:, a) = nCellsPerSide * FCCspacing
-    endif
+    end if
 
     return
 
@@ -602,16 +602,16 @@ contains
       deriv = dfridr(eps, deriv_err)
       if (ierr /= 0) then
         call my_error("compute_numer_deriv")
-      endif
+      end if
       if (deriv_err > deriv_err_last) then
         deriv = deriv_last
         deriv_err = deriv_err_last
         exit
-      endif
+      end if
       eps = eps * 10.0_cd
       deriv_last = deriv
       deriv_err_last = deriv_err
-    enddo
+    end do
 
     return
 
@@ -657,7 +657,7 @@ contains
       if (abs(h) <= tiny(0.0_cd)) then  ! avoid division by zero
         ierr = 1
         return
-      endif
+      end if
 
       hh = h
       coordorig = coords(dir, partnum)
@@ -668,7 +668,7 @@ contains
       call kim_compute(model_handle, compute_arguments_handle, ierr)
       if (ierr /= 0) then
         call my_error("kim_api_model_compute")
-      endif
+      end if
       fp = energy
       coords(dir, partnum) = coordorig - hh
       call update_neighborlist(DIM, N, coords, cutoff, cutpad, &
@@ -677,7 +677,7 @@ contains
       call kim_compute(model_handle, compute_arguments_handle, ierr)
       if (ierr /= 0) then
         call my_error("kim_api_model_compute")
-      endif
+      end if
       fm = energy
       coords(dir, partnum) = coordorig
       call update_neighborlist(DIM, N, coords, cutoff, cutpad, &
@@ -696,7 +696,7 @@ contains
         call kim_compute(model_handle, compute_arguments_handle, ierr)
         if (ierr /= 0) then
           call my_error("kim_api_model_compute")
-        endif
+        end if
         fp = energy
         coords(dir, partnum) = coordorig - hh
         call update_neighborlist(DIM, N, coords, cutoff, cutpad, &
@@ -705,7 +705,7 @@ contains
         call kim_compute(model_handle, compute_arguments_handle, ierr)
         if (ierr /= 0) then
           call my_error("kim_api_model_compute")
-        endif
+        end if
         fm = energy
         coords(dir, partnum) = coordorig
         call update_neighborlist(DIM, N, coords, cutoff, cutpad, &
@@ -724,12 +724,12 @@ contains
           if (errt <= err) then ! if error is decreased, save the improved answer
             err = errt
             dfridr = a(j, i)
-          endif
-        enddo
+          end if
+        end do
         if (abs(a(i, i) - a(i - 1, i - 1)) >= SAFE * err) return ! if higher order is worse
         ! by significant factor
         ! `SAFE', then quit early.
-      enddo
+      end do
       return
     end function dfridr
 
@@ -873,7 +873,7 @@ program vc_forces_numer_deriv
                         model_handle, ierr)
   if (ierr /= 0) then
     call my_error("kim_api_create")
-  endif
+  end if
 
   ! check that we are compatible
   if (requested_units_accepted == 0) then
@@ -886,12 +886,12 @@ program vc_forces_numer_deriv
     call kim_get_model_routine_name(i, model_routine_name, ierr)
     if (ierr /= 0) then
       call my_error("kim_get_model_routine_name")
-    endif
+    end if
     call kim_is_routine_present(model_handle, model_routine_name, present, &
                                 required, ierr)
     if (ierr /= 0) then
       call my_error("kim_is_routine_present")
-    endif
+    end if
 
     if ((present == 1) .and. (required == 1)) then
       if (.not. ((model_routine_name == KIM_MODEL_ROUTINE_NAME_CREATE) &
@@ -904,16 +904,16 @@ program vc_forces_numer_deriv
                  .or. (model_routine_name == KIM_MODEL_ROUTINE_NAME_DESTROY))) &
         then
         call my_error("Unknown required ModelRoutineName found.")
-      endif
-    endif
-  enddo
+      end if
+    end if
+  end do
 
   ! create compute_arguments object
   call kim_compute_arguments_create(model_handle, &
                                     compute_arguments_handle, ierr)
   if (ierr /= 0) then
     call my_error("kim_model_compute_arguments_create")
-  endif
+  end if
 
   call check_model_compatibility(compute_arguments_handle, forces_optional, &
                                  model_is_compatible, ierr)
@@ -930,7 +930,7 @@ program vc_forces_numer_deriv
                                    num_species, ierr)
   if (ierr /= 0) then
     call my_error("Get_Model_Supported_Species")
-  endif
+  end if
   ! Setup random cluster
   !
   allocate (cluster_coords(3, N), cluster_disps(3, N), cluster_species(N))
@@ -938,7 +938,7 @@ program vc_forces_numer_deriv
     call random_number(rnd)  ! return random number between 0 and 1
     species_code = 1 + int(rnd * num_species)
     cluster_species(i) = model_species(species_code)
-  enddo
+  end do
   FCCspacing = 1.0_cd  ! initially generate an FCC cluster with lattice
   ! spacing equal to one. This is scaled below based
   ! on the cutoff radius of the model.
@@ -950,8 +950,8 @@ program vc_forces_numer_deriv
     do J = 1, DIM
       call random_number(rnd)  ! return random number between 0 and 1
       cluster_disps(J, I) = 0.1_cd * (rnd - 0.5_cd)
-    enddo
-  enddo
+    end do
+  end do
 
   ! register memory with the KIM system
   ierr = 0
@@ -984,7 +984,7 @@ program vc_forces_numer_deriv
   ierr = ierr + ierr2
   if (ierr /= 0) then
     call my_error("set_argument_pointer")
-  endif
+  end if
 
   ! Allocate storage for neighbor lists and
   ! store pointers to neighbor list object and access function
@@ -1022,23 +1022,23 @@ program vc_forces_numer_deriv
   ! of the cutoff radius
   do i = 1, N
     cluster_coords(:, i) = FCCspacing * cluster_coords(:, i)
-  enddo
+  end do
   print '("Using FCC lattice parameter: ",f12.5)', FCCspacing
 
   do i = 1, N
     call kim_get_species_support_and_code( &
       model_handle, cluster_species(i), species_is_supported, &
       particleSpeciesCodes(i), ierr)
-  enddo
+  end do
   if (ierr /= 0) then
     call my_error("kim_api_get_species_code")
-  endif
+  end if
   do i = 1, N
     particleContributing(i) = 1  ! every particle contributes
-  enddo
+  end do
   do i = 1, N
     coords(:, i) = cluster_coords(:, i) + cluster_disps(:, i)
-  enddo
+  end do
 
   ! Compute neighbor lists
   !
@@ -1049,14 +1049,14 @@ program vc_forces_numer_deriv
                            neighObject, ierr)
   if (ierr /= 0) then
     call my_error("update_neighborlist")
-  endif
+  end if
 
   ! Call model compute to get forces (gradient)
   !
   call kim_compute(model_handle, compute_arguments_handle, ierr)
   if (ierr /= 0) then
     call my_error("kim_api_model_compute")
-  endif
+  end if
 
   ! Copy forces in case model will overwrite forces_kim below
   !
@@ -1077,8 +1077,8 @@ program vc_forces_numer_deriv
       null_pointer, ierr)
     if (ierr /= 0) then
       call my_error("set_argument_pointer")
-    endif
-  endif
+    end if
+  end if
 
   ! Compute gradient using numerical differentiation
   !
@@ -1091,11 +1091,11 @@ program vc_forces_numer_deriv
                                coordsave, neighObject, deriv, deriv_err, ierr)
       if (ierr /= 0) then
         call my_error("compute_numer_deriv")
-      endif
+      end if
       forces_num(J, I) = -deriv
       forces_num_err(J, I) = deriv_err
-    enddo
-  enddo
+    end do
+  end do
 
   ! Continue printing results to screen
   !
@@ -1111,7 +1111,7 @@ program vc_forces_numer_deriv
         passfail = "ideal"
       else
         passfail = "     "
-      endif
+      end if
       weight = max(abs(forces_num(J, I)), eps_prec) / &
                max(abs(forces_num_err(J, I)), eps_prec)
       term = weight * forcediff**2
@@ -1119,7 +1119,7 @@ program vc_forces_numer_deriv
         term_max = term
         Imax = I
         Jmax = J
-      endif
+      end if
       forcediff_sumsq = forcediff_sumsq + term
       weight_sum = weight_sum + weight
       if (J == 1) then
@@ -1130,10 +1130,10 @@ program vc_forces_numer_deriv
         print '(14X,I3,2X,2ES25.15,3ES15.5,2X,A5)', &
           J, forces(J, I), forces_num(J, I), &
           forcediff, forces_num_err(J, I), weight, passfail
-      endif
-    enddo
+      end if
+    end do
     print *
-  enddo
+  end do
   alpha = sqrt(forcediff_sumsq / weight_sum) / dble(DIM * N)
   print *
   print '("alpha = |Force_model - Force_numer|_w/(DIM*N) = ",ES15.5," &
@@ -1157,7 +1157,7 @@ program vc_forces_numer_deriv
                                      compute_arguments_handle, ierr)
   if (ierr /= 0) then
     call my_error("kim_model_compute_arguments_destroy")
-  endif
+  end if
   call kim_model_destroy(model_handle)
 
   ! Print output footer

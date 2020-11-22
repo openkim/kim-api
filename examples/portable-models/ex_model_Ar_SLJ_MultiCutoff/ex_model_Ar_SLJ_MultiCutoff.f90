@@ -133,7 +133,7 @@ contains
     else
       phi = 4.0_cd * (sor12 - sor6)
       if (calc_deriv) dphi = 24.0_cd * (-2.0_cd * sor12 + sor6) / r
-    endif
+    end if
 
   end subroutine calc_phi
 
@@ -172,7 +172,7 @@ contains
       Rrel(:) = coor(:, k) - coor(:, atom)
       Rsqrel = dot_product(Rrel, Rrel)
       if (Rsqrel < model_cutsq1) eps = eps + Rsqrel
-    enddo
+    end do
     eps = 0.5_cd * lj_spring * eps
 
   end subroutine calc_spring_energyamp
@@ -218,8 +218,8 @@ contains
         dforce(:) = 0.5_cd * eps * lj_spring * Rrel(:) * phi
         force(:, atom) = force(:, atom) + dforce(:) ! accumulate force on atom
         force(:, k) = force(:, k) - dforce(:)    ! accumulate force on k
-      endif
-    enddo
+      end if
+    end do
 
   end subroutine calc_spring_force
 
@@ -299,7 +299,7 @@ contains
       call kim_log_entry(model_compute_arguments_handle, &
                          KIM_LOG_VERBOSITY_ERROR, "get data")
       return
-    endif
+    end if
 
     ! Check to see if we have been asked to compute the forces, energyperpart,
     ! energy and virial
@@ -335,8 +335,8 @@ contains
           model_compute_handle, KIM_LOG_VERBOSITY_ERROR, &
           "Unexpected species code detected")
         return
-      endif
-    enddo
+      end if
+    end do
     ierr = 0 ! everything is ok
 
     ! Initialize potential energies, forces, virial term
@@ -365,7 +365,7 @@ contains
             "GetNeighborList failed")
           ierr = 1
           return
-        endif
+        end if
 
         ! Get short range contribution for atom i to energy amplitude
         call calc_spring_energyamp(model_compute_arguments_handle, &
@@ -377,7 +377,7 @@ contains
             "GetNeighborList failed")
           ierr = 1
           return
-        endif
+        end if
 
         ! Loop over the neighbors of particle i
         !
@@ -395,7 +395,7 @@ contains
               "GetNeighborList failed")
             ierr = 1
             return
-          endif
+          end if
 
           ! compute relative position vector
           !
@@ -414,10 +414,10 @@ contains
             !
             if (comp_enepot == 1) then
               enepot(i) = enepot(i) + 0.5_cd * epsi * epsj * phi   ! accumulate energy
-            endif
+            end if
             if (comp_energy == 1) then
               energy = energy + 0.5_cd * epsi * epsj * phi
-            endif
+            end if
 
             !!@@@@@@@@@@@@@@@@@@@@ NOT FIXED YET
             !        ! contribution to virial tensor,
@@ -446,7 +446,7 @@ contains
                   "GetNeighborList failed")
                 ierr = 1
                 return
-              endif
+              end if
               ! Contribution due to short range neighbors of j
               call calc_spring_force(model_compute_arguments_handle, j, coor, &
                                      epsi, phi, force, ierr)
@@ -457,20 +457,20 @@ contains
                   "GetNeighborList failed")
                 ierr = 1
                 return
-              endif
+              end if
               ! Contribution due to deriv of LJ term
               dforce(:) = epsi * epsj * dEidr * Rij(:) / r
               force(:, i) = force(:, i) + dforce(:) ! accumulate force on i
               force(:, j) = force(:, j) - dforce(:) ! accumulate force on j
-            endif
+            end if
 
-          endif
+          end if
 
-        enddo  ! loop on jj
+        end do  ! loop on jj
 
-      endif  ! if particleContributing
+      end if  ! if particleContributing
 
-    enddo  ! do i
+    end do  ! do i
 
     ! Everything is great
     !
@@ -557,7 +557,7 @@ contains
         model_compute_arguments_create_handle, &
         KIM_LOG_VERBOSITY_ERROR, &
         "Unable to successfully create compute_arguments object")
-    endif
+    end if
 
     return
   end subroutine model_compute_arguments_create
@@ -700,7 +700,7 @@ recursive subroutine model_create_routine( &
     call kim_log_entry( &
       model_create_handle, KIM_LOG_VERBOSITY_ERROR, &
       "Unable to successfully initialize model")
-  endif
+  end if
 
   return
 

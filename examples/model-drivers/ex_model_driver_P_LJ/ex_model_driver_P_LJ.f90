@@ -81,7 +81,7 @@ module ex_model_driver_p_lj
     real(c_double) :: epsilon(1)
     real(c_double) :: sigma(1)
     real(c_double) :: shift(1)
-  endtype BUFFER_TYPE
+  end type BUFFER_TYPE
 
 contains
 
@@ -117,7 +117,7 @@ contains
       phi = 0.0_cd
     else
       phi = 4.0_cd * model_epsilon * (sor12 - sor6) + model_shift
-    endif
+    end if
 
   end subroutine calc_phi
 
@@ -155,7 +155,7 @@ contains
     else
       phi = 4.0_cd * model_epsilon * (sor12 - sor6) + model_shift
       dphi = 24.0_cd * model_epsilon * (-2.0_cd * sor12 + sor6) / r
-    endif
+    end if
 
   end subroutine calc_phi_dphi
 
@@ -195,7 +195,7 @@ contains
       phi = 4.0_cd * model_epsilon * (sor12 - sor6) + model_shift
       dphi = 24.0_cd * model_epsilon * (-2.0_cd * sor12 + sor6) / r
       d2phi = 24.0_cd * model_epsilon * (26.0_cd * sor12 - 7.0_cd * sor6) / rsq
-    endif
+    end if
 
   end subroutine calc_phi_dphi_d2phi
 
@@ -261,7 +261,7 @@ contains
                          KIM_LOG_VERBOSITY_ERROR, "get_compute")
       ierr = 1
       return
-    endif
+    end if
 
     ! Unpack data from KIM object
     !
@@ -302,7 +302,7 @@ contains
                          KIM_LOG_VERBOSITY_ERROR, "get_argument_pointer")
       ierr = 1
       return
-    endif
+    end if
 
     if (associated(energy)) then
       comp_energy = 1
@@ -331,8 +331,8 @@ contains
           "Unexpected species code detected")
         ierr = 1
         return
-      endif
-    enddo
+      end if
+    end do
     ierr = 0 ! everything is ok
 
     ! Initialize potential energies, forces
@@ -361,7 +361,7 @@ contains
             "kim_api_get_neigh")
           ierr = 1
           return
-        endif
+        end if
 
         ! Loop over the neighbors of particle i
         !
@@ -403,23 +403,23 @@ contains
                             buf%shift(1), &
                             buf%Pcutoff(1), &
                             r, phi)                  ! compute just pair potential
-            endif
+            end if
 
             ! contribution to energy
             !
             if (comp_enepot == 1) then
               enepot(i) = enepot(i) + 0.5_cd * phi    ! accumulate energy
-            endif
+            end if
             if (comp_energy == 1) then
               energy = energy + 0.5_cd * phi       !      add half v to total energy
-            endif
+            end if
 
             ! contribution to process_dEdr
             !
             if (comp_process_dEdr == 1) then
               call kim_process_dedr_term( &
                 model_compute_arguments_handle, deidr, r, rij, i, j, ierr)
-            endif
+            end if
 
             ! contribution to process_d2Edr2
             if (comp_process_d2Edr2 == 1) then
@@ -435,22 +435,22 @@ contains
               call kim_process_d2edr2_term( &
                 model_compute_arguments_handle, d2eidr, &
                 r_pairs, Rij_pairs, i_pairs, j_pairs, ierr)
-            endif
+            end if
 
             ! contribution to forces
             !
             if (comp_force == 1) then
               force(:, i) = force(:, i) + dEidr * Rij / r ! accumulate force on particle i
               force(:, j) = force(:, j) - dEidr * Rij / r ! accumulate force on particle j
-            endif
+            end if
 
-          endif
+          end if
 
-        enddo  ! loop on jj
+        end do  ! loop on jj
 
-      endif  ! if particleContributing
+      end if  ! if particleContributing
 
-    enddo  ! do i
+    end do  ! do i
 
     ! Everything is great
     !
@@ -856,7 +856,7 @@ recursive subroutine model_driver_create_routine( &
                        KIM_LOG_VERBOSITY_ERROR, "kim_api_convert_to_act_unit")
     ierr = 1
     goto 42
-  endif
+  end if
   in_cutoff = in_cutoff * factor
 
   call kim_convert_unit( &
@@ -876,7 +876,7 @@ recursive subroutine model_driver_create_routine( &
                        KIM_LOG_VERBOSITY_ERROR, "kim_api_convert_to_act_unit")
     ierr = 1
     goto 42
-  endif
+  end if
   in_epsilon = in_epsilon * factor
 
   call kim_convert_unit( &
@@ -896,7 +896,7 @@ recursive subroutine model_driver_create_routine( &
                        KIM_LOG_VERBOSITY_ERROR, "kim_api_convert_to_act_unit")
     ierr = 1
     goto 42
-  endif
+  end if
   in_sigma = in_sigma * factor
 
   allocate (buf)
@@ -941,7 +941,7 @@ recursive subroutine model_driver_create_routine( &
                        KIM_LOG_VERBOSITY_ERROR, "set_parameter")
     ierr = 1
     goto 42
-  endif
+  end if
 
   call kim_set_parameter_pointer( &
     model_driver_create_handle, buf%epsilon, "epsilon", &
@@ -951,7 +951,7 @@ recursive subroutine model_driver_create_routine( &
                        KIM_LOG_VERBOSITY_ERROR, "set_parameter")
     ierr = 1
     goto 42
-  endif
+  end if
 
   call kim_set_parameter_pointer( &
     model_driver_create_handle, buf%sigma, "sigma", &
@@ -961,7 +961,7 @@ recursive subroutine model_driver_create_routine( &
                        KIM_LOG_VERBOSITY_ERROR, "set_parameter")
     ierr = 1
     goto 42
-  endif
+  end if
 
   ierr = 0
 42 continue

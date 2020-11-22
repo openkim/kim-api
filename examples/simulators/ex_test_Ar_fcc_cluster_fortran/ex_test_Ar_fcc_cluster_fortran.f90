@@ -109,26 +109,26 @@ contains
       call my_warning("invalid number of cutoffs")
       ierr = 1
       return
-    endif
+    end if
 
     if (cutoffs(1) > neighObject%cutoff) then
       call my_warning("neighbor list cutoff too small for model cutoff")
       ierr = 1
       return
-    endif
+    end if
 
     if (neighbor_list_index /= 1) then
       call my_warning("wrong list index")
       ierr = 1
       return
-    endif
+    end if
 
     if ((request > numberOfParticles) .or. (request < 1)) then
       print *, request
       call my_warning("Invalid part ID in get_neigh")
       ierr = 1
       return
-    endif
+    end if
 
     ! set the returned number of neighbors for the returned part
     numnei = neighborList(1, request)
@@ -191,12 +191,12 @@ contains
           if ((j > i) .OR. ((.not. half) .AND. (i /= j))) then
             a = a + 1
             neighborList(a, i) = j
-          endif
-        endif
-      enddo
+          end if
+        end if
+      end do
       ! part i has a-1 neighbors
       neighborList(1, i) = a - 1
-    enddo
+    end do
 
     return
 
@@ -272,9 +272,9 @@ contains
               ! put middle particle as #1
               coords(:, 1) = latVec + FCCshifts(:, m)
               a = a - 1
-            endif
-          enddo
-        enddo
+            end if
+          end do
+        end do
         if (.not. periodic) then
           ! Add in the remaining three faces
           ! pos-x face
@@ -295,8 +295,8 @@ contains
           latVec(3) = nCellsPerSide * FCCspacing
           a = a + 1; coords(:, a) = latVec
           a = a + 1; coords(:, a) = latVec + FCCshifts(:, 2)
-        endif
-      enddo
+        end if
+      end do
       if (.not. periodic) then
         ! Add in the remaining three edges
         latVec(1) = (i - 1) * FCCspacing
@@ -311,12 +311,12 @@ contains
         latVec(2) = nCellsPerSide * FCCspacing
         latVec(3) = (i - 1) * FCCspacing
         a = a + 1; coords(:, a) = latVec
-      endif
-    enddo
+      end if
+    end do
     if (.not. periodic) then
       ! Add in the remaining corner
       a = a + 1; coords(:, a) = nCellsPerSide * FCCspacing
-    endif
+    end if
 
     return
 
@@ -415,7 +415,7 @@ program ex_test_ar_fcc_cluster_fortran
                         model_handle, ierr)
   if (ierr /= 0) then
     call my_error("kim_api_create")
-  endif
+  end if
 
   ! check that we are compatible
   if (requested_units_accepted == 0) then
@@ -428,12 +428,12 @@ program ex_test_ar_fcc_cluster_fortran
     call kim_get_model_routine_name(i, model_routine_name, ierr)
     if (ierr /= 0) then
       call my_error("kim_get_model_routine_name")
-    endif
+    end if
     call kim_is_routine_present(model_handle, model_routine_name, present, &
                                 required, ierr)
     if (ierr /= 0) then
       call my_error("kim_is_routine_present")
-    endif
+    end if
 
     if ((present == 1) .and. (required == 1)) then
       if (.not. ((model_routine_name == KIM_MODEL_ROUTINE_NAME_CREATE) &
@@ -446,9 +446,9 @@ program ex_test_ar_fcc_cluster_fortran
                  .or. (model_routine_name == KIM_MODEL_ROUTINE_NAME_DESTROY))) &
         then
         call my_error("Unknown required ModelRoutineName found.")
-      endif
-    endif
-  enddo
+      end if
+    end if
+  end do
 
   ! check that model supports Ar
   !
@@ -456,20 +456,20 @@ program ex_test_ar_fcc_cluster_fortran
     model_handle, KIM_SPECIES_NAME_AR, species_is_supported, species_code, ierr)
   if ((ierr /= 0) .or. (species_is_supported /= 1)) then
     call my_error("Model does not support Ar")
-  endif
+  end if
 
   ! Check supported extensions, if any
   call kim_is_routine_present( &
     model_handle, KIM_MODEL_ROUTINE_NAME_EXTENSION, present, required, ierr)
   if (ierr /= 0) then
     call my_error("Unable to get Extension present/required.")
-  endif
+  end if
   if (present /= 0) then
     call kim_extension(model_handle, KIM_SUPPORTED_EXTENSIONS_ID, &
                        c_loc(supported_extensions), ierr)
     if (ierr /= 0) then
       call my_error("Error returned from kim_model_extension().")
-    endif
+    end if
     write (*, '(A,I2,A)') "Model Supports ", &
       supported_extensions%number_of_supported_extensions, &
       " Extensions:"
@@ -481,7 +481,7 @@ program ex_test_ar_fcc_cluster_fortran
         "which has required = ", &
         supported_extensions%supported_extension_required(i)
     end do
-  endif
+  end if
 
   ! Best-practice is to check that the model is compatible
   ! but we will skip it here
@@ -491,7 +491,7 @@ program ex_test_ar_fcc_cluster_fortran
     model_handle, compute_arguments_handle, ierr)
   if (ierr /= 0) then
     call my_error("kim_model_compute_arguments_create")
-  endif
+  end if
 
   ! register memory with the KIM system
   ierr = 0
@@ -523,7 +523,7 @@ program ex_test_ar_fcc_cluster_fortran
   ierr = ierr + ierr2
   if (ierr /= 0) then
     call my_error("set_argument_pointer")
-  endif
+  end if
 
   ! Allocate storage for neighbor lists
   !
@@ -545,7 +545,7 @@ program ex_test_ar_fcc_cluster_fortran
                                         number_of_neighbor_lists)
   if (number_of_neighbor_lists /= 1) then
     call my_error("too many neighbor lists")
-  endif
+  end if
   call kim_get_neighbor_list_values( &
     model_handle, cutoffs, &
     model_will_not_request_neighbors_of_noncontributing_particles, ierr)
@@ -558,12 +558,12 @@ program ex_test_ar_fcc_cluster_fortran
   !
   do i = 1, N
     particle_species_codes(i) = species_code
-  enddo
+  end do
 
   ! setup contributing particles
   do i = 1, N
     particle_contributing(i) = 1  ! every particle contributes
-  enddo
+  end do
 
   ! Print output header
   !
@@ -589,7 +589,7 @@ program ex_test_ar_fcc_cluster_fortran
     call kim_compute(model_handle, compute_arguments_handle, ierr)
     if (ierr /= 0) then
       call my_error("kim_api_model_compute")
-    endif
+    end if
 
     ! compue force_norm
     force_norm = 0.0
@@ -605,7 +605,7 @@ program ex_test_ar_fcc_cluster_fortran
     print '(3ES20.10)', energy, force_norm, current_spacing
 
     current_spacing = current_spacing + spacing_incr
-  enddo
+  end do
 
   ! Deallocate neighbor list object
   deallocate (neighborList)
@@ -614,7 +614,7 @@ program ex_test_ar_fcc_cluster_fortran
     model_handle, compute_arguments_handle, ierr)
   if (ierr /= 0) then
     call my_error("compute_arguments_destroy")
-  endif
+  end if
   call kim_model_destroy(model_handle)
 
 end program ex_test_ar_fcc_cluster_fortran
