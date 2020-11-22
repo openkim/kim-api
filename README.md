@@ -33,7 +33,7 @@
 #
 -->
 
-[![Build Status](https://travis-ci.org/openkim/kim-api.svg?branch=devel)](https://travis-ci.org/openkim/kim-api)
+[![Build Status](https://travis-ci.com/openkim/kim-api.svg?branch=devel)](https://travis-ci.com/openkim/kim-api)
 [![Documentation Status](https://readthedocs.org/projects/kim-api/badge/?version=devel)](https://kim-api.readthedocs.io/en/devel/?badge=devel)
 [![Coverity Scan](https://scan.coverity.com/projects/16411/badge.svg?flat=1)](https://scan.coverity.com/projects/openkim-kim-api)
 [![codecov](https://codecov.io/gh/openkim/kim-api/branch/devel/graph/badge.svg)](https://codecov.io/gh/openkim/kim-api/branch/devel)
