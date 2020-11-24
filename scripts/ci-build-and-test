@@ -122,6 +122,8 @@ mv test-install test-install-relocated || exit $?
 set +xv
 printf "calling ${PWD}/test-install-relocated/bin/kim-api-activate\n"
 source "${PWD}/test-install-relocated/bin/kim-api-activate" || exit $?
+kim-api-collections-management list || exit $?
+
 set -xv
 if [ "$TRAVIS_OS_NAME" != "windows" ]; then
   KIM_SIMULATOR_MODEL_EXE="./test-install-relocated/libexec/kim-api/kim-api-simulator-model"
