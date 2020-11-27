@@ -72,7 +72,7 @@ elif command -v curl > /dev/null 2>&1; then
   web_tool_download="${web_tool_q} --remote-name"
 else
   printf "*** ERROR *** Unable to find a web tool: please install 'wget' or 'curl'.\n";
-  return 1
+  exit 1
 fi
 
 
