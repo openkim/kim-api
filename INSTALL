@@ -373,6 +373,11 @@ other values should be used.
 
 D.2.3 INSTALLATION PREFIX
 
+Here and below, all paths or filepaths must be specified in a format
+appropriate for the OS (windows or linux).  Windows paths are of the form
+C:\dir1\dir2 (forward slashes may be used instead to avoid escaping issues:
+C:/dir1/dir2) and linux paths are of the form /dir1/dir2.
+
 By default CMake installs the KIM API package under the Global prefix
 "/usr/local".  This is referred to as a "Global" (or system-wide) installation.
 It is available to all users of the system.  (Other "Global" prefix values are
