@@ -537,27 +537,29 @@ remove_item () {
 split_items_list_into_collections () {
   local item_type="$1"
   local items_list="$2"
+  # items_list might have paths with backslashes (in particular \U)
+  # use 'printf "%s" ...' below to avoid escape processing of first argument.
 
   local cwd_collection
-  cwd_collection=`printf "${items_list}" | grep "^currentWorkingDirectory" | \
+  cwd_collection=`printf "%s" "${items_list}" | grep "^currentWorkingDirectory" | \
                    sed -e 's/^currentWorkingDirectory \([^ ]*\) .*$/	\1/'`
   local number_cwd
   number_cwd=`printf "${cwd_collection}" | grep -c ''`
   if test x"" = x"${number_cwd}"; then number_cwd=0; fi
   local env_collection
-  env_collection=`printf "${items_list}" | grep "^environmentVariable" | \
+  env_collection=`printf "%s" "${items_list}" | grep "^environmentVariable" | \
                   sed -e 's/^environmentVariable \([^ ]*\) .*$/	\1/'`
   local number_env
   number_env=`printf "${env_collection}" | grep -c ''`
   if test x"" = x"${number_env}"; then number_env=0; fi
   local usr_collection
-  usr_collection=`printf "${items_list}" | grep "^user" | \
+  usr_collection=`printf "%s" "${items_list}" | grep "^user" | \
                   sed -e 's/^user \([^ ]*\) .*$/	\1/'`
   local number_usr
   number_usr=`printf "${usr_collection}" | grep -c ''`
   if test x"" = x"${number_usr}"; then number_usr=0; fi
   local sys_collection
-  sys_collection=`printf "${items_list}" | grep "^system" | \
+  sys_collection=`printf "%s" "${items_list}" | grep "^system" | \
                   sed -e 's/^system \([^ ]*\) .*$/	\1/'`
   local number_sys
   number_sys=`printf "${sys_collection}" | grep -c ''`
