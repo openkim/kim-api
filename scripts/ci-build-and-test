@@ -99,9 +99,11 @@ rm -rf "build" || exit $?
 
 # now test collections-management and install
 if [ "$TRAVIS_OS_NAME" != "windows" ]; then
-  KIM_API_PATH_SEPARATOR=":"
+  CUSTOM_PATHLIST=":${PWD}/test-install/my-collection"
 else
-  KIM_API_PATH_SEPARATOR=";"
+  # needs to be of the form C:/.... but ${PWD} is of the form /c/.....
+  # so use TRAVIS_BUILD_DIR for now.
+  CUSTOM_PATHLIST=";${TRAVIS_BUILD_DIR}/build/test-install/my-collection"
 fi
 mkdir build
 cd build
@@ -109,14 +111,14 @@ ccache -z
 cmake -DCMAKE_INSTALL_PREFIX="${PWD}/test-install" \
       -DCMAKE_BUILD_TYPE="${CMAKE_BUILD_TYPE}" \
       -DKIM_API_BUILD_EXAMPLES=OFF \
-      -DKIM_API_SYSTEM_MODEL_DRIVERS_DIR="${KIM_API_PATH_SEPARATOR}${PWD}/test-install/my-collection" \
-      -DKIM_API_SYSTEM_PORTABLE_MODELS_DIR="${KIM_API_PATH_SEPARATOR}${PWD}/test-install/my-collection" \
-      -DKIM_API_SYSTEM_SIMULATOR_MODELS_DIR="${KIM_API_PATH_SEPARATOR}${PWD}/test-install/my-collection" \
+      -DKIM_API_SYSTEM_MODEL_DRIVERS_DIR="${CUSTOM_PATHLIST}" \
+      -DKIM_API_SYSTEM_PORTABLE_MODELS_DIR="${CUSTOM_PATHLIST}" \
+      -DKIM_API_SYSTEM_SIMULATOR_MODELS_DIR="${CUSTOM_PATHLIST}" \
       ${CXX17:+-DCMAKE_CXX_STANDARD=17}  `#[use std::filesystem spport (assume it is available)]` \
       .. \
   || exit $?
 # check that default system collections are added to front of path lists when ":/..." (or ";/...") form is used, as above
-grep -A1 "KIM_API_SYSTEM_MODEL_DRIVERS_DIR" kim-api-configuration-detailed.log | grep "model-drivers${KIM_API_PATH_SEPARATOR}${PWD}/test-install/my-collection" || exit $?
+grep -A1 "KIM_API_SYSTEM_MODEL_DRIVERS_DIR" kim-api-configuration-detailed.log | grep "model-drivers${CUSTOM_PATHLIST}" || exit $?
 
 ${MAKE} -j2 install || exit $?
 ccache -s
