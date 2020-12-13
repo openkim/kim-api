@@ -376,10 +376,10 @@ std::string LogImplementation::GetTimeStamp() const
 {
   time_t rawTime;
   time(&rawTime);
-  struct tm * timeInfo;
-  timeInfo = localtime(&rawTime);
+  struct tm timeInfo;
+  localtime_r(&rawTime, &timeInfo);
   char date[1024];
-  strftime(date, 1023, "%Y-%m-%d:%H:%M:%S%Z", timeInfo);
+  strftime(date, 1023, "%Y-%m-%d:%H:%M:%S%Z", &timeInfo);
 
   std::string dateString(date);
   if (dateString == latestTimeStamp_) { ++sequence_; }
