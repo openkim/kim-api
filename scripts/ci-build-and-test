@@ -70,8 +70,8 @@ ccache -s
 ctest --output-on-failure || exit $?
 
 if test x"${COVERAGE}" != x""; then
-  curl -s https://codecov.io/bash | sed -e's/execdir/exec/g' > ${PWD}/codecov
-  bash ${PWD}/codecov -x gcov-6 || exit $?
+  curl -s https://codecov.io/bash > ${PWD}/codecov
+  bash ${PWD}/codecov -x gcov || exit $?
 fi
 
 mkdir ${PWD}/destdir
