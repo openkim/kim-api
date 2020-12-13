@@ -41,7 +41,7 @@ env:
 
 matrix:
   include:
-    - name: "macOS Debug, Sanitize, Coverage"
+    - name: "macOS Debug, Sanitize"
       if: branch != coverity_scan
       os: osx
       addons:
@@ -55,7 +55,6 @@ matrix:
           update: true
       env: CMAKE_BUILD_TYPE=Debug
            SANITIZE=true
-           COVERAGE=true
       before_script:
         - export PATH="/usr/local/opt/ccache/libexec:$PATH" &&
           export CXX17=true &&
@@ -143,13 +142,14 @@ matrix:
              "${DISTRO}"
              "${TRAVIS_REPO_SLUG}:${DISTRO}"
              "${PWD}/ccache"
-    - name: "centos (EPEL), Debug, Sanitize"
+    - name: "centos (EPEL), Debug, Sanitize, Coverage"
       if: branch != coverity_scan
       os: linux
       services: docker
       env: DISTRO=centos
            CMAKE_BUILD_TYPE=Debug
            SANITIZE=true
+           COVERAGE=true
       before_script:
         - mkdir "${HOME}/work" &&
           cd "${HOME}/work" &&
