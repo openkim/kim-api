@@ -376,11 +376,16 @@ std::string LogImplementation::GetTimeStamp() const
 {
   time_t rawTime;
   time(&rawTime);
+  char date[1024];
+#ifdef _WIN32
+  struct tm * timeInfo;
+  timeInfo = localtime(&rawTime);
+  strftime(date, 1023, "%Y-%m-%d:%H:%M:%S%Z", timeInfo);
+#else
   struct tm timeInfo;
   localtime_r(&rawTime, &timeInfo);
-  char date[1024];
   strftime(date, 1023, "%Y-%m-%d:%H:%M:%S%Z", &timeInfo);
-
+#endif
   std::string dateString(date);
   if (dateString == latestTimeStamp_) { ++sequence_; }
   else
