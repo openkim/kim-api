@@ -30,7 +30,7 @@
 #
 
 #
-# Release: This file is part of the kim-api-2.2.0 package.
+# Release: This file is part of the kim-api-2.2.1 package.
 #
 
 
@@ -41,8 +41,7 @@ enable_cxx_compiler_flag_if_supported("-Wall")
 enable_cxx_compiler_flag_if_supported("-Wextra")
 enable_cxx_compiler_flag_if_supported("-pedantic")
 if(KIM_API_ENABLE_COVERAGE)
-  enable_cxx_compiler_flag_if_supported("-fprofile-arcs")
-  enable_cxx_compiler_flag_if_supported("-ftest-coverage")
+  set(KIM_API_CXX_FLAGS "${KIM_API_CXX_FLAGS} --coverage")
 endif()
 if(KIM_API_ENABLE_SANITIZE)
   enable_cxx_compiler_flag_if_supported("-fsanitize=address")
@@ -56,8 +55,7 @@ enable_c_compiler_flag_if_supported("-Wall")
 enable_c_compiler_flag_if_supported("-Wextra")
 enable_c_compiler_flag_if_supported("-pedantic")
 if(KIM_API_ENABLE_COVERAGE)
-  enable_c_compiler_flag_if_supported("-fprofile-arcs")
-  enable_c_compiler_flag_if_supported("-ftest-coverage")
+  set(KIM_API_C_FLAGS "${KIM_API_C_FLAGS} --coverage")
 endif()
 if(KIM_API_ENABLE_SANITIZE)
   enable_c_compiler_flag_if_supported("-fsanitize=address")
@@ -81,8 +79,7 @@ else()
   enable_fortran_compiler_flag_if_supported("-diag-disable 5462")  # disable "Global name too long" warning
 endif()
 if(KIM_API_ENABLE_COVERAGE)
-  enable_fortran_compiler_flag_if_supported("-fprofile-arcs")
-  enable_fortran_compiler_flag_if_supported("-ftest-coverage")
+  set(KIM_API_Fortran_FLAGS "${KIM_API_Fortran_FLAGS} --coverage")
 endif()
 if(KIM_API_ENABLE_SANITIZE)
   enable_fortran_compiler_flag_if_supported("-fsanitize=address")
@@ -102,7 +99,7 @@ if(KIM_API_ENABLE_SANITIZE)
   set(KIM_API_EXE_LINKER_FLAGS "${KIM_API_EXE_LINKER_FLAGS} -fsanitize=address")
 endif()
 if(KIM_API_ENABLE_COVERAGE)
-  set(KIM_API_EXE_LINKER_FLAGS "${KIM_API_EXE_LINKER_FLAGS} -fprofile-arcs -ftest-coverage")
+  set(KIM_API_EXE_LINKER_FLAGS "${KIM_API_EXE_LINKER_FLAGS} --coverage")
 endif()
 string(STRIP "${KIM_API_EXE_LINKER_FLAGS}" _s)
 set(KIM_API_EXE_LINKER_FLAGS "${_s}")

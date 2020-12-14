@@ -30,7 +30,7 @@
 #
 
 #
-# Release: This file is part of the kim-api-2.2.0 package.
+# Release: This file is part of the kim-api-2.2.1 package.
 #
 
 
@@ -123,7 +123,7 @@ done
 fortran_files_needing_formatting=""
 for file in ${fortran_files_to_check_format}; do
   # ":${file}" references file in the git index
-  fcomp="`{ cd \"${dir_prefix}\" && diff -q <(git show :${file}) <(git show :${file} | fprettify -) ; } 2>&1`"  # will be empty if file doesn't change and there are now warnings from fprettify
+  fcomp="`{ cd \"$(dirname ${file})\" && git show :${file} | fprettify --diff - ; } 2>&1`"  # will be empty if file doesn't change and there are no warnings from fprettify
   if test ! x"" = x"${fcomp}"; then
     fortran_files_needing_formatting="${fortran_files_needing_formatting} ${file}"
   fi
@@ -164,7 +164,7 @@ if test x"${cpp_files_needing_formatting}" != x"" -o x"${fortran_files_needing_f
   done
   printf "\n"
   for file in ${fortran_files_needing_formatting}; do
-    printf "  (cd \"${dir_prefix}\" && fprettify \"${file}\")\n"
+    printf "  fprettify \"${file}\"\n"
   done
   printf "\n"
 

@@ -27,7 +27,7 @@
 !
 
 !
-! Release: This file is part of the kim-api-2.2.0 package.
+! Release: This file is part of the kim-api-2.2.1 package.
 !
 
 !> \brief \copybrief KIM::Numbering

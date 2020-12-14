@@ -29,7 +29,7 @@
 #
 
 #
-# Release: This file is part of the kim-api-2.2.0 package.
+# Release: This file is part of the kim-api-2.2.1 package.
 #
 
 
@@ -74,6 +74,12 @@ if test x"" = x"${CMAKE_BUILD_TYPE}"; then
   exit 1
 fi
 
+# Store env to pass to docker if COVERAGE requested
+if test x"${COVERAGE}" != x""; then
+  # https://docs.codecov.io/docs/testing-with-docker
+  ci_env=`bash <(curl -s https://codecov.io/env)`
+fi
+
 set -xv
 mkdir "${CONTEXT}" || exit $?
 cd "${CONTEXT}" || exit $?
@@ -113,7 +119,7 @@ docker build -t "${TAG}" -f "docker/Dockerfile.${DISTRO}" .  &&
          --build-arg B_COVERAGE="${COVERAGE:+true}" \
          \
          .  &&
-  docker run -it --cap-add SYS_PTRACE --cidfile container.pid \
+  docker run -it --cap-add SYS_PTRACE --cidfile container.pid ${ci_env} \
          "${TAG}_w_common" &&
   rm -rf ccache &&
   CON=`cat container.pid` &&

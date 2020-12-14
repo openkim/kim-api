@@ -29,11 +29,11 @@
 #
 
 #
-# Release: This file is part of the kim-api-2.2.0 package.
+# Release: This file is part of the kim-api-2.2.1 package.
 #
 -->
 
-[![Build Status](https://travis-ci.org/openkim/kim-api.svg?branch=master)](https://travis-ci.org/openkim/kim-api)
+[![Build Status](https://travis-ci.com/openkim/kim-api.svg?branch=master)](https://travis-ci.com/openkim/kim-api)
 [![Documentation Status](https://readthedocs.org/projects/kim-api/badge/?version=master)](https://kim-api.readthedocs.io/en/master/?badge=master)
 [![Coverity Scan](https://scan.coverity.com/projects/16411/badge.svg?flat=1)](https://scan.coverity.com/projects/openkim-kim-api)
 [![codecov](https://codecov.io/gh/openkim/kim-api/branch/master/graph/badge.svg)](https://codecov.io/gh/openkim/kim-api/branch/master)

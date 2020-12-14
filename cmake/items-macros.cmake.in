@@ -30,7 +30,7 @@
 #
 
 #
-# Release: This file is part of the kim-api-2.2.0 package.
+# Release: This file is part of the kim-api-2.2.1 package.
 #
 
 
@@ -159,9 +159,9 @@ endfunction(add_kim_api_model_driver_library${REMOVE_THIS_FOR_3_0_0_RELEASE})
 
 
 macro(kim_api_items_set_compiler_variables)
-  set(KIM_API_CMAKE_CXX_COMPILER "@KIM_API_CMAKE_CXX_COMPILER@")
-  set(KIM_API_CMAKE_C_COMPILER "@KIM_API_CMAKE_C_COMPILER@")
-  set(KIM_API_CMAKE_Fortran_COMPILER "@KIM_API_CMAKE_Fortran_COMPILER@")
+  set(KIM_API_CMAKE_CXX_COMPILER "@KIM_API_CMAKE_CXX_COMPILER@" CACHE FILEPATH "CXX Compiler used to build kim-api package")
+  set(KIM_API_CMAKE_C_COMPILER "@KIM_API_CMAKE_C_COMPILER@" CACHE FILEPATH "C Compiler used to build kim-api package")
+  set(KIM_API_CMAKE_Fortran_COMPILER "@KIM_API_CMAKE_Fortran_COMPILER@" CACHE FILEPATH "Fortran Compiler used to build kim-api package")
 endmacro(kim_api_items_set_compiler_variables)
 
 macro(kim_api_items_set_cmake_compiler_variables)
@@ -175,13 +175,13 @@ endmacro(kim_api_items_set_cmake_compiler_variables)
 macro(kim_api_items_set_compiler_standard_variables)
   # Language standards
   #
-  set(KIM_API_CMAKE_CXX_STANDARD @CMAKE_CXX_STANDARD@)
-  set(KIM_API_CMAKE_CXX_STANDARD_REQUIRED @CMAKE_CXX_STANDARD_REQUIRED@)
-  set(KIM_API_CMAKE_CXX_EXTENSIONS @CMAKE_CXX_EXTENSIONS@)
+  set(KIM_API_CMAKE_CXX_STANDARD @CMAKE_CXX_STANDARD@ CACHE STRING "CXX_STANDARD used to build kim-api package")
+  set(KIM_API_CMAKE_CXX_STANDARD_REQUIRED @CMAKE_CXX_STANDARD_REQUIRED@ CACHE STRING "CXX_STANDARD_REQUIRED used to build kim-api package")
+  set(KIM_API_CMAKE_CXX_EXTENSIONS @CMAKE_CXX_EXTENSIONS@ CACHE STRING "CXX_EXTENSIONS used to build kim-api package")
   #
-  set(KIM_API_CMAKE_C_STANDARD @CMAKE_C_STANDARD@)
-  set(KIM_API_CMAKE_C_STANDARD_REQUIRED @CMAKE_C_STANDARD_REQUIRED@)
-  set(KIM_API_CMAKE_C_EXTENSIONS @CMAKE_C_EXTENSIONS@)
+  set(KIM_API_CMAKE_C_STANDARD @CMAKE_C_STANDARD@ CACHE STRING "C_STANDARD used to build kim-api package")
+  set(KIM_API_CMAKE_C_STANDARD_REQUIRED @CMAKE_C_STANDARD_REQUIRED@ CACHE STRING "C_STANDARD_REQUIRED used to build kim-api package")
+  set(KIM_API_CMAKE_C_EXTENSIONS @CMAKE_C_EXTENSIONS@ CACHE STRING "C_EXTENSIONS used to build kim-api package")
   #
   # NO similar setting exist yet in CMake for Fortran
 endmacro(kim_api_items_set_compiler_standard_variables)
@@ -201,10 +201,10 @@ macro(kim_api_items_set_cmake_compiler_standard_variables)
 endmacro(kim_api_items_set_cmake_compiler_standard_variables)
 
 macro(kim_api_items_set_compiler_flag_variables)
-  set(KIM_API_EXE_LINKER_FLAGS "@KIM_API_EXE_LINKER_FLAGS@")
-  set(KIM_API_CXX_FLAGS "@KIM_API_CXX_FLAGS@")
-  set(KIM_API_C_FLAGS "@KIM_API_C_FLAGS@")
-  set(KIM_API_Fortran_FLAGS "@KIM_API_Fortran_FLAGS@")
+  set(KIM_API_EXE_LINKER_FLAGS "@KIM_API_EXE_LINKER_FLAGS@" CACHE STRING "EXE_LINKER_FLAGS used to build kim-api package")
+  set(KIM_API_CXX_FLAGS "@KIM_API_CXX_FLAGS@" CACHE STRING "CXX_FLAGS used to build kim-api package")
+  set(KIM_API_C_FLAGS "@KIM_API_C_FLAGS@" CACHE STRING "C_FLAGS used to build kim-api package")
+  set(KIM_API_Fortran_FLAGS "@KIM_API_Fortran_FLAGS@" CACHE STRING "Fortran_FLAGS used to build kim-api package")
 endmacro(kim_api_items_set_compiler_flag_variables)
 
 macro(kim_api_items_prepend_compiler_flags_to_cmake_variables)
@@ -217,7 +217,7 @@ macro(kim_api_items_prepend_compiler_flags_to_cmake_variables)
 endmacro(kim_api_items_prepend_compiler_flags_to_cmake_variables)
 
 macro(kim_api_items_set_build_type_variable)
-  set(KIM_API_CMAKE_BUILD_TYPE "@CMAKE_BUILD_TYPE@")
+  set(KIM_API_CMAKE_BUILD_TYPE "@CMAKE_BUILD_TYPE@" CACHE STRING "Built type used to build kim-api package")
 endmacro(kim_api_items_set_build_type_variable)
 
 macro(kim_api_items_set_cmake_build_type_variable_in_cache)

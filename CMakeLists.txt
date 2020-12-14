@@ -30,7 +30,7 @@
 #
 
 #
-# Release: This file is part of the kim-api-2.2.0 package.
+# Release: This file is part of the kim-api-2.2.1 package.
 #
 
 
@@ -76,7 +76,7 @@ mark_as_advanced(KIM_API_CONFIGURATION_TIMESTAMP)
 #
 # Define main project
 #
-project(${KIM_API_PROJECT_NAME} VERSION 2.2.0 LANGUAGES CXX C Fortran)  # must remain a single line for create-pacakge script
+project(${KIM_API_PROJECT_NAME} VERSION 2.2.1 LANGUAGES CXX C Fortran)  # must remain a single line for create-pacakge script
 set(PROJECT_DESCRIPTION "An Application Programming Interface (API) for the Knowledgebase of Interatomic Models (KIM).")
 #
 include(GNUInstallDirs)  # needs to come after languages are enabled
@@ -110,19 +110,27 @@ mark_as_advanced(KIM_API_USER_SIMULATOR_MODELS_DIR_DEFAULT)
 #
 #
 macro(_set_system_dir var identifier type_string)
-  set(_default_dir "${PROJECT_NAME}/${identifier}")
+  set(_default_dir_1 "${PROJECT_NAME}/${identifier}")  # _1 single escape -- to be used directly
+  set(_default_dir_2 "${PROJECT_NAME}/${identifier}")  # _2 double escape -- to be passed into macro/function
   set(_description "System collection (${KIM_API_PATH_SEPARATOR}-separated) ${type_string} directory list")
   if(WIN32)
-    set(_default_dir "${CMAKE_INSTALL_FULL_LIBDIR}/${_default_dir}")
+    file(TO_CMAKE_PATH "${CMAKE_INSTALL_FULL_LIBDIR}/${_default_dir_1}" _normalized_libdir_1)
+    file(TO_CMAKE_PATH "${CMAKE_INSTALL_FULL_LIBDIR}/${_default_dir_2}" _normalized_libdir_2)
+    set(_default_dir_1 "${_normalized_libdir_1}")
+    set(_default_dir_2 "${_normalized_libdir_2}")
+    unset(_normalized_libdir_1)
+    unset(_normalized_libdir_2)
   else()
-    set(_default_dir "\\\${ORIGIN}/${_default_dir}")
+    set(_default_dir_1 "\${ORIGIN}/${_default_dir_1}")   # Here is the important difference between the _1 and _2
+    set(_default_dir_2 "\\\${ORIGIN}/${_default_dir_2}") # Here is the important difference between the _1 and _2
     set(_description "${_description} (entries may begin with $ORIGIN (w/ or w/o {}'s), if appropriate)")
   endif()
-  set_cache_with_fallback(${var} "${_default_dir}" STRING ${_description})
-  if("${var}" MATCHES "^${KIM_API_PATH_SEPARATOR}")
-    set(${var} "${_default_dir}${var}")
+  set_cache_with_fallback(${var} "${_default_dir_2}" STRING ${_description})
+  if("${${var}}" MATCHES "^${KIM_API_PATH_SEPARATOR}")
+    set(${var} "${_default_dir_1}${${var}}")
   endif()
-  unset(_default_dir)
+  unset(_default_dir_1)
+  unset(_default_dir_2)
   unset(_description)
   mark_as_advanced(${var})
 endmacro(_set_system_dir)

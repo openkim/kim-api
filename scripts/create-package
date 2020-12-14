@@ -29,7 +29,7 @@
 #
 
 #
-# Release: This file is part of the kim-api-2.2.0 package.
+# Release: This file is part of the kim-api-2.2.1 package.
 #
 
 
@@ -110,7 +110,7 @@ EOF
 
 # Change kim-api.git to release version string
 # replace c /* */ comments
-orig_string="kim-api-2.2.0 package.  "  # include trailing space to keep this from catching non /* */ comments
+orig_string="kim-api-2.2.1 package.  "  # include trailing space to keep this from catching non /* */ comments
 new_string="${fullpackagename} package."
 num_spaces=`expr ${#new_string} - ${#orig_string}`
 if test ${num_spaces} -le 0; then

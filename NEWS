@@ -28,11 +28,44 @@
 #
 
 #
-# Release: This file is part of the kim-api-2.2.0 package.
+# Release: This file is part of the kim-api-2.2.1 package.
 #
 
 
-=== kim-api-2.2.0 =============== 18Dec2020 ====================================
+=== kim-api-2.2.1 =============== 13Dec2020 ====================================
+
+* replace usage of localtime() with more secure localtime_r()
+
+* Enable Github code scanning
+
+* Refactor CI to move codecov support to centos docker CI and speedup macOS CI
+
+* Fix build support for coverage
+
+* Improvements and fixes in collections management
+
+* Use CMake CACHE variables so kim items can override package settings
+
+* Added discussion of standalone portable model CMakeLists.txt files to docs
+
+* Eliminate a compiler warning
+
+* Updates to support new version of fprettyify
+
+* Refactor libkim-api.pc file for more standard support for relocatable
+  behavior
+
+* Update travis-ci badge to use .com url
+
+* Implement more reliable method for bash scripts to find ORIGIN
+
+* Fix bugs in handling of -DKIM_API_SYSTEM_*_DIR=":/dir/..." build options; Add
+  CI testing for usage of these cases.
+
+* Correct release date for 2.2.0 in this file (Dec -> Nov)
+
+
+=== kim-api-2.2.0 =============== 18Nov2020 ====================================
 
 * The kim-api now supports Windows.  Significant additions have been made to
   the code and CMakeLists.txt files to support building kim-api and items on

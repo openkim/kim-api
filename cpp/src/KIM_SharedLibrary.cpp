@@ -28,7 +28,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-2.2.0 package.
+// Release: This file is part of the kim-api-2.2.1 package.
 //
 
 #include <cstdio>
@@ -60,20 +60,20 @@
 
 namespace
 {
+static void * const referencePointForKIM_Library = NULL;
 KIM::FILESYSTEM::Path PrivateGetORIGIN()
 {
 #if !defined(_WIN32) && !defined(__CYGWIN__)
   Dl_info info;
   int OK = false;
-  OK = dladdr(reinterpret_cast<void const *>(&KIM::SharedLibrary::GetORIGIN),
-              &info);
+  OK = dladdr(&referencePointForKIM_Library, &info);
   return KIM::FILESYSTEM::Path(OK ? info.dli_fname : "").parent_path();
 #else
   // https://stackoverflow.com/questions/6924195/get-dll-path-at-runtime
   HMODULE hm = NULL;
   GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS
                         | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
-                    reinterpret_cast<LPCSTR>(&KIM::SharedLibrary::GetORIGIN),
+                    reinterpret_cast<LPCSTR>(&referencePointForKIM_Library),
                     &hm);
   wchar_t pathBuf[MAX_PATH];
   if (!GetModuleFileNameW(hm, pathBuf, MAX_PATH))

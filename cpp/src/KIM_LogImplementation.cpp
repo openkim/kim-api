@@ -28,7 +28,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-2.2.0 package.
+// Release: This file is part of the kim-api-2.2.1 package.
 //
 
 
@@ -376,11 +376,16 @@ std::string LogImplementation::GetTimeStamp() const
 {
   time_t rawTime;
   time(&rawTime);
+  char date[1024];
+#ifdef _WIN32
   struct tm * timeInfo;
   timeInfo = localtime(&rawTime);
-  char date[1024];
   strftime(date, 1023, "%Y-%m-%d:%H:%M:%S%Z", timeInfo);
-
+#else
+  struct tm timeInfo;
+  localtime_r(&rawTime, &timeInfo);
+  strftime(date, 1023, "%Y-%m-%d:%H:%M:%S%Z", &timeInfo);
+#endif
   std::string dateString(date);
   if (dateString == latestTimeStamp_) { ++sequence_; }
   else
