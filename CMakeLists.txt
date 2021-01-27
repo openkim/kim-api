@@ -112,18 +112,14 @@ mark_as_advanced(KIM_API_USER_SIMULATOR_MODELS_DIR_DEFAULT)
 macro(_set_system_dir var identifier type_string)
   set(_default_dir_1 "${PROJECT_NAME}/${identifier}")  # _1 single escape -- to be used directly
   set(_default_dir_2 "${PROJECT_NAME}/${identifier}")  # _2 double escape -- to be passed into macro/function
-  set(_description "System collection (${KIM_API_PATH_SEPARATOR}-separated) ${type_string} directory list")
-  if(WIN32)
-    file(TO_CMAKE_PATH "${CMAKE_INSTALL_FULL_LIBDIR}/${_default_dir_1}" _normalized_libdir_1)
-    file(TO_CMAKE_PATH "${CMAKE_INSTALL_FULL_LIBDIR}/${_default_dir_2}" _normalized_libdir_2)
-    set(_default_dir_1 "${_normalized_libdir_1}")
-    set(_default_dir_2 "${_normalized_libdir_2}")
-    unset(_normalized_libdir_1)
-    unset(_normalized_libdir_2)
+  set(_description "System collection (${KIM_API_PATH_SEPARATOR}-separated) ${type_string} directory list (entries may begin with $ORIGIN (w/ or w/o {}'s), if appropriate)")
+  if(WIN32 AND NOT CYGWIN)
+    # Note: On Win32, ${ORIGIN} refers to the bin/ directory containing libkim-api.dll.
+    set(_default_dir_1 "\${ORIGIN}/../lib/${_default_dir_1}")   # Here is the important difference between the _1 and _2
+    set(_default_dir_2 "\\\${ORIGIN}/../lib/${_default_dir_2}") # Here is the important difference between the _1 and _2
   else()
     set(_default_dir_1 "\${ORIGIN}/${_default_dir_1}")   # Here is the important difference between the _1 and _2
     set(_default_dir_2 "\\\${ORIGIN}/${_default_dir_2}") # Here is the important difference between the _1 and _2
-    set(_description "${_description} (entries may begin with $ORIGIN (w/ or w/o {}'s), if appropriate)")
   endif()
   set_cache_with_fallback(${var} "${_default_dir_2}" STRING ${_description})
   if("${${var}}" MATCHES "^${KIM_API_PATH_SEPARATOR}")
