@@ -368,7 +368,8 @@ void PrivateReplaceORIGIN(KIM::FILESYSTEM::PathList & pathList,
       {
         // ensure current has no trailing slash
         if (current.filename().empty()) current = current.parent_path();
-        while (!current.parent_path().empty())
+        while (!current.parent_path().empty()
+               && current.parent_path() != current)
         {
           right = current.filename() / right;
           current = current.parent_path();

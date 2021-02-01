@@ -120,6 +120,10 @@ class Path
   {
     return lhs.path_ == rhs.path_;
   }
+  friend bool operator!=(const Path & lhs, const Path & rhs)
+  {
+    return !(lhs == rhs);
+  }
 
   // Concatenates the current path and the argument.
   Path & concat(const std::string & p);
