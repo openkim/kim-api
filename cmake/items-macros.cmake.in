@@ -759,7 +759,7 @@ function(_add_kim_api_library)
   unset(_oneValueArgs)
   unset(_multiValueArgs)
 
-  file(COPY ${KIM-API-ITEMS_DIR}/item-compiled-with-version.txt DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+  configure_file(${KIM-API-ITEMS_DIR}/item-compiled-with-version.txt ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
 
   if("${_ITEM_TYPE}" STREQUAL "modelDriver")
     _set_model_driver_template_variables(
