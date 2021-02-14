@@ -642,6 +642,8 @@ int refresh_routine(KIM_ModelRefresh * const modelRefresh)
   /* set shift to -shift */
   buffer->shift = -buffer->shift;
 
+  /* set influence distance to current value of cutoff parameter */
+  buffer->influenceDistance = buffer->cutoff;
 
   /* store model cutoff in KIM object */
   KIM_ModelRefresh_SetInfluenceDistancePointer(modelRefresh,
