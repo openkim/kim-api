@@ -53,6 +53,7 @@ if("${KIM-API_FIND_VERSION}" VERSION_LESS "2.2.0")
 endif()
 
 if(NOT KIM-API_FIND_QUIETLY)
+  include(FindPackageMessage)
   get_target_property(_kim_loc KIM-API::kim-api IMPORT_LOCATION)
   find_package_message(KIM-API "Found KIM-API: ${_kim_loc}" "KIM-API")
   unset(_kim_loc)
