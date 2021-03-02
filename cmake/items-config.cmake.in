@@ -110,3 +110,7 @@ endmacro(kim_api_items_setup_after_project)
 
 
 include("${CMAKE_CURRENT_LIST_DIR}/kim-api-items-macros.cmake")
+
+if(NOT KIM-API-ITEMS_FIND_QUIETLY)
+  find_package_message(KIM-API-ITEMS "Found KIM-API-ITEMS pacakge." "KIM-API-ITEMS")
+endif()
