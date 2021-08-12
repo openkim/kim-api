@@ -1152,8 +1152,7 @@ program vc_forces_numer_deriv
     particle_energy_sum = 0.0_cd
     do i = 1, N
       if (particleContributing(i) == 0) then
-        if (particle_energy(i) > 0.1e-10_cd .or. &
-            particle_energy(i) < -0.1e-10_cd) then
+        if (abs(particle_energy(i)) > epsilon(0.0_cd)) then
           noncontrib_particle_energy_nonzero = .true.
         end if
       else
