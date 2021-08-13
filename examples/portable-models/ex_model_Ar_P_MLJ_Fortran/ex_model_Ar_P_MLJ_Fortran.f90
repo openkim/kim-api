@@ -389,7 +389,8 @@ contains
     call kim_get_model_buffer_pointer(model_destroy_handle, pbuf)
     call c_f_pointer(pbuf, buf)
     call kim_log_entry(model_destroy_handle, &
-                       KIM_LOG_VERBOSITY_ERROR, "deallocating model buffer")
+                       KIM_LOG_VERBOSITY_INFORMATION, &
+                       "deallocating model buffer")
     deallocate (buf)
     ierr = 0  ! everything is good
   end subroutine model_destroy_func

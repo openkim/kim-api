@@ -734,6 +734,7 @@ SimulatorModelImplementation::~SimulatorModelImplementation()
   LOG_DEBUG("Enter  " + callString);
 
   sharedLibrary_->RemoveParameterFileDirectory();
+  if (sharedLibrary_->IsOpen()) sharedLibrary_->Close();
   delete sharedLibrary_;
 
   LOG_DEBUG("Destroying Log object and exit " + callString);

@@ -71,6 +71,8 @@ class SharedLibrary
   ~SharedLibrary();
 
   int Open(FILESYSTEM::Path const & sharedLibraryName);
+  int IsOpen() const;
+  int IsOpen(FILESYSTEM::Path const & sharedLibraryName) const;
   int Close();
   int GetType(CollectionItemType * const type) const;
   int GetCreateFunctionPointer(LanguageName * const languageName,
@@ -105,6 +107,12 @@ class SharedLibrary
   static FILESYSTEM::Path GetORIGIN();
 
  private:
+  // do not allow copy constructor or operator=
+  SharedLibrary(SharedLibrary const &);
+  void operator=(SharedLibrary const &);
+  // do not allow default constructor
+  SharedLibrary();
+
   struct EmbeddedFile
   {
     char const * fileName;

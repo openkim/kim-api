@@ -131,7 +131,13 @@ SharedLibrary::~SharedLibrary()
 #endif
   LOG_DEBUG("Enter  " + callString);
 
-  Close();
+  if (sharedLibraryHandle_ != NULL)
+  {
+    LOG_WARNING(
+        "SharedLibrary not Close()'d prior to calling ~SharedLibrary().");
+    int error = Close();
+    if (error) { LOG_ERROR("SharedLibrary::Close() returned an error."); }
+  }
 
   LOG_DEBUG("Exit   " + callString);
 }
@@ -334,6 +340,13 @@ int SharedLibrary::Open(FILESYSTEM::Path const & sharedLibraryName)
 
   LOG_DEBUG("Exit 0=" + callString);
   return false;
+}
+
+int SharedLibrary::IsOpen() const { return (sharedLibraryHandle_ != NULL); }
+
+int SharedLibrary::IsOpen(FILESYSTEM::Path const & sharedLibraryName) const
+{
+  return (IsOpen() && sharedLibraryName == sharedLibraryName_);
 }
 
 int SharedLibrary::Close()

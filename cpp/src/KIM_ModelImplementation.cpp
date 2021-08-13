@@ -2082,6 +2082,7 @@ ModelImplementation::~ModelImplementation()
 #endif
   LOG_DEBUG("Enter  " + callString);
 
+  if (sharedLibrary_->IsOpen()) sharedLibrary_->Close();
   delete sharedLibrary_;
 
   LOG_DEBUG("Destroying Log object and exit " + callString);

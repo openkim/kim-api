@@ -490,7 +490,11 @@ int PrivateGetListOfItemMetadataFilesByCollectionAndType(
   if (error) { return true; }
   int extent;
   error = lib.GetNumberOfMetadataFiles(&extent);
-  if (error) { return true; }
+  if (error)
+  {
+    lib.Close();
+    return true;
+  }
 
   for (int i = 0; i < extent; ++i)
   {
@@ -498,7 +502,11 @@ int PrivateGetListOfItemMetadataFilesByCollectionAndType(
     unsigned int length;
     unsigned char const * data;
     error = lib.GetMetadataFile(i, &flnm, &length, &data);
-    if (error) { return true; }
+    if (error)
+    {
+      lib.Close();
+      return true;
+    }
 
     fileNames.push_back(flnm);
     fileStrings.push_back(std::string());
@@ -507,6 +515,7 @@ int PrivateGetListOfItemMetadataFilesByCollectionAndType(
         (strlen(fileStrings.back().c_str()) == length) ? true : false);
   }
 
+  lib.Close();
   return false;
 }
 
