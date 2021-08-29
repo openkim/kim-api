@@ -210,7 +210,7 @@ if test x"${TEST_CM}" = x"yes"; then
   else
     KIM_SIMULATOR_MODEL_EXE="./test-install-relocated/bin/kim-api-simulator-model"
   fi
-  kim-api-collections-management install system `find ../examples/model-drivers -mindepth 1 -maxdepth 1 -type d` &&
+    kim-api-collections-management install system `find ../examples/model-drivers -mindepth 1 -maxdepth 1 -type d` &&
     kim-api-collections-management install system `find ../examples/portable-models -mindepth 1 -maxdepth 1 -type d` &&
     kim-api-collections-management install system `find ../examples/simulator-models -mindepth 1 -maxdepth 1 -type d` &&
     kim-api-collections-management list &&
