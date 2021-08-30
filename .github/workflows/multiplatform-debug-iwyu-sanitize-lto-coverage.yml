@@ -52,6 +52,11 @@ jobs:
 
     env:
       CMAKE_BUILD_TYPE: Debug
+      PATH: "/usr/local/opt/ccache/libexec:$PATH"
+      CXX17: true
+      CXX: g++-9
+      CC: gcc-9
+      FC: gfortran-9
 
     steps:
 
@@ -61,17 +66,10 @@ jobs:
       - name: Install ccache via homebrew
         run: brew install ccache
 
-      - name: Configure environment
-        run: |
-          export PATH="/usr/local/opt/ccache/libexec:$PATH"
-          export CXX17=true
-          export CXX=g++-9
-          export CC=gcc-9
-          export FC=gfortran-9
-          env
-
       - name: Build KIM API, run tests
-        run: ./scripts/ci-build-and-test
+        run: |
+          env
+          ./scripts/ci-build-and-test
 
   fedora-debug-sanitize:
 
