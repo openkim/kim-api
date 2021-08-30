@@ -119,7 +119,7 @@ docker build -t "${TAG}" -f "docker/Dockerfile.${DISTRO}" .  &&
          --build-arg B_COVERAGE="${COVERAGE:+true}" \
          \
          .  &&
-  docker run -it --cap-add SYS_PTRACE --cidfile container.pid ${ci_env} \
+  docker run --cap-add SYS_PTRACE --cidfile container.pid ${ci_env} \
          "${TAG}_w_common" &&
   rm -rf ccache &&
   CON=`cat container.pid` &&
