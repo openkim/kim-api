@@ -62,7 +62,7 @@ jobs:
       # TODO: Should ${HOME}/.ccache always exist?
       - name: Initialize work and ccache dirs
         run: |
-          mkdir "${HOME}/work"
+          mkdir -p "${HOME}/work"
           cd "${HOME}/work"
           mkdir ccache
           if [ -d "${HOME}/.ccache" ]; then cp -r "${HOME}"/.ccache/* ccache; fi
