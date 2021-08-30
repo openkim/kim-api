@@ -44,6 +44,7 @@ RUN zypper -n install \
         include-what-you-use \
         libasan6 \
         make \
+        sysuser-shadow \
         tar \
         vim \
         wget \
