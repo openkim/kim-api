@@ -45,7 +45,7 @@ jobs:
 
   fedora-debug-sanitize:
 
-    name: Fedora
+    name: Fedora (debug & sanitize)
 
     runs-on:
       ubuntu-latest
@@ -82,7 +82,7 @@ jobs:
 
   ubuntu-debug-sanitize:
 
-    name: Ubuntu
+    name: Ubuntu (debug & sanitize)
 
     runs-on:
       ubuntu-latest
@@ -92,6 +92,41 @@ jobs:
       CMAKE_BUILD_TYPE: Debug
       SANITIZE: true
       CXX17: true
+
+    steps:
+
+      - name: Check out repository
+        uses: actions/checkout@v2
+
+      # TODO: Should ${HOME}/.ccache always exist?
+      # TODO: Use actions/cache@v2?
+      - name: Initialize work and ccache dirs
+        run: |
+          mkdir -p "${HOME}/work"
+          cd "${HOME}/work"
+          mkdir ccache
+          if [ -d "${HOME}/.ccache" ]; then cp -r "${HOME}"/.ccache/* ccache; fi
+          env
+
+      - name: Build docker, build KIM API, run tests
+        run: |
+          cd ${HOME}/work
+          ${GITHUB_WORKSPACE}/scripts/ci-docker-build-and-run \
+            "${GITHUB_WORKSPACE}" \
+            "${DISTRO}" \
+            "${GITHUB_REPOSITORY}:${DISTRO}" \
+            "${HOME}/work/ccache"
+
+  ubuntu-cmake@3.10-debug:
+
+    name: Ubuntu cmake@3.10 (debug)
+
+    runs-on:
+      ubuntu-latest
+
+    env:
+      DISTRO: ubuntu_cmake310
+      CMAKE_BUILD_TYPE: Debug
 
     steps:
 
