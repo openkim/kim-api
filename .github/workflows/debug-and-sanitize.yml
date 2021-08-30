@@ -151,3 +151,40 @@ jobs:
             "${DISTRO}" \
             "${GITHUB_REPOSITORY}:${DISTRO}" \
             "${HOME}/work/ccache"
+
+  debian-debug-sanitize:
+
+    name: Debian (debug & sanitize)
+
+    runs-on:
+      ubuntu-latest
+
+    env:
+      DISTRO: debian
+      CMAKE_BUILD_TYPE: Debug
+      SANITIZE: true
+      CXX17: true
+
+    steps:
+
+      - name: Check out repository
+        uses: actions/checkout@v2
+
+      # TODO: Should ${HOME}/.ccache always exist?
+      # TODO: Use actions/cache@v2?
+      - name: Initialize work and ccache dirs
+        run: |
+          mkdir -p "${HOME}/work"
+          cd "${HOME}/work"
+          mkdir ccache
+          if [ -d "${HOME}/.ccache" ]; then cp -r "${HOME}"/.ccache/* ccache; fi
+          env
+
+      - name: Build docker, build KIM API, run tests
+        run: |
+          cd ${HOME}/work
+          ${GITHUB_WORKSPACE}/scripts/ci-docker-build-and-run \
+            "${GITHUB_WORKSPACE}" \
+            "${DISTRO}" \
+            "${GITHUB_REPOSITORY}:${DISTRO}" \
+            "${HOME}/work/ccache"
