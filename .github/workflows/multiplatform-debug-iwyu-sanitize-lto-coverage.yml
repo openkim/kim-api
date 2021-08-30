@@ -71,6 +71,34 @@ jobs:
           env
           ./scripts/ci-build-and-test
 
+  macos-bigsur-debug:
+
+    name: macOS Big Sur 11 (debug)
+
+    runs-on:
+      macos-11
+
+    env:
+      CMAKE_BUILD_TYPE: Debug
+
+    steps:
+
+      - name: Check out repository
+        uses: actions/checkout@v2
+
+      - name: Install ccache via homebrew
+        run: brew install ccache
+
+      - name: Build KIM API, run tests
+        run: |
+          export PATH="/usr/local/opt/ccache/libexec:$PATH"
+          export CXX17=true
+          export CXX=g++-9
+          export CC=gcc-9
+          export FC=gfortran-9
+          env
+          ./scripts/ci-build-and-test
+
   fedora-debug-sanitize:
 
     name: Fedora (debug & sanitize)
