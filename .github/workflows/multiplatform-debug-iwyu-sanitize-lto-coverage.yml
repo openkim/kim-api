@@ -62,13 +62,12 @@ jobs:
         run: brew install ccache
 
       - name: Build KIM API, run tests
-        env:
-          PATH: "/usr/local/opt/ccache/libexec:$PATH"
-          CXX17: true
-          CXX: g++-9
-          CC: gcc-9
-          FC: gfortran-9
         run: |
+          export PATH="/usr/local/opt/ccache/libexec:$PATH"
+          export CXX17=true
+          export CXX=g++-9
+          export CC=gcc-9
+          export FC=gfortran-9
           env
           ./scripts/ci-build-and-test
 
