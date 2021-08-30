@@ -45,7 +45,7 @@ jobs:
 
   macos-catalina-debug:
 
-    name: macOS (debug)
+    name: macOS Catalina 10.15 (debug)
 
     runs-on:
       macos-10.15
