@@ -43,6 +43,27 @@ on:
 
 jobs:
 
+  macos-catalina-debug:
+
+    name: macOS (debug)
+
+    runs-on:
+      macos-10.15
+
+    env:
+      CMAKE_BUILD_TYPE: Debug
+
+    steps:
+
+      - name: Check out repository
+        uses: actions/checkout@v2
+
+      - name: Install ccache via homebrew
+        run: brew install ccache
+
+      - name: Build KIM API, run tests
+        run: ./scripts/ci-build-and-test
+
   fedora-debug-sanitize:
 
     name: Fedora (debug & sanitize)
