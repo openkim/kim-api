@@ -52,11 +52,6 @@ jobs:
 
     env:
       CMAKE_BUILD_TYPE: Debug
-      PATH: "/usr/local/opt/ccache/libexec:$PATH"
-      CXX17: true
-      CXX: g++-9
-      CC: gcc-9
-      FC: gfortran-9
 
     steps:
 
@@ -67,6 +62,12 @@ jobs:
         run: brew install ccache
 
       - name: Build KIM API, run tests
+        env:
+          PATH: "/usr/local/opt/ccache/libexec:$PATH"
+          CXX17: true
+          CXX: g++-9
+          CC: gcc-9
+          FC: gfortran-9
         run: |
           env
           ./scripts/ci-build-and-test
