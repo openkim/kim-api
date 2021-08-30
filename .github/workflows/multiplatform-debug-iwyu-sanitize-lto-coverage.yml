@@ -80,6 +80,47 @@ jobs:
             "${GITHUB_REPOSITORY}:${DISTRO}" \
             "${HOME}/work/ccache"
 
+  openSUSE-debug-IWYU-sanitize-LTO:
+
+    name: openSUSE (debug, IWYU, sanitize & LTO)
+
+    runs-on:
+      ubuntu-latest
+
+    env:
+      DISTRO: openSUSE
+      CMAKE_BUILD_TYPE: Debug
+      IWYU: true
+      SANITIZE: true
+      CXX17: true
+      CXXFLAGS: "-flto=auto"
+      CFLAGS: "-flto=auto"
+      FFLAGS: "-flto=auto"
+
+    steps:
+
+      - name: Check out repository
+        uses: actions/checkout@v2
+
+      # TODO: Should ${HOME}/.ccache always exist?
+      # TODO: Use actions/cache@v2?
+      - name: Initialize work and ccache dirs
+        run: |
+          mkdir -p "${HOME}/work"
+          cd "${HOME}/work"
+          mkdir ccache
+          if [ -d "${HOME}/.ccache" ]; then cp -r "${HOME}"/.ccache/* ccache; fi
+          env
+
+      - name: Build docker, build KIM API, run tests
+        run: |
+          cd ${HOME}/work
+          ${GITHUB_WORKSPACE}/scripts/ci-docker-build-and-run \
+            "${GITHUB_WORKSPACE}" \
+            "${DISTRO}" \
+            "${GITHUB_REPOSITORY}:${DISTRO}" \
+            "${HOME}/work/ccache"
+
   ubuntu-debug-sanitize:
 
     name: Ubuntu (debug & sanitize)
