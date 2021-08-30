@@ -117,7 +117,7 @@ jobs:
             "${GITHUB_REPOSITORY}:${DISTRO}" \
             "${HOME}/work/ccache"
 
-  ubuntu-cmake@3.10-debug:
+  ubuntu-cmake3.10-debug:
 
     name: Ubuntu cmake@3.10 (debug)
 
