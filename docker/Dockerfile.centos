@@ -39,6 +39,7 @@ RUN EPEL_VER=`cat /etc/centos-release | sed -e 's/[^0-9]*\([0-9]*\)\..*/\1/'` &&
         yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-${EPEL_VER}.noarch.rpm
 RUN yum -y install \
         ccache \
+        libarchive \
         cmake \
         findutils \
         gcc \
