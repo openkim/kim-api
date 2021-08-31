@@ -171,12 +171,12 @@ if test x"${TEST_CM}" = x"yes"; then
   set -xv
 
   # now test collections-management and install
-  if [ "$TRAVIS_OS_NAME" != "windows" ]; then
+  if [ "$RUNNER_OS" != "Windows" ]; then
     CUSTOM_PATHLIST=":${PWD}/test-install/my-collection"
   else
     # needs to be of the form C:/.... but ${PWD} is of the form /c/.....
-    # so use TRAVIS_BUILD_DIR for now.
-    CUSTOM_PATHLIST=";${TRAVIS_BUILD_DIR}/build/test-install/my-collection"
+    # so use GITHUB_WORKSPACE for now.
+    CUSTOM_PATHLIST=";${GITHUB_WORKSPACE}/build/test-install/my-collection"
   fi
   mkdir build
   cd build
@@ -205,7 +205,7 @@ if test x"${TEST_CM}" = x"yes"; then
   kim-api-collections-management list || exit $?
 
   set -xv
-  if [ "$TRAVIS_OS_NAME" != "windows" ]; then
+  if [ "$RUNNER_OS" != "Windows" ]; then
     KIM_SIMULATOR_MODEL_EXE="./test-install-relocated/libexec/kim-api/kim-api-simulator-model"
   else
     KIM_SIMULATOR_MODEL_EXE="./test-install-relocated/bin/kim-api-simulator-model"
