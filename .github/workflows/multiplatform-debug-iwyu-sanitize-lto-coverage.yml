@@ -322,3 +322,42 @@ jobs:
             "${DISTRO}" \
             "${GITHUB_REPOSITORY}:${DISTRO}" \
             "${HOME}/work/ccache"
+
+  windows-mingw-debug:
+
+    name: Windows-MinGW (debug)
+
+    runs-on:
+      windows-latest
+
+    env:
+      CMAKE_BUILD_TYPE: Debug
+
+    defaults:
+      run:
+        shell: msys2 {0}
+
+    steps:
+
+      - name: Check out repository
+        uses: actions/checkout@v2
+
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          path-type: minimal
+          update: true
+          install: >-
+            mingw-w64-x86_64-ccache
+            mingw-w64-x86_64-cmake
+            mingw-w64-x86_64-doxygen
+            mingw-w64-x86_64-toolchain
+
+      # TODO: Set up caching
+
+      - name: Build KIM API, run tests
+        env:
+          CMAKE_GENERATOR: MinGW Makefiles
+          MAKE: mingw32-make
+          CMAKE_MAKE_PROGRAM: ${{ env.MAKE }}
+        run: bash ./scripts/ci-build-and-test
