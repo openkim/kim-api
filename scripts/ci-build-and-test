@@ -191,6 +191,7 @@ if test x"${TEST_CM}" = x"yes"; then
         .. \
     || exit $?
   # check that default system collections are added to front of path lists when ":/..." (or ";/...") form is used, as above
+  cat kim-api-configuration-detailed.log
   grep -A1 "KIM_API_SYSTEM_MODEL_DRIVERS_DIR" kim-api-configuration-detailed.log | grep "model-drivers${CUSTOM_PATHLIST}" || exit $?
 
   ${MAKE} -j2 install || exit $?
