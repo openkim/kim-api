@@ -103,20 +103,64 @@ jobs:
           env
           ./scripts/ci-build-and-test
 
-  fedora-debug-sanitize:
+  linux-debug-sanitize:
 
-    name: Fedora (debug & sanitize)
+    strategy:
+      matrix:
+        os: [fedora, openSUSE, ubuntu, centos, debian]
+        include:
+          - os: fedora
+            job_name: Fedora (debug & sanitize)
+            env:
+              DISTRO: fedora
+              CMAKE_BUILD_TYPE: Debug
+              SANITIZE: true
+              CXX17: true
+              CCACHE_DIR: /home/runner/kim-ccache/
+              WORK_DIR: /home/runner/kim-work/
+          - os: openSUSE
+            job_name: openSUSE (debug, IWYU, sanitize & LTO)
+            env:
+              DISTRO: openSUSE
+              CMAKE_BUILD_TYPE: Debug
+              IWYU: true
+              SANITIZE: true
+              CXX17: true
+              CXXFLAGS: "-flto=auto"
+              CFLAGS: "-flto=auto"
+              FFLAGS: "-flto=auto"
+              CCACHE_DIR: /home/runner/kim-ccache/
+              WORK_DIR: /home/runner/kim-work/
+          - os: ubuntu
+            job_name: Ubuntu (debug & sanitize)
+            env:
+              DISTRO: ubuntu
+              CMAKE_BUILD_TYPE: Debug
+              SANITIZE: true
+              CXX17: true
+              CCACHE_DIR: /home/runner/kim-ccache/
+              WORK_DIR: /home/runner/kim-work/
+          - os: centos
+            job_name: CentOS EPEL (debug, sanitize, & coverage)
+            env:
+              DISTRO: centos
+              CMAKE_BUILD_TYPE: Debug
+              SANITIZE: true
+              COVERAGE: true
+              CCACHE_DIR: /home/runner/kim-ccache/
+              WORK_DIR: /home/runner/kim-work/
+          - os: debian
+            job_name: Debian (debug & sanitize)
+            env:
+              DISTRO: debian
+              CMAKE_BUILD_TYPE: Debug
+              SANITIZE: true
+              CXX17: true
+              CCACHE_DIR: /home/runner/kim-ccache/
+              WORK_DIR: /home/runner/kim-work/
 
     runs-on:
       ubuntu-latest
-
-    env:
-      DISTRO: fedora
-      CMAKE_BUILD_TYPE: Debug
-      SANITIZE: true
-      CXX17: true
-      CCACHE_DIR: /home/runner/kim-ccache/
-      WORK_DIR: /home/runner/kim-work/
 
     steps:
 
@@ -156,116 +200,9 @@ jobs:
             "${GITHUB_REPOSITORY}:${{ env.DISTRO }}" \
             "${{ env.CCACHE_DIR }}"
 
-  openSUSE-debug-IWYU-sanitize-LTO:
-
-    name: openSUSE (debug, IWYU, sanitize & LTO)
-
-    runs-on:
-      ubuntu-latest
-
-    env:
-      DISTRO: openSUSE
-      CMAKE_BUILD_TYPE: Debug
-      IWYU: true
-      SANITIZE: true
-      CXX17: true
-      CXXFLAGS: "-flto=auto"
-      CFLAGS: "-flto=auto"
-      FFLAGS: "-flto=auto"
-      CCACHE_DIR: /home/runner/kim-ccache/
-      WORK_DIR: /home/runner/kim-work/
-
-    steps:
-
-      - name: Check out repository
-        uses: actions/checkout@v2
-
-      - name: Initialize ccache
-        uses: actions/cache@v2
-        with:
-          path: ${{ env.CCACHE_DIR }}
-          key: ${{ env.DISTRO }}-ccache-${{ github.sha }}
-          restore-keys: |
-            ${{ env.DISTRO }}-ccache
-
-      - name: Ensure ccache dir exists
-        run: |
-          if [ ! -d ${{ env.CCACHE_DIR }} ]; then \
-            echo "Could not find CCACHE_DIR ${{ env.CCACHE_DIR }}" \
-            && echo "Creating ${{ env.CCACHE_DIR }}" \
-            && mkdir -p ${{ env.CCACHE_DIR }}; \
-          else \
-            echo "Found CCACHE_DIR ${{ env.CCACHE_DIR }}" \
-            && ls -lha ${{ env.CCACHE_DIR }}; \
-          fi
-
-      - name: Ensure work dir exists
-        run: |
-          if [ ! -d ${{ env.WORK_DIR }} ]; then mkdir -p ${{ env.WORK_DIR }}; fi
-
-      - name: Build docker, build KIM API, run tests
-        run: |
-          cd ${{ env.WORK_DIR }}
-          env
-          ${GITHUB_WORKSPACE}/scripts/ci-docker-build-and-run \
-            "${GITHUB_WORKSPACE}" \
-            "${{ env.DISTRO }}" \
-            "${GITHUB_REPOSITORY}:${{ env.DISTRO }}" \
-            "${{ env.CCACHE_DIR }}"
-
-  ubuntu-debug-sanitize:
-
-    name: Ubuntu (debug & sanitize)
-
-    runs-on:
-      ubuntu-latest
-
-    env:
-      DISTRO: ubuntu
-      CMAKE_BUILD_TYPE: Debug
-      SANITIZE: true
-      CXX17: true
-      CCACHE_DIR: /home/runner/kim-ccache/
-      WORK_DIR: /home/runner/kim-work/
-
-    steps:
-
-      - name: Check out repository
-        uses: actions/checkout@v2
-
-      - name: Initialize ccache
-        uses: actions/cache@v2
-        with:
-          path: ${{ env.CCACHE_DIR }}
-          key: ${{ env.DISTRO }}-ccache-${{ github.sha }}
-          restore-keys: |
-            ${{ env.DISTRO }}-ccache
-
-      - name: Ensure ccache dir exists
-        run: |
-          if [ ! -d ${{ env.CCACHE_DIR }} ]; then \
-            echo "Could not find CCACHE_DIR ${{ env.CCACHE_DIR }}" \
-            && echo "Creating ${{ env.CCACHE_DIR }}" \
-            && mkdir -p ${{ env.CCACHE_DIR }}; \
-          else \
-            echo "Found CCACHE_DIR ${{ env.CCACHE_DIR }}" \
-            && ls -lha ${{ env.CCACHE_DIR }}; \
-          fi
-
-      - name: Ensure work dir exists
-        run: |
-          if [ ! -d ${{ env.WORK_DIR }} ]; then mkdir -p ${{ env.WORK_DIR }}; fi
-
-      - name: Build docker, build KIM API, run tests
-        run: |
-          cd ${{ env.WORK_DIR }}
-          env
-          ${GITHUB_WORKSPACE}/scripts/ci-docker-build-and-run \
-            "${GITHUB_WORKSPACE}" \
-            "${{ env.DISTRO }}" \
-            "${GITHUB_REPOSITORY}:${{ env.DISTRO }}" \
-            "${{ env.CCACHE_DIR }}"
-
+  # Ubuntu where we want to use cmake 3.10 specifically has to be separate
+  # because we use a separate gha cache directory for the cmake tarball that is
+  # downloaded.
   ubuntu-cmake310-debug:
 
     name: Ubuntu cmake@3.10 (debug)
@@ -349,112 +286,6 @@ jobs:
             "${GITHUB_REPOSITORY}:${{ env.DISTRO }}" \
             "${{ env.CCACHE_DIR }}" \
             "${{ env.CMAKE_DIR }}"
-
-  CentOS-EPEL-debug-sanitize-coverage:
-
-    name: CentOS EPEL (debug, sanitize, & coverage)
-
-    runs-on:
-      ubuntu-latest
-
-    env:
-      DISTRO: centos
-      CMAKE_BUILD_TYPE: Debug
-      SANITIZE: true
-      COVERAGE: true
-      CCACHE_DIR: /home/runner/kim-ccache/
-      WORK_DIR: /home/runner/kim-work/
-
-    steps:
-
-      - name: Check out repository
-        uses: actions/checkout@v2
-
-      - name: Initialize ccache
-        uses: actions/cache@v2
-        with:
-          path: ${{ env.CCACHE_DIR }}
-          key: ${{ env.DISTRO }}-ccache-${{ github.sha }}
-          restore-keys: |
-            ${{ env.DISTRO }}-ccache
-
-      - name: Ensure ccache dir exists
-        run: |
-          if [ ! -d ${{ env.CCACHE_DIR }} ]; then \
-            echo "Could not find CCACHE_DIR ${{ env.CCACHE_DIR }}" \
-            && echo "Creating ${{ env.CCACHE_DIR }}" \
-            && mkdir -p ${{ env.CCACHE_DIR }}; \
-          else \
-            echo "Found CCACHE_DIR ${{ env.CCACHE_DIR }}" \
-            && ls -lha ${{ env.CCACHE_DIR }}; \
-          fi
-
-      - name: Ensure work dir exists
-        run: |
-          if [ ! -d ${{ env.WORK_DIR }} ]; then mkdir -p ${{ env.WORK_DIR }}; fi
-
-      - name: Build docker, build KIM API, run tests
-        run: |
-          cd ${{ env.WORK_DIR }}
-          env
-          ${GITHUB_WORKSPACE}/scripts/ci-docker-build-and-run \
-            "${GITHUB_WORKSPACE}" \
-            "${{ env.DISTRO }}" \
-            "${GITHUB_REPOSITORY}:${{ env.DISTRO }}" \
-            "${{ env.CCACHE_DIR }}"
-
-  debian-debug-sanitize:
-
-    name: Debian (debug & sanitize)
-
-    runs-on:
-      ubuntu-latest
-
-    env:
-      DISTRO: debian
-      CMAKE_BUILD_TYPE: Debug
-      SANITIZE: true
-      CXX17: true
-      CCACHE_DIR: /home/runner/kim-ccache/
-      WORK_DIR: /home/runner/kim-work/
-
-    steps:
-
-      - name: Check out repository
-        uses: actions/checkout@v2
-
-      - name: Initialize ccache
-        uses: actions/cache@v2
-        with:
-          path: ${{ env.CCACHE_DIR }}
-          key: ${{ env.DISTRO }}-ccache-${{ github.sha }}
-          restore-keys: |
-            ${{ env.DISTRO }}-ccache
-
-      - name: Ensure ccache dir exists
-        run: |
-          if [ ! -d ${{ env.CCACHE_DIR }} ]; then \
-            echo "Could not find CCACHE_DIR ${{ env.CCACHE_DIR }}" \
-            && echo "Creating ${{ env.CCACHE_DIR }}" \
-            && mkdir -p ${{ env.CCACHE_DIR }}; \
-          else \
-            echo "Found CCACHE_DIR ${{ env.CCACHE_DIR }}" \
-            && ls -lha ${{ env.CCACHE_DIR }}; \
-          fi
-
-      - name: Ensure work dir exists
-        run: |
-          if [ ! -d ${{ env.WORK_DIR }} ]; then mkdir -p ${{ env.WORK_DIR }}; fi
-
-      - name: Build docker, build KIM API, run tests
-        run: |
-          cd ${{ env.WORK_DIR }}
-          env
-          ${GITHUB_WORKSPACE}/scripts/ci-docker-build-and-run \
-            "${GITHUB_WORKSPACE}" \
-            "${{ env.DISTRO }}" \
-            "${GITHUB_REPOSITORY}:${{ env.DISTRO }}" \
-            "${{ env.CCACHE_DIR }}"
 
 #  windows-mingw-debug:
 #
