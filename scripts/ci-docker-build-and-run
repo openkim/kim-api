@@ -84,10 +84,17 @@ set -xv
 mkdir "${CONTEXT}" || exit $?
 cd "${CONTEXT}" || exit $?
 if test x"" = x"${CCACHE_DIR}"; then
+  echo "Could not find ccache directory ${CCACHE_DIR}"
   mkdir "ccache" || exit $?
 else
+  echo "Found CCACHE_DIR ${CCACHE_DIR}"
+  echo "Listing contents of CCACHE_DIR..."
+  ls -lha ${CCACHE_DIR}
+  echo "Copying CCACHE_DIR contents to directory 'ccache'"
   cp -r "${CCACHE_DIR}" "ccache" || exit $?
 fi
+echo "Listing contents of directory 'ccache'"
+ls -lha ccache
 (cd "${KIM_DIR}" && git archive --format tar --prefix=kim-api/ HEAD) | \
   tar -xf - || exit $?
 cp -r "${KIM_DIR}/docker" "docker" || exit $?
@@ -123,6 +130,10 @@ docker build -t "${TAG}" -f "docker/Dockerfile.${DISTRO}" .  &&
          "${TAG}_w_common" &&
   rm -rf ccache &&
   CON=`cat container.pid` &&
-  docker cp "${CON}:/home/kim/.ccache" ccache &&
+  docker cp "${CON}:/home/kim/.ccache/." ${CCACHE_DIR} &&
   docker rm "${CON}" || exit $?
+
+echo "Listing contents of CCACHE_DIR ${CCACHE_DIR}"
+ls -lha ${CCACHE_DIR}
+
 set +xv

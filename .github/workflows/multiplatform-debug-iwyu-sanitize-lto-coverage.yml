@@ -27,7 +27,7 @@
 #    Christoph Junghans
 #    Ryan S. Elliott
 #    Alexander Stukowski
-#
+#    Daniel S. Karls
 
 #
 # Release: This file is part of the kim-api.git repository.
@@ -51,12 +51,33 @@ jobs:
       macos-10.15
 
     env:
+      DISTRO: macos_catalina
       CMAKE_BUILD_TYPE: Debug
+      CCACHE_DIR: /Users/runner/.ccache/
 
     steps:
 
       - name: Check out repository
         uses: actions/checkout@v2
+
+      - name: Initialize ccache
+        uses: actions/cache@v2
+        with:
+          path: ${{ env.CCACHE_DIR }}
+          key: ${{ env.DISTRO }}-ccache-${{ github.sha }}
+          restore-keys: |
+            ${{ env.DISTRO }}-ccache
+
+      - name: Ensure ccache dir exists
+        run: |
+          if [ ! -d ${{ env.CCACHE_DIR }} ]; then \
+            echo "Could not find CCACHE_DIR ${{ env.CCACHE_DIR }}" \
+            && echo "Creating ${{ env.CCACHE_DIR }}" \
+            && mkdir -p ${{ env.CCACHE_DIR }}; \
+          else \
+            echo "Found CCACHE_DIR ${{ env.CCACHE_DIR }}" \
+            && ls -lha ${{ env.CCACHE_DIR }}; \
+          fi
 
       - name: Install ccache via homebrew
         run: brew install ccache
@@ -79,12 +100,33 @@ jobs:
       macos-11
 
     env:
+      DISTRO: macos_bigsur
       CMAKE_BUILD_TYPE: Debug
+      CCACHE_DIR: /Users/runner/.ccache/
 
     steps:
 
       - name: Check out repository
         uses: actions/checkout@v2
+
+      - name: Initialize ccache
+        uses: actions/cache@v2
+        with:
+          path: ${{ env.CCACHE_DIR }}
+          key: ${{ env.DISTRO }}-ccache-${{ github.sha }}
+          restore-keys: |
+            ${{ env.DISTRO }}-ccache
+
+      - name: Ensure ccache dir exists
+        run: |
+          if [ ! -d ${{ env.CCACHE_DIR }} ]; then \
+            echo "Could not find CCACHE_DIR ${{ env.CCACHE_DIR }}" \
+            && echo "Creating ${{ env.CCACHE_DIR }}" \
+            && mkdir -p ${{ env.CCACHE_DIR }}; \
+          else \
+            echo "Found CCACHE_DIR ${{ env.CCACHE_DIR }}" \
+            && ls -lha ${{ env.CCACHE_DIR }}; \
+          fi
 
       - name: Install ccache via homebrew
         run: brew install ccache
@@ -111,30 +153,46 @@ jobs:
       CMAKE_BUILD_TYPE: Debug
       SANITIZE: true
       CXX17: true
+      CCACHE_DIR: /home/runner/kim-ccache/
+      WORK_DIR: /home/runner/kim-work/
 
     steps:
 
       - name: Check out repository
         uses: actions/checkout@v2
 
-      # TODO: Should ${HOME}/.ccache always exist?
-      # TODO: Use actions/cache@v2?
-      - name: Initialize work and ccache dirs
+      - name: Initialize ccache
+        uses: actions/cache@v2
+        with:
+          path: ${{ env.CCACHE_DIR }}
+          key: ${{ env.DISTRO }}-ccache-${{ github.sha }}
+          restore-keys: |
+            ${{ env.DISTRO }}-ccache
+
+      - name: Ensure ccache dir exists
         run: |
-          mkdir -p "${HOME}/work"
-          cd "${HOME}/work"
-          mkdir ccache
-          if [ -d "${HOME}/.ccache" ]; then cp -r "${HOME}"/.ccache/* ccache; fi
-          env
+          if [ ! -d ${{ env.CCACHE_DIR }} ]; then \
+            echo "Could not find CCACHE_DIR ${{ env.CCACHE_DIR }}" \
+            && echo "Creating ${{ env.CCACHE_DIR }}" \
+            && mkdir -p ${{ env.CCACHE_DIR }}; \
+          else \
+            echo "Found CCACHE_DIR ${{ env.CCACHE_DIR }}" \
+            && ls -lha ${{ env.CCACHE_DIR }}; \
+          fi
+
+      - name: Ensure work dir exists
+        run: |
+          if [ ! -d ${{ env.WORK_DIR }} ]; then mkdir -p ${{ env.WORK_DIR }}; fi
 
       - name: Build docker, build KIM API, run tests
         run: |
-          cd ${HOME}/work
+          cd ${{ env.WORK_DIR }}
+          env
           ${GITHUB_WORKSPACE}/scripts/ci-docker-build-and-run \
             "${GITHUB_WORKSPACE}" \
-            "${DISTRO}" \
-            "${GITHUB_REPOSITORY}:${DISTRO}" \
-            "${HOME}/work/ccache"
+            "${{ env.DISTRO }}" \
+            "${GITHUB_REPOSITORY}:${{ env.DISTRO }}" \
+            "${{ env.CCACHE_DIR }}"
 
   openSUSE-debug-IWYU-sanitize-LTO:
 
@@ -152,30 +210,46 @@ jobs:
       CXXFLAGS: "-flto=auto"
       CFLAGS: "-flto=auto"
       FFLAGS: "-flto=auto"
+      CCACHE_DIR: /home/runner/kim-ccache/
+      WORK_DIR: /home/runner/kim-work/
 
     steps:
 
       - name: Check out repository
         uses: actions/checkout@v2
 
-      # TODO: Should ${HOME}/.ccache always exist?
-      # TODO: Use actions/cache@v2?
-      - name: Initialize work and ccache dirs
+      - name: Initialize ccache
+        uses: actions/cache@v2
+        with:
+          path: ${{ env.CCACHE_DIR }}
+          key: ${{ env.DISTRO }}-ccache-${{ github.sha }}
+          restore-keys: |
+            ${{ env.DISTRO }}-ccache
+
+      - name: Ensure ccache dir exists
         run: |
-          mkdir -p "${HOME}/work"
-          cd "${HOME}/work"
-          mkdir ccache
-          if [ -d "${HOME}/.ccache" ]; then cp -r "${HOME}"/.ccache/* ccache; fi
-          env
+          if [ ! -d ${{ env.CCACHE_DIR }} ]; then \
+            echo "Could not find CCACHE_DIR ${{ env.CCACHE_DIR }}" \
+            && echo "Creating ${{ env.CCACHE_DIR }}" \
+            && mkdir -p ${{ env.CCACHE_DIR }}; \
+          else \
+            echo "Found CCACHE_DIR ${{ env.CCACHE_DIR }}" \
+            && ls -lha ${{ env.CCACHE_DIR }}; \
+          fi
+
+      - name: Ensure work dir exists
+        run: |
+          if [ ! -d ${{ env.WORK_DIR }} ]; then mkdir -p ${{ env.WORK_DIR }}; fi
 
       - name: Build docker, build KIM API, run tests
         run: |
-          cd ${HOME}/work
+          cd ${{ env.WORK_DIR }}
+          env
           ${GITHUB_WORKSPACE}/scripts/ci-docker-build-and-run \
             "${GITHUB_WORKSPACE}" \
-            "${DISTRO}" \
-            "${GITHUB_REPOSITORY}:${DISTRO}" \
-            "${HOME}/work/ccache"
+            "${{ env.DISTRO }}" \
+            "${GITHUB_REPOSITORY}:${{ env.DISTRO }}" \
+            "${{ env.CCACHE_DIR }}"
 
   ubuntu-debug-sanitize:
 
@@ -189,30 +263,46 @@ jobs:
       CMAKE_BUILD_TYPE: Debug
       SANITIZE: true
       CXX17: true
+      CCACHE_DIR: /home/runner/kim-ccache/
+      WORK_DIR: /home/runner/kim-work/
 
     steps:
 
       - name: Check out repository
         uses: actions/checkout@v2
 
-      # TODO: Should ${HOME}/.ccache always exist?
-      # TODO: Use actions/cache@v2?
-      - name: Initialize work and ccache dirs
+      - name: Initialize ccache
+        uses: actions/cache@v2
+        with:
+          path: ${{ env.CCACHE_DIR }}
+          key: ${{ env.DISTRO }}-ccache-${{ github.sha }}
+          restore-keys: |
+            ${{ env.DISTRO }}-ccache
+
+      - name: Ensure ccache dir exists
         run: |
-          mkdir -p "${HOME}/work"
-          cd "${HOME}/work"
-          mkdir ccache
-          if [ -d "${HOME}/.ccache" ]; then cp -r "${HOME}"/.ccache/* ccache; fi
-          env
+          if [ ! -d ${{ env.CCACHE_DIR }} ]; then \
+            echo "Could not find CCACHE_DIR ${{ env.CCACHE_DIR }}" \
+            && echo "Creating ${{ env.CCACHE_DIR }}" \
+            && mkdir -p ${{ env.CCACHE_DIR }}; \
+          else \
+            echo "Found CCACHE_DIR ${{ env.CCACHE_DIR }}" \
+            && ls -lha ${{ env.CCACHE_DIR }}; \
+          fi
+
+      - name: Ensure work dir exists
+        run: |
+          if [ ! -d ${{ env.WORK_DIR }} ]; then mkdir -p ${{ env.WORK_DIR }}; fi
 
       - name: Build docker, build KIM API, run tests
         run: |
-          cd ${HOME}/work
+          cd ${{ env.WORK_DIR }}
+          env
           ${GITHUB_WORKSPACE}/scripts/ci-docker-build-and-run \
             "${GITHUB_WORKSPACE}" \
-            "${DISTRO}" \
-            "${GITHUB_REPOSITORY}:${DISTRO}" \
-            "${HOME}/work/ccache"
+            "${{ env.DISTRO }}" \
+            "${GITHUB_REPOSITORY}:${{ env.DISTRO }}" \
+            "${{ env.CCACHE_DIR }}"
 
   ubuntu-cmake310-debug:
 
@@ -224,30 +314,46 @@ jobs:
     env:
       DISTRO: ubuntu_cmake310
       CMAKE_BUILD_TYPE: Debug
+      CCACHE_DIR: /home/runner/kim-ccache/
+      WORK_DIR: /home/runner/kim-work/
 
     steps:
 
       - name: Check out repository
         uses: actions/checkout@v2
 
-      # TODO: Should ${HOME}/.ccache always exist?
-      # TODO: Use actions/cache@v2?
-      - name: Initialize work and ccache dirs
+      - name: Initialize ccache
+        uses: actions/cache@v2
+        with:
+          path: ${{ env.CCACHE_DIR }}
+          key: ${{ env.DISTRO }}-ccache-${{ github.sha }}
+          restore-keys: |
+            ${{ env.DISTRO }}-ccache
+
+      - name: Ensure ccache dir exists
         run: |
-          mkdir -p "${HOME}/work"
-          cd "${HOME}/work"
-          mkdir ccache
-          if [ -d "${HOME}/.ccache" ]; then cp -r "${HOME}"/.ccache/* ccache; fi
-          env
+          if [ ! -d ${{ env.CCACHE_DIR }} ]; then \
+            echo "Could not find CCACHE_DIR ${{ env.CCACHE_DIR }}" \
+            && echo "Creating ${{ env.CCACHE_DIR }}" \
+            && mkdir -p ${{ env.CCACHE_DIR }}; \
+          else \
+            echo "Found CCACHE_DIR ${{ env.CCACHE_DIR }}" \
+            && ls -lha ${{ env.CCACHE_DIR }}; \
+          fi
+
+      - name: Ensure work dir exists
+        run: |
+          if [ ! -d ${{ env.WORK_DIR }} ]; then mkdir -p ${{ env.WORK_DIR }}; fi
 
       - name: Build docker, build KIM API, run tests
         run: |
-          cd ${HOME}/work
+          cd ${{ env.WORK_DIR }}
+          env
           ${GITHUB_WORKSPACE}/scripts/ci-docker-build-and-run \
             "${GITHUB_WORKSPACE}" \
-            "${DISTRO}" \
-            "${GITHUB_REPOSITORY}:${DISTRO}" \
-            "${HOME}/work/ccache"
+            "${{ env.DISTRO }}" \
+            "${GITHUB_REPOSITORY}:${{ env.DISTRO }}" \
+            "${{ env.CCACHE_DIR }}"
 
   CentOS-EPEL-debug-sanitize-coverage:
 
@@ -261,30 +367,46 @@ jobs:
       CMAKE_BUILD_TYPE: Debug
       SANITIZE: true
       COVERAGE: true
+      CCACHE_DIR: /home/runner/kim-ccache/
+      WORK_DIR: /home/runner/kim-work/
 
     steps:
 
       - name: Check out repository
         uses: actions/checkout@v2
 
-      # TODO: Should ${HOME}/.ccache always exist?
-      # TODO: Use actions/cache@v2?
-      - name: Initialize work and ccache dirs
+      - name: Initialize ccache
+        uses: actions/cache@v2
+        with:
+          path: ${{ env.CCACHE_DIR }}
+          key: ${{ env.DISTRO }}-ccache-${{ github.sha }}
+          restore-keys: |
+            ${{ env.DISTRO }}-ccache
+
+      - name: Ensure ccache dir exists
         run: |
-          mkdir -p "${HOME}/work"
-          cd "${HOME}/work"
-          mkdir ccache
-          if [ -d "${HOME}/.ccache" ]; then cp -r "${HOME}"/.ccache/* ccache; fi
-          env
+          if [ ! -d ${{ env.CCACHE_DIR }} ]; then \
+            echo "Could not find CCACHE_DIR ${{ env.CCACHE_DIR }}" \
+            && echo "Creating ${{ env.CCACHE_DIR }}" \
+            && mkdir -p ${{ env.CCACHE_DIR }}; \
+          else \
+            echo "Found CCACHE_DIR ${{ env.CCACHE_DIR }}" \
+            && ls -lha ${{ env.CCACHE_DIR }}; \
+          fi
+
+      - name: Ensure work dir exists
+        run: |
+          if [ ! -d ${{ env.WORK_DIR }} ]; then mkdir -p ${{ env.WORK_DIR }}; fi
 
       - name: Build docker, build KIM API, run tests
         run: |
-          cd ${HOME}/work
+          cd ${{ env.WORK_DIR }}
+          env
           ${GITHUB_WORKSPACE}/scripts/ci-docker-build-and-run \
             "${GITHUB_WORKSPACE}" \
-            "${DISTRO}" \
-            "${GITHUB_REPOSITORY}:${DISTRO}" \
-            "${HOME}/work/ccache"
+            "${{ env.DISTRO }}" \
+            "${GITHUB_REPOSITORY}:${{ env.DISTRO }}" \
+            "${{ env.CCACHE_DIR }}"
 
   debian-debug-sanitize:
 
@@ -298,30 +420,46 @@ jobs:
       CMAKE_BUILD_TYPE: Debug
       SANITIZE: true
       CXX17: true
+      CCACHE_DIR: /home/runner/kim-ccache/
+      WORK_DIR: /home/runner/kim-work/
 
     steps:
 
       - name: Check out repository
         uses: actions/checkout@v2
 
-      # TODO: Should ${HOME}/.ccache always exist?
-      # TODO: Use actions/cache@v2?
-      - name: Initialize work and ccache dirs
+      - name: Initialize ccache
+        uses: actions/cache@v2
+        with:
+          path: ${{ env.CCACHE_DIR }}
+          key: ${{ env.DISTRO }}-ccache-${{ github.sha }}
+          restore-keys: |
+            ${{ env.DISTRO }}-ccache
+
+      - name: Ensure ccache dir exists
         run: |
-          mkdir -p "${HOME}/work"
-          cd "${HOME}/work"
-          mkdir ccache
-          if [ -d "${HOME}/.ccache" ]; then cp -r "${HOME}"/.ccache/* ccache; fi
-          env
+          if [ ! -d ${{ env.CCACHE_DIR }} ]; then \
+            echo "Could not find CCACHE_DIR ${{ env.CCACHE_DIR }}" \
+            && echo "Creating ${{ env.CCACHE_DIR }}" \
+            && mkdir -p ${{ env.CCACHE_DIR }}; \
+          else \
+            echo "Found CCACHE_DIR ${{ env.CCACHE_DIR }}" \
+            && ls -lha ${{ env.CCACHE_DIR }}; \
+          fi
+
+      - name: Ensure work dir exists
+        run: |
+          if [ ! -d ${{ env.WORK_DIR }} ]; then mkdir -p ${{ env.WORK_DIR }}; fi
 
       - name: Build docker, build KIM API, run tests
         run: |
-          cd ${HOME}/work
+          cd ${{ env.WORK_DIR }}
+          env
           ${GITHUB_WORKSPACE}/scripts/ci-docker-build-and-run \
             "${GITHUB_WORKSPACE}" \
-            "${DISTRO}" \
-            "${GITHUB_REPOSITORY}:${DISTRO}" \
-            "${HOME}/work/ccache"
+            "${{ env.DISTRO }}" \
+            "${GITHUB_REPOSITORY}:${{ env.DISTRO }}" \
+            "${{ env.CCACHE_DIR }}"
 
 #  windows-mingw-debug:
 #

@@ -115,12 +115,15 @@ if test x"${TEST_BUILD}" = x"yes"; then
   mkdir build
   cd build
   ccache -z
-  # cmake will respect value of the follwoing environment variables:
+  # cmake will respect value of the following environment variables:
   #   CXX,      CC,     and FC
   #   CXXFLAGS, CFLAGS, and FFLAGS
   cmake --warn-uninitialized \
         -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX:=/usr/local} \
         -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} \
+        -DCMAKE_C_COMPILER_LAUNCHER=ccache \
+        -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
+        -DCMAKE_FORTRAN_COMPILER_LAUNCHER=ccache \
         ${SANITIZE:+-DKIM_API_ENABLE_SANITIZE=ON} \
         ${COVERAGE:+-DKIM_API_ENABLE_COVERAGE=ON} \
         ${IWYU:+-DCMAKE_CXX_INCLUDE_WHAT_YOU_USE=include-what-you-use} \
@@ -183,6 +186,9 @@ if test x"${TEST_CM}" = x"yes"; then
   ccache -z
   cmake -DCMAKE_INSTALL_PREFIX="${PWD}/test-install" \
         -DCMAKE_BUILD_TYPE="${CMAKE_BUILD_TYPE}" \
+        -DCMAKE_C_COMPILER_LAUNCHER=ccache \
+        -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
+        -DCMAKE_FORTRAN_COMPILER_LAUNCHER=ccache \
         -DKIM_API_BUILD_EXAMPLES=OFF \
         -DKIM_API_SYSTEM_MODEL_DRIVERS_DIR="${CUSTOM_PATHLIST}" \
         -DKIM_API_SYSTEM_PORTABLE_MODELS_DIR="${CUSTOM_PATHLIST}" \
