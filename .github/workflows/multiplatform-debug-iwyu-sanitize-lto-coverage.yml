@@ -255,7 +255,7 @@ jobs:
           export CMAKE_PKG_NAME=cmake-${CMAKE_VER}-Linux-x86_64
           export CMAKE_ARCHIVE_NAME=${CMAKE_PKG_NAME}.tar.gz
           cd ${CMAKE_DIR}
-          wget http://github.com/Kitware/CMake/releases/download/v${CMAKE_VER}/${CMAKE_ARCHIVE_NAME}
+          wget http://github.com/Kitware/CMake/releases/download/v${CMAKE_VER}/${CMAKE_ARCHIVE_NAME} -O ${CMAKE_ARCHIVE_NAME}
 
       - name: Initialize ccache
         uses: actions/cache@v2
