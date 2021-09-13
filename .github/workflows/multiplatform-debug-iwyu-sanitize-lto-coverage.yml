@@ -43,64 +43,26 @@ on:
 
 jobs:
 
-  macos-catalina-debug:
+  macos-debug:
 
-    name: macOS Catalina 10.15 (debug)
+    strategy:
+      matrix:
+        os: [macos-10.15, macos-11]
+        include:
+          - os: macos-10.15
+            DISTRO: macos_catalina
+            job_name: macOS Catalina 10.15 (debug)
 
-    runs-on:
-      macos-10.15
+          - os: macos-11
+            DISTRO: macos_bigsur
+            job_name: macOS Big Sur 11 (debug)
 
-    env:
-      DISTRO: macos_catalina
-      CMAKE_BUILD_TYPE: Debug
-      CCACHE_DIR: /Users/runner/.ccache/
+    name: ${{ matrix.job_name }}
 
-    steps:
-
-      - name: Check out repository
-        uses: actions/checkout@v2
-
-      - name: Initialize ccache
-        uses: actions/cache@v2
-        with:
-          path: ${{ env.CCACHE_DIR }}
-          key: ${{ env.DISTRO }}-ccache-${{ github.sha }}
-          restore-keys: |
-            ${{ env.DISTRO }}-ccache
-
-      - name: Ensure ccache dir exists
-        run: |
-          if [ ! -d ${{ env.CCACHE_DIR }} ]; then \
-            echo "Could not find CCACHE_DIR ${{ env.CCACHE_DIR }}" \
-            && echo "Creating ${{ env.CCACHE_DIR }}" \
-            && mkdir -p ${{ env.CCACHE_DIR }}; \
-          else \
-            echo "Found CCACHE_DIR ${{ env.CCACHE_DIR }}" \
-            && ls -lha ${{ env.CCACHE_DIR }}; \
-          fi
-
-      - name: Install ccache via homebrew
-        run: brew install ccache
-
-      - name: Build KIM API, run tests
-        run: |
-          export PATH="/usr/local/opt/ccache/libexec:$PATH"
-          export CXX17=true
-          export CXX=g++-9
-          export CC=gcc-9
-          export FC=gfortran-9
-          env
-          ./scripts/ci-build-and-test
-
-  macos-bigsur-debug:
-
-    name: macOS Big Sur 11 (debug)
-
-    runs-on:
-      macos-11
+    runs-on: ${{ matrix.os }}
 
     env:
-      DISTRO: macos_bigsur
+      DISTRO: ${{ matrix.DISTRO }}
       CMAKE_BUILD_TYPE: Debug
       CCACHE_DIR: /Users/runner/.ccache/
 
