@@ -159,6 +159,8 @@ jobs:
               CCACHE_DIR: /home/runner/kim-ccache/
               WORK_DIR: /home/runner/kim-work/
 
+    name: ${{ matrix.job_name }}
+
     runs-on:
       ubuntu-latest
 
