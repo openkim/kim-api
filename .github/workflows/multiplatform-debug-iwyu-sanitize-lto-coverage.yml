@@ -315,12 +315,44 @@ jobs:
       DISTRO: ubuntu_cmake310
       CMAKE_BUILD_TYPE: Debug
       CCACHE_DIR: /home/runner/kim-ccache/
+      CMAKE_DIR: /home/runner/kim-cmake310/
       WORK_DIR: /home/runner/kim-work/
 
     steps:
 
       - name: Check out repository
         uses: actions/checkout@v2
+
+      - name: Initialize cmake 3.10 binaries cache
+        id: cmake-cache
+        uses: actions/cache@v2
+        with:
+          path: ${{ env.CMAKE_DIR }}
+          key: ${{ env.DISTRO }}-cmake-${{ github.sha }}
+          restore-keys: |
+            ${{ env.DISTRO }}-cmake
+
+      - name: Ensure cmake dir exists
+        run: |
+          if [ ! -d ${{ env.CMAKE_DIR }} ]; then \
+            echo "Could not find CMAKE_DIR ${{ env.CMAKE_DIR }}" \
+            && echo "Creating ${{ env.CMAKE_DIR }}" \
+            && mkdir -p ${{ env.CMAKE_DIR }}; \
+          else \
+            echo "Found CMAKE_DIR ${{ env.CMAKE_DIR }}" \
+            && ls -lha ${{ env.CMAKE_DIR }}; \
+          fi
+
+      # NOTE: The archive downloaded *must* end in .tar.gz and be decompressable via
+      #       `tar -xzf`
+      - name: Download cmake 3.10.3 binaries, if necessary
+        if: steps.cmake-cache.outputs.cache-hit != 'true'
+        run: |
+          export CMAKE_VER=3.10.3
+          export CMAKE_PKG_NAME=cmake-${CMAKE_VER}-Linux-x86_64
+          export CMAKE_ARCHIVE_NAME=${CMAKE_PKG_NAME}.tar.gz
+          cd ${CMAKE_DIR}
+          wget http://github.com/Kitware/CMake/releases/download/v${CMAKE_VER}/${CMAKE_ARCHIVE_NAME}
 
       - name: Initialize ccache
         uses: actions/cache@v2
@@ -353,7 +385,8 @@ jobs:
             "${GITHUB_WORKSPACE}" \
             "${{ env.DISTRO }}" \
             "${GITHUB_REPOSITORY}:${{ env.DISTRO }}" \
-            "${{ env.CCACHE_DIR }}"
+            "${{ env.CCACHE_DIR }}" \
+            "${{ env.CMAKE_DIR }}"
 
   CentOS-EPEL-debug-sanitize-coverage:
 

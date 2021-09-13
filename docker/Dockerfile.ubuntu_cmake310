@@ -38,7 +38,6 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get -y update && \
     DEBIAN_FRONTEND=noninteractive apt-get -y install --no-install-recommends \
         ca-certificates \
         ccache \
-        cmake \
         findutils \
         gcc \
         g++ \
@@ -52,13 +51,17 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get -y update && \
         xz-utils \
     && rm -rf /var/lib/apt/lists/*
 
-RUN wget http://www.cmake.org/files/v3.10/cmake-3.10.3.tar.gz
-RUN tar -xzf cmake-3.10.3.tar.gz
-WORKDIR cmake-3.10.3/
-RUN ./configure
-RUN make
-RUN make install
-RUN update-alternatives --install /usr/bin/cmake cmake /usr/local/bin/cmake 1 --force
+COPY cmake cmake_tmp
+
+# NOTE: The name of the cmake archive inside of the 'cmake' directory *must* end with a
+# (single) '.tar.gz' suffix
+RUN cd cmake_tmp \
+    && export CMAKE_ARCHIVE_NAME=`ls cmake-*` \
+    && export CMAKE_PKG_NAME=`echo $CMAKE_ARCHIVE_NAME | awk '{split($0,a,".tar.gz"); print a[1]}'` \
+    && tar -xzf ${CMAKE_ARCHIVE_NAME} \
+    && mv ${CMAKE_PKG_NAME}/bin/* /usr/local/bin/ \
+    && mv ${CMAKE_PKG_NAME}/share/* /usr/local/share/ \
+    && rm -rf ${CMAKE_ARCHIVE_NAME} ${CMAKE_PKG_NAME}
 RUN cmake --version
 
 # specify build prefix to be used (optional)
