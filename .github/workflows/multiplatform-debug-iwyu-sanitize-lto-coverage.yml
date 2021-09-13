@@ -162,6 +162,8 @@ jobs:
     runs-on:
       ubuntu-latest
 
+    env: ${{ matrix.env }}
+
     steps:
 
       - name: Check out repository
