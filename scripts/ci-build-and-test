@@ -27,6 +27,7 @@
 # Contributors:
 #    Ryan S. Elliott
 #    Alexander Stukowski
+#    Daniel S. Karls
 #
 
 #
@@ -34,127 +35,223 @@
 #
 
 
+# define usage function
+usage () {
+  local command="`printf $0 | sed 's|.*/\([^/][^/]*\)/*|\1|'`"
+
+  # Follows docopt.org format
+  printf "Usage:\n"
+  printf "  ${command}\n"
+  printf "  ${command} (test_build | test_cm | test_install_instructions)...\n"
+}
+
 # check for required env
 if test x"" = x"${CMAKE_BUILD_TYPE}"; then
   printf "error: must define CMAKE_BUILD_TYPE.\n"
+  usage
   exit 1
 fi
 
+print_separator_line () {
+  printf "%79s\n" " " | sed -e "s/ /$1/g"
+}
 
-set -xv
+
+# check for command line arguments specifying which part of the tests to run
+# default (no args) is to run all tests
+if test $# -lt 1; then
+  TEST_BUILD=yes
+  TEST_CM=yes
+  TEST_INSTALL_INSTRUCTIONS=yes
+else
+  # run only the tests requested "test_build" "test_cm" or "test_install_instructions"
+  while test $# -ne 0; do
+    case $1 in
+      test_build)
+        TEST_BUILD=yes
+      ;;
+      test_cm)
+        TEST_CM=yes
+      ;;
+      test_install_instructions)
+        TEST_INSTALL_INSTRUCTIONS=yes
+      ;;
+      *)
+        printf "unknown option: %s.  Ignoring.\n\n" $1
+    esac
+    shift
+  done
+fi
+
+# report settings
+print_separator_line "-"
+printf "ci-build-and-test\n"
+printf "  testing will include:\n"
+if test x"${TEST_BUILD}" = x"yes"; then
+  printf "    - test_build\n"
+fi
+if test x"${TEST_CM}" = x"yes"; then
+  printf "    - test_cm\n"
+fi
+if test x"${TEST_INSTALL_INSTRUCTIONS}" = x"yes"; then
+  printf "    - test_install_instructions\n"
+fi
+print_separator_line "-"
+printf "\n"
+
 # print environment
+set -xv
 env
 
 # set MAKE command variable to default if necessary
 MAKE=${MAKE:-make}
-
-mkdir build
-cd build
-ccache -z
-# cmake will respect value of the follwoing environment variables:
-#   CXX,      CC,     and FC
-#   CXXFLAGS, CFLAGS, and FFLAGS
-cmake --warn-uninitialized \
-      -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX:=/usr/local} \
-      -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} \
-      ${SANITIZE:+-DKIM_API_ENABLE_SANITIZE=ON} \
-      ${COVERAGE:+-DKIM_API_ENABLE_COVERAGE=ON} \
-      ${IWYU:+-DCMAKE_CXX_INCLUDE_WHAT_YOU_USE=include-what-you-use} \
-      ${IWYU:+-DCMAKE_C_INCLUDE_WHAT_YOU_USE=include-what-you-use} \
-      .. \
-  || exit $?
-cat kim-api-configuration-detailed.log
-${MAKE} -j2 || exit $?
-ccache -s
-
-ctest --output-on-failure || exit $?
-
-if test x"${COVERAGE}" != x""; then
-  bash <(curl -s https://codecov.io/bash) || exit $?
-fi
-
-mkdir ${PWD}/destdir
-${MAKE} install DESTDIR=${PWD}/destdir || exit $?
-# Query value of ${CMAKE_INSTALL_PREFIX} from CMake cache (https://stackoverflow.com/questions/8474753/how-to-get-a-cmake-variable-from-the-command-line)
-# Remove drive letter (C:), which precedes the path on Windows (MinGW) platform.
-INSTALL_PREFIX=`cmake -L -N . | grep CMAKE_INSTALL_PREFIX | cut -d "=" -f2 | cut -d ":" -f2`
-echo "CMAKE_INSTALL_PREFIX is: ${INSTALL_PREFIX}"
-rm -rf "${PWD}/destdir${INSTALL_PREFIX}/"{bin,include,libexec,share} || exit $?
-rm -rf "${PWD}/destdir${LIB_DIR:=${INSTALL_PREFIX}/lib}" || exit $?
-rm -rf "${PWD}/destdir${BASH_COMPLETION_DIR:=${INSTALL_PREFIX}/etc}" || exit $?
 set +xv
-printf -- "--- remaining installed files ---\n" &&
-  find "${PWD}/destdir" &&
-  printf -- "---------------------------------\n"
-set -xv
-dir="${INSTALL_PREFIX}"
-while test x"" != x"${dir}"; do
-  rmdir "${PWD}/destdir${dir}" || exit $?
-  dir=`printf -- "${dir}" | sed -e 's|\(.*\)/.*|\1|'`
-done
-rmdir "${PWD}/destdir" || exit $?
-cd ../
-rm -rf "build" || exit $?
 
-# now test collections-management and install
-if [ "$TRAVIS_OS_NAME" != "windows" ]; then
-  CUSTOM_PATHLIST=":${PWD}/test-install/my-collection"
-else
-  # needs to be of the form C:/.... but ${PWD} is of the form /c/.....
-  # so use TRAVIS_BUILD_DIR for now.
-  CUSTOM_PATHLIST=";${TRAVIS_BUILD_DIR}/build/test-install/my-collection"
-fi
-mkdir build
-cd build
-ccache -z
-cmake -DCMAKE_INSTALL_PREFIX="${PWD}/test-install" \
-      -DCMAKE_BUILD_TYPE="${CMAKE_BUILD_TYPE}" \
-      -DKIM_API_BUILD_EXAMPLES=OFF \
-      -DKIM_API_SYSTEM_MODEL_DRIVERS_DIR="${CUSTOM_PATHLIST}" \
-      -DKIM_API_SYSTEM_PORTABLE_MODELS_DIR="${CUSTOM_PATHLIST}" \
-      -DKIM_API_SYSTEM_SIMULATOR_MODELS_DIR="${CUSTOM_PATHLIST}" \
-      ${CXX17:+-DCMAKE_CXX_STANDARD=17}  `#[use std::filesystem spport (assume it is available)]` \
-      .. \
-  || exit $?
-# check that default system collections are added to front of path lists when ":/..." (or ";/...") form is used, as above
-grep -A1 "KIM_API_SYSTEM_MODEL_DRIVERS_DIR" kim-api-configuration-detailed.log | grep "model-drivers${CUSTOM_PATHLIST}" || exit $?
+###############################################################################
+# Build (if enabled: sanitize, coverage, iwyu), CTest, DESTDIR Install & delete
+###############################################################################
+if test x"${TEST_BUILD}" = x"yes"; then
+  set -xv
 
-${MAKE} -j2 install || exit $?
-ccache -s
-
-# move install tree to test relocatability
-mv test-install test-install-relocated || exit $?
-
-set +xv
-printf "calling ${PWD}/test-install-relocated/bin/kim-api-activate\n"
-source "${PWD}/test-install-relocated/bin/kim-api-activate" || exit $?
-kim-api-collections-management list || exit $?
-
-set -xv
-if [ "$TRAVIS_OS_NAME" != "windows" ]; then
-  KIM_SIMULATOR_MODEL_EXE="./test-install-relocated/libexec/kim-api/kim-api-simulator-model"
-else
-  KIM_SIMULATOR_MODEL_EXE="./test-install-relocated/bin/kim-api-simulator-model"
-fi
-kim-api-collections-management install system `find ../examples/model-drivers -mindepth 1 -maxdepth 1 -type d` &&
-  kim-api-collections-management install system `find ../examples/portable-models -mindepth 1 -maxdepth 1 -type d` &&
-  kim-api-collections-management install system `find ../examples/simulator-models -mindepth 1 -maxdepth 1 -type d` &&
-  kim-api-collections-management list &&
-  ${KIM_SIMULATOR_MODEL_EXE} Sim_LAMMPS_LJcut_AkersonElliott_Alchemy_PbAu smspec-file data \
+  mkdir build
+  cd build
+  ccache -z
+  # cmake will respect value of the following environment variables:
+  #   CXX,      CC,     and FC
+  #   CXXFLAGS, CFLAGS, and FFLAGS
+  cmake --warn-uninitialized \
+        -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX:=/usr/local} \
+        -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} \
+        -DCMAKE_C_COMPILER_LAUNCHER=ccache \
+        -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
+        -DCMAKE_FORTRAN_COMPILER_LAUNCHER=ccache \
+        ${SANITIZE:+-DKIM_API_ENABLE_SANITIZE=ON} \
+        ${COVERAGE:+-DKIM_API_ENABLE_COVERAGE=ON} \
+        ${IWYU:+-DCMAKE_CXX_INCLUDE_WHAT_YOU_USE=include-what-you-use} \
+        ${IWYU:+-DCMAKE_C_INCLUDE_WHAT_YOU_USE=include-what-you-use} \
+        .. \
     || exit $?
-cd ../
-rm -rf "build" || exit $?
+  cat kim-api-configuration-detailed.log
+  ${MAKE} -j2 || exit $?
+  ccache -s
 
-# now test the INSTALL file instructions
-mkdir build
-cd build
-ccache -z
-mkdir "${PWD}/WORKSPACE"
-../scripts/run-cmds-from-install IN_WORKSPACE "${PWD}/WORKSPACE" "${PWD}/.." || exit $?
+  ctest --output-on-failure || exit $?
 
-cd ../
-rm -rf "build" || exit $?
+  if test x"${COVERAGE}" != x""; then
+    bash <(curl -s https://codecov.io/bash) || exit $?
+  fi
+
+  mkdir ${PWD}/destdir
+  ${MAKE} install DESTDIR=${PWD}/destdir || exit $?
+  # Query value of ${CMAKE_INSTALL_PREFIX} from CMake cache (https://stackoverflow.com/questions/8474753/how-to-get-a-cmake-variable-from-the-command-line)
+  # Remove drive letter (C:), which precedes the path on Windows (MinGW) platform.
+  INSTALL_PREFIX=`cmake -L -N . | grep CMAKE_INSTALL_PREFIX | cut -d "=" -f2 | cut -d ":" -f2`
+  echo "CMAKE_INSTALL_PREFIX is: ${INSTALL_PREFIX}"
+  rm -rf "${PWD}/destdir${INSTALL_PREFIX}/"{bin,include,libexec,share} || exit $?
+  rm -rf "${PWD}/destdir${LIB_DIR:=${INSTALL_PREFIX}/lib}" || exit $?
+  rm -rf "${PWD}/destdir${BASH_COMPLETION_DIR:=${INSTALL_PREFIX}/etc}" || exit $?
+  set +xv
+  printf -- "--- remaining installed files ---\n" &&
+    find "${PWD}/destdir" &&
+    printf -- "---------------------------------\n"
+  set -xv
+  dir="${INSTALL_PREFIX}"
+  while test x"" != x"${dir}"; do
+    rmdir "${PWD}/destdir${dir}" || exit $?
+    dir=`printf -- "${dir}" | sed -e 's|\(.*\)/.*|\1|'`
+  done
+  rmdir "${PWD}/destdir" || exit $?
+  cd ../
+  rm -rf "build" || exit $?
+
+  set +xv
+fi
+
+
+###############################################################################
+# Build and Install w/o examples (if enabled: CXX17), Relocatable, CM install
+###############################################################################
+if test x"${TEST_CM}" = x"yes"; then
+  set -xv
+
+  # now test collections-management and install
+  if [ "$RUNNER_OS" != "Windows" ]; then
+    CUSTOM_PATHLIST=":${PWD}/test-install/my-collection"
+  else
+    # needs to be of the form C:/.... but ${PWD} is of the form /c/.....
+    # so use GITHUB_WORKSPACE for now.
+    CUSTOM_PATHLIST=";${GITHUB_WORKSPACE}/build/test-install/my-collection"
+  fi
+  mkdir build
+  cd build
+  ccache -z
+  cmake -DCMAKE_INSTALL_PREFIX="${PWD}/test-install" \
+        -DCMAKE_BUILD_TYPE="${CMAKE_BUILD_TYPE}" \
+        -DCMAKE_C_COMPILER_LAUNCHER=ccache \
+        -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
+        -DCMAKE_FORTRAN_COMPILER_LAUNCHER=ccache \
+        -DKIM_API_BUILD_EXAMPLES=OFF \
+        -DKIM_API_SYSTEM_MODEL_DRIVERS_DIR="${CUSTOM_PATHLIST}" \
+        -DKIM_API_SYSTEM_PORTABLE_MODELS_DIR="${CUSTOM_PATHLIST}" \
+        -DKIM_API_SYSTEM_SIMULATOR_MODELS_DIR="${CUSTOM_PATHLIST}" \
+        ${CXX17:+-DCMAKE_CXX_STANDARD=17}  `#[use std::filesystem spport (assume it is available)]` \
+        .. \
+    || exit $?
+  # check that default system collections are added to front of path lists when ":/..." (or ";/...") form is used, as above
+  cat kim-api-configuration-detailed.log
+  # need to escape backslashes for grep to work correctly
+  CUSTOM_PATHLIST_ESCAPED_BACKSLASHES=$(echo ${CUSTOM_PATHLIST} | sed -e 's/\\/\\\\/g')
+  grep -A1 "KIM_API_SYSTEM_MODEL_DRIVERS_DIR" kim-api-configuration-detailed.log | grep "model-drivers${CUSTOM_PATHLIST_ESCAPED_BACKSLASHES}" || exit $?
+
+  ${MAKE} -j2 install || exit $?
+  ccache -s
+
+  # move install tree to test relocatability
+  mv test-install test-install-relocated || exit $?
+
+  set +xv
+  printf "calling ${PWD}/test-install-relocated/bin/kim-api-activate\n"
+  source "${PWD}/test-install-relocated/bin/kim-api-activate" || exit $?
+  kim-api-collections-management list || exit $?
+
+  set -xv
+  if [ "$RUNNER_OS" != "Windows" ]; then
+    KIM_SIMULATOR_MODEL_EXE="./test-install-relocated/libexec/kim-api/kim-api-simulator-model"
+  else
+    KIM_SIMULATOR_MODEL_EXE="./test-install-relocated/bin/kim-api-simulator-model"
+  fi
+    kim-api-collections-management install system `find ../examples/model-drivers -mindepth 1 -maxdepth 1 -type d` &&
+    kim-api-collections-management install system `find ../examples/portable-models -mindepth 1 -maxdepth 1 -type d` &&
+    kim-api-collections-management install system `find ../examples/simulator-models -mindepth 1 -maxdepth 1 -type d` &&
+    kim-api-collections-management list &&
+    ${KIM_SIMULATOR_MODEL_EXE} Sim_LAMMPS_LJcut_AkersonElliott_Alchemy_PbAu smspec-file data \
+      || exit $?
+  cd ../
+  rm -rf "build" || exit $?
+
+  set +xv
+fi
+
+
+###############################################################################
+# Run commands from INSTALL file (builds with CMAKE_BUILD_TYPE=Release)
+###############################################################################
+if test x"${TEST_INSTALL_INSTRUCTIONS}" = x"yes"; then
+  set -xv
+
+  # now test the INSTALL file instructions
+  mkdir build
+  cd build
+  ccache -z
+  mkdir "${PWD}/WORKSPACE"
+  ../scripts/run-cmds-from-install IN_WORKSPACE "${PWD}/WORKSPACE" "${PWD}/.." || exit $?
+
+  cd ../
+  rm -rf "build" || exit $?
+
+  set +xv
+fi
+
 
 # success
-set +xv
 exit 0

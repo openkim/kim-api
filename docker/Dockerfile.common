@@ -25,6 +25,7 @@
 # Contributors:
 #    Christoph Junghans
 #    Ryan S. Elliott
+#    Daniel S. Karls
 #
 
 #
@@ -69,13 +70,14 @@ ENV COVERAGE ${B_COVERAGE}
 RUN useradd -m kim
 RUN if test x"" = x"`getent group | grep -E "^kim"`"; then groupadd kim; fi
 USER kim
-ENV PATH=/usr/lib64/ccache:${PATH}
+ENV PATH=/usr/lib64/ccache:/usr/lib/ccache:${PATH}
 ENV CCACHE_MAXSIZE=250M
 
 COPY kim-api/ /home/kim/kim-api
 COPY ci-build-and-test /home/kim/ci-build-and-test
 RUN rm -rf /home/kim/.ccache
 COPY ccache/ /home/kim/.ccache
+RUN ls -lha /home/kim/.ccache
 USER root
 RUN chown -R kim:kim \
   /home/kim/kim-api \

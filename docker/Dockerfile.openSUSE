@@ -25,6 +25,7 @@
 # Contributors:
 #    Christoph Junghans
 #    Ryan S. Elliott
+#    Daniel S. Karls
 #
 
 #
@@ -37,6 +38,7 @@ FROM opensuse/tumbleweed
 RUN zypper -n install \
         ccache \
         cmake \
+        findutils \
         git \
         gcc \
         gcc-c++ \
@@ -44,6 +46,7 @@ RUN zypper -n install \
         include-what-you-use \
         libasan6 \
         make \
+        sysuser-shadow \
         tar \
         vim \
         wget \
