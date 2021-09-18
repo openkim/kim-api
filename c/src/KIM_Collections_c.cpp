@@ -549,7 +549,7 @@ int KIM_Collections_GetDirectoryName(KIM_Collections * const collections,
   else
   {
     *directoryName = pStrDirectoryName->c_str();
-    return true;
+    return false;
   }
 }
 
