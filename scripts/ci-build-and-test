@@ -138,7 +138,17 @@ if test x"${TEST_BUILD}" = x"yes"; then
   ctest --output-on-failure || exit $?
 
   if test x"${COVERAGE}" != x""; then
-    bash <(curl -s https://codecov.io/bash) || exit $?
+    cd /home/kim/kim-api
+
+    # Run gcov to generate coverage reports
+    bash -c "find /home/kim/kim-api -type f -name '*.gcno' -exec gcov -pb {} +" || exit $?
+
+    # Run codecov uploader
+    curl -Os https://uploader.codecov.io/latest/linux/codecov || exit $?
+    chmod +x codecov || exit $?
+    ./codecov || exit $?
+
+    cd build
   fi
 
   mkdir ${PWD}/destdir
