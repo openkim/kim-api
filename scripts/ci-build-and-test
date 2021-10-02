@@ -138,7 +138,39 @@ if test x"${TEST_BUILD}" = x"yes"; then
   ctest --output-on-failure || exit $?
 
   if test x"${COVERAGE}" != x""; then
-    bash <(curl -s https://codecov.io/bash) || exit $?
+    # Create directory for housing codecov and its keys
+    CODECOV_DIR=/home/kim/.codecov
+    mkdir ${CODECOV_DIR}
+    cd $CODECOV_DIR
+
+    # Download codecov signing key
+    curl -Os https://keybase.io/codecovsecurity/pgp_keys.asc || exit $?
+
+    # Verify integrity of codecov key by comparing to known hash (codecov has
+    # said this key should never change)
+    sha256sum pgp_keys.asc | xargs -I{} [ "{}" == "d56942c32a1bb70af75bf972302b6114049fb59cb76193fac349bb9b587b60c2  pgp_keys.asc" ] || exit $?
+    gpg --import pgp_keys.asc || exit $?
+
+    # Download signature used to sign the file containing the trusted hash
+    curl -Os https://uploader.codecov.io/latest/linux/codecov.SHA256SUM || exit $?
+    curl -Os https://uploader.codecov.io/latest/linux/codecov.SHA256SUM.sig || exit $?
+
+    # Verify the file containing the trusted hash
+    gpg --verify codecov.SHA256SUM.sig codecov.SHA256SUM || exit $?
+
+    # Download the codecov uploader and verify its hash
+    curl -Os https://uploader.codecov.io/latest/linux/codecov || exit $?
+    sha256sum -c codecov.SHA256SUM  || exit $?
+    chmod +x ${CODECOV_DIR}/codecov || exit $?
+
+    # Run gcov to generate coverage reports
+    cd /home/kim/kim-api
+    bash -c "find /home/kim/kim-api -type f -name '*.gcno' -exec gcov -pb {} +" || exit $?
+
+    # Run codecov uploader
+    ${CODECOV_DIR}/codecov || exit $?
+
+    cd build
   fi
 
   mkdir ${PWD}/destdir

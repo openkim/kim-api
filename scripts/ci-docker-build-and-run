@@ -90,8 +90,8 @@ fi
 
 # Store env to pass to docker if COVERAGE requested
 if test x"${COVERAGE}" != x""; then
-  # https://docs.codecov.io/docs/testing-with-docker
-  ci_env=`bash <(curl -s https://codecov.io/env)`
+  # See https://docs.codecov.io/docs/testing-with-docker
+  ci_env="-e CODECOV_ENV -e CODECOV_TOKEN -e CODECOV_URL -e CODECOV_SLUG -e VCS_COMMIT_ID -e VCS_BRANCH_NAME -e VCS_PULL_REQUEST -e VCS_SLUG -e VCS_TAG -e CI_BUILD_URL -e CI_BUILD_ID -e CI_JOB_ID -e GITHUB_ACTIONS -e GITHUB_HEAD_REF -e GITHUB_REF -e GITHUB_REPOSITORY -e GITHUB_RUN_ID -e GITHUB_SERVER_URL -e GITHUB_SHA -e GITHUB_WORKFLOW"
 fi
 
 set -xv
