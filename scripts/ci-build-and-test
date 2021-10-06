@@ -133,7 +133,7 @@ if test x"${TEST_BUILD}" = x"yes"; then
     || exit $?
   cat kim-api-configuration-detailed.log
   ${MAKE} -j2 || exit $?
-  ccache -s
+  ccache -sv
 
   ctest --output-on-failure || exit $?
 
@@ -236,7 +236,7 @@ if test x"${TEST_CM}" = x"yes"; then
   grep -A1 "KIM_API_SYSTEM_MODEL_DRIVERS_DIR" kim-api-configuration-detailed.log | grep "model-drivers${CUSTOM_PATHLIST_ESCAPED_BACKSLASHES}" || exit $?
 
   ${MAKE} -j2 install || exit $?
-  ccache -s
+  ccache -sv
 
   # move install tree to test relocatability
   mv test-install test-install-relocated || exit $?
