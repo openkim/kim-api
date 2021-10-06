@@ -40,6 +40,7 @@ on:
   push:
     branches-ignore:
       - 'coverity_scan'
+  pull_request:
 
 jobs:
 
