@@ -33,7 +33,7 @@
 #
 -->
 
-[![Build](https://github.com/openkim/kim-api/actions/workflows/multiplatform-debug-iwyu-sanitize-lto-coverage.yml/badge.svg)](https://github.com/openkim/kim-api/actions/workflows/multiplatform-debug-iwyu-sanitize-lto-coverage.yml)
+[![Build](https://github.com/openkim/kim-api/actions/workflows/build-multiplatform.yml/badge.svg)](https://github.com/openkim/kim-api/actions/workflows/build-multiplatform.yml)
 [![Documentation Status](https://readthedocs.org/projects/kim-api/badge/?version=devel)](https://kim-api.readthedocs.io/en/devel/?badge=devel)
 [![Coverity Scan](https://scan.coverity.com/projects/16411/badge.svg?flat=1)](https://scan.coverity.com/projects/openkim-kim-api)
 [![codecov](https://codecov.io/gh/openkim/kim-api/branch/devel/graph/badge.svg)](https://codecov.io/gh/openkim/kim-api/branch/devel)

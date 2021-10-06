@@ -33,7 +33,7 @@
 # Release: This file is part of the kim-api.git repository.
 #
 
-name: Debug and sanitize
+name: Build
 
 # Run when pushing to all branches other than 'coverity_scan'
 on:
