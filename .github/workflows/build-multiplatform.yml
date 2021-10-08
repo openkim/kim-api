@@ -40,6 +40,7 @@ on:
   push:
     branches-ignore:
       - 'coverity_scan'
+  pull_request:
 
 jobs:
 
@@ -301,7 +302,10 @@ jobs:
       windows-latest
 
     env:
+      DISTRO: windows_mingw
       CMAKE_BUILD_TYPE: Debug
+      WINDOWS_CCACHE_DIR: C:/ccache/
+      CCACHE_DIR: /home/runneradmin/ccache/
 
     defaults:
       run:
@@ -311,6 +315,23 @@ jobs:
 
       - name: Check out repository
         uses: actions/checkout@v2
+
+      # Because the msys2/setup-msys2 action creates the path for msys2 where
+      # everything in this job happens at the start of every time this job is
+      # run (of the form ${RUNNER_TEMP}/msys/msys64 where RUNNER_TEMP is a
+      # default GHA envvar containing an absolute windows path), we avoid
+      # directly setting up a cache directory inside of it to hold ccache
+      # artifacts.  Instead, we make a cache directory directly in windows and
+      # copy its contents into the ccache directory we use inside of msys2; at
+      # the conclusion of the job, we copy the contents of the ccache directory
+      # back to the windows directory.
+      - name: Initialize windows ccache dir
+        uses: actions/cache@v2
+        with:
+          path: ${{ env.WINDOWS_CCACHE_DIR }}
+          key: ${{ env.DISTRO }}-ccache-${{ github.sha }}
+          restore-keys: |
+            ${{ env.DISTRO }}-ccache
 
       - uses: msys2/setup-msys2@v2
         with:
@@ -323,11 +344,29 @@ jobs:
             mingw-w64-x86_64-doxygen
             mingw-w64-x86_64-toolchain
 
-      # TODO: Set up caching
+      - name: Ensure windows ccache dir exists
+        run: |
+          if [ ! -d ${{ env.WINDOWS_CCACHE_DIR }} ]; then \
+            echo "Could not find windows ccache dir ${{ env.WINDOWS_CCACHE_DIR }}" \
+            && echo "Creating ${{ env.WINDOWS_CCACHE_DIR }}" \
+            && mkdir -p ${{ env.WINDOWS_CCACHE_DIR }}; \
+          else \
+            echo "Found windows ccache dir ${{ env.WINDOWS_CCACHE_DIR }}" \
+            && ls -lha ${{ env.WINDOWS_CCACHE_DIR }}; \
+          fi
+
+      - name: Copy ccache contents (if any) from windows ccache dir -> msys2 working path
+        run: |
+          echo "Copying ${{ env.WINDOWS_CCACHE_DIR}} -> ${{ env.CCACHE_DIR }}"
+          cp -r ${{ env.WINDOWS_CCACHE_DIR }} ${{ env.CCACHE_DIR }}
 
       - name: Build KIM API, run tests
         env:
           CMAKE_GENERATOR: MinGW Makefiles
           MAKE: mingw32-make
-          CMAKE_MAKE_PROGRAM: ${{ env.MAKE }}
-        run: bash ./scripts/ci-build-and-test
+          CMAKE_MAKE_PROGRAM: mingw32-make
+        run: |
+          bash ./scripts/ci-build-and-test
+
+      - name: Copy ccache content from msys2 working path -> windows ccache dir
+        run: cp -r ${{ env.CCACHE_DIR }}/* ${{ env.WINDOWS_CCACHE_DIR }}
