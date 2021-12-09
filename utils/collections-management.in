@@ -178,7 +178,8 @@ check_item_compatibility () {
     if check_version_compatibility "${version}"; then
       return 0
     else
-      printf "*** ERROR *** ${item_name} found at openkim.org is not compatible with this version of the KIM API.\n"
+      printf "*** ERROR *** ${item_name} found at openkim.org requires version ${version} of the KIM API\n"
+      printf "              which is not compatible with the installed version ${major_version} of the KIM API.\n"
       return 1
     fi
   fi
