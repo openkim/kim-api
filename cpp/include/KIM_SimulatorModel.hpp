@@ -178,10 +178,10 @@ class SimulatorModel
   ///
   /// \param[inout] simulatorModel Pointer to the SimulatorModel object.
   ///
-  /// \pre \c simulatorModel points to a previously created %KIM API
+  /// \pre \c *simulatorModel points to a previously created %KIM API
   ///      SimulatorModel object.
   ///
-  /// \post `simulatorModel == NULL`.
+  /// \post `*simulatorModel == NULL`.
   ///
   /// \sa KIM_SimulatorModel_Destroy,
   /// kim_simulator_model_module::kim_simulator_model_destroy

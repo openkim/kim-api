@@ -74,7 +74,7 @@ int Collections::Create(Collections ** const collections)
 
 void Collections::Destroy(Collections ** const collections)
 {
-  if (*collections != NULL) 
+  if (*collections != NULL)
   {
     CollectionsImplementation::Destroy(&((*collections)->pimpl));
   }

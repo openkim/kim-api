@@ -131,10 +131,10 @@ class Collections
   ///
   /// \param[inout] collections Pointer to the Collections object.
   ///
-  /// \pre \c collections points to a previously created %KIM API Collections
+  /// \pre \c *collections points to a previously created %KIM API Collections
   ///      object.
   ///
-  /// \post `collections == NULL`.
+  /// \post `*collections == NULL`.
   ///
   /// \sa KIM_Collections_Destroy,
   /// kim_collections_module::kim_collections_destroy
