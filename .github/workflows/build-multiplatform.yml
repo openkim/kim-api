@@ -1,0 +1,364 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the Common Development
+# and Distribution License Version 1.0 (the "License").
+#
+# You can obtain a copy of the license at
+# http://www.opensource.org/licenses/CDDL-1.0.  See the License for the
+# specific language governing permissions and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each file and
+# include the License file in a prominent location with the name LICENSE.CDDL.
+# If applicable, add the following below this CDDL HEADER, with the fields
+# enclosed by brackets "[]" replaced with your own identifying information:
+#
+# Portions Copyright (c) [yyyy] [name of copyright owner]. All rights reserved.
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2013--2021, Regents of the University of Minnesota.
+# All rights reserved.
+#
+# Contributors:
+#    Richard Berger
+#    Christoph Junghans
+#    Ryan S. Elliott
+#    Alexander Stukowski
+#    Daniel S. Karls
+
+#
+# Release: This file is part of the kim-api-2.3.0 package.
+#
+
+name: Build
+
+# Run when pushing to all branches other than 'coverity_scan'
+on:
+  push:
+    branches-ignore:
+      - 'coverity_scan'
+  pull_request:
+
+jobs:
+
+  macos-debug:
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-10.15, macos-11]
+        include:
+          - os: macos-10.15
+            DISTRO: macos_catalina
+            job_name: macOS Catalina 10.15 (debug)
+
+          - os: macos-11
+            DISTRO: macos_bigsur
+            job_name: macOS Big Sur 11 (debug)
+
+    name: ${{ matrix.job_name }}
+
+    runs-on: ${{ matrix.os }}
+
+    env:
+      DISTRO: ${{ matrix.DISTRO }}
+      CMAKE_BUILD_TYPE: Debug
+      CCACHE_DIR: /Users/runner/.ccache/
+
+    steps:
+
+      - name: Check out repository
+        uses: actions/checkout@v2
+
+      - name: Initialize ccache
+        uses: actions/cache@v2
+        with:
+          path: ${{ env.CCACHE_DIR }}
+          key: ${{ env.DISTRO }}-ccache-${{ github.sha }}
+          restore-keys: |
+            ${{ env.DISTRO }}-ccache
+
+      - name: Ensure ccache dir exists
+        run: |
+          if [ ! -d ${{ env.CCACHE_DIR }} ]; then \
+            echo "Could not find CCACHE_DIR ${{ env.CCACHE_DIR }}" \
+            && echo "Creating ${{ env.CCACHE_DIR }}" \
+            && mkdir -p ${{ env.CCACHE_DIR }}; \
+          else \
+            echo "Found CCACHE_DIR ${{ env.CCACHE_DIR }}" \
+            && ls -lha ${{ env.CCACHE_DIR }}; \
+          fi
+
+      - name: Install ccache via homebrew
+        run: brew install ccache
+
+      - name: Build KIM API, run tests
+        run: |
+          export PATH="/usr/local/opt/ccache/libexec:$PATH"
+          export CXX17=true
+          export CXX=g++-9
+          export CC=gcc-9
+          export FC=gfortran-9
+          env
+          ./scripts/ci-build-and-test
+
+  linux-debug-sanitize:
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [fedora, openSUSE, ubuntu, debian]
+        include:
+          - os: fedora
+            job_name: Fedora (debug & sanitize)
+            env:
+              DISTRO: fedora
+              CMAKE_BUILD_TYPE: Debug
+              SANITIZE: true
+              CXX17: true
+              CCACHE_DIR: /home/runner/kim-ccache/
+              WORK_DIR: /home/runner/kim-work/
+          - os: openSUSE
+            job_name: openSUSE (debug, IWYU, sanitize & LTO)
+            env:
+              DISTRO: openSUSE
+              CMAKE_BUILD_TYPE: Debug
+              IWYU: true
+              SANITIZE: true
+              CXX17: true
+              CXXFLAGS: "-flto=auto"
+              CFLAGS: "-flto=auto"
+              FFLAGS: "-flto=auto"
+              CCACHE_DIR: /home/runner/kim-ccache/
+              WORK_DIR: /home/runner/kim-work/
+          - os: ubuntu
+            job_name: Ubuntu (debug, sanitize, & coverage)
+            env:
+              DISTRO: ubuntu
+              CMAKE_BUILD_TYPE: Debug
+              SANITIZE: true
+              COVERAGE: true
+              CXX17: true
+              CCACHE_DIR: /home/runner/kim-ccache/
+              WORK_DIR: /home/runner/kim-work/
+          - os: debian
+            job_name: Debian (debug & sanitize)
+            env:
+              DISTRO: debian
+              CMAKE_BUILD_TYPE: Debug
+              SANITIZE: true
+              CXX17: true
+              CCACHE_DIR: /home/runner/kim-ccache/
+              WORK_DIR: /home/runner/kim-work/
+
+    name: ${{ matrix.job_name }}
+
+    runs-on:
+      ubuntu-latest
+
+    env: ${{ matrix.env }}
+
+    steps:
+
+      - name: Check out repository
+        uses: actions/checkout@v2
+
+      - name: Initialize ccache
+        uses: actions/cache@v2
+        with:
+          path: ${{ env.CCACHE_DIR }}
+          key: ${{ env.DISTRO }}-ccache-${{ github.sha }}
+          restore-keys: |
+            ${{ env.DISTRO }}-ccache
+
+      - name: Ensure ccache dir exists
+        run: |
+          if [ ! -d ${{ env.CCACHE_DIR }} ]; then \
+            echo "Could not find CCACHE_DIR ${{ env.CCACHE_DIR }}" \
+            && echo "Creating ${{ env.CCACHE_DIR }}" \
+            && mkdir -p ${{ env.CCACHE_DIR }}; \
+          else \
+            echo "Found CCACHE_DIR ${{ env.CCACHE_DIR }}" \
+            && ls -lha ${{ env.CCACHE_DIR }}; \
+          fi
+
+      - name: Ensure work dir exists
+        run: |
+          if [ ! -d ${{ env.WORK_DIR }} ]; then mkdir -p ${{ env.WORK_DIR }}; fi
+
+      - name: Build docker, build KIM API, run tests
+        run: |
+          cd ${{ env.WORK_DIR }}
+          env
+          ${GITHUB_WORKSPACE}/scripts/ci-docker-build-and-run \
+            "${GITHUB_WORKSPACE}" \
+            "${{ env.DISTRO }}" \
+            "${GITHUB_REPOSITORY}:${{ env.DISTRO }}" \
+            "${{ env.CCACHE_DIR }}"
+
+  # Ubuntu where we want to use cmake 3.10 specifically has to be separate
+  # because we use a separate gha cache directory for the cmake tarball that is
+  # downloaded.
+  ubuntu-cmake310-debug:
+
+    name: Ubuntu cmake@3.10 (debug)
+
+    runs-on:
+      ubuntu-latest
+
+    env:
+      DISTRO: ubuntu_cmake310
+      CMAKE_BUILD_TYPE: Debug
+      CCACHE_DIR: /home/runner/kim-ccache/
+      CMAKE_DIR: /home/runner/kim-cmake310/
+      WORK_DIR: /home/runner/kim-work/
+
+    steps:
+
+      - name: Check out repository
+        uses: actions/checkout@v2
+
+      - name: Initialize cmake 3.10 binaries cache
+        id: cmake-cache
+        uses: actions/cache@v2
+        with:
+          path: ${{ env.CMAKE_DIR }}
+          key: ${{ env.DISTRO }}-cmake-${{ github.sha }}
+          restore-keys: |
+            ${{ env.DISTRO }}-cmake
+
+      - name: Ensure cmake dir exists
+        run: |
+          if [ ! -d ${{ env.CMAKE_DIR }} ]; then \
+            echo "Could not find CMAKE_DIR ${{ env.CMAKE_DIR }}" \
+            && echo "Creating ${{ env.CMAKE_DIR }}" \
+            && mkdir -p ${{ env.CMAKE_DIR }}; \
+          else \
+            echo "Found CMAKE_DIR ${{ env.CMAKE_DIR }}" \
+            && ls -lha ${{ env.CMAKE_DIR }}; \
+          fi
+
+      # NOTE: The archive downloaded *must* end in .tar.gz and be decompressable via
+      #       `tar -xzf`
+      - name: Download cmake 3.10.3 binaries, if necessary
+        if: steps.cmake-cache.outputs.cache-hit != 'true'
+        run: |
+          export CMAKE_VER=3.10.3
+          export CMAKE_PKG_NAME=cmake-${CMAKE_VER}-Linux-x86_64
+          export CMAKE_ARCHIVE_NAME=${CMAKE_PKG_NAME}.tar.gz
+          cd ${CMAKE_DIR}
+          wget http://github.com/Kitware/CMake/releases/download/v${CMAKE_VER}/${CMAKE_ARCHIVE_NAME} -O ${CMAKE_ARCHIVE_NAME}
+
+      - name: Initialize ccache
+        uses: actions/cache@v2
+        with:
+          path: ${{ env.CCACHE_DIR }}
+          key: ${{ env.DISTRO }}-ccache-${{ github.sha }}
+          restore-keys: |
+            ${{ env.DISTRO }}-ccache
+
+      - name: Ensure ccache dir exists
+        run: |
+          if [ ! -d ${{ env.CCACHE_DIR }} ]; then \
+            echo "Could not find CCACHE_DIR ${{ env.CCACHE_DIR }}" \
+            && echo "Creating ${{ env.CCACHE_DIR }}" \
+            && mkdir -p ${{ env.CCACHE_DIR }}; \
+          else \
+            echo "Found CCACHE_DIR ${{ env.CCACHE_DIR }}" \
+            && ls -lha ${{ env.CCACHE_DIR }}; \
+          fi
+
+      - name: Ensure work dir exists
+        run: |
+          if [ ! -d ${{ env.WORK_DIR }} ]; then mkdir -p ${{ env.WORK_DIR }}; fi
+
+      - name: Build docker, build KIM API, run tests
+        run: |
+          cd ${{ env.WORK_DIR }}
+          env
+          ${GITHUB_WORKSPACE}/scripts/ci-docker-build-and-run \
+            "${GITHUB_WORKSPACE}" \
+            "${{ env.DISTRO }}" \
+            "${GITHUB_REPOSITORY}:${{ env.DISTRO }}" \
+            "${{ env.CCACHE_DIR }}" \
+            "${{ env.CMAKE_DIR }}"
+
+  windows-mingw-debug:
+
+    name: Windows-MinGW (debug)
+
+    runs-on:
+      windows-latest
+
+    env:
+      DISTRO: windows_mingw
+      CMAKE_BUILD_TYPE: Debug
+      WINDOWS_CCACHE_DIR: C:/ccache/
+      CCACHE_DIR: /home/runneradmin/ccache/
+
+    defaults:
+      run:
+        shell: msys2 {0}
+
+    steps:
+
+      - name: Check out repository
+        uses: actions/checkout@v2
+
+      # Because the msys2/setup-msys2 action creates the path for msys2 where
+      # everything in this job happens at the start of every time this job is
+      # run (of the form ${RUNNER_TEMP}/msys/msys64 where RUNNER_TEMP is a
+      # default GHA envvar containing an absolute windows path), we avoid
+      # directly setting up a cache directory inside of it to hold ccache
+      # artifacts.  Instead, we make a cache directory directly in windows and
+      # copy its contents into the ccache directory we use inside of msys2; at
+      # the conclusion of the job, we copy the contents of the ccache directory
+      # back to the windows directory.
+      - name: Initialize windows ccache dir
+        uses: actions/cache@v2
+        with:
+          path: ${{ env.WINDOWS_CCACHE_DIR }}
+          key: ${{ env.DISTRO }}-ccache-${{ github.sha }}
+          restore-keys: |
+            ${{ env.DISTRO }}-ccache
+
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          path-type: minimal
+          update: true
+          install: >-
+            mingw-w64-x86_64-ccache
+            mingw-w64-x86_64-cmake
+            mingw-w64-x86_64-doxygen
+            mingw-w64-x86_64-toolchain
+
+      - name: Ensure windows ccache dir exists
+        run: |
+          if [ ! -d ${{ env.WINDOWS_CCACHE_DIR }} ]; then \
+            echo "Could not find windows ccache dir ${{ env.WINDOWS_CCACHE_DIR }}" \
+            && echo "Creating ${{ env.WINDOWS_CCACHE_DIR }}" \
+            && mkdir -p ${{ env.WINDOWS_CCACHE_DIR }}; \
+          else \
+            echo "Found windows ccache dir ${{ env.WINDOWS_CCACHE_DIR }}" \
+            && ls -lha ${{ env.WINDOWS_CCACHE_DIR }}; \
+          fi
+
+      - name: Copy ccache contents (if any) from windows ccache dir -> msys2 working path
+        run: |
+          echo "Copying ${{ env.WINDOWS_CCACHE_DIR}} -> ${{ env.CCACHE_DIR }}"
+          cp -r ${{ env.WINDOWS_CCACHE_DIR }} ${{ env.CCACHE_DIR }}
+
+      - name: Build KIM API, run tests
+        env:
+          CMAKE_GENERATOR: MinGW Makefiles
+          MAKE: mingw32-make
+          CMAKE_MAKE_PROGRAM: mingw32-make
+        run: |
+          bash ./scripts/ci-build-and-test
+
+      - name: Copy ccache content from msys2 working path -> windows ccache dir
+        run: cp -r ${{ env.CCACHE_DIR }}/* ${{ env.WINDOWS_CCACHE_DIR }}

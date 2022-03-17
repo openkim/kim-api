@@ -1,31 +1,28 @@
 !
-! CDDL HEADER START
-!
-! The contents of this file are subject to the terms of the Common Development
-! and Distribution License Version 1.0 (the "License").
-!
-! You can obtain a copy of the license at
-! http://www.opensource.org/licenses/CDDL-1.0.  See the License for the
-! specific language governing permissions and limitations under the License.
-!
-! When distributing Covered Code, include this CDDL HEADER in each file and
-! include the License file in a prominent location with the name LICENSE.CDDL.
-! If applicable, add the following below this CDDL HEADER, with the fields
-! enclosed by brackets "[]" replaced with your own identifying information:
-!
-! Portions Copyright (c) [yyyy] [name of copyright owner]. All rights reserved.
-!
-! CDDL HEADER END
-!
-
-!
-! Copyright (c) 2013--2020, Regents of the University of Minnesota.
+! KIM-API: An API for interatomic models
+! Copyright (c) 2013--2022, Regents of the University of Minnesota.
 ! All rights reserved.
 !
 ! Contributors:
 !    Ellad B. Tadmor
 !    Ryan S. Elliott
 !    Stephen M. Whalen
+!
+! SPDX-License-Identifier: LGPL-2.1-or-later
+!
+! This library is free software; you can redistribute it and/or
+! modify it under the terms of the GNU Lesser General Public
+! License as published by the Free Software Foundation; either
+! version 2.1 of the License, or (at your option) any later version.
+!
+! This library is distributed in the hope that it will be useful,
+! but WITHOUT ANY WARRANTY; without even the implied warranty of
+! MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+! Lesser General Public License for more details.
+!
+! You should have received a copy of the GNU Lesser General Public License
+! along with this library; if not, write to the Free Software Foundation,
+! Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 !
 
 module error
@@ -155,7 +152,8 @@ contains
 !
 !-------------------------------------------------------------------------------
   recursive subroutine check_model_compatibility( &
-    compute_arguments_handle, forces_optional, model_is_compatible, ierr)
+    compute_arguments_handle, forces_optional, particle_energy_supported, &
+    particle_energy_optional, model_is_compatible, ierr)
     use, intrinsic :: iso_c_binding
     use error
     implicit none
@@ -164,6 +162,8 @@ contains
     type(kim_compute_arguments_handle_type), intent(in) :: &
       compute_arguments_handle
     logical, intent(out) :: forces_optional
+    logical, intent(out) :: particle_energy_supported
+    logical, intent(out) :: particle_energy_optional
     logical, intent(out) :: model_is_compatible
     integer(c_int), intent(out) :: ierr
 
@@ -177,6 +177,8 @@ contains
 
     ! assume fail
     model_is_compatible = .false.
+    particle_energy_supported = .false.
+    particle_energy_optional = .false.
     forces_optional = .false.
     ierr = 0
 
@@ -197,10 +199,12 @@ contains
         return
       end if
 
-      ! can only handle energy and forces as required args
+      ! can only handle energy, particle_energy and forces as required args
       if (support_status == KIM_SUPPORT_STATUS_REQUIRED) then
         if (.not. ( &
             (argument_name == KIM_COMPUTE_ARGUMENT_NAME_PARTIAL_ENERGY) .or. &
+            (argument_name == &
+             KIM_COMPUTE_ARGUMENT_NAME_PARTIAL_PARTICLE_ENERGY) .or. &
             (argument_name == KIM_COMPUTE_ARGUMENT_NAME_PARTIAL_FORCES))) then
           call my_warning("unsupported required argument")
           ierr = 0
@@ -226,6 +230,27 @@ contains
           forces_optional = .true.
         else
           call my_warning("unknown support_status for forces")
+          ierr = 0
+          return
+        end if
+      end if
+
+      ! check support for particle_energy
+      if (argument_name == &
+          KIM_COMPUTE_ARGUMENT_NAME_PARTIAL_PARTICLE_ENERGY) then
+        if (support_status == KIM_SUPPORT_STATUS_NOT_SUPPORTED) then
+          call my_warning("model does not support partial_particle_energy.  &
+            &The associated checks will be disabled.")
+          particle_energy_supported = .false.
+          particle_energy_optional = .false.
+        else if (support_status == KIM_SUPPORT_STATUS_REQUIRED) then
+          particle_energy_supported = .true.
+          particle_energy_optional = .false.
+        else if (support_status == KIM_SUPPORT_STATUS_OPTIONAL) then
+          particle_energy_supported = .true.
+          particle_energy_optional = .true.
+        else
+          call my_warning("unknown support_status for particle energy")
           ierr = 0
           return
         end if
@@ -815,10 +840,16 @@ program vc_forces_numer_deriv
     model_will_not_request_neighbors_of_noncontributing_particles(:)
   real(c_double) :: cutoff
   real(c_double), target :: energy
+  real(c_double), target :: particle_energy(N)
+  real(c_double), target :: particle_energy_sum
   real(c_double), target :: coords(3, N)
   real(c_double), target :: forces_kim(3, N)
   real(c_double) :: forces(3, N)
   integer(c_int) middleDum
+  logical doing_non_contributing
+  logical particle_energy_supported
+  logical particle_energy_optional
+  logical noncontrib_particle_energy_nonzero
   logical forces_optional
   logical model_is_compatible
   integer(c_int) number_of_model_routine_names
@@ -830,6 +861,8 @@ program vc_forces_numer_deriv
   real(c_double), pointer :: null_pointer
 
   nullify (null_pointer)
+
+  doing_non_contributing = .false. ! .true. on 2nd pass through main program
 
   numberOfParticles = N
 
@@ -916,6 +949,8 @@ program vc_forces_numer_deriv
   end if
 
   call check_model_compatibility(compute_arguments_handle, forces_optional, &
+                                 particle_energy_supported, &
+                                 particle_energy_optional, &
                                  model_is_compatible, ierr)
   if (ierr /= 0) then
     call my_error("error checking compatibility")
@@ -978,6 +1013,12 @@ program vc_forces_numer_deriv
     compute_arguments_handle, &
     KIM_COMPUTE_ARGUMENT_NAME_PARTIAL_ENERGY, energy, ierr2)
   ierr = ierr + ierr2
+  if (particle_energy_supported) then
+    call kim_set_argument_pointer( &
+      compute_arguments_handle, &
+      KIM_COMPUTE_ARGUMENT_NAME_PARTIAL_PARTICLE_ENERGY, particle_energy, ierr2)
+    ierr = ierr + ierr2
+  end if
   call kim_set_argument_pointer( &
     compute_arguments_handle, &
     KIM_COMPUTE_ARGUMENT_NAME_PARTIAL_FORCES, forces_kim, ierr2)
@@ -989,9 +1030,11 @@ program vc_forces_numer_deriv
   ! Allocate storage for neighbor lists and
   ! store pointers to neighbor list object and access function
   !
+  allocate (coordsave(DIM, N))
   allocate (neighborList(N + 1, N))
   neighObject%neighbor_list_pointer = c_loc(neighborList)
   neighObject%number_of_particles = N
+  allocate (forces_num(DIM, N), forces_num_err(DIM, N))
 
   ! Set pointer in KIM object to neighbor list routine and object
   !
@@ -1024,6 +1067,33 @@ program vc_forces_numer_deriv
     cluster_coords(:, i) = FCCspacing * cluster_coords(:, i)
   end do
   print '("Using FCC lattice parameter: ",f12.5)', FCCspacing
+  print *
+
+1000 continue ! Start of configuration setup
+
+  if (doing_non_contributing) then
+    ! Turn particle energy computation back on, if possible
+    if (particle_energy_optional) then
+      call kim_set_argument_pointer( &
+        compute_arguments_handle, &
+        KIM_COMPUTE_ARGUMENT_NAME_PARTIAL_PARTICLE_ENERGY, &
+        particle_energy, ierr)
+      if (ierr /= 0) then
+        call my_error("set_argument_pointer")
+      end if
+    end if
+
+    ! Turn force computation back on, if possible
+    !
+    if (forces_optional) then
+      call kim_set_argument_pointer( &
+        compute_arguments_handle, KIM_COMPUTE_ARGUMENT_NAME_PARTIAL_FORCES, &
+        forces_kim, ierr)
+      if (ierr /= 0) then
+        call my_error("set_argument_pointer")
+      end if
+    end if
+  end if
 
   do i = 1, N
     call kim_get_species_support_and_code( &
@@ -1033,9 +1103,21 @@ program vc_forces_numer_deriv
   if (ierr /= 0) then
     call my_error("kim_api_get_species_code")
   end if
-  do i = 1, N
-    particleContributing(i) = 1  ! every particle contributes
-  end do
+  if (.not. doing_non_contributing) then
+    do i = 1, N
+      particleContributing(i) = 1  ! all particle contribute
+    end do
+  else
+    do i = 1, N
+      ! Random collection of contributing atoms
+      call random_number(rnd)  ! return random number between 0 and 1
+      if (rnd > 0.5) then
+        particleContributing(i) = 1
+      else
+        particleContributing(i) = 0
+      end if
+    end do
+  end if
   do i = 1, N
     coords(:, i) = cluster_coords(:, i) + cluster_disps(:, i)
   end do
@@ -1043,7 +1125,6 @@ program vc_forces_numer_deriv
   ! Compute neighbor lists
   !
   do_update_list = .true.
-  allocate (coordsave(DIM, N))
   call update_neighborlist(DIM, N, coords, cutoff, cutpad, &
                            do_update_list, coordsave, &
                            neighObject, ierr)
@@ -1062,12 +1143,54 @@ program vc_forces_numer_deriv
   !
   forces = forces_kim
 
+  ! Add up particle_energy to compare with energy
+  noncontrib_particle_energy_nonzero = .false.
+  if (particle_energy_supported) then
+    particle_energy_sum = 0.0_cd
+    do i = 1, N
+      if (particleContributing(i) == 0) then
+        if (abs(particle_energy(i)) > epsilon(0.0_cd)) then
+          noncontrib_particle_energy_nonzero = .true.
+        end if
+      else
+        particle_energy_sum = particle_energy_sum + particle_energy(i)
+      end if
+    end do
+  end if
+
   ! Print results to screen
   !
   print '(41(''=''))'
-  print '("Energy = ",ES25.15)', energy
+  if (.not. doing_non_contributing) then
+    print '("Configuration with all contributing particles")'
+  else
+    print '("Configuration with some non-contributing particles")'
+  end if
+  if (particle_energy_supported) then
+    print '(A25,2X,A25,2X,A15)', "Energy", "Sum Contrib. Energies", "Diff"
+    print '(ES25.15,2X,ES25.15,2X,ES15.5)', energy, particle_energy_sum, &
+      energy - particle_energy_sum
+    if (noncontrib_particle_energy_nonzero) then
+      call my_error( &
+        "Some non-contributing particles have non-zero &
+        &partial_particle_energy")
+    end if
+  else
+    print '("Energy = ",ES25.15)', energy
+  end if
   print '(41(''=''))'
   print *
+
+  ! Turn off particle energy computation, if possible
+  if (particle_energy_optional) then
+    call kim_set_argument_pointer( &
+      compute_arguments_handle, &
+      KIM_COMPUTE_ARGUMENT_NAME_PARTIAL_PARTICLE_ENERGY, &
+      null_pointer, ierr)
+    if (ierr /= 0) then
+      call my_error("set_argument_pointer")
+    end if
+  end if
 
   ! Turn off force computation, if possible
   !
@@ -1082,7 +1205,6 @@ program vc_forces_numer_deriv
 
   ! Compute gradient using numerical differentiation
   !
-  allocate (forces_num(DIM, N), forces_num_err(DIM, N))
   do I = 1, N
     do J = 1, DIM
       call compute_numer_deriv(I, J, model_handle, compute_arguments_handle, &
@@ -1099,9 +1221,9 @@ program vc_forces_numer_deriv
 
   ! Continue printing results to screen
   !
-  print '(A6,2X,A4,2X,A3,2X,2A25,3A15,2X,A4)', "Part", "Spec", "Dir", &
-    "Force_model", "Force_numer", "Force diff", "pred error", "weight", &
-    "stat"
+  print '(A6,2X,A7,2X,A4,2X,A3,2X,2A25,3A15,2X,A4)', "Part", "Contrib", &
+    "Spec", "Dir", "Force_model", "Force_numer", "Force diff", "pred error", &
+    "weight", "stat"
   forcediff_sumsq = 0.0_cd
   weight_sum = 0.0_cd
   do I = 1, N
@@ -1123,11 +1245,13 @@ program vc_forces_numer_deriv
       forcediff_sumsq = forcediff_sumsq + term
       weight_sum = weight_sum + weight
       if (J == 1) then
-        print '(I6,2X,I4,2X,I3,2X,2ES25.15,3ES15.5,2X,A5)', &
-          I, particleSpeciesCodes(I), J, forces(J, I), forces_num(J, I), &
-          forcediff, forces_num_err(J, I), weight, passfail
+        print '(I6,2X,I7,2X,I4,2X,I3,2X,2ES25.15,3ES15.5,2X,A5)', &
+          I, particleContributing(I), &
+          particleSpeciesCodes(I), J, forces(J, I), &
+          forces_num(J, I), forcediff, &
+          forces_num_err(J, I), weight, passfail
       else
-        print '(14X,I3,2X,2ES25.15,3ES15.5,2X,A5)', &
+        print '(23X,I3,2X,2ES25.15,3ES15.5,2X,A5)', &
           J, forces(J, I), forces_num(J, I), &
           forcediff, forces_num_err(J, I), weight, passfail
       end if
@@ -1143,6 +1267,13 @@ program vc_forces_numer_deriv
     ''', forcediff = '',ES15.5, '', forcediff/force_model = '',ES15.5)', &
     Imax, Jmax, abs(forces(Jmax, Imax) - forces_num(Jmax, Imax)), &
     abs(forces(Jmax, Imax) - forces_num(Jmax, Imax)) / abs(forces(Jmax, Imax))
+
+  if (.not. doing_non_contributing) then
+    doing_non_contributing = .true.
+    print *
+    print *
+    goto 1000
+  end if
 
   ! Free temporary storage
   !

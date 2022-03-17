@@ -1,36 +1,32 @@
 #
-# CDDL HEADER START
-#
-# The contents of this file are subject to the terms of the Common Development
-# and Distribution License Version 1.0 (the "License").
-#
-# You can obtain a copy of the license at
-# http://www.opensource.org/licenses/CDDL-1.0.  See the License for the
-# specific language governing permissions and limitations under the License.
-#
-# When distributing Covered Code, include this CDDL HEADER in each file and
-# include the License file in a prominent location with the name LICENSE.CDDL.
-# If applicable, add the following below this CDDL HEADER, with the fields
-# enclosed by brackets "[]" replaced with your own identifying information:
-#
-# Portions Copyright (c) [yyyy] [name of copyright owner]. All rights reserved.
-#
-# CDDL HEADER END
-#
-
-#
-# Copyright (c) 2013--2020, Regents of the University of Minnesota.
+# KIM-API: An API for interatomic models
+# Copyright (c) 2013--2022, Regents of the University of Minnesota.
 # All rights reserved.
 #
 # Contributors:
-#    Richard Berger
 #    Christoph Junghans
 #    Ryan S. Elliott
-#    Alexander Stukowski
+#    Daniel S. Karls
+#
+# SPDX-License-Identifier: LGPL-2.1-or-later
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public License
+# along with this library; if not, write to the Free Software Foundation,
+# Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #
 
 #
-# Release: This file is part of the kim-api-2.2.1 package.
+# Release: This file is part of the kim-api-2.3.0 package.
 #
 
 
@@ -76,7 +72,7 @@ mark_as_advanced(KIM_API_CONFIGURATION_TIMESTAMP)
 #
 # Define main project
 #
-project(${KIM_API_PROJECT_NAME} VERSION 2.2.1 LANGUAGES CXX C Fortran)  # must remain a single line for create-pacakge script
+project(${KIM_API_PROJECT_NAME} VERSION 2.3.0 LANGUAGES CXX C Fortran)  # must remain a single line for create-pacakge script
 set(PROJECT_DESCRIPTION "An Application Programming Interface (API) for the Knowledgebase of Interatomic Models (KIM).")
 #
 include(GNUInstallDirs)  # needs to come after languages are enabled
@@ -112,18 +108,16 @@ mark_as_advanced(KIM_API_USER_SIMULATOR_MODELS_DIR_DEFAULT)
 macro(_set_system_dir var identifier type_string)
   set(_default_dir_1 "${PROJECT_NAME}/${identifier}")  # _1 single escape -- to be used directly
   set(_default_dir_2 "${PROJECT_NAME}/${identifier}")  # _2 double escape -- to be passed into macro/function
-  set(_description "System collection (${KIM_API_PATH_SEPARATOR}-separated) ${type_string} directory list")
-  if(WIN32)
-    file(TO_CMAKE_PATH "${CMAKE_INSTALL_FULL_LIBDIR}/${_default_dir_1}" _normalized_libdir_1)
-    file(TO_CMAKE_PATH "${CMAKE_INSTALL_FULL_LIBDIR}/${_default_dir_2}" _normalized_libdir_2)
-    set(_default_dir_1 "${_normalized_libdir_1}")
-    set(_default_dir_2 "${_normalized_libdir_2}")
-    unset(_normalized_libdir_1)
-    unset(_normalized_libdir_2)
+  set(_description "System collection (${KIM_API_PATH_SEPARATOR}-separated) ${type_string} directory list (entries may begin with $ORIGIN (w/ or w/o {}'s), if appropriate)")
+  if(WIN32 AND NOT CYGWIN)
+    # Note: On Win32, ${ORIGIN} refers to the bin/ directory containing libkim-api.dll.
+    file(RELATIVE_PATH _relative_libdir_path "${CMAKE_INSTALL_FULL_BINDIR}" "${CMAKE_INSTALL_FULL_LIBDIR}")
+    set(_default_dir_1 "\${ORIGIN}/${_relative_libdir_path}/${_default_dir_1}")   # Here is the important difference between the _1 and _2
+    set(_default_dir_2 "\\\${ORIGIN}/${_relative_libdir_path}/${_default_dir_2}") # Here is the important difference between the _1 and _2
+    unset(_relative_libdir_path)
   else()
     set(_default_dir_1 "\${ORIGIN}/${_default_dir_1}")   # Here is the important difference between the _1 and _2
     set(_default_dir_2 "\\\${ORIGIN}/${_default_dir_2}") # Here is the important difference between the _1 and _2
-    set(_description "${_description} (entries may begin with $ORIGIN (w/ or w/o {}'s), if appropriate)")
   endif()
   set_cache_with_fallback(${var} "${_default_dir_2}" STRING ${_description})
   if("${${var}}" MATCHES "^${KIM_API_PATH_SEPARATOR}")
@@ -157,7 +151,9 @@ set_target_properties(kim-api
 target_include_directories(kim-api PUBLIC
   $<BUILD_INTERFACE:$<TARGET_PROPERTY:kim-api,Fortran_MODULE_DIRECTORY>>
   $<INSTALL_INTERFACE:${CMAKE_INSTALL_RELOC_LIBDIR}/${PROJECT_NAME}/${KIM_API_Fortran_MODULE_DIR_IDENTIFIER}>)
-target_link_libraries(kim-api ${CMAKE_DL_LIBS})
+if(NOT WIN32 OR CYGWIN)
+  target_link_libraries(kim-api ${CMAKE_DL_LIBS})
+endif()
 
 # Add install rules for kim-api
 #
@@ -175,7 +171,7 @@ install(
   FILES
     "${PROJECT_SOURCE_DIR}/README.md"
     "${PROJECT_SOURCE_DIR}/NEWS"
-    "${PROJECT_SOURCE_DIR}/LICENSE.CDDL"
+    "${PROJECT_SOURCE_DIR}/LICENSE.LGPL"
   DESTINATION
     "${CMAKE_INSTALL_RELOC_DOCDIR}"
   )

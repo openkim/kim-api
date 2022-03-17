@@ -1,34 +1,31 @@
 //
-// CDDL HEADER START
-//
-// The contents of this file are subject to the terms of the Common Development
-// and Distribution License Version 1.0 (the "License").
-//
-// You can obtain a copy of the license at
-// http://www.opensource.org/licenses/CDDL-1.0.  See the License for the
-// specific language governing permissions and limitations under the License.
-//
-// When distributing Covered Code, include this CDDL HEADER in each file and
-// include the License file in a prominent location with the name LICENSE.CDDL.
-// If applicable, add the following below this CDDL HEADER, with the fields
-// enclosed by brackets "[]" replaced with your own identifying information:
-//
-// Portions Copyright (c) [yyyy] [name of copyright owner]. All rights reserved.
-//
-// CDDL HEADER END
-//
-
-//
-// Copyright (c) 2016--2020, Regents of the University of Minnesota.
+// KIM-API: An API for interatomic models
+// Copyright (c) 2013--2022, Regents of the University of Minnesota.
 // All rights reserved.
 //
 // Contributors:
 //    Ryan S. Elliott
 //    Alexander Stukowski
 //
+// SPDX-License-Identifier: LGPL-2.1-or-later
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License, or (at your option) any later version.
+//
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with this library; if not, write to the Free Software Foundation,
+// Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+//
 
 //
-// Release: This file is part of the kim-api-2.2.1 package.
+// Release: This file is part of the kim-api-2.3.0 package.
 //
 
 
@@ -368,7 +365,8 @@ void PrivateReplaceORIGIN(KIM::FILESYSTEM::PathList & pathList,
       {
         // ensure current has no trailing slash
         if (current.filename().empty()) current = current.parent_path();
-        while (!current.parent_path().empty())
+        while (!current.parent_path().empty()
+               && current.parent_path() != current)
         {
           right = current.filename() / right;
           current = current.parent_path();
@@ -489,7 +487,11 @@ int PrivateGetListOfItemMetadataFilesByCollectionAndType(
   if (error) { return true; }
   int extent;
   error = lib.GetNumberOfMetadataFiles(&extent);
-  if (error) { return true; }
+  if (error)
+  {
+    lib.Close();
+    return true;
+  }
 
   for (int i = 0; i < extent; ++i)
   {
@@ -497,7 +499,11 @@ int PrivateGetListOfItemMetadataFilesByCollectionAndType(
     unsigned int length;
     unsigned char const * data;
     error = lib.GetMetadataFile(i, &flnm, &length, &data);
-    if (error) { return true; }
+    if (error)
+    {
+      lib.Close();
+      return true;
+    }
 
     fileNames.push_back(flnm);
     fileStrings.push_back(std::string());
@@ -506,6 +512,7 @@ int PrivateGetListOfItemMetadataFilesByCollectionAndType(
         (strlen(fileStrings.back().c_str()) == length) ? true : false);
   }
 
+  lib.Close();
   return false;
 }
 

@@ -1,34 +1,31 @@
 #
-# CDDL HEADER START
-#
-# The contents of this file are subject to the terms of the Common Development
-# and Distribution License Version 1.0 (the "License").
-#
-# You can obtain a copy of the license at
-# http://www.opensource.org/licenses/CDDL-1.0.  See the License for the
-# specific language governing permissions and limitations under the License.
-#
-# When distributing Covered Code, include this CDDL HEADER in each file and
-# include the License file in a prominent location with the name LICENSE.CDDL.
-# If applicable, add the following below this CDDL HEADER, with the fields
-# enclosed by brackets "[]" replaced with your own identifying information:
-#
-# Portions Copyright (c) [yyyy] [name of copyright owner]. All rights reserved.
-#
-# CDDL HEADER END
-#
-
-#
-# Copyright (c) 2013--2020, Regents of the University of Minnesota.
+# KIM-API: An API for interatomic models
+# Copyright (c) 2013--2022, Regents of the University of Minnesota.
 # All rights reserved.
 #
 # Contributors:
 #    Jim Madge
 #    Ryan S. Elliott
 #
+# SPDX-License-Identifier: LGPL-2.1-or-later
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public License
+# along with this library; if not, write to the Free Software Foundation,
+# Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+#
 
 #
-# Release: This file is part of the kim-api-2.2.1 package.
+# Release: This file is part of the kim-api-2.3.0 package.
 #
 
 
@@ -50,14 +47,22 @@ if((NOT BASH_COMPLETION_COMPLETIONSDIR) AND ("${CMAKE_INSTALL_PREFIX}" IN_LIST K
   endif()
 endif()
 set_cache_with_fallback(BASH_COMPLETION_COMPLETIONSDIR "${CMAKE_INSTALL_RELOC_SYSCONFDIR}/bash_completion.d" PATH "Directory where bash completions are installed")
-set(dir SYSCONFDIR)
-GNUInstallDirs_get_absolute_install_dir(BASH_COMPLETION_FULL_COMPLETIONSDIR BASH_COMPLETION_COMPLETIONSDIR)
-unset(dir)
+if(${CMAKE_VERSION} VERSION_LESS 3.20)
+  set(dir SYSCONFDIR)
+  GNUInstallDirs_get_absolute_install_dir(BASH_COMPLETION_FULL_COMPLETIONSDIR BASH_COMPLETION_COMPLETIONSDIR)
+  unset(dir)
+else()
+  GNUInstallDirs_get_absolute_install_dir(BASH_COMPLETION_FULL_COMPLETIONSDIR BASH_COMPLETION_COMPLETIONSDIR SYSCONFDIR)
+endif()
 RelocatableGNUInstallDirs_get_relocatable_dir(BASH_COMPLETION_RELOC_COMPLETIONSDIR BASH_COMPLETION_FULL_COMPLETIONSDIR BASH_COMPLETION_COMPLETIONSDIR)
 
 # zsh completions
 set_cache_with_fallback(ZSH_COMPLETION_COMPLETIONSDIR "${CMAKE_INSTALL_RELOC_SYSCONFDIR}/zsh_completion.d" PATH "Directory where zsh completions are installed")
-set(dir SYSCONFDIR)
-GNUInstallDirs_get_absolute_install_dir(ZSH_COMPLETION_FULL_COMPLETIONSDIR ZSH_COMPLETION_COMPLETIONSDIR)
-unset(dir)
+if(${CMAKE_VERSION} VERSION_LESS 3.20)
+  set(dir SYSCONFDIR)
+  GNUInstallDirs_get_absolute_install_dir(ZSH_COMPLETION_FULL_COMPLETIONSDIR ZSH_COMPLETION_COMPLETIONSDIR)
+  unset(dir)
+else()
+  GNUInstallDirs_get_absolute_install_dir(ZSH_COMPLETION_FULL_COMPLETIONSDIR ZSH_COMPLETION_COMPLETIONSDIR SYSCONFDIR)
+endif()
 RelocatableGNUInstallDirs_get_relocatable_dir(ZSH_COMPLETION_RELOC_COMPLETIONSDIR ZSH_COMPLETION_FULL_COMPLETIONSDIR ZSH_COMPLETION_COMPLETIONSDIR)

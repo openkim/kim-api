@@ -1,40 +1,38 @@
 #!/bin/bash
 
 #
-# CDDL HEADER START
-#
-# The contents of this file are subject to the terms of the Common Development
-# and Distribution License Version 1.0 (the "License").
-#
-# You can obtain a copy of the license at
-# http://www.opensource.org/licenses/CDDL-1.0.  See the License for the
-# specific language governing permissions and limitations under the License.
-#
-# When distributing Covered Code, include this CDDL HEADER in each file and
-# include the License file in a prominent location with the name LICENSE.CDDL.
-# If applicable, add the following below this CDDL HEADER, with the fields
-# enclosed by brackets "[]" replaced with your own identifying information:
-#
-# Portions Copyright (c) [yyyy] [name of copyright owner]. All rights reserved.
-#
-# CDDL HEADER END
-#
-
-#
-# Copyright (c) 2013--2020, Regents of the University of Minnesota.
+# KIM-API: An API for interatomic models
+# Copyright (c) 2013--2022, Regents of the University of Minnesota.
 # All rights reserved.
 #
 # Contributors:
 #    Ryan S. Elliott
+#    Daniel S. Karls
+#
+# SPDX-License-Identifier: LGPL-2.1-or-later
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public License
+# along with this library; if not, write to the Free Software Foundation,
+# Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #
 
 #
-# Release: This file is part of the kim-api-2.2.1 package.
+# Release: This file is part of the kim-api-2.3.0 package.
 #
 
 
-if test $# -lt 3 -o $# -gt 4; then
-  printf "usage: %s kim-dir distro tag [ccache]\n" $0
+if test $# -lt 3 -o $# -gt 5; then
+  printf "usage: %s kim-dir distro tag [ccache] [cmake]\n" $0
   exit 1
 fi
 
@@ -52,14 +50,27 @@ fi
 
 TAG="$3"
 
-if test $# -eq 4; then
+if test $# -ge 4; then
   CCACHE_DIR="$4"
   if test ! -d "${CCACHE_DIR}"; then
-    printf "error: ccache does not exist.\n"
+    printf "error: ccache dir ${CCACHE_DIR} does not exist.\n"
     exit 1
   fi
 else
   CCACHE_DIR=""
+fi
+
+# NOTE: In order to use a cmake cache directory, you must also be
+# using a ccache directory. This is necessary simply because there
+# is not a nice way to handle kwargs to a bash script.
+if test $# -eq 5; then
+  CMAKE_DIR="$5"
+  if test ! -d "${CMAKE_DIR}"; then
+    printf "error: cmake dir ${CMAKE_DIR} does not exist.\n"
+    exit 1
+  fi
+else
+  CMAKE_DIR=""
 fi
 
 CONTEXT="${PWD}/context-for-docker"
@@ -76,18 +87,46 @@ fi
 
 # Store env to pass to docker if COVERAGE requested
 if test x"${COVERAGE}" != x""; then
-  # https://docs.codecov.io/docs/testing-with-docker
-  ci_env=`bash <(curl -s https://codecov.io/env)`
+  # See https://docs.codecov.io/docs/testing-with-docker
+  ci_env="-e CODECOV_ENV -e CODECOV_TOKEN -e CODECOV_URL -e CODECOV_SLUG -e VCS_COMMIT_ID -e VCS_BRANCH_NAME -e VCS_PULL_REQUEST -e VCS_SLUG -e VCS_TAG -e CI_BUILD_URL -e CI_BUILD_ID -e CI_JOB_ID -e GITHUB_ACTIONS -e GITHUB_HEAD_REF -e GITHUB_REF -e GITHUB_REPOSITORY -e GITHUB_RUN_ID -e GITHUB_SERVER_URL -e GITHUB_SHA -e GITHUB_WORKFLOW"
 fi
 
 set -xv
 mkdir "${CONTEXT}" || exit $?
 cd "${CONTEXT}" || exit $?
+
+# Copy ccache into docker context
 if test x"" = x"${CCACHE_DIR}"; then
+  echo "Could not find ccache directory ${CCACHE_DIR}"
   mkdir "ccache" || exit $?
 else
+  echo "Found CCACHE_DIR ${CCACHE_DIR}"
+  echo "Listing contents of CCACHE_DIR..."
+  ls -lha ${CCACHE_DIR}
+  echo "Copying CCACHE_DIR contents to directory 'ccache'"
   cp -r "${CCACHE_DIR}" "ccache" || exit $?
 fi
+echo "Listing contents of directory 'ccache'"
+ls -lha ccache
+
+# Copy cmake into docker context
+# NOTE: The 'cmake' directory produced as a result of this step will
+# be ignored by all but the ubuntu_cmake310 build recipe
+# FIXME: This is duplicated from the ccache case above and both
+# should be merged with a loop or something similar
+if test x"" = x"${CMAKE_DIR}"; then
+  echo "Could not find cmake directory ${CMAKE_DIR}"
+  mkdir "cmake" || exit $?
+else
+  echo "Found CMAKE_DIR ${CMAKE_DIR}"
+  echo "Listing contents of CMAKE_DIR..."
+  ls -lha ${CMAKE_DIR}
+  echo "Copying CMAKE_DIR contents to directory 'cmake'"
+  cp -r "${CMAKE_DIR}" "cmake" || exit $?
+fi
+echo "Listing contents of directory 'cmake'"
+ls -lha cmake
+
 (cd "${KIM_DIR}" && git archive --format tar --prefix=kim-api/ HEAD) | \
   tar -xf - || exit $?
 cp -r "${KIM_DIR}/docker" "docker" || exit $?
@@ -119,10 +158,15 @@ docker build -t "${TAG}" -f "docker/Dockerfile.${DISTRO}" .  &&
          --build-arg B_COVERAGE="${COVERAGE:+true}" \
          \
          .  &&
-  docker run -it --cap-add SYS_PTRACE --cidfile container.pid ${ci_env} \
+  docker run --cap-add SYS_PTRACE --cidfile container.pid ${ci_env} \
          "${TAG}_w_common" &&
   rm -rf ccache &&
+  rm -rf cmake &&
   CON=`cat container.pid` &&
-  docker cp "${CON}:/home/kim/.ccache" ccache &&
+  docker cp "${CON}:/home/kim/.ccache/." ${CCACHE_DIR} &&
   docker rm "${CON}" || exit $?
+
+echo "Listing contents of CCACHE_DIR ${CCACHE_DIR}"
+ls -lha ${CCACHE_DIR}
+
 set +xv
