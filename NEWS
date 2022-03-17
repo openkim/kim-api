@@ -29,6 +29,19 @@
 #
 
 
+=== kim-api-2.3.0 =============== 17Mar2022 ====================================
+
+* Re-license from CDDL to LGPL-2.1-or-later
+
+* Fixed bug in c bindings for KIM_Collections_GetDirectoryName()
+
+* Transition from Travis CI to github actions
+
+* Add partial_particle_energy computation to utility_forces_numer_deriv
+
+* Fixes/Improvements to CMake build system
+
+
 === kim-api-2.2.1 =============== 13Dec2020 ====================================
 
 * replace usage of localtime() with more secure localtime_r()
