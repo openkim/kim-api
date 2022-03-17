@@ -72,7 +72,7 @@ mark_as_advanced(KIM_API_CONFIGURATION_TIMESTAMP)
 #
 # Define main project
 #
-project(${KIM_API_PROJECT_NAME} VERSION 2.3.0 LANGUAGES CXX C Fortran)  # must remain a single line for create-pacakge script
+project(${KIM_API_PROJECT_NAME} VERSION 2.3.1 LANGUAGES CXX C Fortran)  # must remain a single line for create-pacakge script
 set(PROJECT_DESCRIPTION "An Application Programming Interface (API) for the Knowledgebase of Interatomic Models (KIM).")
 #
 include(GNUInstallDirs)  # needs to come after languages are enabled
