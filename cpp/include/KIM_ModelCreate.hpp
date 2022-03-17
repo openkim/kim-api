@@ -1,6 +1,6 @@
 //
 // KIM-API: An API for interatomic models
-// Copyright (c) 2013--2021, Regents of the University of Minnesota.
+// Copyright (c) 2013--2022, Regents of the University of Minnesota.
 // All rights reserved.
 //
 // Contributors:
