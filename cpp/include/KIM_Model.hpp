@@ -133,9 +133,9 @@ class Model
   ///
   /// \param[inout] model Pointer to the Model object.
   ///
-  /// \pre \c model points to a previously created %KIM API Model object.
+  /// \pre \c *model points to a previously created %KIM API Model object.
   ///
-  /// \post `model == NULL`.
+  /// \post `*model == NULL`.
   ///
   /// \sa KIM_Model_Destroy, kim_model_module::kim_model_destroy
   ///

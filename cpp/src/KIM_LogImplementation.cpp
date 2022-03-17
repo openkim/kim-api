@@ -111,11 +111,14 @@ int LogImplementation::Create(LogImplementation ** const logImplementation)
 
 void LogImplementation::Destroy(LogImplementation ** const logImplementation)
 {
-  (*logImplementation)
-      ->LogEntry(LOG_VERBOSITY::information,
-                 "Log object destroyed.",
-                 __LINE__,
-                 __FILE__);
+  if (*logImplementation != NULL)
+  {
+    (*logImplementation)
+        ->LogEntry(LOG_VERBOSITY::information,
+                   "Log object destroyed.",
+                   __LINE__,
+                   __FILE__);
+  }
   delete (*logImplementation);
   *logImplementation = NULL;
 }

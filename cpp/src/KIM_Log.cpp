@@ -57,7 +57,10 @@ int Log::Create(Log ** const log)
 
 void Log::Destroy(Log ** const log)
 {
-  LogImplementation::Destroy(&((*log)->pimpl));
+  if (*log != NULL)
+  {
+    LogImplementation::Destroy(&((*log)->pimpl));
+  }
   delete *log;
   *log = NULL;
 }
