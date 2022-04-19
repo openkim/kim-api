@@ -32,13 +32,12 @@ import subprocess
 analyticsScript = '''\
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async
-src="https://www.googletagmanager.com/gtag/js?id=UA-25481110-7"></script>
+src="https://www.googletagmanager.com/gtag/js?id=G-HT7Y2LG7BB"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-
-  gtag('config', 'UA-25481110-7');
+  gtag('config', 'G-HT7Y2LG7BB');
 </script>
 '''
 
