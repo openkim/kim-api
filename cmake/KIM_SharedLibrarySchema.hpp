@@ -31,7 +31,7 @@
 #ifndef KIM_SHARED_LIBRARY_SCHEMA_HPP_
 #define KIM_SHARED_LIBRARY_SCHEMA_HPP_
 
-#define KIM_SHARED_LIBRARY_SCHEMA_VERSION 2
+#define KIM_SHARED_LIBRARY_SCHEMA_VERSION 3
 
 
 #ifndef KIM_FUNCTION_TYPES_HPP_
@@ -50,6 +50,32 @@ class LanguageName;
 
 namespace SHARED_LIBRARY_SCHEMA
 {
+struct SharedLibrarySchemaV3
+{
+  struct EmbeddedFilePart
+  {
+    unsigned int const filePartLength;
+    unsigned char const * const filePartPointer;
+  };  // struct EmbeddedFilePart
+
+  struct EmbeddedFile
+  {
+    unsigned int const numberOfParts;
+    EmbededFilePart const * const embeddedFileParts;
+  };  // struct EmbeddedFile
+
+  CollectionItemType const itemType;
+  char const * const itemName;
+  LanguageName const createLanguageName;
+  Function * createRoutine;
+  char const * const driverName;
+  EmbeddedFile const * const simulatorModelSpecificationFile;
+  int const numberOfParameterFiles;
+  EmbeddedFile const * const parameterFiles;
+  int const numberOfMetadataFiles;
+  EmbeddedFile const * const metadataFiles;
+};  // struct SharedLibrarySchemaV3
+
 struct SharedLibrarySchemaV2
 {
   struct EmbeddedFile
