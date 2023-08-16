@@ -9,6 +9,7 @@
                  "variable alchemy_mapping index @<atom-type-sym-list>@"
                  "variable alchemy_curr_type loop 10000"
                  "include @<parameter-file-1>@"
+                 "variable alchemy_curr_type delete"
                  "pair_modify mix arithmetic"
                ]
 }
