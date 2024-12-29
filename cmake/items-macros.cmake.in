@@ -494,18 +494,19 @@ macro(_set_simulator_model_template_variables)
 endmacro()
 
 #
-# Function to create a custom command to convert a file (blob) to a c source.
+# Function to create a custom command to convert a file (blob) to a cpp source.
 #
 # Convert _filein to hex then format as c source file and write to _fileout.
 # Assumes _filein is a relative file name in the _dirin directory.
 #
 # Sets _blob_to_c_command to string for use with add_custom_command()
 #
-function(_add_custom_command_blob_to_c _dirin _filein _fileout)
+function(_add_custom_command_blob_to_cpp _dirin _filein _fileout)
   include(FindPackageMessage)
-  find_program(XXD_EXECUTABLE "xxd")
+  # find_program(XXD_EXECUTABLE "xxd")
+  find_program(XXD_EXECUTABLE "kim_base64_encode")
   if(XXD_EXECUTABLE)
-    find_package_message(xxd "Found xxd: (${XXD_EXECUTABLE})" "found")
+    find_package_message(xxd "Found kim_base64_encode: (${XXD_EXECUTABLE})" "found")
 
     string(MAKE_C_IDENTIFIER ${_filein} _cfilein)
     set(_edit_xxd_output "${CMAKE_CURRENT_BINARY_DIR}/EditXXDOutput.cmake")
@@ -522,7 +523,7 @@ function(_add_custom_command_blob_to_c _dirin _filein _fileout)
         )
     endif()
     add_custom_command(OUTPUT ${_fileout}
-      COMMAND ${XXD_EXECUTABLE} -i "${_filein}" "${_fileout}"
+      COMMAND ${XXD_EXECUTABLE} "${_filein}" "${_fileout}"
       COMMAND ${CMAKE_COMMAND} "-Dvarname=${_cfilein}" "-Dfilein=${_filein}" "-Dfileout=${_fileout}" -P "${_edit_xxd_output}"
       DEPENDS "${_dirin}/${_filein}" "${_edit_xxd_output}"
       WORKING_DIRECTORY "${_dirin}"
@@ -555,7 +556,7 @@ function(_add_custom_command_blob_to_c _dirin _filein _fileout)
     unset(_cfilein)
     unset(_blob_to_source)
   endif()
-endfunction(_add_custom_command_blob_to_c)
+endfunction(_add_custom_command_blob_to_cpp)
 
 #
 # Function to create and define targets for c source files from provided data
@@ -607,9 +608,9 @@ function(_xxd_process_files)
       else()
         message(FATAL_ERROR "Cannot find metadata file '${_FNAME}'")
       endif()
-      set(_FILE "${CMAKE_CURRENT_BINARY_DIR}/${_FNAME}.c")
+      set(_FILE "${CMAKE_CURRENT_BINARY_DIR}/${_FNAME}.cpp")
       list(APPEND _ITEM_SOURCES ${_FILE})
-      _add_custom_command_blob_to_c("${_DIR_IN}" "${_FNAME}" "${_FILE}")
+      _add_custom_command_blob_to_cpp("${_DIR_IN}" "${_FNAME}" "${_FILE}")
       unset(_DIR_IN)
     endforeach()
     unset(_FNAME)
