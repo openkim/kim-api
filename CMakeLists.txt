@@ -45,7 +45,12 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   set(_LOG_MAX "DEBUG")
 else()
   set(_LOG_MAX "INFORMATION")
+  set(CMAKE_BUILD_TYPE "Release") # Default to Release, soves KIM slowdown complaints
 endif()
+
+# C++ Language Standard, enforced to be C++11
+set(CMAKE_CXX_STANDARD 11)
+
 set_cache_with_fallback(KIM_API_LOG_MAXIMUM_LEVEL "${_LOG_MAX}" STRING "Maximum log verbosity")
 unset(_LOG_MAX)
 set_property(CACHE KIM_API_LOG_MAXIMUM_LEVEL PROPERTY STRINGS "" SILENT FATAL ERROR WARNING INFORMATION DEBUG)

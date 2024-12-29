@@ -55,6 +55,10 @@
 #include "KIM_SharedLibrarySchema.hpp"
 #endif
 
+#ifndef BASE64_HPP
+#include "base64.hpp" // For base64 decoding
+#endif
+
 namespace
 {
 static void * const referencePointForKIM_Library = NULL;
@@ -680,6 +684,8 @@ int SharedLibrary::WriteParameterFileDirectory()
     std::ofstream fl;
     fl.open(parameterFilePathName.string().c_str(),
             std::ifstream::out | std::ifstream::binary);
+    std::string fileDataRawStr(reinterpret_cast<const char *>(strPtr), length);
+    std::cout << "File data raw string: " << fileDataRawStr << std::endl;
     fl.write(reinterpret_cast<const char *>(strPtr), length);
     if (!fl)
     {
