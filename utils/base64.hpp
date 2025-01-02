@@ -1,6 +1,7 @@
 #ifndef BASE64_HPP
 #define BASE64_HPP
 
+#include <cstddef>
 #include <string>
 #include <cstdint>
 
@@ -37,6 +38,10 @@ private:
         return tab;
     }
 
+
+public:
+    // Prevent instantiation
+    Base64() = delete;
     // Calculate encoded size
     inline static constexpr size_t encoded_size(size_t n) {
         return 4 * ((n + 2) / 3);
@@ -47,9 +52,10 @@ private:
         return n / 4 * 3;
     }
 
-public:
-    // Prevent instantiation
-    Base64() = delete;
+    constexpr static std::size_t MAX_BASE64_WIDTH = 76;
+    constexpr static std::size_t MAX_BINARY_WIDTH = MAX_BASE64_WIDTH/4 * 3;
+
+
     
     inline static std::string encode(const std::string& input) {
         std::string output;
@@ -132,6 +138,54 @@ public:
         output.resize(out - &output[0]);
         return output;
     }
+
+    inline static void decode(unsigned char const * input, 
+                              const std::size_t len_in, 
+                              unsigned char * const output, 
+                              std::size_t& len_out) {
+        // Same as above, but with output passed as reference to avoid reallocation, more C-like
+        // this assumes that output is allocated and of the max correct size
+        // len_out is the size of the output buffer
+
+        std::size_t len = len_in;
+        unsigned char* out = output;
+        unsigned char* in = const_cast<unsigned char*>(input);
+
+        unsigned char c3[3], c4[4];
+        int i = 0;
+        int j = 0;
+
+        auto const inverse = get_inverse();
+
+        while(len-- && *in != '=') {
+            auto const v = inverse[*in];
+            if(v == -1)
+                break;
+            ++in;
+            c4[i] = v;
+            if(++i == 4) {
+                c3[0] = (c4[0] << 2) + ((c4[1] & 0x30) >> 4);
+                c3[1] = ((c4[1] & 0xf) << 4) + ((c4[2] & 0x3c) >> 2);
+                c3[2] = ((c4[2] & 0x3) << 6) + c4[3];
+
+                for(i = 0; i < 3; i++)
+                    *out++ = c3[i];
+                i = 0;
+            }
+        }
+
+        if(i) {
+            c3[0] = (c4[0] << 2) + ((c4[1] & 0x30) >> 4);
+            c3[1] = ((c4[1] & 0xf) << 4) + ((c4[2] & 0x3c) >> 2);
+            c3[2] = ((c4[2] & 0x3) << 6) + c4[3];
+
+            for(j = 0; j < i - 1; j++)
+                *out++ = c3[j];
+        }
+
+        len_out = out - output;
+    }
+    
 };
 
 #endif // BASE64_HPP

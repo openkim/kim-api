@@ -523,7 +523,6 @@ function(_add_custom_command_blob_to_cpp _dirin _filein _fileout)
         )
     endif()
     add_custom_command(OUTPUT ${_fileout}
-      message(STATUS "---+++--- ${XXD_EXECUTABLE} Creating ${_fileout} from ${_filein}")
       COMMAND ${XXD_EXECUTABLE} "${_filein}" "${_fileout}"
       COMMAND ${CMAKE_COMMAND} "-Dvarname=${_cfilein}" "-Dfilein=${_filein}" "-Dfileout=${_fileout}" -P "${_edit_xxd_output}"
       DEPENDS "${_dirin}/${_filein}" "${_edit_xxd_output}"
