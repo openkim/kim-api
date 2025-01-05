@@ -160,6 +160,12 @@ if(NOT WIN32 OR CYGWIN)
   target_link_libraries(kim-api ${CMAKE_DL_LIBS})
 endif()
 
+add_executable(kim_base64_encode "${PROJECT_SOURCE_DIR}/utils/encode.cpp")
+target_include_directories(kim_base64_encode PRIVATE "${PROJECT_SOURCE_DIR}/cpp/include")
+set_target_properties(kim_base64_encode PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/utils" )
+SET(XXD_EXECUTABLE ${PROJECT_BINARY_DIR}/utils/kim_base64_encode)
+add_dependencies(kim-api kim_base64_encode)
+
 # Add install rules for kim-api
 #
 install(TARGETS kim-api
