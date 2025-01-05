@@ -45,7 +45,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   set(_LOG_MAX "DEBUG")
 else()
   set(_LOG_MAX "INFORMATION")
-  set(CMAKE_BUILD_TYPE "Release") # Default to Release, soves KIM slowdown complaints
+  set(CMAKE_BUILD_TYPE "Release") # Default to Release, solves KIM slowdown complaints
 endif()
 
 # C++ Language Standard, enforced to be C++11
@@ -186,6 +186,9 @@ install(
   DESTINATION
     "${CMAKE_INSTALL_RELOC_DOCDIR}"
   )
+# install for kim_base64_encode
+install(TARGETS kim_base64_encode
+  RUNTIME DESTINATION "${CMAKE_INSTALL_RELOC_BINDIR}")
 
 # Add include subdirectories
 #

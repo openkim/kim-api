@@ -15,6 +15,7 @@ void writeEncodedFile(std::string & filename, std::string & output_filename){
     std::ifstream input_file(filename, std::ios::binary);
     std::ofstream output_file(encoded_file_name);
 
+    unsigned int len = 0;
 
     const size_t chunk = 1024 * 48; // 48 kb buffer, multiple of 3, base64 3bytes to 4 char
     const size_t linewidth = 76;
@@ -22,7 +23,7 @@ void writeEncodedFile(std::string & filename, std::string & output_filename){
     buffer.reserve(chunk);
     size_t linepos =0 ;
 
-    std::string header = "extern \"C\" {\n constexpr unsigned char " + parsed_file_string + "[] = R\"(\n";
+    std::string header = "extern unsigned char " + parsed_file_string + "[] = R\"(\n";
     // std::string header = "constexpr unsigned char " + parsed_file_string + "[] = R\"(\n";
     output_file.write(header.data(), header.length());
 
@@ -35,15 +36,18 @@ void writeEncodedFile(std::string & filename, std::string & output_filename){
         for (char &c : encoded){
             output_file.put(c);
             linepos++;
+            len++;
             if (linepos >= linewidth){
                 output_file.put('\n');
+                len++;
                 linepos = 0;
             }
         }
     }
     if (linepos > 0) output_file.put('\n');
 
-    std::string footer = ")\";\nconstexpr unsigned int " +  parsed_file_string + "_len = sizeof(" + parsed_file_string + ") - 1;\n}";
+    len += 2; // two \n in beginning and end
+    std::string footer = ")\";\nextern unsigned int " +  parsed_file_string + "_len = " +  std::to_string(len) + ";\n";
 
     output_file.write(footer.data(), footer.length());
     input_file.close();
