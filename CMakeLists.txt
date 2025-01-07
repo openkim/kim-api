@@ -45,7 +45,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   set(_LOG_MAX "DEBUG")
 else()
   set(_LOG_MAX "INFORMATION")
-  set(CMAKE_BUILD_TYPE "Release") # Default to Release, soves KIM slowdown complaints
+  set(CMAKE_BUILD_TYPE "Release") # Default to Release, solves KIM slowdown complaints
 endif()
 
 # C++ Language Standard, enforced to be C++11
@@ -160,6 +160,12 @@ if(NOT WIN32 OR CYGWIN)
   target_link_libraries(kim-api ${CMAKE_DL_LIBS})
 endif()
 
+add_executable(kim-base64-encode "${PROJECT_SOURCE_DIR}/utils/encode.cpp")
+target_include_directories(kim-base64-encode PRIVATE "${PROJECT_SOURCE_DIR}/cpp/include")
+set_target_properties(kim-base64-encode PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/utils" )
+SET(XXD_EXECUTABLE ${PROJECT_BINARY_DIR}/utils/kim-base64-encode)
+add_dependencies(kim-api kim-base64-encode)
+
 # Add install rules for kim-api
 #
 install(TARGETS kim-api
@@ -180,6 +186,9 @@ install(
   DESTINATION
     "${CMAKE_INSTALL_RELOC_DOCDIR}"
   )
+# install kim-base64-encode in CMAKE_INSTALL_RELOC_BINDIR
+install(TARGETS kim-base64-encode
+  RUNTIME DESTINATION "${CMAKE_INSTALL_RELOC_BINDIR}")
 
 # Add include subdirectories
 #
