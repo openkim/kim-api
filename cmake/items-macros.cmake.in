@@ -503,10 +503,9 @@ endmacro()
 #
 function(_add_custom_command_blob_to_cpp _dirin _filein _fileout)
   include(FindPackageMessage)
-  # find_program(XXD_EXECUTABLE "xxd")
-  find_program(XXD_EXECUTABLE "kim_base64_encode")
+  find_program(XXD_EXECUTABLE "kim-base64-encode")
   if(XXD_EXECUTABLE)
-    find_package_message(xxd "Found kim_base64_encode: (${XXD_EXECUTABLE})" "found")
+    find_package_message(xxd "Found kim-base64-encode: (${XXD_EXECUTABLE})" "found")
 
     string(MAKE_C_IDENTIFIER ${_filein} _cfilein)
     set(_edit_xxd_output "${CMAKE_CURRENT_BINARY_DIR}/EditXXDOutput.cmake")

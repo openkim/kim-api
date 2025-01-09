@@ -704,7 +704,6 @@ int SharedLibrary::WriteParameterFileDirectory()
     FILESYSTEM::Path const parameterFilePathName
         = parameterFileDirectoryName_ / parameterFileName;
     std::ofstream fl;
-    std::cout << "Decoding file: " << parameterFileName << " using Base64\n";
     
     fl.open(parameterFilePathName.string().c_str(),
             std::ifstream::out | std::ifstream::binary);
