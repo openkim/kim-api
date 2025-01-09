@@ -166,6 +166,7 @@ set_target_properties(kim-base64-encode PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${P
 SET(XXD_EXECUTABLE ${PROJECT_BINARY_DIR}/utils/kim-base64-encode)
 add_dependencies(kim-api kim-base64-encode)
 
+
 # Add install rules for kim-api
 #
 install(TARGETS kim-api
@@ -188,7 +189,8 @@ install(
   )
 # install kim-base64-encode in CMAKE_INSTALL_RELOC_BINDIR
 install(TARGETS kim-base64-encode
-  RUNTIME DESTINATION "${CMAKE_INSTALL_RELOC_BINDIR}")
+
+RUNTIME DESTINATION "${CMAKE_INSTALL_RELOC_BINDIR}")
 
 # Add include subdirectories
 #
