@@ -57,7 +57,7 @@
 #endif
 
 #ifndef BASE64_HPP
-#include "base64.hpp" // For base64 decoding
+#include "KIM_Base64.hpp" // For base64 decoding
 #endif
 
 namespace
@@ -657,10 +657,10 @@ int SharedLibrary::WriteParameterFileDirectory()
     const std::size_t FILE_NEWLINE_PAD_OFFSET = 1;
     const std::size_t PERLINE_PAD = 1;
     
-    int usable_chars = len - FILE_NEWLINE_PAD_OFFSET*2;
+    int usable_chars = static_cast<int>(len) - FILE_NEWLINE_PAD_OFFSET*2;
     const auto file_start_ptr = specificationData + FILE_NEWLINE_PAD_OFFSET;
     
-    std::array<unsigned char, Base64::MAX_BINARY_WIDTH> binary_line;
+    std::array<unsigned char, Base64::MAX_BINARY_WIDTH> binary_line{};
 
     const int char_per_line = static_cast<int>(Base64::MAX_BASE64_WIDTH);
 
@@ -671,7 +671,7 @@ int SharedLibrary::WriteParameterFileDirectory()
     while(char_remaining > 0){
         int n_chars_this_line = std::min(char_per_line, char_remaining);
         Base64::decode(file_start_ptr + offset, n_chars_this_line, binary_line.data(), out_len);
-        fl.write(reinterpret_cast<char *>(binary_line.data()), out_len);
+        fl.write(reinterpret_cast<char *>(binary_line.data()), static_cast<std::streamsize>(out_len));
         char_remaining -= (char_per_line + PERLINE_PAD);
         offset += (char_per_line + PERLINE_PAD);
     }
@@ -711,10 +711,10 @@ int SharedLibrary::WriteParameterFileDirectory()
     const std::size_t FILE_NEWLINE_PAD_OFFSET = 1;
     const std::size_t PERLINE_PAD = 1;
     
-    int usable_chars = length - FILE_NEWLINE_PAD_OFFSET*2;
+    int usable_chars = static_cast<int>(length) - FILE_NEWLINE_PAD_OFFSET*2;
     const auto file_start_ptr = strPtr + FILE_NEWLINE_PAD_OFFSET;
     
-    std::array<unsigned char, Base64::MAX_BINARY_WIDTH> binary_line;
+    std::array<unsigned char, Base64::MAX_BINARY_WIDTH> binary_line{};
 
     const int char_per_line = static_cast<int>(Base64::MAX_BASE64_WIDTH);
 
@@ -725,7 +725,7 @@ int SharedLibrary::WriteParameterFileDirectory()
     while(char_remaining > 0){
         int n_chars_this_line = std::min(char_per_line, char_remaining);
         Base64::decode(file_start_ptr + offset, n_chars_this_line, binary_line.data(), out_len);
-        fl.write(reinterpret_cast<char *>(binary_line.data()), out_len);
+        fl.write(reinterpret_cast<char *>(binary_line.data()), static_cast<std::streamsize>(out_len));
         char_remaining -= (char_per_line + PERLINE_PAD);
         offset += (char_per_line + PERLINE_PAD);
     }    

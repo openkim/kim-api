@@ -48,6 +48,8 @@ else()
   set(CMAKE_BUILD_TYPE "Release") # Default to Release, solves KIM slowdown complaints
 endif()
 
+message(STATUS "KIM-API Build Type: ${CMAKE_BUILD_TYPE}")
+
 # C++ Language Standard, enforced to be C++11
 set(CMAKE_CXX_STANDARD 11)
 
@@ -160,10 +162,13 @@ if(NOT WIN32 OR CYGWIN)
   target_link_libraries(kim-api ${CMAKE_DL_LIBS})
 endif()
 
-add_executable(kim-base64-encode "${PROJECT_SOURCE_DIR}/utils/encode.cpp")
+add_executable(kim-base64-encode "${PROJECT_SOURCE_DIR}/utils/KIM_Base64Encode.cpp")
 target_include_directories(kim-base64-encode PRIVATE "${PROJECT_SOURCE_DIR}/cpp/include")
 set_target_properties(kim-base64-encode PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/utils" )
-SET(XXD_EXECUTABLE ${PROJECT_BINARY_DIR}/utils/kim-base64-encode)
+
+# Keeping the name XXD for now, as otherwise this will result in much larger refactoring
+# But everywhere, XXD = kim-base64-encode
+set(XXD_EXECUTABLE ${PROJECT_BINARY_DIR}/utils/kim-base64-encode)
 add_dependencies(kim-api kim-base64-encode)
 
 
