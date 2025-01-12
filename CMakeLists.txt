@@ -162,7 +162,7 @@ if(NOT WIN32 OR CYGWIN)
   target_link_libraries(kim-api ${CMAKE_DL_LIBS})
 endif()
 
-add_executable(kim-base64-encode "${PROJECT_SOURCE_DIR}/utils/KIM_Base64Encode.cpp")
+add_executable(kim-base64-encode "${PROJECT_SOURCE_DIR}/cpp/src/KIM_Base64Encode.cpp")
 target_include_directories(kim-base64-encode PRIVATE "${PROJECT_SOURCE_DIR}/cpp/include")
 set_target_properties(kim-base64-encode PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/utils" )
 
