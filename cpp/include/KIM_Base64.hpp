@@ -14,13 +14,14 @@
 
 #include <cstddef>
 #include <string>
-#include <cstdint>
+// #include <cstdint>
 
-class Base64 {
+namespace Base64 {
   // Based on boost https://www.boost.org/doc/libs/1_66_0/boost/beast/core/detail/base64.hpp
- private:
+ namespace
+ {
   /// \brief Base64 alphabet table
-  inline static const char* get_alphabet() {
+  inline const char* get_alphabet() {
     static const char tab[] =
         "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
     return tab;
@@ -48,16 +49,13 @@ class Base64 {
     };
     return tab;
   }
-
-
- public:
-  Base64() = delete;
+ } // anonymous namespace
 
   /// \brief Calculate encoded size
   ///
   /// \param n The size of the input
   /// \return The size of the encoded output
-  inline static constexpr size_t encoded_size(size_t n) {
+  inline static size_t encoded_size(size_t n) {
     return 4 * ((n + 2) / 3);
   }
 
@@ -65,13 +63,13 @@ class Base64 {
   ///
   /// \param n The size of the input
   /// \return The maximum size of the decoded output
-  inline static constexpr size_t decoded_size(size_t n) {
+  inline static  size_t decoded_size(size_t n) {
     return n / 4 * 3;
   }
 
   // width of encoded output
-  constexpr static std::size_t MAX_BASE64_WIDTH = 76;
-  constexpr static std::size_t MAX_BINARY_WIDTH = MAX_BASE64_WIDTH/4 * 3;
+   const static std::size_t MAX_BASE64_WIDTH = 76;
+   const static std::size_t MAX_BINARY_WIDTH = MAX_BASE64_WIDTH/4 * 3;
 
 
   /// \brief Encode a string
@@ -85,7 +83,7 @@ class Base64 {
     const char* in = input.data();
     char* out = &output[0];
     size_t len = input.size();
-    auto const tab = get_alphabet();
+    const char * tab = get_alphabet();
 
     // Process 3-byte chunks
     for(size_t n = len / 3; n--;) {
@@ -132,10 +130,10 @@ class Base64 {
     int i = 0;
     int j = 0;
 
-    auto const inverse = get_inverse();
+    const signed char * inverse = get_inverse();
 
     while(len-- && *in != '=') {
-      auto const v = inverse[*in];
+      const signed char v = inverse[*in];
       if(v == -1)
         break;
       ++in;
@@ -176,16 +174,16 @@ class Base64 {
                             std::size_t& len_out) {
     std::size_t len = len_in;
     unsigned char* out = output;
-    auto in = const_cast<unsigned char*>(input);
+    unsigned char * in = const_cast<unsigned char*>(input);
 
     unsigned char c3[3], c4[4];
     int i = 0;
     int j = 0;
 
-    auto const inverse = get_inverse();
+    const signed char * inverse = get_inverse();
 
     while(len-- && *in != '=') {
-      auto const v = inverse[*in];
+      const signed char v = inverse[*in];
       if(v == -1)
         break;
       ++in;
@@ -213,6 +211,6 @@ class Base64 {
     len_out = out - output;
   }
 
-};
+}
 
 #endif // BASE64_HPP

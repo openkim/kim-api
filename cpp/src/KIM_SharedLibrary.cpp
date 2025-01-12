@@ -37,7 +37,6 @@
 #endif
 #include <fstream>
 #include <sstream>
-#include <array>
 #include <unistd.h>  // IWYU pragma: keep  // For macOS
 
 #ifndef KIM_SHARED_LIBRARY_HPP_
@@ -658,9 +657,10 @@ int SharedLibrary::WriteParameterFileDirectory()
     const std::size_t PERLINE_PAD = 1;
     
     int usable_chars = static_cast<int>(len) - FILE_NEWLINE_PAD_OFFSET*2;
-    const auto file_start_ptr = specificationData + FILE_NEWLINE_PAD_OFFSET;
+    const unsigned char * file_start_ptr = specificationData + FILE_NEWLINE_PAD_OFFSET;
     
-    std::array<unsigned char, Base64::MAX_BINARY_WIDTH> binary_line{};
+    // std::array<unsigned char, Base64::MAX_BINARY_WIDTH> binary_line{};
+    std::vector<unsigned char> binary_line(Base64::MAX_BINARY_WIDTH);
 
     const int char_per_line = static_cast<int>(Base64::MAX_BASE64_WIDTH);
 
@@ -712,9 +712,10 @@ int SharedLibrary::WriteParameterFileDirectory()
     const std::size_t PERLINE_PAD = 1;
     
     int usable_chars = static_cast<int>(length) - FILE_NEWLINE_PAD_OFFSET*2;
-    const auto file_start_ptr = strPtr + FILE_NEWLINE_PAD_OFFSET;
+    const unsigned char * file_start_ptr = strPtr + FILE_NEWLINE_PAD_OFFSET;
     
-    std::array<unsigned char, Base64::MAX_BINARY_WIDTH> binary_line{};
+    // std::array<unsigned char, Base64::MAX_BINARY_WIDTH> binary_line{};
+    std::vector<unsigned char> binary_line(Base64::MAX_BINARY_WIDTH);
 
     const int char_per_line = static_cast<int>(Base64::MAX_BASE64_WIDTH);
 

@@ -51,7 +51,7 @@ endif()
 message(STATUS "KIM-API Build Type: ${CMAKE_BUILD_TYPE}")
 
 # C++ Language Standard, enforced to be C++11
-set(CMAKE_CXX_STANDARD 11)
+# set(CMAKE_CXX_STANDARD 11)
 
 set_cache_with_fallback(KIM_API_LOG_MAXIMUM_LEVEL "${_LOG_MAX}" STRING "Maximum log verbosity")
 unset(_LOG_MAX)

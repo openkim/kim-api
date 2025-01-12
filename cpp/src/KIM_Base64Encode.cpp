@@ -9,6 +9,8 @@
 #include <sstream>
 #include <vector>
 #include <algorithm>
+#include <cstdio>
+#include <string>
 
 /// \brief Write the Base^4 encode binary file as a C++ source file, emulating XXD
 ///
@@ -22,8 +24,14 @@ void WriteEncodedFile(std::string & fileName, std::string & outputFileName){
     std::replace(xxdFormatFileName.begin(), xxdFormatFileName.end(), '.', '_');
     std::replace(xxdFormatFileName.begin(), xxdFormatFileName.end(), '-', '_');
 
-    std::ifstream inputFile(fileName, std::ios::binary);
-    std::ofstream outputFile(outputFileName);
+    // std::ifstream inputFile(fileName, std::ios::binary);
+    // std::ofstream outputFile(outputFileName);
+
+    FILE *inputFile = fopen(fileName.c_str(), "rb");
+    if(!inputFile) { std::cerr << "Error opening input file" << std::endl; return;}
+
+    FILE *outputFile = fopen(outputFileName.c_str(), "w");
+    if(!outputFile) {std::cerr << "Error opening output file" << std::endl; return;}
 
     unsigned int len = 0;
 
@@ -35,37 +43,53 @@ void WriteEncodedFile(std::string & fileName, std::string & outputFileName){
 
     // C++ const is different from C const (equivalent to static const), 
     // so we need to use extern
-    std::string header = "extern unsigned char " + xxdFormatFileName + "[] = R\"(\n";
+    // std::string header = "extern unsigned char " + xxdFormatFileName + "[] = R\"(\n";
+    std::string header = "extern unsigned char " + xxdFormatFileName + "[] = \"(";
 
-    outputFile.write(header.data(), header.length());
+    // outputFile.write(header.data(), header.length());
+    fwrite(header.data(), sizeof(char), header.size(), outputFile);
 
     std::vector<char> rawBuffer(chunk); // buffer to store raw io data
     
-    while (inputFile.read(rawBuffer.data(), chunk) || inputFile.gcount()){
-        buffer.assign(rawBuffer.data(), inputFile.gcount()); // assign exact string from raw buffer
+    // while (inputFile.read(rawBuffer.data(), chunk) || inputFile.gcount()){
+    while( size_t bytesRead = fread(rawBuffer.data(), 1, chunk, inputFile) )
+    {
+        buffer.assign(rawBuffer.data(), bytesRead); // assign exact string from raw buffer
                                                                // If raw < chunk this will deal with it
 
         // Possible optimization: stored encoded data in buffer pointer, like the decode function
         std::string encoded = Base64::encode(buffer);
-        for (char &c : encoded){
-            outputFile.put(c);
+        for(size_t i = 0; i < encoded.size(); i++){
+            char & c = encoded[i];
+            // outputFile.put(c);
+            fputc(c,outputFile);
             linepos++;
             len++;
             if (linepos >= Base64::MAX_BASE64_WIDTH){
-                outputFile.put('\n');
+                // outputFile.put('\n');
+                // fputc('\n',outputFile);
+                // fwrite("\\n",3,1,outputFile);
                 len++;
                 linepos = 0;
             }
         }
     }
-    if (linepos > 0) outputFile.put('\n');
+    // if (linepos > 0) outputFile.put('\n');
+    // if (linepos > 0) fputc('\n',outputFile);
+    // if (linepos > 0) fwrite("\\n",3,1,outputFile);
+
 
     len += 2; // two \n in beginning and end
-    std::string footer = ")\";\nextern unsigned int " +  xxdFormatFileName + "_len = " +  std::to_string(len) + ";\n";
-
-    outputFile.write(footer.data(),  static_cast<std::streamsize>(footer.length()));
-    inputFile.close();
-    outputFile.close();
+    // std::string footer = ")\";\nextern unsigned int " +  xxdFormatFileName + "_len = " +  std::to_string(len) + ";\n";
+    std::stringstream footerStream;
+    footerStream << ")\";\nextern unsigned int " << xxdFormatFileName << "_len = " << len << ";\n";
+    std::string footer = footerStream.str();
+    // outputFile.write(footer.data(),  static_cast<std::streamsize>(footer.length()));
+    fwrite(footer.data(), sizeof(char), footer.size(), outputFile);
+    // inputFile.close();
+    fclose(inputFile);
+    // outputFile.close();
+    fclose(outputFile);
 }
 
 int main(int argc, char * argv[]){
