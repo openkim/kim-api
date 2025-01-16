@@ -163,7 +163,7 @@ if(NOT WIN32 OR CYGWIN)
 endif()
 
 add_executable(kim-base64-encode "${PROJECT_SOURCE_DIR}/cpp/src/KIM_Base64Encode.cpp")
-target_include_directories(kim-base64-encode PRIVATE "${PROJECT_SOURCE_DIR}/cpp/include")
+target_include_directories(kim-base64-encode PRIVATE "${PROJECT_SOURCE_DIR}/cpp/include" "${CMAKE_CURRENT_BINARY_DIR}/cpp/include")
 set_target_properties(kim-base64-encode PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/utils" )
 
 # Keeping the name XXD for now, as otherwise this will result in much larger refactoring

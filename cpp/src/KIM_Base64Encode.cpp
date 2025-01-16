@@ -4,6 +4,7 @@
 // and writes it to a new file, like XXD but with base64 encoding
 
 #include "KIM_Base64.hpp"
+#include "KIM_Version.hpp"
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -92,11 +93,31 @@ void WriteEncodedFile(std::string & fileName, std::string & outputFileName){
     fclose(outputFile);
 }
 
+void usage(std::string name)
+{
+    size_t beg = name.find_last_of("/\\");
+    if (beg != std::string::npos) name = name.substr(beg + 1, std::string::npos);
+
+    // Follows docopt.org format
+    std::cerr << "Usage:\n"
+            << "  " << name << " " << "<input-filename> " << "<output-filename>\n"
+            << "  " << name << " " << "--version\n";
+    // note: this interface is likely to change in future kim-api releases
+}
+
 int main(int argc, char * argv[]){
-    if (argc != 3){
-        std::cerr << "Improper arguments, please provide input and output file name\n";
-        return 1;
+
+    if ((argc == 2) && (std::string(argv[1]) == "--version"))
+    {
+        std::cout << KIM_VERSION_STRING << std::endl;
+        return 0;
     }
+    if ((argc != 3))
+    {
+        usage(argv[0]);
+        return -1;
+    }
+
 
     std::string fileName = argv[1];
     std::string outputFileName = argv[2];
