@@ -162,14 +162,14 @@ if(NOT WIN32 OR CYGWIN)
   target_link_libraries(kim-api ${CMAKE_DL_LIBS})
 endif()
 
-add_executable(kim-base64-encode "${PROJECT_SOURCE_DIR}/cpp/src/KIM_Base64Encode.cpp")
-target_include_directories(kim-base64-encode PRIVATE "${PROJECT_SOURCE_DIR}/cpp/include" "${CMAKE_CURRENT_BINARY_DIR}/cpp/include")
-set_target_properties(kim-base64-encode PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/utils" )
 
 # Keeping the name XXD for now, as otherwise this will result in much larger refactoring
-# But everywhere, XXD = kim-base64-encode
-set(XXD_EXECUTABLE ${PROJECT_BINARY_DIR}/utils/kim-base64-encode)
-add_dependencies(kim-api kim-base64-encode)
+# But everywhere, XXD = base64-encode
+set(XXD_EXECUTABLE ${PROJECT_BINARY_DIR}/utils/base64-encode)
+add_subdirectory(cpp/src/base64-encode ${CMAKE_BINARY_DIR}/utils/base64-encode)
+add_dependencies(kim-api base64-encode)
+install(TARGETS base64-encode
+    RUNTIME DESTINATION ${CMAKE_INSTALL_RELOC_BINDIR})
 
 # Add install rules for kim-api
 #
@@ -192,8 +192,8 @@ install(
     "${CMAKE_INSTALL_RELOC_DOCDIR}"
   )
 # install kim-base64-encode in CMAKE_INSTALL_RELOC_BINDIR
-install(TARGETS kim-base64-encode
-  RUNTIME DESTINATION "${CMAKE_INSTALL_RELOC_BINDIR}")
+# install(TARGETS kim-base64-encode
+#   RUNTIME DESTINATION "${CMAKE_INSTALL_RELOC_BINDIR}")
 
 # Add include subdirectories
 #

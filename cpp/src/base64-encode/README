@@ -1,0 +1,30 @@
+Base64 Encode
+=============
+
+`base64-encode` is a simple xxd replacement to convert files
+into embeddable C++ source code. Instead of using binary array
+it used base64 strings, which makes it much more performant 
+for large files. Currently only -i option is supported for 
+compatibility. More options to be released in future. C++ 98 compliant.
+
+### Usage
+```bash
+base64-encode -i file.in out.cpp
+```
+```
+Options:
+  -h        Help
+  -v        Show version information
+  -i        Convert input file to C++ source
+```
+
+### Build
+```bash
+mkdir build && cd build
+cmake ..
+make
+sudo make install
+```
+
+### License
+Boost Software license
