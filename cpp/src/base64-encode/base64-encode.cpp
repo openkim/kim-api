@@ -38,8 +38,7 @@ void WriteEncodedFile(std::string & fileName, std::string & outputFileName)
       = 0;  // current io positions, always < base64::MAX_BASE64_WIDTH
   unsigned int n_base64_char;  // total base64 char obtained
   char rawBuffer[base64::IO_CHUNK];  // buffer to store raw io data
-  char encodedBuffer[base64::encoded_size(
-      base64::IO_CHUNK)];  // buffer for converted data
+  char encodedBuffer[4 * ((base64::IO_CHUNK + 2) / 3)];  // buffer for converted data
 
   // setup fine names and pointers
   std::string xxdFormatFileName = fileName;

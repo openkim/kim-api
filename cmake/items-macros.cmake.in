@@ -503,9 +503,9 @@ endmacro()
 #
 function(_add_custom_command_blob_to_cpp _dirin _filein _fileout)
   include(FindPackageMessage)
-  find_program(XXD_EXECUTABLE "kim-base64-encode")
+  find_program(XXD_EXECUTABLE "base64-encode")
   if(XXD_EXECUTABLE)
-    find_package_message(xxd "Found kim-base64-encode: (${XXD_EXECUTABLE})" "found")
+    find_package_message(xxd "Found base64-encode: (${XXD_EXECUTABLE})" "found")
 
     string(MAKE_C_IDENTIFIER ${_filein} _cfilein)
     set(_edit_xxd_output "${CMAKE_CURRENT_BINARY_DIR}/EditXXDOutput.cmake")
@@ -522,7 +522,7 @@ function(_add_custom_command_blob_to_cpp _dirin _filein _fileout)
         )
     endif()
     add_custom_command(OUTPUT ${_fileout}
-      COMMAND ${XXD_EXECUTABLE} "${_filein}" "${_fileout}"
+      COMMAND ${XXD_EXECUTABLE} -i "${_filein}" "${_fileout}"
       COMMAND ${CMAKE_COMMAND} "-Dvarname=${_cfilein}" "-Dfilein=${_filein}" "-Dfileout=${_fileout}" -P "${_edit_xxd_output}"
       DEPENDS "${_dirin}/${_filein}" "${_edit_xxd_output}"
       WORKING_DIRECTORY "${_dirin}"
@@ -533,7 +533,7 @@ function(_add_custom_command_blob_to_cpp _dirin _filein _fileout)
     # No backup yet
     # Possible Solutions: 1) CMAKE only implementation of base64 encoding? 
     #                     2) use system base64/openssl binaries?
-    message(FATAL_ERROR "Missing kim-base64-encode: Please check the KIM-API installation.")
+    message(FATAL_ERROR "Missing base64-encode: Please check the KIM-API installation.")
     # find_package_message(xxd "Missing xxd: Falling back to less efficient cmake implementation." "missing")
 
     # string(MAKE_C_IDENTIFIER ${_filein} _cfilein)

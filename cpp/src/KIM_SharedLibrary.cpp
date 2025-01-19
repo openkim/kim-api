@@ -651,9 +651,6 @@ int SharedLibrary::WriteParameterFileDirectory()
     fl.open(specificationFilePathName.string().c_str(),
             std::ifstream::out | std::ifstream::binary);
 
-    int usable_chars
-        = static_cast<int>(len);  // unsigned int to signed to avoid underflow
-
     std::vector<char> binary_line;
     binary_line.reserve(base64::decoded_size(len));
     std::pair<std::size_t, std::size_t> char_out_and_char_in

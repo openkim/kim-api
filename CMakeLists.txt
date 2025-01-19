@@ -166,7 +166,7 @@ endif()
 # Keeping the name XXD for now, as otherwise this will result in much larger refactoring
 # But everywhere, XXD = base64-encode
 set(XXD_EXECUTABLE ${PROJECT_BINARY_DIR}/utils/base64-encode)
-add_subdirectory(cpp/src/base64-encode ${CMAKE_BINARY_DIR}/utils/base64-encode)
+add_subdirectory(cpp/src/base64-encode)
 add_dependencies(kim-api base64-encode)
 install(TARGETS base64-encode
     RUNTIME DESTINATION ${CMAKE_INSTALL_RELOC_BINDIR})

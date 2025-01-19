@@ -15,7 +15,7 @@ namespace base64
 ///
 /// \param[in] n Size of char string
 /// \return max size of encoded string generated from n chars
-inline std::size_t const encoded_size(std::size_t n)
+inline std::size_t encoded_size(std::size_t n)
 {
   return 4 * ((n + 2) / 3);
 }
@@ -24,7 +24,7 @@ inline std::size_t const encoded_size(std::size_t n)
 ///
 /// \param[in] n Size of base64 string
 /// \return size of char string form n length base64 string
-inline std::size_t const decoded_size(std::size_t n)
+inline std::size_t decoded_size(std::size_t n)
 {
   return n / 4 * 3;  // requires n&3==0, smaller
 }
