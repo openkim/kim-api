@@ -50,9 +50,6 @@ endif()
 
 message(STATUS "KIM-API Build Type: ${CMAKE_BUILD_TYPE}")
 
-# C++ Language Standard, enforced to be C++11
-# set(CMAKE_CXX_STANDARD 11)
-
 set_cache_with_fallback(KIM_API_LOG_MAXIMUM_LEVEL "${_LOG_MAX}" STRING "Maximum log verbosity")
 unset(_LOG_MAX)
 set_property(CACHE KIM_API_LOG_MAXIMUM_LEVEL PROPERTY STRINGS "" SILENT FATAL ERROR WARNING INFORMATION DEBUG)
@@ -159,17 +156,36 @@ target_include_directories(kim-api PUBLIC
   $<BUILD_INTERFACE:$<TARGET_PROPERTY:kim-api,Fortran_MODULE_DIRECTORY>>
   $<INSTALL_INTERFACE:${CMAKE_INSTALL_RELOC_LIBDIR}/${PROJECT_NAME}/${KIM_API_Fortran_MODULE_DIR_IDENTIFIER}>)
 if(NOT WIN32 OR CYGWIN)
-  target_link_libraries(kim-api ${CMAKE_DL_LIBS})
+  target_link_libraries(kim-api PRIVATE ${CMAKE_DL_LIBS})
 endif()
 
 
 # Keeping the name XXD for now, as otherwise this will result in much larger refactoring
 # But everywhere, XXD = base64-encode
-set(XXD_EXECUTABLE ${PROJECT_BINARY_DIR}/utils/base64-encode)
-add_subdirectory(cpp/src/base64-encode)
+set(XXD_EXECUTABLE $<TARGET_FILE:base64-encode>)
+set(LIBB64_PATH cpp/src/libb64/libb64) # PATH to LIBB64 SRC 
+set(BUFFERSIZE 16777216)
+
+add_subdirectory(${CMAKE_SOURCE_DIR}/${LIBB64_PATH}) # compile the libb64
+add_executable(base64-encode utils/base64-encode.cpp) # compile bas64-encode
+
+target_include_directories(base64-encode PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/${LIBB64_PATH}/include>) # include files for base64-encode
+target_include_directories(kim-api PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/${LIBB64_PATH}/include>) # include files for kim-api decode
+
+target_link_libraries(base64-encode PRIVATE b64)
+target_link_libraries(kim-api PRIVATE b64)
+
+target_compile_definitions(kim-api PUBLIC
+        -DBUFFERSIZE=${BUFFERSIZE}) # shall we just pick a buffersize and discard this option?
+
 add_dependencies(kim-api base64-encode)
+add_dependencies(kim-api b64)
+add_dependencies(base64-encode b64)
+
 install(TARGETS base64-encode
-    RUNTIME DESTINATION ${CMAKE_INSTALL_RELOC_BINDIR})
+        RUNTIME DESTINATION ${CMAKE_INSTALL_RELOC_BINDIR})
 
 # Add install rules for kim-api
 #

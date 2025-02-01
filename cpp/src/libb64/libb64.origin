@@ -1,0 +1,54 @@
+------------------------------------------------------------------------------
+libb64 — MODIFIED ORIGIN DETAILS
+------------------------------------------------------------------------------
+
+1. ORIGINAL SOURCE
+   Name/Version    : libb64 1.2
+   Original URL    : https://sourceforge.net/projects/libb64/files/libb64/libb64/libb64-1.2.src.zip/download
+   Access Date     : 01/02/2025
+   Original Author : Chris Venter, chris.venter@gmail.com, http://rocketpod.blogspot.com
+   Adapted by      : Navneeth Mohan, Amit Gupta
+
+2. MODIFICATIONS
+   Removed:
+      libb64-1.2/AUTHORS      
+      libb64-1.2/base64/base64.cc  
+      libb64-1.2/base64/Makefile  
+      libb64-1.2/base64/VisualStudioProject/
+      libb64-1.2/base64/VisualStudioProject/base64.sln  
+      libb64-1.2/base64/VisualStudioProject/base64.vcxproj  
+      libb64-1.2/base64/VisualStudioProject/base64.vcxproj.filters  
+      libb64-1.2/base64/VisualStudioProject/Makefile  
+      libb64-1.2/BENCHMARKS   
+      libb64-1.2/CHANGELOG    
+      libb64-1.2/LICENSE      
+      libb64-1.2/Makefile     
+      libb64-1.2/README       
+      libb64-1.2/src/Makefile  
+      libb64-1.2/TODO   
+
+   Added:
+      CMakeLists.txt
+      libb64/CMakeLists.txt
+
+3. Patches
+
+1. `src/cencode.c`
+
+```
+< 	if (value_in < 0 || value_in >= decoding_size) return -1;
+---
+> 	if (value_in < 0 || value_in > decoding_size) return -1;
+```
+
+2. `src/cdecode.c`
+
+```
+78d77
+<                 *codechar++ = '\"';
+80d78
+<                 *codechar++ = '\"';
+```
+
+4. LICENSE
+   The original license is included in the file `libb64/LICENSE`.

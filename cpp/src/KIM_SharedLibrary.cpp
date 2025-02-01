@@ -56,7 +56,7 @@
 #endif
 
 #ifndef BASE64_HPP
-#include "base64-encode/base64.hpp"  // For base64 decoding
+#include "b64/decode.h"  // For base64 decoding
 #endif
 
 namespace
@@ -651,13 +651,10 @@ int SharedLibrary::WriteParameterFileDirectory()
     fl.open(specificationFilePathName.string().c_str(),
             std::ifstream::out | std::ifstream::binary);
 
-    std::vector<char> binary_line;
-    binary_line.reserve(base64::decoded_size(len));
-    std::pair<std::size_t, std::size_t> char_out_and_char_in
-        = base64::decode(binary_line.data(), specificationData, len);
-
-    fl.write(reinterpret_cast<char *>(binary_line.data()),
-             static_cast<std::streamsize>(char_out_and_char_in.first));
+    std::istringstream strStream(
+        reinterpret_cast<const char *>(specificationData));
+    base64::decoder decoder = base64::decoder();
+    decoder.decode(strStream, fl);
 
     if (!fl)
     {
@@ -691,16 +688,11 @@ int SharedLibrary::WriteParameterFileDirectory()
     fl.open(parameterFilePathName.string().c_str(),
             std::ifstream::out | std::ifstream::binary);
 
-    int usable_chars = static_cast<int>(
-        length);  // unsigned int to signed to avoid underflow
+    std::istringstream strStream(reinterpret_cast<const char *>(strPtr));
+    base64::decoder decoder = base64::decoder();
 
-    std::vector<char> binary_line;
-    binary_line.reserve(base64::decoded_size(length));
-    std::pair<std::size_t, std::size_t> char_out_and_char_in
-        = base64::decode(binary_line.data(), strPtr, usable_chars);
+    decoder.decode(strStream, fl);
 
-    fl.write(reinterpret_cast<char *>(binary_line.data()),
-             static_cast<std::streamsize>(char_out_and_char_in.first));
     if (!fl)
     {
       LOG_ERROR("Unable to get write parameter file.");
