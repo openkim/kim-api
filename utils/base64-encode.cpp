@@ -116,13 +116,13 @@ int main(int argc, char ** argv)
       = "extern unsigned char " + encodeFormatFileName + "[] = \n\"";
   outstream.write(header.data(), header.length());
 
-  std::streampos startPos = outstream.tellp();
+//  std::streampos startPos = outstream.tellp();
   base64::encoder E;
 
   E.encode(instream, outstream);
   outstream.seekp(-1, std::ios::cur);  // rewind by 1 character to delete the
                                        // '\n' written by libb64
-  std::streampos endPos = outstream.tellp();
+//  std::streampos endPos = outstream.tellp();
   // size_t len = endPos - startPos;
   std::string footer = "\";\nextern unsigned int " + encodeFormatFileName
                        + "_len = sizeof(" + encodeFormatFileName + ") - 1;\n";
