@@ -41,7 +41,7 @@ RUN zypper -n install \
         gcc-c++ \
         gcc-fortran \
         include-what-you-use \
-        libasan6 \
+        libasan8 \
         make \
         sysuser-shadow \
         tar \

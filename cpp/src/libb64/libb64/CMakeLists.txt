@@ -12,6 +12,10 @@ add_library(b64 STATIC EXCLUDE_FROM_ALL
     ${CMAKE_CURRENT_SOURCE_DIR}/src/cencode.c 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/cdecode.c
 )
+set_target_properties(b64 PROPERTIES 
+    POSITION_INDEPENDENT_CODE ON
+)
+
 target_compile_definitions(b64 PUBLIC 
     -DBUFFERSIZE=${BUFFERSIZE}
 )

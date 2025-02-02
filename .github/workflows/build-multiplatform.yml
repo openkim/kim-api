@@ -41,6 +41,7 @@ on:
     branches-ignore:
       - 'coverity_scan'
   pull_request:
+  workflow_dispatch: # Trigger workflow manually through Github API, Github CLI, or Github Web-UI
 
 jobs:
 
@@ -49,15 +50,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-10.15, macos-11]
+        os: [macos-13-large, macos-14-large]
         include:
-          - os: macos-10.15
-            DISTRO: macos_catalina
-            job_name: macOS Catalina 10.15 (debug)
+          - os: macos-13-large
+            DISTRO: macos_ventura
+            job_name: macOS Ventura 13 (debug)
 
-          - os: macos-11
-            DISTRO: macos_bigsur
-            job_name: macOS Big Sur 11 (debug)
+          - os: macos-14-large
+            DISTRO: macos_sonoma
+            job_name: macOS Sonoma 14 (debug)
 
     name: ${{ matrix.job_name }}
 
@@ -335,6 +336,7 @@ jobs:
             mingw-w64-x86_64-cmake
             mingw-w64-x86_64-doxygen
             mingw-w64-x86_64-toolchain
+            mingw-w64-x86_64-gcc-fortran
 
       - name: Ensure windows ccache dir exists
         run: |
@@ -354,6 +356,7 @@ jobs:
 
       - name: Build KIM API, run tests
         env:
+          FC: gfortran
           CMAKE_GENERATOR: MinGW Makefiles
           MAKE: mingw32-make
           CMAKE_MAKE_PROGRAM: mingw32-make
