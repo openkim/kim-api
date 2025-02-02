@@ -160,32 +160,19 @@ if(NOT WIN32 OR CYGWIN)
 endif()
 
 
-# Keeping the name XXD for now, as otherwise this will result in much larger refactoring
-# But everywhere, XXD = base64-encode
-set(XXD_EXECUTABLE $<TARGET_FILE:base64-encode>)
 set(LIBB64_PATH cpp/src/libb64/libb64) # PATH to LIBB64 SRC 
 set(BUFFERSIZE 16777216)
 
 add_subdirectory(${CMAKE_SOURCE_DIR}/${LIBB64_PATH}) # compile the libb64
-add_executable(base64-encode utils/base64-encode.cpp) # compile bas64-encode
-
-target_include_directories(base64-encode PUBLIC
-        $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/${LIBB64_PATH}/include>) # include files for base64-encode
 target_include_directories(kim-api PUBLIC
         $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/${LIBB64_PATH}/include>) # include files for kim-api decode
 
-target_link_libraries(base64-encode PRIVATE b64)
 target_link_libraries(kim-api PRIVATE b64)
 
 target_compile_definitions(kim-api PUBLIC
         -DBUFFERSIZE=${BUFFERSIZE}) # shall we just pick a buffersize and discard this option?
 
-add_dependencies(kim-api base64-encode)
-add_dependencies(kim-api b64)
-add_dependencies(base64-encode b64)
 
-install(TARGETS base64-encode
-        RUNTIME DESTINATION ${CMAKE_INSTALL_RELOC_BINDIR})
 
 # Add install rules for kim-api
 #
