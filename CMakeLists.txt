@@ -160,7 +160,7 @@ if(NOT WIN32 OR CYGWIN)
 endif()
 
 
-set(LIBB64_PATH cpp/src/libb64/libb64) # PATH to LIBB64 SRC 
+set(LIBB64_PATH cpp/src/third-party/libb64) # PATH to LIBB64 SRC 
 set(BUFFERSIZE 16777216)
 
 add_subdirectory(${CMAKE_SOURCE_DIR}/${LIBB64_PATH}) # compile the libb64
