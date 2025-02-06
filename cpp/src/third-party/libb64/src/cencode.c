@@ -104,7 +104,8 @@ int base64_encode_blockend(char* code_out, base64_encodestate* state_in)
 	case step_A:
 		break;
 	}
-	*codechar++ = '\n';
+	/* comment out this line to remove an excess new-line character */
+	/* *codechar++ = '\n'; */
 	
 	return codechar - code_out;
 }

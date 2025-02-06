@@ -41,7 +41,14 @@ libb64 — MODIFIED ORIGIN DETAILS
 > 	if (value_in < 0 || value_in > decoding_size) return -1;
 ```
 
-2. `src/cdecode.c`
+2. `src/cencode.c`
+```
+<  *codechar++ = '\n';
+---
+>  /* *codechar++ = '\n'; */     
+```
+
+3. `src/cdecode.c`
 
 ```
 78d77

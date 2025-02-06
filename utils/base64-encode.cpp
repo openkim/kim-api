@@ -120,7 +120,7 @@ int main(int argc, char ** argv)
   base64::encoder E;
 
   E.encode(instream, outstream);
-  outstream.seekp(-1, std::ios::cur);  // rewind by 1 character to delete the
+//  outstream.seekp(-1, std::ios::cur);  // rewind by 1 character to delete the
                                        // '\n' written by libb64
 //  std::streampos endPos = outstream.tellp();
   // size_t len = endPos - startPos;
