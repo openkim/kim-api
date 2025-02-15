@@ -35,6 +35,7 @@ target_include_directories(kim-api PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
   ${PROJECT_SOURCE_DIR}/cmake  # for KIM_SharedLibrarySchema.hpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/libb64/libb64/include
   )
 
 configure_file(KIM_Configuration.hpp.in ${CMAKE_CURRENT_BINARY_DIR}/KIM_Configuration.hpp)
@@ -79,9 +80,15 @@ set(CPP_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_LogImplementation.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_ModelImplementation.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/KIM_SharedLibrary.cpp
-  )
+)
 
-target_sources(kim-api PRIVATE ${CPP_SOURCES})
+set(C_SOURCES
+  ${CMAKE_CURRENT_SOURCE_DIR}/libb64/libb64/src/cdecode.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/libb64/libb64/src/cencode.c
+)
+target_compile_definitions(kim-api PRIVATE BUFFERSIZE=${KIM_API_BASE64_BUFFERSIZE})
+
+target_sources(kim-api PRIVATE ${CPP_SOURCES} ${C_SOURCES})
 
 if(WIN32 AND NOT CYGWIN)
   # Activate C++17 language standard on Win32 platform, because kim-api code uses C++ filesystem library internally.

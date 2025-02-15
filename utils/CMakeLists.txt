@@ -123,16 +123,15 @@ target_link_libraries(simulator-model kim-api)
 set_target_properties(simulator-model PROPERTIES OUTPUT_NAME ${SIMULATOR_MODEL})
 
 add_executable(collections-info collections-info.cpp)
-target_include_directories(collections-info PRIVATE "${PROJECT_SOURCE_DIR}/cpp/src/")
+target_include_directories(collections-info PRIVATE "${PROJECT_SOURCE_DIR}/cpp/src")
 target_link_libraries(collections-info kim-api)
 set_target_properties(collections-info PROPERTIES OUTPUT_NAME ${COLLECTIONS_INFO})
 
-add_executable(base64-encode base64-encode.cpp)
-target_include_directories(base64-encode PUBLIC
-        $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/${LIBB64_PATH}/include>) # include files for base64-encode
-target_link_libraries(base64-encode PRIVATE b64)
+add_executable(base64-encode base64-encode.cpp ${PROJECT_SOURCE_DIR}/cpp/src/libb64/libb64/src/cencode.c)
+target_include_directories(base64-encode PRIVATE "${PROJECT_BINARY_DIR}/cpp/include")
+target_include_directories(base64-encode PRIVATE "${PROJECT_SOURCE_DIR}/cpp/src/libb64/libb64/include")
 set_target_properties(base64-encode PROPERTIES OUTPUT_NAME ${BASE64_ENCODE})
-add_dependencies(base64-encode b64)
+target_compile_definitions(base64-encode PRIVATE BUFFERSIZE=${KIM_API_BASE64_BUFFERSIZE})
 
 add_executable(shared-library-test shared-library-test.cpp)
 target_include_directories(shared-library-test PRIVATE "${PROJECT_BINARY_DIR}/cpp/include")

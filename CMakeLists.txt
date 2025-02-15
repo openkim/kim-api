@@ -43,9 +43,11 @@ include(DefaultCompilerStandards)
 #
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   set(_LOG_MAX "DEBUG")
-else()
+elseif(NOT DEFINED CMAKE_BUILD_TYPE OR CMAKE_BUILD_TYPE STREQUAL "")
   set(_LOG_MAX "INFORMATION")
   set(CMAKE_BUILD_TYPE "Release") # Default to Release, solves KIM slowdown complaints
+else()
+  set(_LOG_MAX "INFORMATION")
 endif()
 
 message(STATUS "KIM-API Build Type: ${CMAKE_BUILD_TYPE}")
@@ -53,6 +55,9 @@ message(STATUS "KIM-API Build Type: ${CMAKE_BUILD_TYPE}")
 set_cache_with_fallback(KIM_API_LOG_MAXIMUM_LEVEL "${_LOG_MAX}" STRING "Maximum log verbosity")
 unset(_LOG_MAX)
 set_property(CACHE KIM_API_LOG_MAXIMUM_LEVEL PROPERTY STRINGS "" SILENT FATAL ERROR WARNING INFORMATION DEBUG)
+#
+set(KIM_API_BASE64_BUFFERSIZE "16777216" CACHE STRING "base64 buffer size")
+mark_as_advanced(KIM_API_BASE64_BUFFERSIZE)
 #
 option(KIM_API_BUILD_EXAMPLES "Build example Drivers, Models, Simulator Models, and Simulators" ON)
 #
@@ -159,21 +164,6 @@ if(NOT WIN32 OR CYGWIN)
   target_link_libraries(kim-api PRIVATE ${CMAKE_DL_LIBS})
 endif()
 
-
-set(LIBB64_PATH cpp/src/third-party/libb64) # PATH to LIBB64 SRC 
-set(BUFFERSIZE 16777216)
-
-add_subdirectory(${CMAKE_SOURCE_DIR}/${LIBB64_PATH}) # compile the libb64
-target_include_directories(kim-api PUBLIC
-        $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/${LIBB64_PATH}/include>) # include files for kim-api decode
-
-target_link_libraries(kim-api PRIVATE b64)
-
-target_compile_definitions(kim-api PUBLIC
-        -DBUFFERSIZE=${BUFFERSIZE}) # shall we just pick a buffersize and discard this option?
-
-
-
 # Add install rules for kim-api
 #
 install(TARGETS kim-api
@@ -194,9 +184,6 @@ install(
   DESTINATION
     "${CMAKE_INSTALL_RELOC_DOCDIR}"
   )
-# install kim-base64-encode in CMAKE_INSTALL_RELOC_BINDIR
-# install(TARGETS kim-base64-encode
-#   RUNTIME DESTINATION "${CMAKE_INSTALL_RELOC_BINDIR}")
 
 # Add include subdirectories
 #

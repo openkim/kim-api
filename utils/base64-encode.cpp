@@ -27,9 +27,11 @@
 //
 
 //
-// Release: This file is part of the kim-api-2.3.0 package.
+// Release: This file is part of the kim-api.git repository.
 //
 
+
+#include "KIM_Version.hpp"
 
 #include <b64/encode.h>
 
@@ -38,8 +40,8 @@
 #include <string>
 
 #include <algorithm>
-#include <sstream>
 #include <cstdlib>
+#include <sstream>
 
 // Function which prints the usage of this executable
 void usage(std::string name)
@@ -78,7 +80,7 @@ int main(int argc, char ** argv)
   std::string option = argv[1];
   if (option == "--version")
   {
-    printf("VERSION\n");
+    std::cout << KIM_VERSION_STRING << std::endl;
     return 0;
   }
   else if (option != "-i" || argc != 4)
@@ -116,14 +118,9 @@ int main(int argc, char ** argv)
       = "extern unsigned char " + encodeFormatFileName + "[] = \n\"";
   outstream.write(header.data(), header.length());
 
-//  std::streampos startPos = outstream.tellp();
   base64::encoder E;
 
   E.encode(instream, outstream);
-//  outstream.seekp(-1, std::ios::cur);  // rewind by 1 character to delete the
-                                       // '\n' written by libb64
-//  std::streampos endPos = outstream.tellp();
-  // size_t len = endPos - startPos;
   std::string footer = "\";\nextern unsigned int " + encodeFormatFileName
                        + "_len = sizeof(" + encodeFormatFileName + ") - 1;\n";
 

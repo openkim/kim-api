@@ -420,6 +420,9 @@ Additionally, the KIM API defines the following advanced build options.
   be used to build and install, on the same machine, two different copies
   (typically different versions) of the package.
 
+* KIM_API_BASE64_BUFFERSIZE (="16777216") Sets the buffer size for the C++
+  base64 encode/decode routines used in the kim-api.
+
 * KIM_API_ENABLE_SANITIZE (=OFF) When ON this enables the AddressSanitizer
   library for detecting memory corruption bugs.
 
