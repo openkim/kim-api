@@ -313,11 +313,15 @@ get_build_install_item () {
   # make changes for installing to CWD collection, if necessary
   if test x"${install_collection}" = x"CWD"; then
     drivers_env_name="`${collections_info} env env | sed -e 's/^\([^ ]*\) .*/\1/'`"; if test $? -ne 0; then return 1; fi
+    eval "drivers_env_value=\$${drivers_env_name}"
     models_env_name="`${collections_info} env env | sed -e 's/^[^ ]* \([^ ]*\) .*/\1/'`"; if test $? -ne 0; then return 1; fi
-    simulator_models_env_name="`${collections_info} env env | sed -e 's/^[^ ]* [^ ]* \([^ ]*\) .*/\1/'`"; if test $? -ne 0; then return 1; fi
-    export ${drivers_env_name}=${PWD}
-    export ${models_env_name}=${PWD}
-    export ${simulator_models_env_name}=${PWD}
+    eval "models_env_value=\$${models_env_name}"
+    simulator_models_env_name="`${collections_info} env env | sed -e 's/^[^ ]* [^ ]* \([^ ]*\).*/\1/'`"; if test $? -ne 0; then return 1; fi
+    eval "simulator_models_env_value=\$${simulator_models_env_name}"
+
+    export ${drivers_env_name}=${PWD}:${drivers_env_value}
+    export ${models_env_name}=${PWD}:${models_env_value}
+    export ${simulator_models_env_name}=${PWD}:${simulator_models_env_value}
     install_collection="environment"
   fi
 
