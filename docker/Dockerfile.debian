@@ -41,7 +41,7 @@ RUN apt-get -y update && \
         gfortran \
         git \
         iwyu \
-        libasan6 \
+        libasan8 \
         make \
         wget \
         xxd \

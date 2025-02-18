@@ -43,12 +43,21 @@ include(DefaultCompilerStandards)
 #
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   set(_LOG_MAX "DEBUG")
+elseif(NOT DEFINED CMAKE_BUILD_TYPE OR CMAKE_BUILD_TYPE STREQUAL "")
+  set(_LOG_MAX "INFORMATION")
+  set(CMAKE_BUILD_TYPE "Release") # Default to Release, solves KIM slowdown complaints
 else()
   set(_LOG_MAX "INFORMATION")
 endif()
+
+message(STATUS "KIM-API Build Type: ${CMAKE_BUILD_TYPE}")
+
 set_cache_with_fallback(KIM_API_LOG_MAXIMUM_LEVEL "${_LOG_MAX}" STRING "Maximum log verbosity")
 unset(_LOG_MAX)
 set_property(CACHE KIM_API_LOG_MAXIMUM_LEVEL PROPERTY STRINGS "" SILENT FATAL ERROR WARNING INFORMATION DEBUG)
+#
+set(KIM_API_BASE64_BUFFERSIZE "16777216" CACHE STRING "base64 buffer size")
+mark_as_advanced(KIM_API_BASE64_BUFFERSIZE)
 #
 option(KIM_API_BUILD_EXAMPLES "Build example Drivers, Models, Simulator Models, and Simulators" ON)
 #
@@ -152,7 +161,7 @@ target_include_directories(kim-api PUBLIC
   $<BUILD_INTERFACE:$<TARGET_PROPERTY:kim-api,Fortran_MODULE_DIRECTORY>>
   $<INSTALL_INTERFACE:${CMAKE_INSTALL_RELOC_LIBDIR}/${PROJECT_NAME}/${KIM_API_Fortran_MODULE_DIR_IDENTIFIER}>)
 if(NOT WIN32 OR CYGWIN)
-  target_link_libraries(kim-api ${CMAKE_DL_LIBS})
+  target_link_libraries(kim-api PRIVATE ${CMAKE_DL_LIBS})
 endif()
 
 # Add install rules for kim-api
