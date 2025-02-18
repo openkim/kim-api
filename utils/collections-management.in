@@ -165,6 +165,11 @@ check_item_compatibility () {
     printf "              '${web_tool}' returned error code ${error_code}.\n"
     return 1
   fi
+  if test x"{\"error\":" = x`printf ${version} | sed -e 's/\(.\{9\}\).*/\1/'`; then
+    printf "*** ERROR *** Received error from openkim.org while checking ${item_name} compatibility.\n"
+    printf "              '${web_tool}' returned query result ${version}.\n"
+    return 1
+  fi
   version="`printf -- "%s" "${version}" | \
                  sed -e 's/\[//g' -e 's/\]//g' \
                  -e 's/{"kim-api-version": "\([0-9.]*\)"}/\1/g'`"
