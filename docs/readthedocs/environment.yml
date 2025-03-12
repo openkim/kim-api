@@ -1,0 +1,11 @@
+name: rtd-docs
+channels:
+  - conda-forge
+dependencies:
+  - python=3.10
+  - cmake
+  - make
+  - doxygen
+  - sphinx
+  - sphinx_rtd_theme
+  - sphinxcontrib-doxylink

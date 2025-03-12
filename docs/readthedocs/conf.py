@@ -28,6 +28,7 @@
 #
 
 import subprocess
+import shutil
 
 analyticsScript = '''\
 <!-- Global site tag (gtag.js) - Google Analytics -->
@@ -53,6 +54,21 @@ subprocess.call('rm -rf build; mkdir build; cd build; FC=true cmake ../../../ -D
 html_extra_path = ['./build/docs/html']
 
 
+### Sphinx keep overwriting the index.html
+### This will keep a kopy of the original html file, and restore it in the end
+
+# -------------------------------------------------------
+shutil.copy(html_extra_path[0] + "/index.html", html_extra_path[0] + "/index.html_bak")
+
+def restore_index_html(app, exception):
+    sphinx_output_path = app.outdir
+    shutil.copy(html_extra_path[0] + "/index.html_bak", f"{sphinx_output_path}/index.html")
+
+def setup(app):
+    app.connect("build-finished", restore_index_html)
+
+# ----------------------------------------------------------
+
 ################################################################################
 
 project = u'kim-api'
@@ -74,3 +90,5 @@ exclude_patterns = [u'_build', 'Thumbs.db', '.DS_Store']
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = None
+
+
