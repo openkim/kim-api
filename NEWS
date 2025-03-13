@@ -29,7 +29,23 @@
 #
 
 
+=== kim-api-2.4.0 =============== 12Mar2025 ====================================
+
+* Updated readthedocs settings
+
+* Updated github actions settings
+
+* Improvements to the collections management utility to improve error handling
+  of web queries and to fix an issue with finding installed drivers in the CWD
+  collection
+
+* Refactor handlling of parameter files to use base64 encoding instead of the
+  hex format of xxd (xxd is no longer a dependency for the package).  This
+  allows for more efficient handling of large parameter files
+
+
 === kim-api-2.3.0 =============== 17Mar2022 ====================================
+
 
 * Re-license from CDDL to LGPL-2.1-or-later
 
