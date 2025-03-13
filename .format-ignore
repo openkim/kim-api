@@ -6,3 +6,10 @@ cpp/src/edn-cpp/example.cpp
 cpp/src/edn-cpp/repl.cpp
 
 cpp/src/ghc-filesystem/filesystem.hpp
+
+cpp/src/libb64/libb64/include/b64/cdecode.h
+cpp/src/libb64/libb64/include/b64/cencode.h
+cpp/src/libb64/libb64/include/b64/decode.h
+cpp/src/libb64/libb64/include/b64/encode.h
+cpp/src/libb64/libb64/src/cdecode.c
+cpp/src/libb64/libb64/src/cencode.c

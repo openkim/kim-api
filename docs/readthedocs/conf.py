@@ -24,21 +24,21 @@
 #
 
 #
-# Release: This file is part of the kim-api-2.3.0 package.
+# Release: This file is part of the kim-api.git repository.
 #
 
 import subprocess
+import shutil
 
 analyticsScript = '''\
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async
-src="https://www.googletagmanager.com/gtag/js?id=UA-25481110-7"></script>
+src="https://www.googletagmanager.com/gtag/js?id=G-HT7Y2LG7BB"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-
-  gtag('config', 'UA-25481110-7');
+  gtag('config', 'G-HT7Y2LG7BB');
 </script>
 '''
 
@@ -53,6 +53,21 @@ subprocess.call('cat script.html orig_footer.html > footer.html', shell=True)
 subprocess.call('rm -rf build; mkdir build; cd build; FC=true cmake ../../../ -DREADTHEDOCS=ON; make docs', shell=True)
 html_extra_path = ['./build/docs/html']
 
+
+### Sphinx keep overwriting the index.html
+### This will keep a kopy of the original html file, and restore it in the end
+
+# -------------------------------------------------------
+shutil.copy(html_extra_path[0] + "/index.html", html_extra_path[0] + "/index.html_bak")
+
+def restore_index_html(app, exception):
+    sphinx_output_path = app.outdir
+    shutil.copy(html_extra_path[0] + "/index.html_bak", f"{sphinx_output_path}/index.html")
+
+def setup(app):
+    app.connect("build-finished", restore_index_html)
+
+# ----------------------------------------------------------
 
 ################################################################################
 
@@ -75,3 +90,5 @@ exclude_patterns = [u'_build', 'Thumbs.db', '.DS_Store']
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = None
+
+

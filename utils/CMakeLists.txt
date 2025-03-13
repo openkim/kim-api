@@ -26,7 +26,7 @@
 #
 
 #
-# Release: This file is part of the kim-api-2.3.0 package.
+# Release: This file is part of the kim-api.git repository.
 #
 
 
@@ -35,6 +35,7 @@ include(RelocatablePath)
 set(PORTABLE_MODEL_INFO    ${PROJECT_NAME}-portable-model-info)
 set(SIMULATOR_MODEL        ${PROJECT_NAME}-simulator-model)
 set(COLLECTIONS_INFO       ${PROJECT_NAME}-collections-info)
+set(BASE64_ENCODE          ${PROJECT_NAME}-base64-encode)
 set(COLLECTIONS_MANAGEMENT ${PROJECT_NAME}-collections-management)
 set(SHARED_LIBRARY_TEST    ${PROJECT_NAME}-shared-library-test)
 set(ACTIVATE_SCRIPT        ${PROJECT_NAME}-activate)
@@ -122,9 +123,15 @@ target_link_libraries(simulator-model kim-api)
 set_target_properties(simulator-model PROPERTIES OUTPUT_NAME ${SIMULATOR_MODEL})
 
 add_executable(collections-info collections-info.cpp)
-target_include_directories(collections-info PRIVATE "${PROJECT_SOURCE_DIR}/cpp/src/")
+target_include_directories(collections-info PRIVATE "${PROJECT_SOURCE_DIR}/cpp/src")
 target_link_libraries(collections-info kim-api)
 set_target_properties(collections-info PROPERTIES OUTPUT_NAME ${COLLECTIONS_INFO})
+
+add_executable(base64-encode base64-encode.cpp ${PROJECT_SOURCE_DIR}/cpp/src/libb64/libb64/src/cencode.c)
+target_include_directories(base64-encode PRIVATE "${PROJECT_BINARY_DIR}/cpp/include")
+target_include_directories(base64-encode PRIVATE "${PROJECT_SOURCE_DIR}/cpp/src/libb64/libb64/include")
+set_target_properties(base64-encode PROPERTIES OUTPUT_NAME ${BASE64_ENCODE})
+target_compile_definitions(base64-encode PRIVATE BUFFERSIZE=${KIM_API_BASE64_BUFFERSIZE})
 
 add_executable(shared-library-test shared-library-test.cpp)
 target_include_directories(shared-library-test PRIVATE "${PROJECT_BINARY_DIR}/cpp/include")
@@ -138,7 +145,7 @@ else()
   set(_dir "${CMAKE_INSTALL_RELOC_BINDIR}")
 endif()
 install(
-  TARGETS portable-model-info simulator-model collections-info shared-library-test
+  TARGETS portable-model-info simulator-model collections-info base64-encode shared-library-test
   EXPORT KIM_API_Targets
   DESTINATION "${_dir}"
   )

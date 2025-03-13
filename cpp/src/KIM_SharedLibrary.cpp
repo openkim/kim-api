@@ -25,7 +25,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-2.3.0 package.
+// Release: This file is part of the kim-api.git repository.
 //
 
 #include <cstdio>
@@ -53,6 +53,10 @@
 
 #ifndef KIM_SHARED_LIBRARY_SCHEMA_HPP_
 #include "KIM_SharedLibrarySchema.hpp"
+#endif
+
+#ifndef BASE64_HPP
+#include "b64/decode.h"  // For base64 decoding
 #endif
 
 namespace
@@ -384,10 +388,7 @@ int SharedLibrary::Close()
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
-  else
-  {
-    sharedLibraryHandle_ = NULL;
-  }
+  else { sharedLibraryHandle_ = NULL; }
 
   LOG_DEBUG("Exit 0=" + callString);
   return false;
@@ -649,7 +650,12 @@ int SharedLibrary::WriteParameterFileDirectory()
     std::ofstream fl;
     fl.open(specificationFilePathName.string().c_str(),
             std::ifstream::out | std::ifstream::binary);
-    fl.write(reinterpret_cast<const char *>(specificationData), len);
+
+    std::istringstream strStream(
+        reinterpret_cast<const char *>(specificationData));
+    base64::decoder decoder = base64::decoder();
+    decoder.decode(strStream, fl);
+
     if (!fl)
     {
       LOG_ERROR("Unable to get write parameter file.");
@@ -678,9 +684,15 @@ int SharedLibrary::WriteParameterFileDirectory()
     FILESYSTEM::Path const parameterFilePathName
         = parameterFileDirectoryName_ / parameterFileName;
     std::ofstream fl;
+
     fl.open(parameterFilePathName.string().c_str(),
             std::ifstream::out | std::ifstream::binary);
-    fl.write(reinterpret_cast<const char *>(strPtr), length);
+
+    std::istringstream strStream(reinterpret_cast<const char *>(strPtr));
+    base64::decoder decoder = base64::decoder();
+
+    decoder.decode(strStream, fl);
+
     if (!fl)
     {
       LOG_ERROR("Unable to get write parameter file.");

@@ -26,11 +26,11 @@
 #
 
 #
-# Release: This file is part of the kim-api-2.3.0 package.
+# Release: This file is part of the kim-api.git repository.
 #
 
 
-set(PROJECT_VERSION_PRERELEASE "" CACHE STRING "Project SemVer prerelease string")  # cache to allow change from command line
+set(PROJECT_VERSION_PRERELEASE "git" CACHE STRING "Project SemVer prerelease string")  # cache to allow change from command line
 
 set(_build_metadata "")  # avoid uninitialized variable warning
 find_package(Git QUIET)

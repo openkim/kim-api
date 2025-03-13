@@ -25,7 +25,7 @@
 #
 
 #
-# Release: This file is part of the kim-api-2.3.0 package.
+# Release: This file is part of the kim-api.git repository.
 #
 
 
@@ -48,7 +48,6 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get -y update && \
         make \
         wget \
         curl \
-        xxd \
         xz-utils \
     && rm -rf /var/lib/apt/lists/*
 

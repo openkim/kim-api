@@ -25,7 +25,7 @@
 #
 
 #
-# Release: This file is part of the kim-api-2.3.0 package.
+# Release: This file is part of the kim-api.git repository.
 #
 
 
@@ -84,18 +84,15 @@ To install and run the KIM API package you need the following:
    corresponding Intel compilers, version 11.1 or higher.  Other compilers may
    also work.
 
-4. (optional) The 'xxd' utility (distributed as part of the vim package).
-   If available, provides faster builds than without.
-
-5. wget or curl, sed, grep, tar, uname, etc. (used by the
+4. wget or curl, sed, grep, tar, uname, etc. (used by the
    kim-api-collections-management utility).
 
-6. Doxygen and Graphviz (for generating the documentation).
+5. Doxygen and Graphviz (for generating the documentation).
 
-7. The bash-completion package (for facilitating command-line usage of the
+6. The bash-completion package (for facilitating command-line usage of the
    helper utilities).
 
-8. pkg-config can be used by code needing to link against the kim-api library.
+7. pkg-config can be used by code needing to link against the kim-api library.
 
 
 -------------------------------------------------------------------------------
@@ -419,6 +416,9 @@ Additionally, the KIM API defines the following advanced build options.
   aspects of the package build.  Generally this should not be changed.  It can
   be used to build and install, on the same machine, two different copies
   (typically different versions) of the package.
+
+* KIM_API_BASE64_BUFFERSIZE (="16777216") Sets the buffer size for the C++
+  base64 encode/decode routines used in the kim-api.
 
 * KIM_API_ENABLE_SANITIZE (=OFF) When ON this enables the AddressSanitizer
   library for detecting memory corruption bugs.

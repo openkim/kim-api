@@ -29,7 +29,7 @@
 #
 
 #
-# Release: This file is part of the kim-api-2.3.0 package.
+# Release: This file is part of the kim-api.git repository.
 #
 
 
@@ -163,6 +163,11 @@ check_item_compatibility () {
   if test ${error_code} -ne 0; then
     printf "*** ERROR *** Unable to successfully contact openkim.org to check ${item_name} compatibility.\n"
     printf "              '${web_tool}' returned error code ${error_code}.\n"
+    return 1
+  fi
+  if test x"{\"error\":" = x`printf ${version} | sed -e 's/\(.\{9\}\).*/\1/'`; then
+    printf "*** ERROR *** Received error from openkim.org while checking ${item_name} compatibility.\n"
+    printf "              '${web_tool}' returned query result ${version}.\n"
     return 1
   fi
   version="`printf -- "%s" "${version}" | \
@@ -308,11 +313,15 @@ get_build_install_item () {
   # make changes for installing to CWD collection, if necessary
   if test x"${install_collection}" = x"CWD"; then
     drivers_env_name="`${collections_info} env env | sed -e 's/^\([^ ]*\) .*/\1/'`"; if test $? -ne 0; then return 1; fi
+    eval "drivers_env_value=\$${drivers_env_name}"
     models_env_name="`${collections_info} env env | sed -e 's/^[^ ]* \([^ ]*\) .*/\1/'`"; if test $? -ne 0; then return 1; fi
-    simulator_models_env_name="`${collections_info} env env | sed -e 's/^[^ ]* [^ ]* \([^ ]*\) .*/\1/'`"; if test $? -ne 0; then return 1; fi
-    export ${drivers_env_name}=${PWD}
-    export ${models_env_name}=${PWD}
-    export ${simulator_models_env_name}=${PWD}
+    eval "models_env_value=\$${models_env_name}"
+    simulator_models_env_name="`${collections_info} env env | sed -e 's/^[^ ]* [^ ]* \([^ ]*\).*/\1/'`"; if test $? -ne 0; then return 1; fi
+    eval "simulator_models_env_value=\$${simulator_models_env_name}"
+
+    export ${drivers_env_name}=${PWD}:${drivers_env_value}
+    export ${models_env_name}=${PWD}:${models_env_value}
+    export ${simulator_models_env_name}=${PWD}:${simulator_models_env_value}
     install_collection="environment"
   fi
 

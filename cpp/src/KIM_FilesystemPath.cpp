@@ -25,7 +25,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-2.3.0 package.
+// Release: This file is part of the kim-api.git repository.
 //
 
 #include <cstdlib>

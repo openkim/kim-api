@@ -27,7 +27,7 @@
 #
 
 #
-# Release: This file is part of the kim-api-2.3.0 package.
+# Release: This file is part of the kim-api.git repository.
 #
 
 
@@ -42,6 +42,7 @@ if("${KIM-API_FIND_VERSION}" VERSION_GREATER "2.1.99")
   add_executable(KIM-API::portable-model-info ALIAS portable-model-info)
   add_executable(KIM-API::simulator-model ALIAS simulator-model)
   add_executable(KIM-API::collections-info ALIAS collections-info)
+  add_executable(KIM-API::base64-encode ALIAS base64-encode)
   add_executable(KIM-API::shared-library-test ALIAS shared-library-test)
 endif()
 
