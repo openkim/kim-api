@@ -48,7 +48,6 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get -y update && \
         make \
         wget \
         curl \
-        xxd \
         xz-utils \
     && rm -rf /var/lib/apt/lists/*
 

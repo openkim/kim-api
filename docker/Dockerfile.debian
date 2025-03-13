@@ -44,7 +44,6 @@ RUN apt-get -y update && \
         libasan8 \
         make \
         wget \
-        xxd \
         xz-utils \
     && rm -rf /var/lib/apt/lists/*
 
