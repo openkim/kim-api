@@ -25,7 +25,7 @@
 //
 
 //
-// Release: This file is part of the kim-api.git repository.
+// Release: This file is part of the kim-api-2.4.1 package.
 //
 
 
@@ -380,10 +380,7 @@ int main(int argc, char * argv[])
       std::cout << KIM_VERSION_STRING << std::endl;
       returnVal = 0;
     }
-    else
-    {
-      returnVal = 1;
-    }
+    else { returnVal = 1; }
   }
 
   if (returnVal != 0) usage(argv[0]);
@@ -411,10 +408,7 @@ int processEnv(int argc, char * argv[])
     {
       opt = CI::E_SIMULATOR_MODELS;
     }
-    else
-    {
-      returnVal = 1;
-    }
+    else { returnVal = 1; }
   }
 
   if (0 == returnVal) { CI::env(opt); }
@@ -430,10 +424,7 @@ int processConfigFile(int argc, char * argv[])
   else
   {
     if (0 == strcmp("env", argv[2])) { opt = CI::CF_ENV; }
-    else if (0 == strcmp("name", argv[2]))
-    {
-      opt = CI::CF_NAME;
-    }
+    else if (0 == strcmp("name", argv[2])) { opt = CI::CF_NAME; }
     else if (0 == strcmp("model_drivers", argv[2]))
     {
       opt = CI::CF_MODEL_DRIVERS;
@@ -446,10 +437,7 @@ int processConfigFile(int argc, char * argv[])
     {
       opt = CI::CF_SIMULATOR_MODELS;
     }
-    else
-    {
-      returnVal = 1;
-    }
+    else { returnVal = 1; }
   }
 
   if (0 == returnVal) { CI::configFile(opt); }
@@ -495,10 +483,7 @@ int getItemType(int argc, char * argv[])
       error = col->GetItemType(argv[2], &itemType);
       if (error)
         returnVal = 1;
-      else
-      {
-        std::cout << itemType.ToString() << std::endl;
-      }
+      else { std::cout << itemType.ToString() << std::endl; }
 
       KIM::CollectionsImplementation::Destroy(&col);
     }
@@ -596,10 +581,7 @@ int processSystem(int argc, char * argv[])
     {
       CI::sys(CI::S_SIMULATOR_MODELS);
     }
-    else
-    {
-      returnVal = 1;
-    }
+    else { returnVal = 1; }
   }
 
   return returnVal;
@@ -632,10 +614,7 @@ int processItems(int argc, char * argv[])
         list_all = false;
         name = argv[3];
       }
-      else
-      {
-        returnVal = 1;
-      }
+      else { returnVal = 1; }
     }
   }
 

@@ -24,7 +24,7 @@
 //
 
 //
-// Release: This file is part of the kim-api.git repository.
+// Release: This file is part of the kim-api-2.4.1 package.
 //
 
 
@@ -700,10 +700,7 @@ int ComputeArgumentsImplementation::IsCallbackPresent(
       = computeCallbackFunctionPointer_.find(computeCallbackName);
 
   if (result->second == NULL) { *present = false; }
-  else
-  {
-    *present = true;
-  }
+  else { *present = true; }
 
   LOG_DEBUG("Exit 0=" + callString);
   return false;
@@ -1249,15 +1246,9 @@ std::string const & ComputeArgumentsImplementation::ToString() const
       {
         ss << std::setw(argW) << SPTR(ptr->second);
       }
-      else
-      {
-        ss << std::setw(argW) << "Not Set";
-      }
+      else { ss << std::setw(argW) << "Not Set"; }
     }
-    else
-    {
-      ss << std::setw(argW) << "N/A";
-    }
+    else { ss << std::setw(argW) << "N/A"; }
     ss << "\n";
   }
   ss << "\n";
@@ -1308,15 +1299,9 @@ std::string const & ComputeArgumentsImplementation::ToString() const
             = computeCallbackFunctionPointer_.find(cbName->first);
         ss << std::setw(cbWf) << SFUNC(ptr3->second);
       }
-      else
-      {
-        ss << std::setw(cbWl) << "Not Set";
-      }
+      else { ss << std::setw(cbWl) << "Not Set"; }
     }
-    else
-    {
-      ss << std::setw(cbWs) << "N/A";
-    }
+    else { ss << std::setw(cbWs) << "N/A"; }
     ss << "\n";
   }
   ss << "\n";

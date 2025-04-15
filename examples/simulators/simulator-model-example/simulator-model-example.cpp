@@ -102,10 +102,7 @@ int main()
           std::cout << "Unable to get field line." << std::endl;
           goto fail;
         }
-        else
-        {
-          std::cout << "\t" << *pFieldLine << std::endl;
-        }
+        else { std::cout << "\t" << *pFieldLine << std::endl; }
       }
     }
     std::cout << std::endl;

@@ -405,10 +405,7 @@ int LennardJones612Implementation::Compute(
                        - constOneSixtyEightEpsSig6_2D[iSpecies][jSpecies])
                     * r2iv;
               if (jContrib == 1) { d2Eidr2 = d2phi; }
-              else
-              {
-                d2Eidr2 = 0.5 * d2phi;
-              }
+              else { d2Eidr2 = 0.5 * d2phi; }
             }
 
             if ((isComputeProcess_dEdr == true) || (isComputeForces == true)
@@ -421,10 +418,7 @@ int LennardJones612Implementation::Compute(
                        - constFortyEightEpsSig12_2D[iSpecies][jSpecies] * r6iv)
                     * r2iv;
               if (jContrib == 1) { dEidrByR = dphiByR; }
-              else
-              {
-                dEidrByR = 0.5 * dphiByR;
-              }
+              else { dEidrByR = 0.5 * dphiByR; }
             }
 
             if ((isComputeEnergy == true) || (isComputeParticleEnergy == true))
@@ -433,20 +427,14 @@ int LennardJones612Implementation::Compute(
               {
                 LENNARD_JONES_PHI(-constShifts2D[iSpecies][jSpecies]);
               }
-              else
-              {
-                LENNARD_JONES_PHI(;);
-              }
+              else { LENNARD_JONES_PHI(;); }
             }
 
             // Contribution to energy
             if (isComputeEnergy == true)
             {
               if (jContrib == 1) { *energy += phi; }
-              else
-              {
-                *energy += 0.5 * phi;
-              }
+              else { *energy += 0.5 * phi; }
             }
 
             // Contribution to particleEnergy

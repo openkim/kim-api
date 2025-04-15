@@ -24,7 +24,7 @@
 //
 
 //
-// Release: This file is part of the kim-api.git repository.
+// Release: This file is part of the kim-api-2.4.1 package.
 //
 
 
@@ -164,10 +164,7 @@ bool IsPrereleaseLessThan(std::string const & prereleaseA,
     IDENTIFIER_TYPE typeB = IdentifierType(idB);
 
     if ((typeA == ALPHANUMERIC) && (typeB == NUMERIC)) { return false; }
-    else if ((typeA == NUMERIC) && (typeB == ALPHANUMERIC))
-    {
-      return true;
-    }
+    else if ((typeA == NUMERIC) && (typeB == ALPHANUMERIC)) { return true; }
     else if ((typeA == NUMERIC) && (typeB == NUMERIC))
     {
       char * end;

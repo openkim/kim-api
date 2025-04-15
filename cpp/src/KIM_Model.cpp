@@ -24,7 +24,7 @@
 //
 
 //
-// Release: This file is part of the kim-api.git repository.
+// Release: This file is part of the kim-api-2.4.1 package.
 //
 
 
@@ -87,10 +87,7 @@ int Model::Create(Numbering const numbering,
     *model = NULL;
     return true;
   }
-  else
-  {
-    return false;
-  }
+  else { return false; }
 }
 
 void Model::Destroy(Model ** const model)

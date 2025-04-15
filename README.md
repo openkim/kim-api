@@ -26,14 +26,14 @@
 #
 
 #
-# Release: This file is part of the kim-api.git repository.
+# Release: This file is part of the kim-api-2.4.1 package.
 #
 -->
 
 [![Build](https://github.com/openkim/kim-api/actions/workflows/build-multiplatform.yml/badge.svg)](https://github.com/openkim/kim-api/actions/workflows/build-multiplatform.yml)
-[![Documentation Status](https://readthedocs.org/projects/kim-api/badge/?version=devel)](https://kim-api.readthedocs.io/en/devel/?badge=devel)
+[![Documentation Status](https://readthedocs.org/projects/kim-api/badge/?version=master)](https://kim-api.readthedocs.io/en/master/?badge=master)
 [![Coverity Scan](https://scan.coverity.com/projects/16411/badge.svg?flat=1)](https://scan.coverity.com/projects/openkim-kim-api)
-[![codecov](https://codecov.io/gh/openkim/kim-api/branch/devel/graph/badge.svg)](https://codecov.io/gh/openkim/kim-api/branch/devel)
+[![codecov](https://codecov.io/gh/openkim/kim-api/branch/master/graph/badge.svg)](https://codecov.io/gh/openkim/kim-api/branch/master)
 
 <p align="center"><h2>The KIM API package</h2></p>
 
@@ -50,7 +50,7 @@ the codes are written.  It is part of the larger KIM project
 Documentation
 -------------
 
-[Full documentation](https://kim-api.readthedocs.io/en/devel) is available online via [readthedocs.org](https://readthedocs.org)
+[Full documentation](https://kim-api.readthedocs.io/en/master) is available online via [readthedocs.org](https://readthedocs.org)
 
 
 Download

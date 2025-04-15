@@ -24,7 +24,7 @@
 //
 
 //
-// Release: This file is part of the kim-api.git repository.
+// Release: This file is part of the kim-api-2.4.1 package.
 //
 
 
@@ -57,10 +57,7 @@ int SimulatorModel::Create(std::string const & simulatorModelName,
     *simulatorModel = NULL;
     return true;
   }
-  else
-  {
-    return false;
-  }
+  else { return false; }
 }
 
 void SimulatorModel::Destroy(SimulatorModel ** const simulatorModel)

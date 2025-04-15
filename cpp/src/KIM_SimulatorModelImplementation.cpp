@@ -25,7 +25,7 @@
 //
 
 //
-// Release: This file is part of the kim-api.git repository.
+// Release: This file is part of the kim-api-2.4.1 package.
 //
 
 
@@ -1119,10 +1119,7 @@ int SimulatorModelImplementation::ReadEdnSchemaV1()
               }
             }
           }
-          else if (itr->type == edn::EdnString)
-          {
-            lines.push_back(itr->value);
-          }
+          else if (itr->type == edn::EdnString) { lines.push_back(itr->value); }
           else
           {
             LOG_ERROR("Expecting 'EdnVector' or 'EdnString'.");

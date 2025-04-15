@@ -24,7 +24,7 @@
 !
 
 !
-! Release: This file is part of the kim-api.git repository.
+! Release: This file is part of the kim-api-2.4.1 package.
 !
 
 !> \brief \copybrief KIM::ModelComputeArgumentsCreate

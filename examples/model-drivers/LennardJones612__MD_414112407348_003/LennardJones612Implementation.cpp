@@ -415,10 +415,7 @@ int LennardJones612Implementation::ProcessParameterFiles(
       iIndex = index;
       index++;
     }
-    else
-    {
-      iIndex = modelSpeciesMap[specName1];
-    }
+    else { iIndex = modelSpeciesMap[specName1]; }
     std::map<KIM::SpeciesName const, int, KIM::SPECIES_NAME::Comparator>::
         const_iterator jIter
         = modelSpeciesMap.find(specName2);
@@ -433,19 +430,13 @@ int LennardJones612Implementation::ProcessParameterFiles(
       jIndex = index;
       index++;
     }
-    else
-    {
-      jIndex = modelSpeciesMap[specName2];
-    }
+    else { jIndex = modelSpeciesMap[specName2]; }
 
     if (iIndex >= jIndex)
     {
       indx = jIndex * N + iIndex - (jIndex * jIndex + jIndex) / 2;
     }
-    else
-    {
-      indx = iIndex * N + jIndex - (iIndex * iIndex + iIndex) / 2;
-    }
+    else { indx = iIndex * N + jIndex - (iIndex * iIndex + iIndex) / 2; }
     cutoffs_[indx] = nextCutoff;
     epsilons_[indx] = nextEpsilon;
     sigmas_[indx] = nextSigma;
