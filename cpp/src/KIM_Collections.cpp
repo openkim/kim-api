@@ -63,10 +63,7 @@ int Collections::Create(Collections ** const collections)
     *collections = NULL;
     return true;
   }
-  else
-  {
-    return false;
-  }
+  else { return false; }
 }
 
 void Collections::Destroy(Collections ** const collections)

@@ -57,10 +57,7 @@ int SimulatorModel::Create(std::string const & simulatorModelName,
     *simulatorModel = NULL;
     return true;
   }
-  else
-  {
-    return false;
-  }
+  else { return false; }
 }
 
 void SimulatorModel::Destroy(SimulatorModel ** const simulatorModel)

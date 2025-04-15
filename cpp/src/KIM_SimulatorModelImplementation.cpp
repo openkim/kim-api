@@ -1119,10 +1119,7 @@ int SimulatorModelImplementation::ReadEdnSchemaV1()
               }
             }
           }
-          else if (itr->type == edn::EdnString)
-          {
-            lines.push_back(itr->value);
-          }
+          else if (itr->type == edn::EdnString) { lines.push_back(itr->value); }
           else
           {
             LOG_ERROR("Expecting 'EdnVector' or 'EdnString'.");

@@ -221,10 +221,7 @@ std::string SanitizeID(std::string const & id)
   for (itr = idCopy.begin(); itr != idCopy.end(); ++itr)
   {
     if (isspace(*itr)) { *itr = '_'; }
-    else if ('*' == *itr)
-    {
-      *itr = '_';
-    }
+    else if ('*' == *itr) { *itr = '_'; }
   }
 
   return idCopy;
@@ -353,10 +350,7 @@ std::string LogImplementation::EntryString(std::string const & logVerbosity,
   {
     flName++;  // drop leading '/'
   }
-  else
-  {
-    flName = fileName.c_str();
-  }
+  else { flName = fileName.c_str(); }
 
   std::stringstream ssPrefix;
   ssPrefix << date << " * " << sequence << " * " << logVerbosity << " * "

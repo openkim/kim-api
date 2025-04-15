@@ -193,10 +193,7 @@ void PrivateGetConfigurationFileName(KIM::FILESYSTEM::Path & fileName)
     {
       fileName = KIM::FILESYSTEM::Path::current_path() / path;
     }
-    else
-    {
-      fileName = varVal;
-    }
+    else { fileName = varVal; }
   }
 }
 
@@ -315,10 +312,7 @@ int PrivateGetUserDirs(KIM::Log * log, ItemTypeToPathListMap & dirsMap)
         cfl.close();
         return true;
       }
-      else
-      {
-        cfl.close();
-      }
+      else { cfl.close(); }
     }
     else
     {
@@ -547,10 +541,7 @@ int PrivateGetItemLibraryFileNameAndCollection(
   {
     col = KC::system;
   }
-  else
-  {
-    return true;
-  }
+  else { return true; }
 
   if (fileName) *fileName = itemPath;
   if (collection) *collection = col;
@@ -607,10 +598,7 @@ int PrivateGetItemType(std::string const & itemName,
   {
     it = modelDriver;
   }
-  else
-  {
-    return true;
-  }
+  else { return true; }
 
   *itemType = it;
 

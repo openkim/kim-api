@@ -445,10 +445,7 @@ size_t PathList::Parse(std::string::value_type const * const paths)
     {
       push_back(Path::HomePath().concat(token.substr(1)));
     }
-    else
-    {
-      push_back(token);
-    }
+    else { push_back(token); }
     back().make_preferred();
   }
   return size();

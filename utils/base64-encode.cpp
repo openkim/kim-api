@@ -70,21 +70,20 @@ inline std::string int_to_string(int value)
 }
 
 // A C++ implementation of the CMAKE string-operation MAKE_C_IDENTIFIER
-std::string make_c_identifier(const std::string& input) 
+std::string make_c_identifier(const std::string & input)
 {
   std::string output;
-  
+
   // If the first character is a digit, prepend an underscore
-  if (!input.empty() && std::isdigit(input[0])) 
-    output += '_';
+  if (!input.empty() && std::isdigit(input[0])) output += '_';
 
   // Process each character
-  for(int i = 0; i < input.size(); i++)
+  for (int i = 0; i < input.size(); i++)
   {
     const char ch = input[i];
-    if (std::isalnum(ch) || ch == '_') 
+    if (std::isalnum(ch) || ch == '_')
       output += ch;  // Keep letters, numbers, and underscores
-    else 
+    else
       output += '_';  // Replace other characters with underscore
   }
 

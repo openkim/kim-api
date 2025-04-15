@@ -226,10 +226,7 @@ class LennardJones_Ar
                 *partialEnergy += phi;
                 dEidrByR = dphiByR;
               }
-              else
-              {
-                dEidrByR = 0.5 * dphiByR;
-              }
+              else { dEidrByR = 0.5 * dphiByR; }
 
               xdf = dEidrByR * xrij;
               ydf = dEidrByR * yrij;

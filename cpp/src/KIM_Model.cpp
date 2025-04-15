@@ -87,10 +87,7 @@ int Model::Create(Numbering const numbering,
     *model = NULL;
     return true;
   }
-  else
-  {
-    return false;
-  }
+  else { return false; }
 }
 
 void Model::Destroy(Model ** const model)
