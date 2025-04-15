@@ -29,6 +29,12 @@
 #
 
 
+=== kim-api-2.4.1 =============== 15Apr2025 ====================================
+
+* Fix base64-encode to conform to cmake MAKE_C_IDENTIFIER behavior.  This allows
+  encoded files to have naems that start with a numeric digit.
+
+
 === kim-api-2.4.0 =============== 12Mar2025 ====================================
 
 * Updated readthedocs settings
