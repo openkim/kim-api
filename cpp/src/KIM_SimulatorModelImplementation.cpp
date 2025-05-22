@@ -770,6 +770,14 @@ int SimulatorModelImplementation::Initialize(
     return true;
   }
 
+#if INFORMATION_VERBOSITY
+  log_->LogEntry(LOG_VERBOSITY::information,
+                 "SimulatorModelImplementation object opening shared library: "
+                     + *itemFilePath,
+                 __LINE__,
+                 __FILE__);
+#endif
+
   error = sharedLibrary_->Open(*itemFilePath);
   if (error)
   {

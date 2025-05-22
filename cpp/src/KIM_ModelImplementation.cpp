@@ -2146,6 +2146,14 @@ int ModelImplementation::ModelCreate(
     return true;
   }
 
+#if INFORMATION_VERBOSITY
+  log_->LogEntry(LOG_VERBOSITY::information,
+                 "ModelImplementation object opening shared library: "
+                     + *itemFilePath,
+                 __LINE__,
+                 __FILE__);
+#endif
+
   error = sharedLibrary_->Open(*itemFilePath);
   if (error)
   {
@@ -3083,6 +3091,14 @@ int ModelImplementation::InitializeParameterizedModel(
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
+
+#if INFORMATION_VERBOSITY
+  log_->LogEntry(LOG_VERBOSITY::information,
+                 "ModelImplementation object opening shared library: "
+                     + *itemFilePath,
+                 __LINE__,
+                 __FILE__);
+#endif
 
   error = sharedLibrary_->Open(*itemFilePath);
   if (error)
