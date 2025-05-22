@@ -655,9 +655,10 @@ print_list_of_items () {
   printf -- "  ---  Model Collections Listing\n"
   print_separator_line "="
   printf "\n"
-  printf "kim-api : \n\t%s\n" "`${collections_info} system project`"
-  printf "kim-api-uid : \n\t%s\n" "${kim_api_uid_string}"
+  printf "kim-api: \n\t%s\n" "`${collections_info} system project`"
+  printf "kim-api-uid: \n\t%s\n" "${kim_api_uid_string}"
   printf "\n"
+  printf "kim-api library file: \n\t%s\n" "`${collections_info} system libpath`"
   printf "kim-api configuration file:\n\t%s\n" \
          "`${collections_info} config_file name`"
   printf "\n\n"

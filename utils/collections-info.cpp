@@ -29,12 +29,14 @@
 //
 
 
+#include "../src/KIM_Configuration.hpp"  // using non-public header
 #include "KIM_Collection.hpp"
 #include "KIM_CollectionItemType.hpp"
 #include "KIM_CollectionsImplementation.hpp"  // using non-public internal API
 #include "KIM_FilesystemPath.hpp"  // using non-public internal API
 #include "KIM_Log.hpp"
 #include "KIM_LogVerbosity.hpp"
+#include "KIM_SharedLibrary.hpp"  // using non-public internal API
 #include "KIM_Version.hpp"
 #include <cstring>
 #include <iostream>
@@ -61,7 +63,7 @@ void usage(std::string name)
       << "  " << name << " type <item-name>\n"
       << "  " << name << " metadata <item-name>\n"
       << "  " << name
-      << " system (project | model_drivers | portable_models | "
+      << " system (project | libpath | model_drivers | portable_models | "
          "simulator_models)\n"
       << "  " << name << " model_drivers [--log] [find <model-driver-name>]\n"
       << "  " << name
@@ -216,6 +218,13 @@ void project()
 
   KIM::CollectionsImplementation::Destroy(&col);
   KIM::Log::PopDefaultVerbosity();
+}
+
+void libpath()
+{
+  std::cout << KIM::SharedLibrary::GetORIGIN() << "/"
+            << KIM_SHARED_LIBRARY_PREFIX << KIM_PROJECT_NAME
+            << KIM_SHARED_LIBRARY_SUFFIX << std::endl;
 }
 
 enum SYS_OPTIONS { S_MODEL_DRIVERS, S_PORTABLE_MODELS, S_SIMULATOR_MODELS };
@@ -569,6 +578,7 @@ int processSystem(int argc, char * argv[])
   else
   {
     if (0 == strcmp("project", argv[2])) { CI::project(); }
+    else if (0 == strcmp("libpath", argv[2])) { CI::libpath(); }
     else if (0 == strcmp("model_drivers", argv[2]))
     {
       CI::sys(CI::S_MODEL_DRIVERS);
