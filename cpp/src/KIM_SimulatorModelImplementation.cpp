@@ -765,18 +765,15 @@ int SimulatorModelImplementation::Initialize(
       NULL);
   if (error)
   {
-    LOG_ERROR("Could not find simulator model shared library.");
+    LOG_ERROR("Could not find simulator model shared library for: "
+              + simulatorModelName + ".");
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
 
-#if INFORMATION_VERBOSITY
-  log_->LogEntry(LOG_VERBOSITY::information,
-                 "SimulatorModelImplementation object opening shared library: "
-                     + *itemFilePath,
-                 __LINE__,
-                 __FILE__);
-#endif
+  LOG_INFORMATION("SimulatorModelImplementation object opening simulator model "
+                  "shared library: "
+                  + *itemFilePath);
 
   error = sharedLibrary_->Open(*itemFilePath);
   if (error)
