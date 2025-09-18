@@ -111,7 +111,7 @@ SharedLibrary::SharedLibrary::EmbeddedFile::EmbeddedFile() :
 void SharedLibrary::SharedLibrary::EmbeddedFile::decodeFileInMemory() const
 {
   // empty files are not added to the library, so use empty() as flag
-  if (!decodedString.empty()) { return; }
+  if (!decodedFileContent.empty()) { return; }
 
   if (fileLength > 0 && filePointer != NULL)
   {
@@ -131,9 +131,9 @@ unsigned char const *
 SharedLibrary::SharedLibrary::EmbeddedFile::getDecodedFileDataPointer() const
 {
   decodeFileInMemory();
-  return decodedString.empty() ? NULL
-                               : reinterpret_cast<unsigned char const *>(
-                                     decodedFileContent.data());
+  return decodedFileContent.empty() ? NULL
+                                    : reinterpret_cast<unsigned char const *>(
+                                          decodedFileContent.data());
 }
 
 unsigned int
