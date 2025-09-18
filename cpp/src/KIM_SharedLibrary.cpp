@@ -104,38 +104,44 @@ KIM::FILESYSTEM::Path PrivateGetORIGIN()
 namespace KIM
 {
 SharedLibrary::SharedLibrary::EmbeddedFile::EmbeddedFile() :
-    fileName(NULL), fileLength(0), filePointer(NULL), decodedStringAvailable(false)
+    fileName(NULL),
+    fileLength(0),
+    filePointer(NULL),
+    decodedStringAvailable(false)
 {
   decodedFileContent = "";
 }
 
 void SharedLibrary::SharedLibrary::EmbeddedFile::decodeFileInMemory() const
 {
-  if (decodedStringAvailable){
-    return;
-  }
+  if (decodedStringAvailable) { return; }
 
-  if (fileLength > 0 && filePointer != NULL){
+  if (fileLength > 0 && filePointer != NULL)
+  {
     base64::decoder decoder = base64::decoder();
     std::istringstream encodedString(
-      std::string(reinterpret_cast<const char *>(filePointer), fileLength),
-      std::ios::in | std::ios::binary);
+        std::string(reinterpret_cast<const char *>(filePointer), fileLength),
+        std::ios::in | std::ios::binary);
     std::ostringstream decodedString(std::ios::out | std::ios::binary);
     decoder.decode(encodedString, decodedString);
 
     decodedFileContent = decodedString.str();
     decodedStringAvailable = true;
-  } 
+  }
   // else {LOG}
 }
 
-unsigned char const * SharedLibrary::SharedLibrary::EmbeddedFile::getDecodedFileDataPointer() const
+unsigned char const *
+SharedLibrary::SharedLibrary::EmbeddedFile::getDecodedFileDataPointer() const
 {
   decodeFileInMemory();
-  return decodedStringAvailable? reinterpret_cast<unsigned char const *>(decodedFileContent.data()) : NULL;
+  return decodedStringAvailable ? reinterpret_cast<unsigned char const *>(
+                                      decodedFileContent.data())
+                                : NULL;
 }
 
-unsigned int SharedLibrary::SharedLibrary::EmbeddedFile::getDecodedFileDataLength() const
+unsigned int
+SharedLibrary::SharedLibrary::EmbeddedFile::getDecodedFileDataLength() const
 {
   decodeFileInMemory();
   return static_cast<unsigned int>(decodedFileContent.length());
@@ -421,7 +427,10 @@ int SharedLibrary::Close()
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
-  else { sharedLibraryHandle_ = NULL; }
+  else
+  {
+    sharedLibraryHandle_ = NULL;
+  }
 
   LOG_DEBUG("Exit 0=" + callString);
   return false;

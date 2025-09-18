@@ -123,7 +123,7 @@ class SharedLibrary
     unsigned char const * getDecodedFileDataPointer() const;
     unsigned int getDecodedFileDataLength() const;
 
-  private:
+   private:
     mutable std::string decodedFileContent;
 
   };  // struct EmbeddedFile
