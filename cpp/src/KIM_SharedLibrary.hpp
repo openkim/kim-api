@@ -117,6 +117,14 @@ class SharedLibrary
     unsigned char const * filePointer;
 
     EmbeddedFile();
+
+    unsigned char const * getDecodedFileDataPointer() const;
+    unsigned int getDecodedFileDataLength() const;
+
+   private:
+    mutable std::string decodedFileContent;
+
+    void decodeFileInMemory() const;
   };  // struct EmbeddedFile
 
   static FILESYSTEM::Path const ORIGIN;
