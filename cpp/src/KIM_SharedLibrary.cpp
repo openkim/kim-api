@@ -104,17 +104,14 @@ KIM::FILESYSTEM::Path PrivateGetORIGIN()
 namespace KIM
 {
 SharedLibrary::SharedLibrary::EmbeddedFile::EmbeddedFile() :
-    fileName(NULL),
-    fileLength(0),
-    filePointer(NULL),
-    decodedStringAvailable(false)
+    fileName(NULL), fileLength(0), filePointer(NULL), decodedFileContent("")
 {
-  decodedFileContent = "";
 }
 
 void SharedLibrary::SharedLibrary::EmbeddedFile::decodeFileInMemory() const
 {
-  if (decodedStringAvailable) { return; }
+  // empty files are not added to the library, so use empty() as flag
+  if (!decodedString.empty()) { return; }
 
   if (fileLength > 0 && filePointer != NULL)
   {
@@ -126,7 +123,6 @@ void SharedLibrary::SharedLibrary::EmbeddedFile::decodeFileInMemory() const
     decoder.decode(encodedString, decodedString);
 
     decodedFileContent = decodedString.str();
-    decodedStringAvailable = true;
   }
   // else {LOG}
 }
@@ -135,9 +131,9 @@ unsigned char const *
 SharedLibrary::SharedLibrary::EmbeddedFile::getDecodedFileDataPointer() const
 {
   decodeFileInMemory();
-  return decodedStringAvailable ? reinterpret_cast<unsigned char const *>(
-                                      decodedFileContent.data())
-                                : NULL;
+  return decodedString.empty() ? NULL
+                               : reinterpret_cast<unsigned char const *>(
+                                     decodedFileContent.data());
 }
 
 unsigned int
