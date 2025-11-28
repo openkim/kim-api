@@ -66,6 +66,11 @@ class ModelComputeArguments
   /// \param[out] neighborsOfParticle Pointer to array of particle neighbor
   ///             numbers (using the Model's Numbering).
   ///
+  /// \note \c neighborsOfParticle pointers obtained from this routine are
+  /// valid until the next call to ModelComputeArguments::GetNeighborList (with
+  /// the same \c neighborListIndex) or the KIM::ModelComputeArguments object
+  /// is KIM::Model::ComputeArgumentsDestroy'd.
+  ///
   /// \return \c true if \c neighborListIndex is invalid.
   /// \return \c true if \c particleNumber is invalid.
 
