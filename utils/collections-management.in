@@ -429,11 +429,11 @@ get_build_install_item () {
           printf "Downloading..............#%s\n" "${item_name}" | sed -e 's/ /./g' -e 's/#/ /g'
           for iter in `seq 1 ${web_tool_download_number_retries}`; do
             printf "              Attempt $iter/${web_tool_download_number_retries}.\n"
-            ${web_tool_download} "https://s3.openkim.org/download/${item_name}.txz"
+            ${web_tool_download} "https://openkim.org/download/${item_name}.txz"
             error_code=$?
             if test ${error_code} -ne 0; then
-              printf "                Unable to download ${item_name}.txz from https://s3.openkim.org due to a network error.\n"
-              printf "                Check that you are able to access https://s3.openkim.org/download/${archive_basename}.txz"
+              printf "                Unable to download ${item_name}.txz from https://openkim.org due to a network error.\n"
+              printf "                Check that you are able to access https://openkim.org/download/${archive_basename}.txz"
               if test ${iter} -eq ${web_tool_download_number_retries}; then
                 printf "                    Maximum number of retires exceeded.\n"
                 return 1
