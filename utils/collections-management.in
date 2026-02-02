@@ -433,7 +433,7 @@ get_build_install_item () {
             error_code=$?
             if test ${error_code} -ne 0; then
               printf "                Unable to download ${item_name}.txz from https://openkim.org due to a network error.\n"
-              printf "                Check that you are able to access https://openkim.org/download/${archive_basename}.txz"
+              printf "                Check that you are able to access https://openkim.org/download/${item_name}.txz"
               if test ${iter} -eq ${web_tool_download_number_retries}; then
                 printf "                    Maximum number of retires exceeded.\n"
                 return 1
