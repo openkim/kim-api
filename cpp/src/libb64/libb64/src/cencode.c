@@ -16,20 +16,20 @@ void base64_init_encodestate(base64_encodestate* state_in)
 	state_in->stepcount = 0;
 }
 
-char base64_encode_value(char value_in)
+signed char base64_encode_value(signed char value_in)
 {
-	static const char* encoding = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+	static const signed char* encoding = (const signed char*)"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 	if (value_in > 63) return '=';
 	return encoding[(int)value_in];
 }
 
-int base64_encode_block(const char* plaintext_in, int length_in, char* code_out, base64_encodestate* state_in)
+int base64_encode_block(const signed char* plaintext_in, int length_in, signed char* code_out, base64_encodestate* state_in)
 {
-	const char* plainchar = plaintext_in;
-	const char* const plaintextend = plaintext_in + length_in;
-	char* codechar = code_out;
-	char result;
-	char fragment;
+	const signed char* plainchar = plaintext_in;
+	const signed char* const plaintextend = plaintext_in + length_in;
+	signed char* codechar = code_out;
+	signed char result;
+	signed char fragment;
 	
 	result = state_in->result;
 	
@@ -86,9 +86,9 @@ int base64_encode_block(const char* plaintext_in, int length_in, char* code_out,
 	return codechar - code_out;
 }
 
-int base64_encode_blockend(char* code_out, base64_encodestate* state_in)
+int base64_encode_blockend(signed char* code_out, base64_encodestate* state_in)
 {
-	char* codechar = code_out;
+	signed char* codechar = code_out;
 	
 	switch (state_in->step)
 	{

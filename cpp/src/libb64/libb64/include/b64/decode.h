@@ -26,12 +26,12 @@ namespace base64
 		: _buffersize(buffersize_in)
 		{}
 
-		int decode(char value_in)
+		int decode(signed char value_in)
 		{
 			return base64_decode_value(value_in);
 		}
 
-		int decode(const char* code_in, const int length_in, char* plaintext_out)
+		int decode(const signed char* code_in, const int length_in, signed char* plaintext_out)
 		{
 			return base64_decode_block(code_in, length_in, plaintext_out, &_state);
 		}
@@ -50,7 +50,7 @@ namespace base64
 			{
 				istream_in.read((char*)code, N);
 				codelength = istream_in.gcount();
-				plainlength = decode(code, codelength, plaintext);
+				plainlength = decode((const signed char*)code, codelength, (signed char*)plaintext);
 				ostream_in.write((const char*)plaintext, plainlength);
 			}
 			while (istream_in.good() && codelength > 0);
