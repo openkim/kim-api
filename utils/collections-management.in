@@ -66,7 +66,7 @@ elif command -v curl > /dev/null 2>&1; then
   web_tool_q="${web_tool} --user-agent ${kim_user_agent} -s"
   web_tool_query="${web_tool_q} -o - --data"
   web_tool_url_stdin="${web_tool_q} -O -"
-  web_tool_download="${web_tool_q} --remote-name"
+  web_tool_download="${web_tool_q} --fail --remote-name"
 else
   printf "*** ERROR *** Unable to find a web tool: please install 'wget' or 'curl'.\n";
   exit 1
