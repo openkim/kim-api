@@ -16,17 +16,17 @@ typedef enum
 typedef struct
 {
 	base64_encodestep step;
-	char result;
+	signed char result;
 	int stepcount;
 } base64_encodestate;
 
 void base64_init_encodestate(base64_encodestate* state_in);
 
-char base64_encode_value(char value_in);
+signed char base64_encode_value(signed char value_in);
 
-int base64_encode_block(const char* plaintext_in, int length_in, char* code_out, base64_encodestate* state_in);
+int base64_encode_block(const signed char* plaintext_in, int length_in, signed char* code_out, base64_encodestate* state_in);
 
-int base64_encode_blockend(char* code_out, base64_encodestate* state_in);
+int base64_encode_blockend(signed char* code_out, base64_encodestate* state_in);
 
 #endif /* BASE64_CENCODE_H */
 
