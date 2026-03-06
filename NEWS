@@ -25,14 +25,25 @@
 #
 
 #
-# Release: This file is part of the kim-api-2.4.1 package.
+# Release: This file is part of the kim-api-2.4.2 package.
 #
+
+
+=== kim-api-2.4.2 =============== 06Mar2026 ====================================
+
+* Improved logging and display of shared library paths
+
+* Fixed decoding bug for metadata files stored shared libraries
+
+* Improved documentation of GetNeighborList routines
+
+* Implemented item download retries in collections-management
 
 
 === kim-api-2.4.1 =============== 15Apr2025 ====================================
 
 * Fix base64-encode to conform to cmake MAKE_C_IDENTIFIER behavior.  This allows
-  encoded files to have naems that start with a numeric digit.
+  encoded files to have names that start with a numeric digit.
 
 
 === kim-api-2.4.0 =============== 12Mar2025 ====================================

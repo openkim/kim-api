@@ -26,17 +26,17 @@ namespace base64
 		: _buffersize(buffersize_in)
 		{}
 
-		int encode(char value_in)
+		int encode(signed char value_in)
 		{
 			return base64_encode_value(value_in);
 		}
 
-		int encode(const char* code_in, const int length_in, char* plaintext_out)
+		int encode(const signed char* code_in, const int length_in, signed char* plaintext_out)
 		{
 			return base64_encode_block(code_in, length_in, plaintext_out, &_state);
 		}
 
-		int encode_end(char* plaintext_out)
+		int encode_end(signed char* plaintext_out)
 		{
 			return base64_encode_blockend(plaintext_out, &_state);
 		}
@@ -56,12 +56,12 @@ namespace base64
 				istream_in.read(plaintext, N);
 				plainlength = istream_in.gcount();
 				//
-				codelength = encode(plaintext, plainlength, code);
+				codelength = encode((const signed char*)plaintext, plainlength, (signed char*)code);
 				ostream_in.write(code, codelength);
 			}
 			while (istream_in.good() && plainlength > 0);
 
-			codelength = encode_end(code);
+			codelength = encode_end((signed char*)code);
 			ostream_in.write(code, codelength);
 			//
 			base64_init_encodestate(&_state);

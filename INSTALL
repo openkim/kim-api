@@ -25,7 +25,7 @@
 #
 
 #
-# Release: This file is part of the kim-api-2.4.1 package.
+# Release: This file is part of the kim-api-2.4.2 package.
 #
 
 
@@ -440,10 +440,10 @@ Additionally, the KIM API defines the following advanced build options.
   recorded and used after installation for compilation of items (MDs, PMs, SMs,
   etc.) to ensure binary compatibility with the installed KIM API.
 
-* KIM_API_USER_CONFIGURATION_FILE (=".${PROJECT_NAME}/config") This value
-  determines the default name of the KIM API user configuration file.  If the
-  value corresponds to a relative path (does not start with "/"), then it is
-  interpreted as relative to the user's home directory "${HOME}".
+* KIM_API_USER_CONFIGURATION_FILE (=".${PROJECT_NAME}/${KIM_API_UID}/config")
+  This value determines the default name of the KIM API user configuration file.
+  If the value corresponds to a relative path (does not start with "/"), then it
+  is interpreted as relative to the user's home directory "${HOME}".
 
 * KIM_API_USER_MODEL_DRIVERS_DIR_DEFAULT
   (="~/.${PROJECT_NAME}/<kim-api-uid>/model-drivers") This value specifies the

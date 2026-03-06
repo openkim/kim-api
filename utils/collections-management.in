@@ -29,7 +29,7 @@
 #
 
 #
-# Release: This file is part of the kim-api-2.4.1 package.
+# Release: This file is part of the kim-api-2.4.2 package.
 #
 
 
@@ -66,11 +66,13 @@ elif command -v curl > /dev/null 2>&1; then
   web_tool_q="${web_tool} --user-agent ${kim_user_agent} -s"
   web_tool_query="${web_tool_q} -o - --data"
   web_tool_url_stdin="${web_tool_q} -O -"
-  web_tool_download="${web_tool_q} --remote-name"
+  web_tool_download="${web_tool_q} --fail --remote-name"
 else
   printf "*** ERROR *** Unable to find a web tool: please install 'wget' or 'curl'.\n";
   exit 1
 fi
+web_tool_download_number_retries=10
+web_tool_download_delay_seconds=10
 
 
 # define usage function
@@ -384,17 +386,26 @@ get_build_install_item () {
         sed -e 's/^.*\(openkim-models-.*\)\.txz.*$/\1/'`
       # download archive
       printf "Downloading..............#%s\n" "${archive_basename}" | sed -e 's/ /./g' -e 's/#/ /g'
-      ${web_tool_download} "https://s3.openkim.org/archives/collection/${archive_basename}.txz"
-      local error_code=$?
-      if test ${error_code} -eq 0; then
-        #tar Jxf "${archive_basename}.txz" && rm -f "${archive_basename}.txz"
-        # Workaround for https://github.com/msys2/MSYS2-packages/issues/1548
-        xz --decompress --stdout "${archive_basename}.txz" | tar xf - && rm -f "${archive_basename}.txz"
-      else
-        printf "                Unable to download ${archive_basename}.txz from https://s3.openkim.org.\n"
-        printf "                '${web_tool}' returned error code ${error_code}.\n"
-        return 1
-      fi
+      for iter in `seq 1 ${web_tool_download_number_retries}`; do
+        printf "              Attempt $iter/${web_tool_download_number_retries}.\n"
+        ${web_tool_download} "https://s3.openkim.org/archives/collection/${archive_basename}.txz"
+        error_code=$?
+        if test ${error_code} -ne 0; then
+          printf "                Unable to download ${archive_basename}.txz from https://s3.openkim.org due to a network error.\n"
+          printf "                Check that you are able to access https://s3.openkim.org/archives/collection/${archive_basename}.txz"
+          if test ${iter} -eq ${web_tool_download_number_retries}; then
+            printf "                    Maximum number of retires exceeded.\n"
+            return 1
+          fi
+          printf "                    Sleeping for ${web_tool_download_delay_seconds} seconds.\n"
+          sleep ${web_tool_download_delay_seconds}
+        else
+          break;
+        fi
+      done
+      #tar Jxf "${archive_basename}.txz" && rm -f "${archive_basename}.txz"
+      # Workaround for https://github.com/msys2/MSYS2-packages/issues/1548
+      xz --decompress --stdout "${archive_basename}.txz" | tar xf - && rm -f "${archive_basename}.txz"
       # configure archive
       cd "./${archive_basename}" && mkdir build && cd build
       if ! ${cmake_command} ../ -DKIM_API_INSTALL_COLLECTION="`printf ${install_collection} | tr "[:lower:]" "[:upper:]"`" > ./cmake-log.txt 2>&1; then
@@ -416,17 +427,26 @@ get_build_install_item () {
       if test x"" = x"${local_build_path}"; then
         if check_item_compatibility "${item_name}"; then
           printf "Downloading..............#%s\n" "${item_name}" | sed -e 's/ /./g' -e 's/#/ /g'
-          ${web_tool_download} "https://openkim.org/download/${item_name}.txz"
-          local error_code=$?
-          if test ${error_code} -eq 0; then
-            #tar Jxfv "${item_name}.txz" && rm -f "${item_name}.txz"
-            # Workaround for https://github.com/msys2/MSYS2-packages/issues/1548
-            xz --decompress --stdout "${item_name}.txz" | tar xf - && rm -f "${item_name}.txz"
-          else
-            printf "                Unable to download ${item_name} from https://openkim.org.  Check the KIM Item ID for errors.\n"
-            printf "                '${web_tool}' returned error code ${error_code}.\n"
-            return 1
-          fi
+          for iter in `seq 1 ${web_tool_download_number_retries}`; do
+            printf "              Attempt $iter/${web_tool_download_number_retries}.\n"
+            ${web_tool_download} "https://openkim.org/download/${item_name}.txz"
+            error_code=$?
+            if test ${error_code} -ne 0; then
+              printf "                Unable to download ${item_name}.txz from https://openkim.org due to a network error.\n"
+              printf "                Check that you are able to access https://openkim.org/download/${item_name}.txz"
+              if test ${iter} -eq ${web_tool_download_number_retries}; then
+                printf "                    Maximum number of retires exceeded.\n"
+                return 1
+              fi
+              printf "                    Sleeping for ${web_tool_download_delay_seconds} seconds.\n"
+              sleep ${web_tool_download_delay_seconds}
+            else
+              break;
+            fi
+          done
+          #tar Jxf "${item_name}.txz" && rm -f "${item_name}.txz"
+          # Workaround for https://github.com/msys2/MSYS2-packages/issues/1548
+          xz --decompress --stdout "${item_name}.txz" | tar xf - && rm -f "${item_name}.txz"
         else
           return 1
         fi
@@ -655,9 +675,10 @@ print_list_of_items () {
   printf -- "  ---  Model Collections Listing\n"
   print_separator_line "="
   printf "\n"
-  printf "kim-api : \n\t%s\n" "`${collections_info} system project`"
-  printf "kim-api-uid : \n\t%s\n" "${kim_api_uid_string}"
+  printf "kim-api: \n\t%s\n" "`${collections_info} system project`"
+  printf "kim-api-uid: \n\t%s\n" "${kim_api_uid_string}"
   printf "\n"
+  printf "kim-api library file: \n\t%s\n" "`${collections_info} system libpath`"
   printf "kim-api configuration file:\n\t%s\n" \
          "`${collections_info} config_file name`"
   printf "\n\n"

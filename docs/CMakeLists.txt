@@ -26,7 +26,7 @@
 #
 
 #
-# Release: This file is part of the kim-api-2.4.1 package.
+# Release: This file is part of the kim-api-2.4.2 package.
 #
 
 cmake_minimum_required(VERSION 3.10)

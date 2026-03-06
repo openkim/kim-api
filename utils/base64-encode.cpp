@@ -27,7 +27,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-2.4.1 package.
+// Release: This file is part of the kim-api-2.4.2 package.
 //
 
 
@@ -80,7 +80,7 @@ std::string make_c_identifier(const std::string & input)
   // Process each character
   for (int i = 0; i < input.size(); i++)
   {
-    const char ch = input[i];
+    const signed char ch = input[i];
     if (std::isalnum(ch) || ch == '_')
       output += ch;  // Keep letters, numbers, and underscores
     else

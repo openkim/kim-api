@@ -26,7 +26,7 @@
 /*                                                                            */
 
 /*                                                                            */
-/* Release: This file is part of the kim-api-2.4.1 package.                   */
+/* Release: This file is part of the kim-api-2.4.2 package.                   */
 /*                                                                            */
 
 /**
@@ -430,16 +430,22 @@ Compute-callback table:
   GetNeighborList callback function must support the return of the appropriate
   list of neighbors.  The returned list of neighbors consists of a
   contiguous-in-memory list of integers corresponding to an unordered full list
-  of a particle's neighbors (not including itself).  Each such neighbor list
-  must contain at least all particles within the corresponding cutoff distance
-  of the specified particle.  (However, the returned list may contain particles
-  beyond the cutoff distance.)  Neighbor lists provided by the simulator must
-  be consistent with the configuration coordinates and the PM's cutoff values.
-  In particular, the PM must, in principle, be able to independently construct
-  its own equivalent neighbor list using just the particle coordinates.
-  Further, the GetNeighborList callback routine must check to ensure that the
-  neighbor list data (provided, via the simulator, by the compute-arguments
-  object) is consistent with the PM's cutoff values.
+  of a particle's neighbors (not including itself).  The pointer to such a list
+  must be valid until the next call (with the same neighbor list index) to the
+  GetNeighborList callback function or the compute-arguments object is
+  destroyed.  (Note: this means accessing memory at the pointer location
+  returned by the GetNeighborList routine after another intervening call to
+  that routine may cause your program to generate incorrect results or even
+  crash.)  Each such neighbor list must contain at least all particles within
+  the corresponding cutoff distance of the specified particle.  (However, the
+  returned list may contain particles beyond the cutoff distance.)  Neighbor
+  lists provided by the simulator must be consistent with the configuration
+  coordinates and the PM's cutoff values.  In particular, the PM must, in
+  principle, be able to independently construct its own equivalent neighbor
+  list using just the particle coordinates.  Further, the GetNeighborList
+  callback routine must check to ensure that the neighbor list data (provided,
+  via the simulator, by the compute-arguments object) is consistent with the
+  PM's cutoff values.
 
   <b>CAUTION - SIMULATOR DEVELOPERS:</b> In general, it is important that
   neighbor lists provided by a simulator are "efficient" in the sense that the

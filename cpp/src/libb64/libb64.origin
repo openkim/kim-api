@@ -52,5 +52,7 @@ libb64 — MODIFIED ORIGIN DETAILS
 <                 *codechar++ = '\"';
 ```
 
-4. LICENSE
+4. Changed all `char` to `signed char` as `char` is platform dependent.
+
+5. LICENSE
    The original license is included in the file `LICENSE`.

@@ -25,7 +25,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-2.4.1 package.
+// Release: This file is part of the kim-api-2.4.2 package.
 //
 
 
@@ -765,10 +765,15 @@ int SimulatorModelImplementation::Initialize(
       NULL);
   if (error)
   {
-    LOG_ERROR("Could not find simulator model shared library.");
+    LOG_ERROR("Could not find simulator model shared library for: "
+              + simulatorModelName + ".");
     LOG_DEBUG("Exit 1=" + callString);
     return true;
   }
+
+  LOG_INFORMATION("SimulatorModelImplementation object opening simulator model "
+                  "shared library: "
+                  + *itemFilePath);
 
   error = sharedLibrary_->Open(*itemFilePath);
   if (error)

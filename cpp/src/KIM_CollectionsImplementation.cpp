@@ -25,7 +25,7 @@
 //
 
 //
-// Release: This file is part of the kim-api-2.4.1 package.
+// Release: This file is part of the kim-api-2.4.2 package.
 //
 
 
@@ -634,6 +634,18 @@ int CollectionsImplementation::Create(
 #endif
 
   *collectionsImplementation = pCollectionsImplementation;
+
+#if INFORMATION_VERBOSITY
+  (*collectionsImplementation)
+      ->LogEntry(LOG_VERBOSITY::information,
+                 "Collections object using shared library: "
+                     + KIM::SharedLibrary::GetORIGIN().string() + "/"
+                     + KIM_SHARED_LIBRARY_PREFIX + KIM_PROJECT_NAME
+                     + KIM_SHARED_LIBRARY_SUFFIX,
+                 __LINE__,
+                 __FILE__);
+#endif
+
 #if DEBUG_VERBOSITY
   (*collectionsImplementation)
       ->LogEntry(
