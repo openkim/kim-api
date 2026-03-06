@@ -29,6 +29,17 @@
 #
 
 
+=== kim-api-2.4.2 =============== 06Mar2026 ====================================
+
+* Improved logging and display of shared library paths
+
+* Fixed decoding bug for metadata files stored shared libraries
+
+* Improved documentation of GetNeighborList routines
+
+* Implemented item download retries in collections-management
+
+
 === kim-api-2.4.1 =============== 15Apr2025 ====================================
 
 * Fix base64-encode to conform to cmake MAKE_C_IDENTIFIER behavior.  This allows
